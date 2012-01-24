@@ -1,0 +1,56 @@
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                    http://www.springframework.org/schema/security
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+<!--    <http use-expressions="true">
+        <intercept-url pattern="/**" access="permitAll" />
+        <form-login />
+    </http>-->
+    
+    <!-- TODO: vsechny staticke a neutorizovane zdroje -->
+<!--    <http pattern="**" security="none"/>-->
+    <!-- nahore docasne zakazna bezpecnost pro vsechno -->
+    <http pattern="/css/**" security="none"/>
+    <http pattern="/login.jsp*" security="none"/>
+  
+    <http auto-config='true'>
+        <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
+        <intercept-url pattern="/user.jsp" access="ROLE_USER" />
+        <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
+        <intercept-url pattern="/index.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <intercept-url pattern="/v2/user" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN, IS_AUTHENTICATED_ANONYMOUSLY" />
+        <http-basic /><!-- pokud je vynechano, vyskoci formular od springu -->
+
+<!--        <intercept-url pattern="/**" access="ROLE_USER" method="PUT"/>-->
+    
+        <session-management>
+            <!--This will prevent a user from logging in multiple times - a second login will cause the first to be invalidated.-->
+            <concurrency-control max-sessions="1" />
+            <!--here the second login will be rejected -->
+            <!--<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" /> -->
+        </session-management>
+        <logout delete-cookies="JSESSIONID" logout-url="/v2/user"/>
+    </http>
+
+    <authentication-manager>
+        <authentication-provider ref='myAuthenticationProvider'/>
+<!--        <authentication-provider>
+            <user-service>
+                <user name="admin" password="adminpass" authorities="ROLE_ADMIN" />
+                <user name="user" password="userpass" authorities="ROLE_USER" />
+                <user name="both" password="bothpass" authorities="ROLE_USER, ROLE_ADMIN" />
+            </user-service>
+        </authentication-provider>-->
+    </authentication-manager>
+    
+    <beans:bean id="myAuthenticationProvider"
+      class="cz.nkp.urnnbn.rest.MyAuthenticationProvider">
+<!--    <beans:property name="dataSource" ref="dataSource"/>-->
+    </beans:bean>
+</beans:beans>
