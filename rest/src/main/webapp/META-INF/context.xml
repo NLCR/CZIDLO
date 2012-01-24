@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/api">
+    <Resource auth="Container" 
+  driverClassName="org.postgresql.Driver" 
+  maxActive="100" maxIdle="30" maxWait="200" 
+  name="jdbc/postgres" 
+  password="poseruse" 
+  type="javax.sql.DataSource" 
+  url="jdbc:postgresql://localhost:5432/resolver-restTests" 
+  username="postgres"/>
+</Context>
