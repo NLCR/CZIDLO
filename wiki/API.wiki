@@ -1,0 +1,26 @@
+#summary One-sentence summary of this page.
+
+= REST API =
+
+REST API resolveru je popsáno na https://docs.google.com/spreadsheet/ccc?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E
+Stále se ale nejedná o úplně finální verzi.
+
+
+= Import metadat =
+
+= URN:NBN přiřadí Resolver při importu metadat =
+Proces importu metadat a získání URN:NBN bude standardně vypadat takto
+ # PUT http://localhost:8080/api/v2/registrars/boa001/digitalRepresentations
+Tělo requestu by mělo obsahovat importní xml s metadaty intelektuální entity i digitální reprezentace. Např:
+http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import.xml
+(pouze bez elementu urn:nbn)
+Pokud nenastane žádná chyba, bude odpověď vypadat nějak takto:
+http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/importResponse.xml
+
+= bude použito URN:NBN dříve rezervováno =
+Proces probíhá stejně, jako v předchozím případě. Jen s tím rozdílem, že importní metadata obsahují element urnNbn. Jeho obsah si může klient Resolveru buď úplně vymyslet (a sám si tak spravovat svůj prostor URN:NBN). Vhodnější je ale použít rezeravaci URN:NBN.
+Rezervace probíhá takto:
+Dotaz:
+PUT http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations?size=100
+Odpověď:
+http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/urnNbnReservation.xml
