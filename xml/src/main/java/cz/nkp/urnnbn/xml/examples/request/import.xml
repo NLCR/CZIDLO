@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+    <r:monograph>
+        <!--TODO: reflektovat zmeny v builderech -->
+        <!-- nesmi byt id typu internal. Pokud bude pritomno, ignorovat -->
+        <r:title>Babicka</r:title>
+        <r:subTitle>obrazy z venkovského života</r:subTitle>
+        <r:isbn>8090119964</r:isbn>
+        <!-- nesmi byt created ani updated -->
+        <r:digitalBorn>false</r:digitalBorn>
+        <r:originator type="CORPORATION">IBM print</r:originator>
+        <r:publisher>Československý spisovatel</r:publisher>
+        <r:publicationPlace>V Praze</r:publicationPlace>
+        <r:publicationYear>2011</r:publicationYear>
+    </r:monograph>
+    <r:digitalRepresentation>
+        <!-- TODO: registrar jde poznat z url, chybi ale nekde archiver -->
+        <r:archiverId>37</r:archiverId>
+        <r:urnNbn>urn:nbn:cz:boa001-000002</r:urnNbn>
+        <r:registrarUniqueIdentifiers>
+            <r:id type="OAI_harvester">124</r:id>
+            <r:id type="signatura">neco</r:id>
+        </r:registrarUniqueIdentifiers>
+        <r:financed>norské fondy</r:financed>
+        <r:format>djvu</r:format>
+    </r:digitalRepresentation>
+    <!-- TODO: pridani digitalnich instanci resit az ve vlastni operaci -->
+</r:import>

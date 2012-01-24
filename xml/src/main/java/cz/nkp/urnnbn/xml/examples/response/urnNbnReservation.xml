@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<urnNbnRerservation xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
+    <urnNbn>urn:nbn:cz:boa001-000006</urnNbn>
+    <urnNbn>urn:nbn:cz:boa001-000007</urnNbn>
+    <urnNbn>urn:nbn:cz:boa001-000008</urnNbn>
+    <urnNbn>urn:nbn:cz:boa001-000009</urnNbn>
+    <urnNbn>urn:nbn:cz:boa001-00000a</urnNbn>
+</urnNbnRerservation>
