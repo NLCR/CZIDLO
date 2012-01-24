@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:error xmlns:r="http://resolver.nkp.cz/v2/">
+    <r:code>UNKNOWN_URN</r:code>
+    <r:message>No such urn 'urn:nbn:cz:boa001-00000d' has been assigned yet</r:message>
+</r:error>

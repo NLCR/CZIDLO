@@ -1,0 +1,27 @@
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified" 
+targetNamespace="http://resolver.nkp.cz/v2" 
+xmlns:r="http://resolver.nkp.cz/v2"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <xs:element name="error" type="r:errorType"/>
+    
+    
+    <xs:complexType name="errorType">
+        <xs:sequence>
+            <xs:element name="code" type="r:errorCodeType"/>
+            <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="errorCodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INVALID_SIGLA"/>
+            <xs:enumeration value="UNKNOWN_REGISTRAR"/>
+            
+            <xs:enumeration value="UNKNOWN_URN"/>
+            <xs:enumeration value="TODO_dalsi_druhy_chyb"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

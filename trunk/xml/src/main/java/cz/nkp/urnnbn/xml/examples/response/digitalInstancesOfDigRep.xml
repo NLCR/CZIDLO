@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:digitalInstances xmlns:r="http://resolver.nkp.cz/v2/">
+    <r:digitalInstance>
+        <r:id type="INTERNAL">41</r:id>
+        <r:url>http://kramerius.mzk.cz/search/handle/uuid:123</r:url>
+        <r:published>2011-12-18T19:07:24.038+01:00</r:published>
+    </r:digitalInstance>
+    <r:digitalInstance>
+        <r:id type="INTERNAL">42</r:id>
+        <r:url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</r:url>
+        <r:published>2011-12-18T19:07:24.064+01:00</r:published>
+    </r:digitalInstance>
+    <r:digitalInstance>
+        <r:id type="INTERNAL">43</r:id>
+        <r:url>http://kramerius.nkp.cz/search/handle/uuid:123</r:url>
+        <r:published>2011-12-18T19:07:24.076+01:00</r:published>
+    </r:digitalInstance>
+</r:digitalInstances>
