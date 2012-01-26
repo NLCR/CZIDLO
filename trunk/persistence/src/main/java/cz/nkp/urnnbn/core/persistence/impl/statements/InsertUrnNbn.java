@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
@@ -41,7 +41,7 @@ public class InsertUrnNbn implements StatementWrapper {
             st.setLong(1, urn.getDigRepId());
             st.setString(2, urn.getRegistrarCode());
             st.setString(3, urn.getDocumentCode());
-            Timestamp now = Utils.nowTs();
+            Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(4, now);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
 import java.sql.ResultSet;
@@ -25,9 +25,9 @@ public class DigitalRepresentationRT implements ResultsetTransformer {
         rep.setRegistrarId(resultSet.getLong(DigitalRepresentationDAO.ATTR_REGISTRAR_ID));
         rep.setArchiverId(resultSet.getLong(DigitalRepresentationDAO.ATTR_ARCHIVER_ID));
         Timestamp created = resultSet.getTimestamp(DigitalRepresentationDAO.ATTR_CREATED);
-        rep.setCreated(Utils.timestampToDatetime(created));
+        rep.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigitalRepresentationDAO.ATTR_UPDATED);
-        rep.setLastUpdated(Utils.timestampToDatetime(updated));
+        rep.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
         rep.setFormat(resultSet.getString(DigitalRepresentationDAO.ATTR_FORMAT));
         rep.setExtent(resultSet.getString(DigitalRepresentationDAO.ATTR_EXTENT));
         rep.setResolution(resultSet.getString(DigitalRepresentationDAO.ATTR_RESOLUTION));

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
@@ -50,7 +50,7 @@ public class InsertDigitalRepresentation implements StatementWrapper {
             st.setLong(2, representation.getIntEntId());
             st.setLong(3, representation.getRegistrarId());
             st.setLong(4, representation.getArchiverId());
-            Timestamp now = Utils.nowTs();
+            Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(5, now);
             st.setTimestamp(6, now);
             st.setString(7, representation.getFormat());

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
@@ -39,7 +39,7 @@ public class UpdateIntEntity implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setTimestamp(1, Utils.nowTs());
+            st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setString(2, entity.getTitle());
             st.setString(3, entity.getAlternativeTitle());
             st.setString(4, entity.getDocumentType());

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
@@ -42,7 +42,7 @@ public class InsertDigitalInstance implements StatementWrapper {
             st.setLong(2, i.getDigRepId());
             st.setLong(3, i.getLibraryId());
             st.setString(4, i.getUrl());
-            st.setTimestamp(5, Utils.nowTs());
+            st.setTimestamp(5, DateTimeUtils.nowTs());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

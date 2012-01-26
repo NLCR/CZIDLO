@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
@@ -32,10 +32,10 @@ public class IntEntityRT implements ResultsetTransformer {
         entity.setEntityType(EntityType.valueOf(entityType));
         //created
         Timestamp created = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_CREATED);
-        entity.setCreated(Utils.timestampToDatetime(created));
+        entity.setCreated(DateTimeUtils.timestampToDatetime(created));
         //updated
         Timestamp updated = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_UPDATED);
-        entity.setLastUpdated(Utils.timestampToDatetime(updated));
+        entity.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
         return entity;
     }
 }
