@@ -7,7 +7,7 @@ package cz.nkp.urnnbn.core.persistence.impl;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
 import cz.nkp.urnnbn.core.DefinedProperties;
-import cz.nkp.urnnbn.core.utils.PropertyLoader;
+import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.File;
 import java.io.IOException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

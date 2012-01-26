@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
@@ -41,7 +41,7 @@ public class UpdateDigitalRepresentation implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setTimestamp(1, Utils.nowTs());
+            st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setString(2, rep.getFormat());
             st.setString(3, rep.getExtent());
             st.setString(4, rep.getResolution());

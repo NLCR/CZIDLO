@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import java.sql.ResultSet;
@@ -23,7 +23,7 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         instance.setId(resultSet.getLong(DigitalInstanceDAO.ATTR_ID));
         instance.setDigRepId(resultSet.getLong(DigitalInstanceDAO.ATTR_DIG_REP_ID));
         instance.setLibraryId(resultSet.getLong(DigitalInstanceDAO.ATTR_LIB_ID));
-        instance.setPublished(Utils.timestampToDatetime(resultSet.getTimestamp(DigitalInstanceDAO.ATTR_PUBLISHED)));
+        instance.setPublished(DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(DigitalInstanceDAO.ATTR_PUBLISHED)));
         instance.setUrl(resultSet.getString(DigitalInstanceDAO.ATTR_URL));
         return instance;
     }

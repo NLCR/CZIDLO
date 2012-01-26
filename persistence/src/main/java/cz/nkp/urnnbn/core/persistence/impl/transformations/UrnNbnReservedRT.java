@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.UrnNbnReservedDAO;
 import java.sql.ResultSet;
@@ -21,7 +21,7 @@ public class UrnNbnReservedRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         String registrarCode = resultSet.getString(UrnNbnReservedDAO.ATTR_REGISTRAR_CODE);
         String documentCode = resultSet.getString(UrnNbnReservedDAO.ATTR_DOCUMENT_CODE);
-        DateTime created = Utils.timestampToDatetime(
+        DateTime created = DateTimeUtils.timestampToDatetime(
                 resultSet.getTimestamp(UrnNbnReservedDAO.ATTR_CREATED));
         return new UrnNbn(registrarCode, documentCode, null, created);
     }

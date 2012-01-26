@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.Utils;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
@@ -45,7 +45,7 @@ public class InsertIntelectualEntity implements StatementWrapper {
         try {
             st.setLong(1, entity.getId());
             st.setString(2, entity.getEntityType().name());
-            Timestamp now = Utils.nowTs();
+            Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(3, now);
             st.setTimestamp(4, now);
             st.setString(5, entity.getTitle());
