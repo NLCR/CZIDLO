@@ -40,26 +40,25 @@ public class RecordImporter {
     private final UrnNbnFinder finder;
 
     RecordImporter(DAOFactory factory, RecordImport data, long userId) throws DatabaseException, UnknownRegistrarException {
-        try {
-            Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
-            //TODO: zkontrolovat prava uzivatele k registratorovi
-            finder = new UrnNbnFinder(factory, registrar);
-        } catch (RecordNotFoundException ex) {
-            throw new UnknownRegistrarException(data.getRegistrarSigla());
-        }
         this.data = data;
         this.userId = userId;
         this.factory = factory;
-        merger = new IntelectualEntityMerger(factory);
+        this.merger = new IntelectualEntityMerger(factory);
+        try {
+            Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
+            this.finder = new UrnNbnFinder(factory, registrar);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownRegistrarException(data.getRegistrarSigla());
+        }
     }
 
     public UrnNbn run() throws AccessException, DatabaseException, UrnNotFromRegistrarException, UrnUsedException, ImportFailedException {
         synchronized (RecordImporter.class) {
-            RollbackRecord rollback = new RollbackRecord();
-            UrnNbn urn = urnToBeUsed(rollback);
-            long ieId = findOrImportWithRollbackIntelectualEntity(rollback);
-            long digRepId = importDigitalInstanceWithRollback(rollback, ieId);
-            importUrnNbnWithRollback(urn, rollback, digRepId);
+            RollbackRecord transactionLog = new RollbackRecord();
+            UrnNbn urn = urnToBeUsed(transactionLog);
+            long ieId = findOrImportWithRollbackIntelectualEntity(transactionLog);
+            long digRepId = importDigitalRepersentationWithRollback(transactionLog, ieId);
+            importUrnNbnWithRollback(urn, transactionLog, digRepId);
             return urn;
         }
     }
@@ -67,16 +66,19 @@ public class RecordImporter {
     private UrnNbn urnToBeUsed(RollbackRecord rollback) throws UrnNotFromRegistrarException, UrnUsedException, DatabaseException {
         UrnNbn urnInInputData = data.getUrn();
         if (urnInInputData != null) {
+            logger.log(Level.INFO, "Chosen urn found in import data: {0}", urnInInputData);
             //selected by registrar
             checkUrnBelongsToRegistrar(urnInInputData);
             checkUrnIsFree(urnInInputData);
-            if (isBooked(urnInInputData)) {
+            if (isReserved(urnInInputData)) {
+                logger.info("Urn was reserved");
                 removeUrnFromBookedlist(urnInInputData, rollback);
             } else {
                 rollback.setUrnAssignedByResolverOrRegistrar(urnInInputData);
             }
             return urnInInputData;
         } else {//urn will be assigned by registrar
+            logger.log(Level.INFO, "No urn found in import data, assigning");
             UrnNbn assignedByResolver = assignUrnNbn();
             rollback.setUrnAssignedByResolverOrRegistrar(assignedByResolver);
             return assignedByResolver;
@@ -85,7 +87,7 @@ public class RecordImporter {
 
     private void checkUrnBelongsToRegistrar(UrnNbn urn) throws DatabaseException, UrnNotFromRegistrarException {
         String sigla = data.getRegistrarSigla().toString();
-        if (urn.getRegistrarCode().equals(sigla)) {
+        if (!urn.getRegistrarCode().equals(sigla)) {
             throw new UrnNotFromRegistrarException(sigla, urn);
         }
     }
@@ -99,7 +101,7 @@ public class RecordImporter {
         }
     }
 
-    private boolean isBooked(UrnNbn urn) {
+    private boolean isReserved(UrnNbn urn) {
         //TODO: podivat se, jestli je v seznamu zamluvenych
         return false;
     }
@@ -113,45 +115,51 @@ public class RecordImporter {
         return finder.findNewUrnNbn();
     }
 
-    private long findOrImportWithRollbackIntelectualEntity(RollbackRecord rollback) throws ImportFailedException {
+    private long findOrImportWithRollbackIntelectualEntity(RollbackRecord transactionLog) throws ImportFailedException {
         IntelectualEntity iePresent = merger.getIntEntForMergingOrNull(data.getEntity());
         if (iePresent != null) {//suitable IE found
             logger.log(Level.INFO, "digital instance will be attached to existing intelectual entity");
             return iePresent.getId();
         } else {//IE will be created
-            logger.log(Level.INFO, "new inelectual entity will be created");
-            long id = importIntelectualEntityWithRollback(rollback);
+            logger.info("new intelectual entity will be created");
+            long id = importIntelectualEntityWithRollback(transactionLog);
             return id;
         }
     }
 
-    private Long importIntelectualEntityWithRollback(RollbackRecord rollback) throws ImportFailedException {
+    private Long importIntelectualEntityWithRollback(RollbackRecord transactionLog) throws ImportFailedException {
         try {
             Long ieId = importIntelectualEntity(data);
-            rollback.setInsertedIntEntId(ieId);
+            logger.log(Level.INFO, "Intelectual entity with id was imported with id {0}", ieId);
+            transactionLog.setInsertedIntEntId(ieId);
             return ieId;
         } catch (ImportFailedException ex) {
-            rollbackTransaction(rollback);
+            logger.info("Failed to import intelectual entity, rolling back");
+            rollbackTransaction(transactionLog);
             throw new ImportFailedException(ex.getMessage());
         }
     }
 
-    private long importDigitalInstanceWithRollback(RollbackRecord rollback, long ieId) throws ImportFailedException {
+    private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) throws ImportFailedException {
         try {
             Long digRepId = importDigitalRepresentation(data, ieId);
-            rollback.setDigRepId(digRepId);
+            logger.log(Level.INFO, "digital instance was imported with id {0}", digRepId);
+            transactionLog.setDigRepId(digRepId);
             return digRepId;
         } catch (ImportFailedException ex) {
-            rollbackTransaction(rollback);
+            logger.info("Failed to import digital representation, rolling back");
+            rollbackTransaction(transactionLog);
             throw new ImportFailedException(ex.getMessage());
         }
     }
 
-    private void importUrnNbnWithRollback(UrnNbn urn, RollbackRecord rollback, long digRepId) throws ImportFailedException {
+    private void importUrnNbnWithRollback(UrnNbn urn, RollbackRecord transactionLog, long digRepId) throws ImportFailedException {
         try {
             importUrnNbn(urn, digRepId);
+            logger.log(Level.INFO, "{0} was inserted", urn);
         } catch (ImportFailedException ex) {
-            rollbackTransaction(rollback);
+            logger.log(Level.INFO, "failed to insert {0}, rolling back", urn);
+            rollbackTransaction(transactionLog);
             throw new ImportFailedException(ex.getMessage());
         }
     }
@@ -220,15 +228,19 @@ public class RecordImporter {
 
     private void rollbackTransaction(RollbackRecord rollback) {
         if (rollback.getUrnAssignedByResolverOrRegistrar() != null) {
+            logger.info("removing assigned urn:nbn");
             removeInsertedUrnNbn(rollback.getUrnAssignedByResolverOrRegistrar());
         }
         if (rollback.getUrnFromBookedList() != null) {
+            logger.info("returning reserved urn:nbn");
             putBackToBookedTable(rollback.getUrnFromBookedList());
         }
         if (rollback.getDigRepId() != null) {
+            logger.info("removing created digital representation");
             removeInsertedDigitalRepresentation(rollback.getDigRepId());
         }
         if (rollback.getInsertedIntEntId() != null) {
+            logger.info("removing created intelectual entity");
             removeInsertedIntelectualEntity(rollback.getInsertedIntEntId());
         }
     }
