@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -28,8 +29,8 @@ import javax.ws.rs.QueryParam;
 public class UrnNbnReservationsResource extends Resource {
 
     private static final String PARAM_SIZE = "size";
-    private static final int DEFAULT_SIZE = Config.URN_RESERVATION_DEFAULT_SIZE;
-    private static final int MAX_SIZE = Config.URN_RESERVATION_MAX_SIZE;
+    private static final int DEFAULT_SIZE = Configuration.URN_RESERVATION_DEFAULT_SIZE;
+    private static final int MAX_SIZE = Configuration.URN_RESERVATION_MAX_SIZE;
     private final Registrar registrar;
 
     public UrnNbnReservationsResource(Registrar registrar) {
@@ -55,7 +56,7 @@ public class UrnNbnReservationsResource extends Resource {
     }
 
     private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
-        if (reservedUrnNbnList.size() > Config.MAX_RESERVED_SIZE_TO_PRINT) {
+        if (reservedUrnNbnList.size() > Configuration.MAX_RESERVED_SIZE_TO_PRINT) {
             return new UrnNbnReservationsBuilder(maxBatchSize, reservedUrnNbnList.size());
         } else {
             return new UrnNbnReservationsBuilder(maxBatchSize, reservedUrnNbnList);
@@ -66,7 +67,7 @@ public class UrnNbnReservationsResource extends Resource {
     @Produces("application/xml")
     public String createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
         int size = sizeStr == null ? DEFAULT_SIZE : parseSize(sizeStr);
-        if (Config.SERVER_READ_ONLY) {
+        if (Configuration.SERVER_READ_ONLY) {
             throw new MethodForbiddenException();
         } else {
             try {

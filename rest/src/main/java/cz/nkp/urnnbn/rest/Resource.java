@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.DigRepIdType;
 import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -23,7 +24,6 @@ import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -67,7 +67,7 @@ public class Resource {
 
     UrnNbnReservationService urnReservationService() {
         if (urnReservation == null) {
-            urnReservation = new UrnNbnReservationServiceImpl(connector, Config.MAX_RESERVATION_SIZE);
+            urnReservation = new UrnNbnReservationServiceImpl(connector, Configuration.URN_RESERVATION_MAX_SIZE);
         }
         return urnReservation;
     }
@@ -98,7 +98,7 @@ public class Resource {
         return new DigitalRepresentationIdentifiersBuilder(builders);
     }
 
-    Document validDocumentFromString(String content, File schema) {
+    Document validDocumentFromString(String content, String schema) {
         try {
             return XOMUtils.loadDocumentValidByExternalXsd(content, schema);
         } catch (ValidityException ex) {

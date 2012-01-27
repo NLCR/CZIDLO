@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified" 
+targetNamespace="http://resolver.nkp.cz/v2/" 
+xmlns:r="http://resolver.nkp.cz/v2/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <xs:element name="import">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="r:monograph"/>
+                    <xs:element ref="r:periodical" />
+                    <xs:element ref="r:periodicalVolume"/>
+                    <xs:element ref="r:periodicalIssue"/>
+                    <xs:element ref="r:analytical"/>
+                    <xs:element ref="r:thesis"/>
+                </xs:choice>
+                <xs:element ref="r:digitalRepresentation" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="monograph">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:isbn" minOccurs="0" maxOccurs="1"/>
+                    <!-- TODO: otherId bude mit jeste attribut typ, kde muze byt vsechno az na isbn, ... -->
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                    <!-- TODO: co s digital born? nechavat u vseho? 
+                    defaultne asi bude false -->
+                <xs:element ref="r:digitalBorn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:publisher" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationPlace" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationYear" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="periodical">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:publisher" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationPlace" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="periodicalVolume">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:perVolume" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:publisher" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationPlace" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="periodicalIssue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <!-- nema byt issn povine? protoze pokud bude casto null, 
+                     tak se spoji ruzne vytisky ruznych casopisu ze stejneho rocniku a vytisku.
+                     Stejen pro per. volume
+                -->
+                <xs:element ref="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:perVolume" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:perIssue" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:publisher" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationPlace" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationYear" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="analytical">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:digitalBorn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:sourceDocument" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="thesis">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:digitalBorn" minOccurs="0" maxOccurs="1"/>
+                    <!-- originator by tady mel byt jen typu AUTHOR -->
+                <xs:element ref="r:originator" maxOccurs="1"/>
+                <xs:element ref="r:publicationYear" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:degreeAwardingInstitution" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+<!--    identifikatory IE-->
+    <xs:element name="ccnb" type="xs:string"/>
+    <xs:element name="isbn" type="xs:string"/>
+    <xs:element name="issn" type="xs:string"/>
+    <xs:element name="otherId" type="xs:string"/>
+    <xs:element name="perVolume" type="xs:string"/>
+    <xs:element name="perIssue" type="xs:string"/>
+    
+    <xs:element name="documentType" type="xs:string"/>
+    <xs:element name="title" type="xs:string"/>
+    <xs:element name="subTitle" type="xs:string"/>
+    <xs:element name="digitalBorn" type="xs:boolean"/>
+    <xs:element name="degreeAwardingInstitution" type="xs:string"/>
+    <xs:element name="publisher" type="xs:string"/>
+    <xs:element name="publicationPlace" type="xs:string"/>
+    <xs:element name="publicationYear" type="xs:integer"/>
+           
+    <xs:element name="originator">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="type" use="required" type="r:originType"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="originType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTHOR"/>    
+            <xs:enumeration value="EVENT"/>    
+            <xs:enumeration value="CORPORATION"/>    
+            <xs:enumeration value="OTHER"/>    
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name="sourceDocument">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:isbn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:otherId" minOccurs="0"/>
+                <xs:element ref="r:perVolume" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:perIssue" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publisher" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationPlace" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:publicationYear" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="digitalRepresentation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="archiverId" type="xs:long" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="urnNbn" type="r:urnNbn" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:registrarUniqueIdentifiers" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="r:financed" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:format" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="registrarUniqueIdentifiers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="r:digRepId" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="financed" type="xs:string"/>
+    <xs:element name="format" type="xs:NCName"/>
+    
+        <!-- TODO: rozdelit DigRePid a intEntId -->
+    <xs:complexType name="digRepId">
+        <xs:simpleContent>
+            <xs:extension base="xs:NMTOKEN">
+                <xs:attribute name="type" use="required" type="r:digRepIdType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="urnNbn">
+        <xs:restriction base="xs:token">
+            <xs:pattern value="urn:nbn:cz:[A-Za-z]{3}[0-9]{3}-[0-9]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="digRepIdType">
+        <xs:restriction base="xs:token">
+            <!-- TODO: nekde zdokumentovat, jak muzou vypadat typy identifikatoru pro digRep 
+                 tj pismena (velke, male), cisla, podtrzitko a 2-20 znaku
+            -->
+            <xs:pattern value="[A-Za-z0-9_]{2,20}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
