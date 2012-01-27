@@ -27,7 +27,6 @@ public class RestException extends WebApplicationException {
     }
 
     private static Response buildResponse(Status status, String errorCode, String errorMessage, Map<String, Object> headers) {
-        System.err.println("kod: " + status.toString());
         ResponseBuilder builder = Response.status(status);
         builder.entity(buildEntityXml(errorCode, errorMessage));
         builder.type("text/xml");

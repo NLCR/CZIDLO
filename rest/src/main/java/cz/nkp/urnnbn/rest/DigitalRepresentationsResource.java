@@ -14,6 +14,7 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalRepresentationException;
 import cz.nkp.urnnbn.services.RecordImport;
@@ -89,13 +90,9 @@ public class DigitalRepresentationsResource extends Resource {
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
         } catch (UrnNotFromRegistrarException ex) {
-            //TODO
-            Logger.getLogger(DigitalRepresentationsResource.class.getName()).log(Level.SEVERE, null, ex);
-            return "</TODO>";
+            throw new InvalidDataException("invalid urn:nbn: " + ex.getMessage());
         } catch (UrnUsedException ex) {
-            //TODO
-            Logger.getLogger(DigitalRepresentationsResource.class.getName()).log(Level.SEVERE, null, ex);
-            return "</TODO>";
+            throw new InvalidDataException("urn:nbn is already used");
         } catch (UnknownRegistrarException ex) {
             //TODO
             Logger.getLogger(DigitalRepresentationsResource.class.getName()).log(Level.SEVERE, null, ex);
