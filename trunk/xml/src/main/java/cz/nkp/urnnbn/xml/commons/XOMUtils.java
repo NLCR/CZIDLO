@@ -180,13 +180,24 @@ public class XOMUtils {
         return new Builder().build(xml, null);
     }
 
+    /**
+     * 
+     * @param in InputStream that document can be read from
+     * @return
+     * @throws ParsingException
+     * @throws IOException 
+     */
+    public static Document loadDocumentWithoutValidation(InputStream in) throws ParsingException, IOException {
+        return new Builder().build(in);
+    }
+
     private static XMLReader readerValidatingByXsdFromString(String schema) throws ValidityException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new StreamSource(new StringReader(schema))));
+            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(new StringReader(schema))}));
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new MyErrorHandler());
@@ -194,6 +205,7 @@ public class XOMUtils {
         } catch (ParserConfigurationException ex) {
             throw new ValidityException(ex.getMessage(), ex);
         } catch (SAXException ex) {
+
             throw new ValidityException(ex.getMessage(), ex);
         }
     }
