@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +33,15 @@ public class RecordImportUnmarshaller extends Unmarshaller {
 
     private final Element entityEl;
     private final Element digRepEl;
+    //TODO: pokud bude potreba, dat xpathy do statickych final atributu
+    //(ty stringy se totiz buduji vzdy znovu)
+    private static final Xpath DIG_REP_XPATH =
+            new Xpath('/' + prefixed("import") + '/' + prefixed("digitalRepresentation"));
 
     public RecordImportUnmarshaller(Document doc) {
         super(doc);
         entityEl = intelectualEntityElement();
-        digRepEl = (Element) selectSingleNodeOrNullFromdoc("/resolver:import/resolver:digitalRepresentation");
+        digRepEl = (Element) selectSingleElementOrNullFromdoc(DIG_REP_XPATH);
     }
 
     /**
@@ -46,7 +51,8 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      */
     private Element intelectualEntityElement() {
         for (EntityType type : EntityType.values()) {
-            Node node = selectSingleNodeOrNullFromdoc("/resolver:import/resolver:" + type.toString());
+            Node node = selectSingleElementOrNullFromdoc(
+                    new Xpath('/' + prefixed("import") + '/' + prefixed(type.toString())));
             if (node != null) {
                 return (Element) node;
             }
@@ -61,7 +67,6 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     public IntelectualEntity getIntelectualEntity() {
         EntityType type = toEntityType(entityEl);
         String title = elementContentOrNull("title", entityEl);
-        System.err.println("title:" + title);
         String subTitle = elementContentOrNull("subTitle", entityEl);
         String digitalBornStr = elementContentOrNull("digitalBorn", entityEl);
         boolean digitalBorn = digitalBornStr == null
@@ -115,7 +120,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return Originator object or null
      */
     public Originator getOriginator() {
-        Element originator = (Element) selectSingleNodeOrNull("originator", entityEl);
+        Element originator = (Element) selectSingleElementOrNull("originator", entityEl);
         if (originator != null) {
             String typStr = originator.getAttribute("type").getValue();
             OriginType type = OriginType.valueOf(typStr);
@@ -134,7 +139,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return SourceDocument object or null
      */
     public SourceDocument getSourceDocument() {
-        Element sourceDoc = (Element) selectSingleNodeOrNull("sourceDocument", entityEl);
+        Element sourceDoc = (Element) selectSingleElementOrNull("sourceDocument", entityEl);
         if (sourceDoc != null) {
             String title = elementContentOrNull("title", sourceDoc);
             String ccnb = elementContentOrNull("ccnb", sourceDoc);
@@ -184,21 +189,22 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return DigitalRepresentation object, never null
      */
     public DigitalRepresentation getDigitalRepresentation() {
-        String financedFrom = elementContentOrNull("financed", digRepEl);
-        String format = elementContentOrNull("format", digRepEl);
         DigitalRepresentation digRep = new DigitalRepresentation();
-        digRep.setFinancedFrom(financedFrom);
-        digRep.setFormat(format);
-        //TODO: dalsi atributy
+        digRep.setFinancedFrom(elementContentOrNull("financed", digRepEl));
+        digRep.setFormat(elementContentOrNull("format", digRepEl));
+        digRep.setExtent(elementContentOrNull("extent", digRepEl));
+        digRep.setResolution(elementContentOrNull("resolution", digRepEl));
+        digRep.setColorDepth(elementContentOrNull("colorDepth", digRepEl));
+        digRep.setAccessibility(elementContentOrNull("accessibility", digRepEl));
         return digRep;
     }
 
     public List<DigRepIdentifier> getDigRepIdentifiers() {
-        Element identifiersEl = (Element) selectSingleNodeOrNull("registrarUniqueIdentifiers", digRepEl);
+        Element identifiersEl = (Element) selectSingleElementOrNull("registrarUniqueIdentifiers", digRepEl);
         if (identifiersEl == null) {
             return Collections.<DigRepIdentifier>emptyList();
         } else {
-            Nodes nodes = selectNodes("/resolver:id", identifiersEl);
+            Nodes nodes = selectNodes(new Xpath('/' + prefixed("id")), identifiersEl);
             if (nodes.size() == 0) {
                 return Collections.<DigRepIdentifier>emptyList();
             } else {
@@ -222,7 +228,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return UrnNbn or null
      */
     public UrnNbn getUrnNbn() {
-        Element urnEl = (Element) selectSingleNodeOrNull("urnNbn", digRepEl);
+        Element urnEl = (Element) selectSingleElementOrNull("urnNbn", digRepEl);
         if (urnEl == null) {
             return null;
         } else {
@@ -231,7 +237,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     public Long getArchiverId() {
-        Element urnEl = (Element) selectSingleNodeOrNull("archiverId", digRepEl);
+        Element urnEl = (Element) selectSingleElementOrNull("archiverId", digRepEl);
         if (urnEl == null) {
             return null;
         } else {
