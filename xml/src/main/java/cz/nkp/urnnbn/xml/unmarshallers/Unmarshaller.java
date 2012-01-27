@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers;
 
-import java.util.logging.Level;
+import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.logging.Logger;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -20,8 +20,14 @@ import nu.xom.XPathContext;
 public abstract class Unmarshaller {
 
     private static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
-    static final XPathContext context = new XPathContext("resolver", "http://resolver.nkp.cz/v2/");
+    private static final String NS_PREFIX_NAME = "resolver";
+    private static final String NS_PREFIX = NS_PREFIX_NAME + ":";
+    static final XPathContext context = new XPathContext(NS_PREFIX_NAME, "http://resolver.nkp.cz/v2/");
     private final Document doc;
+
+    static String prefixed(String elementName) {
+        return NS_PREFIX + elementName;
+    }
 
     public Unmarshaller(Document doc) {
         this.doc = doc;
@@ -32,7 +38,7 @@ public abstract class Unmarshaller {
     }
 
     Node selectSingleNode(String xpath, ParentNode parent) {
-        Node result = selectSingleNodeOrNull(xpath, parent);
+        Node result = selectSingleElementOrNull(xpath, parent);
         if (result == null) {
             throw new RuntimeException("didn't find single node by xpath '" + xpath + "'");
         } else {
@@ -40,27 +46,28 @@ public abstract class Unmarshaller {
         }
     }
 
-    Node selectSingleNodeOrNullFromdoc(String xpath) {
-        return selectSingleNodeOrNull(xpath, doc);
+    Element selectSingleElementOrNullFromdoc(Xpath xpath) {
+        return (Element) selectSingleNodeOrNull(xpath, doc);
     }
 
-    Node selectSingleNodeOrNull(String xpath, ParentNode parent) {
-        logger.log(Level.SEVERE, "xpath: {0}", xpath);
-        Nodes result = parent.query(xpath, context);
-        if (result.size() != 1) {
+    Element selectSingleElementOrNull(String elementName, ParentNode parent) {
+        return (Element) selectSingleNodeOrNull(new Xpath(prefixed(elementName)), parent);
+    }
+
+    Node selectSingleNodeOrNull(Xpath xpath, ParentNode parent) {
+        Nodes nodes = parent.query(xpath.toString(), context);
+        if (nodes.size() != 1) {
             return null;
         }
-        return result.get(0);
+        return nodes.get(0);
     }
 
-    Nodes selectNodes(String xpath, ParentNode parent) {
-        return parent.query(xpath, context);
+    Nodes selectNodes(Xpath xpath, ParentNode parent) {
+        return parent.query(xpath.toString(), context);
     }
 
     String elementContentOrNull(String elementName, ParentNode parent) {
-        String xpath = "resolver:" + elementName;
-        logger.log(Level.SEVERE, "xpath: {0}", xpath);
-        Node node = selectSingleNodeOrNull(xpath, parent);
+        Node node = selectSingleElementOrNull(elementName, parent);
         if (node != null && (node instanceof Element)) {
             return node.getValue();
         } else {

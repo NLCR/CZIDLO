@@ -3,10 +3,9 @@
     <r:monograph>
         <!--TODO: reflektovat zmeny v builderech -->
         <!-- nesmi byt id typu internal. Pokud bude pritomno, ignorovat -->
-        <r:title>Babicka</r:title>
-        <r:subTitle>obrazy z venkovského života</r:subTitle>
+        <r:title>Babička</r:title>
+        <r:subTitle>Obrazy z venkovského života</r:subTitle>
         <r:isbn>8090119964</r:isbn>
-        <!-- nesmi byt created ani updated -->
         <r:digitalBorn>false</r:digitalBorn>
         <r:originator type="CORPORATION">IBM print</r:originator>
         <r:publisher>Československý spisovatel</r:publisher>
@@ -19,10 +18,15 @@
         <r:urnNbn>urn:nbn:cz:boa001-000002</r:urnNbn>
         <r:registrarUniqueIdentifiers>
             <r:id type="OAI_harvester">124</r:id>
-            <r:id type="signatura">neco</r:id>
+            <r:id type="signatura">PK-0122.798</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4811-b6a4-c7531bb4a853</r:id>
         </r:registrarUniqueIdentifiers>
         <r:financed>norské fondy</r:financed>
         <r:format>djvu</r:format>
+        <r:extent>200s.</r:extent>
+        <r:resolution>800x600</r:resolution>
+        <r:colorDepth>24b</r:colorDepth>
+        <r:accessibility>veřejné</r:accessibility>
     </r:digitalRepresentation>
     <!-- TODO: pridani digitalnich instanci resit az ve vlastni operaci -->
 </r:import>

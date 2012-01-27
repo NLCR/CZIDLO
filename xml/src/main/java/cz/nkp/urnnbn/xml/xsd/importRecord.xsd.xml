@@ -28,7 +28,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element ref="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:isbn" minOccurs="0" maxOccurs="1"/>
-                    <!-- TODO: otherId bude mit jeste attribut typ, kde muze byt vsechno az na isbn, ... -->
                 <xs:element ref="r:otherId" minOccurs="0"/>
                 <xs:element ref="r:documentType" minOccurs="0" maxOccurs="1"/>
                     <!-- TODO: co s digital born? nechavat u vseho? 
@@ -181,8 +180,12 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="archiverId" type="xs:long" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="urnNbn" type="r:urnNbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:registrarUniqueIdentifiers" minOccurs="1" maxOccurs="1" />
-                <xs:element ref="r:financed" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:format" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="financed" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="format" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="extent" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="resolution" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="colorDepth" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="accessibility" type="xs:string" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -193,8 +196,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="financed" type="xs:string"/>
-    <xs:element name="format" type="xs:NCName"/>
+<!--    <xs:element name="financed" type="xs:string"/>
+    <xs:element name="format" type="xs:NCName"/>-->
     
         <!-- TODO: rozdelit DigRePid a intEntId -->
     <xs:complexType name="digRepId">
@@ -206,7 +209,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     </xs:complexType>
     <xs:simpleType name="urnNbn">
         <xs:restriction base="xs:token">
-            <xs:pattern value="urn:nbn:cz:[A-Za-z]{3}[0-9]{3}-[0-9]{6}"/>
+            <xs:pattern value="urn:nbn:cz:[A-Za-z]{3}[0-9]{3}-[A-Za-z0-9]{6}"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:simpleType name="digRepIdType">
