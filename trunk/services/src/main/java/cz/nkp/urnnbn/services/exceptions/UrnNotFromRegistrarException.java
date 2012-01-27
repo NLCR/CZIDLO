@@ -16,6 +16,7 @@ public class UrnNotFromRegistrarException extends Exception {
     private final UrnNbn urn;
 
     public UrnNotFromRegistrarException(String registrarCode, UrnNbn urn) {
+        super("sigla should be '" + registrarCode + "'");
         this.registrarCode = registrarCode;
         this.urn = urn;
     }
