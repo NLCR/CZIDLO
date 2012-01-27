@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.DigRepIdType;
 import cz.nkp.urnnbn.core.Sigla;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
@@ -81,8 +82,7 @@ public class DigitalRepresentationsResource extends Resource {
         //todo: autentizace
         long userId = 1;//TODO: ziskat z hlavicky
         try {
-
-            Document doc = validDocumentFromString(content, Config.RECORD_IMPORT_XSD);
+            Document doc = validDocumentFromString(content, Configuration.RECORD_IMPORT_XSD);
             RecordImport recordImport = getImportFromDocument(doc);
             UrnNbn urn = dataImportService().importNewRecord(recordImport, userId);
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
@@ -105,7 +105,7 @@ public class DigitalRepresentationsResource extends Resource {
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (ImportFailedException ex) {
-            if (ex.getMessage()!= null){
+            if (ex.getMessage() != null) {
                 logger.log(Level.SEVERE, ex.getMessage());
             }
             throw new InternalException(ex);

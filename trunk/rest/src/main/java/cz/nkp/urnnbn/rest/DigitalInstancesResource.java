@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -117,7 +118,7 @@ public class DigitalInstancesResource extends Resource {
             if (digRep == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
-            Document doc = validDocumentFromString(content, Config.DIGITAL_INSTANCE_IMPORT_XSD);
+            Document doc = validDocumentFromString(content, Configuration.DIGITAL_INSTANCE_IMPORT_XSD);
             DigInstUnmrashaller unmarshaller = new DigInstUnmrashaller(doc);
             DigitalInstance instance = unmarshaller.getDigitalInstance();
             instance.setDigRepId(digRep.getId());
