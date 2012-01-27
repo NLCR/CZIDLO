@@ -4,6 +4,7 @@ package cz.nkp.urnnbn.xml;
 //import dom4jutilszbytky.ValidationException;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -39,13 +40,23 @@ public class Main {
 //            System.err.println("Document is not valid: " + ex.getMessage());
 //        }
         try {
-            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/error.xml");
-            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/response.xsd.xml");
-//            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import.xml");
-            //File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/request.xsd.xml");
-//            URL schemaUrl = new URL("http://iris.mzk.cz/cache/importRecord.xsd");
+//            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/error.xml");
+//            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/response.xsd.xml");
+            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import.xml");
+            String toValidateStr = XOMUtils.loadDocumentWithoutValidation(toValidate).toXML();
 
-            XOMUtils.loadDocumentValidByExternalXsd(toValidate, schema);
+            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/importRecord.xsd.xml");
+            FileInputStream schemaIn = new FileInputStream(schema);
+            //String schemaStr = XOMUtils.loadDocumentValidByInternalXsd(schemaIn).toXML();
+            String schemaStr = XOMUtils.loadDocumentWithoutValidation(schema).toXML();
+            
+            
+            //System.err.println("schema: " + schemaStr);
+            //schemaIn.close();
+            //URL schemaUrl = new URL("http://iris.mzk.cz/cache/importRecord.xsd");
+
+            //XOMUtils.loadDocumentValidByExternalXsd(toValidate, schema);
+            XOMUtils.loadDocumentValidByExternalXsd(toValidateStr, schemaStr);
             //          XOMUtils.loadDocumentValidByExternalXsd(toValidate, schemaUrl);
             //XOMUtils.loadDocumentValidByInternalXsd(new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import_with_xsd.xml"));
             System.err.println("Document is valid");
