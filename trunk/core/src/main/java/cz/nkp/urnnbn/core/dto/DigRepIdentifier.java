@@ -92,4 +92,9 @@ public class DigRepIdentifier {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "DigRepIdentifier{" + "digRepId=" + digRepId + ", registrarId=" + registrarId + ", type=" + type + ", value=" + value + '}';
+    }
 }
