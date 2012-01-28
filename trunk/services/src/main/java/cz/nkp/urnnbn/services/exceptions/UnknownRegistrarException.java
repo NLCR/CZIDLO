@@ -13,10 +13,10 @@ import cz.nkp.urnnbn.core.Sigla;
 public class UnknownRegistrarException extends Exception {
 
     public UnknownRegistrarException(Sigla sigla) {
-        super("Unknown registrar with sigla " + sigla);
+        super("unknown registrar with sigla: " + sigla);
     }
 
     public UnknownRegistrarException(long registrarId) {
-        super("Unknown registrar with id " + registrarId);
+        super("unknown registrar with id: " + registrarId);
     }
 }

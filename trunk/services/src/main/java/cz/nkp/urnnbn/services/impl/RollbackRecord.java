@@ -34,7 +34,7 @@ public class RollbackRecord {
         this.urnAssignedByResolverOrRegistrar = urnAssignedByResolverOrRegistrar;
     }
 
-    public UrnNbn getUrnFromBookedList() {
+    public UrnNbn getUrnFromReservedList() {
         return urnFromBookedList;
     }
 

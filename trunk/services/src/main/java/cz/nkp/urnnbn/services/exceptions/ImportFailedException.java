@@ -4,10 +4,8 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-
 /**
- *
+ * @deprecated 
  * @author Martin Řehánek
  */
 public class ImportFailedException extends Exception {
