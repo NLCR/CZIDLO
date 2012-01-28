@@ -204,7 +204,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
         if (identifiersEl == null) {
             return Collections.<DigRepIdentifier>emptyList();
         } else {
-            Nodes nodes = selectNodes(new Xpath('/' + prefixed("id")), identifiersEl);
+            Nodes nodes = selectNodes(new Xpath(prefixed("id")), identifiersEl);
             if (nodes.size() == 0) {
                 return Collections.<DigRepIdentifier>emptyList();
             } else {
