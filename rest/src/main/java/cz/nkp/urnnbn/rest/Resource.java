@@ -4,8 +4,11 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
@@ -17,8 +20,11 @@ import cz.nkp.urnnbn.services.UrnNbnReservationService;
 import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataImportServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
+import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,6 +83,24 @@ public class Resource {
         return new DigitalRepresentationIdentifiersBuilder(builders);
     }
 
+    RegistrarBuilder registrarBuilder(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) throws DatabaseException {
+        DigitalLibrariesBuilder libBuilder = withDigitalLibraries
+                ? librariesBuilder(registrar) : null;
+        CatalogsBuilder catBuilder = withCatalogs
+                ? catalogsBuilder(registrar) : null;
+        return new RegistrarBuilder(registrar, libBuilder, catBuilder);
+    }
+
+    DigitalLibrariesBuilder librariesBuilder(Registrar registrar) throws DatabaseException {
+        List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrar(registrar.getId());
+        return new DigitalLibrariesBuilder(libraries);
+    }
+
+    CatalogsBuilder catalogsBuilder(Registrar registrar) throws DatabaseException {
+        List<Catalog> catalogs = dataAccessService().catalogsByRegistrar(registrar.getId());
+        return new CatalogsBuilder(catalogs);
+    }
+
     Document validDocumentFromString(String content, String schema) {
         try {
             return XOMUtils.loadDocumentValidByExternalXsd(content, schema);
@@ -90,5 +114,10 @@ public class Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         }
+    }
+
+    boolean queryParamToBoolean(String stringValue, String paramName, boolean defaultValue) {
+        return "".equals(stringValue) ? defaultValue
+                : Parser.parseBooleanQueryParam(stringValue, paramName);
     }
 }
