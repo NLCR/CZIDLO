@@ -16,17 +16,20 @@ import nu.xom.Element;
 public class UrnNbnReservationsBuilder extends XmlBuilder {
 
     private final int maxReservationSize;
+    private final int defaultReservationSize;
     private final List<UrnNbn> urnNbnList;
     private final Integer reservedSize;
 
-    public UrnNbnReservationsBuilder(int maxReservationSize, List<UrnNbn> urnNbnList) {
+    public UrnNbnReservationsBuilder(int maxReservationSize, int defaultReservationSize, List<UrnNbn> urnNbnList) {
         this.maxReservationSize = maxReservationSize;
+        this.defaultReservationSize = defaultReservationSize;
         this.urnNbnList = urnNbnList;
         reservedSize = urnNbnList.size();
     }
 
-    public UrnNbnReservationsBuilder(int maxReservationSize, Integer soFarReserved) {
+    public UrnNbnReservationsBuilder(int maxReservationSize, int defaultReservationSize, Integer soFarReserved) {
         this.maxReservationSize = maxReservationSize;
+        this.defaultReservationSize = defaultReservationSize;
         this.reservedSize = soFarReserved;
         this.urnNbnList = null;
     }
@@ -35,6 +38,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
     Element buildRootElement() {
         Element root = new Element("urnNbnRerservations", RESOLVER);
         appendElementWithContentIfNotNull(root, maxReservationSize, "maxReservationSize");
+        appendElementWithContentIfNotNull(root, defaultReservationSize, "defaultReservationSize");
         Element reserved = new Element("reserved", RESOLVER);
         root.appendChild(reserved);
         Attribute size = new Attribute("size", reservedSize.toString());
