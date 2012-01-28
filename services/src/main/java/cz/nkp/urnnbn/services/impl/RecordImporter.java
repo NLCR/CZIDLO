@@ -21,10 +21,12 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
+import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,12 +62,13 @@ public class RecordImporter {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigRepIdentifierCollisionException {
         synchronized (RecordImporter.class) {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
             long ieId = findOrImportWithRollbackIntelectualEntity(transactionLog);
             long digRepId = importDigitalRepersentationWithRollback(transactionLog, ieId);
+            importDigRepIdentifiersWithRollback(transactionLog, digRepId);
             importUrnNbnWithRollback(urn, transactionLog, digRepId);
             return urn;
         }
@@ -171,11 +174,29 @@ public class RecordImporter {
     private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) {
         try {
             Long digRepId = importDigitalRepresentation(data, ieId);
+            //TODO: bude vyhazovat vyjimku pri konfliktu
             logger.log(Level.INFO, "digital representation was imported with id {0}", digRepId);
             transactionLog.setDigRepId(digRepId);
             return digRepId;
         } catch (Throwable ex) {
             logger.info("failed to import digital representation, rolling back");
+            rollbackTransaction(transactionLog);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private void importDigRepIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigRepIdentifierCollisionException {
+        try {
+            List<DigRepIdentifier> ids = importDigRepIdentifiers(digRepId);
+            logger.log(Level.INFO, "digital representation identifiers inserted: {0}", digRepIdListToString(ids));
+        } catch (DigRepIdentifierCollisionException ex) {
+            //no need to specifically remove identifiers so far imported 
+            //because it will be removed together with registrar in cascade
+            logger.info("failed to import digital representation identifiers, rolling back");
+            rollbackTransaction(transactionLog);
+            throw ex;
+        } catch (Throwable ex) {
+            logger.info("failed to import digital representation identifiers, rolling back");
             rollbackTransaction(transactionLog);
             throw new RuntimeException(ex);
         }
@@ -216,20 +237,31 @@ public class RecordImporter {
         return ieId;
     }
 
-    private Long importDigitalRepresentation(RecordImport data, long ieId) throws ImportFailedException, DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    private Long importDigitalRepresentation(RecordImport data, long ieId) throws DatabaseException, RecordNotFoundException {
         DigitalRepresentation digRep = data.getRepresentation();
         digRep.setIntEntId(ieId);
         Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
         digRep.setRegistrarId(registrar.getId());
         digRep.setArchiverId(data.getArchiverId() != null
                 ? data.getArchiverId() : registrar.getId());
-        Long digRepId = factory.representationDao().insertRepresentation(data.getRepresentation());
+        return factory.representationDao().insertRepresentation(data.getRepresentation());
+    }
+
+    private List<DigRepIdentifier> importDigRepIdentifiers(long digRepId) throws DigRepIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+        Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
+        List<DigRepIdentifier> result = new ArrayList<DigRepIdentifier>();
         for (DigRepIdentifier id : data.getDigRepIds()) {
             id.setDigRepId(digRepId);
             id.setRegistrarId(registrar.getId());
-            factory.digRepIdDao().insertDigRepId(id);
+            try {
+                factory.digRepIdDao().insertDigRepId(id);
+                result.add(id);
+            } catch (AlreadyPresentException ex) {
+                logger.log(Level.SEVERE, "identifier collision for {0}", id);
+                throw new DigRepIdentifierCollisionException(registrar, id);
+            }
         }
-        return digRepId;
+        return result;
     }
 
     private void importUrnNbn(UrnNbn urn, long digRepId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
@@ -292,5 +324,19 @@ public class RecordImporter {
         } catch (Throwable ex) {
             logger.log(Level.SEVERE, "rollback: Failed to remove intelectual entity with id " + ieId, ex);
         }
+    }
+
+    private String digRepIdListToString(List<DigRepIdentifier> ids) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('{');
+        for (int i = 0; i < ids.size(); i++) {
+            DigRepIdentifier id = ids.get(i);
+            builder.append('\'').append(id.getType()).append("':'").append(id.getValue()).append('\'');
+            if (i < ids.size() - 1) {
+                builder.append(",");
+            }
+        }
+        builder.append('}');
+        return builder.toString();
     }
 }
