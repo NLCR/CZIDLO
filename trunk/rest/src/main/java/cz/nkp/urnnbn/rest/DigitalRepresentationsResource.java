@@ -14,11 +14,13 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalRepresentationException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -26,6 +28,7 @@ import cz.nkp.urnnbn.xml.builders.DigitalRepresentationsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,6 +37,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import nu.xom.Document;
 
@@ -78,6 +82,8 @@ public class DigitalRepresentationsResource extends Resource {
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
+        } catch (DigRepIdentifierCollisionException ex) {
+            throw new InvalidDigRepIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {
