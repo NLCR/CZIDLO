@@ -13,7 +13,7 @@ public class RecordNotFoundException extends PersistenceException {
     private String tableName;
 
     public RecordNotFoundException(String tableName) {
-        super();
+        super("table:" + tableName);
         this.tableName = tableName;
     }
 
