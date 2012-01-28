@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
+import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -38,7 +39,8 @@ public interface DataImportService extends BusinessService {
      */
     public UrnNbn importNewRecord(RecordImport data, long userId) throws
             AccessException, UrnNotFromRegistrarException,
-            UrnUsedException, UnknownRegistrarException;
+            UrnUsedException, UnknownRegistrarException,
+            DigRepIdentifierCollisionException;
 
     /**
      * Creates new digital instance for existing digital representation.
