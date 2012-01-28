@@ -27,30 +27,36 @@ public class AuthorizationModule {
         this.factory = factory;
     }
 
-    public void checkAccessRights(long registrarId, long userId) throws AccessException, DatabaseException {
+    public void checkAccessRights(long registrarId, long userId) throws AccessException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             checkAccessRights(registrar, userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void checkAccessRights(Sigla registrarSigla, long userId) throws AccessException, DatabaseException {
+    public void checkAccessRights(Sigla registrarSigla, long userId) throws AccessException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarBySigla(registrarSigla);
             checkAccessRights(registrar, userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void checkAccessRights(Registrar registrar, long userId) throws AccessException, DatabaseException {
+    public void checkAccessRights(Registrar registrar, long userId) throws AccessException {
         try {
             List<Long> adminsOfRegistrar = factory.userDao().getAdminsOfRegistrar(registrar.getId());
             if (!adminsOfRegistrar.contains(userId)) {
                 throw new AccessException(userId, registrar.getUrnInstitutionCode());
             }
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, null, ex);
         }

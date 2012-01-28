@@ -33,7 +33,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         authorization = new AuthorizationModule(factory);
     }
 
-    public UrnNbn importNewRecord(RecordImport data, long userId) throws AccessException, DatabaseException, UrnNotFromRegistrarException, UrnUsedException, ImportFailedException, UnknownRegistrarException {
+    public UrnNbn importNewRecord(RecordImport data, long userId) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException {
         authorization.checkAccessRights(data.getRegistrarSigla(), userId);
         return new RecordImporter(factory, data, userId).run();
     }

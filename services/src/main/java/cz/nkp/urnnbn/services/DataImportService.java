@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public interface DataImportService extends BusinessService{
+public interface DataImportService extends BusinessService {
 
     static final Logger logger = Logger.getLogger(DataImportService.class.getName());
 
@@ -31,15 +31,14 @@ public interface DataImportService extends BusinessService{
      * @param data
      * @param userId id of user performing this operation
      * @return UrnNbn that has been assigned or the one present in data if it can be used
-     * @throws DatabaseException
      * @throws AccessException
      * @throws UrnNotFromRegistrarException
      * @throws UrnUsedException
      * @throws ImportFailedException 
      */
     public UrnNbn importNewRecord(RecordImport data, long userId) throws
-            DatabaseException, AccessException, UrnNotFromRegistrarException,
-            UrnUsedException, ImportFailedException, UnknownRegistrarException;
+            AccessException, UrnNotFromRegistrarException,
+            UrnUsedException, UnknownRegistrarException;
 
     /**
      * Creates new digital instance for existing digital representation.
