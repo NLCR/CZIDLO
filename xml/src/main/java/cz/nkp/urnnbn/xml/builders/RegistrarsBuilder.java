@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
-import cz.nkp.urnnbn.core.dto.Registrar;
 import java.util.List;
 import nu.xom.Element;
 
@@ -14,17 +13,16 @@ import nu.xom.Element;
  */
 public class RegistrarsBuilder extends XmlBuilder {
 
-    private final List<Registrar> registrars;
+    private final List<RegistrarBuilder> registrarBuilders;
 
-    public RegistrarsBuilder(List<Registrar> registrars) {
-        this.registrars = registrars;
+    public RegistrarsBuilder(List<RegistrarBuilder> registrarBuilders) {
+        this.registrarBuilders = registrarBuilders;
     }
 
     @Override
     Element buildRootElement() {
         Element root = new Element("registrars", RESOLVER);
-        for (Registrar registrar : registrars) {
-            RegistrarBuilder builder = new RegistrarBuilder(registrar, null, null);
+        for (RegistrarBuilder builder : registrarBuilders) {
             root.appendChild(builder.buildRootElement());
         }
         return root;
