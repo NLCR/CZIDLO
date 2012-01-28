@@ -26,7 +26,7 @@ public class RegistrarBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("registrar", RESOLVER);
-        appendIdentifierElement(root, IDTYPE_INTERNAL, registrar.getId());
+        //appendIdentifierElement(root, IDTYPE_INTERNAL, registrar.getId());
         appendIdentifierElement(root, "SIGLA", registrar.getUrnInstitutionCode());
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");
         appendElementWithContentIfNotNull(root, registrar.getDescription(), "description");
