@@ -7,7 +7,7 @@ package cz.nkp.urnnbn.rest.exceptions;
 import javax.ws.rs.core.Response.Status;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class InvalidDigRepIdType extends RestException {
