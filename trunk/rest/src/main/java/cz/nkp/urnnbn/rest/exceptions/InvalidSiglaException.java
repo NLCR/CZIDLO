@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class InvalidSiglaException extends RestException {
 
-    public InvalidSiglaException(String sigla) {
-        super(Status.BAD_REQUEST, "INVALID_SIGLA", "Incorrect syntax in '" + sigla + "'");
+    public InvalidSiglaException(String sigla, String message) {
+        super(Status.BAD_REQUEST, "INVALID_SIGLA", "Incorrect syntax in '" + sigla + "': " + message);
     }
 }

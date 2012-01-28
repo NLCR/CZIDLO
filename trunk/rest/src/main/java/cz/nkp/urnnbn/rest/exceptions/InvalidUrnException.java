@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class InvalidUrnException extends RestException {
 
-    public InvalidUrnException(String urnString) {
-        super(Status.BAD_REQUEST, "INVALID_URN_NBN", "Incorrect syntax in '" + urnString + "'");
+    public InvalidUrnException(String urnString, String errorMessage) {
+        super(Status.BAD_REQUEST, "INVALID_URN_NBN", "Incorrect syntax in '" + urnString + "':" + errorMessage);
     }
 }

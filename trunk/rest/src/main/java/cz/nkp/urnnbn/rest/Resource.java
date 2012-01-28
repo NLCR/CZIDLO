@@ -5,16 +5,12 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.rest.config.Configuration;
-import cz.nkp.urnnbn.core.DigRepIdType;
 import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdType;
-import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
@@ -70,23 +66,6 @@ public class Resource {
             urnReservation = new UrnNbnReservationServiceImpl(connector, Configuration.URN_RESERVATION_MAX_SIZE);
         }
         return urnReservation;
-    }
-
-    UrnNbn parseUrn(String urnPar) {
-        try {
-            return UrnNbn.valueOf(urnPar.toLowerCase());
-        } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage());
-            throw new InvalidUrnException(urnPar);
-        }
-    }
-
-    DigRepIdType parseDigRepIdType(String idTypeStr) {
-        try {
-            return DigRepIdType.valueOf(idTypeStr);
-        } catch (RuntimeException e) {
-            throw new InvalidDigRepIdType(idTypeStr);
-        }
     }
 
     DigitalRepresentationIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
