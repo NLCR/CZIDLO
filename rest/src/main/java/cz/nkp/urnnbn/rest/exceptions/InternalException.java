@@ -25,7 +25,11 @@ public class InternalException extends RestException {
     private static String buildMessage(Throwable e) {
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
+        if (e.getMessage() != null) {
+            out.write(e.getMessage());
+        }
         e.printStackTrace(out);
+        out.flush();
         return writer.toString();
     }
 }
