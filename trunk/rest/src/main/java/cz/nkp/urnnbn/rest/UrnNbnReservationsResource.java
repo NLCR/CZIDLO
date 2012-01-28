@@ -19,6 +19,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -63,7 +64,7 @@ public class UrnNbnReservationsResource extends Resource {
 
     @POST
     @Produces("application/xml")
-    public String createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
+    public Response createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
         int size = sizeStr == null
                 ? DEFAULT_BATCH_SIZE : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, MAX_BATCH_SIZE);
         if (Configuration.SERVER_READ_ONLY) {
@@ -73,7 +74,8 @@ public class UrnNbnReservationsResource extends Resource {
                 int userId = 1;//TODO: zjistit z hlavicky
                 List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, userId);
                 UrnNbnReservationBuilder builder = new UrnNbnReservationBuilder(reserved);
-                return builder.buildDocument().toXML();
+                String responseXml = builder.buildDocument().toXML();
+                return Response.created(null).entity(responseXml).build();
             } catch (DatabaseException ex) {
                 logger.log(Level.SEVERE, ex.getMessage());
                 throw new InternalException(ex.getMessage());
