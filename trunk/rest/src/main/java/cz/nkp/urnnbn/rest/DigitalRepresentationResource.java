@@ -62,8 +62,7 @@ public class DigitalRepresentationResource extends Resource {
             @DefaultValue("true") @QueryParam(PARAM_ADD_DIG_INST) String addDigitalInstancesStr) {
         Action action = Parser.parseAction(actionStr, PARAM_ACTION);
         ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
-        boolean addDigitalInstances = "".equals(addDigitalInstancesStr) ? true
-                : Parser.parseBooleanQueryParam(addDigitalInstancesStr, PARAM_ADD_DIG_INST);
+        boolean addDigitalInstances = queryParamToBoolean(addDigitalInstancesStr, PARAM_ADD_DIG_INST, true);
         //TODO: pouzit format. Pokud tam bude nevhodna hodnota (RAW), vyhodit vyjimku
         switch (action) {
             case DECIDE://pokud pochazi z katalogu, pouzij redirect s tim,

@@ -9,18 +9,19 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarsBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 /**
  * REST Web Service
@@ -30,20 +31,21 @@ import javax.ws.rs.Produces;
 @Path("/registrars")
 public class RegistrarsResource extends Resource {
 
-    //private static MethodAllowed[] allowedMethods = {MethodAllowed.GET};
+    private static final String PARAM_DIGITAL_LIBRARIES = "digitalLibraries";
+    private static final String PARAM_CATALOGS = "catalogs";
     @Context
     private UriInfo context;
 
-    /**
-     * Retrieves representation of an instance of cz.nkp.urnnbn.rest.RegistrarsResource
-     * @return an instance of java.lang.String
-     */
     @GET
     @Produces("application/xml")
-    public String getXml() {
+    public String getRegistrars(
+            @DefaultValue("false") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
+            @DefaultValue("false") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         try {
-            List<Registrar> registrars = dataAccessService().registrars();
-            RegistrarsBuilder builder = new RegistrarsBuilder(registrars);
+            boolean addDigitalLibraries = queryParamToBoolean(addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
+            boolean addCatalogs = queryParamToBoolean(addCatalogsStr, PARAM_CATALOGS, false);
+            List<RegistrarBuilder> registrarBuilders = registraBuilders(addDigitalLibraries, addCatalogs);
+            RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
             return builder.buildDocument().toXML();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
@@ -68,21 +70,13 @@ public class RegistrarsResource extends Resource {
             throw new InternalException(ex.getMessage());
         }
     }
-//    @Produces("application/xml")
-//    @POST
-//    public String post() {
-//        throw new InvalidMethodException(allowedMethods);
-//    }
-//
-//    @Produces("application/xml")
-//    @PUT
-//    public String put() {
-//        throw new InvalidMethodException(allowedMethods);
-//    }
-//
-//    @Produces("application/xml")
-//    @DELETE
-//    public String delete() {
-//        throw new InvalidMethodException(allowedMethods);
-//    }
+
+    private List<RegistrarBuilder> registraBuilders(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+        List<Registrar> registrars = dataAccessService().registrars();
+        List<RegistrarBuilder> result = new ArrayList<RegistrarBuilder>(registrars.size());
+        for (Registrar registrar : registrars) {
+            result.add(registrarBuilder(registrar, addDigitalLibraries, addCatalogs));
+        }
+        return result;
+    }
 }
