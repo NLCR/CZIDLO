@@ -28,7 +28,7 @@ public class Parser {
             return UrnNbn.valueOf(urnPar.toLowerCase());
         } catch (RuntimeException e) {
             logger.log(Level.INFO, e.getMessage());
-            throw new InvalidUrnException(urnPar, e.getMessage());
+            throw new InvalidUrnException(urnPar, "incorrect syntax: " + e.getMessage());
         }
     }
 

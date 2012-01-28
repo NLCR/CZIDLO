@@ -14,12 +14,11 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalRepresentationException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -27,7 +26,6 @@ import cz.nkp.urnnbn.xml.builders.DigitalRepresentationsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,10 +52,6 @@ public class DigitalRepresentationsResource extends Resource {
         this.registrar = registrar;
     }
 
-    /**
-     * Retrieves representation of an instance of cz.nkp.urnnbn.rest.RegistrarsResource
-     * @return an instance of java.lang.String
-     */
     @GET
     @Produces("application/xml")
     public String getDigitalRepresentations() {
@@ -71,11 +65,6 @@ public class DigitalRepresentationsResource extends Resource {
         }
     }
 
-    /**
-     * POST method for creating an instance of RegistrarResource
-     * @param content representation for the new resource
-     * @return an HTTP response with content of the created resource
-     */
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
@@ -90,23 +79,16 @@ public class DigitalRepresentationsResource extends Resource {
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
         } catch (UrnNotFromRegistrarException ex) {
-            throw new InvalidDataException("invalid urn:nbn: " + ex.getMessage());
+            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {
-            throw new InvalidDataException("urn:nbn is already used");
+            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            //TODO
-            Logger.getLogger(DigitalRepresentationsResource.class.getName()).log(Level.SEVERE, null, ex);
-            return "</TODO>";
-        } catch (DatabaseException ex) {
-            throw new InternalException(ex.getMessage());
+            logger.log(Level.SEVERE, "unexpected application state", ex);
+            throw new InternalException(ex);
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
-        } catch (ImportFailedException ex) {
-            if (ex.getMessage() != null) {
-                logger.log(Level.SEVERE, ex.getMessage());
-            }
-            throw new InternalException(ex);
         } catch (RuntimeException e) {
+            logger.log(Level.SEVERE, "unexpected application state", e);
             if (e instanceof WebApplicationException) {
                 throw e;
             } else {
