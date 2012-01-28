@@ -30,15 +30,6 @@ public class RecordImport {
     List<DigRepIdentifier> digRepIds;
     UrnNbn urn;
     Sigla registrarSigla;
-    Long archiverId;
-
-    public Long getArchiverId() {
-        return archiverId;
-    }
-
-    public void setArchiverId(Long archiverId) {
-        this.archiverId = archiverId;
-    }
 
     public List<DigRepIdentifier> getDigRepIds() {
         return digRepIds;

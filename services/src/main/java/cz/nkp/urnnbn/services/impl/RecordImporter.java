@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -22,6 +23,7 @@ import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -62,7 +64,7 @@ public class RecordImporter {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigRepIdentifierCollisionException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigRepIdentifierCollisionException, UnknownArchiverException {
         synchronized (RecordImporter.class) {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
@@ -89,8 +91,8 @@ public class RecordImporter {
             }
             return urnInInputData;
         } else {//urn will be assigned by registrar
-            logger.log(Level.INFO, "no urn found in import data, assigning");
-            UrnNbn assignedByResolver = assignUrnNbn();
+            logger.log(Level.INFO, "no urn found in import data, assigning new one");
+            UrnNbn assignedByResolver = assignFreeUrnNbn();
             rollback.setUrnAssignedByResolverOrRegistrar(assignedByResolver);
             return assignedByResolver;
         }
@@ -138,9 +140,11 @@ public class RecordImporter {
         }
     }
 
-    private UrnNbn assignUrnNbn() {
+    private UrnNbn assignFreeUrnNbn() {
         try {
-            return finder.findNewUrnNbn();
+            UrnNbn found = finder.findNewUrnNbn();
+            logger.log(Level.INFO, "found free {0}", found);
+            return found;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -160,7 +164,7 @@ public class RecordImporter {
 
     private Long importIntelectualEntityWithRollback(RollbackRecord transactionLog) {
         try {
-            Long ieId = importIntelectualEntity(data);
+            Long ieId = importIntelectualEntity();
             logger.log(Level.INFO, "intelectual entity was imported with id {0}", ieId);
             transactionLog.setInsertedIntEntId(ieId);
             return ieId;
@@ -171,13 +175,16 @@ public class RecordImporter {
         }
     }
 
-    private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) {
+    private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) throws UnknownArchiverException {
         try {
-            Long digRepId = importDigitalRepresentation(data, ieId);
-            //TODO: bude vyhazovat vyjimku pri konfliktu
+            Long digRepId = importDigitalRepresentation(ieId);
             logger.log(Level.INFO, "digital representation was imported with id {0}", digRepId);
             transactionLog.setDigRepId(digRepId);
             return digRepId;
+        } catch (UnknownArchiverException ex) {
+            logger.log(Level.INFO, "failed to import digital representation, rolling back");
+            rollbackTransaction(transactionLog);
+            throw ex;
         } catch (Throwable ex) {
             logger.info("failed to import digital representation, rolling back");
             rollbackTransaction(transactionLog);
@@ -213,7 +220,7 @@ public class RecordImporter {
         }
     }
 
-    private Long importIntelectualEntity(RecordImport data) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    private Long importIntelectualEntity() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         Long ieId = factory.intelectualEntityDao().insertIntelectualEntity(data.getEntity());
         for (IntEntIdentifier id : data.getIntEntIds()) {
             id.setIntEntDbId(ieId);
@@ -237,14 +244,19 @@ public class RecordImporter {
         return ieId;
     }
 
-    private Long importDigitalRepresentation(RecordImport data, long ieId) throws DatabaseException, RecordNotFoundException {
+    private Long importDigitalRepresentation(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
         DigitalRepresentation digRep = data.getRepresentation();
         digRep.setIntEntId(ieId);
-        Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
-        digRep.setRegistrarId(registrar.getId());
-        digRep.setArchiverId(data.getArchiverId() != null
-                ? data.getArchiverId() : registrar.getId());
-        return factory.representationDao().insertRepresentation(data.getRepresentation());
+        try {
+            return factory.representationDao().insertRepresentation(data.getRepresentation());
+        } catch (RecordNotFoundException e) {
+            if (e.getTableName().equals(ArchiverDAO.TABLE_NAME)) {
+                logger.log(Level.INFO, "unkown archiver with id {0}", digRep.getArchiverId());
+                throw new UnknownArchiverException(digRep.getArchiverId());
+            } else {
+                throw e;
+            }
+        }
     }
 
     private List<DigRepIdentifier> importDigRepIdentifiers(long digRepId) throws DigRepIdentifierCollisionException, DatabaseException, RecordNotFoundException {
