@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class InvalidDigRepIdType extends RestException {
 
-    public InvalidDigRepIdType(String stringValue) {
-            super(Status.BAD_REQUEST, "INVALID_DIGITAL_REPRESENTATION_ID_TYPE", "Incorrect syntax in '" + stringValue + "'");
+    public InvalidDigRepIdType(String stringValue, String errorMessage) {
+        super(Status.BAD_REQUEST, "INVALID_DIGITAL_REPRESENTATION_ID_TYPE", "Incorrect syntax in '" + stringValue + "':" + errorMessage);
     }
 }

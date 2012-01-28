@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class InvalidDigInstanceIdException extends RestException {
 
-    public InvalidDigInstanceIdException(String id) {
-        super(Status.BAD_REQUEST, "INVALID_DIGITAL_INSTANCE_ID", "Incorrect syntax in '" + id + "' - should be number (long)");
+    public InvalidDigInstanceIdException(String id, String message) {
+        super(Status.BAD_REQUEST, "INVALID_DIGITAL_INSTANCE_ID", "Incorrect syntax in '" + id + "': " + message);
     }
 }

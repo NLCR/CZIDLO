@@ -123,7 +123,7 @@ public class DigitalRepresentationsResource extends Resource {
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
         try {
-            DigRepIdType type = parseDigRepIdType(idTypeStr);
+            DigRepIdType type = Parser.parseDigRepIdType(idTypeStr);
             DigRepIdentifier id = new DigRepIdentifier();
             id.setRegistrarId(registrar.getId());
             id.setType(type);

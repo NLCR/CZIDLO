@@ -8,9 +8,6 @@ import cz.nkp.urnnbn.core.Sigla;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidMethodException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidMethodException.MethodAllowed;
-import cz.nkp.urnnbn.rest.exceptions.InvalidSiglaException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.xml.builders.RegistrarsBuilder;
 import java.util.List;
@@ -60,7 +57,7 @@ public class RegistrarsResource extends Resource {
     @Path("{sigla}")
     public RegistrarResource getRegistrarResource(@PathParam("sigla") String siglaStr) {
         try {
-            Sigla sigla = parseSigla(siglaStr);
+            Sigla sigla = Parser.parseSigla(siglaStr);
             Registrar registrar = dataAccessService().registrarBySigla(sigla);
             if (registrar == null) {
                 throw new UnknownRegistrarException(sigla);
@@ -69,14 +66,6 @@ public class RegistrarsResource extends Resource {
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
-        }
-    }
-
-    private Sigla parseSigla(String siglaStr) {
-        try {
-            return Sigla.valueOf(siglaStr);
-        } catch (RuntimeException e) {
-            throw new InvalidSiglaException(siglaStr);
         }
     }
 //    @Produces("application/xml")

@@ -31,7 +31,7 @@ public class ResolverResource extends Resource {
     @Path("{urn}")
     public Resource getDigitalRepresentationResource(@PathParam("urn") String urnPar) {
         try {
-            UrnNbn urnParsed = parseUrn(urnPar);
+            UrnNbn urnParsed = Parser.parseUrn(urnPar);
             UrnNbnWithStatus fetched = dataAccessService().urnBySiglaAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
             switch (fetched.getStatus()) {
                 case ACTIVE:

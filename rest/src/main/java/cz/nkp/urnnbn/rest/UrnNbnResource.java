@@ -26,7 +26,7 @@ public class UrnNbnResource extends Resource {
     @Produces("text/xml")
     public String getUrnNbnXml(@PathParam("urn") String urnPar) {
         try {
-            UrnNbn urnParsed = parseUrn(urnPar);
+            UrnNbn urnParsed = Parser.parseUrn(urnPar);
             UrnNbnWithStatus urnWithStatus = dataAccessService().urnBySiglaAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
             return urnToXml(urnWithStatus);
         } catch (DatabaseException ex) {

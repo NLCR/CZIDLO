@@ -14,7 +14,6 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
@@ -51,19 +50,6 @@ public class DigitalRepresentationResource extends Resource {
         this.urn = urn;
     }
 
-    private enum Format {
-
-        HTML,
-        XML
-    }
-
-    private enum Action {
-
-        REDIRECT,
-        SHOW,
-        DECIDE
-    }
-
     /**
      * Retrieves representation of an instance of cz.nkp.urnnbn.rest.DigitalRepresentationResource
      * @return an instance of java.lang.String
@@ -73,9 +59,12 @@ public class DigitalRepresentationResource extends Resource {
     public String getXml(
             @DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
             @DefaultValue("html") @QueryParam(PARAM_FORMAT) String formatStr,
-            @DefaultValue("true") @QueryParam(PARAM_ADD_DIG_INST) boolean addDigitalInstances) {
-        Action action = parseAction(actionStr);
-        Format format = parseFormat(formatStr);
+            @DefaultValue("true") @QueryParam(PARAM_ADD_DIG_INST) String addDigitalInstancesStr) {
+        Action action = Parser.parseAction(actionStr, PARAM_ACTION);
+        ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
+        boolean addDigitalInstances = "".equals(addDigitalInstancesStr) ? true
+                : Parser.parseBooleanQueryParam(addDigitalInstancesStr, PARAM_ADD_DIG_INST);
+        //TODO: pouzit format. Pokud tam bude nevhodna hodnota (RAW), vyhodit vyjimku
         switch (action) {
             case DECIDE://pokud pochazi z katalogu, pouzij redirect s tim,
             //ze pouzijes pouze DR patrici do DL registratora, ktery vlastni ten katalog
@@ -102,22 +91,6 @@ public class DigitalRepresentationResource extends Resource {
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
-        }
-    }
-
-    private Action parseAction(String actionStr) {
-        try {
-            return Action.valueOf(actionStr.toUpperCase());
-        } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(PARAM_ACTION, actionStr, e.getMessage());
-        }
-    }
-
-    private Format parseFormat(String formatStr) {
-        try {
-            return Format.valueOf(formatStr.toUpperCase());
-        } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(PARAM_FORMAT, formatStr, e.getMessage());
         }
     }
 

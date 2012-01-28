@@ -55,14 +55,13 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String getIdentifier(@PathParam("idType") String idTypeStr) {
-        DigRepIdType idType = parseDigRepIdType(idTypeStr);
+        DigRepIdType idType = Parser.parseDigRepIdType(idTypeStr);
         try {
             List<DigRepIdentifier> identifiers = dataAccessService().digRepIdentifiersByDigRepId(rep.getId());
             for (DigRepIdentifier id : identifiers) {
                 if (id.getType().equals(idType)) {
                     DigitalRepresentationIdentifierBuilder builder = new DigitalRepresentationIdentifierBuilder(id);
                     return builder.buildDocument().toXML();
-                    
                 }
             }
             throw new NotDefinedException(idType);

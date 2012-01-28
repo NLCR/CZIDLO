@@ -9,18 +9,13 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.unmarshallers.DigInstUnmrashaller;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,8 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 
 /**
  *
@@ -87,7 +80,7 @@ public class DigitalInstancesResource extends Resource {
 
     @Path("id/{digInstId}")
     public DigitalInstanceResource digitalInstance(@PathParam("digInstId") String digInstIdStr) {
-        long id = parseDigInstId(digInstIdStr);
+        long id = Parser.parseDigInstId(digInstIdStr);
         try {
             DigitalInstance instance = dataAccessService().digInstanceByInternalId(id);
             if (instance == null) {
@@ -97,15 +90,6 @@ public class DigitalInstancesResource extends Resource {
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
-        }
-    }
-
-    private long parseDigInstId(String digInstIdStr) {
-        try {
-            return Long.valueOf(digInstIdStr);
-        } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage());
-            throw new InvalidDigInstanceIdException(digInstIdStr);
         }
     }
 
