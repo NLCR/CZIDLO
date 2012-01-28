@@ -27,8 +27,8 @@ import javax.ws.rs.QueryParam;
 public class UrnNbnReservationsResource extends Resource {
 
     private static final String PARAM_SIZE = "size";
-    private static final int DEFAULT_SIZE = Configuration.URN_RESERVATION_DEFAULT_SIZE;
-    private static final int MAX_SIZE = Configuration.URN_RESERVATION_MAX_SIZE;
+    private static final int DEFAULT_BATCH_SIZE = Configuration.URN_RESERVATION_DEFAULT_SIZE;
+    private static final int MAX_BATCH_SIZE = Configuration.URN_RESERVATION_MAX_SIZE;
     private final Registrar registrar;
 
     public UrnNbnReservationsResource(Registrar registrar) {
@@ -55,16 +55,17 @@ public class UrnNbnReservationsResource extends Resource {
 
     private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
         if (reservedUrnNbnList.size() > Configuration.MAX_RESERVED_SIZE_TO_PRINT) {
-            return new UrnNbnReservationsBuilder(maxBatchSize, reservedUrnNbnList.size());
+            return new UrnNbnReservationsBuilder(maxBatchSize, DEFAULT_BATCH_SIZE, reservedUrnNbnList.size());
         } else {
-            return new UrnNbnReservationsBuilder(maxBatchSize, reservedUrnNbnList);
+            return new UrnNbnReservationsBuilder(maxBatchSize, DEFAULT_BATCH_SIZE, reservedUrnNbnList);
         }
     }
 
     @POST
     @Produces("application/xml")
     public String createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
-        int size = sizeStr == null ? DEFAULT_SIZE : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, MAX_SIZE);
+        int size = sizeStr == null
+                ? DEFAULT_BATCH_SIZE : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, MAX_BATCH_SIZE);
         if (Configuration.SERVER_READ_ONLY) {
             throw new MethodForbiddenException();
         } else {
