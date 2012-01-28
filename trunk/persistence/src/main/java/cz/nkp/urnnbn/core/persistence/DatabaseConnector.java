@@ -117,7 +117,7 @@ public abstract class DatabaseConnector {
     private void closeConnection(Connection conn) {
         try {
             if (conn != null) {
-                logger.log(Level.SEVERE, "Closing database connection");
+                logger.log(Level.INFO, "Closing database connection");
                 conn.close();
             }
         } catch (SQLException ex) {

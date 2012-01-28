@@ -21,16 +21,16 @@ import java.util.List;
  * @author Martin Řehánek
  */
 public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
-    
+
     public DigRepIdentifierDaoPostgresTest(String testName) {
         super(testName);
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -58,7 +58,7 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         id2.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigRepId(id2);
     }
-    
+
     public void testInsertDigRepId_emptyValue() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -74,9 +74,9 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         } catch (NullPointerException e) {
             //ok
         }
-        
+
     }
-    
+
     public void testInsertDigRepId_unknownDigRep() throws Exception {
         Registrar registrar = registrarPersisted();
         DigRepIdentifier id = builder.digRepIdentifierWithoutIds();
@@ -89,7 +89,7 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
             assertEquals(DigitalRepresentationDAO.TABLE_NAME, e.getTableName());
         }
     }
-    
+
     public void testInsertDigRepId_unknownRegistrar() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -104,7 +104,7 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
             assertEquals(RegistrarDAO.TABLE_NAME, e.getTableName());
         }
     }
-    
+
     public void testInsertDigRepId_insertTwiceSameIdTypeAndValueForSameDigRep() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -119,7 +119,29 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         } catch (AlreadyPresentException e) {
             //ok
         }
-        
+    }
+
+    public void testInsertDigRepId_insertTwiceSameIdTypeAndValueForSameRegistrar() throws Exception {
+        Registrar registrar = registrarPersisted();
+        //first digRep & id
+        IntelectualEntity entity1 = entityPersisted();
+        DigitalRepresentation digRep1 = representationPersisted(registrar.getId(), entity1.getId());
+        DigRepIdentifier id1 = builder.digRepIdentifierWithoutIds();
+        id1.setDigRepId(digRep1.getId());
+        id1.setRegistrarId(registrar.getId());
+        digRepIdDao.insertDigRepId(id1);
+        //second digRep & id
+        IntelectualEntity entity2 = entityPersisted();
+        DigitalRepresentation digRep2 = representationPersisted(registrar.getId(), entity2.getId());
+        DigRepIdentifier id2 = builder.digRepIdentifierWithoutIds();
+        id2.setDigRepId(digRep2.getId());
+        id2.setRegistrarId(registrar.getId());
+        try {
+            digRepIdDao.insertDigRepId(id2);
+            fail();
+        } catch (AlreadyPresentException e) {
+            //ok
+        }
     }
 
     /**
@@ -175,7 +197,7 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertEquals(updated, fetched);
         assertFalse(inserted.equals(fetched));
     }
-    
+
     public void testUpdateDigRepIdValue_unknownRegistrarOrDigRep() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -251,7 +273,7 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         digRepIdDao.deleteAllIdentifiersOfDigRep(digRep.getId());
         assertTrue(digRepIdDao.getIdList(digRep.getId()).isEmpty());
     }
-    
+
     public void testDeleteAllDigRepIdsOfEntity_unknownDigRepId() throws Exception {
         try {
             digRepIdDao.deleteAllIdentifiersOfDigRep(ILLEGAL_ID);
