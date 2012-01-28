@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 public class UrnNbn {
 
     //urn:nbn:cz:aba001-123456
-    private static Pattern urnNbnPattern = Pattern.compile("urn:nbn:cz:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}|URN:NBN:CZ:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}");
+    private static Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}|URN:NBN:CZ:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}");
     private final Long digRepId;
     private final String registrarCode;
     private final String documentCode;
@@ -71,9 +71,9 @@ public class UrnNbn {
 
     public static UrnNbn valueOf(String string) {
         //urn:nbn:cz:aba001-123456
-        Matcher matcher = urnNbnPattern.matcher(string);
+        Matcher matcher = URN_NBN_PATTERN.matcher(string);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("urn:nbn '" + string + "' is invalid");
+            throw new IllegalArgumentException("'" + string + "' doesn't match " + URN_NBN_PATTERN);
         }
         String institutionCode = string.substring(11, 17).toLowerCase();
         String documentCode = string.substring(18, 24).toLowerCase();
