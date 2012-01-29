@@ -29,7 +29,7 @@ public class UnknownDigitalRepresentationException extends RestException {
     public UnknownDigitalRepresentationException(String sigla, DigRepIdType idType, String idValue) {
         super(Status.NOT_FOUND, errorCode,
                 "Registrar with sigla " + sigla
-                + " doesn't register digital representation with identifier of type=" + idType.toString()
-                + " and value '" + idValue + "'");
+                + " doesn't register digital representation with identifier of type '" + idType.toString()
+                + "' and value '" + idValue + "'");
     }
 }

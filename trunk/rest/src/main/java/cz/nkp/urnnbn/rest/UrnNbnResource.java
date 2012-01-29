@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.core.Sigla;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
@@ -27,7 +28,8 @@ public class UrnNbnResource extends Resource {
     public String getUrnNbnXml(@PathParam("urn") String urnPar) {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
-            UrnNbnWithStatus urnWithStatus = dataAccessService().urnBySiglaAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
+            Sigla sigla = Sigla.valueOf(urnParsed.getRegistrarCode());
+            UrnNbnWithStatus urnWithStatus = dataAccessService().urnBySiglaAndDocumentCode(sigla, urnParsed.getDocumentCode());
             return urnToXml(urnWithStatus);
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());

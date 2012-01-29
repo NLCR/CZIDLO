@@ -16,9 +16,13 @@ import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.DataImportService;
+import cz.nkp.urnnbn.services.DataRemoveService;
+import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
 import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataImportServiceImpl;
+import cz.nkp.urnnbn.services.impl.DataRemoveServiceImpl;
+import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
@@ -51,6 +55,8 @@ public class Resource {
     static final Logger logger = Logger.getLogger("rest api v2");
     private static DataAccessService dataAccess;
     private static DataImportService dataImport;
+    private static DataRemoveService dataRemove;
+    private static DataUpdateService dataUpdate;
     private static UrnNbnReservationService urnReservation;
 
     DataAccessService dataAccessService() {
@@ -72,6 +78,20 @@ public class Resource {
             urnReservation = new UrnNbnReservationServiceImpl(connector, Configuration.URN_RESERVATION_MAX_SIZE);
         }
         return urnReservation;
+    }
+
+    DataRemoveService dataRemoveService() {
+        if (dataRemove == null) {
+            dataRemove = new DataRemoveServiceImpl(connector);
+        }
+        return dataRemove;
+    }
+
+    DataUpdateService dataUpdate() {
+        if (dataUpdate == null) {
+            dataUpdate = new DataUpdateServiceImpl(connector);
+        }
+        return dataUpdate;
     }
 
     DigitalRepresentationIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {

@@ -23,11 +23,8 @@ import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -50,13 +47,9 @@ public class DigitalRepresentationResource extends Resource {
         this.urn = urn;
     }
 
-    /**
-     * Retrieves representation of an instance of cz.nkp.urnnbn.rest.DigitalRepresentationResource
-     * @return an instance of java.lang.String
-     */
     @GET
     @Produces("application/xml")
-    public String getXml(
+    public String resolve(
             @DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
             @DefaultValue("html") @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("true") @QueryParam(PARAM_ADD_DIG_INST) String addDigitalInstancesStr) {
@@ -77,7 +70,6 @@ public class DigitalRepresentationResource extends Resource {
             if (urn == null) {
                 urn = dataAccessService().urnByDigRepId(rep.getId());
             }
-            //List<DigRepIdentifier> identifiers = dataAccessService().digRepIdentifiersByDigRepId(rep.getId());
             DigitalRepresentationIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(rep.getId());
             List<DigitalInstanceBuilder> instancesBuilders = addDigitalInstances
                     ? instancesBuilders(rep) : null;
@@ -120,22 +112,5 @@ public class DigitalRepresentationResource extends Resource {
     @Path("/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource() {
         return new DigitalInstancesResource(rep);
-    }
-
-    /**
-     * PUT method for updating or creating an instance of DigitalRepresentationResource
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
-     */
-    @PUT
-    @Consumes("application/xml")
-    public void putXml(String content) {
-    }
-
-    /**
-     * DELETE method for resource DigitalRepresentationResource
-     */
-    @DELETE
-    public void delete() {
     }
 }

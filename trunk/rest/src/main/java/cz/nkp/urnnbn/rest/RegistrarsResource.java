@@ -44,7 +44,7 @@ public class RegistrarsResource extends Resource {
         try {
             boolean addDigitalLibraries = queryParamToBoolean(addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
             boolean addCatalogs = queryParamToBoolean(addCatalogsStr, PARAM_CATALOGS, false);
-            List<RegistrarBuilder> registrarBuilders = registraBuilders(addDigitalLibraries, addCatalogs);
+            List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
             RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
             return builder.buildDocument().toXML();
         } catch (DatabaseException ex) {
@@ -71,7 +71,7 @@ public class RegistrarsResource extends Resource {
         }
     }
 
-    private List<RegistrarBuilder> registraBuilders(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+    private List<RegistrarBuilder> registrarBuilderList(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<Registrar> registrars = dataAccessService().registrars();
         List<RegistrarBuilder> result = new ArrayList<RegistrarBuilder>(registrars.size());
         for (Registrar registrar : registrars) {
