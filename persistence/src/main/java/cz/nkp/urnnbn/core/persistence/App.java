@@ -54,8 +54,8 @@ public class App {
             //debugArchiver();
             //debugRegistrar();
             App app = new App();
-            //app.clearDatabase();
-            app.debugRegistrar();
+            app.clearDatabase();
+            //app.debugRegistrar();
             app.insertTestData();
         } catch (DatabaseException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);

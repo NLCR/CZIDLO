@@ -129,7 +129,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
 
     @Override
     public void deleteEntity(long id) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, id);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override

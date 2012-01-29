@@ -58,7 +58,7 @@ public class ArchiverDaoPostgres extends AbstractDAO implements ArchiverDAO {
     @Override
     public void deleteArchiver(final long id) throws DatabaseException, RecordNotFoundException {
         //todo: otestovat, ze se vyhodi vyjimka, pokud archivator neco archivuje
-        deleteRecordsById(TABLE_NAME, ATTR_ID, id);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override

@@ -14,15 +14,12 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
-import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigInstance;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalInstanceRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -45,7 +42,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     }
 
     @Override
-    public Long insertDigInstance(final DigitalInstance instance) throws DatabaseException, RecordNotFoundException{
+    public Long insertDigInstance(final DigitalInstance instance) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, instance.getDigRepId());
         checkRecordExists(DigitalLibraryDAO.TABLE_NAME, DigitalLibraryDAO.ATTR_ID, instance.getLibraryId());
         DaoOperation operation = new DaoOperation() {
@@ -78,7 +75,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 //                IdPart digLibId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getLibraryId()));
 //                throw new AlreadyPresentException(new IdPart[]{digRepId, digLibId});
 //            } else {
-                throw new DatabaseException(ex);
+            throw new DatabaseException(ex);
 //            }
         }
     }
@@ -112,6 +109,6 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 
     @Override
     public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, digInstId);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, digInstId, true);
     }
 }
