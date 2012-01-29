@@ -29,7 +29,21 @@ public interface DigRepIdentifierDAO {
 
     public void updateDigRepIdValue(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
-    public void deleteDigRepIdentifier(long digRepDbId, DigRepIdType type) throws DatabaseException, RecordNotFoundException;
+    /**
+     * 
+     * @param digRepDbId
+     * @param idType
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if digital representation with id digRepDbId doesn't exist 
+     * or the identifier for digital representation with id digRepDbId and type idType doesn't exist
+     */
+    public void deleteDigRepIdentifier(long digRepDbId, DigRepIdType idType) throws DatabaseException, RecordNotFoundException;
 
+    /**
+     * 
+     * @param digRepDbId
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if digital representation with id digRepDbId doesn't exist
+     */
     public void deleteAllIdentifiersOfDigRep(long digRepDbId) throws DatabaseException, RecordNotFoundException;
 }

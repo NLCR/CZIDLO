@@ -123,7 +123,8 @@ public class DigRepIdentifierDaoPostgres extends AbstractDAO implements DigRepId
 
     @Override
     public void deleteDigRepIdentifier(long digRepDbId, DigRepIdType type) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, ATTR_TYPE, type.toString());
+        checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, digRepDbId);
+        deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
     }
 
     @Override

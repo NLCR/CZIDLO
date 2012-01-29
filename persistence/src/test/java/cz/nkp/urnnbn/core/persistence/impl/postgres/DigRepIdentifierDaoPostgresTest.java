@@ -259,9 +259,6 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    /**
-     * Test of deleteDigRepIdentifier method, of class DigRepIdentifierDaoPostgres.
-     */
     public void testDeleteDigRepIdentifier() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -277,9 +274,45 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertFalse(digRepIdDao.getIdList(digRep.getId()).contains(inserted));
     }
 
-    /**
-     * Test of deleteAllIdentifiersOfDigRep method, of class DigRepIdentifierDaoPostgres.
-     */
+    public void testDeleteDigRepIdentifier_unknownDigRep() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalRepresentation digRep = representationPersisted(registrar.getId(), entity.getId());
+        //insert identifier
+        DigRepIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        inserted.setDigRepId(digRep.getId());
+        inserted.setRegistrarId(registrar.getId());
+        digRepIdDao.insertDigRepId(inserted);
+        assertTrue(digRepIdDao.getIdList(digRep.getId()).contains(inserted));
+        //delete
+        try {
+            digRepIdDao.deleteDigRepIdentifier(ILLEGAL_ID, inserted.getType());
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
+    }
+
+    public void testDeleteDigRepIdentifier_deletedRecordDoesntExist() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalRepresentation digRep = representationPersisted(registrar.getId(), entity.getId());
+        //insert identifier
+        DigRepIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        inserted.setDigRepId(digRep.getId());
+        inserted.setRegistrarId(registrar.getId());
+        digRepIdDao.insertDigRepId(inserted);
+        assertTrue(digRepIdDao.getIdList(digRep.getId()).contains(inserted));
+        //delete
+        try {
+            DigRepIdType otherType = DigRepIdType.valueOf("otherType");
+            digRepIdDao.deleteDigRepIdentifier(digRep.getId(), otherType);
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
+    }
+
     public void testDeleteAllDigRepIdsOfEntity() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
