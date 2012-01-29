@@ -9,7 +9,6 @@ import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -174,9 +173,6 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertTrue(idList.contains(k4pid));
     }
 
-    /**
-     * Test of updateDigRepIdValue method, of class DigRepIdentifierDaoPostgres.
-     */
     public void testUpdateDigRepIdValue() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
@@ -196,6 +192,42 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         DigRepIdentifier fetched = digRepIdDao.getIdList(digRep.getId()).get(0);
         assertEquals(updated, fetched);
         assertFalse(inserted.equals(fetched));
+    }
+
+    public void testUpdateDigRepIdValue_valueCollision() throws Exception {
+        Registrar registrar = registrarPersisted();
+        DigRepIdType idType = DigRepIdType.valueOf("some_id_type");
+        String collidingValue = "collision";
+        //first digRep
+        IntelectualEntity entity1 = entityPersisted();
+        DigitalRepresentation digRep1 = representationPersisted(registrar.getId(), entity1.getId());
+        //identifier of first digRep
+        DigRepIdentifier digRep1Id = builder.digRepIdentifierWithoutIds();
+        digRep1Id.setType(idType);
+        digRep1Id.setValue(collidingValue);
+        digRep1Id.setDigRepId(digRep1.getId());
+        digRep1Id.setRegistrarId(registrar.getId());
+        digRepIdDao.insertDigRepId(digRep1Id);
+
+        //second digRep
+        IntelectualEntity entity2 = entityPersisted();
+        DigitalRepresentation digRep2 = representationPersisted(registrar.getId(), entity2.getId());
+        //insert identifier to digRep2
+        DigRepIdentifier digRep2Id = builder.digRepIdentifierWithoutIds();
+        digRep2Id.setType(idType);
+        digRep2Id.setValue("okValue");
+        digRep2Id.setDigRepId(digRep2.getId());
+        digRep2Id.setRegistrarId(registrar.getId());
+        digRepIdDao.insertDigRepId(digRep2Id);
+        //update
+        DigRepIdentifier updated = new DigRepIdentifier(digRep2Id);
+        updated.setValue(collidingValue);
+        try {
+            digRepIdDao.updateDigRepIdValue(updated);
+            fail();
+        } catch (AlreadyPresentException e) {
+            //ok
+        }
     }
 
     public void testUpdateDigRepIdValue_unknownRegistrarOrDigRep() throws Exception {

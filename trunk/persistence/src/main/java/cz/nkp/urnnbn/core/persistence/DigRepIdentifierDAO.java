@@ -27,7 +27,7 @@ public interface DigRepIdentifierDAO {
 
     public List<DigRepIdentifier> getIdList(long digRepDbId) throws DatabaseException, RecordNotFoundException;
 
-    public void updateDigRepIdValue(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException;
+    public void updateDigRepIdValue(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
     public void deleteDigRepIdentifier(long digRepDbId, DigRepIdType type) throws DatabaseException, RecordNotFoundException;
 

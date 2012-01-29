@@ -94,7 +94,7 @@ public class DigRepIdentifierDaoPostgres extends AbstractDAO implements DigRepId
     }
 
     @Override
-    public void updateDigRepIdValue(DigRepIdentifier identifier) throws DatabaseException, RecordNotFoundException {
+    public void updateDigRepIdValue(DigRepIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, identifier.getDigRepId());
         try {
@@ -108,7 +108,11 @@ public class DigRepIdentifierDaoPostgres extends AbstractDAO implements DigRepId
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0},digRepId:{1}, type:{2}", new Object[]{identifier.getRegistrarId(), identifier.getDigRepId(), identifier.getType().toString()});
             System.err.println("state:" + ex.getSQLState());
-            if ("23503".equals(ex.getSQLState())) {
+            if ("23505".equals(ex.getSQLState())) {
+                IdPart intEntId = new IdPart(DigRepIdentifierDAO.ATTR_DIG_REP_ID, Long.toString(identifier.getDigRepId()));
+                IdPart type = new IdPart(DigRepIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
+                throw new AlreadyPresentException(new IdPart[]{intEntId, type});
+            } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
             } else {
