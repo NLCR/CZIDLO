@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.core.Sigla;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -32,7 +33,8 @@ public class ResolverResource extends Resource {
     public Resource getDigitalRepresentationResource(@PathParam("urn") String urnPar) {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
-            UrnNbnWithStatus fetched = dataAccessService().urnBySiglaAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
+            Sigla sigla = Sigla.valueOf(urnParsed.getRegistrarCode());
+            UrnNbnWithStatus fetched = dataAccessService().urnBySiglaAndDocumentCode(sigla, urnParsed.getDocumentCode());
             switch (fetched.getStatus()) {
                 case ACTIVE:
                     DigitalRepresentation rep = dataAccessService().digRepByInternalId(fetched.getUrn().getDigRepId());
