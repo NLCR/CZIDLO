@@ -48,16 +48,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbnWithStatus urnBySiglaAndDocumentCode(String sigla, String documentCode) throws DatabaseException {
+    public UrnNbnWithStatus urnBySiglaAndDocumentCode(Sigla sigla, String documentCode) throws DatabaseException {
         try {
-            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(sigla, documentCode);
+            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(sigla.toString(), documentCode);
             return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
         } catch (RecordNotFoundException ex) { //urn:nb not in table urn:nbn
             try {
-                UrnNbn urn = factory.urnReservedDao().getUrn(null, documentCode);
-                //tmpMethodThrowsException();//todo: odstranit
+                UrnNbn urn = factory.urnReservedDao().getUrn(sigla, documentCode);
                 return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.BOOKED);
-            } catch (RecordNotFoundException ex2) { //urn:nbn also not booked
+            } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 try {
                     UrnNbn urn = null;//TODO: ziskat z tabulkyy opustenych
                     tmpMethodThrowsException();
@@ -65,7 +64,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                     //in abandonedUrnNbn table
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ABANDONED);
                 } catch (RecordNotFoundException ex3) { //urn:nbn not even ebandoned
-                    UrnNbn urn = new UrnNbn(sigla, documentCode, null);
+                    UrnNbn urn = new UrnNbn(sigla.toString(), documentCode, null);
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
                 }
             }
