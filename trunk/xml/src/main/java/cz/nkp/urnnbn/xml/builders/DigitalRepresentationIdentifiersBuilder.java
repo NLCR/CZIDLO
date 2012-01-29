@@ -21,7 +21,7 @@ public class DigitalRepresentationIdentifiersBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("registrarUniqueIds", RESOLVER);
+        Element root = new Element("registrarScopeIdentifiers", RESOLVER);
         for (DigitalRepresentationIdentifierBuilder idBuilder : identifierBuilders) {
             appendBuilderResultfNotNull(root, idBuilder);
         }

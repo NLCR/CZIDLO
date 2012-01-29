@@ -179,7 +179,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xs:sequence>
                 <xs:element name="archiverId" type="xs:long" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="urnNbn" type="r:urnNbn" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:registrarUniqueIdentifiers" minOccurs="1" maxOccurs="1" />
+                <xs:element ref="r:registrarScopeIdentifiers" minOccurs="1" maxOccurs="1" />
                 <xs:element name="financed" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="format" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="extent" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -189,7 +189,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="registrarUniqueIdentifiers">
+    <xs:element name="registrarScopeIdentifiers">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="r:digRepId" minOccurs="0" maxOccurs="unbounded"/>

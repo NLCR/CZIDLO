@@ -200,7 +200,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     public List<DigRepIdentifier> getDigRepIdentifiers() {
-        Element identifiersEl = (Element) selectSingleElementOrNull("registrarUniqueIdentifiers", digRepEl);
+        Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digRepEl);
         if (identifiersEl == null) {
             return Collections.<DigRepIdentifier>emptyList();
         } else {
