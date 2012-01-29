@@ -94,9 +94,10 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
 
     @Override
     public void deleteIntEntIdentifier(long intEntDbId, IntEntIdType type) throws DatabaseException, RecordNotFoundException {
+        //todo: check, that intEnt exists (existence of intEntId is checked in deleteREcordsByLongAndString
         deleteRecordsByLongAndString(TABLE_NAME,
                 IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId,
-                IntEntIdentifierDAO.ATTR_TYPE, type.name());
+                IntEntIdentifierDAO.ATTR_TYPE, type.name(), true);
     }
 
     @Override

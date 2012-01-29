@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsContByStringAndLongAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAttr;
@@ -90,37 +91,23 @@ public abstract class AbstractDAO {
     }
 
     protected void checkRecordExists(String tableName, String idAttrName, Long idValue) throws DatabaseException, RecordNotFoundException {
-        final StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
-
-        DaoOperation recordCount = new DaoOperation() {
-
-            @Override
-            public Object run(Connection connection) throws SQLException, PersistenceException {
-                PreparedStatement st = OperationUtils.preparedStatementFromWrapper(connection, statement);
-                ResultSet resultSet = st.executeQuery();
-                return OperationUtils.resultSet2Integer(resultSet);
-            }
-        };
-        try {
-            Integer count = (Integer) runInTransaction(recordCount);
-            if (count == 0) {
-                throw new RecordNotFoundException(tableName);
-            }
-        } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "Cannot find record with id {0}", idValue);
-            throw e;
-        } catch (PersistenceException e) {
-            //should never happen
-            logger.log(Level.SEVERE, "Exception unexpected here", e);
-            return;
-        } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot check if record {0} exists", idValue);
-            throw new DatabaseException(ex);
-        }
+        StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
+        checkRecordExists(statement, tableName);
     }
 
     protected void checkRecordExists(String tableName, String idAttrName, String idValue) throws DatabaseException, RecordNotFoundException {
-        final StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
+        StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
+        checkRecordExists(statement, tableName);
+    }
+
+    protected void checkRecordExists(String tableName,
+            String longAttrName, Long longAttrValue,
+            String stringAttrName, String stringAttrValue) throws DatabaseException, RecordNotFoundException {
+        StatementWrapper statement = new SelectRecordsContByStringAndLongAttrs(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
+        checkRecordExists(statement, tableName);
+    }
+
+    private void checkRecordExists(final StatementWrapper statement, String tableName) throws DatabaseException, RecordNotFoundException {
         DaoOperation recordCount = new DaoOperation() {
 
             @Override
@@ -133,18 +120,15 @@ public abstract class AbstractDAO {
         try {
             Integer count = (Integer) runInTransaction(recordCount);
             if (count == 0) {
-                //throw new RecordNotFoundException(tableName, idValue);
                 throw new RecordNotFoundException(tableName);
             }
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "Cannot find record with id {0}", idValue);
             throw e;
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot check if record {0} exists", idValue);
             throw new DatabaseException(ex);
         }
     }
@@ -340,9 +324,11 @@ public abstract class AbstractDAO {
     public void deleteRecordsByLongAndString(
             String tableName,
             String longAttrName, long longAttrValue,
-            String stringAttrName, String stringAttrValue) throws DatabaseException, RecordNotFoundException {
-        //stejne jako u updatu
-        checkRecordExists(tableName, longAttrName, longAttrValue);
+            String stringAttrName, String stringAttrValue,
+            boolean mustExist) throws DatabaseException, RecordNotFoundException {
+        if (mustExist) {
+            checkRecordExists(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
+        }
         try {
             StatementWrapper st = new DeleteRecordsByLongAndStringAttr(
                     tableName,
