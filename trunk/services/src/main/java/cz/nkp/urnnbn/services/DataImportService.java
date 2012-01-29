@@ -6,21 +6,21 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
+ * TODO: get rid of exception from persistence
  * @author Martin Řehánek
  */
 public interface DataImportService extends BusinessService {
@@ -54,8 +54,7 @@ public interface DataImportService extends BusinessService {
             AccessException,
             ImportFailedException;
 
-    //TODO
-    public void updateDigitalRepresentation(DigitalRepresentation rep,
-            List<DigRepIdentifier> ids);
     //TODO: manipulace s instancema
+    public void addNewDigRepId(DigRepIdentifier newId) throws
+            UnknownRegistrarException, UnknownDigitalRepresentationException, IdentifierConflictException;
 }

@@ -24,15 +24,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- *
+ * TODO: zbavit se DatabaseException (resp. přeložit na RuntimeException)
  * @author Martin Řehánek
  */
-public interface DataAccessService extends BusinessService{
+public interface DataAccessService extends BusinessService {
 
     static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-    //implementovane
-    public UrnNbnWithStatus urnBySiglaAndDocumentCode(String registrarCode, String documentCode) throws DatabaseException;
+    public UrnNbnWithStatus urnBySiglaAndDocumentCode(Sigla sigla, String documentCode) throws DatabaseException;
 
     public DigitalRepresentation digRepByInternalId(long digRepId) throws DatabaseException;
 

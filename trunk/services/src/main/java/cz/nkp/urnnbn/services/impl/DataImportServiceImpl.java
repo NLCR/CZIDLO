@@ -6,9 +6,11 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
@@ -16,11 +18,12 @@ import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import java.util.List;
 
 /**
  * TODO: test
@@ -28,6 +31,7 @@ import java.util.List;
  */
 public class DataImportServiceImpl extends BusinessServiceImpl implements DataImportService {
 
+    //TODO: autentizaci a autorizaci by si mel zajistovat klient, ne jina sluzba
     private final AuthorizationModule authorization;
 
     public DataImportServiceImpl(DatabaseConnector conn) {
@@ -50,7 +54,21 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         }
     }
 
-    public void updateDigitalRepresentation(DigitalRepresentation rep, List<DigRepIdentifier> ids) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addNewDigRepId(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigitalRepresentationException, IdentifierConflictException {
+        try {
+            factory.digRepIdDao().insertDigRepId(id);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownDigitalRepresentationException(id.getDigRepId());
+            } else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownRegistrarException(id.getRegistrarId());
+            } else {
+                throw new RuntimeException(ex);
+            }
+        } catch (AlreadyPresentException ex) {
+            throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+        }
     }
 }
