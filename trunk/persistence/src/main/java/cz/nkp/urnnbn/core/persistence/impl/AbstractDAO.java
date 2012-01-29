@@ -83,7 +83,8 @@ public abstract class AbstractDAO {
             }
             //throw new DatabaseException(ex);
         } finally {
-            logger.info("releasing connection");
+            //logger.info("releasing connection");
+            logger.fine("releasing connection");
             releaseConnection(connection);
         }
     }
@@ -103,18 +104,17 @@ public abstract class AbstractDAO {
         try {
             Integer count = (Integer) runInTransaction(recordCount);
             if (count == 0) {
-                //throw new RecordNotFoundException(tableName, idValue);
                 throw new RecordNotFoundException(tableName);
             }
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "Couldn't find record with id " + idValue);
+            logger.log(Level.SEVERE, "Cannot find record with id {0}", idValue);
             throw e;
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't check if record {0} exists", idValue);
+            logger.log(Level.SEVERE, "Cannot check if record {0} exists", idValue);
             throw new DatabaseException(ex);
         }
     }
@@ -137,14 +137,14 @@ public abstract class AbstractDAO {
                 throw new RecordNotFoundException(tableName);
             }
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "Couldn''t find record with id {0}", idValue);
+            logger.log(Level.SEVERE, "Cannot find record with id {0}", idValue);
             throw e;
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't check if record {0} exists", idValue);
+            logger.log(Level.SEVERE, "Cannot check if record {0} exists", idValue);
             throw new DatabaseException(ex);
         }
     }
@@ -179,7 +179,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn''t insert {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[]{tableName, dto.getId()});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -228,7 +228,7 @@ public abstract class AbstractDAO {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn''t insert {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[]{tableName, dto.getId()});
             if ("23505".equals(ex.getSQLState())) {
                 IdPart param = new IdPart(idAttrName, Long.toString(dto.getId()));
                 throw new AlreadyPresentException(param);
@@ -266,7 +266,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't update {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, dto.getId()});
             System.err.println("state:" + ex.getSQLState());
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
@@ -319,8 +319,10 @@ public abstract class AbstractDAO {
         }
     }
 
-    public void deleteRecordsById(String tableName, String idAttrName, long idValue) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(tableName, idAttrName, idValue);
+    public void deleteRecordsById(String tableName, String idAttrName, long idValue, boolean mustExist) throws DatabaseException, RecordNotFoundException {
+        if (mustExist) {
+            checkRecordExists(tableName, idAttrName, idValue);
+        }
         try {
             StatementWrapper st = new DeleteRecordsByLongAttr(tableName, idAttrName, idValue);
             DaoOperation operation = new NoResultOperation(st);
@@ -330,7 +332,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't delete from " + tableName + " where " + idAttrName + "=" + idValue);
+            logger.log(Level.SEVERE, "Cannot delete from {0} where {1}={2}", new Object[]{tableName, idAttrName, idValue});
             throw new DatabaseException(ex);
         }
     }
@@ -353,10 +355,10 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't delete from " + tableName
-                    + " where "
-                    + longAttrName + "=" + longAttrValue + " and "
-                    + stringAttrName + "=" + stringAttrValue);
+            logger.log(Level.SEVERE, "Cannot delete from {0} where "
+                    + "{1}={2} and {3}={4}",
+                    new Object[]{tableName,
+                        longAttrName, longAttrValue, stringAttrName, stringAttrValue});
             throw new DatabaseException(ex);
         }
     }
@@ -377,10 +379,10 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't delete from " + tableName
-                    + " where "
-                    + firstAttrName + "=" + firstAttrValue + " and "
-                    + secondAttrName + "=" + secondAttrValue);
+            logger.log(Level.SEVERE, "Cannot delete from {0} "
+                    + "where {1}={2} and {3}={4}",
+                    new Object[]{tableName,
+                        firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
             throw new DatabaseException(ex);
         }
     }
@@ -395,7 +397,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't delete all records from " + tableName);
+            logger.log(Level.SEVERE, "Cannot delete all records from {0}", tableName);
             throw new DatabaseException(ex);
         }
     }

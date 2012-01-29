@@ -42,7 +42,7 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
     }
 
     @Override
-    public void insertIntEntId(final IntEntIdentifier identifier) throws DatabaseException, RecordNotFoundException,AlreadyPresentException {
+    public void insertIntEntId(final IntEntIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, identifier.getIntEntDbId());
         DaoOperation operation = new DaoOperation() {
 
@@ -101,6 +101,12 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
 
     @Override
     public void deleteAllIntEntIdsOfEntity(long intEntDbId) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_IE_ID, intEntDbId);
+        checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, intEntDbId);
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_IE_ID, intEntDbId, false);
+        } catch (RecordNotFoundException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }

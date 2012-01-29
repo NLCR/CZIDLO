@@ -199,7 +199,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(TABLE_NAME, ATTR_ID, id);
         //delete archiver - registrar is deleted in cascade
-        deleteRecordsById(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id);
+        deleteRecordsById(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id, true);
 //        try {
 //            //delete archiver - registrar is deleted in cascade
 //            StatementWrapper st = new DeleteRecordsByLongAttr(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id);

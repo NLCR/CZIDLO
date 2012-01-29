@@ -141,7 +141,7 @@ public class DigitalRepresentationDaoPostgres extends AbstractDAO implements Dig
     public void deleteRepresentation(long digRepDbId) throws DatabaseException, RecordNotFoundException {
         //TODO: test
         //todo: nesmi se smazat urn
-        deleteRecordsById(TABLE_NAME, ATTR_ID, digRepDbId);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, digRepDbId, true);
     }
 
     @Override

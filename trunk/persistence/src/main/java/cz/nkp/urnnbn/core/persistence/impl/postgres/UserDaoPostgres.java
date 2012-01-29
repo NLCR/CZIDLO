@@ -7,10 +7,8 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -21,15 +19,10 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUser;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentnifiersByStringAndStringAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UserRT;
 import java.sql.Connection;
@@ -149,7 +142,7 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
 
     @Override
     public void deleteUser(long id) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, id);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override

@@ -274,12 +274,19 @@ public class DigRepIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertTrue(digRepIdDao.getIdList(digRep.getId()).isEmpty());
     }
 
-    public void testDeleteAllDigRepIdsOfEntity_unknownDigRepId() throws Exception {
+    public void testDeleteAllDigReIds_noIds() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalRepresentation digRep = representationPersisted(registrar.getId(), entity.getId());
+        digRepIdDao.deleteAllIdentifiersOfDigRep(digRep.getId());
+    }
+
+    public void testDeleteAllDigRepIdsOfEntity_unknownDigRep() throws Exception {
         try {
             digRepIdDao.deleteAllIdentifiersOfDigRep(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            assertEquals(DigRepIdentifierDAO.TABLE_NAME, e.getTableName());
+            assertEquals(DigitalRepresentationDAO.TABLE_NAME, e.getTableName());
         }
     }
 }

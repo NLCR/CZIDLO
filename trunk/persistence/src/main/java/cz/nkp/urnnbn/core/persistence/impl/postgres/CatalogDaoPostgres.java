@@ -30,23 +30,23 @@ import java.util.logging.Logger;
  * @author Martin Řehánek
  */
 public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
-    
+
     private static final Logger logger = Logger.getLogger(CatalogDaoPostgres.class.getName());
-    
+
     public CatalogDaoPostgres(DatabaseConnector con) {
         super(con);
     }
-    
+
     @Override
     public Long insertCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         return insertRecordWithIdFromSequence(catalog, TABLE_NAME, SEQ_NAME, new InsertCatalogue(catalog));
     }
-    
+
     @Override
     public Catalog getCatalogById(long id) throws DatabaseException, RecordNotFoundException {
         return (Catalog) getRecordById(TABLE_NAME, ATTR_ID, id, new CatalogRT());
     }
-    
+
     @Override
     public List<Catalog> getCatalogs(long registrarId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
@@ -62,14 +62,14 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
             throw new DatabaseException(ex);
         }
     }
-    
+
     @Override
     public void updateCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(catalog, TABLE_NAME, ATTR_ID, new UpdateCatalog(catalog));
     }
-    
+
     @Override
     public void deleteCatalog(long catalogId) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, catalogId);
+        deleteRecordsById(TABLE_NAME, ATTR_ID, catalogId, true);
     }
 }
