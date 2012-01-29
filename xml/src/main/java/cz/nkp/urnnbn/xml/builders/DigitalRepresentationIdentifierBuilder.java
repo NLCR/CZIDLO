@@ -22,7 +22,7 @@ public class DigitalRepresentationIdentifierBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("registrarUniqueId", RESOLVER);
+        Element root = new Element("id", RESOLVER);
         Attribute type = new Attribute("type", id.getType().toString());
         root.addAttribute(type);
         root.appendChild(id.getValue());
