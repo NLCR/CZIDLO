@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.rest.exceptions.RestException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
@@ -125,7 +125,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
-        } catch (UnknownDigitalRepresentationException ex) {
+        } catch (UnknownDigRepException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
@@ -152,7 +152,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
-        } catch (UnknownDigitalRepresentationException ex) {
+        } catch (UnknownDigRepException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
@@ -168,7 +168,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
             DigitalRepresentationIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
             dataRemoveService().removeDigitalRepresentationIdentifiers(digRep.getId());
             return builder.buildDocument().toXML();
-        } catch (UnknownDigitalRepresentationException ex) {
+        } catch (UnknownDigRepException ex) {
             //should never happen
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());

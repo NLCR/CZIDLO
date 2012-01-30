@@ -19,7 +19,6 @@ import nu.xom.ValidityException;
 public class Configuration {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
-    public static String DIGITAL_INSTANCE_IMPORT_XSD;
     public static String RECORD_IMPORT_XSD;
     public static int URN_RESERVATION_DEFAULT_SIZE;
     public static int URN_RESERVATION_MAX_SIZE;
@@ -38,11 +37,6 @@ public class Configuration {
         URN_RESERVATION_MAX_SIZE = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         SERVER_READ_ONLY = loader.loadBoolean(PropertyKeys.SERVER_READ_ONLY);
         MAX_RESERVED_SIZE_TO_PRINT = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
-    }
-
-    public static void initDigitalInstanceImportSchema(InputStream in) throws ParsingException, ValidityException, IOException {
-        //DIGITAL_INSTANCE_IMPORT_XSD = XOMUtils.loadDocumentValidByInternalXsd(in).toXML();
-        DIGITAL_INSTANCE_IMPORT_XSD = XOMUtils.loadDocumentWithoutValidation(in).toXML();
     }
 
     static void initRecordImportSchema(InputStream in) throws ParsingException, ValidityException, IOException {

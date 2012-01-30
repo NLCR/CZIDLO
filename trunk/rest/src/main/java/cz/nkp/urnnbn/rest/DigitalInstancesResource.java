@@ -1,33 +1,33 @@
-/*
+    /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
+import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalLibraryException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.unmarshallers.DigInstUnmrashaller;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-import nu.xom.Document;
 
 /**
  *
@@ -36,6 +36,8 @@ import nu.xom.Document;
 @Path("/digitalInstances")
 public class DigitalInstancesResource extends Resource {
 
+    private static final String PARAM_LIBRARY_ID = "libraryId";
+    private static final int MAX_URL_LENGTH = 100;
     private final DigitalRepresentation digRep;
 
     public DigitalInstancesResource() {
@@ -94,29 +96,31 @@ public class DigitalInstancesResource extends Resource {
     }
 
     @POST
-    @Consumes("application/xml")
+    // @Consumes("application/xml")
     @Produces("application/xml")
-    public String addNewDigitalInstance(String content) {
+    public String addNewDigitalInstance(
+            @QueryParam(PARAM_LIBRARY_ID) String libraryIdStr,
+            String string) {
         //todo: autentizace
         try {
+            long userId = 1;//TODO: zjistit id uzivatele z hlavicky
             if (digRep == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
-            Document doc = validDocumentFromString(content, Configuration.DIGITAL_INSTANCE_IMPORT_XSD);
-            DigInstUnmrashaller unmarshaller = new DigInstUnmrashaller(doc);
-            DigitalInstance instance = unmarshaller.getDigitalInstance();
-            instance.setDigRepId(digRep.getId());
-            //TODO: zjistit id uzivatele z hlavicky
-            long userId = 1;
+            long libraryId = Parser.parsePositiveLongQueryParam(libraryIdStr, PARAM_LIBRARY_ID);
+            URL url = Parser.parseUrlFromRequestBody(string, MAX_URL_LENGTH);
+            DigitalInstance instance = newDigitalInstance(libraryId, url);
             instance = dataImportService().addDigitalInstance(instance, userId);
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);
+            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libraryId);
             return builder.buildDocument().toXML();
-        } catch (DatabaseException ex) {
-            throw new InternalException(ex.getMessage());
+        } catch (UnknownDigiLibException ex) {
+            throw new UnknownDigitalLibraryException(ex.getMessage());
+        } catch (UnknownDigRepException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+            throw new InternalException(ex);
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
-        } catch (ImportFailedException ex) {
-            throw new InternalException(ex.getMessage());
         } catch (RuntimeException e) {
             if (e instanceof WebApplicationException) {
                 throw e;
@@ -124,5 +128,13 @@ public class DigitalInstancesResource extends Resource {
                 throw new InternalException(e);
             }
         }
+    }
+
+    private DigitalInstance newDigitalInstance(long libraryId, URL url) {
+        DigitalInstance instance = new DigitalInstance();
+        instance.setLibraryId(libraryId);
+        instance.setDigRepId(digRep.getId());
+        instance.setUrl(url.toString());
+        return instance;
     }
 }

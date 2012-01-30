@@ -18,7 +18,6 @@ public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
     private static final String API_PROPERTIES = "api.properties";
-    private static final String DIG_INST_IMPORT_XSD = "importDigitalInstance.xsd";
     private static final String RECORD_IMPORT_XSD = "import.xsd";
 
     abstract class ResourceUtilizer {
@@ -48,7 +47,6 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         loadApiProperties();
-        loadDigitalInstanceImportXsd();
         loadRecordImportXsd();
     }
 
@@ -60,16 +58,6 @@ public class ContextListener implements ServletContextListener {
                 Configuration.initialize(in);
             }
         }.run(API_PROPERTIES);
-    }
-
-    private void loadDigitalInstanceImportXsd() {
-        new ResourceUtilizer() {
-
-            @Override
-            void processResource(InputStream in) throws Exception {
-                Configuration.initDigitalInstanceImportSchema(in);
-            }
-        }.run(DIG_INST_IMPORT_XSD);
     }
 
     private void loadRecordImportXsd() {
