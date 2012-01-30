@@ -8,9 +8,9 @@ package cz.nkp.urnnbn.services.exceptions;
  *
  * @author Martin Řehánek
  */
-public class UnknownDigitalRepresentationException extends Exception {
+public class UnknownDigRepException extends Exception {
 
-    public UnknownDigitalRepresentationException(long digRepId) {
+    public UnknownDigRepException(long digRepId) {
         super("unknown digital representation with id: " + digRepId);
     }
 }

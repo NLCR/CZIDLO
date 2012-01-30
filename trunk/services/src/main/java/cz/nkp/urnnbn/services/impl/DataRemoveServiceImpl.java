@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 
 /**
  *
@@ -24,24 +24,24 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         super(conn);
     }
 
-    public void removeDigitalRepresentationIdentifiers(long digRepId) throws UnknownDigitalRepresentationException {
+    public void removeDigitalRepresentationIdentifiers(long digRepId) throws UnknownDigRepException {
         try {
             factory.digRepIdDao().deleteAllIdentifiersOfDigRep(digRepId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            throw new UnknownDigitalRepresentationException(digRepId);
+            throw new UnknownDigRepException(digRepId);
         }
     }
 
-    public void removeDigitalRepresentationId(long digRepId, DigRepIdType type) throws UnknownDigitalRepresentationException, DigRepIdNotDefinedException {
+    public void removeDigitalRepresentationId(long digRepId, DigRepIdType type) throws UnknownDigRepException, DigRepIdNotDefinedException {
         try {
             factory.digRepIdDao().deleteDigRepIdentifier(digRepId, type);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigitalRepresentationDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigitalRepresentationException(digRepId);
+                throw new UnknownDigRepException(digRepId);
             } else if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new DigRepIdNotDefinedException(type);
             } else {
