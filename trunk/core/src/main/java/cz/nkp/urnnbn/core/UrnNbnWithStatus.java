@@ -15,7 +15,7 @@ public class UrnNbnWithStatus {
     public static enum Status {
 
         FREE,
-        BOOKED,
+        RESERVED,
         ACTIVE,
         ABANDONED
     }
