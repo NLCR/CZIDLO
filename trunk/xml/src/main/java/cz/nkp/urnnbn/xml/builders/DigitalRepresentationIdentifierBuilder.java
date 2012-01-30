@@ -15,9 +15,16 @@ import nu.xom.Element;
 public class DigitalRepresentationIdentifierBuilder extends XmlBuilder {
 
     private final DigRepIdentifier id;
+    private final String previousValue;
 
     public DigitalRepresentationIdentifierBuilder(DigRepIdentifier id) {
         this.id = id;
+        this.previousValue = null;
+    }
+
+    public DigitalRepresentationIdentifierBuilder(DigRepIdentifier id, String previousValue) {
+        this.id = id;
+        this.previousValue = previousValue;
     }
 
     @Override
@@ -25,7 +32,12 @@ public class DigitalRepresentationIdentifierBuilder extends XmlBuilder {
         Element root = new Element("id", RESOLVER);
         Attribute type = new Attribute("type", id.getType().toString());
         root.addAttribute(type);
-        root.appendChild(id.getValue());
+        Element value = addElement(root, "value");
+        value.appendChild(id.getValue());
+        if (previousValue != null) {
+            Element previousValueEl = addElement(root, "previousValue");
+            previousValueEl.appendChild(previousValue);
+        }
         return root;
     }
 }
