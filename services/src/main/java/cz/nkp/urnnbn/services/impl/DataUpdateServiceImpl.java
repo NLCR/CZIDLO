@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,14 +28,14 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         super(conn);
     }
 
-    public void updateDigRepIdentifier(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigitalRepresentationException, IdentifierConflictException {
+    public void updateDigRepIdentifier(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigRepException, IdentifierConflictException {
         try {
             factory.digRepIdDao().updateDigRepIdValue(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigitalRepresentationException(id.getDigRepId());
+                throw new UnknownDigRepException(id.getDigRepId());
             } else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownRegistrarException(id.getRegistrarId());
             } else {

@@ -6,11 +6,12 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
+import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.services.DataImportService;
-import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
-import java.util.logging.Logger;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 
 /**
  *
@@ -18,7 +19,6 @@ import java.util.logging.Logger;
  */
 class DigitalInstanceAdder extends BusinessServiceImpl {
 
-    private static final Logger logger = Logger.getLogger(DataImportService.class.getName());
     private final DigitalInstance instance;
 
     DigitalInstanceAdder(DAOFactory factory, DigitalInstance instance) {
@@ -26,16 +26,19 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
         this.instance = instance;
     }
 
-    DigitalInstance run() throws DatabaseException, ImportFailedException {
+    DigitalInstance run() throws DatabaseException, UnknownDigiLibException, UnknownDigRepException {
         try {
-            //long registrarId = registrarOfDigLibrary(instance.getDigRepId());
-            //to je spatne. registrator muze byt jakykoliv
-            //checkLibraryBelongsToRegistrar(registrarId, instance.getDigRepId());
-            Long id = factory.digInstDao().insertDigInstance(instance);
-            instance.setId(id);
+            Long instanceId = factory.digInstDao().insertDigInstance(instance);
+            instance.setId(instanceId);
             return instance;
         } catch (RecordNotFoundException ex) {
-            throw new ImportFailedException(ex);
+            if (DigitalLibraryDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownDigiLibException(instance.getLibraryId());
+            } else if (DigitalRepresentationDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownDigRepException(instance.getDigRepId());
+            } else {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }

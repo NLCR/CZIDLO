@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.BusinessService;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
 import java.util.logging.Logger;
 
 /**
@@ -29,8 +30,12 @@ abstract class BusinessServiceImpl implements BusinessService {
         this.factory = factory;
     }
 
-    long registrarOfDigLibrary(long digRepId) throws DatabaseException, RecordNotFoundException {
-        DigitalLibrary lib = factory.digitalLibraryDao().getLibraryById(digRepId);
-        return lib.getRegistrarId();
+    long registrarOfDigLibrary(long libraryId) throws DatabaseException, UnknownDigiLibException {
+        try {
+            DigitalLibrary lib = factory.digitalLibraryDao().getLibraryById(libraryId);
+            return lib.getRegistrarId();
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownDigiLibException(libraryId);
+        }
     }
 }

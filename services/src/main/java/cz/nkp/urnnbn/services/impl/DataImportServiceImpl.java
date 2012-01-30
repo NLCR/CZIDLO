@@ -16,11 +16,11 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ImportFailedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigitalRepresentationException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -44,24 +44,24 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         return new RecordImporter(factory, data, userId).run();
     }
 
-    public DigitalInstance addDigitalInstance(DigitalInstance instance, long userId) throws DatabaseException, AccessException, ImportFailedException {
+    public DigitalInstance addDigitalInstance(DigitalInstance instance, long userId) throws AccessException, UnknownDigiLibException, UnknownDigRepException {
         try {
             long registrarId = registrarOfDigLibrary(instance.getLibraryId());
             authorization.checkAccessRights(registrarId, userId);
             return new DigitalInstanceAdder(factory, instance).run();
-        } catch (RecordNotFoundException ex) {
-            throw new ImportFailedException(ex);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    public void addNewDigRepId(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigitalRepresentationException, IdentifierConflictException {
+    public void addNewDigRepId(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigRepException, IdentifierConflictException {
         try {
             factory.digRepIdDao().insertDigRepId(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigitalRepresentationException(id.getDigRepId());
+                throw new UnknownDigRepException(id.getDigRepId());
             } else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownRegistrarException(id.getRegistrarId());
             } else {
