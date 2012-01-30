@@ -55,7 +55,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         } catch (RecordNotFoundException ex) { //urn:nb not in table urn:nbn
             try {
                 UrnNbn urn = factory.urnReservedDao().getUrn(sigla, documentCode);
-                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.BOOKED);
+                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.RESERVED);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 try {
                     UrnNbn urn = null;//TODO: ziskat z tabulkyy opustenych
