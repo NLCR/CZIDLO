@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
@@ -30,7 +29,6 @@ public interface DigitalInstanceDAO {
      * @return
      * @throws DatabaseException
      * @throws RecordNotFoundException if digital representation or digital library was not found
-     * @throws AlreadyPresentException 
      */
     public Long insertDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException;
 
