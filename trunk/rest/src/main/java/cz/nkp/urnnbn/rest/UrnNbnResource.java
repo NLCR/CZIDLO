@@ -20,25 +20,21 @@ import javax.ws.rs.Produces;
  *
  * @author Martin Řehánek
  */
+@Path("/urnnbn")
 public class UrnNbnResource extends Resource {
 
     @GET
     @Path("{urn}")
     @Produces("text/xml")
-    public String getUrnNbnXml(@PathParam("urn") String urnPar) {
+    public String getUrnNbnXml(@PathParam("urn") String urnStr) {
         try {
-            UrnNbn urnParsed = Parser.parseUrn(urnPar);
+            UrnNbn urnParsed = Parser.parseUrn(urnStr);
             Sigla sigla = Sigla.valueOf(urnParsed.getRegistrarCode());
             UrnNbnWithStatus urnWithStatus = dataAccessService().urnBySiglaAndDocumentCode(sigla, urnParsed.getDocumentCode());
-            return urnToXml(urnWithStatus);
+            return new UrnNbnBuilder(urnWithStatus).buildDocument().toXML();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
-    }
-
-    private String urnToXml(UrnNbnWithStatus urnWithStatus) {
-        UrnNbnBuilder builder = new UrnNbnBuilder(urnWithStatus);
-        return builder.buildDocument().toXML();
     }
 }
