@@ -15,8 +15,6 @@ import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
