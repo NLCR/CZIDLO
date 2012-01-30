@@ -27,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -96,11 +97,9 @@ public class DigitalInstancesResource extends Resource {
     }
 
     @POST
-    // @Consumes("application/xml")
     @Produces("application/xml")
-    public String addNewDigitalInstance(
-            @QueryParam(PARAM_LIBRARY_ID) String libraryIdStr,
-            String string) {
+    public Response addNewDigitalInstance(
+            @QueryParam(PARAM_LIBRARY_ID) String libraryIdStr, String urlStr) {
         //todo: autentizace
         try {
             long userId = 1;//TODO: zjistit id uzivatele z hlavicky
@@ -108,11 +107,12 @@ public class DigitalInstancesResource extends Resource {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
             long libraryId = Parser.parsePositiveLongQueryParam(libraryIdStr, PARAM_LIBRARY_ID);
-            URL url = Parser.parseUrlFromRequestBody(string, MAX_URL_LENGTH);
+            URL url = Parser.parseUrlFromRequestBody(urlStr, MAX_URL_LENGTH);
             DigitalInstance instance = newDigitalInstance(libraryId, url);
             instance = dataImportService().addDigitalInstance(instance, userId);
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libraryId);
-            return builder.buildDocument().toXML();
+            String responseXml = builder.buildDocument().toXML();
+            return Response.created(null).entity(responseXml).build();
         } catch (UnknownDigiLibException ex) {
             throw new UnknownDigitalLibraryException(ex.getMessage());
         } catch (UnknownDigRepException ex) {
@@ -121,12 +121,10 @@ public class DigitalInstancesResource extends Resource {
             throw new InternalException(ex);
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (RuntimeException e) {
-            if (e instanceof WebApplicationException) {
-                throw e;
-            } else {
-                throw new InternalException(e);
-            }
+            throw new InternalException(e);
         }
     }
 
