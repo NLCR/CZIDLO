@@ -7,11 +7,14 @@ package cz.nkp.urnnbn.rest;
 import cz.nkp.urnnbn.core.DigRepIdType;
 import cz.nkp.urnnbn.core.Sigla;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdType;
 import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidSiglaException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,6 +100,34 @@ public class Parser {
             return false;
         } else {
             throw new InvalidQueryParamValueException(paramName, stringValue, "not boolean value '" + stringValue + "'");
+        }
+    }
+
+    static long parsePositiveLongQueryParam(String stringValue, String paramName) {
+        try {
+            Long value = Long.valueOf(stringValue);
+            if (value <= 0) {
+                throw new RuntimeException(stringValue + " is not positive number");
+            }
+            return value;
+        } catch (RuntimeException e) {
+            throw new InvalidQueryParamValueException(paramName, stringValue, e.getMessage());
+        }
+    }
+
+    static URL parseUrlFromRequestBody(String string, int maxUrlLength) {
+        try {
+            if (string != null && string.length() > maxUrlLength) {
+                throw new InvalidDataException("url '" + string + "' too long. Maximal length is " + maxUrlLength);
+            }
+            URL result = new URL(string);
+            String protocol = result.getProtocol();
+            if (!"http".equals(protocol)) {
+                throw new InvalidDataException("invalid protocol '" + protocol + "'");
+            }
+            return result;
+        } catch (MalformedURLException ex) {
+            throw new InvalidDataException("request body doesn't contain valid url: " + ex.toString());
         }
     }
 }
