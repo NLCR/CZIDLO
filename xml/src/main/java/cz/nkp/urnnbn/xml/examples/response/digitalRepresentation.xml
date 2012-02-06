@@ -1,11 +1,13 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <r:digitalRepresentation xmlns:r="http://resolver.nkp.cz/v2/">
     <r:id type="INTERNAL">41</r:id>
     <r:id type="URN:NBN">urn:nbn:cz:boa001-000001</r:id>
-    <r:registrarUniqueIdentifiers>
+    <r:registrarScopeIdentifiers>
         <r:id type="OAI">123</r:id>
-    </r:registrarUniqueIdentifiers>
+        <r:id type="sigla">000123456</r:id>
+        <r:id type="k4_pid">uuid:ae876087-435d-11dd-b505-00145e5790ea</r:id>
+        <r:id type="signatura">Moll-RKP-0090.900,5</r:id>
+    </r:registrarScopeIdentifiers>
     <r:created>2011-12-18T19:07:23.909+01:00</r:created>
     <r:financed>norské fondy</r:financed>
     <r:format>djvu</r:format>
