@@ -7,7 +7,7 @@ Stále se ale nejedná o úplně finální verzi.
 Níže jsou popsány některé operace a příklady vstupních a výstupních dat. 
  * Vstupní data v xml jsou zejména u importu záznamů. Takové xml musí být validní podle xml schéma, které je dostupné zatím zde: 
 http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/rest/src/main/resources/import.xsd
- * Druhým případem, kdy je vstupem xml je vkládání ditigálních instancí. Je dost možné, že zde budou parametry předávány je jako http parametry v těle requestu.
+ * Druhým případem, kdy je vstupem xml je vkládání ditigálních instancí. Xml bude vypadat tak, jak je v ukázce. elementy url a archiverId budou povinné, elementy format a accessibility volitelné.
 
 = Záznam registrátorů =
 == Request ==
