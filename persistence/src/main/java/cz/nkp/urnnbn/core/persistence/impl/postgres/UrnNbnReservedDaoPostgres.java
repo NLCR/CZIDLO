@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -65,15 +65,15 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
     }
 
     @Override
-    public UrnNbn getUrn(Sigla sigla, String documentCode) throws DatabaseException, RecordNotFoundException {
+    public UrnNbn getUrn(RegistrarCode code, String documentCode) throws DatabaseException, RecordNotFoundException {
         StatementWrapper wrapper = new SelectAllAttrsByStringAndStringAttrs(TABLE_NAME,
-                ATTR_REGISTRAR_CODE, sigla.toString(),
+                ATTR_REGISTRAR_CODE, code.toString(),
                 ATTR_DOCUMENT_CODE, documentCode);
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnReservedRT());
         try {
             return (UrnNbn) runInTransaction(operation);
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "No such booked urn:nbn with registrar code {0} and document code {1}", new Object[]{sigla.toString(), documentCode});
+            logger.log(Level.SEVERE, "No such booked urn:nbn with registrar code {0} and document code {1}", new Object[]{code.toString(), documentCode});
             throw (RecordNotFoundException) e;
         } catch (PersistenceException e) {
             //should never happen
@@ -87,7 +87,6 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
     @Override
     public List<UrnNbn> getUrnNbnList(long registrarId) throws DatabaseException, RecordNotFoundException {
         StatementWrapper wrapper = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_REGISTRAR_ID, registrarId);
-        //         new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_REGISTRAR_ID, sigla.toString());
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnReservedRT());
         try {
             return (List<UrnNbn>) runInTransaction(operation);

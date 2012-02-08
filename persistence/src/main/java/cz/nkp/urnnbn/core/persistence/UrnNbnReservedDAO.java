@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -25,7 +25,7 @@ public interface UrnNbnReservedDAO {
 
     public void insertUrnNbn(UrnNbn urn, long registrarId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
-    public UrnNbn getUrn(Sigla sigla, String documentCode) throws DatabaseException, RecordNotFoundException;
+    public UrnNbn getUrn(RegistrarCode code, String documentCode) throws DatabaseException, RecordNotFoundException;
 
     public void deleteUrn(UrnNbn urn) throws DatabaseException, RecordNotFoundException;
 

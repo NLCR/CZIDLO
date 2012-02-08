@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -72,7 +72,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         //fetch
-        UrnNbn fetched = urnBookedDao.getUrn(Sigla.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
+        UrnNbn fetched = urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
         assertEquals(fetched.getRegistrarCode(), inserted.getRegistrarCode());
         assertEquals(fetched.getDocumentCode(), inserted.getDocumentCode());
         assertNotNull(fetched.getCreated());
@@ -84,7 +84,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         try {
-            urnBookedDao.getUrn(Sigla.valueOf("aaa000"), inserted.getDocumentCode());
+            urnBookedDao.getUrn(RegistrarCode.valueOf("aaa000"), inserted.getDocumentCode());
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -97,7 +97,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         try {
-            urnBookedDao.getUrn(Sigla.valueOf(inserted.getRegistrarCode()), "000005");
+            urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), "000005");
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -132,7 +132,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         urnBookedDao.deleteUrn(inserted);
         //fetch
         try {
-            urnBookedDao.getUrn(Sigla.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
+            urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
             fail();
         } catch (RecordNotFoundException e) {
             //ok
