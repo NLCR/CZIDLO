@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest.exceptions;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class NotDefinedException extends RestException {
 
-    public NotDefinedException(DigRepIdType idType) {
+    public NotDefinedException(DigDocIdType idType) {
         super(Status.NOT_FOUND, "NOT_DEFINED", "No value defined for identifier of type '" + idType.toString() + "'");
     }
 }

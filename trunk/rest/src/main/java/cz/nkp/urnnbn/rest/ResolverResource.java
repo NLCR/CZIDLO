@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
@@ -33,11 +33,11 @@ public class ResolverResource extends Resource {
     public Resource getDigitalRepresentationResource(@PathParam("urn") String urnPar) {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
-            Sigla sigla = Sigla.valueOf(urnParsed.getRegistrarCode());
-            UrnNbnWithStatus fetched = dataAccessService().urnBySiglaAndDocumentCode(sigla, urnParsed.getDocumentCode());
+            RegistrarCode sigla = RegistrarCode.valueOf(urnParsed.getRegistrarCode());
+            UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(sigla, urnParsed.getDocumentCode());
             switch (fetched.getStatus()) {
                 case ACTIVE:
-                    DigitalRepresentation rep = dataAccessService().digRepByInternalId(fetched.getUrn().getDigRepId());
+                    DigitalDocument rep = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
                     if (rep == null) {
                         throw new UnknownDigitalRepresentationException(fetched.getUrn());
                     }

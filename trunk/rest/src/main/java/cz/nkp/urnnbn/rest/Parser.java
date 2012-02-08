@@ -4,14 +4,14 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdType;
 import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidSiglaException;
+import cz.nkp.urnnbn.rest.exceptions.InvalidRegistrarCodeException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,9 +35,9 @@ public class Parser {
         }
     }
 
-    static DigRepIdType parseDigRepIdType(String idTypeStr) {
+    static DigDocIdType parseDigRepIdType(String idTypeStr) {
         try {
-            return DigRepIdType.valueOf(idTypeStr);
+            return DigDocIdType.valueOf(idTypeStr);
         } catch (RuntimeException e) {
             throw new InvalidDigRepIdType(idTypeStr, e.getMessage());
         }
@@ -52,11 +52,11 @@ public class Parser {
         }
     }
 
-    static Sigla parseSigla(String siglaStr) {
+    static RegistrarCode parseSigla(String siglaStr) {
         try {
-            return Sigla.valueOf(siglaStr);
+            return RegistrarCode.valueOf(siglaStr);
         } catch (RuntimeException e) {
-            throw new InvalidSiglaException(siglaStr, e.getMessage());
+            throw new InvalidRegistrarCodeException(siglaStr, e.getMessage());
         }
     }
 

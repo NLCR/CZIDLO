@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest.exceptions;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import javax.ws.rs.core.Response.Status;
 
@@ -26,7 +26,7 @@ public class UnknownDigitalRepresentationException extends RestException {
                 "There is no digital representation with id: '" + digRepId + "'");
     }
 
-    public UnknownDigitalRepresentationException(String sigla, DigRepIdType idType, String idValue) {
+    public UnknownDigitalRepresentationException(String sigla, DigDocIdType idType, String idValue) {
         super(Status.NOT_FOUND, errorCode,
                 "Registrar with sigla " + sigla
                 + " doesn't register digital representation with identifier of type '" + idType.toString()
