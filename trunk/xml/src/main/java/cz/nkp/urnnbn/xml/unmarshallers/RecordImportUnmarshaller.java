@@ -188,7 +188,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * 
      * @return DigitalDocument object, never null
      */
-    public DigitalDocument getDigitalRepresentation() {
+    public DigitalDocument getDigitalDocument() {
         DigitalDocument digRep = new DigitalDocument();
         digRep.setFinancedFrom(elementContentOrNull("financed", digRepEl));
         digRep.setExtent(elementContentOrNull("extent", digRepEl));
