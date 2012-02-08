@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.rest.exceptions.RestException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
@@ -130,7 +130,7 @@ public class DigitalDocumentIdentifiersResource extends Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            throw new InvalidDigRepIdentifier(ex.getMessage());
+            throw new InvalidDigDocIdentifier(ex.getMessage());
         }
     }
 
@@ -157,7 +157,7 @@ public class DigitalDocumentIdentifiersResource extends Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            throw new InvalidDigRepIdentifier(ex.getMessage());
+            throw new InvalidDigDocIdentifier(ex.getMessage());
         }
     }
 

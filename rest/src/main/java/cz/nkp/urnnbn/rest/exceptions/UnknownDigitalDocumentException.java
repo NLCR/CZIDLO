@@ -14,16 +14,16 @@ import javax.ws.rs.core.Response.Status;
  */
 public class UnknownDigitalDocumentException extends RestException {
 
-    private static final String errorCode = "UNKNOWN_DIGITAL_REPRESENTATION";
+    private static final String errorCode = "UNKNOWN_DIGITAL_DOCUMENT";
 
     public UnknownDigitalDocumentException(UrnNbn urn) {
         super(Status.NOT_FOUND, errorCode,
-                "There is no digital representation with urn '" + urn + "'");
+                "There is no digital document with urn '" + urn + "'");
     }
 
     public UnknownDigitalDocumentException(long digRepId) {
         super(Status.NOT_FOUND, errorCode,
-                "There is no digital representation with id: '" + digRepId + "'");
+                "There is no digital document with id '" + digRepId + "'");
     }
 
     public UnknownDigitalDocumentException(String sigla, DigDocIdType idType, String idValue) {
