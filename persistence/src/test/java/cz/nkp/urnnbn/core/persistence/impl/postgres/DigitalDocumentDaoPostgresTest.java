@@ -35,7 +35,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
-     * Test of insertRepresentation method, of class DigitalRepresentationDaoPostgres.
+     * Test of insertDocument method, of class DigitalRepresentationDaoPostgres.
      */
     public void testInsertRepresentation_ok() throws Exception {
         IntelectualEntity entity = entityPersisted();
@@ -45,7 +45,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(registrar.getId());
         rep.setArchiverId(archiver.getId());
-        representationDao.insertRepresentation(rep);
+        representationDao.insertDocument(rep);
     }
     
     public void testInsertRepresentation_ok_sameArchiverAndRegistrar() throws Exception {
@@ -55,7 +55,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(registrar.getId());
         rep.setArchiverId(registrar.getId());
-        representationDao.insertRepresentation(rep);
+        representationDao.insertDocument(rep);
     }
     
     public void testInsertRepresentation_invalidRegistrar() throws Exception {
@@ -66,7 +66,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         rep.setRegistrarId(ILLEGAL_ID);
         rep.setArchiverId(archiver.getId());
         try {
-            representationDao.insertRepresentation(rep);
+            representationDao.insertDocument(rep);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -81,7 +81,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         rep.setRegistrarId(registrar.getId());
         rep.setArchiverId(ILLEGAL_ID);
         try {
-            representationDao.insertRepresentation(rep);
+            representationDao.insertDocument(rep);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -96,7 +96,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         rep.setArchiverId(archiver.getId());
         rep.setRegistrarId(registrar.getId());
         try {
-            representationDao.insertRepresentation(rep);
+            representationDao.insertDocument(rep);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -104,19 +104,19 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
-     * Test of getRepresentationByDbId method, of class DigitalRepresentationDaoPostgres.
+     * Test of getDocumentByDbId method, of class DigitalRepresentationDaoPostgres.
      */
     public void testGetRepresentationByDbId() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
-        DigitalDocument fetched = representationDao.getRepresentationByDbId(inserted.getId());
+        DigitalDocument fetched = representationDao.getDocumentByDbId(inserted.getId());
         assertEquals(inserted, fetched);
     }
     
     public void testGetRepresentationByDbId_unknownId() throws Exception {
         try {
-            representationDao.getRepresentationByDbId(ILLEGAL_ID);
+            representationDao.getDocumentByDbId(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException ex) {
             //ok
@@ -179,13 +179,13 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
 //        clone.setFormat("djvu");
 //        clone.setAccessibility("toilet reading only");
 //        representationDao.updateRepresentation(clone);
-//        DigitalDocument fetched = representationDao.getRepresentationByDbId(inserted.getId());
+//        DigitalDocument fetched = representationDao.getDocumentByDbId(inserted.getId());
 //        assertEquals(clone, fetched);
 //        assertFalse(fetched.equals(inserted));
 //    }
 //
 //    /**
-//     * Test of deleteRepresentation method, of class DigitalRepresentationDaoPostgres.
+//     * Test of deleteDocument method, of class DigitalRepresentationDaoPostgres.
 //     */
 //    public void testDeleteRepresentation() throws Exception {
 //        //create registrar with urn

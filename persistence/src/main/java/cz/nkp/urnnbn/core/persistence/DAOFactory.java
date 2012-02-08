@@ -116,7 +116,7 @@ public class DAOFactory {
         return intEntIdDao;
     }
 
-    public DigitalDocumentDAO representationDao() {
+    public DigitalDocumentDAO documentDao() {
         if (representationDao == null) {
             if (postgres()) {
                 representationDao = new DigitalDocumentDaoPostgres(connector);

@@ -49,7 +49,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public Long insertRepresentation(final DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
+    public Long insertDocument(final DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
         //TODO: melo by byt vsechno v transakci
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, representation.getRegistrarId());
         checkRecordExists(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, representation.getArchiverId());
@@ -86,7 +86,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public DigitalDocument getRepresentationByDbId(long dbId) throws DatabaseException, RecordNotFoundException {
+    public DigitalDocument getDocumentByDbId(long dbId) throws DatabaseException, RecordNotFoundException {
         return (DigitalDocument) getRecordById(TABLE_NAME, ATTR_ID, dbId, new DigitalDocumentRT());
     }
 
@@ -138,7 +138,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public void deleteRepresentation(long digRepDbId) throws DatabaseException, RecordNotFoundException {
+    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException {
         //TODO: test
         //todo: nesmi se smazat urn
         deleteRecordsById(TABLE_NAME, ATTR_ID, digRepDbId, true);
