@@ -10,7 +10,7 @@ package cz.nkp.urnnbn.core.dto;
  */
 public class Registrar extends Archiver {
 
-    private String urnInstitutionCode;
+    private String code;
 
     public Registrar() {
         super();
@@ -18,15 +18,15 @@ public class Registrar extends Archiver {
 
     public Registrar(Registrar original) {
         super(original);
-        urnInstitutionCode = original.getUrnInstitutionCode();
+        code = original.getCode();
     }
 
-    public String getUrnInstitutionCode() {
-        return urnInstitutionCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setUrnInstitutionCode(String urnInstitutionCode) {
-        this.urnInstitutionCode = urnInstitutionCode.toLowerCase();
+    public void setCode(String code) {
+        this.code = code.toLowerCase();
     }
 
     public void loadDataFromArchiver(Archiver archiver) {
@@ -53,7 +53,7 @@ public class Registrar extends Archiver {
         if ((this.getDescription() == null) ? (other.getDescription() != null) : !this.getDescription().equals(other.getDescription())) {
             return false;
         }
-        if ((this.urnInstitutionCode == null) ? (other.urnInstitutionCode != null) : !this.urnInstitutionCode.equals(other.urnInstitutionCode)) {
+        if ((this.code == null) ? (other.code != null) : !this.code.equals(other.code)) {
             return false;
         }
         return true;
@@ -65,7 +65,7 @@ public class Registrar extends Archiver {
         hash = 79 * hash + (int) (this.getId() ^ (this.getId() >>> 32));
         hash = 79 * hash + (this.getName() != null ? this.getName().hashCode() : 0);
         hash = 79 * hash + (this.getDescription() != null ? this.getDescription().hashCode() : 0);
-        hash = 79 * hash + (this.urnInstitutionCode != null ? this.urnInstitutionCode.hashCode() : 0);
+        hash = 79 * hash + (this.code != null ? this.code.hashCode() : 0);
         return hash;
     }
 }
