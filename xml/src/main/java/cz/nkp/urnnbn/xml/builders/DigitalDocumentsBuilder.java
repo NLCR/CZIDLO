@@ -10,11 +10,11 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationsBuilder extends XmlBuilder {
+public class DigitalDocumentsBuilder extends XmlBuilder {
 
     private final int digRepCount;
 
-    public DigitalRepresentationsBuilder(int digRepCount) {
+    public DigitalDocumentsBuilder(int digRepCount) {
         this.digRepCount = digRepCount;
     }
 

@@ -13,17 +13,17 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationBuilder extends XmlBuilder {
+public class DigitalDocumentBuilder extends XmlBuilder {
 
     private final DigitalRepresentation rep;
     private final UrnNbn urn;
-    private final DigitalRepresentationIdentifiersBuilder identifiersBuilder;
+    private final DigitalDocumentIdentifiersBuilder identifiersBuilder;
     private final List<DigitalInstanceBuilder> instanceBuilderList;
     private final RegistrarBuilder registrarBuilder;
     private final ArchiverBuilder archiverBuilder;
     private final IntelectualEntityBuilder entityBuilder;
 
-    public DigitalRepresentationBuilder(DigitalRepresentation rep, UrnNbn urn, DigitalRepresentationIdentifiersBuilder identifiersBuilder, List<DigitalInstanceBuilder> instanceBuilders, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
+    public DigitalDocumentBuilder(DigitalRepresentation rep, UrnNbn urn, DigitalDocumentIdentifiersBuilder identifiersBuilder, List<DigitalInstanceBuilder> instanceBuilders, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
         this.rep = rep;
         this.urn = urn;
         this.identifiersBuilder = identifiersBuilder;
