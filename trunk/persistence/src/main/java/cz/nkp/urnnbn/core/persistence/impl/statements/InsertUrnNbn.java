@@ -38,7 +38,7 @@ public class InsertUrnNbn implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, urn.getDigRepId());
+            st.setLong(1, urn.getDigDocId());
             st.setString(2, urn.getRegistrarCode());
             st.setString(3, urn.getDocumentCode());
             Timestamp now = DateTimeUtils.nowTs();

@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.UrnNbnSearch;
+import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
@@ -71,10 +71,10 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     public void testInsertRegistrarUrnCodeCollision() throws Exception {
         Registrar first = builder.registrarWithoutId();
         String code = "clsn";
-        first.setUrnInstitutionCode(code);
+        first.setCode(code);
         registrarDao.insertRegistrar(first);
         Registrar second = builder.registrarWithoutId();
-        second.setUrnInstitutionCode(code);
+        second.setCode(code);
         try {
             registrarDao.insertRegistrar(second);
             fail();
@@ -86,7 +86,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     public void testGetRegistrarBySigla() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
         registrarDao.insertRegistrar(inserted);
-        Sigla sigla = Sigla.valueOf(inserted.getUrnInstitutionCode());
+        Sigla sigla = Sigla.valueOf(inserted.getCode());
         Registrar fetched = registrarDao.getRegistrarBySigla(sigla);
         assertEquals(fetched, inserted);
     }
@@ -192,18 +192,18 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     public void testUpdateRegistrar_tryUpdatingUrnRegistrarCode() throws Exception {
         //insert first registrar
         Registrar first = builder.registrarWithoutId();
-        first.setUrnInstitutionCode("boa001");
+        first.setCode("boa001");
         registrarDao.insertRegistrar(first);
         //insert second registrar
         Registrar second = builder.registrarWithoutId();
-        second.setUrnInstitutionCode("boa002");
+        second.setCode("boa002");
         registrarDao.insertRegistrar(second);
         //update second registrar to cause collision
-        second.setUrnInstitutionCode("boa001");
+        second.setCode("boa001");
         registrarDao.updateRegistrar(second);
         //fetch second registrar that has been updated
         Registrar fetchedSecond = registrarDao.getRegistrarById(second.getId());
-        assertEquals("boa002", fetchedSecond.getUrnInstitutionCode());
+        assertEquals("boa002", fetchedSecond.getCode());
     }
 
     public void testUpdateRegistrar_unknownRegistrarId() throws Exception {
@@ -283,7 +283,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         lib.setRegistrarId(id);
         Long libId = libraryDao.insertLibrary(lib);
         //add urnNbnBooking
-        UrnNbnSearch search = new UrnNbnSearch();
+        UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
         urnSearchDao.insertUrnNbnSearch(search);
 

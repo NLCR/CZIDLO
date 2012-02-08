@@ -36,15 +36,15 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
      */
     public void testInsertUrnNbn() throws Exception {
         Registrar registrar = registrarPersisted();
-        UrnNbn urn = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn urn = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(urn, registrar.getId());
     }
 
     public void testInsertUrnNbn_alreadyExists() throws Exception {
         Registrar registrar = registrarPersisted();
-        UrnNbn first = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn first = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(first, registrar.getId());
-        UrnNbn second = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn second = new UrnNbn(registrar.getCode(), "000004", null);
         try {
             urnBookedDao.insertUrnNbn(second, registrar.getId());
             fail();
@@ -69,7 +69,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testGetUrn() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbn inserted = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         //fetch
         UrnNbn fetched = urnBookedDao.getUrn(Sigla.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
@@ -81,7 +81,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testGetUrn_unknownSearch() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbn inserted = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         try {
             urnBookedDao.getUrn(Sigla.valueOf("aaa000"), inserted.getDocumentCode());
@@ -94,7 +94,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testGetUrn_unknownDocumentCode() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbn inserted = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         try {
             urnBookedDao.getUrn(Sigla.valueOf(inserted.getRegistrarCode()), "000005");
@@ -107,11 +107,11 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testGetUrnNbnList() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbn first = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn first = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(first, registrar.getId());
-        UrnNbn second = new UrnNbn(registrar.getUrnInstitutionCode(), "000007", null);
+        UrnNbn second = new UrnNbn(registrar.getCode(), "000007", null);
         urnBookedDao.insertUrnNbn(second, registrar.getId());
-        UrnNbn third = new UrnNbn(registrar.getUrnInstitutionCode(), "00z007", null);
+        UrnNbn third = new UrnNbn(registrar.getCode(), "00z007", null);
         urnBookedDao.insertUrnNbn(third, registrar.getId());
         List<UrnNbn> urnNbnList = urnBookedDao.getUrnNbnList(registrar.getId());
         assertEquals(3, urnNbnList.size());
@@ -126,7 +126,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testDeleteUrn() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbn inserted = new UrnNbn(registrar.getUrnInstitutionCode(), "000004", null);
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         //delete
         urnBookedDao.deleteUrn(inserted);

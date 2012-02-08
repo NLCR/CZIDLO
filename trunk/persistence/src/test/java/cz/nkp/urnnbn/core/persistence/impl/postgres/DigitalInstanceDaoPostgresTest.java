@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
@@ -37,9 +37,9 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDigInstance() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = representationPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument rep = representationPersisted(lib.getRegistrarId(), entity.getId());
         DigitalInstance instance = new DigitalInstance();
-        instance.setDigRepId(rep.getId());
+        instance.setDigDocId(rep.getId());
         instance.setLibraryId(lib.getId());
         instance.setUrl("http://something");
         digInstDao.insertDigInstance(instance);
@@ -47,9 +47,9 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
 
     public void testInsertDigInstance_unknownLibrary() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = representationPersisted(registrarPersisted().getId(), entity.getId());
+        DigitalDocument rep = representationPersisted(registrarPersisted().getId(), entity.getId());
         DigitalInstance instance = new DigitalInstance();
-        instance.setDigRepId(rep.getId());
+        instance.setDigDocId(rep.getId());
         instance.setLibraryId(ILLEGAL_ID);
         instance.setUrl("http://something");
         try {
@@ -63,7 +63,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDigInstance_unknownDigRep() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         DigitalInstance instance = new DigitalInstance();
-        instance.setDigRepId(ILLEGAL_ID);
+        instance.setDigDocId(ILLEGAL_ID);
         instance.setLibraryId(lib.getId());
         instance.setUrl("http://something");
         try {
@@ -77,21 +77,21 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDigInstance_twoInstancesForSameLibraryAndDigRep() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = representationPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument rep = representationPersisted(lib.getRegistrarId(), entity.getId());
         //first instance
         DigitalInstance first = new DigitalInstance();
-        first.setDigRepId(rep.getId());
+        first.setDigDocId(rep.getId());
         first.setLibraryId(lib.getId());
         first.setUrl("http://something");
         digInstDao.insertDigInstance(first);
         //second
         DigitalInstance second = new DigitalInstance();
-        second.setDigRepId(rep.getId());
+        second.setDigDocId(rep.getId());
         second.setLibraryId(lib.getId());
         second.setUrl("http://somethingElse");
         digInstDao.insertDigInstance(second);
         //check that have been inserted
-        List<DigitalInstance> instances = digInstDao.getDigitalInstancesOfDigRep(rep.getId());
+        List<DigitalInstance> instances = digInstDao.getDigitalInstancesOfDigDoc(rep.getId());
         assertTrue(instances.contains(first));
         assertTrue(instances.contains(second));
     }
@@ -102,10 +102,10 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testGetDigInstanceById() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = representationPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument rep = representationPersisted(lib.getRegistrarId(), entity.getId());
         //insert
         DigitalInstance inserted = new DigitalInstance();
-        inserted.setDigRepId(rep.getId());
+        inserted.setDigDocId(rep.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
         digInstDao.insertDigInstance(inserted);
@@ -128,7 +128,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
 
     public void testGetDigitalInstancesOfDigRep_unknownId() throws Exception {
         try {
-            digInstDao.getDigitalInstancesOfDigRep(ILLEGAL_ID);
+            digInstDao.getDigitalInstancesOfDigDoc(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -141,10 +141,10 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testDeleteDigInstance() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = representationPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument rep = representationPersisted(lib.getRegistrarId(), entity.getId());
         //insert
         DigitalInstance inserted = new DigitalInstance();
-        inserted.setDigRepId(rep.getId());
+        inserted.setDigDocId(rep.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
         digInstDao.insertDigInstance(inserted);

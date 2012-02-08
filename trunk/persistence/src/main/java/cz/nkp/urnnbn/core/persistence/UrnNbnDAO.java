@@ -16,7 +16,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 public interface UrnNbnDAO {
 
     public String TABLE_NAME = "UrnNbn";
-    public String ATTR_DIG_REP_ID = "digitalRepresentationId";
+    public String ATTR_DIG_REP_ID = "digitalDocumentId";
     public String ATTR_REGISTRAR_CODE = "registrarCode";
     public String ATTR_DOCUMENT_CODE = "documentCode";
     public String ATTR_CREATED = "created";

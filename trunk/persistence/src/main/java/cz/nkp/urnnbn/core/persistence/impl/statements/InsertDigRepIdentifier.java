@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
@@ -17,26 +17,26 @@ import java.sql.SQLException;
  */
 public class InsertDigRepIdentifier implements StatementWrapper {
 
-    private final DigRepIdentifier identifier;
+    private final DigDocIdentifier identifier;
 
-    public InsertDigRepIdentifier(DigRepIdentifier identifier) {
+    public InsertDigRepIdentifier(DigDocIdentifier identifier) {
         this.identifier = identifier;
     }
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + DigRepIdentifierDAO.TABLE_NAME
-                + "(" + DigRepIdentifierDAO.ATTR_DIG_REP_ID
-                + "," + DigRepIdentifierDAO.ATTR_REG_ID
-                + "," + DigRepIdentifierDAO.ATTR_TYPE
-                + "," + DigRepIdentifierDAO.ATTR_VALUE
+        return "INSERT into " + DigDocIdentifierDAO.TABLE_NAME
+                + "(" + DigDocIdentifierDAO.ATTR_DIG_REP_ID
+                + "," + DigDocIdentifierDAO.ATTR_REG_ID
+                + "," + DigDocIdentifierDAO.ATTR_TYPE
+                + "," + DigDocIdentifierDAO.ATTR_VALUE
                 + ") values(?,?,?,?)";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, identifier.getDigRepId());
+            st.setLong(1, identifier.getDigDocId());
             st.setLong(2, identifier.getRegistrarId());
             st.setString(3, identifier.getType().toString());
             st.setString(4, identifier.getValue());

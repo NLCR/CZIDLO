@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -15,35 +15,35 @@ import java.util.List;
  *
  * @author Martin Řehánek
  */
-public interface DigRepIdentifierDAO {
+public interface DigDocIdentifierDAO {
 
-    public String TABLE_NAME = "drIdentifier";
+    public String TABLE_NAME = "ddIdentifier";
     public String ATTR_REG_ID = "registrarId";
+    public String ATTR_DIG_REP_ID = "digitalDocumentId";
     public String ATTR_TYPE = "type";
-    public String ATTR_DIG_REP_ID = "digitalRepresentationId";
     public String ATTR_VALUE = "idValue";
 
-    public void insertDigRepId(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
+    public void insertDigDocId(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
-    public List<DigRepIdentifier> getIdList(long digRepDbId) throws DatabaseException, RecordNotFoundException;
+    public List<DigDocIdentifier> getIdList(long digDocDbId) throws DatabaseException, RecordNotFoundException;
 
-    public void updateDigRepIdValue(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
+    public void updateDigRepIdValue(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
     /**
      * 
-     * @param digRepDbId
+     * @param digDocDbId
      * @param idType
      * @throws DatabaseException
      * @throws RecordNotFoundException if digital representation with id digRepDbId doesn't exist 
      * or the identifier for digital representation with id digRepDbId and type idType doesn't exist
      */
-    public void deleteDigRepIdentifier(long digRepDbId, DigRepIdType idType) throws DatabaseException, RecordNotFoundException;
+    public void deleteDigDocIdentifier(long digDocDbId, DigDocIdType idType) throws DatabaseException, RecordNotFoundException;
 
     /**
      * 
-     * @param digRepDbId
+     * @param digDocDbId
      * @throws DatabaseException
      * @throws RecordNotFoundException if digital representation with id digRepDbId doesn't exist
      */
-    public void deleteAllIdentifiersOfDigRep(long digRepDbId) throws DatabaseException, RecordNotFoundException;
+    public void deleteAllIdentifiersOfDigDoc(long digDocDbId) throws DatabaseException, RecordNotFoundException;
 }

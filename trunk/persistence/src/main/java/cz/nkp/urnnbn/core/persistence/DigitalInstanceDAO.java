@@ -18,9 +18,11 @@ public interface DigitalInstanceDAO {
     public String TABLE_NAME = "DigitalInstance";
     public String SEQ_NAME = "seq_DigitalInstance";
     public String ATTR_ID = "id";
-    public String ATTR_DIG_REP_ID = "digitalRepresentationId";
+    public String ATTR_DIG_REP_ID = "digitalDocumentId";
     public String ATTR_LIB_ID = "digitalLibraryId";
     public String ATTR_URL = "url";
+    public String ATTR_FORMAT = "format";
+    public String ATTR_ACCESS = "accessibility";
     public String ATTR_PUBLISHED = "published";
 
     /**
@@ -34,7 +36,7 @@ public interface DigitalInstanceDAO {
 
     public DigitalInstance getDigInstanceById(long id) throws DatabaseException, RecordNotFoundException;
 
-    public List<DigitalInstance> getDigitalInstancesOfDigRep(long digRepId) throws DatabaseException, RecordNotFoundException;
+    public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digDocId) throws DatabaseException, RecordNotFoundException;
 
     public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException;
 

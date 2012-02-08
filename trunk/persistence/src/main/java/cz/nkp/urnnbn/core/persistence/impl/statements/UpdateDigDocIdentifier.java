@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
@@ -15,21 +15,21 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class UpdateDigRepIdentifier implements StatementWrapper {
+public class UpdateDigDocIdentifier implements StatementWrapper {
 
-    private final DigRepIdentifier id;
+    private final DigDocIdentifier id;
 
-    public UpdateDigRepIdentifier(DigRepIdentifier id) {
+    public UpdateDigDocIdentifier(DigDocIdentifier id) {
         this.id = id;
     }
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + DigRepIdentifierDAO.TABLE_NAME + " SET "
-                + DigRepIdentifierDAO.ATTR_VALUE + "=?"
-                + " WHERE " + DigRepIdentifierDAO.ATTR_REG_ID + "=?"
-                + " AND " + DigRepIdentifierDAO.ATTR_DIG_REP_ID + "=?"
-                + " AND " + DigRepIdentifierDAO.ATTR_TYPE + "=?";
+        return "UPDATE " + DigDocIdentifierDAO.TABLE_NAME + " SET "
+                + DigDocIdentifierDAO.ATTR_VALUE + "=?"
+                + " WHERE " + DigDocIdentifierDAO.ATTR_REG_ID + "=?"
+                + " AND " + DigDocIdentifierDAO.ATTR_DIG_REP_ID + "=?"
+                + " AND " + DigDocIdentifierDAO.ATTR_TYPE + "=?";
     }
 
     @Override
@@ -37,7 +37,7 @@ public class UpdateDigRepIdentifier implements StatementWrapper {
         try {
             st.setString(1, id.getValue());
             st.setLong(2, id.getRegistrarId());
-            st.setLong(3, id.getDigRepId());
+            st.setLong(3, id.getDigDocId());
             st.setString(4, id.getType().toString());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu

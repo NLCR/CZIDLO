@@ -32,6 +32,7 @@ public class InsertDigitalInstance implements StatementWrapper {
                 + "," + DigitalInstanceDAO.ATTR_LIB_ID
                 + "," + DigitalInstanceDAO.ATTR_URL
                 + "," + DigitalInstanceDAO.ATTR_PUBLISHED
+                + "," + DigitalInstanceDAO.ATTR_ACCESS
                 + ") values(?,?,?,?,?)";
     }
 
@@ -39,10 +40,11 @@ public class InsertDigitalInstance implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, i.getId());
-            st.setLong(2, i.getDigRepId());
+            st.setLong(2, i.getDigDocId());
             st.setLong(3, i.getLibraryId());
             st.setString(4, i.getUrl());
             st.setTimestamp(5, DateTimeUtils.nowTs());
+            st.setString(6, i.getAccessibility());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

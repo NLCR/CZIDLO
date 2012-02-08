@@ -87,7 +87,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             return null;
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart param = new IdPart(ATTR_URN_INST_CODE, registrar.getUrnInstitutionCode());
+                IdPart param = new IdPart(ATTR_CODE, registrar.getCode());
                 throw new AlreadyPresentException(param);
             } else {
                 throw new DatabaseException(ex);
@@ -103,7 +103,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     private Registrar registrarBySigla(Sigla sigla) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_URN_INST_CODE, sigla.toString());
+        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_CODE, sigla.toString());
         DaoOperation operation = new SingleResultOperation(wrapper, new RegistrarRT());
         try {
             return (Registrar) runInTransaction(operation);

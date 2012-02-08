@@ -39,7 +39,7 @@ public class InsertDigInstance implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, instance.getId());
-            st.setLong(2, instance.getDigRepId());
+            st.setLong(2, instance.getDigDocId());
             st.setLong(3, instance.getLibraryId());
             st.setString(4, instance.getUrl());
             st.setTimestamp(5, DateTimeUtils.nowTs());

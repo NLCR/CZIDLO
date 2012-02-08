@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
@@ -43,7 +43,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 
     @Override
     public Long insertDigInstance(final DigitalInstance instance) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, instance.getDigRepId());
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, instance.getDigDocId());
         checkRecordExists(DigitalLibraryDAO.TABLE_NAME, DigitalLibraryDAO.ATTR_ID, instance.getLibraryId());
         DaoOperation operation = new DaoOperation() {
 
@@ -71,7 +71,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
             return null;
         } catch (SQLException ex) {
 //            if ("23505".equals(ex.getSQLState())) {
-//                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getDigRepId()));
+//                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getDigDocId()));
 //                IdPart digLibId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getLibraryId()));
 //                throw new AlreadyPresentException(new IdPart[]{digRepId, digLibId});
 //            } else {
@@ -86,8 +86,8 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     }
 
     @Override
-    public List<DigitalInstance> getDigitalInstancesOfDigRep(long digRepId) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, digRepId);
+    public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digRepId) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepId);
         try {
             StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_REP_ID, digRepId);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalInstanceRT());

@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.dto.UrnNbnSearch;
-import cz.nkp.urnnbn.core.persistence.UrnNbnSearchDAO;
+import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
+import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
@@ -17,17 +17,17 @@ import java.sql.SQLException;
  */
 public class InsertUrnNbnSearch implements StatementWrapper {
 
-    private final UrnNbnSearch search;
+    private final UrnNbnGenerator search;
 
-    public InsertUrnNbnSearch(UrnNbnSearch search) {
+    public InsertUrnNbnSearch(UrnNbnGenerator search) {
         this.search = search;
     }
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UrnNbnSearchDAO.TABLE_NAME
-                + "(" + UrnNbnSearchDAO.ATTR_REGISTRAR_ID
-                + "," + UrnNbnSearchDAO.ATTR_LAST_DOCUMENT_CODE
+        return "INSERT into " + UrnNbnGeneratorDAO.TABLE_NAME
+                + "(" + UrnNbnGeneratorDAO.ATTR_REGISTRAR_ID
+                + "," + UrnNbnGeneratorDAO.ATTR_LAST_DOCUMENT_CODE
                 + ") values(?,?)";
     }
 
@@ -35,7 +35,7 @@ public class InsertUrnNbnSearch implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, search.getRegistrarId());
-            st.setString(2, search.getLastFoundDocumentCode());
+            st.setString(2, search.getLastDocumentCode());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
