@@ -17,6 +17,7 @@ public class UrnNbn {
     //urn:nbn:cz:aba001-123456
     private static Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}|URN:NBN:CZ:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}");
     private final Long digDocId;
+    //TODO: tady rovnou nahradit instanci RegistrarCode
     private final String registrarCode;
     private final String documentCode;
     private final DateTime created;
