@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -31,7 +31,7 @@ public interface RegistrarDAO {
 
     public Registrar getRegistrarById(long id) throws DatabaseException, RecordNotFoundException;
 
-    public Registrar getRegistrarBySigla(Sigla code) throws DatabaseException, RecordNotFoundException;
+    public Registrar getRegistrarByCode(RegistrarCode code) throws DatabaseException, RecordNotFoundException;
 
     public List<Registrar> getAllRegistrars() throws DatabaseException;
 

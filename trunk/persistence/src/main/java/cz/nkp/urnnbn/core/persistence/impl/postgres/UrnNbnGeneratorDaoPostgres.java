@@ -64,7 +64,6 @@ public class UrnNbnGeneratorDaoPostgres extends AbstractDAO implements UrnNbnGen
     @Override
     public UrnNbnGenerator getSearchByRegistrarId(long registrarId) throws DatabaseException, RecordNotFoundException {
         StatementWrapper wrapper = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_REGISTRAR_ID, registrarId);
-        //new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_REGISTRAR_ID, sigla.toString());
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnGeneratorRT());
         try {
             return (UrnNbnGenerator) runInTransaction(operation);

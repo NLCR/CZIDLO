@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -96,20 +96,20 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     @Override
-    public Registrar getRegistrarBySigla(Sigla sigla) throws DatabaseException, RecordNotFoundException {
-        Registrar registrar = registrarBySigla(sigla);
+    public Registrar getRegistrarByCode(RegistrarCode code) throws DatabaseException, RecordNotFoundException {
+        Registrar registrar = registrarByCode(code);
         addDataFromArchiver(registrar);
         return registrar;
     }
 
-    private Registrar registrarBySigla(Sigla sigla) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_CODE, sigla.toString());
+    private Registrar registrarByCode(RegistrarCode code) throws DatabaseException, RecordNotFoundException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_CODE, code.toString());
         DaoOperation operation = new SingleResultOperation(wrapper, new RegistrarRT());
         try {
             return (Registrar) runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.SEVERE, "No such registrar with sigla {0}", sigla);
+                logger.log(Level.SEVERE, "No such registrar with code {0}", code);
                 throw (RecordNotFoundException) e;
             } else {
                 //should never happen

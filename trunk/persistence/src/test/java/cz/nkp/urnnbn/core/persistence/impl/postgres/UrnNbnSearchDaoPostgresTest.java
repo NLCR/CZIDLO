@@ -69,7 +69,7 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
     /**
      * Test of getSearchByRegistrarId method, of class UrnNbnBookingDaoPostgres.
      */
-    public void testGetSearchBySigla() throws Exception {
+    public void testGetSearchByCode() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbnGenerator search = new UrnNbnGenerator();
@@ -80,7 +80,7 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
         assertEquals(search, fetched);
     }
 
-    public void testGetSearchBySigla_unknownSigla() throws Exception {
+    public void testGetSearchByCode_unknownCode() throws Exception {
         //get
         try {
             urnSearchDao.getSearchByRegistrarId(ILLEGAL_ID);

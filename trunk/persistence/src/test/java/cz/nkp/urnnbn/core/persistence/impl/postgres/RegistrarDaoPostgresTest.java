@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -83,18 +83,18 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testGetRegistrarBySigla() throws Exception {
+    public void testGetRegistrarByCode() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
         registrarDao.insertRegistrar(inserted);
-        Sigla sigla = Sigla.valueOf(inserted.getCode());
-        Registrar fetched = registrarDao.getRegistrarBySigla(sigla);
+        RegistrarCode code = RegistrarCode.valueOf(inserted.getCode());
+        Registrar fetched = registrarDao.getRegistrarByCode(code);
         assertEquals(fetched, inserted);
     }
 
-    public void testGetRegistrarBySigla_unknownSigla() throws Exception {
+    public void testGetRegistrarByCode_unknownCode() throws Exception {
         try {
-            Sigla sigla = Sigla.valueOf("xxx123");
-            registrarDao.getRegistrarBySigla(sigla);
+            RegistrarCode code = RegistrarCode.valueOf("xxx123");
+            registrarDao.getRegistrarByCode(code);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
