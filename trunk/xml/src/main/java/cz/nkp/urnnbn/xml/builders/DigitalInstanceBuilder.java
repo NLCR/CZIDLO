@@ -16,20 +16,20 @@ public class DigitalInstanceBuilder extends XmlBuilder {
     private final DigitalInstance instance;
     private final DigitalLibraryBuilder digLibBuilder;
     private final Long digLibId;
-    private final DigitalRepresentationBuilder digRepBuilder;
+    private final DigitalDocumentBuilder digDocBuilder;
 
-    public DigitalInstanceBuilder(DigitalInstance instance, DigitalLibraryBuilder digLibBuilder, DigitalRepresentationBuilder digRepBuilder) {
+    public DigitalInstanceBuilder(DigitalInstance instance, DigitalLibraryBuilder digLibBuilder, DigitalDocumentBuilder digDocBuilder) {
         this.instance = instance;
         this.digLibBuilder = digLibBuilder;
         this.digLibId = null;
-        this.digRepBuilder = digRepBuilder;
+        this.digDocBuilder = digDocBuilder;
     }
 
     public DigitalInstanceBuilder(DigitalInstance instance, Long digLibId) {
         this.instance = instance;
         this.digLibBuilder = null;
         this.digLibId = digLibId;
-        this.digRepBuilder = null;
+        this.digDocBuilder = null;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DigitalInstanceBuilder extends XmlBuilder {
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
         appendElementWithContentIfNotNull(root, instance.getPublished(), "published");
         appendBuilderResultfNotNull(root, digLibBuilder);
-        appendBuilderResultfNotNull(root, digRepBuilder);
+        appendBuilderResultfNotNull(root, digDocBuilder);
         appendElementWithContentIfNotNull(root, digLibId, "digitalLibraryId");
         return root;
     }

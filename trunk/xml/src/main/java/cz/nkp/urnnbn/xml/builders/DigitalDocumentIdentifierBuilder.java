@@ -12,17 +12,17 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationIdentifierBuilder extends XmlBuilder {
+public class DigitalDocumentIdentifierBuilder extends XmlBuilder {
 
     private final DigRepIdentifier id;
     private final String previousValue;
 
-    public DigitalRepresentationIdentifierBuilder(DigRepIdentifier id) {
+    public DigitalDocumentIdentifierBuilder(DigRepIdentifier id) {
         this.id = id;
         this.previousValue = null;
     }
 
-    public DigitalRepresentationIdentifierBuilder(DigRepIdentifier id, String previousValue) {
+    public DigitalDocumentIdentifierBuilder(DigRepIdentifier id, String previousValue) {
         this.id = id;
         this.previousValue = previousValue;
     }
