@@ -70,7 +70,7 @@ public class RecordImporter {
             UrnNbn urn = urnToBeUsed(transactionLog);
             long ieId = findOrImportWithRollbackIntelectualEntity(transactionLog);
             long digRepId = importDigitalRepersentationWithRollback(transactionLog, ieId);
-            importDigRepIdentifiersWithRollback(transactionLog, digRepId);
+            importDigDocIdentifiersWithRollback(transactionLog, digRepId);
             importUrnNbnWithRollback(urn, transactionLog, digRepId);
             return urn;
         }
@@ -177,33 +177,33 @@ public class RecordImporter {
 
     private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) throws UnknownArchiverException {
         try {
-            Long digRepId = importDigitalRepresentation(ieId);
-            logger.log(Level.INFO, "digital representation was imported with id {0}", digRepId);
+            Long digRepId = importDigitalDocument(ieId);
+            logger.log(Level.INFO, "digital document was imported with id {0}", digRepId);
             transactionLog.setDigRepId(digRepId);
             return digRepId;
         } catch (UnknownArchiverException ex) {
-            logger.log(Level.INFO, "failed to import digital representation, rolling back");
+            logger.log(Level.INFO, "failed to import digital document, rolling back");
             rollbackTransaction(transactionLog);
             throw ex;
         } catch (Throwable ex) {
-            logger.info("failed to import digital representation, rolling back");
+            logger.info("failed to import digital document, rolling back");
             rollbackTransaction(transactionLog);
             throw new RuntimeException(ex);
         }
     }
 
-    private void importDigRepIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigRepIdentifierCollisionException {
+    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigRepIdentifierCollisionException {
         try {
             List<DigDocIdentifier> ids = importDigRepIdentifiers(digRepId);
-            logger.log(Level.INFO, "digital representation identifiers inserted: {0}", digRepIdListToString(ids));
+            logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
         } catch (DigRepIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
             //because it will be removed together with registrar in cascade
-            logger.info("failed to import digital representation identifiers, rolling back");
+            logger.info("failed to import digital document identifiers, rolling back");
             rollbackTransaction(transactionLog);
             throw ex;
         } catch (Throwable ex) {
-            logger.info("failed to import digital representation identifiers, rolling back");
+            logger.info("failed to import digital document identifiers, rolling back");
             rollbackTransaction(transactionLog);
             throw new RuntimeException(ex);
         }
@@ -244,11 +244,11 @@ public class RecordImporter {
         return ieId;
     }
 
-    private Long importDigitalRepresentation(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
-        DigitalDocument digRep = data.getRepresentation();
+    private Long importDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
+        DigitalDocument digRep = data.getDigitalDocument();
         digRep.setIntEntId(ieId);
         try {
-            return factory.representationDao().insertRepresentation(data.getRepresentation());
+            return factory.documentDao().insertDocument(data.getDigitalDocument());
         } catch (RecordNotFoundException e) {
             if (e.getTableName().equals(ArchiverDAO.TABLE_NAME)) {
                 logger.log(Level.INFO, "unkown archiver with id {0}", digRep.getArchiverId());
@@ -291,8 +291,8 @@ public class RecordImporter {
             putBackToReservedTable(rollback.getUrnFromReservedList());
         }
         if (rollback.getDigRepId() != null) {
-            logger.info("removing created digital representation");
-            removeInsertedDigitalRepresentation(rollback.getDigRepId());
+            logger.info("removing created digital document");
+            removeInsertedDigitalDocument(rollback.getDigRepId());
         }
         if (rollback.getInsertedIntEntId() != null) {
             logger.info("removing created intelectual entity");
@@ -322,11 +322,11 @@ public class RecordImporter {
         }
     }
 
-    private void removeInsertedDigitalRepresentation(Long digRepId) {
+    private void removeInsertedDigitalDocument(Long digRepId) {
         try {
-            factory.representationDao().deleteRepresentation(digRepId);
+            factory.documentDao().deleteDocument(digRepId);
         } catch (Throwable ex) {
-            logger.log(Level.SEVERE, "rollback: Failed to remove digital representation with id " + digRepId, ex);
+            logger.log(Level.SEVERE, "rollback: Failed to remove digital document with id " + digRepId, ex);
         }
     }
 

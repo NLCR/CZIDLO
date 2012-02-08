@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 
 /**
  *
@@ -24,24 +24,24 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         super(conn);
     }
 
-    public void removeDigitalRepresentationIdentifiers(long digRepId) throws UnknownDigRepException {
+    public void removeDigitalDocumentIdentifiers(long digRepId) throws UnknownDigDocException {
         try {
             factory.digRepIdDao().deleteAllIdentifiersOfDigDoc(digRepId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            throw new UnknownDigRepException(digRepId);
+            throw new UnknownDigDocException(digRepId);
         }
     }
 
-    public void removeDigitalRepresentationId(long digRepId, DigDocIdType type) throws UnknownDigRepException, DigRepIdNotDefinedException {
+    public void removeDigitalDocumentId(long digRepId, DigDocIdType type) throws UnknownDigDocException, DigRepIdNotDefinedException {
         try {
             factory.digRepIdDao().deleteDigDocIdentifier(digRepId, type);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigRepException(digRepId);
+                throw new UnknownDigDocException(digRepId);
             } else if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new DigRepIdNotDefinedException(type);
             } else {

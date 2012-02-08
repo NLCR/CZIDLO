@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 
 /**
  *
@@ -14,7 +14,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
  */
 public interface DataRemoveService {
 
-    public void removeDigitalRepresentationIdentifiers(long digRepId) throws UnknownDigRepException;
+    public void removeDigitalDocumentIdentifiers(long digRepId) throws UnknownDigDocException;
 
-    public void removeDigitalRepresentationId(long digRepId, DigDocIdType type) throws UnknownDigRepException, DigRepIdNotDefinedException;
+    public void removeDigitalDocumentId(long digRepId, DigDocIdType type) throws UnknownDigDocException, DigRepIdNotDefinedException;
 }

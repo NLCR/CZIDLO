@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 
 /**
  *
@@ -26,7 +26,7 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
         this.instance = instance;
     }
 
-    DigitalInstance run() throws DatabaseException, UnknownDigiLibException, UnknownDigRepException {
+    DigitalInstance run() throws DatabaseException, UnknownDigiLibException, UnknownDigDocException {
         try {
             Long instanceId = factory.digInstDao().insertDigInstance(instance);
             instance.setId(instanceId);
@@ -35,7 +35,7 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
             if (DigitalLibraryDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigiLibException(instance.getLibraryId());
             } else if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigRepException(instance.getDigDocId());
+                throw new UnknownDigDocException(instance.getDigDocId());
             } else {
                 throw new RuntimeException(ex);
             }
