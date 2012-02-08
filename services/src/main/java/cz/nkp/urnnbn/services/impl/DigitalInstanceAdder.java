@@ -7,7 +7,7 @@ package cz.nkp.urnnbn.services.impl;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
@@ -34,8 +34,8 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
         } catch (RecordNotFoundException ex) {
             if (DigitalLibraryDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigiLibException(instance.getLibraryId());
-            } else if (DigitalRepresentationDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigRepException(instance.getDigRepId());
+            } else if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownDigRepException(instance.getDigDocId());
             } else {
                 throw new RuntimeException(ex);
             }

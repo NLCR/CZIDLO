@@ -4,14 +4,14 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -38,7 +38,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbn urnByDigRepId(long digRepId) throws DatabaseException {
+    public UrnNbn urnByDigDocId(long digRepId) throws DatabaseException {
         try {
             return factory.urnDao().getUrnNbnByDigRegId(digRepId);
         } catch (RecordNotFoundException ex) {
@@ -48,13 +48,13 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbnWithStatus urnBySiglaAndDocumentCode(Sigla sigla, String documentCode) throws DatabaseException {
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode) throws DatabaseException {
         try {
-            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(sigla.toString(), documentCode);
+            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code.toString(), documentCode);
             return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
         } catch (RecordNotFoundException ex) { //urn:nb not in table urn:nbn
             try {
-                UrnNbn urn = factory.urnReservedDao().getUrn(sigla, documentCode);
+                UrnNbn urn = factory.urnReservedDao().getUrn(code, documentCode);
                 return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.RESERVED);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 try {
@@ -64,7 +64,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                     //in abandonedUrnNbn table
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ABANDONED);
                 } catch (RecordNotFoundException ex3) { //urn:nbn not even ebandoned
-                    UrnNbn urn = new UrnNbn(sigla.toString(), documentCode, null);
+                    UrnNbn urn = new UrnNbn(code.toString(), documentCode, null);
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
                 }
             }
@@ -72,7 +72,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public DigitalRepresentation digRepByInternalId(long digRepId) throws DatabaseException {
+    public DigitalDocument digDocByInternalId(long digRepId) throws DatabaseException {
         try {
             return factory.representationDao().getRepresentationByDbId(digRepId);
         } catch (RecordNotFoundException ex) {
@@ -82,19 +82,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public List<DigRepIdentifier> digRepIdentifiersByDigRepId(long id) throws DatabaseException {
+    public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long id) throws DatabaseException {
         try {
             return factory.digRepIdDao().getIdList(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigRepIdentifier>emptyList();
+            return Collections.<DigDocIdentifier>emptyList();
         }
     }
 
     @Override
-    public List<DigitalInstance> instancesByDigRepId(long digRepId) throws DatabaseException {
+    public List<DigitalInstance> instancesByDigDocId(long digRepId) throws DatabaseException {
         try {
-            return factory.digInstDao().getDigitalInstancesOfDigRep(digRepId);
+            return factory.digInstDao().getDigitalInstancesOfDigDoc(digRepId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigitalInstance>emptyList();
@@ -172,16 +172,16 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public Registrar registrarBySigla(Sigla sigla) throws DatabaseException {
+    public Registrar registrarByCode(RegistrarCode code) throws DatabaseException {
         try {
-            return factory.registrarDao().getRegistrarBySigla(sigla);
+            return factory.registrarDao().getRegistrarByCode(code);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
         }
     }
 
-    public List<DigitalLibrary> librariesByRegistrar(long registrarId) throws DatabaseException {
+    public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException {
         try {
             return factory.digitalLibraryDao().getLibraries(registrarId);
         } catch (RecordNotFoundException ex) {
@@ -190,7 +190,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
-    public List<Catalog> catalogsByRegistrar(long registrarId) throws DatabaseException {
+    public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException {
         try {
             return factory.catalogDao().getCatalogs(registrarId);
         } catch (RecordNotFoundException ex) {
@@ -203,7 +203,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         return factory.registrarDao().getAllRegistrars();
     }
 
-    public int digitalRepresentationsCount(long registrarId) throws DatabaseException {
+    public int digitalDocumentsCount(long registrarId) throws DatabaseException {
         try {
             return factory.representationDao().getDigRepCount(registrarId);
         } catch (RecordNotFoundException ex) {
@@ -212,7 +212,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
-    public DigitalRepresentation digRepByIdentifier(DigRepIdentifier id) throws DatabaseException {
+    public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException {
         try {
             Long digRepId = factory.representationDao().getDigRepDbIdByIdentifier(id);
             return factory.representationDao().getRepresentationByDbId(digRepId);

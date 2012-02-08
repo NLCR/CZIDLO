@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -15,7 +15,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
  */
 public interface DataUpdateService extends BusinessService {
 
-    public void updateDigRepIdentifier(DigRepIdentifier id) throws
+    public void updateDigRepIdentifier(DigDocIdentifier id) throws
             UnknownRegistrarException, UnknownDigRepException,
             IdentifierConflictException;
 }

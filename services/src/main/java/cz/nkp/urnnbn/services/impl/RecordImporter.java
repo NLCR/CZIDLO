@@ -4,10 +4,10 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -55,12 +55,12 @@ public class RecordImporter {
 
     private UrnNbnFinder initFinder(DAOFactory factory, RecordImport data) throws UnknownRegistrarException {
         try {
-            Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
             return new UrnNbnFinder(factory, registrar);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            throw new UnknownRegistrarException(data.getRegistrarSigla());
+            throw new UnknownRegistrarException(data.getRegistrarCode());
         }
     }
 
@@ -99,9 +99,9 @@ public class RecordImporter {
     }
 
     private void checkUrnBelongsToRegistrar(UrnNbn urn) throws UrnNotFromRegistrarException {
-        String sigla = data.getRegistrarSigla().toString();
-        if (!urn.getRegistrarCode().equals(sigla)) {
-            throw new UrnNotFromRegistrarException(sigla, urn);
+        RegistrarCode code = data.getRegistrarCode();
+        if (!urn.getRegistrarCode().equals(code.toString())) {
+            throw new UrnNotFromRegistrarException(code, urn);
         }
     }
 
@@ -117,9 +117,9 @@ public class RecordImporter {
     }
 
     private boolean isReserved(UrnNbn urn) {
-        Sigla sigla = Sigla.valueOf(urn.getRegistrarCode());
+        RegistrarCode registrarCode = RegistrarCode.valueOf(urn.getRegistrarCode());
         try {
-            factory.urnReservedDao().getUrn(sigla, urn.getDocumentCode());
+            factory.urnReservedDao().getUrn(registrarCode, urn.getDocumentCode());
             //when RecordNotFound is not thrown the urn:nbn is reserved
             return true;
         } catch (DatabaseException ex) {
@@ -194,7 +194,7 @@ public class RecordImporter {
 
     private void importDigRepIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigRepIdentifierCollisionException {
         try {
-            List<DigRepIdentifier> ids = importDigRepIdentifiers(digRepId);
+            List<DigDocIdentifier> ids = importDigRepIdentifiers(digRepId);
             logger.log(Level.INFO, "digital representation identifiers inserted: {0}", digRepIdListToString(ids));
         } catch (DigRepIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
@@ -245,7 +245,7 @@ public class RecordImporter {
     }
 
     private Long importDigitalRepresentation(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
-        DigitalRepresentation digRep = data.getRepresentation();
+        DigitalDocument digRep = data.getRepresentation();
         digRep.setIntEntId(ieId);
         try {
             return factory.representationDao().insertRepresentation(data.getRepresentation());
@@ -259,14 +259,14 @@ public class RecordImporter {
         }
     }
 
-    private List<DigRepIdentifier> importDigRepIdentifiers(long digRepId) throws DigRepIdentifierCollisionException, DatabaseException, RecordNotFoundException {
-        Registrar registrar = factory.registrarDao().getRegistrarBySigla(data.getRegistrarSigla());
-        List<DigRepIdentifier> result = new ArrayList<DigRepIdentifier>();
-        for (DigRepIdentifier id : data.getDigRepIds()) {
-            id.setDigRepId(digRepId);
+    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws DigRepIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+        Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
+        List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>();
+        for (DigDocIdentifier id : data.getDigDogIdentifiers()) {
+            id.setDigDocId(digRepId);
             id.setRegistrarId(registrar.getId());
             try {
-                factory.digRepIdDao().insertDigRepId(id);
+                factory.digRepIdDao().insertDigDocId(id);
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
@@ -310,8 +310,8 @@ public class RecordImporter {
 
     private void putBackToReservedTable(UrnNbn urn) {
         try {
-            Sigla sigla = Sigla.valueOf(urn.getRegistrarCode());
-            Registrar registrar = factory.registrarDao().getRegistrarBySigla(sigla);
+            RegistrarCode registrarCode = RegistrarCode.valueOf(urn.getRegistrarCode());
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
             factory.urnReservedDao().insertUrnNbn(urn, registrar.getId());
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, "rollback: Failed insert " + urn + " into the reserved table", ex);
@@ -338,11 +338,11 @@ public class RecordImporter {
         }
     }
 
-    private String digRepIdListToString(List<DigRepIdentifier> ids) {
+    private String digRepIdListToString(List<DigDocIdentifier> ids) {
         StringBuilder builder = new StringBuilder();
         builder.append('{');
         for (int i = 0; i < ids.size(); i++) {
-            DigRepIdentifier id = ids.get(i);
+            DigDocIdentifier id = ids.get(i);
             builder.append('\'').append(id.getType()).append("':'").append(id.getValue()).append('\'');
             if (i < ids.size() - 1) {
                 builder.append(",");

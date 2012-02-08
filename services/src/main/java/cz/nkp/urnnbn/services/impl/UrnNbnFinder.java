@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.UrnNbnSearch;
+import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -40,20 +40,20 @@ public class UrnNbnFinder {
      * @return 
      */
     UrnNbn findNewUrnNbn() throws DatabaseException {
-        UrnNbnSearch search = getSearchOrInsertNew();
-        UrnNbn result = findFreeUrn(search.getLastFoundDocumentCode());
+        UrnNbnGenerator search = getSearchOrInsertNew();
+        UrnNbn result = findFreeUrn(search.getLastDocumentCode());
         updateLastFound(search, result);
         return result;
     }
 
-    private UrnNbnSearch getSearchOrInsertNew() throws DatabaseException {
+    private UrnNbnGenerator getSearchOrInsertNew() throws DatabaseException {
         try {
             return factory.urnSearchDao().getSearchByRegistrarId(registrar.getId());
         } catch (RecordNotFoundException ex) {
             //ok, so new search will be inserted
             try {
-                logger.log(Level.SEVERE, "no urnNbnSearch found for registrar with sigla {0}, inserting", registrar.getUrnInstitutionCode());
-                UrnNbnSearch search = new UrnNbnSearch();
+                logger.log(Level.SEVERE, "no urnNbnGenerator found for registrar with code {0}, inserting", registrar.getCode());
+                UrnNbnGenerator search = new UrnNbnGenerator();
                 search.setRegistrarId(registrar.getId());
                 factory.urnSearchDao().insertUrnNbnSearch(search);
                 return search;
@@ -67,9 +67,9 @@ public class UrnNbnFinder {
         }
     }
 
-    private void updateLastFound(UrnNbnSearch search, UrnNbn urn) throws DatabaseException {
+    private void updateLastFound(UrnNbnGenerator search, UrnNbn urn) throws DatabaseException {
         try {
-            search.setLastFoundDocumentCode(urn.getDocumentCode());
+            search.setLastDocumentCode(urn.getDocumentCode());
             factory.urnSearchDao().updateUrnNbnSearch(search);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, "failed to update last found urn " + urn.toString(), ex);
@@ -84,7 +84,7 @@ public class UrnNbnFinder {
             iterationFromLastStepIncrease++;
             UrnNbnDocumentCode tested = previous.getNext(step);
             if (isAvailable(tested)) {
-                return new UrnNbn(registrar.getUrnInstitutionCode(), tested.toString(), null);
+                return new UrnNbn(registrar.getCode(), tested.toString(), null);
             } else {
                 int newStep = increaseStep(step, iterationFromLastStepIncrease);
                 if (newStep != step) {//step has been increased
@@ -98,7 +98,7 @@ public class UrnNbnFinder {
 
     private boolean isAvailable(UrnNbnDocumentCode tested) throws DatabaseException {
         try {
-            factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getUrnInstitutionCode(), tested.toString());
+            factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), tested.toString());
             return false;
         } catch (RecordNotFoundException ex) {
             return true;

@@ -10,8 +10,8 @@ package cz.nkp.urnnbn.services.exceptions;
  */
 public class AccessException extends Exception {
 
-    public AccessException(long userId, String registrarSigla) {
-        super("user with id " + userId + " not allowed to manage registrar with sigla " + registrarSigla);
+    public AccessException(long userId, String registrarCode) {
+        super("user with id " + userId + " not allowed to manage registrar with code " + registrarCode);
     }
 
     public AccessException(long userId, long registrarId) {

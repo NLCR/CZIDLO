@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -38,9 +38,9 @@ public class AuthorizationModule {
         }
     }
 
-    public void checkAccessRights(Sigla registrarSigla, long userId) throws AccessException {
+    public void checkAccessRights(RegistrarCode registrarCode, long userId) throws AccessException {
         try {
-            Registrar registrar = factory.registrarDao().getRegistrarBySigla(registrarSigla);
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
             checkAccessRights(registrar, userId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -53,7 +53,7 @@ public class AuthorizationModule {
         try {
             List<Long> adminsOfRegistrar = factory.userDao().getAdminsOfRegistrar(registrar.getId());
             if (!adminsOfRegistrar.contains(userId)) {
-                throw new AccessException(userId, registrar.getUrnInstitutionCode());
+                throw new AccessException(userId, registrar.getCode());
             }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.services;
 
-import cz.nkp.urnnbn.core.Sigla;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -26,17 +26,17 @@ public class RecordImport {
     Publication publication;
     Originator originator;
     SourceDocument sourceDoc;
-    DigitalRepresentation representation;
-    List<DigRepIdentifier> digRepIds;
+    DigitalDocument representation;
+    List<DigDocIdentifier> digDocIdentifiers;
     UrnNbn urn;
-    Sigla registrarSigla;
+    RegistrarCode registrarCode;
 
-    public List<DigRepIdentifier> getDigRepIds() {
-        return digRepIds;
+    public List<DigDocIdentifier> getDigDogIdentifiers() {
+        return digDocIdentifiers;
     }
 
-    public void setDigRepIds(List<DigRepIdentifier> digRepIds) {
-        this.digRepIds = digRepIds;
+    public void setDigDocIdentifiers(List<DigDocIdentifier> digDocIdentifiers) {
+        this.digDocIdentifiers = digDocIdentifiers;
     }
 
     public IntelectualEntity getEntity() {
@@ -71,11 +71,11 @@ public class RecordImport {
         this.publication = publication;
     }
 
-    public DigitalRepresentation getRepresentation() {
+    public DigitalDocument getRepresentation() {
         return representation;
     }
 
-    public void setRepresentation(DigitalRepresentation representation) {
+    public void setRepresentation(DigitalDocument representation) {
         this.representation = representation;
     }
 
@@ -95,11 +95,11 @@ public class RecordImport {
         this.urn = urn;
     }
 
-    public Sigla getRegistrarSigla() {
-        return registrarSigla;
+    public RegistrarCode getRegistrarCode() {
+        return registrarCode;
     }
 
-    public void setRegistrarSigla(Sigla registrarSigla) {
-        this.registrarSigla = registrarSigla;
+    public void setRegistrarCode(RegistrarCode registrarCode) {
+        this.registrarCode = registrarCode;
     }
 }
