@@ -8,17 +8,17 @@ package cz.nkp.urnnbn.core.dto;
  *
  * @author Martin Řehánek
  */
-public class UrnNbnSearch {
+public class UrnNbnGenerator {
 
     private Long registrarId;
-    private String lastFoundDocumentCode = "zzzzzz";//so that first one used will be "000000"
+    private String lastDocumentCode = "zzzzzz";//so that first one used will be "000000"
 
-    public String getLastFoundDocumentCode() {
-        return lastFoundDocumentCode;
+    public String getLastDocumentCode() {
+        return lastDocumentCode;
     }
 
-    public void setLastFoundDocumentCode(String lastUsedDocumentCode) {
-        this.lastFoundDocumentCode = lastUsedDocumentCode;
+    public void setLastDocumentCode(String lastDocumentCode) {
+        this.lastDocumentCode = lastDocumentCode;
     }
 
     public Long getRegistrarId() {
@@ -37,11 +37,11 @@ public class UrnNbnSearch {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final UrnNbnSearch other = (UrnNbnSearch) obj;
+        final UrnNbnGenerator other = (UrnNbnGenerator) obj;
         if (this.registrarId != other.registrarId && (this.registrarId == null || !this.registrarId.equals(other.registrarId))) {
             return false;
         }
-        if ((this.lastFoundDocumentCode == null) ? (other.lastFoundDocumentCode != null) : !this.lastFoundDocumentCode.equals(other.lastFoundDocumentCode)) {
+        if ((this.lastDocumentCode == null) ? (other.lastDocumentCode != null) : !this.lastDocumentCode.equals(other.lastDocumentCode)) {
             return false;
         }
         return true;
@@ -51,12 +51,12 @@ public class UrnNbnSearch {
     public int hashCode() {
         int hash = 5;
         hash = 97 * hash + (this.registrarId != null ? this.registrarId.hashCode() : 0);
-        hash = 97 * hash + (this.lastFoundDocumentCode != null ? this.lastFoundDocumentCode.hashCode() : 0);
+        hash = 97 * hash + (this.lastDocumentCode != null ? this.lastDocumentCode.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return "UrnNbnBooking{" + "registrarId=" + registrarId + ", lastUsedDocumentCode=" + lastFoundDocumentCode + '}';
+        return "UrnNbnBooking{" + "registrarId=" + registrarId + ", lastUsedDocumentCode=" + lastDocumentCode + '}';
     }
 }

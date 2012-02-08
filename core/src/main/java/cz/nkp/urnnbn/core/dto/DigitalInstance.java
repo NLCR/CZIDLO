@@ -10,20 +10,22 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstance implements IdentifiableByLongAttribute{
+public class DigitalInstance implements IdentifiableByLongAttribute {
 
     private long id;
-    private long digRepId;
+    private long digDocId;
     private long libraryId;
     private String url;
+    private String format;
     private DateTime published;
+    private String accessibility;
 
-    public long getDigRepId() {
-        return digRepId;
+    public long getDigDocId() {
+        return digDocId;
     }
 
-    public void setDigRepId(long digRepId) {
-        this.digRepId = digRepId;
+    public void setDigDocId(long digDocId) {
+        this.digDocId = digDocId;
     }
 
     @Override
@@ -60,6 +62,22 @@ public class DigitalInstance implements IdentifiableByLongAttribute{
         this.url = url;
     }
 
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getAccessibility() {
+        return accessibility;
+    }
+
+    public void setAccessibility(String accessibility) {
+        this.accessibility = accessibility;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -72,25 +90,13 @@ public class DigitalInstance implements IdentifiableByLongAttribute{
         if (this.id != other.id) {
             return false;
         }
-        if (this.digRepId != other.digRepId) {
-            return false;
-        }
-        if (this.libraryId != other.libraryId) {
-            return false;
-        }
-        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 17 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 17 * hash + (int) (this.digRepId ^ (this.digRepId >>> 32));
-        hash = 17 * hash + (int) (this.libraryId ^ (this.libraryId >>> 32));
-        hash = 17 * hash + (this.url != null ? this.url.hashCode() : 0);
+        hash = 89 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 }

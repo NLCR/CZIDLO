@@ -27,29 +27,29 @@ public class DigRepIdTypeTest extends TestCase {
     }
 
     /**
-     * Test of valueOf method, of class DigRepIdType.
+     * Test of valueOf method, of class DigDocIdType.
      */
     public void testValueOf() {
         try {
-            DigRepIdType.valueOf(null);
+            DigDocIdType.valueOf(null);
             fail();
         } catch (NullPointerException e) {
             //null
         }
         try {
-            DigRepIdType.valueOf("a");
+            DigDocIdType.valueOf("a");
             fail();
         } catch (IllegalArgumentException e) {
             //too short
         }
         try {
-            DigRepIdType.valueOf("incredibly_long_identifier_type");
+            DigDocIdType.valueOf("incredibly_long_identifier_type");
             fail();
         } catch (IllegalArgumentException e) {
             //too long
         }
         try {
-            DigRepIdType.valueOf("something+else");
+            DigDocIdType.valueOf("something+else");
             fail();
         } catch (IllegalArgumentException e) {
             //contains illegal character
@@ -57,10 +57,10 @@ public class DigRepIdTypeTest extends TestCase {
     }
 
     /**
-     * Test of toString method, of class DigRepIdType.
+     * Test of toString method, of class DigDocIdType.
      */
     public void testToString() {
-        DigRepIdType idType = DigRepIdType.valueOf("my_id_Type1");
+        DigDocIdType idType = DigDocIdType.valueOf("my_id_Type1");
         assertEquals("my_id_Type1", idType.toString());
     }
 }

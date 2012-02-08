@@ -16,7 +16,7 @@ public class UrnNbn {
 
     //urn:nbn:cz:aba001-123456
     private static Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}|URN:NBN:CZ:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}");
-    private final Long digRepId;
+    private final Long digDocId;
     private final String registrarCode;
     private final String documentCode;
     private final DateTime created;
@@ -25,12 +25,12 @@ public class UrnNbn {
      * This constructor should be used when urn:nbn is being assigned or parsed
      * @param registrarCode
      * @param documentCode
-     * @param digRepId 
+     * @param digDocId 
      */
-    public UrnNbn(String registrarCode, String documentCode, Long digRepId) {
+    public UrnNbn(String registrarCode, String documentCode, Long digDocId) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode;
-        this.digRepId = digRepId;
+        this.digDocId = digDocId;
         this.created = null;
     }
 
@@ -38,13 +38,13 @@ public class UrnNbn {
      * This constructor should be used when data is loaded from database in order to be presented
      * @param registrarCode
      * @param documentCode
-     * @param digRepId
+     * @param digDocId
      * @param created 
      */
-    public UrnNbn(String registrarCode, String documentCode, Long digRepId, DateTime created) {
+    public UrnNbn(String registrarCode, String documentCode, Long digDocId, DateTime created) {
         this.registrarCode = registrarCode.toLowerCase();
         this.documentCode = documentCode.toLowerCase();
-        this.digRepId = digRepId;
+        this.digDocId = digDocId;
         this.created = created;
     }
 
@@ -52,8 +52,8 @@ public class UrnNbn {
         return documentCode;
     }
 
-    public Long getDigRepId() {
-        return digRepId;
+    public Long getDigDocId() {
+        return digDocId;
     }
 
     public String getRegistrarCode() {
@@ -89,7 +89,7 @@ public class UrnNbn {
             return false;
         }
         final UrnNbn other = (UrnNbn) obj;
-        if (this.digRepId != other.digRepId && (this.digRepId == null || !this.digRepId.equals(other.digRepId))) {
+        if (this.digDocId != other.digDocId && (this.digDocId == null || !this.digDocId.equals(other.digDocId))) {
             return false;
         }
         if ((this.registrarCode == null) ? (other.registrarCode != null) : !this.registrarCode.equals(other.registrarCode)) {
@@ -104,7 +104,7 @@ public class UrnNbn {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 19 * hash + (this.digRepId != null ? this.digRepId.hashCode() : 0);
+        hash = 19 * hash + (this.digDocId != null ? this.digDocId.hashCode() : 0);
         hash = 19 * hash + (this.registrarCode != null ? this.registrarCode.hashCode() : 0);
         hash = 19 * hash + (this.documentCode != null ? this.documentCode.hashCode() : 0);
         return hash;

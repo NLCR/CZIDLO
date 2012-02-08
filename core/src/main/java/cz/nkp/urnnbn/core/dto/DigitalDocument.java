@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentation implements IdentifiableByLongAttribute {
+public class DigitalDocument implements IdentifiableByLongAttribute {
 
     private long id;
     private long intEntId;
@@ -18,37 +18,27 @@ public class DigitalRepresentation implements IdentifiableByLongAttribute {
     private long archiverId;
     private DateTime created;
     private DateTime lastUpdated;
-    private String format;
     private String extent;
     private String resolution;
     private String colorDepth;
-    private String accessibility;
     private String financedFrom;
+    private String contractNumber;
 
-    public DigitalRepresentation() {
+    public DigitalDocument() {
     }
 
-    public DigitalRepresentation(DigitalRepresentation original) {
+    public DigitalDocument(DigitalDocument original) {
         id = original.getId();
         intEntId = original.getIntEntId();
         registrarId = original.getRegistrarId();
         archiverId = original.getArchiverId();
         created = original.getCreated();
         lastUpdated = original.getLastUpdated();
-        format = original.getFormat();
         extent = original.getExtent();
         resolution = original.getResolution();
         colorDepth = original.getColorDepth();
-        accessibility = original.getAccessibility();
         financedFrom = original.getFinancedFrom();
-    }
-
-    public String getAccessibility() {
-        return accessibility;
-    }
-
-    public void setAccessibility(String accessibility) {
-        this.accessibility = accessibility;
+        contractNumber = original.getContractNumber();
     }
 
     public long getArchiverId() {
@@ -91,12 +81,12 @@ public class DigitalRepresentation implements IdentifiableByLongAttribute {
         this.financedFrom = financedFrom;
     }
 
-    public String getFormat() {
-        return format;
+    public String getContractNumber() {
+        return contractNumber;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setContractNumber(String contractNumber) {
+        this.contractNumber = contractNumber;
     }
 
     @Override
@@ -148,35 +138,8 @@ public class DigitalRepresentation implements IdentifiableByLongAttribute {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DigitalRepresentation other = (DigitalRepresentation) obj;
+        final DigitalDocument other = (DigitalDocument) obj;
         if (this.id != other.id) {
-            return false;
-        }
-        if (this.intEntId != other.intEntId) {
-            return false;
-        }
-        if (this.registrarId != other.registrarId) {
-            return false;
-        }
-        if (this.archiverId != other.archiverId) {
-            return false;
-        }
-        if ((this.format == null) ? (other.format != null) : !this.format.equals(other.format)) {
-            return false;
-        }
-        if ((this.extent == null) ? (other.extent != null) : !this.extent.equals(other.extent)) {
-            return false;
-        }
-        if ((this.resolution == null) ? (other.resolution != null) : !this.resolution.equals(other.resolution)) {
-            return false;
-        }
-        if ((this.colorDepth == null) ? (other.colorDepth != null) : !this.colorDepth.equals(other.colorDepth)) {
-            return false;
-        }
-        if ((this.accessibility == null) ? (other.accessibility != null) : !this.accessibility.equals(other.accessibility)) {
-            return false;
-        }
-        if ((this.financedFrom == null) ? (other.financedFrom != null) : !this.financedFrom.equals(other.financedFrom)) {
             return false;
         }
         return true;
@@ -184,17 +147,8 @@ public class DigitalRepresentation implements IdentifiableByLongAttribute {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 17 * hash + (int) (this.intEntId ^ (this.intEntId >>> 32));
-        hash = 17 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
-        hash = 17 * hash + (int) (this.archiverId ^ (this.archiverId >>> 32));
-        hash = 17 * hash + (this.format != null ? this.format.hashCode() : 0);
-        hash = 17 * hash + (this.extent != null ? this.extent.hashCode() : 0);
-        hash = 17 * hash + (this.resolution != null ? this.resolution.hashCode() : 0);
-        hash = 17 * hash + (this.colorDepth != null ? this.colorDepth.hashCode() : 0);
-        hash = 17 * hash + (this.accessibility != null ? this.accessibility.hashCode() : 0);
-        hash = 17 * hash + (this.financedFrom != null ? this.financedFrom.hashCode() : 0);
+        int hash = 5;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 }

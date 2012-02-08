@@ -6,10 +6,10 @@ package cz.nkp.urnnbn.core;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -70,16 +70,16 @@ public class DtoBuilder {
         return library;
     }
 
-    public DigitalRepresentation digRepWithoutIds() {
-        DigitalRepresentation rep = new DigitalRepresentation();
-        rep.setCreated(now());
-        rep.setLastUpdated(now());
-        return rep;
+    public DigitalDocument digDocWithoutIds() {
+        DigitalDocument doc = new DigitalDocument();
+        doc.setCreated(now());
+        doc.setLastUpdated(now());
+        return doc;
     }
 
-    public DigRepIdentifier digRepIdentifierWithoutIds() {
-        DigRepIdentifier id = new DigRepIdentifier();
-        id.setType(DigRepIdType.valueOf("K4_pid"));
+    public DigDocIdentifier digDocIdentifierWithoutIds() {
+        DigDocIdentifier id = new DigDocIdentifier();
+        id.setType(DigDocIdType.valueOf("K4_pid"));
         id.setValue("uuid:123");
         return id;
     }
@@ -122,7 +122,7 @@ public class DtoBuilder {
         Registrar registrar = new Registrar();
         registrar.setName("MZK");
         registrar.setDescription("Moravská zemská knihovna");
-        registrar.setUrnInstitutionCode("BOA" + nextUrnPrefixSuffix());
+        registrar.setCode("BOA" + nextUrnPrefixSuffix());
         return registrar;
     }
 

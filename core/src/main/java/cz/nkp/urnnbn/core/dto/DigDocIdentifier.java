@@ -4,35 +4,35 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigRepIdentifier {
+public class DigDocIdentifier {
 
-    private long digRepId;
+    private long digDocId;
     private long registrarId;
-    private DigRepIdType type;
+    private DigDocIdType type;
     private String value;
 
-    public DigRepIdentifier() {
+    public DigDocIdentifier() {
     }
 
-    public DigRepIdentifier(DigRepIdentifier inserted) {
+    public DigDocIdentifier(DigDocIdentifier inserted) {
         registrarId = inserted.getRegistrarId();
-        digRepId = inserted.getDigRepId();
+        digDocId = inserted.getDigDocId();
         type = inserted.getType();
         value = inserted.getValue();
     }
 
-    public long getDigRepId() {
-        return digRepId;
+    public long getDigDocId() {
+        return digDocId;
     }
 
-    public void setDigRepId(long digRepId) {
-        this.digRepId = digRepId;
+    public void setDigDocId(long digDocId) {
+        this.digDocId = digDocId;
     }
 
     public long getRegistrarId() {
@@ -43,11 +43,11 @@ public class DigRepIdentifier {
         this.registrarId = registrarId;
     }
 
-    public DigRepIdType getType() {
+    public DigDocIdType getType() {
         return type;
     }
 
-    public void setType(DigRepIdType type) {
+    public void setType(DigDocIdType type) {
         this.type = type;
     }
 
@@ -67,8 +67,8 @@ public class DigRepIdentifier {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DigRepIdentifier other = (DigRepIdentifier) obj;
-        if (this.digRepId != other.digRepId) {
+        final DigDocIdentifier other = (DigDocIdentifier) obj;
+        if (this.digDocId != other.digDocId) {
             return false;
         }
         if (this.registrarId != other.registrarId) {
@@ -86,7 +86,7 @@ public class DigRepIdentifier {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (int) (this.digRepId ^ (this.digRepId >>> 32));
+        hash = 79 * hash + (int) (this.digDocId ^ (this.digDocId >>> 32));
         hash = 79 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
@@ -95,6 +95,6 @@ public class DigRepIdentifier {
 
     @Override
     public String toString() {
-        return "DigRepIdentifier{" + "digRepId=" + digRepId + ", registrarId=" + registrarId + ", type=" + type + ", value=" + value + '}';
+        return "DigDocIdentifier{" + "digDocId=" + digDocId + ", registrarId=" + registrarId + ", type=" + type + ", value=" + value + '}';
     }
 }
