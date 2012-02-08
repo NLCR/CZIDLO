@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.Registrar;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -26,8 +27,8 @@ public class RegistrarBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("registrar", RESOLVER);
-        //appendIdentifierElement(root, IDTYPE_INTERNAL, registrar.getId());
-        appendIdentifierElement(root, "SIGLA", registrar.getUrnInstitutionCode());
+        Attribute type = new Attribute("code", registrar.getCode());
+        root.addAttribute(type);
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");
         appendElementWithContentIfNotNull(root, registrar.getDescription(), "description");
         appendBuilderResultfNotNull(root, librariesBuilder);

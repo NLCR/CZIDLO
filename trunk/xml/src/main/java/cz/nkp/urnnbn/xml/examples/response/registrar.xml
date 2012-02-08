@@ -1,7 +1,5 @@
 
-<r:registrar xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:id type="INTERNAL">31</r:id>
-    <r:id type="SIGLA">boa001</r:id>
+<r:registrar xmlns:r="http://resolver.nkp.cz/v2/" code="boa001">
     <r:name>MZK</r:name>
     <r:description>Moravská zemská knihovna</r:description>
     <r:digitalLibraries>

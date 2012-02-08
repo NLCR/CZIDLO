@@ -7,9 +7,7 @@
         <r:id type="INTERNAL">32</r:id>
         <r:name>K3</r:name>
         <r:description>Kramerius 3</r:description>
-        <r:registrar>
-            <r:id type="INTERNAL">31</r:id>
-            <r:id type="SIGLA">boa001</r:id>
+        <r:registrar code="boa001">
             <r:name>MZK</r:name>
             <r:description>Moravská zemská knihovna</r:description>
         </r:registrar>
