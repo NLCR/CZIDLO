@@ -4,14 +4,14 @@
  */
 package cz.nkp.urnnbn.services;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -31,15 +31,15 @@ public interface DataAccessService extends BusinessService {
 
     static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-    public UrnNbnWithStatus urnBySiglaAndDocumentCode(Sigla sigla, String documentCode) throws DatabaseException;
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
-    public DigitalRepresentation digRepByInternalId(long digRepId) throws DatabaseException;
+    public DigitalDocument digDocByInternalId(long digDocId) throws DatabaseException;
 
-    public UrnNbn urnByDigRepId(long id) throws DatabaseException;
+    public UrnNbn urnByDigDocId(long id) throws DatabaseException;
 
-    public List<DigRepIdentifier> digRepIdentifiersByDigRepId(long id) throws DatabaseException;
+    public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long digDocId) throws DatabaseException;
 
-    public List<DigitalInstance> instancesByDigRepId(long digRepId) throws DatabaseException;
+    public List<DigitalInstance> instancesByDigDocId(long digDocId) throws DatabaseException;
 
     public Registrar registrarById(long id) throws DatabaseException;
 
@@ -58,17 +58,17 @@ public interface DataAccessService extends BusinessService {
     //pokud nenajde, vrati null
     public SourceDocument sourceDocumentByIntEntId(long intEntId) throws DatabaseException;
 
-    public Registrar registrarBySigla(Sigla sigla) throws DatabaseException;
+    public Registrar registrarByCode(RegistrarCode code) throws DatabaseException;
 
-    public List<DigitalLibrary> librariesByRegistrar(long registrarId) throws DatabaseException;
+    public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException;
 
-    public List<Catalog> catalogsByRegistrar(long registrarId) throws DatabaseException;
+    public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException;
 
     public List<Registrar> registrars() throws DatabaseException;
 
-    public int digitalRepresentationsCount(long registrarId) throws DatabaseException;
+    public int digitalDocumentsCount(long registrarId) throws DatabaseException;
 
-    public DigitalRepresentation digRepByIdentifier(DigRepIdentifier id) throws DatabaseException;
+    public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException;
 
     public long digitalInstancesCount() throws DatabaseException;
 

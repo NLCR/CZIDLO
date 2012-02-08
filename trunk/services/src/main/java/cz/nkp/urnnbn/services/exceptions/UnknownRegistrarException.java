@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 
 /**
  *
@@ -12,8 +12,8 @@ import cz.nkp.urnnbn.core.Sigla;
  */
 public class UnknownRegistrarException extends Exception {
 
-    public UnknownRegistrarException(Sigla sigla) {
-        super("unknown registrar with sigla: " + sigla);
+    public UnknownRegistrarException(RegistrarCode code) {
+        super("unknown registrar with code " + code);
     }
 
     public UnknownRegistrarException(long registrarId) {

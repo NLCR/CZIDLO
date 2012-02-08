@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 
 /**
  *
@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.DigRepIdType;
  */
 public class DigRepIdNotDefinedException extends Exception {
 
-    public DigRepIdNotDefinedException(DigRepIdType type) {
+    public DigRepIdNotDefinedException(DigDocIdType type) {
         super("identifier for type '" + type.toString() + "' not defined");
     }
 }

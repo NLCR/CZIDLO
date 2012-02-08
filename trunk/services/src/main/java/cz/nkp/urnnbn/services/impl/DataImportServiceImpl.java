@@ -4,11 +4,11 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -40,7 +40,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     public UrnNbn importNewRecord(RecordImport data, long userId) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigRepIdentifierCollisionException, UnknownArchiverException {
-        authorization.checkAccessRights(data.getRegistrarSigla(), userId);
+        authorization.checkAccessRights(data.getRegistrarCode(), userId);
         return new RecordImporter(factory, data, userId).run();
     }
 
@@ -54,14 +54,14 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         }
     }
 
-    public void addNewDigRepId(DigRepIdentifier id) throws UnknownRegistrarException, UnknownDigRepException, IdentifierConflictException {
+    public void addNewDigRepId(DigDocIdentifier id) throws UnknownRegistrarException, UnknownDigRepException, IdentifierConflictException {
         try {
-            factory.digRepIdDao().insertDigRepId(id);
+            factory.digRepIdDao().insertDigDocId(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigRepException(id.getDigRepId());
+            if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new UnknownDigRepException(id.getDigDocId());
             } else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownRegistrarException(id.getRegistrarId());
             } else {

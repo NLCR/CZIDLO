@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.Registrar;
 
 /**
@@ -13,9 +13,9 @@ import cz.nkp.urnnbn.core.dto.Registrar;
  */
 public class DigRepIdentifierCollisionException extends Exception {
 
-    public DigRepIdentifierCollisionException(Registrar registrar, DigRepIdentifier id) {
+    public DigRepIdentifierCollisionException(Registrar registrar, DigDocIdentifier id) {
         super("digital represenation with identifier of type '" + id.getType()
                 + "' and value '" + id.getValue()
-                + "' already registered by registrar with sigla " + registrar.getUrnInstitutionCode());
+                + "' already registered by registrar with code " + registrar.getCode());
     }
 }

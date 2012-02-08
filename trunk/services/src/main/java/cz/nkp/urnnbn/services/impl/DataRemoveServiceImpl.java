@@ -4,10 +4,10 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataRemoveService;
@@ -26,7 +26,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 
     public void removeDigitalRepresentationIdentifiers(long digRepId) throws UnknownDigRepException {
         try {
-            factory.digRepIdDao().deleteAllIdentifiersOfDigRep(digRepId);
+            factory.digRepIdDao().deleteAllIdentifiersOfDigDoc(digRepId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -34,15 +34,15 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         }
     }
 
-    public void removeDigitalRepresentationId(long digRepId, DigRepIdType type) throws UnknownDigRepException, DigRepIdNotDefinedException {
+    public void removeDigitalRepresentationId(long digRepId, DigDocIdType type) throws UnknownDigRepException, DigRepIdNotDefinedException {
         try {
-            factory.digRepIdDao().deleteDigRepIdentifier(digRepId, type);
+            factory.digRepIdDao().deleteDigDocIdentifier(digRepId, type);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            if (DigitalRepresentationDAO.TABLE_NAME.equals(ex.getTableName())) {
+            if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigRepException(digRepId);
-            } else if (DigRepIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
+            } else if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new DigRepIdNotDefinedException(type);
             } else {
                 throw new RuntimeException(ex);

@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
@@ -12,16 +13,16 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  */
 public class UrnNotFromRegistrarException extends Exception {
 
-    private final String registrarCode;
+    private final RegistrarCode registrarCode;
     private final UrnNbn urn;
 
-    public UrnNotFromRegistrarException(String registrarCode, UrnNbn urn) {
-        super("sigla should be '" + registrarCode + "'");
+    public UrnNotFromRegistrarException(RegistrarCode registrarCode, UrnNbn urn) {
+        super("registrar code should be '" + registrarCode + "'");
         this.registrarCode = registrarCode;
         this.urn = urn;
     }
 
-    public String getRegistrarCode() {
+    public RegistrarCode getRegistrarCode() {
         return registrarCode;
     }
 
