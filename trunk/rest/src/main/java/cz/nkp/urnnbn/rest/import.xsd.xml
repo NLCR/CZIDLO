@@ -11,7 +11,7 @@
                     <xs:element ref="r:analytical"/>
                     <xs:element ref="r:thesis"/>
                 </xs:choice>
-                <xs:element ref="r:digitalRepresentation" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -173,7 +173,7 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="digitalRepresentation">
+    <xs:element name="digitalDocument">
         <xs:complexType>
             <xs:complexContent>
                 <xs:sequence>

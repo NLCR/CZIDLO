@@ -46,9 +46,9 @@ public class RegistrarResource extends Resource {
         }
     }
 
-    @Path("digitalRepresentations")
-    public DigitalRepresentationsResource getDigitalRepresentations() {
-        return new DigitalRepresentationsResource(registrar);
+    @Path("digitalDocuments")
+    public DigitalDocumentsResource getDigitalDocuments() {
+        return new DigitalDocumentsResource(registrar);
     }
 
     @Path("urnNbnReservations")

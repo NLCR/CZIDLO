@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalLibraryException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
 import java.net.URL;
@@ -115,7 +115,7 @@ public class DigitalInstancesResource extends Resource {
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownDigiLibException ex) {
             throw new UnknownDigitalLibraryException(ex.getMessage());
-        } catch (UnknownDigRepException ex) {
+        } catch (UnknownDigDocException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);

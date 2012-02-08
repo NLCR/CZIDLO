@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.rest.exceptions.RestException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
@@ -33,13 +33,13 @@ import javax.ws.rs.core.UriInfo;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationIdentifiersResource extends Resource {
+public class DigitalDocumentIdentifiersResource extends Resource {
 
     @Context
     private UriInfo context;
     private final DigitalDocument digRep;
 
-    public DigitalRepresentationIdentifiersResource(DigitalDocument digRep) {
+    public DigitalDocumentIdentifiersResource(DigitalDocument digRep) {
         this.digRep = digRep;
     }
 
@@ -125,7 +125,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
-        } catch (UnknownDigRepException ex) {
+        } catch (UnknownDigDocException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
@@ -152,7 +152,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
-        } catch (UnknownDigRepException ex) {
+        } catch (UnknownDigDocException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
@@ -166,9 +166,9 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     public String removeAllIdentifiers() {
         try {
             DigitalDocumentIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
-            dataRemoveService().removeDigitalRepresentationIdentifiers(digRep.getId());
+            dataRemoveService().removeDigitalDocumentIdentifiers(digRep.getId());
             return builder.buildDocument().toXML();
-        } catch (UnknownDigRepException ex) {
+        } catch (UnknownDigDocException ex) {
             //should never happen
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
