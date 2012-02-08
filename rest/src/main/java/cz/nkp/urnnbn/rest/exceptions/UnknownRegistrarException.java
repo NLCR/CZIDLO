@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest.exceptions;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
  */
 public class UnknownRegistrarException extends RestException {
 
-    public UnknownRegistrarException(Sigla sigla) {
+    public UnknownRegistrarException(RegistrarCode sigla) {
         super(Status.NOT_FOUND, "UNKNOWN_REGISTRAR", "There is no registrar with sigla '" + sigla + "'");
     }
 }

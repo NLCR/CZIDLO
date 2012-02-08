@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.rest.config.Configuration;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -26,8 +26,8 @@ import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifierBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.IOException;
@@ -94,13 +94,13 @@ public class Resource {
         return dataUpdate;
     }
 
-    DigitalRepresentationIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
-        List<DigRepIdentifier> identifiers = dataAccessService().digRepIdentifiersByDigRepId(digRepId);
-        List<DigitalRepresentationIdentifierBuilder> builders = new ArrayList<DigitalRepresentationIdentifierBuilder>(identifiers.size());
-        for (DigRepIdentifier id : identifiers) {
-            builders.add(new DigitalRepresentationIdentifierBuilder(id));
+    DigitalDocumentIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
+        List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(digRepId);
+        List<DigitalDocumentIdentifierBuilder> builders = new ArrayList<DigitalDocumentIdentifierBuilder>(identifiers.size());
+        for (DigDocIdentifier id : identifiers) {
+            builders.add(new DigitalDocumentIdentifierBuilder(id));
         }
-        return new DigitalRepresentationIdentifiersBuilder(builders);
+        return new DigitalDocumentIdentifiersBuilder(builders);
     }
 
     RegistrarBuilder registrarBuilder(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) throws DatabaseException {
@@ -112,12 +112,12 @@ public class Resource {
     }
 
     DigitalLibrariesBuilder librariesBuilder(Registrar registrar) throws DatabaseException {
-        List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrar(registrar.getId());
+        List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(registrar.getId());
         return new DigitalLibrariesBuilder(libraries);
     }
 
     CatalogsBuilder catalogsBuilder(Registrar registrar) throws DatabaseException {
-        List<Catalog> catalogs = dataAccessService().catalogsByRegistrar(registrar.getId());
+        List<Catalog> catalogs = dataAccessService().catalogsByRegistrarId(registrar.getId());
         return new CatalogsBuilder(catalogs);
     }
 

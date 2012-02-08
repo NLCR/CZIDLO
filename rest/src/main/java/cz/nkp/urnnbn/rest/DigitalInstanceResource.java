@@ -7,7 +7,7 @@ package cz.nkp.urnnbn.rest;
 import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -15,8 +15,8 @@ import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.MethodForbiddenException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibraryBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.logging.Level;
 import javax.ws.rs.DELETE;
@@ -39,7 +39,7 @@ public class DigitalInstanceResource extends Resource {
     @Produces("application/xml")
     public String getDigitalInstance() {
         try {
-            DigitalRepresentationBuilder digRepBuilder = digRepBuilder(instance.getDigRepId());
+            DigitalDocumentBuilder digRepBuilder = digRepBuilder(instance.getDigDocId());
             DigitalLibraryBuilder libBuilder = digLibBuilder(instance.getLibraryId());
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libBuilder, digRepBuilder);
             return builder.buildDocument().toXML();
@@ -49,11 +49,11 @@ public class DigitalInstanceResource extends Resource {
         }
     }
 
-    private DigitalRepresentationBuilder digRepBuilder(long digRepId) throws DatabaseException {
-        DigitalRepresentation digRep = dataAccessService().digRepByInternalId(digRepId);
-        UrnNbn urn = dataAccessService().urnByDigRepId(digRep.getId());
-        DigitalRepresentationIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digRepId);
-        return new DigitalRepresentationBuilder(digRep, urn, idsBuilder, null, null, null, null);
+    private DigitalDocumentBuilder digRepBuilder(long digRepId) throws DatabaseException {
+        DigitalDocument digRep = dataAccessService().digDocByInternalId(digRepId);
+        UrnNbn urn = dataAccessService().urnByDigDocId(digRep.getId());
+        DigitalDocumentIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digRepId);
+        return new DigitalDocumentBuilder(digRep, urn, idsBuilder, null, null, null, null);
     }
 
     private DigitalLibraryBuilder digLibBuilder(long libraryId) throws DatabaseException {

@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
@@ -15,8 +15,8 @@ import cz.nkp.urnnbn.rest.exceptions.RestException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifierBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ws.rs.DELETE;
@@ -37,9 +37,9 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
 
     @Context
     private UriInfo context;
-    private final DigitalRepresentation digRep;
+    private final DigitalDocument digRep;
 
-    public DigitalRepresentationIdentifiersResource(DigitalRepresentation digRep) {
+    public DigitalRepresentationIdentifiersResource(DigitalDocument digRep) {
         this.digRep = digRep;
     }
 
@@ -47,7 +47,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     @Produces("application/xml")
     public String getIdentifiers() {
         try {
-            DigitalRepresentationIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
+            DigitalDocumentIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
             return builder.buildDocument().toXML();
         } catch (RestException e) {
             throw e;
@@ -61,12 +61,12 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String getIdentifier(@PathParam("idType") String idTypeStr) {
-        DigRepIdType idType = Parser.parseDigRepIdType(idTypeStr);
+        DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
         try {
-            List<DigRepIdentifier> identifiers = dataAccessService().digRepIdentifiersByDigRepId(digRep.getId());
-            for (DigRepIdentifier id : identifiers) {
+            List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(digRep.getId());
+            for (DigDocIdentifier id : identifiers) {
                 if (id.getType().equals(idType)) {
-                    DigitalRepresentationIdentifierBuilder builder = new DigitalRepresentationIdentifierBuilder(id);
+                    DigitalDocumentIdentifierBuilder builder = new DigitalDocumentIdentifierBuilder(id);
                     return builder.buildDocument().toXML();
                 }
             }
@@ -83,16 +83,16 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public Response setOrUpdateIdentifierValue(@PathParam("idType") String idTypeStr, String value) {
-        DigRepIdType idType = Parser.parseDigRepIdType(idTypeStr);
+        DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
         try {
-            DigRepIdentifier oldId = presentIdentifierOrNull(idType);
+            DigDocIdentifier oldId = presentIdentifierOrNull(idType);
             if (oldId == null) { //insert new value
-                DigRepIdentifier newId = addNewIdentifier(idType, value);
-                String responseXml = new DigitalRepresentationIdentifierBuilder(newId).buildDocument().toXML();
+                DigDocIdentifier newId = addNewIdentifier(idType, value);
+                String responseXml = new DigitalDocumentIdentifierBuilder(newId).buildDocument().toXML();
                 return Response.created(null).entity(responseXml).build();
             } else { //update value
-                DigRepIdentifier newId = updateIdentifier(idType, value);
-                String responseXml = new DigitalRepresentationIdentifierBuilder(newId, oldId.getValue()).buildDocument().toXML();
+                DigDocIdentifier newId = updateIdentifier(idType, value);
+                String responseXml = new DigitalDocumentIdentifierBuilder(newId, oldId.getValue()).buildDocument().toXML();
                 return Response.ok().entity(responseXml).build();
             }
         } catch (RestException e) {
@@ -102,10 +102,10 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
         }
     }
 
-    private DigRepIdentifier presentIdentifierOrNull(DigRepIdType idType) {
+    private DigDocIdentifier presentIdentifierOrNull(DigDocIdType idType) {
         try {
-            List<DigRepIdentifier> idList = dataAccessService().digRepIdentifiersByDigRepId(digRep.getId());
-            for (DigRepIdentifier id : idList) {
+            List<DigDocIdentifier> idList = dataAccessService().digDocIdentifiersByDigDocId(digRep.getId());
+            for (DigDocIdentifier id : idList) {
                 if (id.getType().equals(idType)) {
                     return id;
                 }
@@ -116,9 +116,9 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
         }
     }
 
-    private DigRepIdentifier addNewIdentifier(DigRepIdType idType, String value) {
+    private DigDocIdentifier addNewIdentifier(DigDocIdType idType, String value) {
         try {
-            DigRepIdentifier newId = identifierInstance(idType, value);
+            DigDocIdentifier newId = identifierInstance(idType, value);
             dataImportService().addNewDigRepId(newId);
             return newId;
         } catch (UnknownRegistrarException ex) {
@@ -134,18 +134,18 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
         }
     }
 
-    private DigRepIdentifier identifierInstance(DigRepIdType idType, String value) {
-        DigRepIdentifier result = new DigRepIdentifier();
-        result.setDigRepId(digRep.getId());
+    private DigDocIdentifier identifierInstance(DigDocIdType idType, String value) {
+        DigDocIdentifier result = new DigDocIdentifier();
+        result.setDigDocId(digRep.getId());
         result.setRegistrarId(digRep.getRegistrarId());
         result.setType(idType);
         result.setValue(value);
         return result;
     }
 
-    private DigRepIdentifier updateIdentifier(DigRepIdType idType, String value) {
+    private DigDocIdentifier updateIdentifier(DigDocIdType idType, String value) {
         try {
-            DigRepIdentifier id = identifierInstance(idType, value);
+            DigDocIdentifier id = identifierInstance(idType, value);
             dataUpdate().updateDigRepIdentifier(id);
             return id;
         } catch (UnknownRegistrarException ex) {
@@ -165,7 +165,7 @@ public class DigitalRepresentationIdentifiersResource extends Resource {
     @Produces("application/xml")
     public String removeAllIdentifiers() {
         try {
-            DigitalRepresentationIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
+            DigitalDocumentIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
             dataRemoveService().removeDigitalRepresentationIdentifiers(digRep.getId());
             return builder.buildDocument().toXML();
         } catch (UnknownDigRepException ex) {

@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -15,9 +15,9 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.ArrayList;
@@ -39,10 +39,10 @@ public class DigitalRepresentationResource extends Resource {
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_FORMAT = "format";
     private static final String PARAM_ADD_DIG_INST = "digitalInstances";
-    private final DigitalRepresentation rep;
+    private final DigitalDocument rep;
     private UrnNbn urn;
 
-    public DigitalRepresentationResource(DigitalRepresentation rep, UrnNbn urn) {
+    public DigitalRepresentationResource(DigitalDocument rep, UrnNbn urn) {
         this.rep = rep;
         this.urn = urn;
     }
@@ -68,16 +68,16 @@ public class DigitalRepresentationResource extends Resource {
 
         try {
             if (urn == null) {
-                urn = dataAccessService().urnByDigRepId(rep.getId());
+                urn = dataAccessService().urnByDigDocId(rep.getId());
             }
-            DigitalRepresentationIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(rep.getId());
+            DigitalDocumentIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(rep.getId());
             List<DigitalInstanceBuilder> instancesBuilders = addDigitalInstances
                     ? instancesBuilders(rep) : null;
             RegistrarBuilder regBuilder = new RegistrarBuilder(dataAccessService().registrarById(rep.getRegistrarId()), null, null);
             ArchiverBuilder archBuilder = (rep.getRegistrarId() == rep.getArchiverId())
                     ? null : new ArchiverBuilder(dataAccessService().archiverById(rep.getArchiverId()));
             IntelectualEntityBuilder entityBuilder = entityBuilder(rep.getIntEntId());
-            DigitalRepresentationBuilder builder = new DigitalRepresentationBuilder(rep, urn, digRepIdentifiersBuilder, instancesBuilders, regBuilder, archBuilder, entityBuilder);
+            DigitalDocumentBuilder builder = new DigitalDocumentBuilder(rep, urn, digRepIdentifiersBuilder, instancesBuilders, regBuilder, archBuilder, entityBuilder);
             return builder.buildRootElement().toXML();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
@@ -85,8 +85,8 @@ public class DigitalRepresentationResource extends Resource {
         }
     }
 
-    private List<DigitalInstanceBuilder> instancesBuilders(DigitalRepresentation rep) throws DatabaseException {
-        List<DigitalInstance> instances = dataAccessService().instancesByDigRepId(rep.getId());
+    private List<DigitalInstanceBuilder> instancesBuilders(DigitalDocument rep) throws DatabaseException {
+        List<DigitalInstance> instances = dataAccessService().instancesByDigDocId(rep.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);

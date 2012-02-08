@@ -5,11 +5,11 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.rest.config.Configuration;
-import cz.nkp.urnnbn.core.DigRepIdType;
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import cz.nkp.urnnbn.xml.builders.DigitalRepresentationsBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
 import java.util.logging.Level;
@@ -60,8 +60,8 @@ public class DigitalRepresentationsResource extends Resource {
     @Produces("application/xml")
     public String getDigitalRepresentations() {
         try {
-            int digRepCount = dataAccessService().digitalRepresentationsCount(registrar.getId());
-            DigitalRepresentationsBuilder builder = new DigitalRepresentationsBuilder(digRepCount);
+            int digRepCount = dataAccessService().digitalDocumentsCount(registrar.getId());
+            DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digRepCount);
             return builder.buildDocument().toXML();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
@@ -113,14 +113,14 @@ public class DigitalRepresentationsResource extends Resource {
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
         try {
-            DigRepIdType type = Parser.parseDigRepIdType(idTypeStr);
-            DigRepIdentifier id = new DigRepIdentifier();
+            DigDocIdType type = Parser.parseDigRepIdType(idTypeStr);
+            DigDocIdentifier id = new DigDocIdentifier();
             id.setRegistrarId(registrar.getId());
             id.setType(type);
             id.setValue(idValue);
-            DigitalRepresentation digRep = dataAccessService().digRepByIdentifier(id);
+            DigitalDocument digRep = dataAccessService().digDocByIdentifier(id);
             if (digRep == null) {
-                throw new UnknownDigitalRepresentationException(registrar.getUrnInstitutionCode(), type, idValue);
+                throw new UnknownDigitalRepresentationException(registrar.getCode(), type, idValue);
             }
             return new DigitalRepresentationResource(digRep, null);
         } catch (DatabaseException ex) {
@@ -140,17 +140,17 @@ public class DigitalRepresentationsResource extends Resource {
         result.setOriginator(unmarshaller.getOriginator());
         result.setSourceDoc(unmarshaller.getSourceDocument());
         //registrar        
-        Sigla sigla = Sigla.valueOf(registrar.getUrnInstitutionCode());
-        result.setRegistrarSigla(sigla);
+        RegistrarCode sigla = RegistrarCode.valueOf(registrar.getCode());
+        result.setRegistrarCode(sigla);
         //archiver
         Long archiverId = unmarshaller.getArchiverId() == null
                 ? registrar.getId() : unmarshaller.getArchiverId();
         //digital representation
-        DigitalRepresentation digRep = unmarshaller.getDigitalRepresentation();
+        DigitalDocument digRep = unmarshaller.getDigitalRepresentation();
         digRep.setRegistrarId(registrar.getId());
         digRep.setArchiverId(archiverId);
         result.setRepresentation(digRep);
-        result.setDigRepIds(unmarshaller.getDigRepIdentifiers());
+        result.setDigDocIdentifiers(unmarshaller.getDigRepIdentifiers());
         result.setUrn(unmarshaller.getUrnNbn());
         return result;
     }

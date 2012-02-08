@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.Sigla;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
@@ -59,8 +59,8 @@ public class RegistrarsResource extends Resource {
     @Path("{sigla}")
     public RegistrarResource getRegistrarResource(@PathParam("sigla") String siglaStr) {
         try {
-            Sigla sigla = Parser.parseSigla(siglaStr);
-            Registrar registrar = dataAccessService().registrarBySigla(sigla);
+            RegistrarCode sigla = Parser.parseSigla(siglaStr);
+            Registrar registrar = dataAccessService().registrarByCode(sigla);
             if (registrar == null) {
                 throw new UnknownRegistrarException(sigla);
             }

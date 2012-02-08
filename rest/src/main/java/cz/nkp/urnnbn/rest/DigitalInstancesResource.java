@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
@@ -39,13 +39,13 @@ public class DigitalInstancesResource extends Resource {
 
     private static final String PARAM_LIBRARY_ID = "libraryId";
     private static final int MAX_URL_LENGTH = 100;
-    private final DigitalRepresentation digRep;
+    private final DigitalDocument digRep;
 
     public DigitalInstancesResource() {
         digRep = null;
     }
 
-    public DigitalInstancesResource(DigitalRepresentation digRep) {
+    public DigitalInstancesResource(DigitalDocument digRep) {
         this.digRep = digRep;
     }
 
@@ -70,8 +70,8 @@ public class DigitalInstancesResource extends Resource {
         }
     }
 
-    private List<DigitalInstanceBuilder> instanceBuilders(DigitalRepresentation rep) throws DatabaseException {
-        List<DigitalInstance> instances = dataAccessService().instancesByDigRepId(rep.getId());
+    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument rep) throws DatabaseException {
+        List<DigitalInstance> instances = dataAccessService().instancesByDigDocId(rep.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
             //todo: i knihovny atd.
@@ -131,7 +131,7 @@ public class DigitalInstancesResource extends Resource {
     private DigitalInstance newDigitalInstance(long libraryId, URL url) {
         DigitalInstance instance = new DigitalInstance();
         instance.setLibraryId(libraryId);
-        instance.setDigRepId(digRep.getId());
+        instance.setDigDocId(digRep.getId());
         instance.setUrl(url.toString());
         return instance;
     }
