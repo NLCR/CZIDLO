@@ -4,7 +4,7 @@
     <r:id type="URN:NBN">urn:nbn:cz:boa001-000001</r:id>
     <r:registrarScopeIdentifiers>
         <r:id type="OAI">123</r:id>
-        <r:id type="sigla">000123456</r:id>
+        <r:id type="sysno">000123456</r:id>
         <r:id type="k4_pid">uuid:ae876087-435d-11dd-b505-00145e5790ea</r:id>
         <r:id type="signatura">Moll-RKP-0090.900,5</r:id>
     </r:registrarScopeIdentifiers>
@@ -12,9 +12,7 @@
     <r:financed>norské fondy</r:financed>
     <r:format>djvu</r:format>
     <r:lastUpdated>2011-12-18T19:07:23.909+01:00</r:lastUpdated>
-    <r:registrar>
-        <r:id type="INTERNAL">31</r:id>
-        <r:id type="SIGLA">boa001</r:id>
+    <r:registrar code="boa001">
         <r:name>MZK</r:name>
         <r:description>Moravská zemská knihovna</r:description>
     </r:registrar>

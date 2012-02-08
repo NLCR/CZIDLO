@@ -26,9 +26,9 @@ public class UrnNbnBuilder extends XmlBuilder {
         UrnNbn urn = urnWithStatus.getUrn();
         appendElementWithContentIfNotNull(root, urnWithStatus.getStatus().name(), "status");
         appendElementWithContentIfNotNull(root, urn.getCreated(), "created");
-        appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarSigla");
+        appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarCode");
         appendElementWithContentIfNotNull(root, urn.toString(), "value");
-        appendElementWithContentIfNotNull(root, urn.getDigRepId(), "digitalRepresentationId");
+        appendElementWithContentIfNotNull(root, urn.getDigDocId(), "digitalDocumentId");
         return root;
     }
 }

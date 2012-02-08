@@ -17,7 +17,7 @@ xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLS
     
     <xs:simpleType name="errorCodeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="INVALID_SIGLA"/>
+            <xs:enumeration value="INVALID_REGISTRAR_CODE"/>
             <xs:enumeration value="UNKNOWN_REGISTRAR"/>
             
             <xs:enumeration value="UNKNOWN_URN"/>

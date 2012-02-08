@@ -5,12 +5,12 @@
 package cz.nkp.urnnbn.xml.unmarshallers;
 
 import nu.xom.Document;
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.OriginType;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -186,35 +186,34 @@ public class RecordImportUnmarshaller extends Unmarshaller {
 
     /**
      * 
-     * @return DigitalRepresentation object, never null
+     * @return DigitalDocument object, never null
      */
-    public DigitalRepresentation getDigitalRepresentation() {
-        DigitalRepresentation digRep = new DigitalRepresentation();
+    public DigitalDocument getDigitalRepresentation() {
+        DigitalDocument digRep = new DigitalDocument();
         digRep.setFinancedFrom(elementContentOrNull("financed", digRepEl));
-        digRep.setFormat(elementContentOrNull("format", digRepEl));
         digRep.setExtent(elementContentOrNull("extent", digRepEl));
         digRep.setResolution(elementContentOrNull("resolution", digRepEl));
         digRep.setColorDepth(elementContentOrNull("colorDepth", digRepEl));
-        digRep.setAccessibility(elementContentOrNull("accessibility", digRepEl));
+        digRep.setContractNumber(elementContentOrNull("contactNumber", digRepEl));
         return digRep;
     }
 
-    public List<DigRepIdentifier> getDigRepIdentifiers() {
+    public List<DigDocIdentifier> getDigRepIdentifiers() {
         Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digRepEl);
         if (identifiersEl == null) {
-            return Collections.<DigRepIdentifier>emptyList();
+            return Collections.<DigDocIdentifier>emptyList();
         } else {
             Nodes nodes = selectNodes(new Xpath(prefixed("id")), identifiersEl);
             if (nodes.size() == 0) {
-                return Collections.<DigRepIdentifier>emptyList();
+                return Collections.<DigDocIdentifier>emptyList();
             } else {
-                List<DigRepIdentifier> result = new ArrayList<DigRepIdentifier>(nodes.size());
+                List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>(nodes.size());
                 for (int i = 0; i < nodes.size(); i++) {
                     Element idEl = (Element) nodes.get(i);
                     String type = idEl.getAttribute("type").getValue();
                     String value = idEl.getValue();
-                    DigRepIdentifier id = new DigRepIdentifier();
-                    id.setType(DigRepIdType.valueOf(type));
+                    DigDocIdentifier id = new DigDocIdentifier();
+                    id.setType(DigDocIdType.valueOf(type));
                     id.setValue(value);
                     result.add(id);
                 }

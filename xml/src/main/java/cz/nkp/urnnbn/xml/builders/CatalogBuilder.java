@@ -24,7 +24,7 @@ public class CatalogBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("catalog", RESOLVER);
-        appendIdentifierElement(root, IDTYPE_INTERNAL, catalog.getId());
+        //appendIdentifierElement(root, IDTYPE_INTERNAL, catalog.getId());
         appendElementWithContentIfNotNull(root, catalog.getName(), "name");
         appendElementWithContentIfNotNull(root, catalog.getDescription(), "description");
         appendElementWithContentIfNotNull(root, catalog.getUrlPrefix(), "urlPrefix");

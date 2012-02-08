@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:registrars xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:registrar>
-        <r:id type="INTERNAL">31</r:id>
-        <r:id type="SIGLA">boa001</r:id>
+    <r:registrar code="boa001">
         <r:name>MZK</r:name>
         <r:description>Moravská zemská knihovna</r:description>
     </r:registrar>
-    <r:registrar>
-        <r:id type="INTERNAL">32</r:id>
-        <r:id type="SIGLA">aba001</r:id>
+    <r:registrar code="aba001">
         <r:name>NKP</r:name>
         <r:description>Národní knihovna Praha</r:description>
     </r:registrar>

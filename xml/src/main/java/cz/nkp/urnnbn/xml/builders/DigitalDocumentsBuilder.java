@@ -20,7 +20,7 @@ public class DigitalDocumentsBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalRepresentations", RESOLVER);
+        Element root = new Element("digitalDocuments", RESOLVER);
         appendElementWithContentIfNotNull(root, digRepCount, "count");
         return root;
     }

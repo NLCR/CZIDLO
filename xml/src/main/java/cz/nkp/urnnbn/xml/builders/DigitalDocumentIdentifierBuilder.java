@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
@@ -14,15 +14,15 @@ import nu.xom.Element;
  */
 public class DigitalDocumentIdentifierBuilder extends XmlBuilder {
 
-    private final DigRepIdentifier id;
+    private final DigDocIdentifier id;
     private final String previousValue;
 
-    public DigitalDocumentIdentifierBuilder(DigRepIdentifier id) {
+    public DigitalDocumentIdentifierBuilder(DigDocIdentifier id) {
         this.id = id;
         this.previousValue = null;
     }
 
-    public DigitalDocumentIdentifierBuilder(DigRepIdentifier id, String previousValue) {
+    public DigitalDocumentIdentifierBuilder(DigDocIdentifier id, String previousValue) {
         this.id = id;
         this.previousValue = previousValue;
     }
@@ -32,8 +32,7 @@ public class DigitalDocumentIdentifierBuilder extends XmlBuilder {
         Element root = new Element("id", RESOLVER);
         Attribute type = new Attribute("type", id.getType().toString());
         root.addAttribute(type);
-        Element value = addElement(root, "value");
-        value.appendChild(id.getValue());
+        root.appendChild(id.getValue());
         if (previousValue != null) {
             Element previousValueEl = addElement(root, "previousValue");
             previousValueEl.appendChild(previousValue);
