@@ -15,7 +15,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
@@ -85,7 +85,7 @@ public class DigitalDocumentsResource extends Resource {
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
         } catch (DigRepIdentifierCollisionException ex) {
-            throw new InvalidDigRepIdentifier(ex.getMessage());
+            throw new InvalidDigDocIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {

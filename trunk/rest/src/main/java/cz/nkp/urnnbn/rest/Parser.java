@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigInstanceIdException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdType;
+import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdType;
 import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidRegistrarCodeException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
@@ -39,7 +39,7 @@ public class Parser {
         try {
             return DigDocIdType.valueOf(idTypeStr);
         } catch (RuntimeException e) {
-            throw new InvalidDigRepIdType(idTypeStr, e.getMessage());
+            throw new InvalidDigDocIdType(idTypeStr, e.getMessage());
         }
     }
 

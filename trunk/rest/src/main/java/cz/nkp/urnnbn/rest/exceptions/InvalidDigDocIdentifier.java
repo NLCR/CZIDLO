@@ -10,9 +10,9 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InvalidDigRepIdentifier extends RestException {
+public class InvalidDigDocIdentifier extends RestException {
 
-    public InvalidDigRepIdentifier(String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_DIGITAL_REPRESENTATION_IDENTIFIER", errorMessage);
+    public InvalidDigDocIdentifier(String errorMessage) {
+        super(Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_IDENTIFIER", errorMessage);
     }
 }
