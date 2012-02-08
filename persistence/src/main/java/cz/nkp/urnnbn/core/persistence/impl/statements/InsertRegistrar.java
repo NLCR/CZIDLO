@@ -27,7 +27,7 @@ public class InsertRegistrar implements StatementWrapper {
     public String preparedStatement() {
         return "INSERT into " + RegistrarDAO.TABLE_NAME
                 + "(" + RegistrarDAO.ATTR_ID
-                + "," + RegistrarDAO.ATTR_URN_INST_CODE
+                + "," + RegistrarDAO.ATTR_CODE
                 + ") values(?,?)";
     }
 
@@ -35,7 +35,7 @@ public class InsertRegistrar implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, registrar.getId());
-            st.setString(2, registrar.getUrnInstitutionCode());
+            st.setString(2, registrar.getCode());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnReservedDAO;
-import cz.nkp.urnnbn.core.persistence.UrnNbnSearchDAO;
+import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
@@ -45,7 +45,7 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
     @Override
     public void insertUrnNbn(UrnNbn urn, long registrarId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
-        //checkRecordExists(UrnNbnSearchDAO.TABLE_NAME, UrnNbnSearchDAO.ATTR_REGISTRAR_ID, urn.getRegistrarCode());
+        //checkRecordExists(UrnNbnGeneratorDAO.TABLE_NAME, UrnNbnGeneratorDAO.ATTR_REGISTRAR_ID, urn.getRegistrarCode());
         StatementWrapper st = new InsertUrnNbnReserved(urn, registrarId);
         DaoOperation operation = new NoResultOperation(st);
         try {

@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.UrnNbnSearch;
+import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 
@@ -34,18 +34,18 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
      */
     public void testInsertUrnNbnSearch() throws Exception {
         Registrar registrar = registrarPersisted();
-        UrnNbnSearch search = new UrnNbnSearch();
+        UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
         urnSearchDao.insertUrnNbnSearch(search);
     }
 
     public void testInsertUrnNbnSearch_alreadyPresent() throws Exception {
         Registrar registrar = registrarPersisted();
-        UrnNbnSearch first = new UrnNbnSearch();
+        UrnNbnGenerator first = new UrnNbnGenerator();
         first.setRegistrarId(registrar.getId());
         urnSearchDao.insertUrnNbnSearch(first);
 
-        UrnNbnSearch second = new UrnNbnSearch();
+        UrnNbnGenerator second = new UrnNbnGenerator();
         second.setRegistrarId(registrar.getId());
         try {
             urnSearchDao.insertUrnNbnSearch(second);
@@ -56,7 +56,7 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testInsertUrnNbnSearch_unknownRegistrar() throws Exception {
-        UrnNbnSearch search = new UrnNbnSearch();
+        UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(ILLEGAL_ID);
         try {
             urnSearchDao.insertUrnNbnSearch(search);
@@ -72,11 +72,11 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
     public void testGetSearchBySigla() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbnSearch search = new UrnNbnSearch();
+        UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
         urnSearchDao.insertUrnNbnSearch(search);
         //get
-        UrnNbnSearch fetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
+        UrnNbnGenerator fetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
         assertEquals(search, fetched);
     }
 
@@ -96,26 +96,26 @@ public class UrnNbnSearchDaoPostgresTest extends AbstractDaoTest {
     public void testUpdateUrnNbnSearch() throws Exception {
         //insert
         Registrar registrar = registrarPersisted();
-        UrnNbnSearch inserted = new UrnNbnSearch();
+        UrnNbnGenerator inserted = new UrnNbnGenerator();
         inserted.setRegistrarId(registrar.getId());
         urnSearchDao.insertUrnNbnSearch(inserted);
         //fetch
-        UrnNbnSearch fetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
+        UrnNbnGenerator fetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
         assertEquals(inserted, fetched);
         //update
-        UrnNbnSearch updated = new UrnNbnSearch();
+        UrnNbnGenerator updated = new UrnNbnGenerator();
         updated.setRegistrarId(registrar.getId());
-        updated.setLastFoundDocumentCode("   5");
+        updated.setLastDocumentCode("   5");
         urnSearchDao.updateUrnNbnSearch(updated);
         //fetch
-        UrnNbnSearch updatedAndFetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
+        UrnNbnGenerator updatedAndFetched = urnSearchDao.getSearchByRegistrarId(registrar.getId());
         assertEquals(updatedAndFetched, updated);
         assertFalse(updatedAndFetched.equals(inserted));
     }
 
     public void testUpdateUrnNbnSearch_unknownBooking() throws Exception {
         Registrar registrar = registrarPersisted();
-        UrnNbnSearch search = new UrnNbnSearch();
+        UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
         try {
             urnSearchDao.updateUrnNbnSearch(search);

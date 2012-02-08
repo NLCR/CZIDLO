@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.MultipleRecordsException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
@@ -43,7 +43,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     public void insertUrnNbn(UrnNbn urn) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
-        checkRecordExists(DigitalRepresentationDAO.TABLE_NAME, DigitalRepresentationDAO.ATTR_ID, urn.getDigRepId());
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, urn.getDigDocId());
         StatementWrapper st = new InsertUrnNbn(urn);
         DaoOperation operation = new NoResultOperation(st);
         try {
@@ -53,7 +53,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(urn.getDigRepId()));
+                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(urn.getDigDocId()));
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
                 throw new AlreadyPresentException(new IdPart[]{digRepId, registrarCode, documentCode});

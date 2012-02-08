@@ -5,8 +5,8 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -18,9 +18,9 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
+public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     
-    public DigitalRepresentationDaoPostgresTest(String testName) {
+    public DigitalDocumentDaoPostgresTest(String testName) {
         super(testName);
     }
     
@@ -41,7 +41,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digRepWithoutIds();
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(registrar.getId());
         rep.setArchiverId(archiver.getId());
@@ -51,7 +51,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     public void testInsertRepresentation_ok_sameArchiverAndRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digRepWithoutIds();
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(registrar.getId());
         rep.setArchiverId(registrar.getId());
@@ -61,7 +61,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     public void testInsertRepresentation_invalidRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digRepWithoutIds();
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(ILLEGAL_ID);
         rep.setArchiverId(archiver.getId());
@@ -75,7 +75,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     
     public void testInsertRepresentation_invalidArchiver() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digRepWithoutIds();
         Registrar registrar = registrarPersisted();
         rep.setIntEntId(entity.getId());
         rep.setRegistrarId(registrar.getId());
@@ -89,7 +89,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     }
     
     public void testInsertRepresentation_invalidEntity() throws Exception {
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digRepWithoutIds();
         Registrar registrar = registrarPersisted();
         Archiver archiver = archiverPersisted();
         rep.setIntEntId(ILLEGAL_ID);
@@ -109,8 +109,8 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     public void testGetRepresentationByDbId() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation inserted = representationPersisted(registrar.getId(), entity.getId());
-        DigitalRepresentation fetched = representationDao.getRepresentationByDbId(inserted.getId());
+        DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
+        DigitalDocument fetched = representationDao.getRepresentationByDbId(inserted.getId());
         assertEquals(inserted, fetched);
     }
     
@@ -147,16 +147,16 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
     public void testGetDigRepDbIdByIdentifier() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalRepresentation inserted = representationPersisted(registrar.getId(), entity.getId());
-        DigRepIdentifier identifier = builder.digRepIdentifierWithoutIds();
-        identifier.setDigRepId(inserted.getId());
+        DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
+        DigDocIdentifier identifier = builder.digRepIdentifierWithoutIds();
+        identifier.setDigDocId(inserted.getId());
         identifier.setRegistrarId(registrar.getId());
-        digRepIdDao.insertDigRepId(identifier);
+        digRepIdDao.insertDigDocId(identifier);
         //fetch
         Long fetchedRepId = representationDao.getDigRepDbIdByIdentifier(identifier);
         assertEquals(inserted.getId(), fetchedRepId.longValue());
         //try find with unknown value
-        DigRepIdentifier id2 = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id2 = builder.digRepIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
         id2.setValue(identifier.getValue() + "-new");
         try {
@@ -172,14 +172,14 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
 //    public void testUpdateRepresentation() throws Exception {
 //        Registrar registrar = registrarPersisted();
 //        IntelectualEntity entity = entityPersisted();
-//        DigitalRepresentation inserted = representationPersisted(registrar.getId(), entity.getId());
-//        DigitalRepresentation clone = new DigitalRepresentation(inserted);
+//        DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
+//        DigitalDocument clone = new DigitalDocument(inserted);
 //        clone.setColorDepth("24b");
 //        clone.setExtent("123s.");
 //        clone.setFormat("djvu");
 //        clone.setAccessibility("toilet reading only");
 //        representationDao.updateRepresentation(clone);
-//        DigitalRepresentation fetched = representationDao.getRepresentationByDbId(inserted.getId());
+//        DigitalDocument fetched = representationDao.getRepresentationByDbId(inserted.getId());
 //        assertEquals(clone, fetched);
 //        assertFalse(fetched.equals(inserted));
 //    }
@@ -191,7 +191,7 @@ public class DigitalRepresentationDaoPostgresTest extends AbstractDaoTest {
 //        //create registrar with urn
 //        Registrar registrar = registrarPersisted();
 //        IntelectualEntity entity = entityPersisted();
-//        DigitalRepresentation repInserted = representationPersisted(registrar.getId(), entity.getId());
+//        DigitalDocument repInserted = representationPersisted(registrar.getId(), entity.getId());
 //        UrnNbn urnInserted = new UrnNbn(registrar.getUrnInstitutionCode(), "BOA001", repInserted.getId(), new DateTime());
 //        urnDao.insertUrnNbn(urnInserted);
 //        try {

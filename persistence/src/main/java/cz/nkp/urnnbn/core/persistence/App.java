@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.DigRepIdType;
+import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
@@ -8,10 +8,10 @@ import cz.nkp.urnnbn.core.dto.User;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -40,7 +40,7 @@ public class App {
     static String database = "resolver-restTests";
     List<Registrar> registrars = new ArrayList<Registrar>();
     List<IntelectualEntity> entities = new ArrayList<IntelectualEntity>();
-    List<DigitalRepresentation> representations = new ArrayList<DigitalRepresentation>();
+    List<DigitalDocument> representations = new ArrayList<DigitalDocument>();
     DAOFactory factory = daoFactory();
     DtoBuilder builder = new DtoBuilder();
 
@@ -131,7 +131,7 @@ public class App {
             Registrar mzk = new Registrar();
             mzk.setName("MZK");
             mzk.setDescription("Moravská zemská knihovna");
-            mzk.setUrnInstitutionCode("BOA001");
+            mzk.setCode("BOA001");
             mzk.setId(factory.registrarDao().insertRegistrar(mzk));
             //mzkAdmin
             User mzkAdmin = new User();
@@ -163,7 +163,7 @@ public class App {
             Registrar nkp = new Registrar();
             nkp.setName("NKP");
             nkp.setDescription("Národní knihovna Praha");
-            nkp.setUrnInstitutionCode("ABA001");
+            nkp.setCode("ABA001");
             nkp.setId(factory.registrarDao().insertRegistrar(nkp));
             //library K4 nkp
             DigitalLibrary nkpK4 = new DigitalLibrary();
@@ -207,64 +207,64 @@ public class App {
             factory.srcDocDao().insertSrcDoc(babickaSrcDoc);
 
             //DR babickaMzk
-            DigitalRepresentation babickaMzk = new DigitalRepresentation();
+            DigitalDocument babickaMzk = new DigitalDocument();
             babickaMzk.setArchiverId(mzk.getId());
             babickaMzk.setRegistrarId(mzk.getId());
             babickaMzk.setFinancedFrom("norské fondy");
             babickaMzk.setIntEntId(babicka.getId());
-            babickaMzk.setFormat("djvu");
             babickaMzk.setId(factory.representationDao().insertRepresentation(babickaMzk));
             //urn:nbn:cz:boa001-000001
-            UrnNbn babickaUrn = new UrnNbn(mzk.getUrnInstitutionCode(), "000001", babickaMzk.getId());
+            UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());
             factory.urnDao().insertUrnNbn(babickaUrn);
             //DR id type=OAI
-            DigRepIdentifier babickaMzkDrOaiId = new DigRepIdentifier();
-            babickaMzkDrOaiId.setType(DigRepIdType.valueOf("K4_pid"));
+            DigDocIdentifier babickaMzkDrOaiId = new DigDocIdentifier();
+            babickaMzkDrOaiId.setType(DigDocIdType.valueOf("K4_pid"));
             babickaMzkDrOaiId.setValue("uuid:123");
             babickaMzkDrOaiId.setRegistrarId(mzk.getId());
-            babickaMzkDrOaiId.setDigRepId(babickaMzk.getId());
-            factory.digRepIdDao().insertDigRepId(babickaMzkDrOaiId);
+            babickaMzkDrOaiId.setDigDocId(babickaMzk.getId());
+            factory.digRepIdDao().insertDigDocId(babickaMzkDrOaiId);
             //DR id type=OTHER
-            DigRepIdentifier babickaMzkDrOtherId = new DigRepIdentifier();
-            babickaMzkDrOtherId.setType(DigRepIdType.valueOf("signatura"));
+            DigDocIdentifier babickaMzkDrOtherId = new DigDocIdentifier();
+            babickaMzkDrOtherId.setType(DigDocIdType.valueOf("signatura"));
             babickaMzkDrOtherId.setValue("3-1275.138");
             babickaMzkDrOtherId.setRegistrarId(mzk.getId());
-            babickaMzkDrOtherId.setDigRepId(babickaMzk.getId());
-            factory.digRepIdDao().insertDigRepId(babickaMzkDrOtherId);
+            babickaMzkDrOtherId.setDigDocId(babickaMzk.getId());
+            factory.digRepIdDao().insertDigDocId(babickaMzkDrOtherId);
 
 
             //babicka mzk v K4 mzk
             DigitalInstance babickaMzk_v_K4mzk = new DigitalInstance();
-            babickaMzk_v_K4mzk.setDigRepId(babickaMzk.getId());
+            babickaMzk_v_K4mzk.setDigDocId(babickaMzk.getId());
             babickaMzk_v_K4mzk.setLibraryId(mzkK4.getId());
             babickaMzk_v_K4mzk.setUrl("http://kramerius.mzk.cz/search/handle/uuid:123");
+            babickaMzk_v_K4mzk.setFormat("djvu");
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4mzk);
             //babicka mzk v K3 mzk
             DigitalInstance babickaMzk_v_K3mzk = new DigitalInstance();
-            babickaMzk_v_K3mzk.setDigRepId(babickaMzk.getId());
+            babickaMzk_v_K3mzk.setDigDocId(babickaMzk.getId());
             babickaMzk_v_K3mzk.setLibraryId(mzkK3.getId());
             babickaMzk_v_K3mzk.setUrl("http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239");
             factory.digInstDao().insertDigInstance(babickaMzk_v_K3mzk);
             //babicka mzk v K4 nkp
             DigitalInstance babickaMzk_v_K4nkp = new DigitalInstance();
-            babickaMzk_v_K4nkp.setDigRepId(babickaMzk.getId());
+            babickaMzk_v_K4nkp.setDigDocId(babickaMzk.getId());
             babickaMzk_v_K4nkp.setLibraryId(nkpK4.getId());
             babickaMzk_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:123");
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4nkp);
 
             //DR babicka nkp
-            DigitalRepresentation babickaNkp = new DigitalRepresentation();
+            DigitalDocument babickaNkp = new DigitalDocument();
             babickaNkp.setArchiverId(nkp.getId());
             babickaNkp.setRegistrarId(nkp.getId());
             babickaNkp.setFinancedFrom("VISK");
             babickaNkp.setIntEntId(babicka.getId());
-            babickaNkp.setFormat("jpeg");
             babickaNkp.setId(factory.representationDao().insertRepresentation(babickaNkp));
-            UrnNbn babickaNkpUrn = new UrnNbn(nkp.getUrnInstitutionCode(), "000001", babickaNkp.getId());
+            UrnNbn babickaNkpUrn = new UrnNbn(nkp.getCode(), "000001", babickaNkp.getId());
             factory.urnDao().insertUrnNbn(babickaNkpUrn);
             DigitalInstance babickaNkp_v_K4nkp = new DigitalInstance();
-            babickaNkp_v_K4nkp.setDigRepId(babickaNkp.getId());
+            babickaNkp_v_K4nkp.setDigDocId(babickaNkp.getId());
             babickaNkp_v_K4nkp.setLibraryId(nkpK4.getId());
+            babickaNkp_v_K4nkp.setFormat("jpg");
             babickaNkp_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:456");
             factory.digInstDao().insertDigInstance(babickaNkp_v_K4nkp);
 
@@ -284,15 +284,14 @@ public class App {
             babushkaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babushkaIsbn);
             //babushka nkp
-            DigitalRepresentation babushkaNkp = new DigitalRepresentation();
+            DigitalDocument babushkaNkp = new DigitalDocument();
             babushkaNkp.setArchiverId(nkp.getId());
             babushkaNkp.setRegistrarId(nkp.getId());
             babushkaNkp.setFinancedFrom("VISK");
             babushkaNkp.setIntEntId(babushka.getId());
-            babushkaNkp.setFormat("jpeg");
             babushkaNkp.setId(factory.representationDao().insertRepresentation(babushkaNkp));
             factory.representationDao().insertRepresentation(babushkaNkp);
-            UrnNbn babushaUrn = new UrnNbn(nkp.getUrnInstitutionCode(), "123456", babushkaNkp.getId());
+            UrnNbn babushaUrn = new UrnNbn(nkp.getCode(), "123456", babushkaNkp.getId());
             factory.urnDao().insertUrnNbn(babushaUrn);
 
         } catch (RecordNotFoundException ex) {
@@ -318,8 +317,8 @@ public class App {
         return registrar;
     }
 
-    public DigitalRepresentation representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+    public DigitalDocument representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
+        DigitalDocument rep = builder.digDocWithoutIds();
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
         rep.setArchiverId(registrarId);

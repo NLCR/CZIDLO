@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.dto.DigRepIdentifier;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -13,8 +13,8 @@ import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
@@ -24,8 +24,8 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalRepresentation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalRepresentation;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalRepresentationRT;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalDocumentRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import java.sql.Connection;
@@ -40,16 +40,16 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationDaoPostgres extends AbstractDAO implements DigitalRepresentationDAO {
+public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDocumentDAO {
 
-    private static final Logger logger = Logger.getLogger(DigitalRepresentationDaoPostgres.class.getName());
+    private static final Logger logger = Logger.getLogger(DigitalDocumentDaoPostgres.class.getName());
 
-    public DigitalRepresentationDaoPostgres(DatabaseConnector con) {
+    public DigitalDocumentDaoPostgres(DatabaseConnector con) {
         super(con);
     }
 
     @Override
-    public Long insertRepresentation(final DigitalRepresentation representation) throws DatabaseException, RecordNotFoundException {
+    public Long insertRepresentation(final DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
         //TODO: melo by byt vsechno v transakci
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, representation.getRegistrarId());
         checkRecordExists(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, representation.getArchiverId());
@@ -86,8 +86,8 @@ public class DigitalRepresentationDaoPostgres extends AbstractDAO implements Dig
     }
 
     @Override
-    public DigitalRepresentation getRepresentationByDbId(long dbId) throws DatabaseException, RecordNotFoundException {
-        return (DigitalRepresentation) getRecordById(TABLE_NAME, ATTR_ID, dbId, new DigitalRepresentationRT());
+    public DigitalDocument getRepresentationByDbId(long dbId) throws DatabaseException, RecordNotFoundException {
+        return (DigitalDocument) getRecordById(TABLE_NAME, ATTR_ID, dbId, new DigitalDocumentRT());
     }
 
     @Override
@@ -107,17 +107,17 @@ public class DigitalRepresentationDaoPostgres extends AbstractDAO implements Dig
     }
 
     @Override
-    public List<DigitalRepresentation> getRepresentationsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
+    public List<DigitalDocument> getRepresentationsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Long getDigRepDbIdByIdentifier(DigRepIdentifier id) throws DatabaseException, RecordNotFoundException {
+    public Long getDigRepDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectSingleAttrByLongStringString(
-                DigRepIdentifierDAO.TABLE_NAME, DigRepIdentifierDAO.ATTR_DIG_REP_ID,
-                DigRepIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
-                DigRepIdentifierDAO.ATTR_TYPE, id.getType().toString(),
-                DigRepIdentifierDAO.ATTR_VALUE, id.getValue());
+                DigDocIdentifierDAO.TABLE_NAME, DigDocIdentifierDAO.ATTR_DIG_REP_ID,
+                DigDocIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
+                DigDocIdentifierDAO.ATTR_TYPE, id.getType().toString(),
+                DigDocIdentifierDAO.ATTR_VALUE, id.getValue());
         DaoOperation operation = new SingleResultOperation(statement, new singleLongRT());
         try {
             return (Long) runInTransaction(operation);
@@ -133,8 +133,8 @@ public class DigitalRepresentationDaoPostgres extends AbstractDAO implements Dig
     }
 
     @Override
-    public void updateRepresentation(DigitalRepresentation representation) throws DatabaseException, RecordNotFoundException {
-        updateRecordWithLongPK(representation, TABLE_NAME, ATTR_ID, new UpdateDigitalRepresentation(representation));
+    public void updateRepresentation(DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
+        updateRecordWithLongPK(representation, TABLE_NAME, ATTR_ID, new UpdateDigitalDocument(representation));
     }
 
     @Override
@@ -146,6 +146,6 @@ public class DigitalRepresentationDaoPostgres extends AbstractDAO implements Dig
 
     @Override
     public void deleteAllRepresentations() throws DatabaseException {
-        deleteAllRecords(DigitalRepresentationDAO.TABLE_NAME);
+        deleteAllRecords(DigitalDocumentDAO.TABLE_NAME);
     }
 }

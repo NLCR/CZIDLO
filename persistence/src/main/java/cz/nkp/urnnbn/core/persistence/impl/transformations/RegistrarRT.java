@@ -19,7 +19,7 @@ public class RegistrarRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         Registrar registrar = new Registrar();
         registrar.setId(resultSet.getLong(RegistrarDAO.ATTR_ID));
-        registrar.setUrnInstitutionCode(resultSet.getString(RegistrarDAO.ATTR_URN_INST_CODE));
+        registrar.setCode(resultSet.getString(RegistrarDAO.ATTR_CODE));
         return registrar;
     }
 }

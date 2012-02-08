@@ -19,7 +19,7 @@ public interface RegistrarDAO {
 
     public String TABLE_NAME = "Registrar";
     public String ATTR_ID = "id";
-    public String ATTR_URN_INST_CODE = "registrarCode";
+    public String ATTR_CODE = "code";
 
     /**
      * Should not use id from registrar but instead create new by means of database
@@ -31,7 +31,7 @@ public interface RegistrarDAO {
 
     public Registrar getRegistrarById(long id) throws DatabaseException, RecordNotFoundException;
 
-    public Registrar getRegistrarBySigla(Sigla sigla) throws DatabaseException, RecordNotFoundException;
+    public Registrar getRegistrarBySigla(Sigla code) throws DatabaseException, RecordNotFoundException;
 
     public List<Registrar> getAllRegistrars() throws DatabaseException;
 

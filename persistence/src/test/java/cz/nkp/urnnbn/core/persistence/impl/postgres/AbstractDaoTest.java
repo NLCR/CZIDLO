@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalRepresentation;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
@@ -17,10 +17,10 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigRepIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalRepresentationDAO;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.OriginatorDAO;
@@ -28,7 +28,7 @@ import cz.nkp.urnnbn.core.persistence.PublicationDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.SourceDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnReservedDAO;
-import cz.nkp.urnnbn.core.persistence.UrnNbnSearchDAO;
+import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
@@ -46,10 +46,10 @@ public abstract class AbstractDaoTest extends TestCase {
     //DAOs
     final ArchiverDAO archiverDao;
     final CatalogDAO catalogDao;
-    final DigRepIdentifierDAO digRepIdDao;
+    final DigDocIdentifierDAO digRepIdDao;
     final DigitalInstanceDAO digInstDao;
     final DigitalLibraryDAO libraryDao;
-    final DigitalRepresentationDAO representationDao;
+    final DigitalDocumentDAO representationDao;
     final IntelectualEntityDAO entityDao;
     final IntEntIdentifierDAO intEntIdDao;
     final OriginatorDAO originatorDao;
@@ -59,7 +59,7 @@ public abstract class AbstractDaoTest extends TestCase {
     final UrnNbnDAO urnDao;
     final UserDAO userDao;
     final UrnNbnReservedDAO urnBookedDao;
-    final UrnNbnSearchDAO urnSearchDao;
+    final UrnNbnGeneratorDAO urnSearchDao;
 
     public AbstractDaoTest(String testName) {
         super(testName);
@@ -119,8 +119,8 @@ public abstract class AbstractDaoTest extends TestCase {
         return registrar;
     }
 
-    public DigitalRepresentation representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
-        DigitalRepresentation rep = builder.digRepWithoutIds();
+    public DigitalDocument representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
+        DigitalDocument rep = builder.digRepWithoutIds();
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
         rep.setArchiverId(registrarId);

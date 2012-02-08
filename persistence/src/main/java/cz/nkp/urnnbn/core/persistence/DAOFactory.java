@@ -7,10 +7,10 @@ package cz.nkp.urnnbn.core.persistence;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseDriver;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigRepIdentifierDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.DigDocIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalInstanceDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalLibraryDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalRepresentationDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntEntIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntelectualEntityDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.OriginatorDaoPostgres;
@@ -18,7 +18,7 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.PublicationDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnReservedDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnSearchDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UserDaoPostgres;
 import java.util.logging.Logger;
@@ -34,10 +34,10 @@ public class DAOFactory {
     //DAO instances
     private ArchiverDAO archiverDao;
     private CatalogDAO catalogDao;
-    private DigRepIdentifierDAO digRepId;
+    private DigDocIdentifierDAO digRepId;
     private DigitalInstanceDAO digInst;
     private DigitalLibraryDAO libraryDao;
-    private DigitalRepresentationDAO representationDao;
+    private DigitalDocumentDAO representationDao;
     private IntelectualEntityDAO entityDao;
     private IntEntIdentifierDAO intEntIdDao;
     private OriginatorDAO originatorDao;
@@ -46,7 +46,7 @@ public class DAOFactory {
     private SourceDocumentDAO srcDocDao;
     private UrnNbnDAO urnDao;
     private UserDAO userDao;
-    private UrnNbnSearchDAO urnSearchDao;
+    private UrnNbnGeneratorDAO urnSearchDao;
     private UrnNbnReservedDAO urnReservedDao;
 
     public DAOFactory(DatabaseConnector connector) {
@@ -116,10 +116,10 @@ public class DAOFactory {
         return intEntIdDao;
     }
 
-    public DigitalRepresentationDAO representationDao() {
+    public DigitalDocumentDAO representationDao() {
         if (representationDao == null) {
             if (postgres()) {
-                representationDao = new DigitalRepresentationDaoPostgres(connector);
+                representationDao = new DigitalDocumentDaoPostgres(connector);
             } else if (oracle()) {
                 representationDao = null;//TODO
             }
@@ -170,10 +170,10 @@ public class DAOFactory {
         return catalogDao;
     }
 
-    public DigRepIdentifierDAO digRepIdDao() {
+    public DigDocIdentifierDAO digRepIdDao() {
         if (digRepId == null) {
             if (postgres()) {
-                digRepId = new DigRepIdentifierDaoPostgres(connector);
+                digRepId = new DigDocIdentifierDaoPostgres(connector);
             } else if (oracle()) {
             }
         }
@@ -220,10 +220,10 @@ public class DAOFactory {
         return urnReservedDao;
     }
 
-    public UrnNbnSearchDAO urnSearchDao() {
+    public UrnNbnGeneratorDAO urnSearchDao() {
         if (urnSearchDao == null) {
             if (postgres()) {
-                urnSearchDao = new UrnNbnSearchDaoPostgres(connector);
+                urnSearchDao = new UrnNbnGeneratorDaoPostgres(connector);
             } else if (oracle()) {
             }
         }
