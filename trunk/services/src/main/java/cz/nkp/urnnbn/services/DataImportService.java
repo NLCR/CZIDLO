@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigRepException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
@@ -42,15 +42,15 @@ public interface DataImportService extends BusinessService {
             DigRepIdentifierCollisionException, UnknownArchiverException;
 
     /**
-     * Creates new digital instance for existing digital representation.
+     * Creates new digital instance for existing digital document.
      * @param instance
      * @param userId Id of user performing this operation
      * @return digital instance object with id set
      */
     public DigitalInstance addDigitalInstance(DigitalInstance instance, long userId) throws
-            UnknownDigiLibException, UnknownDigRepException,
+            UnknownDigiLibException, UnknownDigDocException,
             AccessException;
 
     public void addNewDigRepId(DigDocIdentifier newId) throws
-            UnknownRegistrarException, UnknownDigRepException, IdentifierConflictException;
+            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 }

@@ -26,7 +26,7 @@ public class RecordImport {
     Publication publication;
     Originator originator;
     SourceDocument sourceDoc;
-    DigitalDocument representation;
+    DigitalDocument digitalDocument;
     List<DigDocIdentifier> digDocIdentifiers;
     UrnNbn urn;
     RegistrarCode registrarCode;
@@ -71,12 +71,12 @@ public class RecordImport {
         this.publication = publication;
     }
 
-    public DigitalDocument getRepresentation() {
-        return representation;
+    public DigitalDocument getDigitalDocument() {
+        return digitalDocument;
     }
 
-    public void setRepresentation(DigitalDocument representation) {
-        this.representation = representation;
+    public void setDigitalDocument(DigitalDocument digitalDocument) {
+        this.digitalDocument = digitalDocument;
     }
 
     public SourceDocument getSourceDoc() {
