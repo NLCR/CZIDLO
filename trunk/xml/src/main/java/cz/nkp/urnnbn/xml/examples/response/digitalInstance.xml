@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:id type="INTERNAL">42</r:id>
-    <r:url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</r:url>
-    <r:published>2011-12-18T19:07:24.064+01:00</r:published>
-    <r:digitalLibrary>
-        <r:id type="INTERNAL">32</r:id>
-        <r:name>K3</r:name>
-        <r:description>Kramerius 3</r:description>
-        <r:registrar code="boa001">
-            <r:name>MZK</r:name>
-            <r:description>Moravská zemská knihovna</r:description>
-        </r:registrar>
-    </r:digitalLibrary>
-    <r:digitalRepresentation>
-        <r:id type="INTERNAL">41</r:id>
-        <r:id type="URN:NBN">urn:nbn:cz:boa001-000001</r:id>
-        <r:registrarUniqueIdentifiers>
-            <r:id type="OAI">123</r:id>
-        </r:registrarUniqueIdentifiers>
-        <r:created>2011-12-18T19:07:23.909+01:00</r:created>
-        <r:financed>norské fondy</r:financed>
-        <r:format>djvu</r:format>
-        <r:lastUpdated>2011-12-18T19:07:23.909+01:00</r:lastUpdated>
-    </r:digitalRepresentation>
-</r:digitalInstance>
+<digitalInstance xmlns="http://resolver.nkp.cz/v2/">
+    <id type="INTERNAL">1</id>
+    <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
+    <published>2012-02-08T06:34:03.407+01:00</published>
+    <format>djvu</format>
+    <accessibility>veřejně přístupné</accessibility>
+    <digitalLibrary>
+        <name>K4</name>
+        <description>Kramerius4</description>
+        <registrar code="boa001">
+            <name>MZK</name>
+            <description>Moravská zemská knihovna</description>
+        </registrar>
+    </digitalLibrary>
+    <digitalDocument>
+        <id type="INTERNAL">1</id>
+        <id type="URN:NBN">urn:nbn:cz:boa001-000001</id>
+        <registrarScopeIdentifiers>
+            <id type="K4_pid">uuid:123</id>
+            <id type="signatura">3-1275.138</id>
+            <id type="TEST2">1234g</id>
+        </registrarScopeIdentifiers>
+        <colorDepth>24b</colorDepth>
+        <created>2012-02-08T06:34:03.230+01:00</created>
+        <extent>223 stran</extent>
+        <financed>norské fondy</financed>
+        <lastUpdated>2012-02-08T06:34:03.230+01:00</lastUpdated>
+        <resolution>1280x1024</resolution>
+        <contractNumber>123</contractNumber>
+    </digitalDocument>
+</digitalInstance>

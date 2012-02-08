@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+    <status>ACTIVE</status>
+    <created>2012-02-08T06:34:03.272+01:00</created>
+    <registrarCode>boa001</registrarCode>
+    <value>urn:nbn:cz:boa001-000001</value>
+    <digitalDocumentId>1</digitalDocumentId>
+</urnNbn>
