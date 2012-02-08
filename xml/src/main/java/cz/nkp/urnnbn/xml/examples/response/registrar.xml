@@ -1,25 +1,22 @@
-
-<r:registrar xmlns:r="http://resolver.nkp.cz/v2/" code="boa001">
-    <r:name>MZK</r:name>
-    <r:description>Moravská zemská knihovna</r:description>
-    <r:digitalLibraries>
-        <r:digitalLibrary>
-            <r:id type="INTERNAL">31</r:id>
-            <r:name>K4</r:name>
-            <r:description>Kramerius4</r:description>
-        </r:digitalLibrary>
-        <r:digitalLibrary>
-            <r:id type="INTERNAL">32</r:id>
-            <r:name>K3</r:name>
-            <r:description>Kramerius 3</r:description>
-        </r:digitalLibrary>
-    </r:digitalLibraries>
-    <r:catalogs>
-        <r:catalog>
-            <r:id type="INTERNAL">4</r:id>
-            <r:name>Aleph</r:name>
-            <r:description>katalog Aleph</r:description>
-            <r:urlPrefix>http://aleph.mzk.cz</r:urlPrefix>
-        </r:catalog>
-    </r:catalogs>
-</r:registrar>
+<?xml version="1.0" encoding="UTF-8"?>
+<registrar xmlns="http://resolver.nkp.cz/v2/" code="boa001">
+    <name>MZK</name>
+    <description>Moravská zemská knihovna</description>
+    <digitalLibraries>
+        <digitalLibrary>
+            <name>K4</name>
+            <description>Kramerius4</description>
+        </digitalLibrary>
+        <digitalLibrary>
+            <name>K3</name>
+            <description>Kramerius 3</description>
+        </digitalLibrary>
+    </digitalLibraries>
+    <catalogs>
+        <catalog>
+            <name>Aleph</name>
+            <description>katalog Aleph</description>
+            <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+        </catalog>
+    </catalogs>
+</registrar>
