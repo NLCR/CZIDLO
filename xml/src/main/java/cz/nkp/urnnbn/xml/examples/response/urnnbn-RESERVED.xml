@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+    <status>RESERVED</status>
+    <created>2012-02-08T07:11:28.211+01:00</created>
+    <registrarCode>boa001</registrarCode>
+    <value>urn:nbn:cz:boa001-000006</value>
+</urnNbn>

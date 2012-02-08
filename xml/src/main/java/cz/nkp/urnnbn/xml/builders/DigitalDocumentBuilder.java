@@ -35,7 +35,7 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     public Element buildRootElement() {
         Element root = new Element("digitalDocument", RESOLVER);
-        appendIdentifierElement(root, "INTERNAL", rep.getId());
+        //appendIdentifierElement(root, "INTERNAL", rep.getId());
         appendIdentifierElement(root, "URN:NBN", urn);
         if (identifiersBuilder != null) {
             appendBuilderResultfNotNull(root, identifiersBuilder);
