@@ -38,9 +38,9 @@ public interface DigitalDocumentDAO {
      * @throws DatabaseException
      * @throws RecordNotFoundException if registrar, archiver or intelectual entity not found
      */
-    public Long insertRepresentation(DigitalDocument representation) throws DatabaseException, RecordNotFoundException;
+    public Long insertDocument(DigitalDocument representation) throws DatabaseException, RecordNotFoundException;
 
-    public DigitalDocument getRepresentationByDbId(long dbId) throws DatabaseException, RecordNotFoundException;
+    public DigitalDocument getDocumentByDbId(long dbId) throws DatabaseException, RecordNotFoundException;
 
     //vyhledavani dig.rep. podle urn takto:
     //z UrnNbnDao ziskame id digRep a pak pres nej vytahnem data digRep
@@ -55,7 +55,7 @@ public interface DigitalDocumentDAO {
 
     public List<DigitalDocument> getRepresentationsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteRepresentation(long digRepDbId) throws DatabaseException, RecordNotFoundException;
+    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException;
 
     public void deleteAllRepresentations() throws DatabaseException;
     //TODO: implementovat, pokud bude potreba

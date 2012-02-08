@@ -75,7 +75,7 @@ public abstract class AbstractDaoTest extends TestCase {
         entityDao = daoFactory.intelectualEntityDao();
         intEntIdDao = daoFactory.intEntIdentifierDao();
         originatorDao = daoFactory.originatorDao();
-        representationDao = daoFactory.representationDao();
+        representationDao = daoFactory.documentDao();
         userDao = daoFactory.userDao();
         publicationDao = daoFactory.publicationDao();
         srcDocDao = daoFactory.srcDocDao();
@@ -124,7 +124,7 @@ public abstract class AbstractDaoTest extends TestCase {
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
         rep.setArchiverId(registrarId);
-        Long repId = representationDao.insertRepresentation(rep);
+        Long repId = representationDao.insertDocument(rep);
         rep.setId(repId);
         return rep;
     }

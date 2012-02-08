@@ -67,7 +67,7 @@ public class App {
 
     public void clearDatabase() throws DatabaseException {
         factory.urnDao().deleteAllUrnNbns();
-        factory.representationDao().deleteAllRepresentations();
+        factory.documentDao().deleteAllRepresentations();
         factory.intelectualEntityDao().deleteAllEntities();
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
         factory.archiverDao().deleteAllArchivers();
@@ -201,10 +201,6 @@ public class App {
             Originator babickaAutor = builder.originatorWithoutId();
             babickaAutor.setIntEntId(babicka.getId());
             factory.originatorDao().insertOriginator(babickaAutor);
-            //source document
-            SourceDocument babickaSrcDoc = builder.sourceDocumentWithoutId();
-            babickaSrcDoc.setIntEntId(babicka.getId());
-            factory.srcDocDao().insertSrcDoc(babickaSrcDoc);
 
             //DR babickaMzk
             DigitalDocument babickaMzk = new DigitalDocument();
@@ -212,7 +208,7 @@ public class App {
             babickaMzk.setRegistrarId(mzk.getId());
             babickaMzk.setFinancedFrom("norské fondy");
             babickaMzk.setIntEntId(babicka.getId());
-            babickaMzk.setId(factory.representationDao().insertRepresentation(babickaMzk));
+            babickaMzk.setId(factory.documentDao().insertDocument(babickaMzk));
             //urn:nbn:cz:boa001-000001
             UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());
             factory.urnDao().insertUrnNbn(babickaUrn);
@@ -258,7 +254,7 @@ public class App {
             babickaNkp.setRegistrarId(nkp.getId());
             babickaNkp.setFinancedFrom("VISK");
             babickaNkp.setIntEntId(babicka.getId());
-            babickaNkp.setId(factory.representationDao().insertRepresentation(babickaNkp));
+            babickaNkp.setId(factory.documentDao().insertDocument(babickaNkp));
             UrnNbn babickaNkpUrn = new UrnNbn(nkp.getCode(), "000001", babickaNkp.getId());
             factory.urnDao().insertUrnNbn(babickaNkpUrn);
             DigitalInstance babickaNkp_v_K4nkp = new DigitalInstance();
@@ -289,8 +285,8 @@ public class App {
             babushkaNkp.setRegistrarId(nkp.getId());
             babushkaNkp.setFinancedFrom("VISK");
             babushkaNkp.setIntEntId(babushka.getId());
-            babushkaNkp.setId(factory.representationDao().insertRepresentation(babushkaNkp));
-            factory.representationDao().insertRepresentation(babushkaNkp);
+            babushkaNkp.setId(factory.documentDao().insertDocument(babushkaNkp));
+            factory.documentDao().insertDocument(babushkaNkp);
             UrnNbn babushaUrn = new UrnNbn(nkp.getCode(), "123456", babushkaNkp.getId());
             factory.urnDao().insertUrnNbn(babushaUrn);
 
@@ -322,7 +318,7 @@ public class App {
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
         rep.setArchiverId(registrarId);
-        Long repId = factory.representationDao().insertRepresentation(rep);
+        Long repId = factory.documentDao().insertDocument(rep);
         rep.setId(repId);
         return rep;
     }
