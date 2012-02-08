@@ -18,7 +18,7 @@
             <r:publicationYear>1900</r:publicationYear>
         </r:sourceDocument>
     </r:monograph>
-    <r:digitalRepresentation>
+    <r:digitalDocument>
         <r:id type="URN:NBN">urn:nbn:cz:boa001-000002</r:id>
         <!-- nesmi tu byt id typu internal. Jinak asi bude ignorovano -->
         <r:registrarUniqueIdentifiers>
@@ -27,6 +27,6 @@
         </r:registrarUniqueIdentifiers>
         <r:financed>norské fondy</r:financed>
         <r:format>djvu</r:format>
-    </r:digitalRepresentation>
+    </r:digitalDocument>
     <!-- TODO: pridani digitalnich instanci resit az v dalsi operaci -->
 </r:import>

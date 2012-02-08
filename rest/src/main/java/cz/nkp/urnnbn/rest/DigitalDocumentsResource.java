@@ -18,7 +18,7 @@ import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigRepIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
-import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalRepresentationException;
+import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
@@ -45,20 +45,20 @@ import nu.xom.Document;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationsResource extends Resource {
+public class DigitalDocumentsResource extends Resource {
 
     @Context
     private UriInfo context;
     private final Registrar registrar;
 
     /** Creates a new instance of RegistrarsResource */
-    public DigitalRepresentationsResource(Registrar registrar) {
+    public DigitalDocumentsResource(Registrar registrar) {
         this.registrar = registrar;
     }
 
     @GET
     @Produces("application/xml")
-    public String getDigitalRepresentations() {
+    public String getDigitalDocuments() {
         try {
             int digRepCount = dataAccessService().digitalDocumentsCount(registrar.getId());
             DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digRepCount);
@@ -72,7 +72,7 @@ public class DigitalRepresentationsResource extends Resource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String importDigitalRepresentation(String content) {
+    public String importDigitalDocument(String content) {
         //todo: autentizace
         long userId = 1;//TODO: ziskat z hlavicky
         try {
@@ -109,7 +109,7 @@ public class DigitalRepresentationsResource extends Resource {
      * Sub-resource locator method for {id}
      */
     @Path("id/{idType}/{idValue}")
-    public DigitalRepresentationResource getDigitalRepresentationResource(
+    public DigitalDocumentResource getDigitalDocumentResource(
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
         try {
@@ -120,9 +120,9 @@ public class DigitalRepresentationsResource extends Resource {
             id.setValue(idValue);
             DigitalDocument digRep = dataAccessService().digDocByIdentifier(id);
             if (digRep == null) {
-                throw new UnknownDigitalRepresentationException(registrar.getCode(), type, idValue);
+                throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
             }
-            return new DigitalRepresentationResource(digRep, null);
+            return new DigitalDocumentResource(digRep, null);
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
@@ -145,11 +145,11 @@ public class DigitalRepresentationsResource extends Resource {
         //archiver
         Long archiverId = unmarshaller.getArchiverId() == null
                 ? registrar.getId() : unmarshaller.getArchiverId();
-        //digital representation
-        DigitalDocument digRep = unmarshaller.getDigitalRepresentation();
-        digRep.setRegistrarId(registrar.getId());
-        digRep.setArchiverId(archiverId);
-        result.setRepresentation(digRep);
+        //digital document
+        DigitalDocument digDoc = unmarshaller.getDigitalDocument();
+        digDoc.setRegistrarId(registrar.getId());
+        digDoc.setArchiverId(archiverId);
+        result.setDigitalDocument(digDoc);
         result.setDigDocIdentifiers(unmarshaller.getDigRepIdentifiers());
         result.setUrn(unmarshaller.getUrnNbn());
         return result;

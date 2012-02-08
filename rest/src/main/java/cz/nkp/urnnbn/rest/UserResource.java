@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.rest;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -26,14 +25,6 @@ public class UserResource {
     @Context
     private UriInfo context;
 
-    /** Creates a new instance of UserResource */
-    public UserResource() {
-    }
-
-    /**
-     * Retrieves representation of an instance of cz.nkp.urnnbn.rest.UserResource
-     * @return an instance of java.lang.String
-     */
     @GET
     @Produces("text/plain")
     public String getXml() {
@@ -51,11 +42,6 @@ public class UserResource {
                 + "</user>";
     }
 
-    /**
-     * PUT method for updating or creating an instance of UserResource
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
-     */
     @PUT
     @Consumes("application/xml")
     public void putXml(String content) {

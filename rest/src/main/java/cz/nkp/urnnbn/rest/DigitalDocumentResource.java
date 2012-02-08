@@ -34,7 +34,7 @@ import javax.ws.rs.QueryParam;
  *
  * @author Martin Řehánek
  */
-public class DigitalRepresentationResource extends Resource {
+public class DigitalDocumentResource extends Resource {
 
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_FORMAT = "format";
@@ -42,7 +42,7 @@ public class DigitalRepresentationResource extends Resource {
     private final DigitalDocument rep;
     private UrnNbn urn;
 
-    public DigitalRepresentationResource(DigitalDocument rep, UrnNbn urn) {
+    public DigitalDocumentResource(DigitalDocument rep, UrnNbn urn) {
         this.rep = rep;
         this.urn = urn;
     }
@@ -105,8 +105,8 @@ public class DigitalRepresentationResource extends Resource {
     }
 
     @Path("/identifiers")
-    public DigitalRepresentationIdentifiersResource getIdentifiersResource() {
-        return new DigitalRepresentationIdentifiersResource(rep);
+    public DigitalDocumentIdentifiersResource getIdentifiersResource() {
+        return new DigitalDocumentIdentifiersResource(rep);
     }
 
     @Path("/digitalInstances")
