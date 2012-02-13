@@ -16,13 +16,25 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
     private long intEntId;
     private long registrarId;
     private long archiverId;
+    //
     private DateTime created;
     private DateTime lastUpdated;
+    //
     private String extent;
-    private String resolution;
-    private String colorDepth;
     private String financedFrom;
     private String contractNumber;
+    //
+    private String format;
+    private String formatVersion;
+    private Integer resolutionWidth;
+    private Integer resolutionHeight;
+    private String compression;
+    private Double compressionRatio;
+    private String colorModel;
+    private Integer colorDepth;
+    private String iccProfile;
+    private Integer pictureWidth;
+    private Integer pictureHight;
 
     public DigitalDocument() {
     }
@@ -35,10 +47,19 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         created = original.getCreated();
         lastUpdated = original.getLastUpdated();
         extent = original.getExtent();
-        resolution = original.getResolution();
-        colorDepth = original.getColorDepth();
         financedFrom = original.getFinancedFrom();
         contractNumber = original.getContractNumber();
+        format = original.getFormat();
+        formatVersion = original.getFormatVersion();
+        resolutionWidth = original.getResolutionWidth();
+        resolutionWidth = original.getResolutionHeight();
+        compression = original.getCompression();
+        compressionRatio = original.getCompressionRatio();
+        colorModel = original.getColorModel();
+        colorDepth = original.getColorDepth();
+        iccProfile = original.getIccProfile();
+        pictureWidth = original.getPictureWidth();
+        pictureHight = original.getPictureHeight();
     }
 
     public long getArchiverId() {
@@ -47,14 +68,6 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
 
     public void setArchiverId(long archiverId) {
         this.archiverId = archiverId;
-    }
-
-    public String getColorDepth() {
-        return colorDepth;
-    }
-
-    public void setColorDepth(String colorDepth) {
-        this.colorDepth = colorDepth;
     }
 
     public DateTime getCreated() {
@@ -122,12 +135,92 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         this.registrarId = registrarId;
     }
 
-    public String getResolution() {
-        return resolution;
+    public Integer getColorDepth() {
+        return colorDepth;
     }
 
-    public void setResolution(String resolution) {
-        this.resolution = resolution;
+    public void setColorDepth(Integer colorDepth) {
+        this.colorDepth = colorDepth;
+    }
+
+    public String getColorModel() {
+        return colorModel;
+    }
+
+    public void setColorModel(String colorModel) {
+        this.colorModel = colorModel;
+    }
+
+    public String getCompression() {
+        return compression;
+    }
+
+    public void setCompression(String compression) {
+        this.compression = compression;
+    }
+
+    public Double getCompressionRatio() {
+        return compressionRatio;
+    }
+
+    public void setCompressionRatio(Double compressionRatio) {
+        this.compressionRatio = compressionRatio;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getFormatVersion() {
+        return formatVersion;
+    }
+
+    public void setFormatVersion(String formatVersion) {
+        this.formatVersion = formatVersion;
+    }
+
+    public Integer getPictureHeight() {
+        return pictureHight;
+    }
+
+    public void setPictureHeight(Integer height) {
+        this.pictureHight = height;
+    }
+
+    public String getIccProfile() {
+        return iccProfile;
+    }
+
+    public void setIccProfile(String iccProfile) {
+        this.iccProfile = iccProfile;
+    }
+
+    public Integer getResolutionHeight() {
+        return resolutionHeight;
+    }
+
+    public void setResolutionHeight(Integer resolutionHeight) {
+        this.resolutionHeight = resolutionHeight;
+    }
+
+    public Integer getResolutionWidth() {
+        return resolutionWidth;
+    }
+
+    public void setResolutionWidth(Integer resolutionWidth) {
+        this.resolutionWidth = resolutionWidth;
+    }
+
+    public Integer getPictureWidth() {
+        return pictureWidth;
+    }
+
+    public void setPictureWidth(Integer width) {
+        this.pictureWidth = width;
     }
 
     @Override
