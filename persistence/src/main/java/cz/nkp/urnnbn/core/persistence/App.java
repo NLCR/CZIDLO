@@ -61,7 +61,7 @@ public class App {
 
     public void clearDatabase() throws DatabaseException {
         factory.urnDao().deleteAllUrnNbns();
-        factory.documentDao().deleteAllRepresentations();
+        factory.documentDao().deleteAllDocuments();
         factory.intelectualEntityDao().deleteAllEntities();
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
         factory.archiverDao().deleteAllArchivers();
@@ -148,14 +148,23 @@ public class App {
 
             //DR babickaMzk
             DigitalDocument babickaMzk = new DigitalDocument();
+            babickaMzk.setIntEntId(babicka.getId());
             babickaMzk.setArchiverId(mzk.getId());
             babickaMzk.setRegistrarId(mzk.getId());
-            babickaMzk.setFinancedFrom("norské fondy");
-            babickaMzk.setIntEntId(babicka.getId());
-            babickaMzk.setContractNumber("123");
             babickaMzk.setExtent("223 stran");
-            babickaMzk.setColorDepth("24b");
-            babickaMzk.setResolution("1280x1024");
+            babickaMzk.setFinancedFrom("norské fondy");
+            babickaMzk.setContractNumber("123");
+            babickaMzk.setFormat("JPEG");
+            babickaMzk.setFormatVersion("1.0");
+            babickaMzk.setResolutionWidth(1280);
+            babickaMzk.setResolutionHeight(1024);
+            babickaMzk.setCompression("LZW");
+            babickaMzk.setCompressionRatio(Double.valueOf(0.3));
+            babickaMzk.setColorModel("RGB");
+            babickaMzk.setColorDepth(24);
+            babickaMzk.setIccProfile("some ICC profile");
+            babickaMzk.setPictureWidth(600);
+            babickaMzk.setPictureHeight(1000);
             babickaMzk.setId(factory.documentDao().insertDocument(babickaMzk));
             //urn:nbn:cz:boa001-000001
             UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());

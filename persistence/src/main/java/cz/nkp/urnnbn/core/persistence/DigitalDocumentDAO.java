@@ -17,19 +17,31 @@ import java.util.List;
 public interface DigitalDocumentDAO {
 
     public String TABLE_NAME = "DigitalDocument";
-    //TODO: prejmenovat jeste sekvenci
-    public String SEQ_NAME = "seq_DigitalRepresentation";
+    public String SEQ_NAME = "seq_DigitalDocument";
     public String ATTR_ID = "id";
     public String ATTR_INT_ENT_ID = "intelectualEntityId";
     public String ATTR_REGISTRAR_ID = "registrarId";
     public String ATTR_ARCHIVER_ID = "archiverId";
+    //
     public String ATTR_CREATED = "created";
     public String ATTR_UPDATED = "lastUpdated";
+    //TODO: updated/created by USER_ID
+    //
     public String ATTR_EXTENT = "extent";
-    public String ATTR_RESOLUTION = "resolution";
-    public String ATTR_COLOR_DEPTH = "colorDepth";
     public String ATTR_FINANCED = "financedFrom";
     public String ATTR_CONTRACT_NUMBER = "contractNumber";
+    //
+    public String ATTR_FORMAT = "format";
+    public String ATTR_FORMAT_VERSION = "formatVersion";
+    public String ATTR_RESOLUTION_WIDTH = "resolutionWidth";
+    public String ATTR_RESOLUTION_HEIGHT = "resolutionHeight";
+    public String ATTR_COMPRESSION = "compression";
+    public String ATTR_COMPRESSION_RATIO = "compressionRatio";
+    public String ATTR_COLOR_MODEL = "colorModel";
+    public String ATTR_COLOR_DEPTH = "colorDepth";
+    public String ATTR_ICC_PROFILE = "iccProfile";
+    public String ATTR_PIC_WIDTH = "pictureWidth";
+    public String ATTR_PIC_HEIGHT = "pictureHeight";
 
     /**
      * 
@@ -44,20 +56,20 @@ public interface DigitalDocumentDAO {
 
     //vyhledavani dig.rep. podle urn takto:
     //z UrnNbnDao ziskame id digRep a pak pres nej vytahnem data digRep
-    public void updateRepresentation(DigitalDocument representation) throws DatabaseException, RecordNotFoundException;
+    public void updateDocument(DigitalDocument representation) throws DatabaseException, RecordNotFoundException;
 
     //TODO: vyhledavani podle jednoznacneho identifikatoru v ramci registratora
     //pozor: RecordNotFoundException muze byt jak pro registrarora, tak pro samotnou DR
     //mohly bych to oddelit tak, ze pokud nenajde digRep, vrati null
-    public Long getDigRepDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException;
+    public Long getDigDocDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException;
 
-    public Integer getDigRepCount(long registrarId) throws RecordNotFoundException, DatabaseException;
+    public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException;
 
-    public List<DigitalDocument> getRepresentationsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
+    public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
     public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteAllRepresentations() throws DatabaseException;
+    public void deleteAllDocuments() throws DatabaseException;
     //TODO: implementovat, pokud bude potreba
     //public List<Long> getRepresentationsDbIdByIdentifier(DigRepIdType type, String idValue) throws DatabaseException;
     //public List<Long> getAllRepresentationsId() throws DatabaseException;

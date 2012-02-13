@@ -12,17 +12,18 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class InsertDigitalDocument implements StatementWrapper {
+public class InsertDigitalDocument extends AbstractStatement implements StatementWrapper {
 
-    private final DigitalDocument representation;
+    private final DigitalDocument digDocument;
 
-    public InsertDigitalDocument(DigitalDocument representation) {
-        this.representation = representation;
+    public InsertDigitalDocument(DigitalDocument digDocument) {
+        this.digDocument = digDocument;
     }
 
     @Override
@@ -35,28 +36,46 @@ public class InsertDigitalDocument implements StatementWrapper {
                 + "," + DigitalDocumentDAO.ATTR_CREATED
                 + "," + DigitalDocumentDAO.ATTR_UPDATED
                 + "," + DigitalDocumentDAO.ATTR_EXTENT
-                + "," + DigitalDocumentDAO.ATTR_RESOLUTION
-                + "," + DigitalDocumentDAO.ATTR_COLOR_DEPTH
                 + "," + DigitalDocumentDAO.ATTR_FINANCED
                 + "," + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER
-                + ") values(?,?,?,?,?,?,?,?,?,?,?)";
+                + "," + DigitalDocumentDAO.ATTR_FORMAT
+                + "," + DigitalDocumentDAO.ATTR_FORMAT_VERSION
+                + "," + DigitalDocumentDAO.ATTR_RESOLUTION_WIDTH
+                + "," + DigitalDocumentDAO.ATTR_RESOLUTION_HEIGHT
+                + "," + DigitalDocumentDAO.ATTR_COMPRESSION
+                + "," + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO
+                + "," + DigitalDocumentDAO.ATTR_COLOR_MODEL
+                + "," + DigitalDocumentDAO.ATTR_COLOR_DEPTH
+                + "," + DigitalDocumentDAO.ATTR_ICC_PROFILE
+                + "," + DigitalDocumentDAO.ATTR_PIC_WIDTH
+                + "," + DigitalDocumentDAO.ATTR_PIC_HEIGHT
+                + ") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, representation.getId());
-            st.setLong(2, representation.getIntEntId());
-            st.setLong(3, representation.getRegistrarId());
-            st.setLong(4, representation.getArchiverId());
+            st.setLong(1, digDocument.getId());
+            st.setLong(2, digDocument.getIntEntId());
+            st.setLong(3, digDocument.getRegistrarId());
+            st.setLong(4, digDocument.getArchiverId());
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(5, now);
             st.setTimestamp(6, now);
-            st.setString(7, representation.getExtent());
-            st.setString(8, representation.getResolution());
-            st.setString(9, representation.getColorDepth());
-            st.setString(10, representation.getFinancedFrom());
-            st.setString(11, representation.getContractNumber());
+            st.setString(7, digDocument.getExtent());
+            st.setString(8, digDocument.getFinancedFrom());
+            st.setString(9, digDocument.getContractNumber());
+            st.setString(10, digDocument.getFormat());
+            st.setString(11, digDocument.getFormatVersion());
+            setIntOrNull(st, 12, digDocument.getResolutionWidth());
+            setIntOrNull(st, 13, digDocument.getResolutionHeight());
+            st.setString(14, digDocument.getCompression());
+            setDoubleOrNull(st, 15, digDocument.getCompressionRatio());
+            st.setString(16, digDocument.getColorModel());
+            setIntOrNull(st, 17, digDocument.getColorDepth());
+            st.setString(18, digDocument.getIccProfile());
+            setIntOrNull(st, 19, digDocument.getPictureWidth());
+            setIntOrNull(st, 20, digDocument.getPictureHeight());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

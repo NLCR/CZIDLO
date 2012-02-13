@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class UpdateSourceDocument implements StatementWrapper {
+public class UpdateSourceDocument extends AbstractStatement implements StatementWrapper {
 
     private final SourceDocument srcDoc;
 
@@ -51,7 +51,7 @@ public class UpdateSourceDocument implements StatementWrapper {
             st.setString(7, srcDoc.getPeriodicalNumber());
             st.setString(8, srcDoc.getPublicationPlace());
             st.setString(9, srcDoc.getPublisher());
-            st.setInt(10, srcDoc.getPublicationYear());
+            setIntOrNull(st, 10, srcDoc.getPublicationYear());
             st.setLong(11, srcDoc.getIntEntId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu

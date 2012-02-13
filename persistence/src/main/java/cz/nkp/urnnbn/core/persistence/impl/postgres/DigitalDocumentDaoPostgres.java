@@ -91,7 +91,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public Integer getDigRepCount(long registrarId) throws RecordNotFoundException, DatabaseException {
+    public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         StatementWrapper statement = new SelectRecordsCountByLongAttr(TABLE_NAME, ATTR_REGISTRAR_ID, registrarId);
         DaoOperation operation = new SingleResultOperation(statement, new SingleIntRT());
@@ -107,12 +107,12 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public List<DigitalDocument> getRepresentationsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
+    public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Long getDigRepDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException {
+    public Long getDigDocDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectSingleAttrByLongStringString(
                 DigDocIdentifierDAO.TABLE_NAME, DigDocIdentifierDAO.ATTR_DIG_REP_ID,
                 DigDocIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
@@ -133,7 +133,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public void updateRepresentation(DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
+    public void updateDocument(DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(representation, TABLE_NAME, ATTR_ID, new UpdateDigitalDocument(representation));
     }
 
@@ -145,7 +145,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public void deleteAllRepresentations() throws DatabaseException {
+    public void deleteAllDocuments() throws DatabaseException {
         deleteAllRecords(DigitalDocumentDAO.TABLE_NAME);
     }
 }
