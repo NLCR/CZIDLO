@@ -42,11 +42,11 @@ public class Main {
         try {
 //            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/error.xml");
 //            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/response.xsd.xml");
-            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import.xml");
+            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import-monograph.xml");
             String toValidateStr = XOMUtils.loadDocumentWithoutValidation(toValidate).toXML();
 
             File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/importRecord.xsd.xml");
-            FileInputStream schemaIn = new FileInputStream(schema);
+           // FileInputStream schemaIn = new FileInputStream(schema);
             //String schemaStr = XOMUtils.loadDocumentValidByInternalXsd(schemaIn).toXML();
             String schemaStr = XOMUtils.loadDocumentWithoutValidation(schema).toXML();
             

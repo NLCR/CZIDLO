@@ -32,16 +32,16 @@ import nu.xom.Nodes;
 public class RecordImportUnmarshaller extends Unmarshaller {
 
     private final Element entityEl;
-    private final Element digRepEl;
+    private final Element digDocEl;
     //TODO: pokud bude potreba, dat xpathy do statickych final atributu
     //(ty stringy se totiz buduji vzdy znovu)
     private static final Xpath DIG_REP_XPATH =
-            new Xpath('/' + prefixed("import") + '/' + prefixed("digitalRepresentation"));
+            new Xpath('/' + prefixed("import") + '/' + prefixed("digitalDocument"));
 
     public RecordImportUnmarshaller(Document doc) {
         super(doc);
         entityEl = intelectualEntityElement();
-        digRepEl = (Element) selectSingleElementOrNullFromdoc(DIG_REP_XPATH);
+        digDocEl = (Element) selectSingleElementOrNullFromdoc(DIG_REP_XPATH);
     }
 
     /**
@@ -189,17 +189,56 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return DigitalDocument object, never null
      */
     public DigitalDocument getDigitalDocument() {
-        DigitalDocument digRep = new DigitalDocument();
-        digRep.setFinancedFrom(elementContentOrNull("financed", digRepEl));
-        digRep.setExtent(elementContentOrNull("extent", digRepEl));
-        digRep.setResolution(elementContentOrNull("resolution", digRepEl));
-        digRep.setColorDepth(elementContentOrNull("colorDepth", digRepEl));
-        digRep.setContractNumber(elementContentOrNull("contactNumber", digRepEl));
-        return digRep;
+        DigitalDocument digDoc = new DigitalDocument();
+        digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
+        digDoc.setExtent(elementContentOrNull("extent", digDocEl));
+        digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
+        digDoc.setContractNumber(elementContentOrNull("contractNumber", digDocEl));
+        //format
+        digDoc.setFormat(elementContentOrNull("format", digDocEl));
+        Element formatEl = selectSingleElementOrNull("format", digDocEl);
+        digDoc.setFormatVersion(attributeContentOrNull("version", formatEl));
+        //resolution
+        Element resolutionEl = selectSingleElementOrNull("resolution", digDocEl);
+        String resWidthStr = elementContentOrNull("width", resolutionEl);
+        if (resWidthStr != null) {
+            digDoc.setResolutionWidth(Integer.valueOf(resWidthStr));
+        }
+        String resHeightStr = elementContentOrNull("height", resolutionEl);
+        if (resHeightStr != null) {
+            digDoc.setResolutionHeight(Integer.valueOf(resHeightStr));
+        }
+        //compression
+        digDoc.setCompression(elementContentOrNull("compression", digDocEl));
+        Element compressionEl = selectSingleElementOrNull("compression", digDocEl);
+        String compressionRatioStr = attributeContentOrNull("ratio", compressionEl);
+        if (compressionRatioStr != null) {
+            digDoc.setCompressionRatio(Double.valueOf(compressionRatioStr));
+        }
+        //color
+        Element colorEl = selectSingleElementOrNull("color", digDocEl);
+        digDoc.setColorModel(elementContentOrNull("model", colorEl));
+        String colorDepthStr = elementContentOrNull("depth", colorEl);
+        if (colorDepthStr != null) {
+            digDoc.setColorDepth(Integer.valueOf(colorDepthStr));
+        }
+        //ICC profile
+        digDoc.setIccProfile(elementContentOrNull("iccProfile", digDocEl));
+        //picture
+        Element pictureEl = selectSingleElementOrNull("picture", digDocEl);
+        String picWidthStr = elementContentOrNull("width", pictureEl);
+        if (picWidthStr != null) {
+            digDoc.setPictureWidth(Integer.valueOf(picWidthStr));
+        }
+        String picHeightStr = elementContentOrNull("height", pictureEl);
+        if (picHeightStr != null) {
+            digDoc.setPictureHeight(Integer.valueOf(picHeightStr));
+        }
+        return digDoc;
     }
 
     public List<DigDocIdentifier> getDigRepIdentifiers() {
-        Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digRepEl);
+        Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digDocEl);
         if (identifiersEl == null) {
             return Collections.<DigDocIdentifier>emptyList();
         } else {
@@ -227,7 +266,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      * @return UrnNbn or null
      */
     public UrnNbn getUrnNbn() {
-        Element urnEl = (Element) selectSingleElementOrNull("urnNbn", digRepEl);
+        Element urnEl = (Element) selectSingleElementOrNull("urnNbn", digDocEl);
         if (urnEl == null) {
             return null;
         } else {
@@ -236,7 +275,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     public Long getArchiverId() {
-        Element urnEl = (Element) selectSingleElementOrNull("archiverId", digRepEl);
+        Element urnEl = (Element) selectSingleElementOrNull("archiverId", digDocEl);
         if (urnEl == null) {
             return null;
         } else {
