@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.xml.unmarshallers;
 
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.logging.Logger;
+import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
@@ -51,10 +52,13 @@ public abstract class Unmarshaller {
     }
 
     Element selectSingleElementOrNull(String elementName, ParentNode parent) {
+        System.err.println("element: " + elementName);
         return (Element) selectSingleNodeOrNull(new Xpath(prefixed(elementName)), parent);
     }
 
     Node selectSingleNodeOrNull(Xpath xpath, ParentNode parent) {
+        System.err.println("xpath:" + xpath.toString());
+        System.err.println("parent:" + parent.toString());
         Nodes nodes = parent.query(xpath.toString(), context);
         if (nodes.size() != 1) {
             return null;
@@ -73,5 +77,22 @@ public abstract class Unmarshaller {
         } else {
             return null;
         }
+    }
+
+    String attributeContentOrNull(String attributeName, ParentNode parent) {
+        if (parent == null) {
+            return null;
+        } else {
+            Attribute attr = selectSingleAttributeOrNull(attributeName, parent);
+            if (attr != null) {
+                return attr.getValue();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    Attribute selectSingleAttributeOrNull(String attributeNam, ParentNode parent) {
+        return (Attribute) selectSingleNodeOrNull(new Xpath('@' + attributeNam), parent);
     }
 }

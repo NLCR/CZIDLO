@@ -10,19 +10,30 @@
         <r:publicationPlace>V Praze</r:publicationPlace>
         <r:publicationYear>2011</r:publicationYear>
     </r:monograph>
-    <r:digitalRepresentation>
+    <r:digitalDocument>
         <r:archiverId>3</r:archiverId>
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">1234</r:id>
             <r:id type="signatura">PK-0123.999</r:id>    
             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>    
         </r:registrarScopeIdentifiers>
-        <r:financed>norské fondy</r:financed>
-        <r:format>djvu</r:format>
         <r:extent>200s.</r:extent>
-        <r:resolution>800x600</r:resolution>
-        <r:colorDepth>24b</r:colorDepth>
-        <r:accessibility>veřejné</r:accessibility>
+        <r:financed>norské fondy</r:financed>
         <r:contractNumber>123</r:contractNumber>
-    </r:digitalRepresentation>
+        <r:format version="1.0">djvu</r:format>
+        <r:resolution>
+            <r:width>1280</r:width>
+            <r:height>1024</r:height>
+        </r:resolution>
+        <r:compression ratio="0.3">LZW</r:compression>
+        <r:color>
+            <r:model>RGB</r:model>
+            <r:depth>24</r:depth>
+        </r:color>
+        <r:iccProfile>some ICC profile</r:iccProfile>
+        <r:picture>
+            <r:width>600</r:width>
+            <r:height>1000</r:height>
+        </r:picture>
+    </r:digitalDocument>
 </r:import>
