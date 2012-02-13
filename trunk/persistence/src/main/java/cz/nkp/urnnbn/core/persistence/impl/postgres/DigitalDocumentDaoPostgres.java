@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalRepresentation;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
@@ -67,7 +67,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
                 //set id
                 representation.setId(id);
                 //insert
-                StatementWrapper insert = new InsertDigitalRepresentation(representation);
+                StatementWrapper insert = new InsertDigitalDocument(representation);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
                 insertSt.executeUpdate();
                 return id;

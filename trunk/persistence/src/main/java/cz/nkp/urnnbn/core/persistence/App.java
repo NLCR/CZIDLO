@@ -17,9 +17,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -51,18 +49,14 @@ public class App {
 
     public static void main(String[] args) {
         try {
-            //debugArchiver();
-            //debugRegistrar();
             App app = new App();
             app.clearDatabase();
-            //app.debugRegistrar();
             app.insertTestData();
         } catch (DatabaseException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public void clearDatabase() throws DatabaseException {
@@ -72,57 +66,6 @@ public class App {
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
         factory.archiverDao().deleteAllArchivers();
         factory.userDao().deleteAllUsers();
-    }
-
-    private void debugArchiver() {
-        try {
-            ArchiverDAO archiverDao = daoFactory().archiverDao();
-            //insert
-            Archiver archiver = builder.archiverWithoutId();
-            long id = archiverDao.insertArchiver(archiver);
-            //get
-            archiver = archiverDao.getArchiverById(id);
-            if (archiver != null) {
-                System.err.println("archiver: " + archiver.getName());
-            } else {
-                System.err.println("App: not found archiver with id " + id);
-            }
-            //update
-            archiver.setDescription("blabla");
-            archiverDao.updateArchiver(archiver);
-            //delete
-            archiverDao.deleteArchiver(id);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        } catch (DatabaseException ex) {
-            System.err.println("couldn connect to database");
-        }
-    }
-
-    private void debugRegistrar() {
-        try {
-            RegistrarDAO registrarDao = daoFactory().registrarDao();
-            //insert
-            Registrar registrar = builder.registrarWithoutId();
-            long id = registrarDao.insertRegistrar(registrar);
-//            //get
-//            archiver = archiverDao.getArchiverById(id);
-//            if (archiver != null) {
-//                System.err.println("archiver: " + archiver.getName());
-//            } else {
-//                System.err.println("App: not found archiver with id " + id);
-//            }
-//            //update
-//            archiver.setDescription("blabla");
-//            archiverDao.updateArchiver(archiver);
-//            //delete
-//            archiverDao.deleteArchiver(id);
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-        } catch (DatabaseException ex) {
-            System.err.println("couldn connect to database");
-        }
-
     }
 
     private void insertTestData() throws Exception {
@@ -186,6 +129,7 @@ public class App {
             babicka.setCreated(new DateTime());
             babicka.setDigitalBorn(false);
             babicka.setEntityType(EntityType.MONOGRAPH);
+            babicka.setDocumentType("kniha");
             babicka.setId(factory.intelectualEntityDao().insertIntelectualEntity(babicka));
             //babicka isbn
             IntEntIdentifier babickaIsbn = new IntEntIdentifier();
@@ -208,6 +152,10 @@ public class App {
             babickaMzk.setRegistrarId(mzk.getId());
             babickaMzk.setFinancedFrom("norské fondy");
             babickaMzk.setIntEntId(babicka.getId());
+            babickaMzk.setContractNumber("123");
+            babickaMzk.setExtent("223 stran");
+            babickaMzk.setColorDepth("24b");
+            babickaMzk.setResolution("1280x1024");
             babickaMzk.setId(factory.documentDao().insertDocument(babickaMzk));
             //urn:nbn:cz:boa001-000001
             UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());
@@ -234,6 +182,7 @@ public class App {
             babickaMzk_v_K4mzk.setLibraryId(mzkK4.getId());
             babickaMzk_v_K4mzk.setUrl("http://kramerius.mzk.cz/search/handle/uuid:123");
             babickaMzk_v_K4mzk.setFormat("djvu");
+            babickaMzk_v_K4mzk.setAccessibility("veřejně přístupné");
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4mzk);
             //babicka mzk v K3 mzk
             DigitalInstance babickaMzk_v_K3mzk = new DigitalInstance();
@@ -254,6 +203,7 @@ public class App {
             babickaNkp.setRegistrarId(nkp.getId());
             babickaNkp.setFinancedFrom("VISK");
             babickaNkp.setIntEntId(babicka.getId());
+            babickaNkp.setContractNumber("123456");
             babickaNkp.setId(factory.documentDao().insertDocument(babickaNkp));
             UrnNbn babickaNkpUrn = new UrnNbn(nkp.getCode(), "000001", babickaNkp.getId());
             factory.urnDao().insertUrnNbn(babickaNkpUrn);
@@ -261,6 +211,7 @@ public class App {
             babickaNkp_v_K4nkp.setDigDocId(babickaNkp.getId());
             babickaNkp_v_K4nkp.setLibraryId(nkpK4.getId());
             babickaNkp_v_K4nkp.setFormat("jpg");
+            babickaNkp_v_K4nkp.setAccessibility("public");
             babickaNkp_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:456");
             factory.digInstDao().insertDigInstance(babickaNkp_v_K4nkp);
 
@@ -272,6 +223,7 @@ public class App {
             babushka.setCreated(new DateTime());
             babushka.setDigitalBorn(false);
             babushka.setEntityType(EntityType.MONOGRAPH);
+            babushka.setDocumentType("kniga");
             babushka.setId(factory.intelectualEntityDao().insertIntelectualEntity(babushka));
             //babushka isbn
             IntEntIdentifier babushkaIsbn = new IntEntIdentifier();

@@ -17,11 +17,11 @@ import java.sql.Timestamp;
  *
  * @author Martin Řehánek
  */
-public class InsertDigitalRepresentation implements StatementWrapper {
+public class InsertDigitalDocument implements StatementWrapper {
 
     private final DigitalDocument representation;
 
-    public InsertDigitalRepresentation(DigitalDocument representation) {
+    public InsertDigitalDocument(DigitalDocument representation) {
         this.representation = representation;
     }
 
