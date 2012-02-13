@@ -74,7 +74,7 @@ public class DtoBuilder {
         return library;
     }
     
-    public DigitalDocument digRepWithoutIds() {
+    public DigitalDocument digDocWithoutIds() {
         DigitalDocument rep = new DigitalDocument();
         rep.setCreated(now());
         rep.setLastUpdated(now());

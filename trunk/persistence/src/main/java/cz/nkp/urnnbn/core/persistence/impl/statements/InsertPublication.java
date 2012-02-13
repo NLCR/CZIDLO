@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class InsertPublication implements StatementWrapper {
+public class InsertPublication extends AbstractStatement implements StatementWrapper {
 
     private final Publication publication;
 
@@ -37,7 +37,7 @@ public class InsertPublication implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, publication.getId());
-            st.setInt(2, publication.getYear());
+            setIntOrNull(st, 2, publication.getYear());
             st.setString(3, publication.getPlace());
             st.setString(4, publication.getPublisher());
         } catch (SQLException e) {

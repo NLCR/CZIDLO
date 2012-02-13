@@ -49,7 +49,7 @@ public abstract class AbstractDaoTest extends TestCase {
     final DigDocIdentifierDAO digRepIdDao;
     final DigitalInstanceDAO digInstDao;
     final DigitalLibraryDAO libraryDao;
-    final DigitalDocumentDAO representationDao;
+    final DigitalDocumentDAO digDocDao;
     final IntelectualEntityDAO entityDao;
     final IntEntIdentifierDAO intEntIdDao;
     final OriginatorDAO originatorDao;
@@ -75,7 +75,7 @@ public abstract class AbstractDaoTest extends TestCase {
         entityDao = daoFactory.intelectualEntityDao();
         intEntIdDao = daoFactory.intEntIdentifierDao();
         originatorDao = daoFactory.originatorDao();
-        representationDao = daoFactory.documentDao();
+        digDocDao = daoFactory.documentDao();
         userDao = daoFactory.userDao();
         publicationDao = daoFactory.publicationDao();
         srcDocDao = daoFactory.srcDocDao();
@@ -98,7 +98,7 @@ public abstract class AbstractDaoTest extends TestCase {
 
     public void clearDatabase() throws Exception {
         urnDao.deleteAllUrnNbns();
-        representationDao.deleteAllRepresentations();
+        digDocDao.deleteAllDocuments();
         entityDao.deleteAllEntities();
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
         archiverDao.deleteAllArchivers();
@@ -120,11 +120,11 @@ public abstract class AbstractDaoTest extends TestCase {
     }
 
     public DigitalDocument representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
-        DigitalDocument rep = builder.digRepWithoutIds();
+        DigitalDocument rep = builder.digDocWithoutIds();
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
         rep.setArchiverId(registrarId);
-        Long repId = representationDao.insertDocument(rep);
+        Long repId = digDocDao.insertDocument(rep);
         rep.setId(repId);
         return rep;
     }

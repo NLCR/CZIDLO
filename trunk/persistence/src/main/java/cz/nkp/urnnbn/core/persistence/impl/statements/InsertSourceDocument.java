@@ -15,12 +15,12 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class InsertSourceDocument implements StatementWrapper {
+public class InsertSourceDocument extends AbstractStatement implements StatementWrapper {
 
-    private final SourceDocument s;
+    private final SourceDocument sourceDoc;
 
-    public InsertSourceDocument(SourceDocument s) {
-        this.s = s;
+    public InsertSourceDocument(SourceDocument sourceDoc) {
+        this.sourceDoc = sourceDoc;
     }
 
     @Override
@@ -43,17 +43,17 @@ public class InsertSourceDocument implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, s.getIntEntId());
-            st.setString(2, s.getCcnb());
-            st.setString(3, s.getIsbn());
-            st.setString(4, s.getIssn());
-            st.setString(5, s.getOtherId());
-            st.setString(6, s.getTitle());
-            st.setString(7, s.getPeriodicalVolume());
-            st.setString(8, s.getPeriodicalNumber());
-            st.setString(9, s.getPublicationPlace());
-            st.setString(10, s.getPublisher());
-            st.setInt(11, s.getPublicationYear());
+            st.setLong(1, sourceDoc.getIntEntId());
+            st.setString(2, sourceDoc.getCcnb());
+            st.setString(3, sourceDoc.getIsbn());
+            st.setString(4, sourceDoc.getIssn());
+            st.setString(5, sourceDoc.getOtherId());
+            st.setString(6, sourceDoc.getTitle());
+            st.setString(7, sourceDoc.getPeriodicalVolume());
+            st.setString(8, sourceDoc.getPeriodicalNumber());
+            st.setString(9, sourceDoc.getPublicationPlace());
+            st.setString(10, sourceDoc.getPublisher());
+            setIntOrNull(st, 11, sourceDoc.getPublicationYear());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

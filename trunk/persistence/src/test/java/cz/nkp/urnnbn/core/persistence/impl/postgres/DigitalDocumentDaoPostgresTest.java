@@ -37,66 +37,66 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     /**
      * Test of insertDocument method, of class DigitalRepresentationDaoPostgres.
      */
-    public void testInsertRepresentation_ok() throws Exception {
+    public void testInsertDocument_ok() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalDocument rep = builder.digRepWithoutIds();
-        rep.setIntEntId(entity.getId());
-        rep.setRegistrarId(registrar.getId());
-        rep.setArchiverId(archiver.getId());
-        representationDao.insertDocument(rep);
+        DigitalDocument doc = builder.digDocWithoutIds();
+        doc.setIntEntId(entity.getId());
+        doc.setRegistrarId(registrar.getId());
+        doc.setArchiverId(archiver.getId());
+        digDocDao.insertDocument(doc);
     }
     
-    public void testInsertRepresentation_ok_sameArchiverAndRegistrar() throws Exception {
+    public void testInsertDocument_ok_sameArchiverAndRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalDocument rep = builder.digRepWithoutIds();
-        rep.setIntEntId(entity.getId());
-        rep.setRegistrarId(registrar.getId());
-        rep.setArchiverId(registrar.getId());
-        representationDao.insertDocument(rep);
+        DigitalDocument doc = builder.digDocWithoutIds();
+        doc.setIntEntId(entity.getId());
+        doc.setRegistrarId(registrar.getId());
+        doc.setArchiverId(registrar.getId());
+        digDocDao.insertDocument(doc);
     }
     
-    public void testInsertRepresentation_invalidRegistrar() throws Exception {
+    public void testInsertDocument_invalidRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
-        DigitalDocument rep = builder.digRepWithoutIds();
-        rep.setIntEntId(entity.getId());
-        rep.setRegistrarId(ILLEGAL_ID);
-        rep.setArchiverId(archiver.getId());
+        DigitalDocument doc = builder.digDocWithoutIds();
+        doc.setIntEntId(entity.getId());
+        doc.setRegistrarId(ILLEGAL_ID);
+        doc.setArchiverId(archiver.getId());
         try {
-            representationDao.insertDocument(rep);
+            digDocDao.insertDocument(doc);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
         }
     }
     
-    public void testInsertRepresentation_invalidArchiver() throws Exception {
+    public void testInsertDocument_invalidArchiver() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = builder.digRepWithoutIds();
+        DigitalDocument doc = builder.digDocWithoutIds();
         Registrar registrar = registrarPersisted();
-        rep.setIntEntId(entity.getId());
-        rep.setRegistrarId(registrar.getId());
-        rep.setArchiverId(ILLEGAL_ID);
+        doc.setIntEntId(entity.getId());
+        doc.setRegistrarId(registrar.getId());
+        doc.setArchiverId(ILLEGAL_ID);
         try {
-            representationDao.insertDocument(rep);
+            digDocDao.insertDocument(doc);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
         }
     }
     
-    public void testInsertRepresentation_invalidEntity() throws Exception {
-        DigitalDocument rep = builder.digRepWithoutIds();
+    public void testInsertDocument_invalidEntity() throws Exception {
+        DigitalDocument doc = builder.digDocWithoutIds();
         Registrar registrar = registrarPersisted();
         Archiver archiver = archiverPersisted();
-        rep.setIntEntId(ILLEGAL_ID);
-        rep.setArchiverId(archiver.getId());
-        rep.setRegistrarId(registrar.getId());
+        doc.setIntEntId(ILLEGAL_ID);
+        doc.setArchiverId(archiver.getId());
+        doc.setRegistrarId(registrar.getId());
         try {
-            representationDao.insertDocument(rep);
+            digDocDao.insertDocument(doc);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -106,45 +106,45 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     /**
      * Test of getDocumentByDbId method, of class DigitalRepresentationDaoPostgres.
      */
-    public void testGetRepresentationByDbId() throws Exception {
+    public void testGetDocumentByDbId() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
-        DigitalDocument fetched = representationDao.getDocumentByDbId(inserted.getId());
+        DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
         assertEquals(inserted, fetched);
     }
     
-    public void testGetRepresentationByDbId_unknownId() throws Exception {
+    public void testGetDocumentByDbId_unknownId() throws Exception {
         try {
-            representationDao.getDocumentByDbId(ILLEGAL_ID);
+            digDocDao.getDocumentByDbId(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException ex) {
             //ok
         }
     }
     
-    public void testGetDigRepCountByRegistrarId() throws Exception {
+    public void testGetDigDocCountByRegistrarId() throws Exception {
         Registrar registrar = registrarPersisted();
         Random rand = new Random();
         int inserted = rand.nextInt(5);
         for (int i = 0; i < inserted; i++) {
-            //save digRep under registrar
+            //save digDoc under registrar
             IntelectualEntity entity = entityPersisted();
             representationPersisted(registrar.getId(), entity.getId());
         }
-        assertEquals(inserted, representationDao.getDigRepCount(registrar.getId()).intValue());
+        assertEquals(inserted, digDocDao.getDigDocCount(registrar.getId()).intValue());
     }
     
-    public void testGetDigRepCountByRegistrarId_unknownRegistrarId() throws Exception {
+    public void testGetDigDocCountByRegistrarId_unknownRegistrarId() throws Exception {
         try {
-            representationDao.getDigRepCount(ILLEGAL_ID);
+            digDocDao.getDigDocCount(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException ex) {
             //ok
         }
     }
     
-    public void testGetDigRepDbIdByIdentifier() throws Exception {
+    public void testGetDigDocDbIdByIdentifier() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
@@ -153,55 +153,53 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         identifier.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(identifier);
         //fetch
-        Long fetchedRepId = representationDao.getDigRepDbIdByIdentifier(identifier);
+        Long fetchedRepId = digDocDao.getDigDocDbIdByIdentifier(identifier);
         assertEquals(inserted.getId(), fetchedRepId.longValue());
         //try find with unknown value
         DigDocIdentifier id2 = builder.digRepIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
         id2.setValue(identifier.getValue() + "-new");
         try {
-            representationDao.getDigRepDbIdByIdentifier(id2);
+            digDocDao.getDigDocDbIdByIdentifier(id2);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
         }
     }
-//    /**
-//     * Test of updateRepresentation method, of class DigitalRepresentationDaoPostgres.
-//     */
-//    public void testUpdateRepresentation() throws Exception {
-//        Registrar registrar = registrarPersisted();
-//        IntelectualEntity entity = entityPersisted();
-//        DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
-//        DigitalDocument clone = new DigitalDocument(inserted);
-//        clone.setColorDepth("24b");
-//        clone.setExtent("123s.");
-//        clone.setFormat("djvu");
-//        clone.setAccessibility("toilet reading only");
-//        representationDao.updateRepresentation(clone);
-//        DigitalDocument fetched = representationDao.getDocumentByDbId(inserted.getId());
-//        assertEquals(clone, fetched);
-//        assertFalse(fetched.equals(inserted));
-//    }
-//
-//    /**
-//     * Test of deleteDocument method, of class DigitalRepresentationDaoPostgres.
-//     */
-//    public void testDeleteRepresentation() throws Exception {
-//        //create registrar with urn
-//        Registrar registrar = registrarPersisted();
-//        IntelectualEntity entity = entityPersisted();
-//        DigitalDocument repInserted = representationPersisted(registrar.getId(), entity.getId());
-//        UrnNbn urnInserted = new UrnNbn(registrar.getUrnInstitutionCode(), "BOA001", repInserted.getId(), new DateTime());
-//        urnDao.insertUrnNbn(urnInserted);
-//        try {
-//            registrarDao.getRegistrarById(repInserted.getId());
-//            fail();
-//        } catch (RecordNotFoundException e) {
-//            //ok
-//        }
-//        //URN not removed
-//        UrnNbn urnFetched = urnDao.getUrnNbnByDigRegId(repInserted.getId());
-//        assertEquals(urnInserted, urnFetched);
-//    }
+    /**
+     * Test of updateDocument method, of class DigitalRepresentationDaoPostgres.
+     */
+    public void testUpdateDocument() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument inserted = representationPersisted(registrar.getId(), entity.getId());
+        DigitalDocument clone = new DigitalDocument(inserted);
+        clone.setColorDepth(24);
+        clone.setExtent("123s.");
+        clone.setFormat("djvu");
+        digDocDao.updateDocument(clone);
+        DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
+        assertEquals(clone, fetched);
+    }
+
+    /**
+     * Test of deleteDocument method, of class DigitalRepresentationDaoPostgres.
+     */
+    public void testDeleteDocument() throws Exception {
+        //create registrar with urn
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument repInserted = representationPersisted(registrar.getId(), entity.getId());
+        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId(), new DateTime());
+        urnDao.insertUrnNbn(urnInserted);
+        try {
+            registrarDao.getRegistrarById(repInserted.getId());
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
+        //URN not removed
+        UrnNbn urnFetched = urnDao.getUrnNbnByDigRegId(repInserted.getId());
+        assertEquals(urnInserted, urnFetched);
+    }
 }

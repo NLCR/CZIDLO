@@ -19,20 +19,29 @@ public class DigitalDocumentRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
-        DigitalDocument rep = new DigitalDocument();
-        rep.setId(resultSet.getLong(DigitalDocumentDAO.ATTR_ID));
-        rep.setIntEntId(resultSet.getLong(DigitalDocumentDAO.ATTR_INT_ENT_ID));
-        rep.setRegistrarId(resultSet.getLong(DigitalDocumentDAO.ATTR_REGISTRAR_ID));
-        rep.setArchiverId(resultSet.getLong(DigitalDocumentDAO.ATTR_ARCHIVER_ID));
+        DigitalDocument doc = new DigitalDocument();
+        doc.setId(resultSet.getLong(DigitalDocumentDAO.ATTR_ID));
+        doc.setIntEntId(resultSet.getLong(DigitalDocumentDAO.ATTR_INT_ENT_ID));
+        doc.setRegistrarId(resultSet.getLong(DigitalDocumentDAO.ATTR_REGISTRAR_ID));
+        doc.setArchiverId(resultSet.getLong(DigitalDocumentDAO.ATTR_ARCHIVER_ID));
         Timestamp created = resultSet.getTimestamp(DigitalDocumentDAO.ATTR_CREATED);
-        rep.setCreated(DateTimeUtils.timestampToDatetime(created));
+        doc.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigitalDocumentDAO.ATTR_UPDATED);
-        rep.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
-        rep.setExtent(resultSet.getString(DigitalDocumentDAO.ATTR_EXTENT));
-        rep.setResolution(resultSet.getString(DigitalDocumentDAO.ATTR_RESOLUTION));
-        rep.setColorDepth(resultSet.getString(DigitalDocumentDAO.ATTR_COLOR_DEPTH));
-        rep.setFinancedFrom(resultSet.getString(DigitalDocumentDAO.ATTR_FINANCED));
-        rep.setContractNumber(resultSet.getString(DigitalDocumentDAO.ATTR_CONTRACT_NUMBER));
-        return rep;
+        doc.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
+        doc.setExtent(resultSet.getString(DigitalDocumentDAO.ATTR_EXTENT));
+        doc.setFinancedFrom(resultSet.getString(DigitalDocumentDAO.ATTR_FINANCED));
+        doc.setContractNumber(resultSet.getString(DigitalDocumentDAO.ATTR_CONTRACT_NUMBER));
+        doc.setFormat(resultSet.getString(DigitalDocumentDAO.ATTR_FORMAT));
+        doc.setFormatVersion(resultSet.getString(DigitalDocumentDAO.ATTR_FORMAT_VERSION));
+        doc.setResolutionWidth(resultSet.getInt(DigitalDocumentDAO.ATTR_RESOLUTION_WIDTH));
+        doc.setResolutionHeight(resultSet.getInt(DigitalDocumentDAO.ATTR_RESOLUTION_HEIGHT));
+        doc.setCompression(resultSet.getString(DigitalDocumentDAO.ATTR_COMPRESSION));
+        doc.setCompressionRatio(resultSet.getDouble(DigitalDocumentDAO.ATTR_COMPRESSION_RATIO));
+        doc.setColorModel(resultSet.getString(DigitalDocumentDAO.ATTR_COLOR_MODEL));
+        doc.setColorDepth(resultSet.getInt(DigitalDocumentDAO.ATTR_COLOR_DEPTH));
+        doc.setIccProfile(resultSet.getString(DigitalDocumentDAO.ATTR_ICC_PROFILE));
+        doc.setPictureWidth(resultSet.getInt(DigitalDocumentDAO.ATTR_PIC_WIDTH));
+        doc.setPictureHeight(resultSet.getInt(DigitalDocumentDAO.ATTR_PIC_HEIGHT));
+        return doc;
     }
 }

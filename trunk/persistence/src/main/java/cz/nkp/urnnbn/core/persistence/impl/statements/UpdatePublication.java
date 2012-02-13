@@ -15,7 +15,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class UpdatePublication implements StatementWrapper {
+public class UpdatePublication extends AbstractStatement implements StatementWrapper {
 
     private final Publication publication;
 
@@ -37,7 +37,7 @@ public class UpdatePublication implements StatementWrapper {
         try {
             st.setString(1, publication.getPlace());
             st.setString(2, publication.getPublisher());
-            st.setInt(3, publication.getYear());
+            setIntOrNull(st, 3, publication.getYear());
             st.setLong(4, publication.getId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
