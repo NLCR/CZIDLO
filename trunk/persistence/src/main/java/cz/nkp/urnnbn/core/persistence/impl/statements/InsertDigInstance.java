@@ -31,8 +31,10 @@ public class InsertDigInstance implements StatementWrapper {
                 + "," + DigitalInstanceDAO.ATTR_DIG_REP_ID
                 + "," + DigitalInstanceDAO.ATTR_LIB_ID
                 + "," + DigitalInstanceDAO.ATTR_URL
+                + "," + DigitalInstanceDAO.ATTR_FORMAT
+                + "," + DigitalInstanceDAO.ATTR_ACCESS
                 + "," + DigitalInstanceDAO.ATTR_PUBLISHED
-                + ") values(?,?,?,?,?)";
+                + ") values(?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -42,7 +44,9 @@ public class InsertDigInstance implements StatementWrapper {
             st.setLong(2, instance.getDigDocId());
             st.setLong(3, instance.getLibraryId());
             st.setString(4, instance.getUrl());
-            st.setTimestamp(5, DateTimeUtils.nowTs());
+            st.setString(5, instance.getFormat());
+            st.setString(6, instance.getAccessibility());
+            st.setTimestamp(7, DateTimeUtils.nowTs());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
