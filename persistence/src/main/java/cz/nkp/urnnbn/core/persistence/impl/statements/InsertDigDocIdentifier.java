@@ -15,11 +15,11 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class InsertDigRepIdentifier implements StatementWrapper {
+public class InsertDigDocIdentifier implements StatementWrapper {
 
     private final DigDocIdentifier identifier;
 
-    public InsertDigRepIdentifier(DigDocIdentifier identifier) {
+    public InsertDigDocIdentifier(DigDocIdentifier identifier) {
         this.identifier = identifier;
     }
 

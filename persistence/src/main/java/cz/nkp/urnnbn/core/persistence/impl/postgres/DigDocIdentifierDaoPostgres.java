@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigRepIdentifier;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigDocIdentifierRT;
@@ -52,7 +52,7 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
 
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                StatementWrapper insert = new InsertDigRepIdentifier(identifier);
+                StatementWrapper insert = new InsertDigDocIdentifier(identifier);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
                 insertSt.executeUpdate();
                 return null;
