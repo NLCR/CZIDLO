@@ -5,8 +5,9 @@
 package cz.nkp.urnnbn.core.persistence.impl;
 
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
 import cz.nkp.urnnbn.core.DefinedProperties;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.File;
 import java.io.IOException;
@@ -37,9 +38,9 @@ public class DatabaseConnectorFactory {
     public static DatabaseConnector getConnector(String driver, String host, String database, Integer port, String login, String password) {
         if (DatabaseDriver.POSTGRES.equals(driver)) {
             if (port == null) {
-                return new PostgresConnector(host, database, login, password);
+                return new PostgresSimpleConnector(host, database, login, password);
             } else {
-                return new PostgresConnector(host, database, port, login, password);
+                return new PostgresSimpleConnector(host, database, port, login, password);
             }
 
         } else if (DatabaseDriver.ORACLE.equals(driver)) {
@@ -47,5 +48,13 @@ public class DatabaseConnectorFactory {
         } else {
             throw new IllegalArgumentException("Unknown driver '" + driver + "'");
         }
+    }
+
+    /**
+     * 
+     * @return connector using resource (possibly pool) defined in application context
+     */
+    public static DatabaseConnector getConnector() {
+        return new PostgresPooledConnector();
     }
 }

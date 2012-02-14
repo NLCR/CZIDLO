@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.persistence.impl.DatabaseDriver;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigDocIdentifierDaoPostgres;
@@ -14,6 +13,7 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntEntIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntelectualEntityDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.OriginatorDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PublicationDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
@@ -48,24 +48,21 @@ public class DAOFactory {
     private UserDAO userDao;
     private UrnNbnGeneratorDAO urnSearchDao;
     private UrnNbnReservedDAO urnReservedDao;
+    //cache
+    private final boolean postgresImplemantation;
+    private final boolean oracleImplementation;
 
     public DAOFactory(DatabaseConnector connector) {
         this.connector = connector;
-    }
-
-    private boolean postgres() {
-        return DatabaseDriver.POSTGRES.equals(connector.getDriver());
-    }
-
-    private boolean oracle() {
-        return DatabaseDriver.ORACLE.equals(connector.getDriver());
+        this.postgresImplemantation = connector instanceof PostgresConnector;
+        this.oracleImplementation = false;
     }
 
     public ArchiverDAO archiverDao() {
         if (archiverDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 archiverDao = new ArchiverDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 archiverDao = null;//TODO
             }
         }
@@ -74,9 +71,9 @@ public class DAOFactory {
 
     public RegistrarDAO registrarDao() {
         if (registrarDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 registrarDao = new RegistrarDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 registrarDao = null;//TODO
             }
         }
@@ -85,9 +82,9 @@ public class DAOFactory {
 
     public DigitalLibraryDAO digitalLibraryDao() {
         if (libraryDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 libraryDao = new DigitalLibraryDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 libraryDao = null; //TODO
             }
         }
@@ -96,9 +93,9 @@ public class DAOFactory {
 
     public IntelectualEntityDAO intelectualEntityDao() {
         if (entityDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 entityDao = new IntelectualEntityDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 entityDao = null; //TODO
             }
         }
@@ -107,9 +104,9 @@ public class DAOFactory {
 
     public IntEntIdentifierDAO intEntIdentifierDao() {
         if (intEntIdDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 intEntIdDao = new IntEntIdentifierDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 intEntIdDao = null;//TODO   
             }
         }
@@ -118,9 +115,9 @@ public class DAOFactory {
 
     public DigitalDocumentDAO documentDao() {
         if (representationDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 representationDao = new DigitalDocumentDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 representationDao = null;//TODO
             }
         }
@@ -129,9 +126,9 @@ public class DAOFactory {
 
     public UserDAO userDao() {
         if (userDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 userDao = new UserDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 userDao = null;//TODO
             }
         }
@@ -140,9 +137,9 @@ public class DAOFactory {
 
     public PublicationDAO publicationDao() {
         if (publicationDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 publicationDao = new PublicationDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 publicationDao = null; //TODO
             }
         }
@@ -151,9 +148,9 @@ public class DAOFactory {
 
     public UrnNbnDAO urnDao() {
         if (urnDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 urnDao = new UrnNbnDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
                 urnDao = null;//TODO
             }
         }
@@ -162,9 +159,9 @@ public class DAOFactory {
 
     public CatalogDAO catalogDao() {
         if (catalogDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 catalogDao = new CatalogDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return catalogDao;
@@ -172,9 +169,9 @@ public class DAOFactory {
 
     public DigDocIdentifierDAO digRepIdDao() {
         if (digRepId == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 digRepId = new DigDocIdentifierDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return digRepId;
@@ -182,9 +179,9 @@ public class DAOFactory {
 
     public DigitalInstanceDAO digInstDao() {
         if (digInst == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 digInst = new DigitalInstanceDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return digInst;
@@ -192,9 +189,9 @@ public class DAOFactory {
 
     public OriginatorDAO originatorDao() {
         if (originatorDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 originatorDao = new OriginatorDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return originatorDao;
@@ -202,9 +199,9 @@ public class DAOFactory {
 
     public SourceDocumentDAO srcDocDao() {
         if (srcDocDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 srcDocDao = new SourceDocumentDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return srcDocDao;
@@ -212,9 +209,9 @@ public class DAOFactory {
 
     public UrnNbnReservedDAO urnReservedDao() {
         if (urnReservedDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 urnReservedDao = new UrnNbnReservedDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return urnReservedDao;
@@ -222,9 +219,9 @@ public class DAOFactory {
 
     public UrnNbnGeneratorDAO urnSearchDao() {
         if (urnSearchDao == null) {
-            if (postgres()) {
+            if (postgresImplemantation) {
                 urnSearchDao = new UrnNbnGeneratorDaoPostgres(connector);
-            } else if (oracle()) {
+            } else if (oracleImplementation) {
             }
         }
         return urnSearchDao;

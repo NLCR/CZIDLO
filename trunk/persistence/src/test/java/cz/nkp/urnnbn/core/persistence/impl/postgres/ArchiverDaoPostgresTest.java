@@ -64,78 +64,78 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(returned);
         assertEquals(id, returned.getId());
     }
-
-    public void testGetArchiverByIllegalId() throws Exception {
-        try {
-            archiverDao.getArchiverById(ILLEGAL_ID);
-            fail();
-        } catch (RecordNotFoundException e) {
-            //ok
-        }
-    }
-
-    public void testGetAllArchivers() throws Exception {
-        long first = archiverDao.insertArchiver(builder.archiverWithoutId());
-        long second = archiverDao.insertArchiver(builder.archiverWithoutId());
-        long third = archiverDao.insertArchiver(builder.archiverWithoutId());
-        List<Long> idList = archiverDao.getAllArchiversId();
-        assertTrue(idList.contains(first));
-        assertTrue(idList.contains(second));
-        assertTrue(idList.contains(third));
-        assertEquals(3, idList.size());
-    }
-
-    public void testUpdateArchiver() throws Exception {
-        Archiver original = builder.archiverWithoutId();
-        archiverDao.insertArchiver(original);
-        Archiver updated = new Archiver(original);
-        updated.setName("NKP");
-        updated.setName("Narodni knihovna v Praze");
-        archiverDao.updateArchiver(updated);
-        //get by id
-        Archiver returned = archiverDao.getArchiverById(original.getId());
-        assertEquals(updated, returned);
-        assertFalse(original.equals(returned));
-    }
-
-    public void testUpdateNonexistingArchiver() throws Exception {
-        Archiver archiver = builder.archiverWithoutId();
-        archiver.setId(ILLEGAL_ID);
-        try {
-            archiverDao.updateArchiver(archiver);
-            fail();
-        } catch (RecordNotFoundException e) {
-            //OK
-        }
-    }
-
-    public void testDeleteArchiver() throws Exception {
-        Archiver original = builder.archiverWithoutId();
-        long id = archiverDao.insertArchiver(original);
-        archiverDao.deleteArchiver(id);
-        try {
-            archiverDao.getArchiverById(id);
-            fail();
-        } catch (RecordNotFoundException e) {
-            //OK
-        }
-    }
-
-    public void testDeleteNotexistingArchiver() throws Exception {
-        try {
-            archiverDao.deleteArchiver(ILLEGAL_ID);
-            fail();
-        } catch (RecordNotFoundException e) {
-            //OK
-        }
-    }
-
-    public void testDeleteAllArchivers() throws Exception {
-        long first = archiverDao.insertArchiver(builder.archiverWithoutId());
-        long second = archiverDao.insertArchiver(builder.archiverWithoutId());
-        long third = archiverDao.insertArchiver(builder.archiverWithoutId());
-        archiverDao.deleteAllArchivers();
-        List<Long> idList = archiverDao.getAllArchiversId();
-        assertTrue(idList.isEmpty());
-    }
+//
+//    public void testGetArchiverByIllegalId() throws Exception {
+//        try {
+//            archiverDao.getArchiverById(ILLEGAL_ID);
+//            fail();
+//        } catch (RecordNotFoundException e) {
+//            //ok
+//        }
+//    }
+//
+//    public void testGetAllArchivers() throws Exception {
+//        long first = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        long second = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        long third = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        List<Long> idList = archiverDao.getAllArchiversId();
+//        assertTrue(idList.contains(first));
+//        assertTrue(idList.contains(second));
+//        assertTrue(idList.contains(third));
+//        assertEquals(3, idList.size());
+//    }
+//
+//    public void testUpdateArchiver() throws Exception {
+//        Archiver original = builder.archiverWithoutId();
+//        archiverDao.insertArchiver(original);
+//        Archiver updated = new Archiver(original);
+//        updated.setName("NKP");
+//        updated.setName("Narodni knihovna v Praze");
+//        archiverDao.updateArchiver(updated);
+//        //get by id
+//        Archiver returned = archiverDao.getArchiverById(original.getId());
+//        assertEquals(updated, returned);
+//        assertFalse(original.equals(returned));
+//    }
+//
+//    public void testUpdateNonexistingArchiver() throws Exception {
+//        Archiver archiver = builder.archiverWithoutId();
+//        archiver.setId(ILLEGAL_ID);
+//        try {
+//            archiverDao.updateArchiver(archiver);
+//            fail();
+//        } catch (RecordNotFoundException e) {
+//            //OK
+//        }
+//    }
+//
+//    public void testDeleteArchiver() throws Exception {
+//        Archiver original = builder.archiverWithoutId();
+//        long id = archiverDao.insertArchiver(original);
+//        archiverDao.deleteArchiver(id);
+//        try {
+//            archiverDao.getArchiverById(id);
+//            fail();
+//        } catch (RecordNotFoundException e) {
+//            //OK
+//        }
+//    }
+//
+//    public void testDeleteNotexistingArchiver() throws Exception {
+//        try {
+//            archiverDao.deleteArchiver(ILLEGAL_ID);
+//            fail();
+//        } catch (RecordNotFoundException e) {
+//            //OK
+//        }
+//    }
+//
+//    public void testDeleteAllArchivers() throws Exception {
+//        long first = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        long second = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        long third = archiverDao.insertArchiver(builder.archiverWithoutId());
+//        archiverDao.deleteAllArchivers();
+//        List<Long> idList = archiverDao.getAllArchiversId();
+//        assertTrue(idList.isEmpty());
+//    }
 }
