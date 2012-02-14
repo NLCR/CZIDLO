@@ -14,4 +14,6 @@ public class PropertyKeys {
     static final String URN_RESERVATION_MAX_SIZE = "api.reservation.maxSize";
     static final String SERVER_READ_ONLY = "server.readOnly";
     static final String MAX_RESERVED_SIZE_TO_PRINT = "api.getReseravations.maxReservedToPrint";
+    //TODO: povolit/zakazat v importu vkladani urn:nbn ve stavu NEW
+    //zatim globalne pro vsechny registratory
 }
