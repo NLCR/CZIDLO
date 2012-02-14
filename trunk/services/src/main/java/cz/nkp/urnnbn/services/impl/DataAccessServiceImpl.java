@@ -205,7 +205,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 
     public int digitalDocumentsCount(long registrarId) throws DatabaseException {
         try {
-            return factory.documentDao().getDigRepCount(registrarId);
+            return factory.documentDao().getDigDocCount(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return 0;
@@ -214,7 +214,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 
     public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException {
         try {
-            Long digRepId = factory.documentDao().getDigRepDbIdByIdentifier(id);
+            Long digRepId = factory.documentDao().getDigDocDbIdByIdentifier(id);
             return factory.documentDao().getDocumentByDbId(digRepId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
