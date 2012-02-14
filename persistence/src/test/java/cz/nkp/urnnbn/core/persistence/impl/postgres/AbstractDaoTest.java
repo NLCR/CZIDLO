@@ -41,7 +41,6 @@ import junit.framework.TestCase;
 public abstract class AbstractDaoTest extends TestCase {
 
     static final long ILLEGAL_ID = -1;
-    private DatabaseConnector con;
     DtoBuilder builder = new DtoBuilder();
     //DAOs
     final ArchiverDAO archiverDao;
@@ -63,8 +62,13 @@ public abstract class AbstractDaoTest extends TestCase {
 
     public AbstractDaoTest(String testName) {
         super(testName);
-        //con = new PostgresConnector("localhost", "resolver-persistenceUnitTests", "postgres", "poseruse");
-        con = DatabaseConnectorFactory.getConnector("org.postgresql.Driver", "localhost", "resolver-persistenceUnitTests", "postgres", "poseruse");
+        DatabaseConnector con = DatabaseConnectorFactory.getConnector(
+                DatabaseConfig.DRIVER,
+                DatabaseConfig.HOST,
+                DatabaseConfig.DATABASE,
+                DatabaseConfig.PORT,
+                DatabaseConfig.LOGIN,
+                DatabaseConfig.PASSWORD);
         DAOFactory daoFactory = new DAOFactory(con);
         registrarDao = daoFactory.registrarDao();
         archiverDao = daoFactory.archiverDao();

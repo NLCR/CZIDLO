@@ -51,16 +51,8 @@ public abstract class AbstractDAO {
         this.connector = connector;
     }
 
-    public Connection newConnection() throws DatabaseException {
-        return connector.getConnection();
-    }
-
-    public void releaseConnection(Connection connection) {
-        connector.releaseConnection(connection);
-    }
-
     protected Object runInTransaction(DaoOperation operation) throws SQLException, DatabaseException, PersistenceException {
-        Connection connection = newConnection();
+        Connection connection = connector.getConnection();
         try {
             logger.log(Level.FINE, "Transaction started");
             connection.setAutoCommit(false);
@@ -84,9 +76,8 @@ public abstract class AbstractDAO {
             }
             //throw new DatabaseException(ex);
         } finally {
-            //logger.info("releasing connection");
             logger.fine("releasing connection");
-            releaseConnection(connection);
+            connector.releaseConnection(connection);
         }
     }
 

@@ -22,6 +22,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,31 +33,43 @@ import org.joda.time.DateTime;
 public class App {
 
     static String driver = "org.postgresql.Driver";
-    static String login = "postgres";
-    static String password = "poseruse";
+    static String login = "testuser";
+    static String password = "testpass";
     static String host = "localhost";
     static int port = 5432;
-    static String database = "resolver-restTests";
+    static String database = "resolver";
     List<Registrar> registrars = new ArrayList<Registrar>();
     List<IntelectualEntity> entities = new ArrayList<IntelectualEntity>();
     List<DigitalDocument> representations = new ArrayList<DigitalDocument>();
-    DAOFactory factory = daoFactory();
-    DtoBuilder builder = new DtoBuilder();
+    private final DAOFactory factory;
+    private final DtoBuilder builder = new DtoBuilder();
 
-    public DAOFactory daoFactory() {
-        DatabaseConnector connector = DatabaseConnectorFactory.getConnector(driver, host, database, port, login, password);
-        return new DAOFactory(connector);
+    public App(DatabaseConnector connector) {
+        this.factory = new DAOFactory(connector);
     }
 
     public static void main(String[] args) {
         try {
-            App app = new App();
+//            args = new String[1];
+//            args[0] = "/home/martin/NetBeansProjects/persistence/src/main/resources/example.properties";
+            App app = new App(databaseConnector(args));
             app.clearDatabase();
+            System.out.println("database cleared");
             app.insertTestData();
+            System.out.println("test data inserted");
         } catch (DatabaseException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static DatabaseConnector databaseConnector(String[] args) throws IOException {
+        if (args.length == 0) {
+            return DatabaseConnectorFactory.getConnector(driver, host, database, port, login, password);
+        } else {
+            File propertiesFile = new File(args[0]);
+            return DatabaseConnectorFactory.getConnector(propertiesFile);
         }
     }
 
@@ -306,9 +320,5 @@ public class App {
         long id = factory.userDao().insertUser(user);
         user.setId(id);
         return user;
-    }
-
-    private void testMethod() {
-        //babickaMzk
     }
 }
