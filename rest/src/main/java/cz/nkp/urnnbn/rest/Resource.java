@@ -45,13 +45,7 @@ import nu.xom.ValidityException;
  */
 public class Resource {
 
-    private static final String driver = "org.postgresql.Driver";
-    private static final String login = "postgres";
-    private static final String password = "poseruse";
-    private static final String host = "localhost";
-    private static final int port = 5432;
-    private static final String database = "resolver-restTests";
-    private static DatabaseConnector connector = DatabaseConnectorFactory.getConnector(driver, host, database, port, login, password);
+    private static DatabaseConnector connector = DatabaseConnectorFactory.getConnector();
     static final Logger logger = Logger.getLogger("rest api v2");
     private static DataAccessService dataAccess;
     private static DataImportService dataImport;
