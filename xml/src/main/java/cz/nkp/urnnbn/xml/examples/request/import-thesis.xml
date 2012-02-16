@@ -1,41 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <!-- monografie -->
-    <r:monograph>
+    <!-- školní práce -->
+    <r:thesis>
         <!-- název -->
-        <r:title>Babička</r:title>
+        <r:title> Basic Model Checking Problems for Stochastic Games</r:title>
         <!-- další názvové údaje -->
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
-        <!-- čČNB -->
-        <r:ccnb>cnb002251177</r:ccnb>
-        <!-- ISNB -->
-        <r:isbn>8090119964</r:isbn>
+        <r:subTitle>Tato práce se zabývá stochastickými tahovými hrami na nekonečných grafech s lineárními výherními podmínkami.</r:subTitle>
         <!-- další identifikátor -->
-        <r:otherId>OCoLC:768560577</r:otherId>
+        <r:otherId>cislo_prace:123</r:otherId>
         <!-- druh dokumentu -->
-        <r:documentType>kniha</r:documentType>
+        <r:documentType>Ph.D. Thesis</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
-        <r:digitalBorn>false</r:digitalBorn>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Božená Němcová</r:originator>
-        <!-- název vydavatele -->
-        <r:publisher>Československý spisovatel</r:publisher>
-        <!-- místo vydání -->
-        <r:publicationPlace>V Praze</r:publicationPlace>
-        <!-- rok vydání -->
-        <r:publicationYear>2011</r:publicationYear>
-    </r:monograph>
+        <r:digitalBorn>true</r:digitalBorn>
+        <!-- původce (zde povolen pouze autor) -->
+        <r:originator type="AUTHOR">Václav Brožek</r:originator>
+        <!-- rok publikace -->
+        <r:publicationYear>2009</r:publicationYear>
+        <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
+        <r:degreeAwardingInstitution>Fakulta informatiky; Masarykova univerzita</r:degreeAwardingInstitution>
+    </r:thesis>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1234</r:id>
-            <r:id type="signatura">PK-0123.999</r:id>    
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>    
+            <r:id type="OAI_harvester">1239</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl</r:id>    
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
-        <r:extent>245 s.</r:extent>
+        <r:extent>1 s.</r:extent>
         <!-- čím/kým byla digitalizace financována -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->

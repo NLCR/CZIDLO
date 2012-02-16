@@ -1,41 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <!-- monografie -->
-    <r:monograph>
-        <!-- název -->
-        <r:title>Babička</r:title>
-        <!-- další názvové údaje -->
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
-        <!-- čČNB -->
-        <r:ccnb>cnb002251177</r:ccnb>
-        <!-- ISNB -->
-        <r:isbn>8090119964</r:isbn>
-        <!-- další identifikátor -->
+    <!-- výtisk periodika -->
+    <r:periodicalIssue>
+        <!-- název periodika -->
+        <r:title>Rudé právo</r:title>
+        <!-- další názvové údaje periodika -->
+        <r:subTitle>Ústřední orgán Komunistické strany Československa; pražské vydání</r:subTitle>
+        <!-- čČNB periodika -->
+        <r:ccnb>cnb000431774</r:ccnb>
+        <!-- ISNB periodika -->
+        <r:issn>0032-6569 </r:issn>
+        <!-- další identifikátor periodika -->
         <r:otherId>OCoLC:768560577</r:otherId>
+        <!-- název ročníku/svazku -->
+        <r:volumeTitle>ročník 1945</r:volumeTitle>
+        <!-- název výtisku -->
+        <r:issueTitle>16.5.1945</r:issueTitle>
         <!-- druh dokumentu -->
-        <r:documentType>kniha</r:documentType>
+        <r:documentType>ranní vydání novin</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Božená Němcová</r:originator>
+        <r:originator type="CORPORATION">Komunistická strana Československa</r:originator>
         <!-- název vydavatele -->
-        <r:publisher>Československý spisovatel</r:publisher>
+        <r:publisher>Ústřední výbor KSČ</r:publisher>
         <!-- místo vydání -->
-        <r:publicationPlace>V Praze</r:publicationPlace>
+        <r:publicationPlace>Praha</r:publicationPlace>
         <!-- rok vydání -->
-        <r:publicationYear>2011</r:publicationYear>
-    </r:monograph>
+        <r:publicationYear>1945</r:publicationYear>
+    </r:periodicalIssue>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1234</r:id>
-            <r:id type="signatura">PK-0123.999</r:id>    
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>    
+            <r:id type="OAI_harvester">1237</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedj</r:id>    
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
-        <r:extent>245 s.</r:extent>
+        <r:extent>4 strany</r:extent>
         <!-- čím/kým byla digitalizace financována -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->

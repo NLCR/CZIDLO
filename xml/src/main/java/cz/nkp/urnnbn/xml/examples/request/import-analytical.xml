@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <!-- monografie -->
-    <r:monograph>
+    <!-- analytiku (např. článek) -->
+    <r:analytical>
         <!-- název -->
-        <r:title>Babička</r:title>
+        <r:title>O slavných hudebnících</r:title>
         <!-- další názvové údaje -->
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
-        <!-- čČNB -->
-        <r:ccnb>cnb002251177</r:ccnb>
-        <!-- ISNB -->
-        <r:isbn>8090119964</r:isbn>
+        <r:subTitle>Mozart v ústním podání; Mozart, W. A.</r:subTitle>
         <!-- další identifikátor -->
-        <r:otherId>OCoLC:768560577</r:otherId>
+        <r:otherId>cislo_clanku:123</r:otherId>
         <!-- druh dokumentu -->
-        <r:documentType>kniha</r:documentType>
+        <r:documentType>novinový článek</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Božená Němcová</r:originator>
-        <!-- název vydavatele -->
-        <r:publisher>Československý spisovatel</r:publisher>
-        <!-- místo vydání -->
-        <r:publicationPlace>V Praze</r:publicationPlace>
-        <!-- rok vydání -->
-        <r:publicationYear>2011</r:publicationYear>
-    </r:monograph>
+        <r:originator type="AUTHOR">C</r:originator>
+        <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
+        <r:sourceDocument>
+            <r:title>Lidové novin</r:title>
+            <r:ccnb>cnb001282114</r:ccnb>
+            <r:issn>1802-6265</r:issn>
+            <r:otherId>ISBN2:0862-5921</r:otherId>
+            <r:volumeTitle>ročník 1949</r:VolumeTitle>
+            <r:issueTitle>10.1.1941</r:issueTitle>
+            <r:publisher>Pavel Váša a František Šelepa</r:publisher>
+            <r:publicationPlace>Brno</r:publicationPlace>
+            <r:publicationYear>1941</r:publicationYear>
+        </r:sourceDocument>
+    </r:analytical>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1234</r:id>
-            <r:id type="signatura">PK-0123.999</r:id>    
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>    
+            <r:id type="OAI_harvester">1238</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</r:id>    
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
-        <r:extent>245 s.</r:extent>
+        <r:extent>1 s.</r:extent>
         <!-- čím/kým byla digitalizace financována -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->

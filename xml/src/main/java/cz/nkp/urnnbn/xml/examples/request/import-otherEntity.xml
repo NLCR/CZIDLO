@@ -3,15 +3,16 @@
     <!-- monografie -->
     <r:monograph>
         <!-- název -->
-        <r:title>Babička</r:title>
+        <r:title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</r:title>
         <!-- další názvové údaje -->
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
         <!-- čČNB -->
-        <r:ccnb>cnb002251177</r:ccnb>
-        <!-- ISNB -->
-        <r:isbn>8090119964</r:isbn>
+        <r:ccnb>cnb123456789</r:ccnb>
+        <!-- ISNB (zde u mapy nemá význam)
+        <r:isbn/>
+        -->
         <!-- další identifikátor -->
-        <r:otherId>OCoLC:768560577</r:otherId>
+        <r:otherId>ISMN:123456789000</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>kniha</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -30,12 +31,13 @@
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1234</r:id>
-            <r:id type="signatura">PK-0123.999</r:id>    
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>    
+            <r:id type="aleph_sysno">001056568</r:id>
+            <r:id type="signatura">Moll-0004.102</r:id>
+            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</r:id>    
+            <r:id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</r:id>    
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
-        <r:extent>245 s.</r:extent>
+        <r:extent>1 mapa : mědirytina, ručně kolorovaná ; 58 x 47,5 cm na listu 66 x 55 cm</r:extent>
         <!-- čím/kým byla digitalizace financována -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
@@ -44,23 +46,24 @@
         <r:format version="1.0">jpeg</r:format>
         <!-- rozlišení nastavené na skeneru -->
         <r:resolution>
-            <r:width>1280</r:width>
-            <r:height>1024</r:height>
-        </r:resolution>
+            <r:resolution>
+                <r:width>1280</r:width>
+                <r:height>1024</r:height>
+            </r:resolution>
         <!-- kompresní algoritmus a komprimační poměr -->
-        <r:compression ratio="0.3">LZW</r:compression>
-        <r:color>
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
             <!-- barevný model -->
-            <r:model>RGB</r:model>
+                <r:model>RGB</r:model>
             <!-- bitová hloubka -->
-            <r:depth>24</r:depth>
-        </r:color>
+                <r:depth>24</r:depth>
+            </r:color>
         <!-- ICC profil -->
-        <r:iccProfile>some ICC profile</r:iccProfile>
+            <r:iccProfile>some ICC profile</r:iccProfile>
         <!-- realná velikost obrázků (něktěrého obrázku) -->
-        <r:picture>
-            <r:width>600</r:width>
-            <r:height>1000</r:height>
-        </r:picture>
-    </r:digitalDocument>
-</r:import>
+            <r:picture>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:picture>
+        </r:digitalDocument>
+    </r:import>
