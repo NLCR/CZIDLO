@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+    <!-- monografie -->
+    <r:monograph>
+        <!-- název -->
+        <r:title>Babička</r:title>
+        <!-- další názvové údaje -->
+        <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        <!-- čČNB -->
+        <r:ccnb>cnb002251177</r:ccnb>
+        <!-- ISNB -->
+        <r:isbn>8090119964</r:isbn>
+        <!-- druh dokumentu -->
+        <r:documentType>kniha</r:documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <r:digitalBorn>false</r:digitalBorn>
+        <!-- původce (autor/korporace/akce/další) -->
+        <r:originator type="AUTHOR">Božená Němcová</r:originator>
+        <!-- informace o publikování -->
+        <r:publication>
+            <!-- název vydavatele -->
+            <r:publisher>Československý spisovatel</r:publisher>
+            <!-- místo vydání -->
+            <r:place>V Praze</r:place>
+            <!-- rok vydání -->
+            <r:year>2011</r:year>
+        </r:publication>
+    </r:monograph>
+    <r:digitalDocument>
+        <!-- identifikátor archivátora -->
+        <r:archiverId>3</r:archiverId>
+        <!-- předem rezervané urn:nbn -->
+        <r:urnNbn>urn:nbn:cz:boa001-00003b</r:urnNbn>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <r:registrarScopeIdentifiers>
+            <r:id type="OAI_harvester">3234</r:id>
+            <r:id type="signatura">PK-0123.666</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1e10-4822-b7a4-c7531bb4aedg</r:id>
+        </r:registrarScopeIdentifiers>
+        <!-- rozsah -->
+        <r:extent>245 s.</r:extent>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <r:financed>norské fondy</r:financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <r:contractNumber>123</r:contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <r:technicalMetadata>
+            <!-- typ a verze formátu -->
+            <r:format version="1.0">jpeg</r:format>
+            <!-- rozlišení nastavené na skeneru v pixelech -->
+            <r:resolution>
+                <r:width>1280</r:width>
+                <r:height>1024</r:height>
+            </r:resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+            <!-- barevný model (např. RGB, CMYK)-->
+                <r:model>RGB</r:model>
+            <!-- bitová hloubka -->
+                <r:depth>24</r:depth>
+            </r:color>
+            <!-- ICC profil -->
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>
+
