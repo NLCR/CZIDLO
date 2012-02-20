@@ -40,15 +40,15 @@ public interface AccountService extends BusinessService{
             long userId);
 
     /**
-     * Creates new catalogue for registrar.
-     * @param catalogue
+     * Creates new catalog for registrar.
+     * @param catalog
      * @param registrarId 
      * @param user Id of user to perform this operation.
      * Only adminstrator of this organization or application admininstrator
      * are allowed to do that.
      */
-    public void createCatalogue(
-            Catalog catalogue,
+    public void createCatalog(
+            Catalog catalog,
             long registrarId,
             long userId);
 
