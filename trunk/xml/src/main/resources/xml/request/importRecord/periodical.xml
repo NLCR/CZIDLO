@@ -51,9 +51,11 @@
              digitálního dokumentu -->
         <r:technicalMetadata>
             <r:format version="1.0">jpeg</r:format>
-            <!-- rozlišení nastavené na skeneru -->
+            <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
+                <!-- horizontální -->
                 <r:width>1280</r:width>
+                <!-- vertikální -->
                 <r:height>1024</r:height>
             </r:resolution>
             <!-- kompresní algoritmus a komprimační poměr -->
@@ -66,7 +68,7 @@
             </r:color>
             <!-- ICC profil -->
             <r:iccProfile>some ICC profile</r:iccProfile>
-            <!-- realná velikost obrázků (něktěrého obrázku) -->
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
             <r:pictureSize>
                 <r:width>600</r:width>
                 <r:height>1000</r:height>
