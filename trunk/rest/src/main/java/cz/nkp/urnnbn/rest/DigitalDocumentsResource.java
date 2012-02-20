@@ -30,6 +30,7 @@ import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
 import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -72,13 +73,13 @@ public class DigitalDocumentsResource extends Resource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String importDigitalDocument(String content) {
-        //todo: autentizace
-        long userId = 1;//TODO: ziskat z hlavicky
+    public String importDigitalDocument(@Context HttpServletRequest req,
+            String content) {
+        String login = req.getRemoteUser();
         try {
             Document doc = validDocumentFromString(content, Configuration.RECORD_IMPORT_XSD);
             RecordImport recordImport = getImportFromDocument(doc);
-            UrnNbn urn = dataImportService().importNewRecord(recordImport, userId);
+            UrnNbn urn = dataImportService().importNewRecord(recordImport, login);
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();

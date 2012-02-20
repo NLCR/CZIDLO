@@ -19,9 +19,11 @@ import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 /**
  *
@@ -65,7 +67,7 @@ public class DigitalInstanceResource extends Resource {
 
     @DELETE
     @Produces("application/xml")
-    public String removeDigitalInstance() {
+    public String removeDigitalInstance(@Context HttpServletRequest req) {
         if (Configuration.SERVER_READ_ONLY) {
             throw new MethodForbiddenException();
         } else {

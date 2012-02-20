@@ -29,7 +29,7 @@ public class UnknownDigitalDocumentException extends RestException {
     public UnknownDigitalDocumentException(String sigla, DigDocIdType idType, String idValue) {
         super(Status.NOT_FOUND, errorCode,
                 "Registrar with sigla " + sigla
-                + " doesn't register digital representation with identifier of type '" + idType.toString()
+                + " doesn't register digital document with identifier of type '" + idType.toString()
                 + "' and value '" + idValue + "'");
     }
 }

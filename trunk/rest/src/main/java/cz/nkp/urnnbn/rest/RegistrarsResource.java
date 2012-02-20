@@ -35,6 +35,7 @@ public class RegistrarsResource extends Resource {
     private static final String PARAM_CATALOGS = "catalogs";
     @Context
     private UriInfo context;
+    
 
     @GET
     @Produces("application/xml")

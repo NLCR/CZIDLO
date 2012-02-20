@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -99,17 +101,17 @@ public class DigitalInstancesResource extends Resource {
     @POST
     @Produces("application/xml")
     public Response addNewDigitalInstance(
+            @Context HttpServletRequest req,
             @QueryParam(PARAM_LIBRARY_ID) String libraryIdStr, String urlStr) {
-        //todo: autentizace
         try {
-            long userId = 1;//TODO: zjistit id uzivatele z hlavicky
+            String login = req.getRemoteUser();
             if (digRep == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
             long libraryId = Parser.parsePositiveLongQueryParam(libraryIdStr, PARAM_LIBRARY_ID);
             URL url = Parser.parseUrlFromRequestBody(urlStr, MAX_URL_LENGTH);
             DigitalInstance instance = newDigitalInstance(libraryId, url);
-            instance = dataImportService().addDigitalInstance(instance, userId);
+            instance = dataImportService().addDigitalInstance(instance, login);
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libraryId);
             String responseXml = builder.buildDocument().toXML();
             return Response.created(null).entity(responseXml).build();
