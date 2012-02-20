@@ -47,7 +47,7 @@ public class DtoBuilder {
         return archiver;
     }
 
-    public Catalog CatalogueWithoutIdAndRegistrarId() {
+    public Catalog CatalogWithoutIdAndRegistrarId() {
         Catalog catalog = new Catalog();
         catalog.setName("Aleph");
         catalog.setDescription("katalog Aleph");
