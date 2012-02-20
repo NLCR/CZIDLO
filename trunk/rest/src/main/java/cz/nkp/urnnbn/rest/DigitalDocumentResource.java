@@ -101,7 +101,7 @@ public class DigitalDocumentResource extends Resource {
         Publication pub = dataAccessService().publicationByIntEntId(intEntId);
         Originator originator = dataAccessService().originatorByIntEntId(intEntId);
         SourceDocument srcDoc = dataAccessService().sourceDocumentByIntEntId(intEntId);
-        return new IntelectualEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        return IntelectualEntityBuilder.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
     }
 
     @Path("/identifiers")
