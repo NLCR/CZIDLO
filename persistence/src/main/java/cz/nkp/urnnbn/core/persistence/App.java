@@ -84,19 +84,32 @@ public class App {
 
     private void insertTestData() throws Exception {
         try {
+            //superadmin
+            User superAdmin = new User();
+            superAdmin.setLogin("superAdmin");
+            superAdmin.setPassword("superAdminPass");
+            superAdmin.setEmail("admin@resolver");
+            superAdmin.setAdmin(true);
+            superAdmin.setId(factory.userDao().insertUser(superAdmin));
+            System.out.println("created user superAdmin:superAdminPass as superadmin");
+
             //registrar mzk
             Registrar mzk = new Registrar();
             mzk.setName("MZK");
             mzk.setDescription("Moravská zemská knihovna");
             mzk.setCode("BOA001");
             mzk.setId(factory.registrarDao().insertRegistrar(mzk));
+            System.out.println("created registrar MZK with id " + mzk.getId());
+
             //mzkAdmin
             User mzkAdmin = new User();
-            mzkAdmin.setLogin("martin");
-            mzkAdmin.setPassword("fdfadfa");
-            mzkAdmin.setEmail("martin@home.com");
+            mzkAdmin.setLogin("mzkAdmin");
+            mzkAdmin.setPassword("mzkAdminPass");
+            mzkAdmin.setEmail("admin@mzk.cz");
             mzkAdmin.setId(factory.userDao().insertUser(mzkAdmin));
             factory.registrarDao().addAdminOfRegistrar(mzk.getId(), mzkAdmin.getId());
+            System.out.println("created user mzkAdmin:mzkAdminPass with access to registrar MZK");
+
             //library K4 mzk
             DigitalLibrary mzkK4 = new DigitalLibrary();
             mzkK4.setName("K4");
@@ -122,6 +135,18 @@ public class App {
             nkp.setDescription("Národní knihovna Praha");
             nkp.setCode("ABA001");
             nkp.setId(factory.registrarDao().insertRegistrar(nkp));
+            System.out.println("created registrar NKP with id " + nkp.getId());
+
+
+            //nkpAdmin
+            User nkpAdmin = new User();
+            nkpAdmin.setLogin("nkpAdmin");
+            nkpAdmin.setPassword("nkpAdminPass");
+            nkpAdmin.setEmail("admin@nkp.cz");
+            nkpAdmin.setId(factory.userDao().insertUser(nkpAdmin));
+            factory.registrarDao().addAdminOfRegistrar(nkp.getId(), nkpAdmin.getId());
+            System.out.println("created user nkpAdmin:nkpAdminPass with access to registrar NKP");
+
             //library K4 nkp
             DigitalLibrary nkpK4 = new DigitalLibrary();
             nkpK4.setName("K4");
@@ -131,10 +156,25 @@ public class App {
             nkpK4.setId(factory.digitalLibraryDao().insertLibrary(nkpK4));
 
             //archivar MK
-            Archiver arch = new Archiver();
-            arch.setName("MK");
-            arch.setDescription("Mala knihovna ");
-            arch.setId(factory.archiverDao().insertArchiver(arch));
+            Archiver archMk = new Archiver();
+            archMk.setName("MK");
+            archMk.setDescription("Mala knihovna ");
+            archMk.setId(factory.archiverDao().insertArchiver(archMk));
+            System.out.println("created archiver MK with id " + archMk.getId());
+
+            //archivar MK2
+            Archiver archMk2 = new Archiver();
+            archMk2.setName("MK2");
+            archMk2.setDescription("Mala knihovna 2");
+            archMk2.setId(factory.archiverDao().insertArchiver(archMk2));
+            System.out.println("created archiver MK2 with id " + archMk2.getId());
+
+            //archivar MK3
+            Archiver archMk3 = new Archiver();
+            archMk3.setName("MK3");
+            archMk3.setDescription("Mala knihovna 3");
+            archMk3.setId(factory.archiverDao().insertArchiver(archMk3));
+            System.out.println("created archiver MK3 with id " + archMk3.getId());
 
             //IE babicka
             IntelectualEntity babicka = new IntelectualEntity();
