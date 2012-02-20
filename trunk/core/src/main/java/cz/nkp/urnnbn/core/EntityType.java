@@ -17,6 +17,13 @@ public enum EntityType {
             return "monograph";
         }
     },
+    MONOGRAPH_VOLUME {
+
+        @Override
+        public String toString() {
+            return "monographVolume";
+        }
+    },
     PERIODICAL {
 
         @Override
@@ -50,6 +57,13 @@ public enum EntityType {
         @Override
         public String toString() {
             return "analytical";
+        }
+    },
+    OTHER {
+
+        @Override
+        public String toString() {
+            return "otherEntity";
         }
     };
 }

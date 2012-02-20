@@ -34,18 +34,18 @@ public enum IntEntIdType {
             return "issn";
         }
     },
-    PERIODICAL_VOLUME_NUMBER {
+    VOLUME_TITLE {
 
         @Override
         public String toString() {
-            return "perVolume";
+            return "volumeTitle";
         }
     },
-    PERIODICAL_ISSUE_NUMBER {
+    ISSUE_TITLE {
 
         @Override
         public String toString() {
-            return "perIssue";
+            return "issueTitle";
         }
     },
     OTHER {
@@ -84,12 +84,12 @@ public enum IntEntIdType {
                 return result;
             case PERIODICAL_VOLUME:
                 result.add(ISSN);
-                result.add(PERIODICAL_VOLUME_NUMBER);
+                result.add(VOLUME_TITLE);
                 return result;
             case PERIODICAL_ISSUE:
                 result.add(ISSN);
-                result.add(PERIODICAL_VOLUME_NUMBER);
-                result.add(PERIODICAL_ISSUE_NUMBER);
+                result.add(VOLUME_TITLE);
+                result.add(ISSUE_TITLE);
                 return result;
             case THESIS:
                 return result;
@@ -111,10 +111,10 @@ public enum IntEntIdType {
                 return "ccnb";
             case ISSN:
                 return "issn";
-            case PERIODICAL_VOLUME_NUMBER:
-                return "volumeNumber";
-            case PERIODICAL_ISSUE_NUMBER:
-                return "issueNumber";
+            case VOLUME_TITLE:
+                return "volumeTitle";
+            case ISSUE_TITLE:
+                return "issueTitle";
             case OTHER:
                 return "otherId";
             default:
