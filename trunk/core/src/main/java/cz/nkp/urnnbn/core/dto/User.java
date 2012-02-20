@@ -94,4 +94,9 @@ public class User implements IdentifiableByLongAttribute {
         hash = 67 * hash + (this.email != null ? this.email.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", login=" + login + ", admin=" + admin + ", email=" + email + '}';
+    }
 }
