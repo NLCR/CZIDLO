@@ -8,8 +8,6 @@
         <r:subTitle>Mozart v ústním podání; Mozart, W. A.</r:subTitle>
         <!-- druh dokumentu -->
         <r:documentType>novinový článek</r:documentType>
-        <!-- zda je dokument e-born, defaultně false -->
-        <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
         <r:originator type="AUTHOR">C</r:originator>
         <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
