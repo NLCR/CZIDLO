@@ -33,7 +33,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -49,7 +49,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -64,7 +64,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -80,7 +80,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -97,7 +97,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="issueTitle" type="r:issueTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -109,8 +109,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:sourceDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -124,7 +123,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="degreeAwardingInstitution" type="r:degreeAwardingInstitution" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
@@ -140,7 +139,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
