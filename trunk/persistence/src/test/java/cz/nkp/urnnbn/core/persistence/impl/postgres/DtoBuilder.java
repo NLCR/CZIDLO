@@ -51,12 +51,12 @@ public class DtoBuilder {
         return archiver;
     }
     
-    public Catalog catalogueWithoutIdAndRegistrarId() {
-        Catalog catalogue = new Catalog();
-        catalogue.setName("Aleph");
-        catalogue.setDescription("katalog Aleph");
-        catalogue.setUrlPrefix("http://aleph.mzk.cz");
-        return catalogue;
+    public Catalog catalogWithoutIdAndRegistrarId() {
+        Catalog catalog = new Catalog();
+        catalog.setName("Aleph");
+        catalog.setDescription("katalog Aleph");
+        catalog.setUrlPrefix("http://aleph.mzk.cz");
+        return catalog;
     }
     
     public DigitalInstance digitalInstanceWithoutId() {

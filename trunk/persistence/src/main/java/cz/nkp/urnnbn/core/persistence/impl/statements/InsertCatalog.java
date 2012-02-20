@@ -15,11 +15,11 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class InsertCatalogue implements StatementWrapper {
+public class InsertCatalog implements StatementWrapper {
 
     private final Catalog catalog;
 
-    public InsertCatalogue(Catalog catalog) {
+    public InsertCatalog(Catalog catalog) {
         this.catalog = catalog;
     }
 
