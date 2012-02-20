@@ -39,15 +39,15 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         authorization = new AuthorizationModule(factory);
     }
 
-    public UrnNbn importNewRecord(RecordImport data, long userId) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigRepIdentifierCollisionException, UnknownArchiverException {
-        authorization.checkAccessRights(data.getRegistrarCode(), userId);
-        return new RecordImporter(factory, data, userId).run();
+    public UrnNbn importNewRecord(RecordImport data, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigRepIdentifierCollisionException, UnknownArchiverException {
+        authorization.checkAccessRights(data.getRegistrarCode(), login);
+        return new RecordImporter(factory, data).run();
     }
 
-    public DigitalInstance addDigitalInstance(DigitalInstance instance, long userId) throws AccessException, UnknownDigiLibException, UnknownDigDocException {
+    public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws AccessException, UnknownDigiLibException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigLibrary(instance.getLibraryId());
-            authorization.checkAccessRights(registrarId, userId);
+            authorization.checkAccessRights(registrarId, login);
             return new DigitalInstanceAdder(factory, instance).run();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

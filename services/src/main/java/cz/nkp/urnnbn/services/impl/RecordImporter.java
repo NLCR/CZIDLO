@@ -41,13 +41,11 @@ public class RecordImporter {
     private static final Logger logger = Logger.getLogger(DataImportService.class.getName());
     private final DAOFactory factory;
     private final RecordImport data;
-    private final long userId;
     private final IntelectualEntityMerger merger;
     private final UrnNbnFinder finder;
 
-    RecordImporter(DAOFactory factory, RecordImport data, long userId) throws UnknownRegistrarException {
+    RecordImporter(DAOFactory factory, RecordImport data) throws UnknownRegistrarException {
         this.data = data;
-        this.userId = userId;
         this.factory = factory;
         this.merger = new IntelectualEntityMerger(factory);
         this.finder = initFinder(factory, data);

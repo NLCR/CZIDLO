@@ -23,15 +23,23 @@ public class AuthenticationServiceImpl extends BusinessServiceImpl implements Au
     }
 
     @Override
-    public boolean authenticate(User user) {
+    public User autheticatedUserOrNull(User user) {
         try {
-            factory.userDao().getUserByLogin(user.getLogin());
+            if (user == null || user.getLogin() == null || user.getPassword() == null) {
+                return null;
+            }
+            User userByLogin = factory.userDao().getUserByLogin(user.getLogin());
+            if (userByLogin.getPassword().equals(user.getPassword())) {
+                return userByLogin;
+            } else {
+                return null;
+            }
         } catch (DatabaseException ex) {
             Logger.getLogger(AuthenticationServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } catch (RecordNotFoundException ex) {
             Logger.getLogger(AuthenticationServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        //TODO: return real result
-        return true;
     }
 }
