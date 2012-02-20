@@ -13,5 +13,6 @@
     </head>
     <body>
         <h1>Hello Admin!</h1>
+        login: <%= request.getRemoteUser()%>
     </body>
 </html>
