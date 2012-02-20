@@ -30,7 +30,7 @@ public interface DigitalInstanceDAO {
      * @param instance
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital representation or digital library was not found
+     * @throws RecordNotFoundException if digital document or digital library was not found
      */
     public Long insertDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException;
 
