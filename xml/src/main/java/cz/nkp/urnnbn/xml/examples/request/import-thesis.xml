@@ -6,16 +6,17 @@
         <r:title> Basic Model Checking Problems for Stochastic Games</r:title>
         <!-- další názvové údaje -->
         <r:subTitle>Tato práce se zabývá stochastickými tahovými hrami na nekonečných grafech s lineárními výherními podmínkami.</r:subTitle>
-        <!-- další identifikátor -->
-        <r:otherId>cislo_prace:123</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>Ph.D. Thesis</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>true</r:digitalBorn>
         <!-- původce (zde povolen pouze autor) -->
         <r:originator type="AUTHOR">Václav Brožek</r:originator>
-        <!-- rok publikace -->
-        <r:publicationYear>2009</r:publicationYear>
+        <!-- informace o publikování -->
+        <r:publication>
+            <!-- rok publikace -->
+            <r:year>2009</r:year>
+        </r:publication>
         <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
         <r:degreeAwardingInstitution>Fakulta informatiky; Masarykova univerzita</r:degreeAwardingInstitution>
     </r:thesis>
@@ -29,31 +30,37 @@
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
         <r:extent>1 s.</r:extent>
-        <!-- čím/kým byla digitalizace financována -->
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
         <r:contractNumber>123</r:contractNumber>
-        <!-- typ a verze formátu -->
-        <r:format version="1.0">jpeg</r:format>
-        <!-- rozlišení nastavené na skeneru -->
-        <r:resolution>
-            <r:width>1280</r:width>
-            <r:height>1024</r:height>
-        </r:resolution>
-        <!-- kompresní algoritmus a komprimační poměr -->
-        <r:compression ratio="0.3">LZW</r:compression>
-        <r:color>
-            <!-- barevný model -->
-            <r:model>RGB</r:model>
-            <!-- bitová hloubka -->
-            <r:depth>24</r:depth>
-        </r:color>
-        <!-- ICC profil -->
-        <r:iccProfile>some ICC profile</r:iccProfile>
-        <!-- realná velikost obrázků (něktěrého obrázku) -->
-        <r:picture>
-            <r:width>600</r:width>
-            <r:height>1000</r:height>
-        </r:picture>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <r:technicalMetadata>
+            <!-- typ a verze formátu -->
+            <r:format version="1.0">jpeg</r:format>
+            <!-- rozlišení nastavené na skeneru -->
+            <r:resolution>
+                <r:width>1280</r:width>
+                <r:height>1024</r:height>
+            </r:resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <!-- barevný model -->
+                <r:model>RGB</r:model>
+                <!-- bitová hloubka -->
+                <r:depth>24</r:depth>
+            </r:color>
+            <!-- ICC profil -->
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) -->
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
     </r:digitalDocument>
 </r:import>

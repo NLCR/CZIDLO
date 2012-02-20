@@ -7,7 +7,6 @@ package cz.nkp.urnnbn.xml.unmarshallers;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.logging.Logger;
 import nu.xom.Attribute;
-import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
@@ -20,24 +19,18 @@ import nu.xom.XPathContext;
  */
 public abstract class Unmarshaller {
 
-    private static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
+    static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
     private static final String NS_PREFIX_NAME = "resolver";
     private static final String NS_PREFIX = NS_PREFIX_NAME + ":";
     static final XPathContext context = new XPathContext(NS_PREFIX_NAME, "http://resolver.nkp.cz/v2/");
-    private final Document doc;
 
     static String prefixed(String elementName) {
         return NS_PREFIX + elementName;
     }
 
-    public Unmarshaller(Document doc) {
-        this.doc = doc;
-    }
-
-    Node selectSingleNodeFromDoc(String xpath) {
-        return selectSingleNode(xpath, doc);
-    }
-
+//    Node selectSingleNodeFromDoc(String xpath) {
+//        return selectSingleNode(xpath, doc);
+//    }
     Node selectSingleNode(String xpath, ParentNode parent) {
         Node result = selectSingleElementOrNull(xpath, parent);
         if (result == null) {
@@ -47,10 +40,9 @@ public abstract class Unmarshaller {
         }
     }
 
-    Element selectSingleElementOrNullFromdoc(Xpath xpath) {
-        return (Element) selectSingleNodeOrNull(xpath, doc);
-    }
-
+//    Element selectSingleElementOrNullFromdoc(Xpath xpath) {
+//        return (Element) selectSingleNodeOrNull(xpath, doc);
+//    }
     Element selectSingleElementOrNull(String elementName, ParentNode parent) {
         System.err.println("element: " + elementName);
         return (Element) selectSingleNodeOrNull(new Xpath(prefixed(elementName)), parent);

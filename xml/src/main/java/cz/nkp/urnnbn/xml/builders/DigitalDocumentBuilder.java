@@ -37,17 +37,32 @@ public class DigitalDocumentBuilder extends XmlBuilder {
     public Element buildRootElement() {
         Element root = new Element("digitalDocument", RESOLVER);
         //appendIdentifierElement(root, "INTERNAL", rep.getId());
-        appendIdentifierElement(root, "URN:NBN", urn);
+        appendElementWithContentIfNotNull(root, doc.getCreated(), "created");
+        appendElementWithContentIfNotNull(root, doc.getLastUpdated(), "lastUpdated");
+        appendElementWithContentIfNotNull(root, urn, "urnNbn");
         if (identifiersBuilder != null) {
             appendBuilderResultfNotNull(root, identifiersBuilder);
         }
-        appendElementWithContentIfNotNull(root, doc.getCreated(), "created");
-        appendElementWithContentIfNotNull(root, doc.getLastUpdated(), "lastUpdated");
         appendElementWithContentIfNotNull(root, doc.getExtent(), "extent");
         appendElementWithContentIfNotNull(root, doc.getFinancedFrom(), "financed");
         appendElementWithContentIfNotNull(root, doc.getContractNumber(), "contractNumber");
+        appendTechnicalMetadata(root);
+        if (instanceBuilderList != null) {
+            for (DigitalInstanceBuilder builder : instanceBuilderList) {
+                appendBuilderResultfNotNull(root, builder);
+            }
+        }
+        appendBuilderResultfNotNull(root, registrarBuilder);
+        appendBuilderResultfNotNull(root, archiverBuilder);
+        appendBuilderResultfNotNull(root, entityBuilder);
+        return root;
+    }
+
+    private void appendTechnicalMetadata(Element root) {
+        Element technicalEl = addElement(root, "technicalMetadata");
+
         //format
-        Element formatEl = addElement(root, "format");
+        Element formatEl = addElement(technicalEl, "format");
         String format = doc.getFormat();
         if (format != null) {
             formatEl.appendChild(format);
@@ -58,11 +73,11 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             formatEl.addAttribute(version);
         }
         //resolution
-        Element resolutionEl = addElement(root, "resolution");
+        Element resolutionEl = addElement(technicalEl, "resolution");
         appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionWidth(), "width");
         appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionHeight(), "height");
         //compression
-        Element compressionEl = addElement(root, "compression");
+        Element compressionEl = addElement(technicalEl, "compression");
         String compression = doc.getCompression();
         if (compression != null) {
             compressionEl.appendChild(compression);
@@ -73,22 +88,13 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             compressionEl.addAttribute(ratio);
         }
         //color
-        Element colorEl = addElement(root, "color");
+        Element colorEl = addElement(technicalEl, "color");
         appendElementWithContentIfNotNull(colorEl, doc.getColorModel(), "model");
         appendElementWithContentIfNotNull(colorEl, doc.getColorDepth(), "depth");
-        appendElementWithContentIfNotNull(root, doc.getIccProfile(), "iccProfile");
+        appendElementWithContentIfNotNull(technicalEl, doc.getIccProfile(), "iccProfile");
         //common picture characteristics
-        Element pictureEl = addElement(root, "picture");
+        Element pictureEl = addElement(technicalEl, "pictureSize");
         appendElementWithContentIfNotNull(pictureEl, doc.getPictureWidth(), "width");
         appendElementWithContentIfNotNull(pictureEl, doc.getPictureHeight(), "height");
-        appendBuilderResultfNotNull(root, registrarBuilder);
-        appendBuilderResultfNotNull(root, archiverBuilder);
-        appendBuilderResultfNotNull(root, entityBuilder);
-        if (instanceBuilderList != null) {
-            for (DigitalInstanceBuilder builder : instanceBuilderList) {
-                appendBuilderResultfNotNull(root, builder);
-            }
-        }
-        return root;
     }
 }

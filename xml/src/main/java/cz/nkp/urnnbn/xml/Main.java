@@ -67,22 +67,8 @@ public class Main {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-//    private static void xpathTest() {
-//        try {
-//            File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
-//            Document doc = Dom4jUtils.loadDocument(in, false);
-//            XPath urlPath = Dom4jUtils.createXPath("resolver:digitalInstance/resolver:url");
-//            String url = urlPath.selectSingleNode(doc).getText();
-//            System.out.println("url:" + url);
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (DocumentException ex) {
-//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
     private static void xpathTest() {
         try {
             File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");

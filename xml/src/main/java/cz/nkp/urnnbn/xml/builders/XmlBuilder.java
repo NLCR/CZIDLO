@@ -58,9 +58,4 @@ public abstract class XmlBuilder {
             root.appendChild(builder.buildRootElement());
         }
     }
-//    final Element toDetachedRootElement() {
-//        Element root = this.buildRootElement().getRootElement();
-//        root.detach();
-//        return root;
-//    }
 }

@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:otherEntity>
-        <!-- název -->
-        <r:title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</r:title>
-        <!-- další názvové údaje -->
-        <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
+    <r:monographVolume>
+        <!-- název celého díla -->
+        <r:title>Slovník naučný</r:title>
+        <!-- další názvové údaje celého díla -->
+        <r:subTitle>Riegrův slovník naučný</r:subTitle>
         <!-- čČNB -->
-        <r:ccnb>cnb123456789</r:ccnb>
-        <!-- ISNB (zde u mapy nemá význam, obecně ale u otherEntity být může)
-        <r:isbn/>
-        -->
+        <r:ccnb>cnb000000000</r:ccnb>
+        <!-- ISNB svazku, nikoliv celé monografie-->
+        <r:isbn>8090119964</r:isbn>
+        <!-- název svazku -->
+        <r:volumeTitle>D. 8.,S-Szyttler</r:volumeTitle>
         <!-- druh dokumentu -->
-        <r:documentType>mapa</r:documentType>
+        <r:documentType>slovník</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Valk, Gerhard</r:originator>
+        <r:originator type="AUTHOR">Rieger, František Vladislav</r:originator>
         <!-- informace o publikování -->
         <r:publication>
-        <!-- název vydavatele -->
-            <r:publisher>Gerhard Valk</r:publisher>
+            <!-- název vydavatele -->
+            <r:publisher>I. L. Kober</r:publisher>
             <!-- místo vydání -->
-            <r:place>Amsterdam</r:place>
+            <r:place>V Praze</r:place>
             <!-- rok vydání -->
-            <r:year>1701</r:year>
+            <r:year>1870</r:year>
         </r:publication>
-    </r:otherEntity>
+    </r:monographVolume>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="aleph_id">mzk03:001056568</r:id>
-            <r:id type="signatura">Moll-0004.102</r:id>
-            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</r:id>    
-            <r:id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</r:id>    
+            <r:id type="signatura">MP-0001.308,8</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedx</r:id>
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
-        <r:extent>1 mapa : mědirytina, ručně kolorovaná ; 58 x 47,5 cm na listu 66 x 55 cm</r:extent>
+        <r:extent>1213 s. ; 4°</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -49,7 +48,7 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
-            <!-- rozlišení nastavené na skeneru -->
+            <!-- rozlišení nastavené na skeneru v pixelech -->
             <r:resolution>
                 <r:width>1280</r:width>
                 <r:height>1024</r:height>
@@ -57,14 +56,14 @@
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
             <r:color>
-                <!-- barevný model -->
+            <!-- barevný model (např. RGB, CMYK)-->
                 <r:model>RGB</r:model>
-                <!-- bitová hloubka -->
+            <!-- bitová hloubka -->
                 <r:depth>24</r:depth>
             </r:color>
             <!-- ICC profil -->
             <r:iccProfile>some ICC profile</r:iccProfile>
-            <!-- realná velikost obrázků (něktěrého obrázku) -->
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
             <r:pictureSize>
                 <r:width>600</r:width>
                 <r:height>1000</r:height>
