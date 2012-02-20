@@ -10,20 +10,21 @@
         <r:ccnb>cnb002251177</r:ccnb>
         <!-- ISNB -->
         <r:isbn>8090119964</r:isbn>
-        <!-- další identifikátor -->
-        <r:otherId>OCoLC:768560577</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>kniha</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
         <r:originator type="AUTHOR">Božená Němcová</r:originator>
-        <!-- název vydavatele -->
-        <r:publisher>Československý spisovatel</r:publisher>
-        <!-- místo vydání -->
-        <r:publicationPlace>V Praze</r:publicationPlace>
-        <!-- rok vydání -->
-        <r:publicationYear>2011</r:publicationYear>
+        <!-- informace o publikování -->
+        <r:publication>
+            <!-- název vydavatele -->
+            <r:publisher>Československý spisovatel</r:publisher>
+            <!-- místo vydání -->
+            <r:place>V Praze</r:place>
+            <!-- rok vydání -->
+            <r:year>2011</r:year>
+        </r:publication>
     </r:monograph>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
@@ -44,7 +45,7 @@
         <r:contractNumber>123</r:contractNumber>
         <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
              digitálního dokumentu -->
-        <r:technical>
+        <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
             <!-- rozlišení nastavené na skeneru v pixelech -->
@@ -55,7 +56,7 @@
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
             <r:color>
-            <!-- barevný model -->
+            <!-- barevný model (např. RGB, CMYK)-->
                 <r:model>RGB</r:model>
             <!-- bitová hloubka -->
                 <r:depth>24</r:depth>
@@ -67,6 +68,6 @@
                 <r:width>600</r:width>
                 <r:height>1000</r:height>
             </r:pictureSize>
-        </r:technical>
+        </r:technicalMetadata>
     </r:digitalDocument>
 </r:import>

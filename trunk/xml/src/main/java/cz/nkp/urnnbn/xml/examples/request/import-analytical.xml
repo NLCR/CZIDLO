@@ -6,8 +6,6 @@
         <r:title>O slavných hudebnících</r:title>
         <!-- další názvové údaje -->
         <r:subTitle>Mozart v ústním podání; Mozart, W. A.</r:subTitle>
-        <!-- další identifikátor -->
-        <r:otherId>cislo_clanku:123</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>novinový článek</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -20,11 +18,13 @@
             <r:ccnb>cnb001282114</r:ccnb>
             <r:issn>1802-6265</r:issn>
             <r:otherId>ISBN2:0862-5921</r:otherId>
-            <r:volumeTitle>ročník 1949</r:VolumeTitle>
+            <r:volumeTitle>ročník 1949</r:volumeTitle>
             <r:issueTitle>10.1.1941</r:issueTitle>
-            <r:publisher>Pavel Váša a František Šelepa</r:publisher>
-            <r:publicationPlace>Brno</r:publicationPlace>
-            <r:publicationYear>1941</r:publicationYear>
+            <r:publication>
+                <r:publisher>Pavel Váša a František Šelepa</r:publisher>
+                <r:place>Brno</r:place>
+                <r:year>1941</r:year>
+            </r:publication>
         </r:sourceDocument>
     </r:analytical>
     <r:digitalDocument>
@@ -41,27 +41,31 @@
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
         <r:contractNumber>123</r:contractNumber>
-        <!-- typ a verze formátu -->
-        <r:format version="1.0">jpeg</r:format>
-        <!-- rozlišení nastavené na skeneru -->
-        <r:resolution>
-            <r:width>1280</r:width>
-            <r:height>1024</r:height>
-        </r:resolution>
-        <!-- kompresní algoritmus a komprimační poměr -->
-        <r:compression ratio="0.3">LZW</r:compression>
-        <r:color>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <r:technicalMetadata>
+            <!-- typ a verze formátu -->
+            <r:format version="1.0">jpeg</r:format>
+            <!-- rozlišení nastavené na skeneru -->
+            <r:resolution>
+                <r:width>1280</r:width>
+                <r:height>1024</r:height>
+            </r:resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
             <!-- barevný model -->
-            <r:model>RGB</r:model>
+                <r:model>RGB</r:model>
             <!-- bitová hloubka -->
-            <r:depth>24</r:depth>
-        </r:color>
-        <!-- ICC profil -->
-        <r:iccProfile>some ICC profile</r:iccProfile>
-        <!-- realná velikost obrázků (něktěrého obrázku) -->
-        <r:picture>
-            <r:width>600</r:width>
-            <r:height>1000</r:height>
-        </r:picture>
+                <r:depth>24</r:depth>
+            </r:color>
+            <!-- ICC profil -->
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) -->
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
     </r:digitalDocument>
 </r:import>

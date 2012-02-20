@@ -10,8 +10,6 @@
         <r:ccnb>cnb000431774</r:ccnb>
         <!-- ISNB periodika -->
         <r:issn>0032-6569 </r:issn>
-        <!-- další identifikátor periodika -->
-        <r:otherId>OCoLC:768560577</r:otherId>
         <!-- název ročníku/svazku -->
         <r:volumeTitle>ročník 1945</r:volumeTitle>
         <!-- název výtisku -->
@@ -22,12 +20,15 @@
         <r:digitalBorn>false</r:digitalBorn>
         <!-- původce (autor/korporace/akce/další) -->
         <r:originator type="CORPORATION">Komunistická strana Československa</r:originator>
+        <!-- informace o publikování -->
+        <r:publication>
         <!-- název vydavatele -->
-        <r:publisher>Ústřední výbor KSČ</r:publisher>
-        <!-- místo vydání -->
-        <r:publicationPlace>Praha</r:publicationPlace>
-        <!-- rok vydání -->
-        <r:publicationYear>1945</r:publicationYear>
+            <r:publisher>Ústřední výbor KSČ</r:publisher>
+            <!-- místo vydání -->
+            <r:place>Praha</r:place>
+            <!-- rok vydání -->
+            <r:year>1945</r:year>
+        </r:publication>
     </r:periodicalIssue>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
@@ -39,31 +40,37 @@
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
         <r:extent>4 strany</r:extent>
-        <!-- čím/kým byla digitalizace financována -->
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
         <r:contractNumber>123</r:contractNumber>
-        <!-- typ a verze formátu -->
-        <r:format version="1.0">jpeg</r:format>
-        <!-- rozlišení nastavené na skeneru -->
-        <r:resolution>
-            <r:width>1280</r:width>
-            <r:height>1024</r:height>
-        </r:resolution>
-        <!-- kompresní algoritmus a komprimační poměr -->
-        <r:compression ratio="0.3">LZW</r:compression>
-        <r:color>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <r:technicalMetadata>
+            <!-- typ a verze formátu -->
+            <r:format version="1.0">jpeg</r:format>
+            <!-- rozlišení nastavené na skeneru -->
+            <r:resolution>
+                <r:width>1280</r:width>
+                <r:height>1024</r:height>
+            </r:resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
             <!-- barevný model -->
-            <r:model>RGB</r:model>
+                <r:model>RGB</r:model>
             <!-- bitová hloubka -->
-            <r:depth>24</r:depth>
-        </r:color>
-        <!-- ICC profil -->
-        <r:iccProfile>some ICC profile</r:iccProfile>
-        <!-- realná velikost obrázků (něktěrého obrázku) -->
-        <r:picture>
-            <r:width>600</r:width>
-            <r:height>1000</r:height>
-        </r:picture>
+                <r:depth>24</r:depth>
+            </r:color>
+            <!-- ICC profil -->
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) -->
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
     </r:digitalDocument>
 </r:import>
