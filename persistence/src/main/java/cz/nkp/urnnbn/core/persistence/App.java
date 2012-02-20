@@ -112,7 +112,7 @@ public class App {
             mzkK3.setRegistrarId(mzk.getId());
             mzkK3.setId(factory.digitalLibraryDao().insertLibrary(mzkK3));
             //catalog aleph mzk
-            Catalog catalog = builder.CatalogueWithoutIdAndRegistrarId();
+            Catalog catalog = builder.CatalogWithoutIdAndRegistrarId();
             catalog.setRegistrarId(mzk.getId());
             factory.catalogDao().insertCatalog(catalog);
 

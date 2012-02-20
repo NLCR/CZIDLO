@@ -275,7 +275,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = builder.registrarWithoutId();
         long id = registrarDao.insertRegistrar(registrar);
         //add catalog
-        Catalog catalog = builder.catalogueWithoutIdAndRegistrarId();
+        Catalog catalog = builder.catalogWithoutIdAndRegistrarId();
         catalog.setRegistrarId(id);
         Long catalogId = catalogDao.insertCatalog(catalog);
         //add digital library
