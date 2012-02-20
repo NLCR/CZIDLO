@@ -29,14 +29,14 @@ public interface DataImportService extends BusinessService {
      * Creates new intelectual entity (or chooses another present entity if 
      * defined identifiers match) along with new digital instance. 
      * @param data
-     * @param userId id of user performing this operation
+     * @param login login of user performing this operation
      * @return UrnNbn that has been assigned or the one present in data if it can be used
      * @throws AccessException
      * @throws UrnNotFromRegistrarException
      * @throws UrnUsedException
      * @throws ImportFailedException 
      */
-    public UrnNbn importNewRecord(RecordImport data, long userId) throws
+    public UrnNbn importNewRecord(RecordImport data, String login) throws
             AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException,
             DigRepIdentifierCollisionException, UnknownArchiverException;
@@ -44,10 +44,10 @@ public interface DataImportService extends BusinessService {
     /**
      * Creates new digital instance for existing digital document.
      * @param instance
-     * @param userId Id of user performing this operation
+     * @param login login of user performing this operation
      * @return digital instance object with id set
      */
-    public DigitalInstance addDigitalInstance(DigitalInstance instance, long userId) throws
+    public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws
             UnknownDigiLibException, UnknownDigDocException,
             AccessException;
 
