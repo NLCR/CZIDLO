@@ -256,17 +256,25 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="sourceDocument">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="titleInfo" type="r:srcDocTitleInfo" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherId" type="r:issn" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="issueTitle" type="r:issueTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="srcDocTitleInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="title" type="r:title" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="issueTitle" type="r:issueTitle" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
     <xs:simpleType name="otherId">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
