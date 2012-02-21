@@ -18,7 +18,6 @@ public class ImportExamples extends TestCase {
 
     File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
     File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/importRecord.xsd.xml");
-    
     String importSchema;
 
     public ImportExamples(String testName) {
@@ -41,7 +40,7 @@ public class ImportExamples extends TestCase {
     }
 
     public void testValidateMonographWithUrnImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "monograph.xml");
+        String xmlString = toXmlString(importExamplesDir, "monograph-withUrnNbn.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
@@ -89,6 +88,4 @@ public class ImportExamples extends TestCase {
         File file = new File(rootDir.getAbsolutePath() + File.separator + filename);
         return XOMUtils.loadDocumentWithoutValidation(file).toXML();
     }
-    
-    
 }
