@@ -6,6 +6,7 @@ xmlns:r="http://resolver.nkp.cz/v2/"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <xs:import schemaLocation="http://www.xfront.com/isbn.xsd"/>
+    <xs:include schemaLocation="/home/martin/NetBeansProjects/xml/src/main/resources/xsd/identifiers.xsd.xml"/>
     <xs:include schemaLocation="identifiers.xsd.xml"/>
     <xs:element name="import">
         <xs:complexType>
@@ -28,10 +29,17 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="monograph">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -41,13 +49,21 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:complexType>
     </xs:element>
     
+    
     <xs:element name="monographVolume">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="monographTitle" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -60,10 +76,18 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="periodical">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -76,10 +100,17 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="periodicalVolume">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="periodicalTitle" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -92,11 +123,18 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="periodicalIssue">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="periodicalTitle" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="issueTitle" type="r:issueTitle" minOccurs="1" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="issueTitle" type="r:issueTitle" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -109,8 +147,15 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="analytical">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
@@ -122,9 +167,16 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="thesis">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -138,10 +190,17 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:element name="otherEntity">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType > 
+                        <xs:sequence>
+                            <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
@@ -151,8 +210,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:complexType>
     </xs:element>
 
-    <!-- intelectual entity identifier-type attributes -->
-    
     <!-- title -->
     <xs:simpleType name="title">
         <xs:restriction base="xs:string">
@@ -260,20 +317,19 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="otherId" type="r:issn" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="r:otherId" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="srcDocTitleInfo">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="title" type="r:title" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="issueTitle" type="r:issueTitle" minOccurs="0" maxOccurs="1"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    
+    <xs:complexType name="srcDocTitleInfo"> 
+        <xs:sequence>
+            <xs:element name="title" type="r:title" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="issueTitle" type="r:issueTitle" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
     
     <xs:simpleType name="otherId">
         <xs:restriction base="xs:string">
@@ -288,7 +344,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="archiverId" type="xs:long" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="urnNbn" type="r:urnNbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="registrarScopeIdentifiers" type="r:registrarScopeIdentifiers" minOccurs="0" maxOccurs="1" />
-                <xs:element name="extent" type="r:extent" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="financed" type="r:financed" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="contractNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="technicalMetadata" type="r:technicalMetadata" minOccurs="1" maxOccurs="1"/>
@@ -332,14 +387,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:restriction>
     </xs:simpleType>
     
-    <!-- extent -->
-    <xs:simpleType name="extent">
-        <xs:restriction base="xs:string">
-            <xs:minLength value="1"/>
-            <xs:maxLength value="100"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
     <!-- financed -->
     <xs:simpleType name="financed">
         <xs:restriction base="xs:string">
@@ -353,6 +400,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:complexType name="technicalMetadata">
         <xs:sequence>
             <xs:element ref="r:format" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="r:extent" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="r:resolution" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="r:compression" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="r:color" minOccurs="0" maxOccurs="1"/>
@@ -377,6 +425,16 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xs:maxLength value="20"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <!-- extent -->
+    <xs:element name="extent">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:minLength value="1"/>
+                <xs:maxLength value="100"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
     
     <!-- resolution -->
     <xs:element name="resolution">

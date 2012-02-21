@@ -16,8 +16,9 @@ import nu.xom.ParsingException;
  */
 public class ImportExamples extends TestCase {
 
-    File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request");
-    File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/importRecord.xsd.xml");
+    File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
+    File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/importRecord.xsd.xml");
+    
     String importSchema;
 
     public ImportExamples(String testName) {
@@ -34,43 +35,53 @@ public class ImportExamples extends TestCase {
         super.tearDown();
     }
 
-    public void testValidateImportMonograph() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-monograph.xml");
+    public void testValidateMonographImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "monograph.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportMonographVolume() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-monographVolume.xml");
+    public void testValidateMonographWithUrnImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "monograph.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportPeriodical() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-periodical.xml");
+    public void testValidateMonographVolumeImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "monographVolume.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportPeriodicalVolume() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-periodicalVolume.xml");
+    public void testValidatePeriodicalImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "periodical.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportPeriodicalIssue() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-periodicalIssue.xml");
+    public void testValidatePeriodicalVolumeImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "periodicalVolume.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportThesis() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-thesis.xml");
+    public void testValidatePeriodicalIssueImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "periodicalIssue.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportAnalytical() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-analytical.xml");
+    public void testValidateThesisImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "thesis.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
-    public void testValidateImportOtherEntity() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "import-otherEntity.xml");
+    public void testValidateAnalyticalImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "analytical.xml");
+        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    }
+
+    public void testValidateOtherEntity_mapImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "otherEntity-map.xml");
+        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    }
+
+    public void testValidateOtherEntity_musicSheetImport() throws Exception {
+        String xmlString = toXmlString(importExamplesDir, "otherEntity-musicSheet.xml");
         XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
     }
 
@@ -78,4 +89,6 @@ public class ImportExamples extends TestCase {
         File file = new File(rootDir.getAbsolutePath() + File.separator + filename);
         return XOMUtils.loadDocumentWithoutValidation(file).toXML();
     }
+    
+    
 }
