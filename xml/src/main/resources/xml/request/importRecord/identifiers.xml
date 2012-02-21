@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Zde jsou uvedeny příklady identifikátorů použitých v importech, 
+jejichž syntaxe se validována. Nekontrolují se ale kontrolní součty
+v ISNB, ISSN.
+-->
 <r:identifiers xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- isbn-10 bez oddelovacu-->
     <r:isbn>8090119964</r:isbn> 
