@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified" 
+targetNamespace="http://resolver.nkp.cz/v2/" 
+xmlns:r="http://resolver.nkp.cz/v2/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    
+
+    <xs:element name="identifiers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+<!-- 
+ISBN
+====
+Akceptovány jsou jen československé isbn (prefix 80). Pokud se jedná o isbn-13,
+tak musí jít o knihovní isbn (prefix 978). 
+Nekontroluje se zde, jestli souhlasí kontrolní součet.
+
+isbn-10/13 bez oddělovačů
+(978){0,1}80\d([0-9]|){6}\d[0-9xX]
+např.:
+8090119964
+9788090119963
+809011996x
+809011996X
+978809011996x
+978809011996X
+
+
+isbn-10/13 s pomlčkama
+(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]
+např.:
+80-9-01199-64
+978-80-901199-6-3
+80-7178-463-x
+80-7178-463-X
+978-80-7178-463-x
+978-80-7178-463-X
+
+isbn-10/13 s mezerama
+(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]
+např.:
+80 9 01199 64
+978 80 901199 6 3
+80 7178 463 x
+80 7178 463 X
+978 80 7178 463 x
+978 80 7178 463 X
+
+isbn-13 s pomlčkou před kódem 978 a jinak bez oddělovačů
+978-80\d([0-9]|){6}\d[0-9xX]
+např.:
+978-8090119964
+978-807178463x
+978-807178463X
+
+celkove pak:
+(978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]
+-->
+    <xs:simpleType name="isbn">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- cCNB -->
+    <xs:simpleType name="ccnb">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="cnb\d{9}|CNB\d{9}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+
+
+</xs:schema>

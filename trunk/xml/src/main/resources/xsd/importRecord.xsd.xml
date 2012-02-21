@@ -6,11 +6,11 @@ xmlns:r="http://resolver.nkp.cz/v2/"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <xs:import schemaLocation="http://www.xfront.com/isbn.xsd"/>
+    <xs:include schemaLocation="identifiers.xsd.xml"/>
     <xs:element name="import">
         <xs:complexType>
             <xs:sequence>
                 <xs:choice>
-                    <xs:element ref="r:isbnTest"/>
                     <xs:element ref="r:monograph"/>
                     <xs:element ref="r:monographVolume"/>
                     <xs:element ref="r:periodical" />
@@ -20,20 +20,11 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     <xs:element ref="r:thesis"/>
                     <xs:element ref="r:otherEntity"/>
                 </xs:choice>
-<!--                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>-->
+                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="isbnTest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="unbounded"/>
-<!--                <xs:element name="isbn" type="ISBN-type" minOccurs="0" maxOccurs="unbounded"/>-->
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-        
     <xs:element name="monograph">
         <xs:complexType>
             <xs:sequence>
@@ -175,22 +166,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
             <xs:maxLength value="200"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- cCNB -->
-    <xs:simpleType name="ccnb">
-        <xs:restriction base="xs:string">
-<!--            <xs:pattern value="cnb[0-9]{9}|CNB[0-9]{9}"/>-->
-                        <xs:pattern value="\d{1}-\d{5}-\d{3}-\d{1}|\d{1}-\d{3}-\d{5}-\d{1}|\d{1}-\d{2}-\d{6}-\d{1}"/>
-
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- ISBN -->
-    <xs:simpleType name="isbn">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="cnb[0-9]{9}|CNB[0-9]{9}"/>
         </xs:restriction>
     </xs:simpleType>
     
