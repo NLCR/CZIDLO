@@ -15,7 +15,7 @@
         <!-- ISSN periodika -->
         <r:issn>0032-6569 </r:issn>
         <!-- jiný globální identifikátor periodika -->
-        <r:otherId>sici:TODO</r:otherId>
+        <r:otherId>SICI:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>ranní vydání novin</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->

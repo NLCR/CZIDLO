@@ -12,7 +12,7 @@
         <!-- ISBN svazku -->
         <r:isbn>8090119964</r:isbn>
         <!-- jiný globální identifikátor svazku, případně celé monografie -->
-        <r:otherId>sici:TODO</r:otherId>
+        <r:otherId>DOI:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>slovník</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->

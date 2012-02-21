@@ -13,7 +13,7 @@
         <r:isbn/>
         -->
         <!-- jiný globální identifikátor intelektuální entity -->
-        <r:otherId>ismn:979-0-66056-072-3</r:otherId>
+        <r:otherId>ISMN:979-0-66056-072-3</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>hudebnina</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->

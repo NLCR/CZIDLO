@@ -13,7 +13,7 @@
         <r:isbn/>
         -->
         <!-- jiný globální identifikátor intelektuální entity -->
-        <r:otherId>TODO</r:otherId>
+        <r:otherId>DOI:10.3892/ijo_00000788</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>mapa</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
