@@ -13,7 +13,7 @@
         <!-- ISBN -->
         <r:isbn>8090119964</r:isbn>
         <!-- jiný globální identifikátor monografie -->
-        <r:otherId>sici:TODO</r:otherId>
+        <r:otherId>DOI:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>kniha</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
