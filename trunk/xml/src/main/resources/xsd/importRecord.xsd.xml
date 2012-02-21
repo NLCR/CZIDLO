@@ -169,14 +169,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:restriction>
     </xs:simpleType>
     
-    <!-- ISSN -->
-    <xs:simpleType name="issn">
-        <xs:restriction base="xs:string">
-            <!--TODO-->
-            <xs:maxLength value="200"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
     <!-- volume title -->
     <xs:simpleType name="volumeTitle">
         <xs:restriction base="xs:string">

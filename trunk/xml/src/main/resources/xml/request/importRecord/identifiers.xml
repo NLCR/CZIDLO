@@ -38,5 +38,10 @@
     <!-- ccnb  -->
     <r:ccnb>cnb123456789</r:ccnb>    
     <r:ccnb>CNB123456789</r:ccnb>    
+    
+    <!-- issn  -->
+    <r:issn>1234-5678</r:issn>    
+    <r:issn>1234-567x</r:issn>    
+    <r:issn>1234-567X</r:issn>    
 </r:identifiers>
 

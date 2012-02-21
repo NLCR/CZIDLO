@@ -12,6 +12,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xs:sequence>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -78,7 +79,11 @@ celkove pak:
         </xs:restriction>
     </xs:simpleType>
     
-    
-
-
+    <!-- ISSN -->
+    <xs:simpleType name="issn">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
+            <xs:maxLength value="200"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
