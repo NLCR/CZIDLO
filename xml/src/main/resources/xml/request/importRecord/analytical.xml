@@ -45,8 +45,6 @@
             <r:id type="OAI_harvester">1238</r:id>
             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>1 s.</r:extent>
         <!-- čím/kým byla digitalizace financována -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
@@ -56,6 +54,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (počet souborů) -->
+            <r:extent>1</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
