@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <!-- analytiku (např. článek) -->
-    <r:analytical>
+    <r:otherEntity>
         <r:titleInfo>
             <!-- název -->
-            <r:title>O slavných hudebnících</r:title>
+            <r:title>Perličky</r:title>
             <!-- další názvové údaje -->
-            <r:subTitle>Mozart v ústním podání; Mozart, W. A.</r:subTitle>
+            <r:subTitle>úryvky ze známých melodií pro malé a větší klavíristy</r:subTitle>
         </r:titleInfo>
-        <!-- jiný globální identifikátor monografie -->
-        <r:otherId>sici:TODO</r:otherId>
+        <!-- čČNB -->
+        <r:ccnb>cnb002266563</r:ccnb>
+        <!-- ISBN (konrétně zde u hudebniny nemá význam, obecně ale u otherEntity být může)
+        <r:isbn/>
+        -->
+        <!-- jiný globální identifikátor intelektuální entity -->
+        <r:otherId>ismn:979-0-66056-072-3</r:otherId>
         <!-- druh dokumentu -->
-        <r:documentType>novinový článek</r:documentType>
-        <!-- hlavní původce (autor/korporace/akce) -->
-        <r:primaryOriginator type="AUTHOR">C</r:primaryOriginator>
+        <r:documentType>hudebnina</r:documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <r:digitalBorn>false</r:digitalBorn>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
-        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
-        <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
-        <r:sourceDocument>
-            <r:title>Lidové novin</r:title>
-            <r:ccnb>cnb001282114</r:ccnb>
-            <r:issn>1802-6265</r:issn>
-            <r:otherId>ISBN2:0862-5921</r:otherId>
-            <r:volumeTitle>ročník 1949</r:volumeTitle>
-            <r:issueTitle>10.1.1941</r:issueTitle>
-            <r:publication>
-                <r:publisher>Pavel Váša a František Šelepa</r:publisher>
-                <r:place>Brno</r:place>
-                <r:year>1941</r:year>
-            </r:publication>
-        </r:sourceDocument>
-    </r:analytical>
+        <r:otherOriginator>Borová, Milada</r:otherOriginator>
+        <!-- informace o publikování -->
+    </r:otherEntity>
     <r:digitalDocument>
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1238</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</r:id>
+            <r:id type="aleph_id">mzk03:000056568</r:id>
+            <r:id type="signatura">Moll-0005.102</r:id>
+            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,2</r:id>
+            <r:id type="mapy_mzk_cz_id">mzk03_000_056_568_2619321907</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>1 s.</r:extent>
-        <!-- čím/kým byla digitalizace financována -->
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
         <r:financed>norské fondy</r:financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
         <r:contractNumber>123</r:contractNumber>
@@ -50,6 +43,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>5</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
@@ -60,9 +55,9 @@
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
             <r:color>
-            <!-- barevný model -->
+                <!-- barevný model -->
                 <r:model>RGB</r:model>
-            <!-- bitová hloubka -->
+                <!-- bitová hloubka -->
                 <r:depth>24</r:depth>
             </r:color>
             <!-- ICC profil -->

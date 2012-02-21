@@ -2,14 +2,18 @@
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- monografie -->
     <r:monograph>
-        <!-- název -->
-        <r:title>Babička</r:title>
-        <!-- další názvové údaje -->
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        <r:titleInfo>
+            <!-- název -->
+            <r:title>Babička</r:title>
+            <!-- další názvové údaje -->
+            <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        </r:titleInfo>
         <!-- čČNB -->
         <r:ccnb>cnb002251177</r:ccnb>
         <!-- ISBN -->
         <r:isbn>8090119964</r:isbn>
+        <!-- jiný globální identifikátor monografie -->
+        <r:otherId>sici:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>kniha</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -17,7 +21,7 @@
         <!-- hlavní původce (autor/korporace/akce) -->
         <r:primaryOriginator type="AUTHOR">Božená Němcová</r:primaryOriginator>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
-        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
+        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
             <!-- název vydavatele -->
@@ -37,8 +41,6 @@
             <r:id type="signatura">PK-0123.999</r:id>
             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>245 s.</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -51,6 +53,8 @@
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
             <!-- rozlišení nastavené na skeneru v dpi-->
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>248</r:extent>
             <r:resolution>
                 <!-- horizontální -->
                 <r:width>1280</r:width>

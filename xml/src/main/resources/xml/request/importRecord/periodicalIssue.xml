@@ -2,16 +2,20 @@
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- výtisk periodika -->
     <r:periodicalIssue>
-        <!-- název periodika -->
-        <r:title>Rudé právo</r:title>
+        <r:titleInfo>
+            <!-- název periodika -->
+            <r:periodicalTitle>Rudé právo</r:periodicalTitle>
+            <!-- název ročníku/svazku -->
+            <r:volumeTitle>ročník 1945</r:volumeTitle>
+            <!-- název výtisku -->
+            <r:issueTitle>16.5.1945</r:issueTitle>
+        </r:titleInfo>
         <!-- čČNB periodika -->
         <r:ccnb>cnb000431774</r:ccnb>
-        <!-- ISBN periodika -->
+        <!-- ISSN periodika -->
         <r:issn>0032-6569 </r:issn>
-        <!-- název ročníku/svazku -->
-        <r:volumeTitle>ročník 1945</r:volumeTitle>
-        <!-- název výtisku -->
-        <r:issueTitle>16.5.1945</r:issueTitle>
+        <!-- jiný globální identifikátor periodika -->
+        <r:otherId>sici:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>ranní vydání novin</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -38,8 +42,6 @@
             <r:id type="OAI_harvester">1237</r:id>
             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedj</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>4 strany</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -51,6 +53,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>12</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
@@ -61,9 +65,9 @@
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
             <r:color>
-            <!-- barevný model -->
+                <!-- barevný model -->
                 <r:model>RGB</r:model>
-            <!-- bitová hloubka -->
+                <!-- bitová hloubka -->
                 <r:depth>24</r:depth>
             </r:color>
             <!-- ICC profil -->

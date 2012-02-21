@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <r:otherEntity>
-        <!-- název -->
-        <r:title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</r:title>
-        <!-- další názvové údaje -->
-        <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
+        <r:titleInfo>
+            <!-- název -->
+            <r:title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</r:title>
+            <!-- další názvové údaje -->
+            <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
+        </r:titleInfo>
         <!-- čČNB -->
         <r:ccnb>cnb123456789</r:ccnb>
-        <!-- ISBN (zde u mapy nemá význam, obecně ale u otherEntity být může)
+        <!-- ISBN (konrétně zde u mapy nemá význam, obecně ale u otherEntity být může)
         <r:isbn/>
         -->
+        <!-- jiný globální identifikátor intelektuální entity -->
+        <r:otherId>TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>mapa</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -35,11 +39,9 @@
         <r:registrarScopeIdentifiers>
             <r:id type="aleph_id">mzk03:001056568</r:id>
             <r:id type="signatura">Moll-0004.102</r:id>
-            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</r:id>    
-            <r:id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</r:id>    
+            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</r:id>
+            <r:id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>1 mapa : mědirytina, ručně kolorovaná ; 58 x 47,5 cm na listu 66 x 55 cm</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -51,6 +53,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>3</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
