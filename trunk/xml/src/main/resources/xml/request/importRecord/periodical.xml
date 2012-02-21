@@ -8,14 +8,16 @@
         <r:subTitle>Ústřední orgán Komunistické strany Československa; pražské vydání</r:subTitle>
         <!-- čČNB -->
         <r:ccnb>cnb000431774</r:ccnb>
-        <!-- ISNB -->
+        <!-- ISBN -->
         <r:issn>0032-6569 </r:issn>
         <!-- druh dokumentu -->
         <r:documentType>noviny</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="CORPORATION">Komunistická strana Československa</r:originator>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="CORPORATION">Komunistická strana Československa</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
             <!-- název vydavatele -->

@@ -7,15 +7,17 @@
         <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
         <!-- čČNB -->
         <r:ccnb>cnb123456789</r:ccnb>
-        <!-- ISNB (zde u mapy nemá význam, obecně ale u otherEntity být může)
+        <!-- ISBN (zde u mapy nemá význam, obecně ale u otherEntity být může)
         <r:isbn/>
         -->
         <!-- druh dokumentu -->
         <r:documentType>mapa</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Valk, Gerhard</r:originator>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="AUTHOR">Valk, Gerhard</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
         <!-- název vydavatele -->

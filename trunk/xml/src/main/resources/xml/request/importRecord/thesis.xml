@@ -10,8 +10,10 @@
         <r:documentType>Ph.D. Thesis</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>true</r:digitalBorn>
-        <!-- původce (zde povolen pouze autor) -->
-        <r:originator type="AUTHOR">Václav Brožek</r:originator>
+        <!-- hlavní původce (zde povolen pouze autor) -->
+        <r:primaryOriginator type="AUTHOR">Václav Brožek</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
             <!-- rok publikace -->
@@ -26,7 +28,7 @@
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">1239</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl</r:id>    
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl</r:id>
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
         <r:extent>1 s.</r:extent>

@@ -8,8 +8,10 @@
         <r:subTitle>Mozart v ústním podání; Mozart, W. A.</r:subTitle>
         <!-- druh dokumentu -->
         <r:documentType>novinový článek</r:documentType>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">C</r:originator>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="AUTHOR">C</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
         <r:sourceDocument>
             <r:title>Lidové novin</r:title>
@@ -31,7 +33,7 @@
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">1238</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</r:id>    
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</r:id>
         </r:registrarScopeIdentifiers>
         <!-- rozsah -->
         <r:extent>1 s.</r:extent>
