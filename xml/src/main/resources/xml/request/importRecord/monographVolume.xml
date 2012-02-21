@@ -3,9 +3,9 @@
     <r:monographVolume>
         <!-- název celého díla -->
         <r:title>Slovník naučný</r:title>
-        <!-- čČNB svazku. Pokud pro svazek neexistuje, potom ISBN celé monografie -->
+        <!-- čČNB svazku. Pokud pro svazek neexistuje, potom čČNB celé monografie -->
         <r:ccnb>cnb000000000</r:ccnb>
-        <!-- ISNB svazku -->
+        <!-- ISBN svazku -->
         <r:isbn>8090119964</r:isbn>
         <!-- název svazku -->
         <r:volumeTitle>D. 8.,S-Szyttler</r:volumeTitle>
@@ -13,8 +13,10 @@
         <r:documentType>slovník</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Rieger, František Vladislav</r:originator>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="AUTHOR">Rieger, František Vladislav</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
             <!-- název vydavatele -->

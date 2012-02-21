@@ -8,14 +8,16 @@
         <r:subTitle>Obrazy z venkovského života</r:subTitle>
         <!-- čČNB -->
         <r:ccnb>cnb002251177</r:ccnb>
-        <!-- ISNB -->
+        <!-- ISBN -->
         <r:isbn>8090119964</r:isbn>
         <!-- druh dokumentu -->
         <r:documentType>kniha</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
-        <!-- původce (autor/korporace/akce/další) -->
-        <r:originator type="AUTHOR">Božená Němcová</r:originator>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="AUTHOR">Božená Němcová</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
         <!-- informace o publikování -->
         <r:publication>
             <!-- název vydavatele -->
