@@ -5,9 +5,9 @@
         <r:titleInfo>
             <!-- název periodika -->
             <r:periodicalTitle>Rudé právo</r:periodicalTitle>
-            <!-- název ročníku/svazku -->
+            <!-- název ročníku (svazku) -->
             <r:volumeTitle>ročník 1945</r:volumeTitle>
-            <!-- název výtisku -->
+            <!-- název čísla -->
             <r:issueTitle>16.5.1945</r:issueTitle>
         </r:titleInfo>
         <!-- čČNB periodika -->
