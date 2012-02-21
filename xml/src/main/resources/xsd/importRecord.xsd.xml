@@ -5,10 +5,12 @@ targetNamespace="http://resolver.nkp.cz/v2/"
 xmlns:r="http://resolver.nkp.cz/v2/"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <xs:import schemaLocation="http://www.xfront.com/isbn.xsd"/>
     <xs:element name="import">
         <xs:complexType>
             <xs:sequence>
                 <xs:choice>
+                    <xs:element ref="r:isbnTest"/>
                     <xs:element ref="r:monograph"/>
                     <xs:element ref="r:monographVolume"/>
                     <xs:element ref="r:periodical" />
@@ -18,11 +20,19 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     <xs:element ref="r:thesis"/>
                     <xs:element ref="r:otherEntity"/>
                 </xs:choice>
-                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>
+<!--                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>-->
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="isbnTest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="unbounded"/>
+<!--                <xs:element name="isbn" type="ISBN-type" minOccurs="0" maxOccurs="unbounded"/>-->
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
         
     <xs:element name="monograph">
         <xs:complexType>
@@ -33,7 +43,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -48,7 +59,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -63,7 +75,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -78,7 +91,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -94,7 +108,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="issueTitle" type="r:issueTitle" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -106,7 +121,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:sourceDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -120,7 +136,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="degreeAwardingInstitution" type="r:degreeAwardingInstitution" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
@@ -136,7 +153,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="r:documentType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="r:originator" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="r:otherOriginatorType" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="r:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -161,18 +179,18 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     </xs:simpleType>
     
     <!-- cCNB -->
-    <!-- TODO: opravdu je ta syntaxe takto a cisel za "cnb" je opravdu prave 9? -->
     <xs:simpleType name="ccnb">
         <xs:restriction base="xs:string">
-            <xs:pattern value="cnb[0-9]{9}"/>
+<!--            <xs:pattern value="cnb[0-9]{9}|CNB[0-9]{9}"/>-->
+                        <xs:pattern value="\d{1}-\d{5}-\d{3}-\d{1}|\d{1}-\d{3}-\d{5}-\d{1}|\d{1}-\d{2}-\d{6}-\d{1}"/>
+
         </xs:restriction>
     </xs:simpleType>
     
     <!-- ISBN -->
     <xs:simpleType name="isbn">
         <xs:restriction base="xs:string">
-            <!--TODO-->
-            <xs:maxLength value="200"/>
+            <xs:pattern value="cnb[0-9]{9}|CNB[0-9]{9}"/>
         </xs:restriction>
     </xs:simpleType>
     
@@ -207,6 +225,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xs:maxLength value="50"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <!-- other originator (illustrator, translator) -->
+    <xs:simpleType name="otherOriginatorType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     
     <!-- degree awarding institution -->
     <xs:simpleType name="degreeAwardingInstitution">
@@ -216,7 +242,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     </xs:simpleType>
     
     <!-- originator -->
-    <xs:element name="originator">
+    <xs:element name="primaryOriginator">
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
