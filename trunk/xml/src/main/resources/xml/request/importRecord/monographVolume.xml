@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <r:monographVolume>
-        <!-- název celého díla -->
-        <r:title>Slovník naučný</r:title>
+        <r:titleInfo>
+            <!-- název celé monografie -->
+            <r:monographTitle>Slovník naučný</r:monographTitle>
+            <!-- název svazku -->
+            <r:volumeTitle>D. 8.,S-Szyttler</r:volumeTitle>
+        </r:titleInfo>
         <!-- čČNB svazku. Pokud pro svazek neexistuje, potom čČNB celé monografie -->
         <r:ccnb>cnb000000000</r:ccnb>
         <!-- ISBN svazku -->
         <r:isbn>8090119964</r:isbn>
-        <!-- název svazku -->
-        <r:volumeTitle>D. 8.,S-Szyttler</r:volumeTitle>
+        <!-- jiný globální identifikátor svazku, případně celé monografie -->
+        <r:otherId>sici:TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>slovník</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -35,8 +39,6 @@
             <r:id type="signatura">MP-0001.308,8</r:id>
             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedx</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>1213 s. ; 4°</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -48,6 +50,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>1218</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->

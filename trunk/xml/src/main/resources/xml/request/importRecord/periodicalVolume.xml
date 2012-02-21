@@ -2,14 +2,18 @@
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- ročník případně jiný svazek periodika -->
     <r:periodicalVolume>
-        <!-- název periodika -->
-        <r:title>Rudé právo</r:title>
+        <r:titleInfo>
+            <!-- název periodika -->
+            <r:periodicalTitle>Rudé právo</r:periodicalTitle>
+            <!-- název ročníku/svazku -->
+            <r:volumeTitle>ročník 1945</r:volumeTitle>
+        </r:titleInfo>
         <!-- čČNB periodika -->
         <r:ccnb>cnb000431774</r:ccnb>
         <!-- ISBN periodika -->
         <r:issn>0032-6569 </r:issn>
-        <!-- název ročníku/svazku -->
-        <r:volumeTitle>ročník 1945</r:volumeTitle>
+        <!-- jiný globální identifikátor periodika -->
+        <r:otherId>TODO</r:otherId>
         <!-- druh dokumentu -->
         <r:documentType>ročník novin</r:documentType>
         <!-- zda je dokument e-born, defaultně false -->
@@ -36,8 +40,6 @@
             <r:id type="OAI_harvester">1236</r:id>
             <r:id type="K4_uuid">38bfc69d-1d10-4822-b7a4-c7531bb4aedi</r:id>
         </r:registrarScopeIdentifiers>
-        <!-- rozsah -->
-        <r:extent>179 výtisků</r:extent>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
@@ -49,6 +51,8 @@
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>123</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
