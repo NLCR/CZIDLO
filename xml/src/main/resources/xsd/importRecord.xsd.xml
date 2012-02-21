@@ -43,7 +43,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="r:isbn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
@@ -74,7 +73,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="1" maxOccurs="1"/>
@@ -90,7 +88,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="title" type="r:title" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="subTitle" type="r:subTitle" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="ccnb" type="r:ccnb" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="issn" type="r:issn" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="volumeTitle" type="r:volumeTitle" minOccurs="0" maxOccurs="1"/>
@@ -230,10 +227,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     </xs:element>
     <xs:simpleType name="originType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="AUTHOR"/>    
-            <xs:enumeration value="EVENT"/>    
-            <xs:enumeration value="CORPORATION"/>    
-            <xs:enumeration value="OTHER"/>    
+            <xs:enumeration value="AUTHOR"/>
+            <xs:enumeration value="EVENT"/>
+            <xs:enumeration value="CORPORATION"/>
+            <xs:enumeration value="OTHER"/>
         </xs:restriction>
     </xs:simpleType>
     
@@ -361,7 +358,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             <xs:element ref="r:iccProfile" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="r:pictureSize" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
-    </xs:complexType>    
+    </xs:complexType>
     
     <!-- format and format version -->
     <xs:element name="format">

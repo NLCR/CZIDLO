@@ -3,11 +3,9 @@
     <r:monographVolume>
         <!-- název celého díla -->
         <r:title>Slovník naučný</r:title>
-        <!-- další názvové údaje celého díla -->
-        <r:subTitle>Riegrův slovník naučný</r:subTitle>
-        <!-- čČNB -->
+        <!-- čČNB svazku. Pokud pro svazek neexistuje, potom ISBN celé monografie -->
         <r:ccnb>cnb000000000</r:ccnb>
-        <!-- ISNB svazku, nikoliv celé monografie-->
+        <!-- ISNB svazku -->
         <r:isbn>8090119964</r:isbn>
         <!-- název svazku -->
         <r:volumeTitle>D. 8.,S-Szyttler</r:volumeTitle>
