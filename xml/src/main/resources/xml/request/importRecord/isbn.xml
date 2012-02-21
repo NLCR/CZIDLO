@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:identifiers xmlns:r="http://resolver.nkp.cz/v2/">
+    <!-- isbn-10 bez oddelovacu-->
+    <r:isbn>8090119964</r:isbn> 
+    <r:isbn>809011996x</r:isbn> 
+    <r:isbn>809011996X</r:isbn> 
+  
+    <!-- isbn-10 s pomlckama-->
+    <r:isbn>80-9-011996-4</r:isbn> 
+    <r:isbn>80-7178-463-X</r:isbn> 
+    <r:isbn>80-7178-463-x</r:isbn> 
+  
+    <!-- isbn-10 s mezerama-->
+    <r:isbn>80 9 011996 4</r:isbn> 
+    <r:isbn>80 7178 463 X</r:isbn> 
+    <r:isbn>80 7178 463 x</r:isbn> 
+  
+    <!-- isbn-13 bez oddelovacu-->
+    <r:isbn>9788090119964</r:isbn> 
+    <r:isbn>978807178463X</r:isbn> 
+    <r:isbn>978807178463x</r:isbn> 
+  
+    <!-- isbn-13 s pomlckama-->
+    <r:isbn>978-80-9-011996-4</r:isbn> 
+    <r:isbn>978-80-7178-463-X</r:isbn> 
+    <r:isbn>978-80-7178-463-x</r:isbn> 
+  
+    <!--isbn-13 s mezerama-->
+    <r:isbn>978 80 9 011996 4</r:isbn> 
+    <r:isbn>978 80 7178 463 X</r:isbn> 
+    <r:isbn>978 80 7178 463 x</r:isbn> 
+  
+    <!--isbn-13 s pomlčkou za 978-->
+    <r:isbn>978-8090119964</r:isbn> 
+    <r:isbn>978-807178463X</r:isbn> 
+    <r:isbn>978-807178463x</r:isbn> 
+  
+    <!-- ccnb  -->
+    <r:ccnb>cnb123456789</r:ccnb>    
+    <r:ccnb>CNB123456789</r:ccnb>    
+</r:identifiers>
+
