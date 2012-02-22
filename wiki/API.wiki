@@ -106,35 +106,58 @@ GET http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations
 = Import metadat - URN:NBN bude vygenerováno =
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/registrars/boa001/digitalRepresentations
+POST http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <r:monograph>
-        <r:title>Babička</r:title>
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        <r:titleInfo>
+            <r:title>Babička</r:title>
+            <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        </r:titleInfo>
+        <r:ccnb>cnb002251177</r:ccnb>
         <r:isbn>8090119964</r:isbn>
+        <r:otherId>DOI:TODO</r:otherId>
+        <r:documentType>kniha</r:documentType>
         <r:digitalBorn>false</r:digitalBorn>
-        <r:originator type="CORPORATION">IBM print</r:originator>
-        <r:publisher>Československý spisovatel</r:publisher>
-        <r:publicationPlace>V Praze</r:publicationPlace>
-        <r:publicationYear>2011</r:publicationYear>
+        <r:primaryOriginator type="AUTHOR">Božená Němcová</r:primaryOriginator>
+        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
+        <r:publication>
+            <r:publisher>Československý spisovatel</r:publisher>
+            <r:place>V Praze</r:place>
+            <r:year>2011</r:year>
+        </r:publication>
     </r:monograph>
-    <r:digitalRepresentation>
+    <r:digitalDocument>
         <r:archiverId>3</r:archiverId>
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">1234</r:id>
-             <r:id type="signatura">PK-0123.999</r:id>
-             <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
+            <r:id type="signatura">PK-0123.999</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
         </r:registrarScopeIdentifiers>
         <r:financed>norské fondy</r:financed>
-        <r:extent>200s.</r:extent>
-        <r:resolution>800x600</r:resolution>
-        <r:colorDepth>24b</r:colorDepth>
         <r:contractNumber>123</r:contractNumber>
-    </r:digitalRepresentation>
+        <r:technicalMetadata>
+            <r:format version="1.0">jpeg</r:format>
+            <r:extent>245 x jpeg2000;245 x mods-alto;1 x mods</r:extent>
+            <r:resolution>
+                <r:horizontal>1280</r:horizontal>
+                <r:vertical>1024</r:vertical>
+            </r:resolution>
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <r:model>RGB</r:model>
+                <r:depth>24</r:depth>
+            </r:color>
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
 </r:import>
 }}}
 == Response ==
@@ -150,36 +173,59 @@ V těle http dotazu se nachází tento obsah:
 = Import metadat - URN:NBN bylo dříve rezervováno, teď je součástí metadat =
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/registrars/boa001/digitalRepresentations
+POST http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <r:monograph>
-        <r:title>Babička</r:title>
-        <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        <r:titleInfo>
+            <r:title>Babička</r:title>
+            <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        </r:titleInfo>
+        <r:ccnb>cnb002251177</r:ccnb>
         <r:isbn>8090119964</r:isbn>
+        <r:otherId>DOI:TODO</r:otherId>
+        <r:documentType>kniha</r:documentType>
         <r:digitalBorn>false</r:digitalBorn>
-        <r:originator type="CORPORATION">IBM print</r:originator>
-        <r:publisher>Československý spisovatel</r:publisher>
-        <r:publicationPlace>V Praze</r:publicationPlace>
-        <r:publicationYear>2011</r:publicationYear>
+        <r:primaryOriginator type="AUTHOR">Božená Němcová</r:primaryOriginator>
+        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
+        <r:publication>
+            <r:publisher>Československý spisovatel</r:publisher>
+            <r:place>V Praze</r:place>
+            <r:year>2011</r:year>
+        </r:publication>
     </r:monograph>
-    <r:digitalRepresentation>
-        <r:archiverId>1</r:archiverId>
+    <r:digitalDocument>
+        <r:archiverId>3</r:archiverId>
         <r:urnNbn>urn:nbn:cz:boa001-00003b</r:urnNbn>
         <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">12345</r:id>
-            <r:id type="signatura">PK-0122.799</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4811-b6a4-c7531bb4a854</r:id>
+            <r:id type="OAI_harvester">1234</r:id>
+            <r:id type="signatura">PK-0123.999</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
         </r:registrarScopeIdentifiers>
         <r:financed>norské fondy</r:financed>
-        <r:extent>200s.</r:extent>
-        <r:resolution>800x600</r:resolution>
-        <r:colorDepth>24b</r:colorDepth>
         <r:contractNumber>123</r:contractNumber>
-    </r:digitalRepresentation>
+        <r:technicalMetadata>
+            <r:format version="1.0">jpeg</r:format>
+            <r:extent>245 x jpeg2000;245 x mods-alto;1 x mods</r:extent>
+            <r:resolution>
+                <r:horizontal>1280</r:horizontal>
+                <r:vertical>1024</r:vertical>
+            </r:resolution>
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <r:model>RGB</r:model>
+                <r:depth>24</r:depth>
+            </r:color>
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
 </r:import>
 }}}
 == Response ==
