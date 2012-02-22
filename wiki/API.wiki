@@ -1,14 +1,20 @@
-#basic description of REST API
+=REST API - příklady=
 
-= REST API =
+Aplikační rozhraní systému slouží zejména k dvěma základním účelům:
+ # vkládání metadatových záznamů a zároveň rezervování urn:nbn identifikátoru pro publikaci popsanou tímto záznamem
+ # zobrazení záznamu digitálního dokumentu nebo přesměrování do konkrétní digitální knihovny na základě hodnotu urn:nbn
+Dále rozhraní umožňuje:
+ # zobrazení záznamů registrátorů, stavu každého urn:nbn, hodnoty registrar-scope identifikátoru vybraného typu
+ # rezervaci balíku urn:nbn, zobrazení celkového počtu rezervovaných urn:nbn
+ # pro konkrétní digitální dokument vkládání/editaci/odstranění identifikátorů unikátních v rámci registrátora
+ # resolvování na základě hodnoty těchto registrar-scope identifikátorů
 
-REST API resolveru je popsáno na https://docs.google.com/spreadsheet/ccc?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E
-Stále se ale nejedná o úplně finální verzi.
-Níže jsou popsány některé operace a příklady vstupních a výstupních dat. 
- * Vstupní data v xml jsou zejména u importu záznamů. Takové xml musí být validní podle xml schéma, které je dostupné zatím zde: 
-http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/rest/src/main/resources/import.xsd
+Uvádíme příklady použití operací realizujících tyto funkce s ukázkami vstupních a výstupních dat. Nejsou zde použity nepovinné parametry, jako je např. parmetr digitalInstances u operací zobrazujících záznam digitálního dokumentu.
+Formálněji a podrobněji je REST API popsáno v [https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2 tomto dokumentu].
+
+ * Vstupní data v xml jsou zejména u importu záznamů. Tyto xml pak musí být validní podle [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/resources/xsd/recordImport.xsd.xml xsd].
  * Druhým případem, kdy je vstupem xml je vkládání ditigálních instancí. Xml bude vypadat tak, jak je v ukázce. elementy url a archiverId budou povinné, elementy format a accessibility volitelné.
-
+-----
 = Záznam registrátorů =
 == Request ==
 {{{
@@ -28,7 +34,7 @@ GET http://localhost:8080/api/v2/registrars
     </r:registrar>
 </r:registrars>
 }}}
-
+-----
 = Záznam registrátora =
 == Request ==
 {{{
@@ -59,7 +65,7 @@ GET http://localhost:8080/api/v2/registrars/boa001
     </catalogs>
 </registrar>
 }}}
-
+-----
 = Rezervace balíku URN:NBN =
 == Request ==
 {{{
@@ -76,7 +82,7 @@ POST http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations?size=5
     <urnNbn>urn:nbn:cz:boa001-00000a</urnNbn>
 </urnNbnReservation>
 }}}
-
+-----
 = Seznam rezervovaných URN:NBN =
 == Request ==
 {{{
@@ -102,7 +108,7 @@ GET http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations
     </reserved>
 </urnNbnRerservations>
 }}}
-
+-----
 = Import metadat - URN:NBN bude vygenerováno =
 == Request ==
 {{{
@@ -169,7 +175,7 @@ V těle http dotazu se nachází tento obsah:
     <value>urn:nbn:cz:boa001-00000d</value>
 </urnNbn>
 }}}
-
+-----
 = Import metadat - URN:NBN bylo dříve rezervováno, teď je součástí metadat =
 == Request ==
 {{{
@@ -237,7 +243,7 @@ V těle http dotazu se nachází tento obsah:
     <value>urn:nbn:cz:boa001-00003b</value>
 </urnNbn>
 }}}
-
+-----
 = Počet digitálních dokumentů daného registrátora =
 {{{
 GET http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
@@ -249,6 +255,7 @@ GET http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
     <r:count>1</r:count>
 </r:digitalDocuments>
 }}}
+-----
 = Záznam digitálního dokumentu na základě registrar-scope identifikátoru =
 == Request ==
 {{{
@@ -310,7 +317,7 @@ id/uuid:123
     </digitalInstance>
 </digitalDocument>
 }}}
-
+-----
 = Vložení/aktualizace registrar-scope identifikátoru =
 == Request ==
 {{{
@@ -334,7 +341,7 @@ Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
     <previousValue>1234g</previousValue>
 </id>
 }}}
-
+-----
 = Vložení digitální instance = 
 == Request ==
 {{{
@@ -361,7 +368,7 @@ Tělo dotazu pak obsahuje:
     <r:accessibility>volně přístupné</r:accessibility>
 </digitalInstance>
 }}}
-
+-----
 = Seznam digitálních instancí digitálního dokumentu =
 == Request ==
 {{{
@@ -395,7 +402,7 @@ GET http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstan
     </digitalInstance>
 </digitalInstances>
 }}}
-
+-----
 = Zobrazení záznamu a stavu URN:NBN =
 == Request ==
 {{{
@@ -432,7 +439,7 @@ GET http://localhost:8080/api/v2/urnnbn/urn:nbn:cz:boa001-000056
     <value>urn:nbn:cz:boa001-000056</value>
 </urnNbn>
 }}}
-
+-----
 = Celkový počet digitálních instancí =
 == Request ===
 {{{
@@ -445,8 +452,8 @@ GET http://localhost:8080/api/v2/digitalInstances
     <r:totalCount>4</r:totalCount>
 </r:digitalInstances>
 }}}
+-----
 = Záznam digitální instance =
-
 == Request ===
 {{{
 GET http://localhost:8080/api/v2/digitalInstances/id/1
