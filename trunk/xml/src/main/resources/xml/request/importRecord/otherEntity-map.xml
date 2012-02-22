@@ -69,7 +69,7 @@
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
             <!-- rozsah (v počtu souborů) -->
-            <r:extent>3</r:extent>
+            <r:extent>3 x jpeg2000;3 x mods-alto;1 x mods</r:extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <r:resolution>
                 <!-- horizontální -->
