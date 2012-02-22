@@ -17,7 +17,7 @@ import nu.xom.ParsingException;
 public class ImportExamples extends TestCase {
 
     File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
-    File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/importRecord.xsd.xml");
+    File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/recordImport.xsd.xml");
     String importSchema;
 
     public ImportExamples(String testName) {

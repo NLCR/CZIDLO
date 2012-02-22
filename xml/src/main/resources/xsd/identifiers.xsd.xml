@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : identifiers.xsd.xml
+    Created on : 22. únor 2012, 11:59
+    Author     : Martin Řehánek
+    Description:
+        This XML Schema (W3C) document validates identifiers
+        that are used in schema recordImport.xsd.xml.
+        http://code.google.com/p/urnnbn-resolver-v2/
+        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified" 
 targetNamespace="http://resolver.nkp.cz/v2/" 
 xmlns:r="http://resolver.nkp.cz/v2/"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
-    
 
     <xs:element name="identifiers">
         <xs:complexType>

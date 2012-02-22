@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : analytical.xml
+    Created on : 22. únor 2012, 11:59
+    Author     : Martin Řehánek
+    Description:
+        Example of valid record to be imported into application urnnbn-resolver-v2
+        through its http rest api.
+        Intelectual Entity in this example is of type MONOGRAPH. 
+        The type will be used for publications that do not come out periodically 
+        and type MONOGRAPH_VOLUME cannot be used.
+        http://code.google.com/p/urnnbn-resolver-v2/
+        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+-->
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- monografie -->
     <r:monograph>
         <r:titleInfo>
-            <!-- název -->
+            <!-- název (povinný údaj) -->
             <r:title>Babička</r:title>
             <!-- další názvové údaje -->
             <r:subTitle>Obrazy z venkovského života</r:subTitle>
@@ -57,9 +70,9 @@
             <r:extent>248</r:extent>
             <r:resolution>
                 <!-- horizontální -->
-                <r:width>1280</r:width>
+                <r:horizontal>1280</r:horizontal>
                 <!-- vertikální -->
-                <r:height>1024</r:height>
+                <r:vertical>1024</r:vertical>
             </r:resolution>
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
