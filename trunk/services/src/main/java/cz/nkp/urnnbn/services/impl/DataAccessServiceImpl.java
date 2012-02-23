@@ -146,7 +146,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         try {
             return factory.publicationDao().getPublicationById(intEntId);
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.FINE, "no publication found for entity {0}", intEntId);
             return null;
         }
     }
@@ -156,7 +156,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         try {
             return factory.originatorDao().getOriginatorById(intEntId);
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.FINE, "no primary originator found for entity {0}", intEntId);
             return null;
         }
     }
@@ -166,7 +166,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         try {
             return factory.srcDocDao().getSrcDocById(intEntId);
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.FINE, "no souce document found for entity {0}", intEntId);
             return null;
         }
     }
