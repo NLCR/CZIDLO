@@ -35,6 +35,7 @@ import $FILE_DIR/monographVolume.xml
 import $FILE_DIR/periodical.xml
 import $FILE_DIR/periodicalVolume.xml
 import $FILE_DIR/periodicalIssue.xml
-import $FILE_DIR/thesis.xml
 import $FILE_DIR/analytical.xml
-import $FILE_DIR/otherEntity.xml
+import $FILE_DIR/thesis.xml
+import $FILE_DIR/otherEntity-map.xml
+import $FILE_DIR/otherEntity-musicSheet.xml
