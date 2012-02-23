@@ -71,6 +71,9 @@ public class UrnNbnReservationsResource extends Resource {
             throw new MethodForbiddenException();
         } else {
             try {
+                //TODO: INVALID_RESERVATION_SIZE : 400
+                //
+                
                 int userId = 1;//TODO: zjistit z hlavicky
                 List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, userId);
                 UrnNbnReservationBuilder builder = new UrnNbnReservationBuilder(reserved);

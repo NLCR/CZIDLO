@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
@@ -79,13 +79,15 @@ public class DigitalDocumentsResource extends Resource {
         try {
             Document doc = validDocumentFromString(content, Configuration.RECORD_IMPORT_XSD);
             RecordImport recordImport = getImportFromDocument(doc);
+            //TODO: pokud to nema registrator povoleno, nemuze vkladat urn:nbn ve stavu FREE
+            //kdyz se o to pokusi, tak tady dojde InvalidUrnException
             UrnNbn urn = dataImportService().importNewRecord(recordImport, login);
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
-        } catch (DigRepIdentifierCollisionException ex) {
+        } catch (DigDocIdentifierCollisionException ex) {
             throw new InvalidDigDocIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
