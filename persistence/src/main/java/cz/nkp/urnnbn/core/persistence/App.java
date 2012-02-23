@@ -178,28 +178,40 @@ public class App {
 
             //IE babicka
             IntelectualEntity babicka = new IntelectualEntity();
-            babicka.setTitle("Babicka");
-            babicka.setAlternativeTitle("obrazy z venkovského života");
             babicka.setCreated(new DateTime());
             babicka.setDigitalBorn(false);
             babicka.setEntityType(EntityType.MONOGRAPH);
             babicka.setDocumentType("kniha");
+            babicka.setOtherOriginator("Adolf Kašpar");
             babicka.setId(factory.intelectualEntityDao().insertIntelectualEntity(babicka));
-            //babicka isbn
+            //title
+            IntEntIdentifier babickaTitle = new IntEntIdentifier();
+            babickaTitle.setIntEntDbId(babicka.getId());
+            babickaTitle.setType(IntEntIdType.TITLE);
+            babickaTitle.setValue("Babicka");
+            factory.intEntIdentifierDao().insertIntEntId(babickaTitle);
+            //subTitle
+            IntEntIdentifier babickaSubtitle = new IntEntIdentifier();
+            babickaSubtitle.setIntEntDbId(babicka.getId());
+            babickaSubtitle.setType(IntEntIdType.SUB_TITLE);
+            babickaSubtitle.setValue("obrazy z venkovského života");
+            factory.intEntIdentifierDao().insertIntEntId(babickaSubtitle);
+            //isbn
             IntEntIdentifier babickaIsbn = new IntEntIdentifier();
             babickaIsbn.setIntEntDbId(babicka.getId());
             babickaIsbn.setType(IntEntIdType.ISBN);
             babickaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babickaIsbn);
+            
             //publication
             Publication babickaPub = builder.publicationWithoutId();
             babickaPub.setIntEntId(babicka.getId());
             factory.publicationDao().insertPublication(babickaPub);
-            //Originator
+            //primary originator
             Originator babickaAutor = builder.originatorWithoutId();
             babickaAutor.setIntEntId(babicka.getId());
             factory.originatorDao().insertOriginator(babickaAutor);
-
+            
             //DR babickaMzk
             DigitalDocument babickaMzk = new DigitalDocument();
             babickaMzk.setIntEntId(babicka.getId());
@@ -210,8 +222,8 @@ public class App {
             babickaMzk.setContractNumber("123");
             babickaMzk.setFormat("JPEG");
             babickaMzk.setFormatVersion("1.0");
-            babickaMzk.setResolutionWidth(1280);
-            babickaMzk.setResolutionHeight(1024);
+            babickaMzk.setResolutionHorizontal(1280);
+            babickaMzk.setResolutionVertical(1024);
             babickaMzk.setCompression("LZW");
             babickaMzk.setCompressionRatio(Double.valueOf(0.3));
             babickaMzk.setColorModel("RGB");
@@ -281,19 +293,31 @@ public class App {
 
             //babushka
             IntelectualEntity babushka = new IntelectualEntity();
-            babushka.setTitle("Babushka");
-            babushka.setAlternativeTitle("kartiny iz selskoj zhizni");
             babushka.setCreated(new DateTime());
             babushka.setDigitalBorn(false);
             babushka.setEntityType(EntityType.MONOGRAPH);
             babushka.setDocumentType("kniga");
+            babushka.setOtherOriginator("Adolf Kašpar");
             babushka.setId(factory.intelectualEntityDao().insertIntelectualEntity(babushka));
-            //babushka isbn
+            //title
+            IntEntIdentifier babushkaTitle = new IntEntIdentifier();
+            babushkaTitle.setIntEntDbId(babushka.getId());
+            babushkaTitle.setType(IntEntIdType.TITLE);
+            babushkaTitle.setValue("Babushka");
+            factory.intEntIdentifierDao().insertIntEntId(babushkaTitle);
+            //subTitle
+            IntEntIdentifier babushkaSubTitle = new IntEntIdentifier();
+            babushkaSubTitle.setIntEntDbId(babushka.getId());
+            babushkaSubTitle.setType(IntEntIdType.SUB_TITLE);
+            babushkaSubTitle.setValue("kartiny iz selskoj zhizni");
+            factory.intEntIdentifierDao().insertIntEntId(babushkaSubTitle);
+            //isbn
             IntEntIdentifier babushkaIsbn = new IntEntIdentifier();
             babushkaIsbn.setIntEntDbId(babushka.getId());
             babushkaIsbn.setType(IntEntIdType.ISBN);
             babushkaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babushkaIsbn);
+            
             //babushka nkp
             DigitalDocument babushkaNkp = new DigitalDocument();
             babushkaNkp.setArchiverId(nkp.getId());

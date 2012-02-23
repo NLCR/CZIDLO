@@ -28,10 +28,9 @@ public class UpdateIntEntity implements StatementWrapper {
     public String preparedStatement() {
         return "UPDATE " + IntelectualEntityDAO.TABLE_NAME + " SET "
                 + IntelectualEntityDAO.ATTR_UPDATED + "=?,"
-                + IntelectualEntityDAO.ATTR_TITLE + "=?,"
-                + IntelectualEntityDAO.ATTR_ALT_TITLE + "=?,"
                 + IntelectualEntityDAO.ATTR_DOC_TYPE + "=?,"
                 + IntelectualEntityDAO.ATTR_DIGITAL_BORN + "=?,"
+                + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR + "=?,"
                 + IntelectualEntityDAO.ATTR_DEG_AW_INST + "=?"
                 + " WHERE " + IntelectualEntityDAO.ATTR_ID + "=?";
     }
@@ -40,12 +39,11 @@ public class UpdateIntEntity implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setTimestamp(1, DateTimeUtils.nowTs());
-            st.setString(2, entity.getTitle());
-            st.setString(3, entity.getAlternativeTitle());
-            st.setString(4, entity.getDocumentType());
-            st.setBoolean(5, entity.isDigitalBorn());
-            st.setString(6, entity.getDegreeAwardingInstitution());
-            st.setLong(7, entity.getId());
+            st.setString(2, entity.getDocumentType());
+            st.setBoolean(3, entity.isDigitalBorn());
+            st.setString(4, entity.getOtherOriginator());
+            st.setString(5, entity.getDegreeAwardingInstitution());
+            st.setLong(6, entity.getId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

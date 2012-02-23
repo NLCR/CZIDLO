@@ -20,6 +20,7 @@ public interface RegistrarDAO {
     public String TABLE_NAME = "Registrar";
     public String ATTR_ID = "id";
     public String ATTR_CODE = "code";
+    public String ATTR_CAN_REGISTER_FREE_URN = "allowedToRegisterFreeUrnNbn";
 
     /**
      * Should not use id from registrar but instead create new by means of database

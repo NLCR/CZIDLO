@@ -17,13 +17,13 @@ public interface SourceDocumentDAO {
 
     public String TABLE_NAME = "SourceDocument";
     public String ATTR_INT_ENT_ID = "intelectualEntityId";
+    public String ATTR_TITLE = "title";
+    public String ATTR_VOLUME_TITLE = "volumeTitle";
+    public String ATTR_ISSUE_TITLE = "issueTitle";
     public String ATTR_CCNB = "ccnb";
     public String ATTR_ISBN = "isbn";
     public String ATTR_ISSN = "issn";
     public String ATTR_OTHER_ID = "otherId";
-    public String ATTR_TITLE = "title";
-    public String ATTR_PER_VOL = "periodicalVolume";
-    public String ATTR_PER_NUM = "periodicalNumber";
     public String ATTR_PUB_PLACE = "publicationPlace";
     public String ATTR_PUBLISHER = "publisher";
     public String ATTR_PUB_YEAR = "publicationYear";

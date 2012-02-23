@@ -35,13 +35,13 @@ public class InsertDigitalDocument extends AbstractStatement implements Statemen
                 + "," + DigitalDocumentDAO.ATTR_ARCHIVER_ID
                 + "," + DigitalDocumentDAO.ATTR_CREATED
                 + "," + DigitalDocumentDAO.ATTR_UPDATED
-                + "," + DigitalDocumentDAO.ATTR_EXTENT
                 + "," + DigitalDocumentDAO.ATTR_FINANCED
                 + "," + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER
                 + "," + DigitalDocumentDAO.ATTR_FORMAT
                 + "," + DigitalDocumentDAO.ATTR_FORMAT_VERSION
-                + "," + DigitalDocumentDAO.ATTR_RESOLUTION_WIDTH
-                + "," + DigitalDocumentDAO.ATTR_RESOLUTION_HEIGHT
+                + "," + DigitalDocumentDAO.ATTR_EXTENT
+                + "," + DigitalDocumentDAO.ATTR_RES_HORIZONTAL
+                + "," + DigitalDocumentDAO.ATTR_RES_VERTICAL
                 + "," + DigitalDocumentDAO.ATTR_COMPRESSION
                 + "," + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO
                 + "," + DigitalDocumentDAO.ATTR_COLOR_MODEL
@@ -62,13 +62,13 @@ public class InsertDigitalDocument extends AbstractStatement implements Statemen
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(5, now);
             st.setTimestamp(6, now);
-            st.setString(7, digDocument.getExtent());
-            st.setString(8, digDocument.getFinancedFrom());
-            st.setString(9, digDocument.getContractNumber());
-            st.setString(10, digDocument.getFormat());
-            st.setString(11, digDocument.getFormatVersion());
-            setIntOrNull(st, 12, digDocument.getResolutionWidth());
-            setIntOrNull(st, 13, digDocument.getResolutionHeight());
+            st.setString(7, digDocument.getFinancedFrom());
+            st.setString(8, digDocument.getContractNumber());
+            st.setString(9, digDocument.getFormat());
+            st.setString(10, digDocument.getFormatVersion());
+            st.setString(11, digDocument.getExtent());
+            setIntOrNull(st, 12, digDocument.getResolutionHorizontal());
+            setIntOrNull(st, 13, digDocument.getResolutionVertical());
             st.setString(14, digDocument.getCompression());
             setDoubleOrNull(st, 15, digDocument.getCompressionRatio());
             st.setString(16, digDocument.getColorModel());

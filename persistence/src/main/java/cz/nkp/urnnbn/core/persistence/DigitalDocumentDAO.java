@@ -33,8 +33,8 @@ public interface DigitalDocumentDAO {
     //
     public String ATTR_FORMAT = "format";
     public String ATTR_FORMAT_VERSION = "formatVersion";
-    public String ATTR_RESOLUTION_WIDTH = "resolutionWidth";
-    public String ATTR_RESOLUTION_HEIGHT = "resolutionHeight";
+    public String ATTR_RES_HORIZONTAL = "resolutionHorizontal";
+    public String ATTR_RES_VERTICAL = "resolutionVertical";
     public String ATTR_COMPRESSION = "compression";
     public String ATTR_COMPRESSION_RATIO = "compressionRatio";
     public String ATTR_COLOR_MODEL = "colorModel";

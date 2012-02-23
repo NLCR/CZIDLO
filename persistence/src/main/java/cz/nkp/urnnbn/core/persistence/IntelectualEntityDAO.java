@@ -23,10 +23,9 @@ public interface IntelectualEntityDAO {
     public String ATTR_ENTITY_TYPE = "entityType";
     public String ATTR_CREATED = "created";
     public String ATTR_UPDATED = "lastUpdated";
-    public String ATTR_TITLE = "title";
-    public String ATTR_ALT_TITLE = "alternativeTitle";
     public String ATTR_DOC_TYPE = "documentType";
     public String ATTR_DIGITAL_BORN = "digitalBorn";
+    public String ATTR_OTHER_ORIGINATOR = "otherOriginator";
     public String ATTR_DEG_AW_INST = "degreeAwardingInstitution";
 
     public Long insertIntelectualEntity(IntelectualEntity entity) throws DatabaseException;

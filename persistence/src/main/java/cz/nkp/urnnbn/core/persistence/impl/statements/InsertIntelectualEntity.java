@@ -32,12 +32,11 @@ public class InsertIntelectualEntity implements StatementWrapper {
                 + "," + IntelectualEntityDAO.ATTR_ENTITY_TYPE
                 + "," + IntelectualEntityDAO.ATTR_CREATED
                 + "," + IntelectualEntityDAO.ATTR_UPDATED
-                + "," + IntelectualEntityDAO.ATTR_TITLE
-                + "," + IntelectualEntityDAO.ATTR_ALT_TITLE
                 + "," + IntelectualEntityDAO.ATTR_DOC_TYPE
                 + "," + IntelectualEntityDAO.ATTR_DIGITAL_BORN
+                + "," + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR
                 + "," + IntelectualEntityDAO.ATTR_DEG_AW_INST
-                + ") values(?,?,?,?,?,?,?,?,?)";
+                + ") values(?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -48,11 +47,10 @@ public class InsertIntelectualEntity implements StatementWrapper {
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(3, now);
             st.setTimestamp(4, now);
-            st.setString(5, entity.getTitle());
-            st.setString(6, entity.getAlternativeTitle());
-            st.setString(7, entity.getDocumentType());
-            st.setBoolean(8, entity.isDigitalBorn());
-            st.setString(9, entity.getDegreeAwardingInstitution());
+            st.setString(5, entity.getDocumentType());
+            st.setBoolean(6, entity.isDigitalBorn());
+            st.setString(7, entity.getOtherOriginator());
+            st.setString(8, entity.getDegreeAwardingInstitution());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
