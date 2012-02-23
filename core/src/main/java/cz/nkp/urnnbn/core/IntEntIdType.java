@@ -13,6 +13,34 @@ import java.util.List;
  */
 public enum IntEntIdType {
 
+    TITLE {
+
+        @Override
+        public String toString() {
+            return "title";
+        }
+    },
+    SUB_TITLE {
+
+        @Override
+        public String toString() {
+            return "subTitle";
+        }
+    },
+    VOLUME_TITLE {
+
+        @Override
+        public String toString() {
+            return "volumeTitle";
+        }
+    },
+    ISSUE_TITLE {
+
+        @Override
+        public String toString() {
+            return "issueTitle";
+        }
+    },
     ISBN {
 
         @Override
@@ -34,20 +62,6 @@ public enum IntEntIdType {
             return "issn";
         }
     },
-    VOLUME_TITLE {
-
-        @Override
-        public String toString() {
-            return "volumeTitle";
-        }
-    },
-    ISSUE_TITLE {
-
-        @Override
-        public String toString() {
-            return "issueTitle";
-        }
-    },
     OTHER {
 
         @Override
@@ -55,7 +69,6 @@ public enum IntEntIdType {
             return "otherId";
         }
     };
-    //TODO: z enumu na vlastni tridu, aby byly mozne typy "OTHER:neco"
 
     //TODO: tohle asi nepatri sem, ale do presenteru
     public static List<IntEntIdType> searchableIds() {
@@ -99,26 +112,6 @@ public enum IntEntIdType {
                 return result;
             default:
                 return result;
-        }
-    }
-
-    @Override
-    public String toString() {
-        switch (this) {
-            case ISBN:
-                return "isbn";
-            case CCNB:
-                return "ccnb";
-            case ISSN:
-                return "issn";
-            case VOLUME_TITLE:
-                return "volumeTitle";
-            case ISSUE_TITLE:
-                return "issueTitle";
-            case OTHER:
-                return "otherId";
-            default:
-                return "";
         }
     }
 }

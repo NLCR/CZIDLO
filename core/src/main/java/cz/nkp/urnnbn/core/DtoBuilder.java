@@ -97,8 +97,6 @@ public class DtoBuilder {
         entity.setEntityType(EntityType.MONOGRAPH);
         entity.setCreated(now());
         entity.setLastUpdated(now());
-        entity.setTitle("Babička");
-        entity.setAlternativeTitle("obrazy venkovského života");
         entity.setDigitalBorn(false);
         return entity;
     }

@@ -20,14 +20,14 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
     private DateTime created;
     private DateTime lastUpdated;
     //
-    private String extent;
     private String financedFrom;
     private String contractNumber;
     //
     private String format;
     private String formatVersion;
-    private Integer resolutionWidth;
-    private Integer resolutionHeight;
+    private String extent;
+    private Integer resolutionHorizontal;
+    private Integer resolutionVertical;
     private String compression;
     private Double compressionRatio;
     private String colorModel;
@@ -51,8 +51,8 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         contractNumber = original.getContractNumber();
         format = original.getFormat();
         formatVersion = original.getFormatVersion();
-        resolutionWidth = original.getResolutionWidth();
-        resolutionWidth = original.getResolutionHeight();
+        resolutionHorizontal = original.getResolutionHorizontal();
+        resolutionVertical = original.getResolutionVertical();
         compression = original.getCompression();
         compressionRatio = original.getCompressionRatio();
         colorModel = original.getColorModel();
@@ -199,20 +199,20 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         this.iccProfile = iccProfile;
     }
 
-    public Integer getResolutionHeight() {
-        return resolutionHeight;
+    public Integer getResolutionVertical() {
+        return resolutionVertical;
     }
 
-    public void setResolutionHeight(Integer resolutionHeight) {
-        this.resolutionHeight = resolutionHeight;
+    public void setResolutionVertical(Integer resolutionVertical) {
+        this.resolutionVertical = resolutionVertical;
     }
 
-    public Integer getResolutionWidth() {
-        return resolutionWidth;
+    public Integer getResolutionHorizontal() {
+        return resolutionHorizontal;
     }
 
-    public void setResolutionWidth(Integer resolutionWidth) {
-        this.resolutionWidth = resolutionWidth;
+    public void setResolutionHorizontal(Integer resolutionHorizontal) {
+        this.resolutionHorizontal = resolutionHorizontal;
     }
 
     public Integer getPictureWidth() {
