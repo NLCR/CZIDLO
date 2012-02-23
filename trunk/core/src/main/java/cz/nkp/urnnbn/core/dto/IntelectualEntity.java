@@ -17,10 +17,9 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
     private EntityType entityType;
     private DateTime created;
     private DateTime lastUpdated;
-    private String title;
-    private String alternativeTitle;
     private String documentType;
-    private boolean digitalBorn;
+    private boolean digitalBorn = false;
+    private String otherOriginator;
     private String degreeAwardingInstitution;
 
     public IntelectualEntity() {
@@ -31,19 +30,10 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
         this.entityType = original.getEntityType();
         this.created = original.getCreated();
         this.lastUpdated = original.getLastUpdated();
-        this.title = original.getTitle();
-        this.alternativeTitle = original.getAlternativeTitle();
         this.documentType = original.getDocumentType();
         this.digitalBorn = original.isDigitalBorn();
+        this.otherOriginator = original.getOtherOriginator();
         this.degreeAwardingInstitution = original.getDegreeAwardingInstitution();
-    }
-
-    public String getAlternativeTitle() {
-        return alternativeTitle;
-    }
-
-    public void setAlternativeTitle(String alternativeTitle) {
-        this.alternativeTitle = alternativeTitle;
     }
 
     public DateTime getCreated() {
@@ -68,6 +58,14 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
 
     public void setDigitalBorn(boolean digitalBorn) {
         this.digitalBorn = digitalBorn;
+    }
+
+    public String getOtherOriginator() {
+        return otherOriginator;
+    }
+
+    public void setOtherOriginator(String otherOriginator) {
+        this.otherOriginator = otherOriginator;
     }
 
     public String getDocumentType() {
@@ -102,14 +100,6 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
         this.lastUpdated = lastUpdated;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -123,12 +113,6 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
             return false;
         }
         if (this.entityType != other.entityType) {
-            return false;
-        }
-        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
-            return false;
-        }
-        if ((this.alternativeTitle == null) ? (other.alternativeTitle != null) : !this.alternativeTitle.equals(other.alternativeTitle)) {
             return false;
         }
         if ((this.documentType == null) ? (other.documentType != null) : !this.documentType.equals(other.documentType)) {
@@ -148,8 +132,6 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
         int hash = 7;
         hash = 43 * hash + (int) (this.id ^ (this.id >>> 32));
         hash = 43 * hash + (this.entityType != null ? this.entityType.hashCode() : 0);
-        hash = 43 * hash + (this.title != null ? this.title.hashCode() : 0);
-        hash = 43 * hash + (this.alternativeTitle != null ? this.alternativeTitle.hashCode() : 0);
         hash = 43 * hash + (this.documentType != null ? this.documentType.hashCode() : 0);
         hash = 43 * hash + (this.digitalBorn ? 1 : 0);
         hash = 43 * hash + (this.degreeAwardingInstitution != null ? this.degreeAwardingInstitution.hashCode() : 0);

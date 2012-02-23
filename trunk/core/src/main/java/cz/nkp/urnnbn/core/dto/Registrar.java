@@ -11,6 +11,7 @@ package cz.nkp.urnnbn.core.dto;
 public class Registrar extends Archiver {
 
     private String code;
+    private boolean allowedToRegisterFreeUrnNbn = false;
 
     public Registrar() {
         super();
@@ -27,6 +28,14 @@ public class Registrar extends Archiver {
 
     public void setCode(String code) {
         this.code = code.toLowerCase();
+    }
+
+    public boolean isAllowedToRegisterFreeUrnNbn() {
+        return allowedToRegisterFreeUrnNbn;
+    }
+
+    public void setAllowedToRegisterFreeUrnNbn(boolean allowedToRegisterFreeUrnNbn) {
+        this.allowedToRegisterFreeUrnNbn = allowedToRegisterFreeUrnNbn;
     }
 
     public void loadDataFromArchiver(Archiver archiver) {
