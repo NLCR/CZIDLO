@@ -32,7 +32,7 @@
         <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
         <r:sourceDocument>
             <r:titleInfo>
-                <r:title>Lidové novin</r:title>
+                <r:title>Lidové noviny</r:title>
                 <r:volumeTitle>ročník 1949</r:volumeTitle>
                 <r:issueTitle>10.1.1941</r:issueTitle>
             </r:titleInfo>

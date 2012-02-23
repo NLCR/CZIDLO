@@ -22,15 +22,13 @@ public abstract class Unmarshaller {
     static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
     private static final String NS_PREFIX_NAME = "resolver";
     private static final String NS_PREFIX = NS_PREFIX_NAME + ":";
-    static final XPathContext context = new XPathContext(NS_PREFIX_NAME, "http://resolver.nkp.cz/v2/");
+    protected static final String NAMESPACE_URI = "http://resolver.nkp.cz/v2/";
+    private static final XPathContext context = new XPathContext(NS_PREFIX_NAME, NAMESPACE_URI);
 
     static String prefixed(String elementName) {
         return NS_PREFIX + elementName;
     }
 
-//    Node selectSingleNodeFromDoc(String xpath) {
-//        return selectSingleNode(xpath, doc);
-//    }
     Node selectSingleNode(String xpath, ParentNode parent) {
         Node result = selectSingleElementOrNull(xpath, parent);
         if (result == null) {
@@ -40,17 +38,11 @@ public abstract class Unmarshaller {
         }
     }
 
-//    Element selectSingleElementOrNullFromdoc(Xpath xpath) {
-//        return (Element) selectSingleNodeOrNull(xpath, doc);
-//    }
     Element selectSingleElementOrNull(String elementName, ParentNode parent) {
-        System.err.println("element: " + elementName);
         return (Element) selectSingleNodeOrNull(new Xpath(prefixed(elementName)), parent);
     }
 
     Node selectSingleNodeOrNull(Xpath xpath, ParentNode parent) {
-        System.err.println("xpath:" + xpath.toString());
-        System.err.println("parent:" + parent.toString());
         Nodes nodes = parent.query(xpath.toString(), context);
         if (nodes.size() != 1) {
             return null;

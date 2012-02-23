@@ -17,7 +17,7 @@
     <r:thesis>
         <r:titleInfo>
             <!-- název (povinný údaj) -->
-            <r:title> Basic Model Checking Problems for Stochastic Games</r:title>
+            <r:title>Basic Model Checking Problems for Stochastic Games</r:title>
             <!-- další názvové údaje -->
             <r:subTitle>Tato práce se zabývá stochastickými tahovými hrami na nekonečných grafech s lineárními výherními podmínkami.</r:subTitle>
         </r:titleInfo>

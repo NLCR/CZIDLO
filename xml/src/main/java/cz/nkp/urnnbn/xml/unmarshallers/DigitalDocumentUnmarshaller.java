@@ -34,7 +34,6 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
     DigitalDocument getDigitalDocument() {
         DigitalDocument digDoc = new DigitalDocument();
         digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
-        digDoc.setExtent(elementContentOrNull("extent", digDocEl));
         digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
         digDoc.setContractNumber(elementContentOrNull("contractNumber", digDocEl));
         loadTechnicalMetadataToDocument(digDoc);
@@ -50,15 +49,17 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
             digDoc.setFormat(elementContentOrNull("format", root));
             Element formatEl = selectSingleElementOrNull("format", root);
             digDoc.setFormatVersion(attributeContentOrNull("version", formatEl));
+            //extent
+            digDoc.setExtent(elementContentOrNull("extent", root));
             //resolution
             Element resolutionEl = selectSingleElementOrNull("resolution", root);
-            String resWidthStr = elementContentOrNull("width", resolutionEl);
+            String resWidthStr = elementContentOrNull("horizontal", resolutionEl);
             if (resWidthStr != null) {
-                digDoc.setResolutionWidth(Integer.valueOf(resWidthStr));
+                digDoc.setResolutionHorizontal(Integer.valueOf(resWidthStr));
             }
-            String resHeightStr = elementContentOrNull("height", resolutionEl);
+            String resHeightStr = elementContentOrNull("vertical", resolutionEl);
             if (resHeightStr != null) {
-                digDoc.setResolutionHeight(Integer.valueOf(resHeightStr));
+                digDoc.setResolutionVertical(Integer.valueOf(resHeightStr));
             }
             //compression
             digDoc.setCompression(elementContentOrNull("compression", root));

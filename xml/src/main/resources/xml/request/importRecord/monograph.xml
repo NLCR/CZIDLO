@@ -32,7 +32,7 @@
         <!-- zda je dokument e-born, defaultně false -->
         <r:digitalBorn>false</r:digitalBorn>
         <!-- hlavní původce (autor/korporace/akce) -->
-        <r:primaryOriginator type="AUTHOR">Božená Němcová</r:primaryOriginator>
+        <r:primaryOriginator type="AUTHOR">Božena Němcová</r:primaryOriginator>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
         <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
         <!-- informace o publikování -->
