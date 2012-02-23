@@ -33,8 +33,8 @@ public class DigitalDocumentRT implements ResultsetTransformer {
         doc.setContractNumber(resultSet.getString(DigitalDocumentDAO.ATTR_CONTRACT_NUMBER));
         doc.setFormat(resultSet.getString(DigitalDocumentDAO.ATTR_FORMAT));
         doc.setFormatVersion(resultSet.getString(DigitalDocumentDAO.ATTR_FORMAT_VERSION));
-        doc.setResolutionWidth(resultSet.getInt(DigitalDocumentDAO.ATTR_RESOLUTION_WIDTH));
-        doc.setResolutionHeight(resultSet.getInt(DigitalDocumentDAO.ATTR_RESOLUTION_HEIGHT));
+        doc.setResolutionHorizontal(resultSet.getInt(DigitalDocumentDAO.ATTR_RES_HORIZONTAL));
+        doc.setResolutionVertical(resultSet.getInt(DigitalDocumentDAO.ATTR_RES_VERTICAL));
         doc.setCompression(resultSet.getString(DigitalDocumentDAO.ATTR_COMPRESSION));
         doc.setCompressionRatio(resultSet.getDouble(DigitalDocumentDAO.ATTR_COMPRESSION_RATIO));
         doc.setColorModel(resultSet.getString(DigitalDocumentDAO.ATTR_COLOR_MODEL));

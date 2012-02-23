@@ -28,13 +28,13 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
     public String preparedStatement() {
         return "UPDATE " + DigitalDocumentDAO.TABLE_NAME + " SET "
                 + DigitalDocumentDAO.ATTR_UPDATED + "=?,"
-                + DigitalDocumentDAO.ATTR_EXTENT + "=?,"
                 + DigitalDocumentDAO.ATTR_FINANCED + "=?,"
                 + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER + "=?,"
                 + DigitalDocumentDAO.ATTR_FORMAT + "=?,"
                 + DigitalDocumentDAO.ATTR_FORMAT_VERSION + "=?,"
-                + DigitalDocumentDAO.ATTR_RESOLUTION_WIDTH + "=?,"
-                + DigitalDocumentDAO.ATTR_RESOLUTION_HEIGHT + "=?,"
+                + DigitalDocumentDAO.ATTR_EXTENT + "=?,"
+                + DigitalDocumentDAO.ATTR_RES_HORIZONTAL + "=?,"
+                + DigitalDocumentDAO.ATTR_RES_VERTICAL + "=?,"
                 + DigitalDocumentDAO.ATTR_COMPRESSION + "=?,"
                 + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO + "=?,"
                 + DigitalDocumentDAO.ATTR_COLOR_MODEL + "=?,"
@@ -49,13 +49,13 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setTimestamp(1, DateTimeUtils.nowTs());
-            st.setString(2, doc.getExtent());
-            st.setString(3, doc.getFinancedFrom());
-            st.setString(4, doc.getContractNumber());
-            st.setString(5, doc.getFormat());
-            st.setString(6, doc.getFormatVersion());
-            setIntOrNull(st, 7, doc.getResolutionWidth());
-            setIntOrNull(st, 8, doc.getResolutionHeight());
+            st.setString(2, doc.getFinancedFrom());
+            st.setString(3, doc.getContractNumber());
+            st.setString(4, doc.getFormat());
+            st.setString(5, doc.getFormatVersion());
+            st.setString(6, doc.getExtent());
+            setIntOrNull(st, 7, doc.getResolutionHorizontal());
+            setIntOrNull(st, 8, doc.getResolutionVertical());
             st.setString(9, doc.getCompression());
             setDoubleOrNull(st, 10, doc.getCompressionRatio());
             st.setString(11, doc.getColorModel());

@@ -101,8 +101,8 @@ public class SourceDocumentDaoPostgresTest extends AbstractDaoTest {
         updated.setOtherId("uuid:123");
         srcDocDao.updateSrcDoc(updated);
         SourceDocument fetched = srcDocDao.getSrcDocById(inserted.getId());
-        assertEquals(updated, fetched);
-        assertFalse(inserted.equals(fetched));
+        assertEquals(updated.getTitle(), fetched.getTitle());
+        assertFalse(inserted.getTitle().equals(fetched.getTitle()));
     }
 
     public void testUpdateSrcDoc_invalidEntityId() throws Exception {

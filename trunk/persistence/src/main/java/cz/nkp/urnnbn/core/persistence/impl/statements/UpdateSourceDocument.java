@@ -26,13 +26,13 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
     @Override
     public String preparedStatement() {
         return "UPDATE " + SourceDocumentDAO.TABLE_NAME + " SET "
+                + SourceDocumentDAO.ATTR_TITLE + "=?,"
+                + SourceDocumentDAO.ATTR_VOLUME_TITLE + "=?,"
+                + SourceDocumentDAO.ATTR_ISSUE_TITLE + "=?,"
                 + SourceDocumentDAO.ATTR_CCNB + "=?,"
                 + SourceDocumentDAO.ATTR_ISBN + "=?,"
                 + SourceDocumentDAO.ATTR_ISSN + "=?,"
                 + SourceDocumentDAO.ATTR_OTHER_ID + "=?,"
-                + SourceDocumentDAO.ATTR_TITLE + "=?,"
-                + SourceDocumentDAO.ATTR_PER_VOL + "=?,"
-                + SourceDocumentDAO.ATTR_PER_NUM + "=?,"
                 + SourceDocumentDAO.ATTR_PUB_PLACE + "=?,"
                 + SourceDocumentDAO.ATTR_PUBLISHER + "=?,"
                 + SourceDocumentDAO.ATTR_PUB_YEAR + "=?"
@@ -42,13 +42,13 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setString(1, srcDoc.getCcnb());
-            st.setString(2, srcDoc.getIsbn());
-            st.setString(3, srcDoc.getIssn());
-            st.setString(4, srcDoc.getOtherId());
-            st.setString(5, srcDoc.getTitle());
-            st.setString(6, srcDoc.getPeriodicalVolume());
-            st.setString(7, srcDoc.getPeriodicalNumber());
+            st.setString(1, srcDoc.getTitle());
+            st.setString(2, srcDoc.getVolumeTitle());
+            st.setString(3, srcDoc.getIssueTitle());
+            st.setString(4, srcDoc.getCcnb());
+            st.setString(5, srcDoc.getIsbn());
+            st.setString(6, srcDoc.getIssn());
+            st.setString(7, srcDoc.getOtherId());
             st.setString(8, srcDoc.getPublicationPlace());
             st.setString(9, srcDoc.getPublisher());
             setIntOrNull(st, 10, srcDoc.getPublicationYear());

@@ -102,10 +102,10 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
      */
     public void testUpdateEntity() throws Exception {
         IntelectualEntity inserted = builder.intEntityWithoutId();
+        inserted.setDegreeAwardingInstitution("CUNI");
         long id = entityDao.insertIntelectualEntity(inserted);
         IntelectualEntity updated = new IntelectualEntity(inserted);
-        updated.setTitle("Babushka");
-        updated.setAlternativeTitle("kartiny selskoj zhizni");
+        updated.setDegreeAwardingInstitution("MUNI");
         entityDao.updateEntity(updated);
 
         IntelectualEntity fetched = entityDao.getEntityByDbId(id);

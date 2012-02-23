@@ -22,11 +22,6 @@ public class IntEntityRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         IntelectualEntity entity = new IntelectualEntity();
         entity.setId(resultSet.getLong(IntelectualEntityDAO.ATTR_ID));
-        entity.setTitle(resultSet.getString(IntelectualEntityDAO.ATTR_TITLE));
-        entity.setAlternativeTitle(resultSet.getString(IntelectualEntityDAO.ATTR_ALT_TITLE));
-        entity.setDocumentType(resultSet.getString(IntelectualEntityDAO.ATTR_DOC_TYPE));
-        entity.setDigitalBorn(resultSet.getBoolean(IntelectualEntityDAO.ATTR_DIGITAL_BORN));
-        entity.setDegreeAwardingInstitution(resultSet.getString(IntelectualEntityDAO.ATTR_DEG_AW_INST));
         //entity type
         String entityType = resultSet.getString(IntelectualEntityDAO.ATTR_ENTITY_TYPE);
         entity.setEntityType(EntityType.valueOf(entityType));
@@ -36,6 +31,11 @@ public class IntEntityRT implements ResultsetTransformer {
         //updated
         Timestamp updated = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_UPDATED);
         entity.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
+        //other attribures
+        entity.setDocumentType(resultSet.getString(IntelectualEntityDAO.ATTR_DOC_TYPE));
+        entity.setDigitalBorn(resultSet.getBoolean(IntelectualEntityDAO.ATTR_DIGITAL_BORN));
+        entity.setOtherOriginator(resultSet.getString(IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR));
+        entity.setDegreeAwardingInstitution(resultSet.getString(IntelectualEntityDAO.ATTR_DEG_AW_INST));
         return entity;
     }
 }

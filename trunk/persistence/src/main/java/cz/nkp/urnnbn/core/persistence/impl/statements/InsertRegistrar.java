@@ -28,7 +28,8 @@ public class InsertRegistrar implements StatementWrapper {
         return "INSERT into " + RegistrarDAO.TABLE_NAME
                 + "(" + RegistrarDAO.ATTR_ID
                 + "," + RegistrarDAO.ATTR_CODE
-                + ") values(?,?)";
+                + "," + RegistrarDAO.ATTR_CAN_REGISTER_FREE_URN
+                + ") values(?,?,?)";
     }
 
     @Override
@@ -36,6 +37,7 @@ public class InsertRegistrar implements StatementWrapper {
         try {
             st.setLong(1, registrar.getId());
             st.setString(2, registrar.getCode());
+            st.setBoolean(3, registrar.isAllowedToRegisterFreeUrnNbn());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

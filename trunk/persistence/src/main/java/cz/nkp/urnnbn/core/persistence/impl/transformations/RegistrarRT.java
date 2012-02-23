@@ -20,6 +20,7 @@ public class RegistrarRT implements ResultsetTransformer {
         Registrar registrar = new Registrar();
         registrar.setId(resultSet.getLong(RegistrarDAO.ATTR_ID));
         registrar.setCode(resultSet.getString(RegistrarDAO.ATTR_CODE));
+        registrar.setAllowedToRegisterFreeUrnNbn(resultSet.getBoolean(RegistrarDAO.ATTR_CAN_REGISTER_FREE_URN));
         return registrar;
     }
 }
