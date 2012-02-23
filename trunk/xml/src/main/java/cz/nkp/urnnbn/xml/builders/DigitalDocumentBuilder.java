@@ -43,7 +43,6 @@ public class DigitalDocumentBuilder extends XmlBuilder {
         if (identifiersBuilder != null) {
             appendBuilderResultfNotNull(root, identifiersBuilder);
         }
-        appendElementWithContentIfNotNull(root, doc.getExtent(), "extent");
         appendElementWithContentIfNotNull(root, doc.getFinancedFrom(), "financed");
         appendElementWithContentIfNotNull(root, doc.getContractNumber(), "contractNumber");
         appendTechnicalMetadata(root);
@@ -72,10 +71,12 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             Attribute version = new Attribute("version", formatVersion);
             formatEl.addAttribute(version);
         }
+        //extent
+        appendElementWithContentIfNotNull(technicalEl, doc.getExtent(), "extent");
         //resolution
         Element resolutionEl = addElement(technicalEl, "resolution");
-        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionWidth(), "width");
-        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionHeight(), "height");
+        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionHorizontal(), "horizontal");
+        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionVertical(), "vertical");
         //compression
         Element compressionEl = addElement(technicalEl, "compression");
         String compression = doc.getCompression();

@@ -5,12 +5,15 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.EntityType;
+import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Attribute;
@@ -44,7 +47,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
             case OTHER:
                 return new OtherEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
             default:
-                return null;
+                throw new RuntimeException();
         }
     }
     protected final IntelectualEntity entity;
@@ -52,6 +55,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
     protected final Publication publication;
     protected final Originator originator;
     protected final SourceDocument srcDoc;
+    private final Map<IntEntIdType, String> intEntIdMap = new EnumMap<IntEntIdType, String>(IntEntIdType.class);
 
     public IntelectualEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
         this.entity = entity;
@@ -59,6 +63,11 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         this.publication = publication;
         this.originator = originator;
         this.srcDoc = srcDoc;
+        if (identifiers != null) {
+            for (IntEntIdentifier identifier : identifiers) {
+                intEntIdMap.put(identifier.getType(), identifier.getValue());
+            }
+        }
     }
 
     Element entityElement() {
@@ -79,14 +88,6 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         }
     }
 
-    void appendTitleAndSubtitle(Element root) {
-        Element titleEl = appendElementWithContentIfNotNull(root, entity.getTitle(), "title");
-        if (titleEl == null) {
-            logger.log(Level.WARNING, "empty value of \"title\" for intelectual entity {0}", entity.getId());
-        }
-        appendElementWithContentIfNotNull(root, entity.getAlternativeTitle(), "subTitle");
-    }
-
     void appendDocumentType(Element root) {
         appendElementWithContentIfNotNull(root, entity.getDocumentType(), "documentType");
     }
@@ -98,16 +99,19 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         }
     }
 
-    void appendOriginator(Element root) {
+    void appendPrimaryOriginator(Element root) {
         if (originator != null) {
-            Element originatorEl = addElement(root, "originator");
+            Element originatorEl = addElement(root, "primaryOriginator");
             Attribute type = new Attribute("type", originator.getType().name());
             originatorEl.addAttribute(type);
             originatorEl.appendChild(originator.getValue());
         } else {
-            logger.log(Level.WARNING, "empty value of \"originator\" for entity {0}", entity.getId());
+            //logger.log(Level.WARNING, "empty value of \"originator\" for entity {0}", entity.getId());
         }
+    }
 
+    void appendOtherOriginator(Element root) {
+        appendElementWithContentIfNotNull(root, entity.getOtherOriginator(), "otherOriginator");
     }
 
     void appendPublication(Element root) {
@@ -122,16 +126,18 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
     void appendSourceDocument(Element root) {
         if (srcDoc != null) {
             Element srcDocEl = addElement(root, "sourceDocument");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getTitle(), "title");
+            Element titleInfo = addElement(srcDocEl, "titleInfo");
+            appendElementWithContentIfNotNull(titleInfo, srcDoc.getTitle(), "title");
+            appendElementWithContentIfNotNull(titleInfo, srcDoc.getVolumeTitle(), "volumeTitle");
+            appendElementWithContentIfNotNull(titleInfo, srcDoc.getIssueTitle(), "issueTitle");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getCcnb(), "ccnb");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIsbn(), "isbn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIssn(), "issn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getOtherId(), "otherId");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getPeriodicalVolume(), "periodicalVolume");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getPeriodicalNumber(), "periodicalNumber");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getPublisher(), "publisher");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getPublicationPlace(), "publicationPlace");
-            appendElementWithContentIfNotNull(srcDocEl, srcDoc.getPublicationYear(), "publicationYear");
+            Element publicationEl = addElement(srcDocEl, "publication");
+            appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublisher(), "publisher");
+            appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationPlace(), "place");
+            appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationYear(), "year");
         } else {
             logger.log(Level.WARNING, "empty value of \"source document\" for entity {0}", entity.getId());
         }
@@ -141,14 +147,14 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         Element el = appendElementWithContentIfNotNull(root, entity.getDegreeAwardingInstitution(), "degreeAwardingInstitution");
     }
 
-    void appendEntityIdentifier(Element root, String string) {
+    void appendEntityIdentifier(Element root, IntEntIdType type, String elementName, boolean mandatory) {
         if (identifiers != null) {
-            for (IntEntIdentifier identifier : identifiers) {
-                String idType = identifier.getType().toString();
-                if (string.equals(idType)) {
-                    Element idElement = addElement(root, idType);
-                    idElement.appendChild(identifier.getValue());
-                }
+            String value = intEntIdMap.get(type);
+            if (value != null) {
+                Element idElement = addElement(root, elementName);
+                idElement.appendChild(value);
+            } else if (mandatory) {
+                logger.log(Level.WARNING, "empty value of mandatory identifier {0} for entity {1}", new Object[]{type.toString(), entity.getId()});
             }
         }
     }

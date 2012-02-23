@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -26,11 +27,13 @@ class AnalyticalBuilder extends IntelectualEntityBuilder {
     public Element buildRootElement() {
         Element root = entityElement();
         appendCreatedAndUpdated(root);
-        appendTitleAndSubtitle(root);
-        //appendIdentifierElement(root, "INTERNAL", entity.getId());
+        Element titleInfo = addElement(root, "titleInfo");
+        appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "title", true);
+        appendEntityIdentifier(titleInfo, IntEntIdType.SUB_TITLE, "subTitle", false);
+        appendEntityIdentifier(root, IntEntIdType.OTHER, "otherId", false);
         appendDocumentType(root);
-        appendDigitalBorn(root);
-        appendOriginator(root);
+        appendPrimaryOriginator(root);
+        appendOtherOriginator(root);
         appendSourceDocument(root);
         return root;
     }
