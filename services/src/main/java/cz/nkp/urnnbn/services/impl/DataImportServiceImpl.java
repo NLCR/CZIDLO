@@ -16,7 +16,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
@@ -39,7 +39,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         authorization = new AuthorizationModule(factory);
     }
 
-    public UrnNbn importNewRecord(RecordImport data, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigRepIdentifierCollisionException, UnknownArchiverException {
+    public UrnNbn importNewRecord(RecordImport data, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigDocIdentifierCollisionException, UnknownArchiverException {
         authorization.checkAccessRights(data.getRegistrarCode(), login);
         return new RecordImporter(factory, data).run();
     }

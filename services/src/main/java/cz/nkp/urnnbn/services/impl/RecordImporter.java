@@ -22,7 +22,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
@@ -62,7 +62,7 @@ public class RecordImporter {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigRepIdentifierCollisionException, UnknownArchiverException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigDocIdentifierCollisionException, UnknownArchiverException {
         synchronized (RecordImporter.class) {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
@@ -190,11 +190,11 @@ public class RecordImporter {
         }
     }
 
-    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigRepIdentifierCollisionException {
+    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigDocIdentifierCollisionException {
         try {
             List<DigDocIdentifier> ids = importDigRepIdentifiers(digRepId);
             logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
-        } catch (DigRepIdentifierCollisionException ex) {
+        } catch (DigDocIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
             //because it will be removed together with registrar in cascade
             logger.info("failed to import digital document identifiers, rolling back");
@@ -257,7 +257,7 @@ public class RecordImporter {
         }
     }
 
-    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws DigRepIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws DigDocIdentifierCollisionException, DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
         List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>();
         for (DigDocIdentifier id : data.getDigDogIdentifiers()) {
@@ -268,7 +268,7 @@ public class RecordImporter {
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
-                throw new DigRepIdentifierCollisionException(registrar, id);
+                throw new DigDocIdentifierCollisionException(registrar, id);
             }
         }
         return result;

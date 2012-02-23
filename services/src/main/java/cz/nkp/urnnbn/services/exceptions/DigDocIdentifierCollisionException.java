@@ -11,10 +11,10 @@ import cz.nkp.urnnbn.core.dto.Registrar;
  *
  * @author Martin Řehánek
  */
-public class DigRepIdentifierCollisionException extends Exception {
+public class DigDocIdentifierCollisionException extends Exception {
 
-    public DigRepIdentifierCollisionException(Registrar registrar, DigDocIdentifier id) {
-        super("digital represenation with identifier of type '" + id.getType()
+    public DigDocIdentifierCollisionException(Registrar registrar, DigDocIdentifier id) {
+        super("digital document with identifier of type '" + id.getType()
                 + "' and value '" + id.getValue()
                 + "' already registered by registrar with code " + registrar.getCode());
     }

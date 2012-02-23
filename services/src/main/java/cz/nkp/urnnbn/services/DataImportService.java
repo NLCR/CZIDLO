@@ -8,7 +8,7 @@ import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigRepIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
@@ -39,7 +39,7 @@ public interface DataImportService extends BusinessService {
     public UrnNbn importNewRecord(RecordImport data, String login) throws
             AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException,
-            DigRepIdentifierCollisionException, UnknownArchiverException;
+            DigDocIdentifierCollisionException, UnknownArchiverException;
 
     /**
      * Creates new digital instance for existing digital document.
