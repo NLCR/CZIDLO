@@ -86,6 +86,39 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
+     * Test of getEntityByIdentifierValue method, of class IntelectualEntityDaoPostgres.
+     */
+    public void testGetEntityByIdentifierValue() throws Exception {
+        String value = "something";
+        //ISBN
+        IntelectualEntity entity1 = entityPersisted();
+        IntEntIdentifier isbn = new IntEntIdentifier();
+        isbn.setIntEntDbId(entity1.getId());
+        isbn.setType(IntEntIdType.ISBN);
+        isbn.setValue(value);
+        intEntIdDao.insertIntEntId(isbn);
+        //CCNB
+        IntelectualEntity entity2 = entityPersisted();
+        IntEntIdentifier ccnb = new IntEntIdentifier();
+        ccnb.setIntEntDbId(entity2.getId());
+        ccnb.setType(IntEntIdType.CCNB);
+        ccnb.setValue(value);
+        intEntIdDao.insertIntEntId(ccnb);
+
+        //find by the value
+        List<Long> foundIds = entityDao.getEntitiesDbIdByIdentifierValue(value);
+        assertEquals(2, foundIds.size());
+        assertTrue(foundIds.contains(entity1.getId()));
+        assertTrue(foundIds.contains(entity2.getId()));
+        List<IntelectualEntity> foundEntities = new ArrayList<IntelectualEntity>(foundIds.size());
+        for (Long dbId : foundIds) {
+            foundEntities.add(entityDao.getEntityByDbId(dbId));
+        }
+        assertTrue(foundEntities.contains(entity1));
+        assertTrue(foundEntities.contains(entity2));
+    }
+
+    /**
      * Test of getEntitiesCount method, of class IntelectualEntityDaoPostgres.
      */
     public void testGetEntitiesCount_0args() throws Exception {
