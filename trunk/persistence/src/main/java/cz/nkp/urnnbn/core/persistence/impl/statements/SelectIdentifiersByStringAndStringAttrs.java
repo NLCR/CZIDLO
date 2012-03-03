@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class SelectIdentnifiersByStringAndStringAttrs implements StatementWrapper {
+public class SelectIdentifiersByStringAndStringAttrs implements StatementWrapper {
 
     private final String tableName;
     private final String idAttrName;
@@ -22,7 +22,7 @@ public class SelectIdentnifiersByStringAndStringAttrs implements StatementWrappe
     private final String whereAttrName2;
     private final String whereAttrValue2;
 
-    public SelectIdentnifiersByStringAndStringAttrs(
+    public SelectIdentifiersByStringAndStringAttrs(
             String tableName, String idAttrName,
             String whereAttrName1, String whereAttrValue1,
             String whereAttrName2, String whereAttrValue2) {

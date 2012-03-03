@@ -32,8 +32,22 @@ public interface IntelectualEntityDAO {
 
     public IntelectualEntity getEntityByDbId(long dbId) throws DatabaseException, RecordNotFoundException;
 
-    // vyhledavani - treba vsechny IE s danym isbn
+    /**
+     * Finds intelectual entities that have ieIdentifier of specified type with specified value
+     * @param type
+     * @param idValue
+     * @return list of intelectual entity db id
+     * @throws DatabaseException 
+     */
     public List<Long> getEntitiesDbIdByIdentifier(IntEntIdType type, String idValue) throws DatabaseException;
+
+    /**
+     * Finds intelectual entities that have ieIdentifier of anye type with specified value
+     * @param idValue
+     * @return
+     * @throws DatabaseException 
+     */
+    public List<Long> getEntitiesDbIdByIdentifierValue(String idValue) throws DatabaseException;
 
     //TODO: zvazit, jestli budou potreba
     //public List<Long> getAllEntitiesId() throws DatabaseException;
