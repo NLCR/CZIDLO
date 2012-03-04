@@ -12,6 +12,5 @@ public enum OriginType {
 
     AUTHOR,
     EVENT,
-    CORPORATION,
-    OTHER
+    CORPORATION
 }
