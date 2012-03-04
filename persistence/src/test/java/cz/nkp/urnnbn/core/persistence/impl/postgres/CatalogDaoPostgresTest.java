@@ -70,7 +70,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
     /**
      * Test of getCatalogs method, of class CatalogDaoPostgres.
      */
-    public void testGetCatalogsList() throws Exception {
+    public void testGetCatalogsByRegistrarId() throws Exception {
         Registrar registrar = registrarPersisted();
         //first catalog
         Catalog first = builder.catalogWithoutIdAndRegistrarId();
@@ -90,6 +90,22 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         assertTrue(catalogs.contains(first));
         assertTrue(catalogs.contains(second));
         assertFalse(catalogs.contains(third));
+    }
+
+    public void testGetCatalogs() throws Exception {
+        assertTrue(catalogDao.getCatalogs().isEmpty());
+
+        //first catalog
+        Catalog first = builder.catalogWithoutIdAndRegistrarId();
+        first.setRegistrarId(registrarPersisted().getId());
+        catalogDao.insertCatalog(first);
+        assertEquals(1, catalogDao.getCatalogs().size());
+
+        //second catalog
+        Catalog second = builder.catalogWithoutIdAndRegistrarId();
+        second.setRegistrarId(registrarPersisted().getId());
+        catalogDao.insertCatalog(second);
+        assertEquals(2, catalogDao.getCatalogs().size());
     }
 
     public void testGetCatalogsList_noCatalogs() throws Exception {

@@ -91,7 +91,7 @@ public class App {
             superAdmin.setEmail("admin@resolver");
             superAdmin.setAdmin(true);
             superAdmin.setId(factory.userDao().insertUser(superAdmin));
-            System.out.println("created user superAdmin:superAdminPass as superadmin");
+            System.out.println("created user " + superAdmin.getLogin() + ":" + superAdmin.getPassword() + " as superadmin");
 
             //registrar mzk
             Registrar mzk = new Registrar();
@@ -108,7 +108,7 @@ public class App {
             mzkAdmin.setEmail("admin@mzk.cz");
             mzkAdmin.setId(factory.userDao().insertUser(mzkAdmin));
             factory.registrarDao().addAdminOfRegistrar(mzk.getId(), mzkAdmin.getId());
-            System.out.println("created user mzkAdmin:mzkAdminPass with access to registrar MZK");
+            System.out.println("created user " + mzkAdmin.getLogin() + ":" + mzkAdmin.getPassword() + " with access to registrar MZK");
 
             //library K4 mzk
             DigitalLibrary mzkK4 = new DigitalLibrary();
@@ -125,9 +125,11 @@ public class App {
             mzkK3.setRegistrarId(mzk.getId());
             mzkK3.setId(factory.digitalLibraryDao().insertLibrary(mzkK3));
             //catalog aleph mzk
-            Catalog catalog = builder.CatalogWithoutIdAndRegistrarId();
-            catalog.setRegistrarId(mzk.getId());
-            factory.catalogDao().insertCatalog(catalog);
+            Catalog alephMzk = new Catalog();
+            alephMzk.setName("Aleph mzk");
+            alephMzk.setUrlPrefix("http://iris.mzk.cz");
+            alephMzk.setRegistrarId(mzk.getId());
+            factory.catalogDao().insertCatalog(alephMzk);
 
             //registrar nkp
             Registrar nkp = new Registrar();
@@ -136,7 +138,12 @@ public class App {
             nkp.setCode("ABA001");
             nkp.setId(factory.registrarDao().insertRegistrar(nkp));
             System.out.println("created registrar NKP with id " + nkp.getId());
-
+            //catalog aleph nkp
+            Catalog alephNkp = new Catalog();
+            alephNkp.setName("Aleph nkp");
+            alephNkp.setUrlPrefix("http://hades.mzk.cz");
+            alephNkp.setRegistrarId(nkp.getId());
+            factory.catalogDao().insertCatalog(alephNkp);
 
             //nkpAdmin
             User nkpAdmin = new User();
@@ -145,7 +152,7 @@ public class App {
             nkpAdmin.setEmail("admin@nkp.cz");
             nkpAdmin.setId(factory.userDao().insertUser(nkpAdmin));
             factory.registrarDao().addAdminOfRegistrar(nkp.getId(), nkpAdmin.getId());
-            System.out.println("created user nkpAdmin:nkpAdminPass with access to registrar NKP");
+            System.out.println("created user " + nkpAdmin.getLogin() + ":" + nkpAdmin.getPassword() + " with access to registrar NKP");
 
             //library K4 nkp
             DigitalLibrary nkpK4 = new DigitalLibrary();
@@ -202,7 +209,7 @@ public class App {
             babickaIsbn.setType(IntEntIdType.ISBN);
             babickaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babickaIsbn);
-            
+
             //publication
             Publication babickaPub = builder.publicationWithoutId();
             babickaPub.setIntEntId(babicka.getId());
@@ -211,7 +218,7 @@ public class App {
             Originator babickaAutor = builder.originatorWithoutId();
             babickaAutor.setIntEntId(babicka.getId());
             factory.originatorDao().insertOriginator(babickaAutor);
-            
+
             //DR babickaMzk
             DigitalDocument babickaMzk = new DigitalDocument();
             babickaMzk.setIntEntId(babicka.getId());
@@ -317,7 +324,7 @@ public class App {
             babushkaIsbn.setType(IntEntIdType.ISBN);
             babushkaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babushkaIsbn);
-            
+
             //babushka nkp
             DigitalDocument babushkaNkp = new DigitalDocument();
             babushkaNkp.setArchiverId(nkp.getId());
