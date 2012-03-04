@@ -30,6 +30,8 @@ public interface CatalogDAO {
 
     public List<Catalog> getCatalogs(long rgistrarId) throws DatabaseException, RecordNotFoundException;
 
+    public List<Catalog> getCatalogs() throws DatabaseException;
+
     public void updateCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException;
 
     public void deleteCatalog(long catalogId) throws DatabaseException, RecordNotFoundException;

@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertCatalog;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateCatalog;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.CatalogRT;
@@ -45,6 +46,20 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
     @Override
     public Catalog getCatalogById(long id) throws DatabaseException, RecordNotFoundException {
         return (Catalog) getRecordById(TABLE_NAME, ATTR_ID, id, new CatalogRT());
+    }
+
+    public List<Catalog> getCatalogs() throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrs(TABLE_NAME);
+            DaoOperation operation = new MultipleResultsOperation(st, new CatalogRT());
+            return (List<Catalog>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
     }
 
     @Override
