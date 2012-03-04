@@ -123,7 +123,7 @@ public abstract class AbstractDaoTest extends TestCase {
         return registrar;
     }
 
-    public DigitalDocument representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
+    public DigitalDocument documentPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
         DigitalDocument rep = builder.digDocWithoutIds();
         rep.setIntEntId(intEntId);
         rep.setRegistrarId(registrarId);
