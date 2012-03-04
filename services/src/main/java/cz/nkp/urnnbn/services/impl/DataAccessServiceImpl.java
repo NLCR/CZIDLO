@@ -23,9 +23,11 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataAccessService;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -132,6 +134,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<IntelectualEntity> entitiesByIdValue(String value) throws DatabaseException {
+        List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdByIdentifierValue(value);
+        List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
+        for (long id : idList) {
+            IntelectualEntity entity = entityById(id);
+            if (entity != null) {
+                result.add(entity);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) throws DatabaseException {
         try {
             return factory.intEntIdentifierDao().getIdList(intEntId);
@@ -181,6 +196,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
     public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException {
         try {
             return factory.digitalLibraryDao().getLibraries(registrarId);
@@ -190,6 +206,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
     public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException {
         try {
             return factory.catalogDao().getCatalogs(registrarId);
@@ -199,10 +216,12 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
     public List<Registrar> registrars() throws DatabaseException {
         return factory.registrarDao().getAllRegistrars();
     }
 
+    @Override
     public int digitalDocumentsCount(long registrarId) throws DatabaseException {
         try {
             return factory.documentDao().getDigDocCount(registrarId);
@@ -212,6 +231,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
     public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException {
         try {
             Long digRepId = factory.documentDao().getDigDocDbIdByIdentifier(id);
@@ -222,16 +242,28 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
+    public List<DigitalDocument> digDocsOfIntEnt(long intEntId) throws DatabaseException {
+        try {
+            return factory.documentDao().getDocumentsOfIntEntity(intEntId);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.WARNING, ex.getMessage());
+            return Collections.<DigitalDocument>emptyList();
+        }
+    }
+
     private void tmpMethodThrowsException() throws RecordNotFoundException {
         if (true) {
             throw new RecordNotFoundException();
         }
     }
 
+    @Override
     public long digitalInstancesCount() throws DatabaseException {
         return factory.digInstDao().getTotalCount();
     }
 
+    @Override
     public DigitalInstance digInstanceByInternalId(long id) throws DatabaseException {
         try {
             return factory.digInstDao().getDigInstanceById(id);
@@ -241,6 +273,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
+    @Override
     public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException {
         try {
             return factory.digitalLibraryDao().getLibraryById(libraryId);
