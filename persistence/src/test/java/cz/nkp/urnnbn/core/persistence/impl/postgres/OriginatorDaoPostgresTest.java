@@ -105,7 +105,7 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
         assertFalse(inserted.equals(fetchedValueUpdated));
         //update type and value
         Originator updated = new Originator(inserted);
-        updated.setType(inserted.getType() == OriginType.AUTHOR ? OriginType.OTHER : OriginType.AUTHOR);
+        updated.setType(inserted.getType() == OriginType.AUTHOR ? OriginType.CORPORATION : OriginType.AUTHOR);
         updated.setValue(inserted.getValue() + "-another");
         originatorDao.updateOriginator(updated);
         Originator fetchedUpdated = originatorDao.getOriginatorById(inserted.getId());
