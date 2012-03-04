@@ -19,9 +19,11 @@ import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
@@ -108,7 +110,18 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 
     @Override
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, entityId);
+        try {
+            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_INT_ENT_ID, entityId);
+            DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
+            return (List<DigitalDocument>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
     }
 
     @Override
