@@ -48,9 +48,9 @@ public interface DataAccessService extends BusinessService {
     public IntelectualEntity entityById(long id) throws DatabaseException;
 
     public List<IntelectualEntity> entitiesByIdValue(String value) throws DatabaseException;
-    
+
     public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) throws DatabaseException;
-    
+
     //pokud nenajde, vrati null
     public Publication publicationByIntEntId(long intEntId) throws DatabaseException;
 
@@ -66,17 +66,21 @@ public interface DataAccessService extends BusinessService {
 
     public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException;
 
+    public List<Catalog> catalogs() throws DatabaseException;
+
     public List<Registrar> registrars() throws DatabaseException;
 
     public int digitalDocumentsCount(long registrarId) throws DatabaseException;
 
     public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException;
-    
+
     public List<DigitalDocument> digDocsOfIntEnt(long intEntId) throws DatabaseException;
 
     public long digitalInstancesCount() throws DatabaseException;
 
     public DigitalInstance digInstanceByInternalId(long id) throws DatabaseException;
+
+    public List<DigitalInstance> digInstancesByDigDocId(long digDocId) throws DatabaseException;
 
     public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException;
 }
