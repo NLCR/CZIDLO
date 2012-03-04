@@ -17,6 +17,7 @@
     <!-- nahore docasne zakazna bezpecnost pro vsechno -->
     <http pattern="/css/**" security="none"/>
     <http pattern="/login.jsp*" security="none"/>
+    <http pattern="/test.jsp*" security="none"/>
   
     <http auto-config='true'>
         <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
