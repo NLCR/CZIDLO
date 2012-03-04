@@ -60,10 +60,11 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                 return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.RESERVED);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 try {
-                    UrnNbn urn = null;//TODO: ziskat z tabulkyy opustenych
-                    tmpMethodThrowsException();
-                    //todo: remove tmpMethod and actually search
-                    //in abandonedUrnNbn table
+                    //TODO: actually search in abandonedUrnNbn table
+                    UrnNbn urn = null;
+                    if (true) {
+                        throw new RecordNotFoundException();
+                    }
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ABANDONED);
                 } catch (RecordNotFoundException ex3) { //urn:nbn not even ebandoned
                     UrnNbn urn = new UrnNbn(code.toString(), documentCode, null);
@@ -207,6 +208,11 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<Catalog> catalogs() throws DatabaseException {
+        return factory.catalogDao().getCatalogs();
+    }
+
+    @Override
     public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException {
         try {
             return factory.catalogDao().getCatalogs(registrarId);
@@ -252,15 +258,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
-    private void tmpMethodThrowsException() throws RecordNotFoundException {
-        if (true) {
-            throw new RecordNotFoundException();
-        }
-    }
-
     @Override
     public long digitalInstancesCount() throws DatabaseException {
         return factory.digInstDao().getTotalCount();
+    }
+
+    @Override
+    public List<DigitalInstance> digInstancesByDigDocId(long digDocId) throws DatabaseException {
+        try {
+            return factory.digInstDao().getDigitalInstancesOfDigDoc(digDocId);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.WARNING, ex.getMessage());
+            return Collections.<DigitalInstance>emptyList();
+        }
     }
 
     @Override
