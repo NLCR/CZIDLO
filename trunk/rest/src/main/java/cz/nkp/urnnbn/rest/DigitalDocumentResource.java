@@ -49,8 +49,8 @@ public class DigitalDocumentResource extends Resource {
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_FORMAT = "format";
     private static final String PARAM_WITH_DIG_INST = "digitalInstances";
-    private static final String WEB_MODULE_CONTEXT = "resolver";
-    private static final String HEADER_REFERER = "web";
+    private static final String WEB_MODULE_CONTEXT = "web";
+    private static final String HEADER_REFERER = "referer";
     private final DigitalDocument doc;
     private UrnNbn urn;
 
