@@ -3,7 +3,7 @@ HEADERS_TMP=/tmp/headers
 BODY_TMP=/tmp/body
 
 TITLE="Vložení nové digitální instance"
-URN_NBN=urn:nbn:cz:boa001-000001
+URN_NBN=urn:nbn:cz:tst002-000001
 LIBRARY_ID=2
 URL="http://localhost:8080/api/v2/resolver/$URN_NBN/digitalInstances?libraryId=$LIBRARY_ID"
 HTTP_METHOD=POST

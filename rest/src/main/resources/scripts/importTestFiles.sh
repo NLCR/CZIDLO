@@ -21,7 +21,7 @@ echo "--------"
 cat $BODY_TMP | xmlindent
 }
 
-URL=http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
+URL=http://localhost:8080/api/v2/registrars/tst002/digitalDocuments
 HTTP_METHOD=POST
 LOGIN=mzkAdmin
 PASSWORD=mzkAdminPass
