@@ -25,7 +25,9 @@ import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
@@ -84,6 +86,8 @@ public class App {
 
     private void insertTestData() throws Exception {
         try {
+            Map<String, Registrar> registrarMap = insertRegistrars();
+
             //superadmin
             User superAdmin = new User();
             superAdmin.setLogin("superAdmin");
@@ -94,12 +98,7 @@ public class App {
             System.out.println("created user " + superAdmin.getLogin() + ":" + superAdmin.getPassword() + " as superadmin");
 
             //registrar mzk
-            Registrar mzk = new Registrar();
-            mzk.setName("MZK");
-            mzk.setDescription("Moravská zemská knihovna");
-            mzk.setCode("BOA001");
-            mzk.setId(factory.registrarDao().insertRegistrar(mzk));
-            System.out.println("created registrar MZK with id " + mzk.getId());
+            Registrar mzk = registrarMap.get("tst002");
 
             //mzkAdmin
             User mzkAdmin = new User();
@@ -108,7 +107,7 @@ public class App {
             mzkAdmin.setEmail("admin@mzk.cz");
             mzkAdmin.setId(factory.userDao().insertUser(mzkAdmin));
             factory.registrarDao().addAdminOfRegistrar(mzk.getId(), mzkAdmin.getId());
-            System.out.println("created user " + mzkAdmin.getLogin() + ":" + mzkAdmin.getPassword() + " with access to registrar MZK");
+            System.out.println("created user " + mzkAdmin.getLogin() + ":" + mzkAdmin.getPassword() + " with access to registrar " + mzk.getName());
 
             //library K4 mzk
             DigitalLibrary mzkK4 = new DigitalLibrary();
@@ -132,12 +131,8 @@ public class App {
             factory.catalogDao().insertCatalog(alephMzk);
 
             //registrar nkp
-            Registrar nkp = new Registrar();
-            nkp.setName("NKP");
-            nkp.setDescription("Národní knihovna Praha");
-            nkp.setCode("ABA001");
-            nkp.setId(factory.registrarDao().insertRegistrar(nkp));
-            System.out.println("created registrar NKP with id " + nkp.getId());
+            Registrar nkp = registrarMap.get("tst001");
+
             //catalog aleph nkp
             Catalog alephNkp = new Catalog();
             alephNkp.setName("Aleph nkp");
@@ -152,7 +147,7 @@ public class App {
             nkpAdmin.setEmail("admin@nkp.cz");
             nkpAdmin.setId(factory.userDao().insertUser(nkpAdmin));
             factory.registrarDao().addAdminOfRegistrar(nkp.getId(), nkpAdmin.getId());
-            System.out.println("created user " + nkpAdmin.getLogin() + ":" + nkpAdmin.getPassword() + " with access to registrar NKP");
+            System.out.println("created user " + nkpAdmin.getLogin() + ":" + nkpAdmin.getPassword() + " with access to registrar " + nkp.getName());
 
             //library K4 nkp
             DigitalLibrary nkpK4 = new DigitalLibrary();
@@ -391,5 +386,84 @@ public class App {
         long id = factory.userDao().insertUser(user);
         user.setId(id);
         return user;
+    }
+
+    private Map<String, Registrar> insertRegistrars() throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+        Map<String, Registrar> result = new HashMap<String, Registrar>();
+        //dvě testovací knihovny
+        addToMap(insertRegistrar("TST001", "Národní knihovna České republiky - test", "testovací registrátor", true), result);
+        addToMap(insertRegistrar("TST002", "Moravská zemská knihovna - test", "testovací registrátor"), result);
+        //MZK s realnými knihovnami
+        Registrar mzk = insertRegistrar("BOA001", "Moravská zemská knihovna", "");
+        insertCatalog("Aleph MZK", "http://aleph.mzk.cz", mzk);
+        insertLibrary("Kramerius 4", "http://kramerius.mzk.cz", "aktuální verze knihovny Kramerius", mzk);
+        insertLibrary("Kramerius 3", "http://kramerius3.mzk.cz", "předchozí verze knihovny Kramerius", mzk);
+        //NKP
+        Registrar nk = insertRegistrar("ABA001", "Národní knihovna České republiky", "", true);
+        insertCatalog("Aleph NKP", "http://aleph.nkp.cz", nk);
+        //jedina realne pouzivana knihovna je kramerius nkp s pouvodnim id 4
+        insertLibrary("Kramerius Národní knihovna ČR", "http://kramerius.nkp.cz", "kod_rd:dkknkcr", nk);
+        //proto dalsi knihovny ani pridavat nebudu
+        //ostatní registrátoři z databáze starého Resolveru
+        insertRegistrar("ABE045", "Vojenský historický ústav – knihovna", "");
+        insertRegistrar("OLA001", "Vědecká knihovna v Olomouci", "");
+        insertRegistrar("LID001", "Technická univerzita v Liberci - Univerzitní knihovna", "");
+        insertRegistrar("PNA001", "Studijní a vědecká knihovna Plzeňského kraje", "");
+        insertRegistrar("PAE302", "Státní okresní archiv Pardubice", "");
+        insertRegistrar("BVE301", "Regionální muzeum v Mikulově", "");
+        insertRegistrar("ULG001", "Severočeská vědecká knihovna v Ústí nad Labem", "");
+        insertRegistrar("BVE302", "Regionální muzeum v Mikulově", "");
+        insertRegistrar("ABE343", "Národní archiv v Praze – knihovna", "");
+        insertRegistrar("HKE302", "Muzeum východních Čech v Hradci Králové - společenskovědní knihovna", "");
+        insertRegistrar("JHE301", "Muzeum Jindřichohradecka – odborná knihovna", "");
+        insertRegistrar("ROE301", "Muzeum Dr.Bohuslava Horáka v Rokycanech", "");
+        insertRegistrar("KTG503", "Městská knihovna Horažďovice", "");
+        insertRegistrar("GHE302", "Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB", "");
+        insertRegistrar("KVE303", "Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna", "");
+        insertRegistrar("LIA001", "Krajská vědecká knihovna v Liberci", "");
+        insertRegistrar("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", "");
+        insertRegistrar("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", "");
+        insertRegistrar("ABE190", "Gender Studies, o.p.s. – knihovna", "");
+        return result;
+    }
+
+    private Registrar insertRegistrar(String code, String name, String description) throws DatabaseException, AlreadyPresentException {
+        return insertRegistrar(code, name, description, false);
+    }
+
+    private Registrar insertRegistrar(String code, String name, String description, boolean allowedToRegisterFreeUrn) throws DatabaseException, AlreadyPresentException {
+        Registrar result = new Registrar();
+        result.setName(name);
+        result.setDescription(description);
+        result.setCode(code);
+        result.setAllowedToRegisterFreeUrnNbn(allowedToRegisterFreeUrn);
+        result.setId(factory.registrarDao().insertRegistrar(result));
+        System.out.println("created registrar " + result.getName() + " with code " + result.getCode());
+        return result;
+    }
+
+    private void addToMap(Registrar registrar, Map<String, Registrar> result) {
+        result.put(registrar.getCode(), registrar);
+    }
+
+    private DigitalLibrary insertLibrary(String name, String url, String decription, Registrar registrar) throws DatabaseException, RecordNotFoundException {
+        DigitalLibrary result = new DigitalLibrary();
+        result.setName(name);
+        result.setUrl(url);
+        result.setDescription(decription);
+        result.setRegistrarId(registrar.getId());
+        result.setId(factory.digitalLibraryDao().insertLibrary(result));
+        System.out.println("creted digital library " + result.getName() + " of registrar " + registrar.getName());
+        return result;
+    }
+
+    private Catalog insertCatalog(String name, String url, Registrar registrar) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        Catalog result = new Catalog();
+        result.setName(name);
+        result.setUrlPrefix(url);
+        result.setRegistrarId(registrar.getId());
+        factory.catalogDao().insertCatalog(result);
+        System.out.println("created catalog " + result.getName() + " of registrar " + registrar.getName());
+        return result;
     }
 }
