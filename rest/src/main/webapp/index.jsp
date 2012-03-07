@@ -5,10 +5,18 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Resolver urn:nbn</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        login: <%= request.getRemoteUser()%>
+        <h1>Resolver urn:nbn - aplikační rozhraní</h1>
+        Aplikační rozhraní je popsáno 
+        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">zde</a> 
+        a <a href="http://code.google.com/p/urnnbn-resolver-v2/wiki/API">zde</a>
+        Pro ruční vyhledávání, vkladání či editaci záznamů a další administraci použijte <a href ="/web">webové rozhraní</a>.
+        <br>
+        <a href ="/api/v2/registrars">Seznam registrátorů</a>
+        <br>
+        <a href ="/api/v2/digitalInstances">Digitální instance</a>
+        <br>
     </body>
 </html>
