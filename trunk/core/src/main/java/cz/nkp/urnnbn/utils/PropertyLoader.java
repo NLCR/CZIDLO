@@ -95,6 +95,14 @@ public class PropertyLoader {
         return Boolean.parseBoolean(strValue);
     }
 
+    public boolean loadBooleanFalseIfNullOrEmpty(String key) {
+        if (key == null || key.isEmpty()) {
+            return false;
+        } else {
+            return loadBoolean(key);
+        }
+    }
+
     public Properties getProperties() {
         return properties;
     }
