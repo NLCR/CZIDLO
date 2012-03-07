@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
@@ -130,7 +131,8 @@ public class DigitalDocumentResource extends Resource {
         String serverName = request.getServerName();
         int port = request.getServerPort();
         try {
-            return new URI("http://" + serverName + ":" + port + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
+            String protocol = Configuration.WEB_REDIRECTION_SSL ? "https" : "http";
+            return new URI(protocol + "://" + serverName + ":" + port + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
         } catch (URISyntaxException ex) {
             throw new InternalException(ex);
         }

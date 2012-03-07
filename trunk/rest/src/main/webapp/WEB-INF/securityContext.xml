@@ -22,7 +22,7 @@
     <http auto-config='true'>
         <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
         <intercept-url pattern="/user.jsp" access="ROLE_USER" />
-        <intercept-url pattern="/index.jsp" access="ROLE_ADMIN,ROLE_USER" />
+<!--        <intercept-url pattern="/index.jsp" access="ROLE_ADMIN,ROLE_USER" />-->
         <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
 <!--        <intercept-url pattern="/index.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />-->
         <intercept-url pattern="/v2/user" access="IS_AUTHENTICATED_ANONYMOUSLY" />

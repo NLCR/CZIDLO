@@ -24,7 +24,8 @@ public class Configuration {
     public static int URN_RESERVATION_MAX_SIZE;
     public static boolean SERVER_READ_ONLY;
     public static int MAX_RESERVED_SIZE_TO_PRINT;
-
+    public static boolean WEB_REDIRECTION_SSL;
+    
     /**
      * 
      * @param properties InputStream containing properties
@@ -37,6 +38,7 @@ public class Configuration {
         URN_RESERVATION_MAX_SIZE = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         SERVER_READ_ONLY = loader.loadBoolean(PropertyKeys.SERVER_READ_ONLY);
         MAX_RESERVED_SIZE_TO_PRINT = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
+        WEB_REDIRECTION_SSL = loader.loadBooleanFalseIfNullOrEmpty(PropertyKeys.WEB_REDIRECTION_SSL);
     }
 
     static void initRecordImportSchema(InputStream in) throws ParsingException, ValidityException, IOException {
