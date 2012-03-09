@@ -3,6 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
+    <artifactId>persistence</artifactId>
+    <name>persistence</name>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <url>http://maven.apache.org</url>
@@ -63,6 +65,4 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-    <artifactId>persistence</artifactId>
-    <name>persistence</name>
 </project>
