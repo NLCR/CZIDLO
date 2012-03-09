@@ -66,6 +66,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>web-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -114,7 +119,6 @@
             <artifactId>spring-security-config</artifactId>
             <version>3.1.0.RELEASE</version>
         </dependency>
-                
         <dependency>
         <!-- Tohle tu je kvuli toho, ze spring ma nekde dependency na tuhle knihovnu.
              Jenze ona je taky v TOMCAT/lib a proto se to bije. Kdyz ale tady tu zavislost

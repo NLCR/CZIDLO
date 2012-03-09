@@ -16,49 +16,35 @@
 <!--    <http pattern="**" security="none"/>-->
     <!-- nahore docasne zakazna bezpecnost pro vsechno -->
     <http pattern="/css/**" security="none"/>
-    <http pattern="/login.jsp*" security="none"/>
-    <http pattern="/test.jsp*" security="none"/>
+    <http pattern="/test/test.jsp*" security="none"/>
+<!--    <http pattern="/test/login.jsp" security="none"/>
+    <http pattern="/test/logout.jsp*" security="none"/>-->
   
-    <http auto-config='true'>
-        <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
-        <intercept-url pattern="/user.jsp" access="ROLE_USER" />
-<!--        <intercept-url pattern="/index.jsp" access="ROLE_ADMIN,ROLE_USER" />-->
+<!--    <http auto-config='true'>-->
+    <http>
+        <http-basic/>
+<!--        <form-login login-page='/test/login.jsp'/>-->
+        <intercept-url pattern="/test/admin.jsp" access="ROLE_ADMIN" />
+        <intercept-url pattern="/test/user.jsp" access="ROLE_USER" />
         <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
-<!--        <intercept-url pattern="/index.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />-->
-        <intercept-url pattern="/v2/user" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-<!--        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN, IS_AUTHENTICATED_ANONYMOUSLY" />-->
-<!--        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" />-->
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="PUT"/>
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="POST"/>
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE"/>
+<!--        <intercept-url pattern="/test/logout.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />-->
+        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
         
-        
-        <http-basic /><!-- pokud je vynechano, vyskoci formular od springu -->
-
-<!--        <intercept-url pattern="/**" access="ROLE_USER" method="PUT"/>-->
-    
         <session-management>
             <!--This will prevent a user from logging in multiple times - a second login will cause the first to be invalidated.-->
             <concurrency-control max-sessions="1" />
             <!--here the second login will be rejected -->
-            <!--<concurrency-control max-sessions="1" error-if-maximum-exceeded="true" /> -->
+<!--            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />-->
         </session-management>
-        <logout delete-cookies="JSESSIONID" logout-url="/v2/user"/>
+<!--        <logout delete-cookies="JSESSIONID" logout-success-url="/test/logout.jsp" logout-url="/logout"/>-->
     </http>
 
     <authentication-manager>
-        <authentication-provider ref='myAuthenticationProvider'/>
-<!--        <authentication-provider>
-            <user-service>
-                <user name="admin" password="adminpass" authorities="ROLE_ADMIN" />
-                <user name="user" password="userpass" authorities="ROLE_USER" />
-                <user name="both" password="bothpass" authorities="ROLE_USER, ROLE_ADMIN" />
-            </user-service>
-        </authentication-provider>-->
+        <authentication-provider ref='authenticationProvider'/>
     </authentication-manager>
     
-    <beans:bean id="myAuthenticationProvider"
-      class="cz.nkp.urnnbn.rest.MyAuthenticationProvider">
-<!--    <beans:property name="dataSource" ref="dataSource"/>-->
-    </beans:bean>
+    <beans:bean id="authenticationProvider" class="cz.nkp.urnnbn.webcommon.security.ResolverAuthenticationProvider"/>
+    <beans:bean id="logListener" class="cz.nkp.urnnbn.webcommon.security.SecurityListener"/>     
 </beans:beans>

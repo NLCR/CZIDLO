@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.Configuration;
+import cz.nkp.urnnbn.rest.config.ApiConfiguration;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -28,8 +28,6 @@ import javax.ws.rs.core.Response;
 public class UrnNbnReservationsResource extends Resource {
 
     private static final String PARAM_SIZE = "size";
-    private static final int DEFAULT_BATCH_SIZE = Configuration.URN_RESERVATION_DEFAULT_SIZE;
-    private static final int MAX_BATCH_SIZE = Configuration.URN_RESERVATION_MAX_SIZE;
     private final Registrar registrar;
 
     public UrnNbnReservationsResource(Registrar registrar) {
@@ -55,10 +53,10 @@ public class UrnNbnReservationsResource extends Resource {
     }
 
     private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
-        if (reservedUrnNbnList.size() > Configuration.MAX_RESERVED_SIZE_TO_PRINT) {
-            return new UrnNbnReservationsBuilder(maxBatchSize, DEFAULT_BATCH_SIZE, reservedUrnNbnList.size());
+        if (reservedUrnNbnList.size() > ApiConfiguration.instanceOf().getMaxReservedSizeToPrint()) {
+            return new UrnNbnReservationsBuilder(maxBatchSize, ApiConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList.size());
         } else {
-            return new UrnNbnReservationsBuilder(maxBatchSize, DEFAULT_BATCH_SIZE, reservedUrnNbnList);
+            return new UrnNbnReservationsBuilder(maxBatchSize, ApiConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList);
         }
     }
 
@@ -66,14 +64,15 @@ public class UrnNbnReservationsResource extends Resource {
     @Produces("application/xml")
     public Response createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
         int size = sizeStr == null
-                ? DEFAULT_BATCH_SIZE : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, MAX_BATCH_SIZE);
-        if (Configuration.SERVER_READ_ONLY) {
+                ? ApiConfiguration.instanceOf().getUrnReservationDefaultSize()
+                : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiConfiguration.instanceOf().getUrnReservationMaxSize());
+        if (ApiConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
             try {
                 //TODO: INVALID_RESERVATION_SIZE : 400
                 //
-                
+
                 int userId = 1;//TODO: zjistit z hlavicky
                 List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, userId);
                 UrnNbnReservationBuilder builder = new UrnNbnReservationBuilder(reserved);
