@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.Configuration;
+import cz.nkp.urnnbn.rest.config.ApiConfiguration;
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
@@ -77,7 +77,7 @@ public class DigitalDocumentsResource extends Resource {
             String content) {
         String login = req.getRemoteUser();
         try {
-            Document doc = validDocumentFromString(content, Configuration.RECORD_IMPORT_XSD);
+            Document doc = validDocumentFromString(content, ApiConfiguration.instanceOf().getRecordImportSchema());
             RecordImport recordImport = getImportFromDocument(doc);
             //TODO: pokud to nema registrator povoleno, nemuze vkladat urn:nbn ve stavu FREE
             //kdyz se o to pokusi, tak tady dojde InvalidUrnException

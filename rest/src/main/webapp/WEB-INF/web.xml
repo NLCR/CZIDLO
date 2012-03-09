@@ -8,18 +8,15 @@
         <!--  <res-type>org.postgresql.jdbc3.Jdbc3ConnectionPool</res-type> -->
         <res-auth>Container</res-auth>
     </resource-ref>
-    
     <context-param>
         <param-name>resolverConfig</param-name>
         <param-value>
          /api.properties
         </param-value>
     </context-param>
-    
     <listener>
         <listener-class>cz.nkp.urnnbn.rest.config.ContextListener</listener-class>
     </listener>
-    
     <!-- SPRING START -->
     <listener>
         <listener-class>

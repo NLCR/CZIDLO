@@ -146,7 +146,7 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     private DigDocIdentifier updateIdentifier(DigDocIdType idType, String value) {
         try {
             DigDocIdentifier id = identifierInstance(idType, value);
-            dataUpdate().updateDigRepIdentifier(id);
+            dataUpdateService().updateDigRepIdentifier(id);
             return id;
         } catch (UnknownRegistrarException ex) {
             //should never happen here

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.Configuration;
+import cz.nkp.urnnbn.rest.config.ApiConfiguration;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -68,7 +68,7 @@ public class DigitalInstanceResource extends Resource {
     @DELETE
     @Produces("application/xml")
     public String removeDigitalInstance(@Context HttpServletRequest req) {
-        if (Configuration.SERVER_READ_ONLY) {
+        if (ApiConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
             return "<TODO>implementovat</TODO>";

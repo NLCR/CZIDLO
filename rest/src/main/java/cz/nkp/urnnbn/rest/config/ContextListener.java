@@ -55,7 +55,7 @@ public class ContextListener implements ServletContextListener {
 
             @Override
             void processResource(InputStream in) throws Exception {
-                Configuration.initialize(in);
+                ApiConfiguration.instanceOf().initialize(in);
             }
         }.run(API_PROPERTIES);
     }
@@ -65,7 +65,7 @@ public class ContextListener implements ServletContextListener {
 
             @Override
             void processResource(InputStream in) throws Exception {
-                Configuration.initRecordImportSchema(in);
+                ApiConfiguration.instanceOf().initRecordImportSchema(in);
             }
         }.run(RECORD_IMPORT_XSD);
     }

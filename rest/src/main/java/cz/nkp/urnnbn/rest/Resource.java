@@ -5,25 +5,18 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.rest.config.Configuration;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.DataUpdateService;
+import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
-import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
-import cz.nkp.urnnbn.services.impl.DataImportServiceImpl;
-import cz.nkp.urnnbn.services.impl.DataRemoveServiceImpl;
-import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
-import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifierBuilder;
@@ -45,47 +38,26 @@ import nu.xom.ValidityException;
  */
 public class Resource {
 
-    private static DatabaseConnector connector = DatabaseConnectorFactory.getConnector();
-    static final Logger logger = Logger.getLogger("rest api v2");
-    private static DataAccessService dataAccess;
-    private static DataImportService dataImport;
-    private static DataRemoveService dataRemove;
-    private static DataUpdateService dataUpdate;
-    private static UrnNbnReservationService urnReservation;
+    static final Logger logger = Logger.getLogger(Resource.class.getName());
 
     DataAccessService dataAccessService() {
-        if (dataAccess == null) {
-            dataAccess = new DataAccessServiceImpl(connector);
-        }
-        return dataAccess;
+        return Services.instanceOf().dataAccessService();
     }
 
     DataImportService dataImportService() {
-        if (dataImport == null) {
-            dataImport = new DataImportServiceImpl(connector);
-        }
-        return dataImport;
+        return Services.instanceOf().dataImportService();
     }
 
     UrnNbnReservationService urnReservationService() {
-        if (urnReservation == null) {
-            urnReservation = new UrnNbnReservationServiceImpl(connector, Configuration.URN_RESERVATION_MAX_SIZE);
-        }
-        return urnReservation;
+        return Services.instanceOf().urnReservationService();
     }
 
     DataRemoveService dataRemoveService() {
-        if (dataRemove == null) {
-            dataRemove = new DataRemoveServiceImpl(connector);
-        }
-        return dataRemove;
+        return Services.instanceOf().dataRemoveService();
     }
 
-    DataUpdateService dataUpdate() {
-        if (dataUpdate == null) {
-            dataUpdate = new DataUpdateServiceImpl(connector);
-        }
-        return dataUpdate;
+    DataUpdateService dataUpdateService() {
+        return Services.instanceOf().dataUpdateService();
     }
 
     DigitalDocumentIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
