@@ -22,8 +22,9 @@
   
 <!--    <http auto-config='true'>-->
     <http>
-        <http-basic/>
+<!--        <http-basic/>-->
 <!--        <form-login login-page='/test/login.jsp'/>-->
+<form-login/>
         <intercept-url pattern="/test/admin.jsp" access="ROLE_ADMIN" />
         <intercept-url pattern="/test/user.jsp" access="ROLE_USER" />
         <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
@@ -38,7 +39,7 @@
             <!--here the second login will be rejected -->
 <!--            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />-->
         </session-management>
-<!--        <logout delete-cookies="JSESSIONID" logout-success-url="/test/logout.jsp" logout-url="/logout"/>-->
+        <logout delete-cookies="JSESSIONID" logout-success-url="/test/logout.jsp" logout-url="/logout"/>
     </http>
 
     <authentication-manager>

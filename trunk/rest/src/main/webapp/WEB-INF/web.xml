@@ -25,14 +25,6 @@
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <!--        <param-value>
-        /WEB-INF/security-applicationContext.xml,
-        /WEB-INF/applicationContext.xml
-        </param-value>-->
-        <!--        <param-value>
-         classpath:security-applicationContext.xml
-        /WEB-INF/security-applicationContext.xml
-        </param-value>-->
         <param-value>
          /WEB-INF/securityContext.xml
         </param-value>
