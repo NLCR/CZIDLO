@@ -23,8 +23,9 @@ public class Services {
 
     private static final Logger logger = Logger.getLogger(Services.class.getName());
     private static Services instance;
+    private static final Integer MAX_URN_RESERVATION_SIZE = 100;
     private final DatabaseConnector connector;
-    private final int urnNbnReservationMaxSize;
+    private final Integer urnNbnReservationMaxSize;
     private DataAccessService dataAccess;
     private DataImportService dataImport;
     private DataRemoveService dataRemove;
@@ -32,12 +33,20 @@ public class Services {
     private UrnNbnReservationService urnReservation;
     private AuthenticationService authenticationService;
 
-    private Services(DatabaseConnector connector, int urnNbnReservationMaxSize) {
+    private Services(DatabaseConnector connector, Integer urnNbnReservationMaxSize) {
         this.connector = connector;
-        this.urnNbnReservationMaxSize = urnNbnReservationMaxSize;
+        if (urnNbnReservationMaxSize == null) {
+            this.urnNbnReservationMaxSize = MAX_URN_RESERVATION_SIZE;
+        } else {
+            this.urnNbnReservationMaxSize = urnNbnReservationMaxSize;
+        }
     }
 
-    public static void init(boolean develMode, int urnNbnReservationMaxSize) {
+    public static void init(boolean develMode) {
+        init(develMode, null);
+    }
+
+    public static void init(boolean develMode, Integer urnNbnReservationMaxSize) {
         DatabaseConnector connector = null;
         if (develMode) {
             logger.log(Level.INFO, "initializing {0} in development mode", Services.class.getName());
