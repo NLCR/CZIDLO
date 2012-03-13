@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.rest.config;
 
+import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,7 +56,7 @@ public class ContextListener implements ServletContextListener {
 
             @Override
             void processResource(InputStream in) throws Exception {
-                ApiConfiguration.instanceOf().initialize(in);
+                ApiModuleConfiguration.instanceOf().initialize(new PropertyLoader(in));
             }
         }.run(API_PROPERTIES);
     }
@@ -65,7 +66,7 @@ public class ContextListener implements ServletContextListener {
 
             @Override
             void processResource(InputStream in) throws Exception {
-                ApiConfiguration.instanceOf().initRecordImportSchema(in);
+                ApiModuleConfiguration.instanceOf().initRecordImportSchema(in);
             }
         }.run(RECORD_IMPORT_XSD);
     }

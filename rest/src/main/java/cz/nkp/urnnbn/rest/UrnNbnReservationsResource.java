@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.ApiConfiguration;
+import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -53,10 +53,10 @@ public class UrnNbnReservationsResource extends Resource {
     }
 
     private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
-        if (reservedUrnNbnList.size() > ApiConfiguration.instanceOf().getMaxReservedSizeToPrint()) {
-            return new UrnNbnReservationsBuilder(maxBatchSize, ApiConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList.size());
+        if (reservedUrnNbnList.size() > ApiModuleConfiguration.instanceOf().getMaxReservedSizeToPrint()) {
+            return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList.size());
         } else {
-            return new UrnNbnReservationsBuilder(maxBatchSize, ApiConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList);
+            return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList);
         }
     }
 
@@ -64,9 +64,9 @@ public class UrnNbnReservationsResource extends Resource {
     @Produces("application/xml")
     public Response createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
         int size = sizeStr == null
-                ? ApiConfiguration.instanceOf().getUrnReservationDefaultSize()
-                : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiConfiguration.instanceOf().getUrnReservationMaxSize());
-        if (ApiConfiguration.instanceOf().isServerReadOnly()) {
+                ? ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize()
+                : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
+        if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
             try {
