@@ -12,9 +12,11 @@ import java.util.logging.Logger;
  */
 public class App {
 
+    private static final String PROPERTIES_PATH = "/home/hanis/prace/resolver/resolver-legacy.properties";          
+            
     public static void main(String[] args) {
         try {
-            Configuration conf = new Configuration(new FileInputStream("/home/martin/secret/resolver-legacy.properties"));
+            Configuration conf = new Configuration(new FileInputStream(PROPERTIES_PATH));
             OracleDatabaseConnector connector = new OracleDatabaseConnector(conf);
             Connection connection = connector.getConnection();
             RecordImportBuilder builder = new RecordImportBuilder(connection, conf.getResultXmlDir(), conf.getUpdateDatastampsDir());
