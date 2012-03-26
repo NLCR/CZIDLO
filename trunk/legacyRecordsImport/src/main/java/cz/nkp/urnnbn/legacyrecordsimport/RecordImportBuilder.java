@@ -6,8 +6,11 @@ package cz.nkp.urnnbn.legacyrecordsimport;
 
 import cz.nkp.urnnbn.xml.commons.Namespaces;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +20,7 @@ import java.util.logging.Logger;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
+import nu.xom.Serializer;
 
 /**
  *
@@ -25,11 +29,14 @@ import nu.xom.Element;
 public class RecordImportBuilder {
 
     static String RESOLVER = Namespaces.RESOLVER;
+    private static String NAMESPACE_PREFIX = "r";
     private static String SPACE = " ";
     private static String TWO_SPACES = "  ";
+    private static String URNNBN_PREFIX = "urn:nbn:cz:";
     private final Connection con;
     private final File resultDir;
     private final File datastampDir;
+    
 
     public RecordImportBuilder(Connection con, File resultDir, File datastampDir) {
         this.con = con;
@@ -85,8 +92,7 @@ public class RecordImportBuilder {
 
     final Element appendElementWithContentIfNotNull(Element root, Object content, String elementName) {
         if (content != null) {
-            Element child = new Element(elementName, RESOLVER);
-            root.appendChild(child);
+            Element child = addElement(root, elementName);
             child.appendChild(String.valueOf(content));
             return child;
         } else {
@@ -95,7 +101,8 @@ public class RecordImportBuilder {
     }
 
     Element addElement(Element root, String elementName) {
-        Element child = new Element(elementName, RESOLVER);
+        Element child = new Element(NAMESPACE_PREFIX + ":" + elementName, RESOLVER);
+        //Element child = new Element(elementName, RESOLVER);
         root.appendChild(child);
         return child;
     }
@@ -104,8 +111,7 @@ public class RecordImportBuilder {
         String urnNbn = updateUrn(enhanceString(resultSet.getString("URNNBN")));
         String registrarCode = updateRegistrarCode(enhanceString(resultSet.getString("SIGLA")));
         checkIfFits(urnNbn, registrarCode);
-
-        Element importEl = new Element("import", RESOLVER);
+        Element importEl = new Element("r:import", RESOLVER);
         appendEntityElement(importEl, resultSet);
         appendDigitalDocumentElement(importEl, resultSet, urnNbn);
 
@@ -119,7 +125,7 @@ public class RecordImportBuilder {
 
     private String updateUrn(String original) {
         if (original.toLowerCase().startsWith("urn:nbn:cz:aba001")) {
-            return "tst001" + original.split("-")[1];
+            return "urn:nbn:cz:tst001-" + original.split("-")[1];
         } else {
             return original;
         }
@@ -132,9 +138,11 @@ public class RecordImportBuilder {
             return original;
         }
     }
+    
+    
 
-    private void checkIfFits(String urnNbn, String registrarCode) throws Exception {
-        if (!urnNbn.toLowerCase().startsWith(registrarCode.toLowerCase())) {
+    private void checkIfFits(String urnNbn, String registrarCode) throws Exception {      
+        if (!urnNbn.toLowerCase().substring(URNNBN_PREFIX.length()).startsWith(registrarCode.toLowerCase())) {
             throw new Exception(urnNbn + " dowsn't fit " + registrarCode);
         }
     }
@@ -143,9 +151,8 @@ public class RecordImportBuilder {
         if (original == null || original.isEmpty()) {
             return null;
         }
-        String normalizedSpaces = normalizeSpaces(original);
-        String noStartSpace = removeStartSpace(normalizedSpaces);
-        return removeEndSpace(noStartSpace);
+        String normalizedSpaces = normalizeSpaces(original);        
+        return normalizedSpaces.trim();
     }
 
     private String normalizeSpaces(String string) {
@@ -155,21 +162,6 @@ public class RecordImportBuilder {
         return string;
     }
 
-    private String removeStartSpace(String string) {
-        if (string.startsWith(SPACE)) {
-            return string.substring(1);
-        } else {
-            return string;
-        }
-    }
-
-    private String removeEndSpace(String string) {
-        if (string.endsWith(SPACE)) {
-            return string.substring(0, string.length() - 1);
-        } else {
-            return string;
-        }
-    }
 
     private void appendDigitalDocumentElement(Element importEl, ResultSet resultSet, String urnNbn) throws SQLException {
         Element docEl = addElement(importEl, "digitalDocument");
@@ -246,18 +238,12 @@ public class RecordImportBuilder {
     }
 
     private void saveDateStamps(ResultSet resultSet, String urnNbn) throws SQLException, IOException {
-        Document doc = datastamsDocument(resultSet, urnNbn);
-        File outFile = new File(datastampDir.getAbsolutePath() + File.separator + urnNbn + ".xml");
-        saveDocumentToFile(doc, outFile);
+        Document doc = datestampsDocument(resultSet, urnNbn);
+        String path = datastampDir.getAbsolutePath() + File.separator + urnNbn + ".xml";
+        saveDocumentToFile(doc, path);
     }
 
-    private void saveDocumentToFile(Document doc, File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        writer.write(doc.toXML());
-        writer.close();
-    }
-
-    private Document datastamsDocument(ResultSet resultSet, String urnNbn) throws SQLException {
+    private Document datestampsDocument(ResultSet resultSet, String urnNbn) throws SQLException {
         Element datastamps = new Element("dateStamps");
         datastamps.addAttribute(new Attribute("id", urnNbn));
         String urnAssigned = enhanceString(resultSet.getString("URN_prideleno"));
@@ -270,7 +256,14 @@ public class RecordImportBuilder {
     }
 
     private void saveImportDocToFile(Document document, String urnNbn) throws IOException {
-        File outfile = new File(resultDir.getAbsolutePath() + File.separator + urnNbn + ".xml");
-        saveDocumentToFile(document, outfile);
+        String path = resultDir.getAbsolutePath() + File.separator + urnNbn + ".xml";
+        saveDocumentToFile(document, path);
+    }
+    
+    private void saveDocumentToFile(Document document, String path) throws IOException {
+        FileOutputStream out = new FileOutputStream(path);
+        Serializer ser = new Serializer(out, "UTF-8");
+        ser.setIndent(2);
+        ser.write(document);         
     }
 }
