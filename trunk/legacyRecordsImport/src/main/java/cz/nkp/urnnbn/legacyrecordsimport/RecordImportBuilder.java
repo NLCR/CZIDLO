@@ -4,23 +4,24 @@
  */
 package cz.nkp.urnnbn.legacyrecordsimport;
 
+import cz.nkp.urnnbn.legacyrecordsimport.validation.ImportValidator;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
+import nu.xom.ParsingException;
 import nu.xom.Serializer;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -62,7 +63,7 @@ public class RecordImportBuilder {
                     + "    URNNBN.DIGITALNI_REPREZENTACE  r1 left outer join URNNBN.INSTITUCE  i"
                     + "    on r1.INSTITUCE=i.INSTITUCE_ID) r left outer join URNNBN.INTELEKTUALNI_ENTITA e"
                     + "                                      on r.INTELEKTUALNI_ENTITA=e.IE_ID "
-                    + "                                      where e.DRUH_DOKUMENTU='GP'";
+                    + "                                      where e.DRUH_DOKUMENTU='BK'";
             ResultSet resultSet = st.executeQuery(statement);
             buildImports(resultSet);
         } catch (SQLException ex) {
@@ -79,13 +80,9 @@ public class RecordImportBuilder {
                 Logger.getLogger(RecordImportBuilder.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (++counter > 3) {
+            if (++counter > 300) {
                 break;
             }
-
-
-
-
 
         }
     }
@@ -115,7 +112,9 @@ public class RecordImportBuilder {
         appendEntityElement(importEl, resultSet);
         appendDigitalDocumentElement(importEl, resultSet, urnNbn);
 
-        saveImportDocToFile(new Document(importEl), urnNbn);
+        Document importDocument = new Document(importEl);
+        validateDocument(importDocument, urnNbn);
+        saveImportDocToFile(importDocument, urnNbn);
         //k pozdejsi aktualizaci databaze mimo importy
         saveDateStamps(resultSet, urnNbn);
 
@@ -182,10 +181,11 @@ public class RecordImportBuilder {
         appendElementWithContentIfNotNull(docEl, contractNumber, "contractNumber");
         //format
         String ddFormat = enhanceString(resultSet.getString("FORMAT"));
-        if (ddFormat != null) {
+       //TODO - spatne schema nebo toto
+       //if (ddFormat != null) {
             Element technical = addElement(docEl, "technicalMetadata");
             appendElementWithContentIfNotNull(technical, ddFormat, "format");
-        }
+       // }
     }
 
     private void appendEntityElement(Element importEl, ResultSet resultSet) throws SQLException {
@@ -213,7 +213,9 @@ public class RecordImportBuilder {
 
         //issn
         String issn = enhanceString(resultSet.getString("ISSN"));
-        appendElementWithContentIfNotNull(entityEl, issn, "issn");
+        if(issn != null && issn.matches("\\d{4}-\\d{3}[0-9Xx]{1}")) {
+            appendElementWithContentIfNotNull(entityEl, issn, "issn");
+        }
 
         //menit za behu
         String documentType = "grafika";
@@ -230,17 +232,18 @@ public class RecordImportBuilder {
         String publishmentYear = enhanceString(resultSet.getString("ROK_VYDANI"));
         String publishmentPlace = enhanceString(resultSet.getString("MISTO_VYDANI"));
         if (publishmentPlace != null || publishmentYear != null) {
-            Element publication = addElement(importEl, "publication");
+            Element publication = addElement(entityEl, "publication");
             appendElementWithContentIfNotNull(publication, publishmentPlace, "place");
             appendElementWithContentIfNotNull(publication, publishmentYear, "year");
         }
+        
 
     }
 
     private void saveDateStamps(ResultSet resultSet, String urnNbn) throws SQLException, IOException {
-        Document doc = datestampsDocument(resultSet, urnNbn);
+        Document document = datestampsDocument(resultSet, urnNbn);
         String path = datastampDir.getAbsolutePath() + File.separator + urnNbn + ".xml";
-        saveDocumentToFile(doc, path);
+        saveDocumentToFile(document, path);
     }
 
     private Document datestampsDocument(ResultSet resultSet, String urnNbn) throws SQLException {
@@ -265,5 +268,20 @@ public class RecordImportBuilder {
         Serializer ser = new Serializer(out, "UTF-8");
         ser.setIndent(2);
         ser.write(document);         
+    }
+    
+    private void validateDocument(Document document, String urnNbn) {
+        System.out.println("validating " + urnNbn);
+        try {
+            ImportValidator.validate(document);
+        } catch (SAXException ex) {
+            Logger.getLogger(RecordImportBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(RecordImportBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParsingException ex) {
+            Logger.getLogger(RecordImportBuilder.class.getName()).log(Level.SEVERE, null, ex);        
+        } catch (IOException ex) {
+            Logger.getLogger(RecordImportBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
