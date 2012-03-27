@@ -52,7 +52,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode) throws DatabaseException {
         try {
-            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code.toString(), documentCode);
+            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code, documentCode);
             return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
         } catch (RecordNotFoundException ex) { //urn:nb not in table urn:nbn
             try {
@@ -67,7 +67,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                     }
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ABANDONED);
                 } catch (RecordNotFoundException ex3) { //urn:nbn not even ebandoned
-                    UrnNbn urn = new UrnNbn(code.toString(), documentCode, null);
+                    UrnNbn urn = new UrnNbn(code, documentCode, null);
                     return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
                 }
             }
