@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -28,7 +29,7 @@ public interface UrnNbnDAO {
     //this will be used when resolving or searching for new not assigned urn:nbn
     //todo: mozna optimalizovat a vyhnout se vyjimkam, pokud budu hledat neexistujici urn:nbn
     //tj. vytvorit pro tohle novou metodu tady
-    public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(String registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException;
+    public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException;
 
     //TODO: test
     //booked->active nebo active->abandoned

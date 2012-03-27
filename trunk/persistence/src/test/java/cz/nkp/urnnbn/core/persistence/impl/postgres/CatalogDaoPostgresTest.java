@@ -130,14 +130,16 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         Catalog inserted = builder.catalogWithoutIdAndRegistrarId();
         inserted.setRegistrarId(registrar.getId());
-        catalogDao.insertCatalog(inserted);
+        inserted.setId(catalogDao.insertCatalog(inserted));
         Catalog updated = new Catalog(inserted);
         updated.setName(inserted.getName() + "-new");
         updated.setUrlPrefix(inserted.getUrlPrefix() + "/new");
         catalogDao.updateCatalog(updated);
         Catalog fetched = catalogDao.getCatalogById(inserted.getId());
-        assertEquals(fetched, updated);
-        assertFalse(fetched.equals(inserted));
+        assertEquals(fetched.getName(), updated.getName());
+        assertEquals(fetched.getUrlPrefix(), updated.getUrlPrefix());
+        assertFalse(fetched.getName().equals(inserted.getName()));
+        assertFalse(fetched.getUrlPrefix().equals(inserted.getUrlPrefix()));
     }
 
     public void testUpdateCatalog_unknownRegistrarId() throws Exception {
@@ -150,7 +152,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         catalogDao.updateCatalog(updated);
         Catalog fetched = catalogDao.getCatalogById(inserted.getId());
         assertEquals(fetched, inserted);
-        assertFalse(fetched.equals(updated));
+        assertFalse(fetched.getRegistrarId()==updated.getRegistrarId());
     }
 
     /**

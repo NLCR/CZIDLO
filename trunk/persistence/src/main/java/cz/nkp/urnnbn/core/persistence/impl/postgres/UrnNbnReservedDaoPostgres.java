@@ -9,7 +9,6 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnReservedDAO;
-import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
@@ -55,7 +54,7 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode());
+                IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
                 throw new AlreadyPresentException(new IdPart[]{registrarCode, documentCode});
             } else {
@@ -105,6 +104,6 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
     @Override
     public void deleteUrn(UrnNbn urn) throws DatabaseException, RecordNotFoundException {
         //TODO: recordNotFoundException to nikdy nehaze, poresit
-        deleteRecordsByStringAndString(TABLE_NAME, ATTR_REGISTRAR_CODE, urn.getRegistrarCode(), ATTR_DOCUMENT_CODE, urn.getDocumentCode());
+        deleteRecordsByStringAndString(TABLE_NAME, ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString(), ATTR_DOCUMENT_CODE, urn.getDocumentCode());
     }
 }

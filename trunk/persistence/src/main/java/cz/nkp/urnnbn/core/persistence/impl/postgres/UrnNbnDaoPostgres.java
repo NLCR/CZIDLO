@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
@@ -54,7 +55,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
                 IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(urn.getDigDocId()));
-                IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode());
+                IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
                 throw new AlreadyPresentException(new IdPart[]{digRepId, registrarCode, documentCode});
             } else {
@@ -69,9 +70,9 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     @Override
-    public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(String registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException {
+    public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException {
         StatementWrapper wrapper = new SelectAllAttrsByStringAndStringAttrs(TABLE_NAME,
-                ATTR_REGISTRAR_CODE, registrarCode,
+                ATTR_REGISTRAR_CODE, registrarCode.toString(),
                 ATTR_DOCUMENT_CODE, documentCode);
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnRT());
         try {
@@ -91,7 +92,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     @Override
     public void deleteUrnNbn(UrnNbn urn) throws DatabaseException {
         StatementWrapper wrapper = new DeleteByStringString(TABLE_NAME,
-                ATTR_REGISTRAR_CODE, urn.getRegistrarCode(),
+                ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString(),
                 ATTR_DOCUMENT_CODE, urn.getDocumentCode());
         DaoOperation operation = new NoResultOperation(wrapper);
         try {

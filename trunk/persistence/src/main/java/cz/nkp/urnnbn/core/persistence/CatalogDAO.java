@@ -28,7 +28,7 @@ public interface CatalogDAO {
 
     public Catalog getCatalogById(long id) throws DatabaseException, RecordNotFoundException;
 
-    public List<Catalog> getCatalogs(long rgistrarId) throws DatabaseException, RecordNotFoundException;
+    public List<Catalog> getCatalogs(long registrarId) throws DatabaseException, RecordNotFoundException;
 
     public List<Catalog> getCatalogs() throws DatabaseException;
 

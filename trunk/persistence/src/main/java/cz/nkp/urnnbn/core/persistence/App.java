@@ -4,6 +4,7 @@ import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.User;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
@@ -119,8 +120,20 @@ public class App {
             superAdmin.setId(factory.userDao().insertUser(superAdmin));
             System.out.println("created user " + superAdmin.getLogin() + ":" + superAdmin.getPassword() + " as superadmin");
 
+            //registrar tst03
+            Registrar tst03 = registrarMap.get("tst03");
+
+            //tst03 Admin
+            User tst03Admin = new User();
+            tst03Admin.setLogin("tst03Admin");
+            tst03Admin.setPassword("tst03AdminPass");
+            tst03Admin.setEmail("admin@somewhere.cz");
+            tst03Admin.setId(factory.userDao().insertUser(tst03Admin));
+            factory.registrarDao().addAdminOfRegistrar(tst03.getId(), tst03Admin.getId());
+            System.out.println("created user " + tst03Admin.getLogin() + ":" + tst03Admin.getPassword() + " with access to registrar " + tst03.getName());
+
             //registrar mzk
-            Registrar mzk = registrarMap.get("tst002");
+            Registrar mzk = registrarMap.get("tst02");
 
             //mzkAdmin
             User mzkAdmin = new User();
@@ -153,7 +166,7 @@ public class App {
             factory.catalogDao().insertCatalog(alephMzk);
 
             //registrar nkp
-            Registrar nkp = registrarMap.get("tst001");
+            Registrar nkp = registrarMap.get("tst01");
 
             //catalog aleph nkp
             Catalog alephNkp = new Catalog();
@@ -392,8 +405,8 @@ public class App {
     private Map<String, Registrar> insertRegistrars() throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         Map<String, Registrar> result = new HashMap<String, Registrar>();
         //dvě testovací knihovny
-        addToMap(insertRegistrar("TST001", "Národní knihovna České republiky - test", "testovací registrátor", true), result);
-        addToMap(insertRegistrar("TST002", "Moravská zemská knihovna - test", "testovací registrátor"), result);
+        addToMap(insertRegistrar("TST01", "Národní knihovna České republiky - test", "testovací registrátor", true), result);
+        addToMap(insertRegistrar("TST02", "Moravská zemská knihovna - test", "testovací registrátor"), result);
         //MZK s realnými knihovnami
         Registrar mzk = insertRegistrar("BOA001", "Moravská zemská knihovna", "");
         insertCatalog("Aleph MZK", "http://aleph.mzk.cz", mzk);
@@ -425,7 +438,14 @@ public class App {
         insertRegistrar("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", "");
         insertRegistrar("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", "");
         insertRegistrar("ABE190", "Gender Studies, o.p.s. – knihovna", "");
+        //testovaci registratori
+        addToMap(insertRegistrar("TST03", "Testovací registrátor", ""), result);
+
         return result;
+    }
+
+    private void addToMap(Registrar registrar, Map<String, Registrar> result) {
+        result.put(registrar.getCode().toString(), registrar);
     }
 
     private Registrar insertRegistrar(String code, String name, String description) throws DatabaseException, AlreadyPresentException {
@@ -436,15 +456,11 @@ public class App {
         Registrar result = new Registrar();
         result.setName(name);
         result.setDescription(description);
-        result.setCode(code);
+        result.setCode(RegistrarCode.valueOf(code));
         result.setAllowedToRegisterFreeUrnNbn(allowedToRegisterFreeUrn);
         result.setId(factory.registrarDao().insertRegistrar(result));
         System.out.println("created registrar " + result.getName() + " with code " + result.getCode());
         return result;
-    }
-
-    private void addToMap(Registrar registrar, Map<String, Registrar> result) {
-        result.put(registrar.getCode(), registrar);
     }
 
     private DigitalLibrary insertLibrary(String name, String url, String decription, Registrar registrar) throws DatabaseException, RecordNotFoundException {

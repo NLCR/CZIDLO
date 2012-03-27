@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -68,7 +69,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         } catch (AlreadyPresentException e) {
             IdPart[] id = (IdPart[]) e.getPresentObjectId();
             assertEquals(String.valueOf(rep.getId()), id[0].getValue());
-            assertEquals(registrar.getCode(), id[1].getValue());
+            assertEquals(registrar.getCode().toString(), id[1].getValue());
             assertEquals(documentCode, id[2].getValue());
         }
     }
@@ -105,7 +106,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
         UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
         urnDao.insertUrnNbn(inserted);
-        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), documentCode);
+        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(),documentCode);
         assertEquals(inserted, fetched);
     }
     
@@ -117,7 +118,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
         urnDao.insertUrnNbn(inserted);
         try {
-            urnDao.getUrnNbnByRegistrarCodeAndDocumentCode("NOT_USED", documentCode);
+            urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode.valueOf("NOT99"), documentCode);
             fail();
         } catch (RecordNotFoundException ex) {
             //ok
