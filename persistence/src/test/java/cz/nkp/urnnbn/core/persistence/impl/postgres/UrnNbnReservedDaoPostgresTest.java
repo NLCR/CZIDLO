@@ -54,7 +54,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testInsertUrnNbn_unknownRegistrarId() throws Exception {
-        UrnNbn urn = new UrnNbn("aaa000", "000004", null);
+        UrnNbn urn = new UrnNbn(RegistrarCode.valueOf("aaa000"), "000004", null);
         try {
             urnBookedDao.insertUrnNbn(urn, ILLEGAL_ID);
             fail();
@@ -72,7 +72,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         //fetch
-        UrnNbn fetched = urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
+        UrnNbn fetched = urnBookedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertEquals(fetched.getRegistrarCode(), inserted.getRegistrarCode());
         assertEquals(fetched.getDocumentCode(), inserted.getDocumentCode());
         assertNotNull(fetched.getCreated());
@@ -97,7 +97,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
         urnBookedDao.insertUrnNbn(inserted, registrar.getId());
         try {
-            urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), "000005");
+            urnBookedDao.getUrn(inserted.getRegistrarCode(), "000005");
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -132,7 +132,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         urnBookedDao.deleteUrn(inserted);
         //fetch
         try {
-            urnBookedDao.getUrn(RegistrarCode.valueOf(inserted.getRegistrarCode()), inserted.getDocumentCode());
+            urnBookedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
             fail();
         } catch (RecordNotFoundException e) {
             //ok

@@ -41,7 +41,7 @@ public class InsertUrnNbnReserved implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, registrarId);
-            st.setString(2, urn.getRegistrarCode());
+            st.setString(2, urn.getRegistrarCode().toString());
             st.setString(3, urn.getDocumentCode());
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(4, now);

@@ -36,7 +36,7 @@ public class InsertRegistrar implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, registrar.getId());
-            st.setString(2, registrar.getCode());
+            st.setString(2, registrar.getCode().toString());
             st.setBoolean(3, registrar.isAllowedToRegisterFreeUrnNbn());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu

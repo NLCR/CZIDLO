@@ -70,7 +70,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
 
     public void testInsertRegistrarUrnCodeCollision() throws Exception {
         Registrar first = builder.registrarWithoutId();
-        String code = "clsn";
+        RegistrarCode code = RegistrarCode.valueOf("clsn");
         first.setCode(code);
         registrarDao.insertRegistrar(first);
         Registrar second = builder.registrarWithoutId();
@@ -79,14 +79,14 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.insertRegistrar(second);
             fail();
         } catch (AlreadyPresentException ex) {
-            assertEquals(code, ((IdPart) ex.getPresentObjectId()).getValue());
+            assertEquals(code.toString(), ((IdPart) ex.getPresentObjectId()).getValue());
         }
     }
 
     public void testGetRegistrarByCode() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
         registrarDao.insertRegistrar(inserted);
-        RegistrarCode code = RegistrarCode.valueOf(inserted.getCode());
+        RegistrarCode code = inserted.getCode();
         Registrar fetched = registrarDao.getRegistrarByCode(code);
         assertEquals(fetched, inserted);
     }
@@ -192,18 +192,18 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     public void testUpdateRegistrar_tryUpdatingUrnRegistrarCode() throws Exception {
         //insert first registrar
         Registrar first = builder.registrarWithoutId();
-        first.setCode("boa001");
+        first.setCode(RegistrarCode.valueOf("boa001"));
         registrarDao.insertRegistrar(first);
         //insert second registrar
         Registrar second = builder.registrarWithoutId();
-        second.setCode("boa002");
+        second.setCode(RegistrarCode.valueOf("boa002"));
         registrarDao.insertRegistrar(second);
         //update second registrar to cause collision
-        second.setCode("boa001");
+        second.setCode(RegistrarCode.valueOf("boa001"));
         registrarDao.updateRegistrar(second);
         //fetch second registrar that has been updated
         Registrar fetchedSecond = registrarDao.getRegistrarById(second.getId());
-        assertEquals("boa002", fetchedSecond.getCode());
+        assertEquals(RegistrarCode.valueOf("boa002"), fetchedSecond.getCode());
     }
 
     public void testUpdateRegistrar_unknownRegistrarId() throws Exception {

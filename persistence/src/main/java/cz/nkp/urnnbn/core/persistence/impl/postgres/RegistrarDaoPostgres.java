@@ -87,7 +87,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             return null;
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart param = new IdPart(ATTR_CODE, registrar.getCode());
+                IdPart param = new IdPart(ATTR_CODE, registrar.getCode().toString());
                 throw new AlreadyPresentException(param);
             } else {
                 throw new DatabaseException(ex);
