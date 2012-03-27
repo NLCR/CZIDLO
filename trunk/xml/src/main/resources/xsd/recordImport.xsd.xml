@@ -362,7 +362,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- urn:nbn -->
     <xs:simpleType name="urnNbnType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="urn:nbn:cz:[A-Za-z]{3}[0-9]{3}\-[A-Za-z0-9]{6}"/>
+            <xs:pattern value="urn:nbn:cz:[A-Za-z0-9]{2,6}\-[A-Za-z0-9]{6}"/>
         </xs:restriction>
     </xs:simpleType>
     
