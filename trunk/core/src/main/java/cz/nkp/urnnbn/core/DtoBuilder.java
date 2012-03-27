@@ -120,7 +120,7 @@ public class DtoBuilder {
         Registrar registrar = new Registrar();
         registrar.setName("MZK");
         registrar.setDescription("Moravská zemská knihovna");
-        registrar.setCode("BOA" + nextUrnPrefixSuffix());
+        registrar.setCode(RegistrarCode.valueOf("BOA" + nextUrnPrefixSuffix()));
         return registrar;
     }
 

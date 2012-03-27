@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import junit.framework.TestCase;
 
 /**
@@ -29,13 +28,36 @@ public class UrnNbnTest extends TestCase {
 
     public void testValueOf_ok() {
         UrnNbn urn = UrnNbn.valueOf("urn:nbn:cz:aba001-123456");
-        assertEquals(urn.getRegistrarCode(), "aba001");
+        assertEquals(urn.getRegistrarCode().toString(), "aba001");
         assertEquals(urn.getDocumentCode(), "123456");
+        UrnNbn urn2 = UrnNbn.valueOf("urn:nbn:cz:ab-123456");
+        assertEquals(urn2.getRegistrarCode().toString(), "ab");
+        assertEquals(urn2.getDocumentCode(), "123456");
+
+        UrnNbn urn21 = UrnNbn.valueOf("urn:nbn:cz:a1-123456");
+        assertEquals(urn21.getRegistrarCode().toString(), "a1");
+        assertEquals(urn21.getDocumentCode(), "123456");
+
+        UrnNbn urn3 = UrnNbn.valueOf("urn:nbn:cz:aba-123456");
+        assertEquals(urn3.getRegistrarCode().toString(), "aba");
+        assertEquals(urn3.getDocumentCode(), "123456");
+
+        UrnNbn urn31 = UrnNbn.valueOf("urn:nbn:cz:ab1-123456");
+        assertEquals(urn31.getRegistrarCode().toString(), "ab1");
+        assertEquals(urn31.getDocumentCode(), "123456");
+
+        UrnNbn urn4 = UrnNbn.valueOf("urn:nbn:cz:aba0-123456");
+        assertEquals(urn4.getRegistrarCode().toString(), "aba0");
+        assertEquals(urn4.getDocumentCode(), "123456");
+
+        UrnNbn urn5 = UrnNbn.valueOf("urn:nbn:cz:aba00-123456");
+        assertEquals(urn5.getRegistrarCode().toString(), "aba00");
+        assertEquals(urn5.getDocumentCode(), "123456");
     }
 
     public void testValueOf_ok_inUpperCase() {
         UrnNbn urn = UrnNbn.valueOf("URN:NBN:CZ:ABA001-123456");
-        assertEquals(urn.getRegistrarCode(), "aba001");
+        assertEquals(urn.getRegistrarCode().toString(), "aba001");
         assertEquals(urn.getDocumentCode(), "123456");
     }
 
@@ -77,19 +99,19 @@ public class UrnNbnTest extends TestCase {
 
     public void testValueOf_incorrectRegistrarCode() {
         try {
-            UrnNbn.valueOf("urn:nbn:cz:ab001-123456");
+            UrnNbn.valueOf("urn:nbn:cz:a-123456");
+            fail();
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+        try {
+            UrnNbn.valueOf("urn:nbn:cz:1-123456");
             fail();
         } catch (IllegalArgumentException e) {
             //ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:abcd001-123456");
-            fail();
-        } catch (IllegalArgumentException e) {
-            //ok
-        }
-        try {
-            UrnNbn.valueOf("urn:nbn:cz:aba01-123456");
             fail();
         } catch (IllegalArgumentException e) {
             //ok

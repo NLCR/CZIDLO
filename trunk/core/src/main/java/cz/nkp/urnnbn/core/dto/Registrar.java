@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
+
 /**
  *
  * @author Martin Řehánek
  */
 public class Registrar extends Archiver {
 
-    private String code;
+    private RegistrarCode code;
     private boolean allowedToRegisterFreeUrnNbn = false;
 
     public Registrar() {
@@ -22,12 +24,12 @@ public class Registrar extends Archiver {
         code = original.getCode();
     }
 
-    public String getCode() {
+    public RegistrarCode getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code.toLowerCase();
+    public void setCode(RegistrarCode code) {
+        this.code = code;
     }
 
     public boolean isAllowedToRegisterFreeUrnNbn() {

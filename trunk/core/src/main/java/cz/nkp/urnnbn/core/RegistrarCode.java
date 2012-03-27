@@ -4,6 +4,9 @@
  */
 package cz.nkp.urnnbn.core;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Martin Řehánek
@@ -12,20 +15,29 @@ public class RegistrarCode {
 
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 6;
+    private static final Pattern PATTERN = Pattern.compile("\\w*");
     private final String value;
 
     public static RegistrarCode valueOf(String string) {
         if (string.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("registrat code to short, must be at least " + MIN_LENGTH + " characters long");
+            throw new IllegalArgumentException("registrat code '" + string + "' to short, must be at least " + MIN_LENGTH + " characters long");
         }
         if (string.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("registrat code to long, must be at most " + MAX_LENGTH + " characters long");
+            throw new IllegalArgumentException("registrat code '" + string + "' to long, must be at most " + MAX_LENGTH + " characters long");
+        }
+        if (!containsOnlyWordCharacters(string)) {
+            throw new IllegalArgumentException("registrat code '" + string + "' contains illegal character");
         }
         return new RegistrarCode(string);
     }
 
+    private static boolean containsOnlyWordCharacters(String string) {
+        Matcher matcher = PATTERN.matcher(string);
+        return matcher.matches();
+    }
+
     private RegistrarCode(String value) {
-        this.value = value;
+        this.value = value.toLowerCase();
     }
 
     @Override
