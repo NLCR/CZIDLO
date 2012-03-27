@@ -52,7 +52,7 @@
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- předem rezervané urn:nbn -->
-        <r:urnNbn>urn:nbn:cz:tst002-00003b</r:urnNbn>
+        <r:urnNbn>urn:nbn:cz:tst02-00003b</r:urnNbn>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">3234</r:id>

@@ -27,7 +27,7 @@ public class RegistrarBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("registrar", RESOLVER);
-        Attribute type = new Attribute("code", registrar.getCode());
+        Attribute type = new Attribute("code", registrar.getCode().toString());
         root.addAttribute(type);
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");
         appendElementWithContentIfNotNull(root, registrar.getDescription(), "description");
