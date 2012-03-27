@@ -407,40 +407,51 @@ public class App {
         //dvě testovací knihovny
         addToMap(insertRegistrar("TST01", "Národní knihovna České republiky - test", "testovací registrátor", true), result);
         addToMap(insertRegistrar("TST02", "Moravská zemská knihovna - test", "testovací registrátor"), result);
-        //MZK s realnými knihovnami
-        Registrar mzk = insertRegistrar("BOA001", "Moravská zemská knihovna", "");
+        //ostatní registrátoři z databáze starého Resolveru
+        Registrar nk =
+                insertRegistrar("ABA001", "Národní knihovna České republiky", "", true);
+        insertRegistrar("ABA006", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABA007", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABA008", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABA010", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABE045", "Vojenský historický ústav – knihovna", "");
+        insertRegistrar("ABC135", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABE190", "Gender Studies, o.p.s. – knihovna", "");
+        insertRegistrar("ABE310", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABE323", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABE336", "název chybí", "TODO:doplnit název");
+        insertRegistrar("ABE343", "Národní archiv v Praze – knihovna", "");
+        Registrar mzk =
+                insertRegistrar("BOA001", "Moravská zemská knihovna", "");
+        insertRegistrar("BVE301", "Regionální muzeum v Mikulově", "");
+        insertRegistrar("BVE302", "Regionální muzeum v Mikulově", "");
+        insertRegistrar("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", "");
+        insertRegistrar("GHE302", "Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB", "");
+        insertRegistrar("HKA001", "název chybí", "TODO:doplnit název");
+        insertRegistrar("HKE302", "Muzeum východních Čech v Hradci Králové - společenskovědní knihovna", "");
+        insertRegistrar("JHE301", "Muzeum Jindřichohradecka – odborná knihovna", "");
+        insertRegistrar("KMG001", "název chybí", "TODO:doplnit název");
+        insertRegistrar("KTG503", "Městská knihovna Horažďovice", "");
+        insertRegistrar("KVE303", "Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna", "");
+        insertRegistrar("KVG001", "název chybí", "TODO:doplnit název");
+        insertRegistrar("LIA001", "Krajská vědecká knihovna v Liberci", "");
+        insertRegistrar("LID001", "Technická univerzita v Liberci - Univerzitní knihovna", "");
+        insertRegistrar("OLA001", "Vědecká knihovna v Olomouci", "");
+        insertRegistrar("OSA001", "název chybí", "TODO:doplnit název");
+        insertRegistrar("PAE302", "Státní okresní archiv Pardubice", "");
+        insertRegistrar("PNA001", "Studijní a vědecká knihovna Plzeňského kraje", "");
+        insertRegistrar("ROE301", "Muzeum Dr.Bohuslava Horáka v Rokycanech", "");
+        insertRegistrar("ULG001", "Severočeská vědecká knihovna v Ústí nad Labem", "");
+        insertRegistrar("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", "");
+        //testovaci registratori
+        addToMap(insertRegistrar("TST03", "Testovací registrátor", ""), result);
+        //katalogy a knihovny
+        //TODO: pridat dalsi dig. knihovny, nakonec neni vsechno z boa001
+        insertCatalog("Aleph NKP", "http://aleph.nkp.cz", nk);
         insertCatalog("Aleph MZK", "http://aleph.mzk.cz", mzk);
         insertLibrary("Kramerius 4", "http://kramerius.mzk.cz", "aktuální verze knihovny Kramerius", mzk);
         insertLibrary("Kramerius 3", "http://kramerius3.mzk.cz", "předchozí verze knihovny Kramerius", mzk);
-        //NKP
-        Registrar nk = insertRegistrar("ABA001", "Národní knihovna České republiky", "", true);
-        insertCatalog("Aleph NKP", "http://aleph.nkp.cz", nk);
-        //jedina realne pouzivana knihovna je kramerius nkp s pouvodnim id 4
         insertLibrary("Kramerius Národní knihovna ČR", "http://kramerius.nkp.cz", "kod_rd:dkknkcr", nk);
-        //proto dalsi knihovny ani pridavat nebudu
-        //ostatní registrátoři z databáze starého Resolveru
-        insertRegistrar("ABE045", "Vojenský historický ústav – knihovna", "");
-        insertRegistrar("OLA001", "Vědecká knihovna v Olomouci", "");
-        insertRegistrar("LID001", "Technická univerzita v Liberci - Univerzitní knihovna", "");
-        insertRegistrar("PNA001", "Studijní a vědecká knihovna Plzeňského kraje", "");
-        insertRegistrar("PAE302", "Státní okresní archiv Pardubice", "");
-        insertRegistrar("BVE301", "Regionální muzeum v Mikulově", "");
-        insertRegistrar("ULG001", "Severočeská vědecká knihovna v Ústí nad Labem", "");
-        insertRegistrar("BVE302", "Regionální muzeum v Mikulově", "");
-        insertRegistrar("ABE343", "Národní archiv v Praze – knihovna", "");
-        insertRegistrar("HKE302", "Muzeum východních Čech v Hradci Králové - společenskovědní knihovna", "");
-        insertRegistrar("JHE301", "Muzeum Jindřichohradecka – odborná knihovna", "");
-        insertRegistrar("ROE301", "Muzeum Dr.Bohuslava Horáka v Rokycanech", "");
-        insertRegistrar("KTG503", "Městská knihovna Horažďovice", "");
-        insertRegistrar("GHE302", "Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB", "");
-        insertRegistrar("KVE303", "Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna", "");
-        insertRegistrar("LIA001", "Krajská vědecká knihovna v Liberci", "");
-        insertRegistrar("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", "");
-        insertRegistrar("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", "");
-        insertRegistrar("ABE190", "Gender Studies, o.p.s. – knihovna", "");
-        //testovaci registratori
-        addToMap(insertRegistrar("TST03", "Testovací registrátor", ""), result);
-
         return result;
     }
 
