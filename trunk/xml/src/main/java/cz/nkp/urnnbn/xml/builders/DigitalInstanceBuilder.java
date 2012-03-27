@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -35,6 +36,9 @@ public class DigitalInstanceBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("digitalInstance", RESOLVER);
+        //todo: dodat do databáze atribut active a při odstraňování nastavit na false
+        //taky dodat datum změny a vypisovat jako "deleted" pokud nebude null (tj. odstraněno)
+        root.addAttribute(new Attribute("active", "true"));
         appendIdentifierElement(root, IDTYPE_INTERNAL, instance.getId());
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
         appendElementWithContentIfNotNull(root, instance.getPublished(), "published");
