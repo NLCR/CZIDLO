@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.joda.time.DateTime;
@@ -15,10 +16,10 @@ import org.joda.time.DateTime;
 public class UrnNbn {
 
     //urn:nbn:cz:aba001-123456
-    private static Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}|URN:NBN:CZ:[a-zA-z]{3}\\d{3}\\-[a-zA-Z0-9]{6}");
+    private static final String PREFIX = "urn:nbn:cz:";
+    private static final Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}",Pattern.CASE_INSENSITIVE);
     private final Long digDocId;
-    //TODO: tady rovnou nahradit instanci RegistrarCode
-    private final String registrarCode;
+    private final RegistrarCode registrarCode;
     private final String documentCode;
     private final DateTime created;
 
@@ -28,7 +29,7 @@ public class UrnNbn {
      * @param documentCode
      * @param digDocId 
      */
-    public UrnNbn(String registrarCode, String documentCode, Long digDocId) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode;
         this.digDocId = digDocId;
@@ -42,8 +43,8 @@ public class UrnNbn {
      * @param digDocId
      * @param created 
      */
-    public UrnNbn(String registrarCode, String documentCode, Long digDocId, DateTime created) {
-        this.registrarCode = registrarCode.toLowerCase();
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created) {
+        this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
         this.created = created;
@@ -57,7 +58,7 @@ public class UrnNbn {
         return digDocId;
     }
 
-    public String getRegistrarCode() {
+    public RegistrarCode getRegistrarCode() {
         return registrarCode;
     }
 
@@ -67,7 +68,7 @@ public class UrnNbn {
 
     @Override
     public String toString() {
-        return "urn:nbn:cz:" + registrarCode + "-" + documentCode;
+        return PREFIX + registrarCode + "-" + documentCode;
     }
 
     public static UrnNbn valueOf(String string) {
@@ -76,9 +77,11 @@ public class UrnNbn {
         if (!matcher.matches()) {
             throw new IllegalArgumentException("'" + string + "' doesn't match " + URN_NBN_PATTERN);
         }
-        String institutionCode = string.substring(11, 17).toLowerCase();
-        String documentCode = string.substring(18, 24).toLowerCase();
-        return new UrnNbn(institutionCode, documentCode, null);
+        String codes = string.substring(PREFIX.length());
+        String[] codesSplit = codes.split("-");
+        RegistrarCode registrarCode = RegistrarCode.valueOf(codesSplit[0]);
+        String documentCode = codesSplit[1].toLowerCase();
+        return new UrnNbn(registrarCode, documentCode, null);
     }
 
     @Override

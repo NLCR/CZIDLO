@@ -40,6 +40,7 @@ public class Catalog implements IdentifiableByLongAttribute {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
