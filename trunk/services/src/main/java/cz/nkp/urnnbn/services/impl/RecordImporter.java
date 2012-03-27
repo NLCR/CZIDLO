@@ -98,7 +98,7 @@ public class RecordImporter {
 
     private void checkUrnBelongsToRegistrar(UrnNbn urn) throws UrnNotFromRegistrarException {
         RegistrarCode code = data.getRegistrarCode();
-        if (!urn.getRegistrarCode().equals(code.toString())) {
+        if (!urn.getRegistrarCode().equals(code)) {
             throw new UrnNotFromRegistrarException(code, urn);
         }
     }
@@ -115,9 +115,8 @@ public class RecordImporter {
     }
 
     private boolean isReserved(UrnNbn urn) {
-        RegistrarCode registrarCode = RegistrarCode.valueOf(urn.getRegistrarCode());
         try {
-            factory.urnReservedDao().getUrn(registrarCode, urn.getDocumentCode());
+            factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
             //when RecordNotFound is not thrown the urn:nbn is reserved
             return true;
         } catch (DatabaseException ex) {
@@ -308,8 +307,7 @@ public class RecordImporter {
 
     private void putBackToReservedTable(UrnNbn urn) {
         try {
-            RegistrarCode registrarCode = RegistrarCode.valueOf(urn.getRegistrarCode());
-            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(urn.getRegistrarCode());
             factory.urnReservedDao().insertUrnNbn(urn, registrar.getId());
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, "rollback: Failed insert " + urn + " into the reserved table", ex);
