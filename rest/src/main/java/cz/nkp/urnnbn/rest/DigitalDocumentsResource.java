@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.core.DigDocIdType;
-import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -143,8 +142,7 @@ public class DigitalDocumentsResource extends Resource {
         result.setOriginator(unmarshaller.getOriginator());
         result.setSourceDoc(unmarshaller.getSourceDocument());
         //registrar        
-        RegistrarCode sigla = RegistrarCode.valueOf(registrar.getCode());
-        result.setRegistrarCode(sigla);
+        result.setRegistrarCode(registrar.getCode());
         //archiver
         Long archiverId = unmarshaller.getArchiverId() == null
                 ? registrar.getId() : unmarshaller.getArchiverId();

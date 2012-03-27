@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.rest.exceptions;
 
 import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import javax.ws.rs.core.Response.Status;
 
@@ -26,9 +27,9 @@ public class UnknownDigitalDocumentException extends RestException {
                 "There is no digital document with id '" + digRepId + "'");
     }
 
-    public UnknownDigitalDocumentException(String sigla, DigDocIdType idType, String idValue) {
+    public UnknownDigitalDocumentException(RegistrarCode code, DigDocIdType idType, String idValue) {
         super(Status.NOT_FOUND, errorCode,
-                "Registrar with sigla " + sigla
+                "Registrar with code " + code
                 + " doesn't register digital document with identifier of type '" + idType.toString()
                 + "' and value '" + idValue + "'");
     }

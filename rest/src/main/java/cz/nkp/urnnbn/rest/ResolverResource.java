@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -33,8 +32,8 @@ public class ResolverResource extends Resource {
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
-            RegistrarCode sigla = RegistrarCode.valueOf(urnParsed.getRegistrarCode());
-            UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(sigla, urnParsed.getDocumentCode());
+            UrnNbnWithStatus fetched = dataAccessService().
+                    urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
             switch (fetched.getStatus()) {
                 case ACTIVE:
                     DigitalDocument rep = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
