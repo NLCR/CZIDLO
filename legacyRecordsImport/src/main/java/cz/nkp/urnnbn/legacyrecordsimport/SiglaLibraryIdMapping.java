@@ -51,7 +51,11 @@ public class SiglaLibraryIdMapping {
         mapping.put("zlg001", Integer.valueOf(34));
     }
 
-    static int getLibraryId(String sigla) {
-        return mapping.get(sigla);
+    static int getLibraryId(String sigla) throws SiglaNotFoundException {
+        String s = sigla.toLowerCase();
+        if(!mapping.containsKey(s)) {
+            throw new SiglaNotFoundException();
+        }
+        return mapping.get(s);
     }
 }
