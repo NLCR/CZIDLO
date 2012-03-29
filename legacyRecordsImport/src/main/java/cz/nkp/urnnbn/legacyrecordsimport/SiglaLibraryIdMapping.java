@@ -54,7 +54,7 @@ public class SiglaLibraryIdMapping {
     static int getLibraryId(String sigla) throws SiglaNotFoundException {
         String s = sigla.toLowerCase();
         if(!mapping.containsKey(s)) {
-            throw new SiglaNotFoundException();
+            throw new SiglaNotFoundException("EXC: " + "sigla " +  sigla + " not found");
         }
         return mapping.get(s);
     }

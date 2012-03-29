@@ -29,6 +29,14 @@ import org.xml.sax.SAXException;
  */
 public class RecordImportBuilder {
 
+    public static final String DOCUMENT_TYPE_BOOK = "kniha";
+    public static final String DOCUMENT_TYPE_MAP = "mapa";
+    public static final String DOCUMENT_TYPE_MUSIC = "hudebnina";
+    public static final String DOCUMENT_TYPE_GRAPHICS = "grafika";
+    public static final String DOCUMENT_TYPE_PERIODICAL = "noviny";
+    public static final String DOCUMENT_TYPE_PERIODICAL_VOLUME = "rocnik novin";
+    
+
     static String RESOLVER = Namespaces.RESOLVER;
     private static String NAMESPACE_PREFIX = "r";
     private static String SPACE = " ";
@@ -63,8 +71,8 @@ public class RecordImportBuilder {
                     + "    URNNBN.DIGITALNI_REPREZENTACE  r1 left outer join URNNBN.INSTITUCE  i"
                     + "    on r1.INSTITUCE=i.INSTITUCE_ID) r left outer join URNNBN.INTELEKTUALNI_ENTITA e"
                     + "                                      on r.INTELEKTUALNI_ENTITA=e.IE_ID "
-                    + " left join URNNBN.ZVEREJNENO z on r.DR_ID =z.DIGITALNI_REPREZENTACE"
-                    + "                                      where e.DRUH_DOKUMENTU='BK'";
+                    + " left join URNNBN.ZVEREJNENO z on r.DR_ID =z.DIGITALNI_REPREZENTACE";
+                    //+ "                                      where e.DRUH_DOKUMENTU='BK'";
             ResultSet resultSet = st.executeQuery(statement);
             buildImports(resultSet);
         } catch (SQLException ex) {
@@ -77,16 +85,15 @@ public class RecordImportBuilder {
         while (resultSet.next()) {
             try {
                 buildImport(resultSet);
-            } catch (SiglaNotFoundException ex) {
-                System.out.println("EXC:SIGLA " + ex.getMessage());
             } catch (IOException ex) {
                 System.out.println("EXC:IO " + ex.getMessage());
             }
+            System.out.println(counter++);
 
 
-            if (++counter > 800) {
-                break;
-            }
+//            if (++counter > 800) {
+//                break;
+//            }
 
         }
     }
@@ -108,31 +115,86 @@ public class RecordImportBuilder {
         return child;
     }
 
-    private void buildImport(ResultSet resultSet) throws SQLException, SiglaNotFoundException, IOException {
+    private void buildImport(ResultSet resultSet) throws SQLException, IOException {
         //String urnNbn = updateUrn(enhanceString(resultSet.getString("URNNBN")));
         //String registrarCode = updateRegistrarCode(enhanceString(resultSet.getString("SIGLA")));
         String urnNbn = enhanceString(resultSet.getString("URNNBN"));
+        //if(urnNbn)
         String registrarCode = enhanceString(resultSet.getString("SIGLA"));
-        checkIfFits(urnNbn, registrarCode);
+        try {
+            checkIfFits(urnNbn, registrarCode);
+        } catch (SiglaNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            return;
+            
+        }
         Element importEl = new Element("r:import", RESOLVER);
-        appendEntityElement(importEl, resultSet);
+        String documentTypeString = resultSet.getString("DRUH_DOKUMENTU");
+        String issn = resultSet.getString("ISSN");
+        String periodicalVolume = resultSet.getString("ROCNIK_PERIODIKA");
+        if(documentTypeString == null) {
+            return;
+        }
+        String documentType = "";
+        if(documentTypeString.equals("BK") && periodicalVolume == null && issn == null) {
+            documentType = DOCUMENT_TYPE_BOOK;
+        } else if((documentTypeString.equals("BK") || documentTypeString.equals("SE")) && periodicalVolume != null) {
+            documentType = DOCUMENT_TYPE_PERIODICAL_VOLUME;
+        } else if((documentTypeString.equals("BK") || documentTypeString.equals("SE")) && periodicalVolume == null) {
+            documentType = DOCUMENT_TYPE_PERIODICAL;
+        } else if(documentTypeString.equals("GP")) {
+            documentType = DOCUMENT_TYPE_PERIODICAL;
+        }else if(documentTypeString.equals("MU")) {
+            documentType = DOCUMENT_TYPE_MUSIC;
+        }else if(documentTypeString.equals("MP")) {
+            documentType = DOCUMENT_TYPE_MAP;
+        }
+        
+        
+        appendEntityElement(importEl, resultSet, documentType);
         appendDigitalDocumentElement(importEl, resultSet, urnNbn);
 
         Document importDocument = new Document(importEl);
         validateDocument(importDocument, urnNbn);
-        saveImportDocToFile(importDocument, urnNbn,registrarCode);
+        
+        
+        String path = resultDir.getAbsolutePath() + File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + ".xml";
+        saveDocumentToFile(importDocument, path);
+    
         //k pozdejsi aktualizaci databaze mimo importy
-        saveDateStamps(resultSet, urnNbn);
+        //saveDateStamps(resultSet, urnNbn);
 
-        //patri k ie a stejne tam nic moc neni, tak asi zahodit
+        //patri k ie a stejne tam nic moc neni, tak asi zahodit        
         String accessibility = enhanceString(resultSet.getString("DOSTUPNOST"));
+        if(accessibility != null) {
+            accessibility = "volně přístupné";
+        }
         String url = enhanceString(resultSet.getString("URL"));
         String format = enhanceString(resultSet.getString("FORMAT"));
-        buildDigitalInstanceDocument(url, registrarCode, format, accessibility, urnNbn);
+        try {
+            buildDigitalInstanceDocument(url, registrarCode, format, accessibility, urnNbn, documentType);
+        } catch (SiglaNotFoundException ex) {
+            System.out.println("");
+        }
+            
+        
     }
     
     private void buildDigitalInstanceDocument(String url, String registrarCode, String format, 
-            String accessibility, String urnNbn) throws SiglaNotFoundException, IOException {
+            String accessibility, String urnNbn, String documentType) throws SiglaNotFoundException, IOException {
+        
+        if(url == null) { 
+            return;
+        }
+        if(url.startsWith("\"")) {
+            System.out.println("oprava url " + url);
+            url = url.substring(1, url.length());
+            System.out.println("oprava url " + url);
+        }
+        if(!url.startsWith("http://")) {
+            System.out.println("spatne url " + url);
+            return;
+        }
         int digitalLibraryId = SiglaLibraryIdMapping.getLibraryId(registrarCode);
 
         Element rootEl = new Element("r:digitalInstance", RESOLVER);
@@ -145,7 +207,8 @@ public class RecordImportBuilder {
 
         Document instanceDocument = new Document(rootEl);
         
-        String path = resultDir.getAbsolutePath() + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
+        //String path = resultDir.getAbsolutePath()+ File.separator + "instances"+ File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
+        String path = resultDir.getAbsolutePath()+ getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
         saveDocumentToFile(instanceDocument, path);
     }        
     
@@ -169,8 +232,11 @@ public class RecordImportBuilder {
     
 
     private void checkIfFits(String urnNbn, String registrarCode) throws SiglaNotFoundException {      
+        if(urnNbn.length() < 12) { 
+            throw new SiglaNotFoundException("EXC:urnnmb not valid: " + urnNbn);
+        }
         if (!urnNbn.toLowerCase().substring(URNNBN_PREFIX.length()).startsWith(registrarCode.toLowerCase())) {
-            throw new SiglaNotFoundException(urnNbn + " dowsn't fit " + registrarCode);
+            throw new SiglaNotFoundException("EXC:" + urnNbn + " dowsn't fit " + registrarCode);
         }
     }
 
@@ -215,13 +281,24 @@ public class RecordImportBuilder {
             appendElementWithContentIfNotNull(technical, ddFormat, "format");
        // }
     }
+    
+    
+    private String getEntityType(String docomuntType) {
+        if(DOCUMENT_TYPE_BOOK.equals(docomuntType)) {
+            return "monograph";
+        }
+        if(DOCUMENT_TYPE_PERIODICAL.equals(docomuntType)) {
+            return "periodical";
+        }
+        if(DOCUMENT_TYPE_PERIODICAL_VOLUME.equals(docomuntType)) {
+            return "periodicalVolume";
+        }
+        return "otherEntity";        
+    }
 
-    private void appendEntityElement(Element importEl, ResultSet resultSet) throws SQLException {
-        //nepouzit, v selektu
-        //String documentType = resultSet.getString("DRUH_DOKUMENTU");
-
-        //intelectual entity type
-        String entityType = "monograph";
+    private void appendEntityElement(Element importEl, ResultSet resultSet, String documentType) throws SQLException {
+                
+        String entityType = getEntityType(documentType);
         Element entityEl = addElement(importEl, entityType);
 
         //title info
@@ -229,11 +306,18 @@ public class RecordImportBuilder {
 
         //ruzne mapovani u ruznych IE (issue title napr. )
         String entityTitle = enhanceString(resultSet.getString("NAZEV"));
-        appendElementWithContentIfNotNull(titleInfo, entityTitle, "title");
+        
+        if(documentType.equals(DOCUMENT_TYPE_PERIODICAL_VOLUME)) {
+            String periodicalVolume = resultSet.getString("ROCNIK_PERIODIKA");
+            appendElementWithContentIfNotNull(titleInfo, entityTitle, "periodicalTitle");
+            appendElementWithContentIfNotNull(titleInfo, "ročník " + periodicalVolume, "volumeTitle");
+        } else {
+            appendElementWithContentIfNotNull(titleInfo, entityTitle, "title");
+        }
 
         //volumeTitle
-        String periodicalVolume = resultSet.getString("ROCNIK_PERIODIKA");
-        appendElementWithContentIfNotNull(titleInfo, periodicalVolume, "volumeTitle");
+        
+        //appendElementWithContentIfNotNull(titleInfo, periodicalVolume, "volumeTitle");
 
         //isbn
         String ccnb = enhanceString(resultSet.getString("CCNB"));
@@ -246,7 +330,7 @@ public class RecordImportBuilder {
         }
 
         //menit za behu
-        String documentType = "grafika";
+        
         appendElementWithContentIfNotNull(entityEl, documentType, "documentType");
 
         //author
@@ -258,6 +342,19 @@ public class RecordImportBuilder {
 
         //publication
         String publishmentYear = enhanceString(resultSet.getString("ROK_VYDANI"));
+        if (publishmentYear != null) {
+            if(publishmentYear.startsWith("[")) {
+                publishmentYear = publishmentYear.substring(1, publishmentYear.length());
+            }
+            if(publishmentYear.endsWith("]")) {
+                publishmentYear = publishmentYear.substring(0, publishmentYear.length() - 1);
+            }
+
+            if (!publishmentYear.matches("[0-9Xx]{4}") || documentType.equals(DOCUMENT_TYPE_PERIODICAL)) {
+                publishmentYear = null;
+            }
+
+        }
         String publishmentPlace = enhanceString(resultSet.getString("MISTO_VYDANI"));
         if (publishmentPlace != null || publishmentYear != null) {
             Element publication = addElement(entityEl, "publication");
@@ -286,10 +383,7 @@ public class RecordImportBuilder {
         return new Document(datastamps);
     }
 
-    private void saveImportDocToFile(Document document, String urnNbn, String registrarCode) throws IOException {
-        String path = resultDir.getAbsolutePath() + File.separator + registrarCode + File.separator + urnNbn + ".xml";
-        saveDocumentToFile(document, path);
-    }
+
     
     private void saveDocumentToFile(Document document, String path) throws IOException {
         File f = new File(path);
