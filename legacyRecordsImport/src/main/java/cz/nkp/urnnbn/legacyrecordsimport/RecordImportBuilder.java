@@ -34,7 +34,7 @@ public class RecordImportBuilder {
     public static final String DOCUMENT_TYPE_MUSIC = "hudebnina";
     public static final String DOCUMENT_TYPE_GRAPHICS = "grafika";
     public static final String DOCUMENT_TYPE_PERIODICAL = "noviny";
-    public static final String DOCUMENT_TYPE_PERIODICAL_VOLUME = "rocnik novin";
+    public static final String DOCUMENT_TYPE_PERIODICAL_VOLUME = "ročník novin";
     
 
     static String RESOLVER = Namespaces.RESOLVER;
@@ -118,7 +118,7 @@ public class RecordImportBuilder {
     private void buildImport(ResultSet resultSet) throws SQLException, IOException {
         //String urnNbn = updateUrn(enhanceString(resultSet.getString("URNNBN")));
         //String registrarCode = updateRegistrarCode(enhanceString(resultSet.getString("SIGLA")));
-        String urnNbn = enhanceString(resultSet.getString("URNNBN"));
+        String urnNbn = enhanceString(resultSet.getString("URNNBN")).toLowerCase();
         //if(urnNbn)
         String registrarCode = enhanceString(resultSet.getString("SIGLA"));
         try {
@@ -131,8 +131,11 @@ public class RecordImportBuilder {
         Element importEl = new Element("r:import", RESOLVER);
         String documentTypeString = resultSet.getString("DRUH_DOKUMENTU");
         String issn = resultSet.getString("ISSN");
+        if (issn != null && !issn.matches("\\d{4}-\\d{3}[0-9Xx]{1}")) {
+            issn = null;
+        }
         String periodicalVolume = resultSet.getString("ROCNIK_PERIODIKA");
-        if(documentTypeString == null) {
+        if (documentTypeString == null) {
             return;
         }
         String documentType = "";
@@ -158,7 +161,7 @@ public class RecordImportBuilder {
         validateDocument(importDocument, urnNbn);
         
         
-        String path = resultDir.getAbsolutePath() + File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + ".xml";
+        String path = resultDir.getAbsolutePath() + File.separator + "imports"  + File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + ".xml";
         saveDocumentToFile(importDocument, path);
     
         //k pozdejsi aktualizaci databaze mimo importy
@@ -186,7 +189,7 @@ public class RecordImportBuilder {
         if(url == null) { 
             return;
         }
-        if(url.startsWith("\"")) {
+        if(url.startsWith("¨")) {
             System.out.println("oprava url " + url);
             url = url.substring(1, url.length());
             System.out.println("oprava url " + url);
@@ -207,8 +210,8 @@ public class RecordImportBuilder {
 
         Document instanceDocument = new Document(rootEl);
         
-        //String path = resultDir.getAbsolutePath()+ File.separator + "instances"+ File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
-        String path = resultDir.getAbsolutePath()+ getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
+        String path = resultDir.getAbsolutePath()+ File.separator + "digitalIinstances"+ File.separator + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
+        //String path = resultDir.getAbsolutePath() + File.separator  + getEntityType(documentType) + File.separator + registrarCode + File.separator + urnNbn + "-add.xml";
         saveDocumentToFile(instanceDocument, path);
     }        
     
