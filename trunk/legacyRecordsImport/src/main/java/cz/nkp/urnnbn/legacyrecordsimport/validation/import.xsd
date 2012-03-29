@@ -221,7 +221,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="titleType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="100"/>
+            <xs:maxLength value="650"/>
         </xs:restriction>
     </xs:simpleType>
     
