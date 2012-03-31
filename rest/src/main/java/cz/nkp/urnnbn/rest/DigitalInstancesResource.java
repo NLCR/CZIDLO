@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.rest;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
@@ -16,21 +17,23 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
+import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import nu.xom.Document;
 
 /**
  *
@@ -39,16 +42,15 @@ import javax.ws.rs.core.Response.Status;
 @Path("/digitalInstances")
 public class DigitalInstancesResource extends Resource {
 
-    private static final String PARAM_LIBRARY_ID = "libraryId";
-    private static final int MAX_URL_LENGTH = 100;
-    private final DigitalDocument digRep;
+    private static final int MAX_URL_LENGTH = 200;
+    private final DigitalDocument digDoc;
 
     public DigitalInstancesResource() {
-        digRep = null;
+        digDoc = null;
     }
 
     public DigitalInstancesResource(DigitalDocument digRep) {
-        this.digRep = digRep;
+        this.digDoc = digRep;
     }
 
     @GET
@@ -64,10 +66,10 @@ public class DigitalInstancesResource extends Resource {
     }
 
     private DigitalInstancesBuilder instancesBuilder() throws DatabaseException {
-        if (digRep == null) {
+        if (digDoc == null) {
             return new DigitalInstancesBuilder(dataAccessService().digitalInstancesCount());
         } else {
-            List<DigitalInstanceBuilder> instanceBuilders = instanceBuilders(digRep);
+            List<DigitalInstanceBuilder> instanceBuilders = instanceBuilders(digDoc);
             return new DigitalInstancesBuilder(instanceBuilders);
         }
     }
@@ -99,20 +101,22 @@ public class DigitalInstancesResource extends Resource {
     }
 
     @POST
+    @Consumes("application/xml")
     @Produces("application/xml")
     public Response addNewDigitalInstance(
             @Context HttpServletRequest req,
-            @QueryParam(PARAM_LIBRARY_ID) String libraryIdStr, String urlStr) {
+            String content) {
         try {
             String login = req.getRemoteUser();
-            if (digRep == null) {
+            if (digDoc == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
-            long libraryId = Parser.parsePositiveLongQueryParam(libraryIdStr, PARAM_LIBRARY_ID);
-            URL url = Parser.parseUrlFromRequestBody(urlStr, MAX_URL_LENGTH);
-            DigitalInstance instance = newDigitalInstance(libraryId, url);
-            instance = dataImportService().addDigitalInstance(instance, login);
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libraryId);
+            Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getInstanceImportSchema());
+            DigitalInstance digInstFromImport = digitalInstanceFromDocument(doc);
+            digInstFromImport.setDigDocId(digDoc.getId());
+            Parser.parseUrl(digInstFromImport.getUrl(), MAX_URL_LENGTH);
+            DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digInstFromImport, login);
+            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digInstFromImport.getLibraryId());
             String responseXml = builder.buildDocument().toXML();
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownDigiLibException ex) {
@@ -133,8 +137,13 @@ public class DigitalInstancesResource extends Resource {
     private DigitalInstance newDigitalInstance(long libraryId, URL url) {
         DigitalInstance instance = new DigitalInstance();
         instance.setLibraryId(libraryId);
-        instance.setDigDocId(digRep.getId());
+        instance.setDigDocId(digDoc.getId());
         instance.setUrl(url.toString());
         return instance;
+    }
+
+    private DigitalInstance digitalInstanceFromDocument(Document doc) {
+        DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(doc);
+        return unmarshaller.getDigitalInstance();
     }
 }

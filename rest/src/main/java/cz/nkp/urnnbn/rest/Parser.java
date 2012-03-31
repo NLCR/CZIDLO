@@ -115,19 +115,19 @@ public class Parser {
         }
     }
 
-    static URL parseUrlFromRequestBody(String string, int maxUrlLength) {
+    static URL parseUrl(String string, int maxUrlLength) {
         try {
             if (string != null && string.length() > maxUrlLength) {
                 throw new InvalidDataException("url '" + string + "' too long. Maximal length is " + maxUrlLength);
             }
             URL result = new URL(string);
             String protocol = result.getProtocol();
-            if (!"http".equals(protocol)) {
-                throw new InvalidDataException("invalid protocol '" + protocol + "'");
+            if (!("http".equals(protocol) || "https".equals(protocol))) {
+                throw new InvalidDataException("unknown protocol '" + protocol + "'");
             }
             return result;
         } catch (MalformedURLException ex) {
-            throw new InvalidDataException("request body doesn't contain valid url: " + ex.toString());
+            throw new InvalidDataException("'" + string + "' is not valid url: " + ex.toString());
         }
     }
 }

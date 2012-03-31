@@ -19,7 +19,8 @@ public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
     private static final String API_PROPERTIES = "api.properties";
-    private static final String RECORD_IMPORT_XSD = "import.xsd";
+    private static final String RECORD_IMPORT_XSD = "importRecord.xsd";
+    private static final String INSTANCE_IMPORT_XSD = "importDigitalInstance.xsd";
 
     abstract class ResourceUtilizer {
 
@@ -49,6 +50,7 @@ public class ContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         loadApiProperties();
         loadRecordImportXsd();
+        loadInstanceImportXsd();
     }
 
     private void loadApiProperties() {
@@ -69,6 +71,16 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initRecordImportSchema(in);
             }
         }.run(RECORD_IMPORT_XSD);
+    }
+
+    private void loadInstanceImportXsd() {
+        new ResourceUtilizer() {
+
+            @Override
+            void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initInstanceImportSchema(in);
+            }
+        }.run(INSTANCE_IMPORT_XSD);
     }
 
     @Override

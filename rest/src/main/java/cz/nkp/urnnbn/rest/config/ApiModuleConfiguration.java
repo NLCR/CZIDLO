@@ -26,6 +26,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
     private String recordImportSchema;
+    private String instanceImportSchema;
 
     static public ApiModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -52,12 +53,20 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         recordImportSchema = XOMUtils.loadDocumentWithoutValidation(in).toXML();
     }
 
+    void initInstanceImportSchema(InputStream in) throws ParsingException, ValidityException, IOException {
+        instanceImportSchema = XOMUtils.loadDocumentWithoutValidation(in).toXML();
+    }
+
     public Integer getMaxReservedSizeToPrint() {
         return maxReservedSizeToPrint;
     }
 
     public String getRecordImportSchema() {
         return recordImportSchema;
+    }
+
+    public String getInstanceImportSchema() {
+        return instanceImportSchema;
     }
 
     public Integer getUrnReservationDefaultSize() {
