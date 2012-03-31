@@ -53,13 +53,15 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
             digDoc.setExtent(elementContentOrNull("extent", root));
             //resolution
             Element resolutionEl = selectSingleElementOrNull("resolution", root);
-            String resWidthStr = elementContentOrNull("horizontal", resolutionEl);
-            if (resWidthStr != null) {
-                digDoc.setResolutionHorizontal(Integer.valueOf(resWidthStr));
-            }
-            String resHeightStr = elementContentOrNull("vertical", resolutionEl);
-            if (resHeightStr != null) {
-                digDoc.setResolutionVertical(Integer.valueOf(resHeightStr));
+            if (resolutionEl != null) {
+                String resWidthStr = elementContentOrNull("horizontal", resolutionEl);
+                if (resWidthStr != null) {
+                    digDoc.setResolutionHorizontal(Integer.valueOf(resWidthStr));
+                }
+                String resHeightStr = elementContentOrNull("vertical", resolutionEl);
+                if (resHeightStr != null) {
+                    digDoc.setResolutionVertical(Integer.valueOf(resHeightStr));
+                }
             }
             //compression
             digDoc.setCompression(elementContentOrNull("compression", root));
