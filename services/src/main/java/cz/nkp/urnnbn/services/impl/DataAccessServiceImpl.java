@@ -292,4 +292,17 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return null;
         }
     }
+
+    @Override
+    public List<Archiver> archivers() throws DatabaseException {
+        List<Archiver> includingRegistrars = factory.archiverDao().getAllArchivers();
+        List<Long> registrarIdList = factory.registrarDao().getAllRegistrarsId();
+        List<Archiver> result = new ArrayList<Archiver>(includingRegistrars.size() - registrarIdList.size());
+        for (Archiver archiverOrRegistrar : includingRegistrars) {
+            if (!registrarIdList.contains(archiverOrRegistrar.getId())) {
+                result.add(archiverOrRegistrar);
+            }
+        }
+        return result;
+    }
 }
