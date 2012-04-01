@@ -44,6 +44,8 @@ public interface DataAccessService extends BusinessService {
     public Registrar registrarById(long id) throws DatabaseException;
 
     public Archiver archiverById(long id) throws DatabaseException;
+    
+    public List<Archiver> archivers() throws DatabaseException;
 
     public IntelectualEntity entityById(long id) throws DatabaseException;
 
