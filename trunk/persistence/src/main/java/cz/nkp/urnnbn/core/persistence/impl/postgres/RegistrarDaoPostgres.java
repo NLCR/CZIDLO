@@ -35,6 +35,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -146,6 +147,10 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             }
         }
         return result;
+    }
+
+    public List<Long> getAllRegistrarsId() throws DatabaseException {
+        return (List<Long>) getAllRecords(TABLE_NAME, new singleLongRT());
     }
 
     @Override

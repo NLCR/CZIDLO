@@ -20,7 +20,6 @@ public interface ArchiverDAO {
     public String ATTR_ID = "id";
     public String ATTR_NAME = "name";
     public String ATTR_DESCRIPTION = "description";
-    
 
     /**
      * Should not use id from archiver but instead create new by means of database
@@ -31,6 +30,8 @@ public interface ArchiverDAO {
     public Long insertArchiver(Archiver archiver) throws DatabaseException;
 
     public Archiver getArchiverById(long id) throws DatabaseException, RecordNotFoundException;
+
+    public List<Archiver> getAllArchivers() throws DatabaseException;
 
     public List<Long> getAllArchiversId() throws DatabaseException;
 
