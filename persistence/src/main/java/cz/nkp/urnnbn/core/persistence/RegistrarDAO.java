@@ -35,6 +35,8 @@ public interface RegistrarDAO {
     public Registrar getRegistrarByCode(RegistrarCode code) throws DatabaseException, RecordNotFoundException;
 
     public List<Registrar> getAllRegistrars() throws DatabaseException;
+    
+    public List<Long> getAllRegistrarsId() throws DatabaseException;
 
     public List<Long> getRegistrarsIdManagedByUser(long userId) throws DatabaseException, RecordNotFoundException;
 

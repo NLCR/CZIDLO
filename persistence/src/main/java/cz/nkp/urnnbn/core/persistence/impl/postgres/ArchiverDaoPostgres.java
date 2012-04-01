@@ -65,4 +65,8 @@ public class ArchiverDaoPostgres extends AbstractDAO implements ArchiverDAO {
     public void deleteAllArchivers() throws DatabaseException {
         deleteAllRecords(TABLE_NAME);
     }
+
+    public List<Archiver> getAllArchivers() throws DatabaseException {
+        return (List<Archiver>) getAllRecords(TABLE_NAME, new ArchiverRT());
+    }
 }
