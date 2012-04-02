@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public interface RegistrarDAO {
     public Registrar getRegistrarByCode(RegistrarCode code) throws DatabaseException, RecordNotFoundException;
 
     public List<Registrar> getAllRegistrars() throws DatabaseException;
-    
+
     public List<Long> getAllRegistrarsId() throws DatabaseException;
 
     public List<Long> getRegistrarsIdManagedByUser(long userId) throws DatabaseException, RecordNotFoundException;
@@ -47,7 +48,7 @@ public interface RegistrarDAO {
 
     public void activateRegistrar(long id) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException;
+    public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
-    public void deleteAllRegistrars() throws DatabaseException;
+    public void deleteAllRegistrars() throws DatabaseException, RecordReferencedException;
 }

@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
@@ -56,13 +57,12 @@ public class ArchiverDaoPostgres extends AbstractDAO implements ArchiverDAO {
     }
 
     @Override
-    public void deleteArchiver(final long id) throws DatabaseException, RecordNotFoundException {
-        //todo: otestovat, ze se vyhodi vyjimka, pokud archivator neco archivuje
+    public void deleteArchiver(final long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override
-    public void deleteAllArchivers() throws DatabaseException {
+    public void deleteAllArchivers() throws DatabaseException, RecordReferencedException {
         deleteAllRecords(TABLE_NAME);
     }
 

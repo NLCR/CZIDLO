@@ -133,6 +133,16 @@ public abstract class AbstractDaoTest extends TestCase {
         return rep;
     }
 
+    public DigitalDocument documentPersisted(long registrarId, long archiverId, long intEntId) throws DatabaseException, RecordNotFoundException {
+        DigitalDocument rep = builder.digDocWithoutIds();
+        rep.setIntEntId(intEntId);
+        rep.setRegistrarId(registrarId);
+        rep.setArchiverId(archiverId);
+        Long repId = digDocDao.insertDocument(rep);
+        rep.setId(repId);
+        return rep;
+    }
+
     public DigitalLibrary libraryPersisted() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         Registrar registrar = builder.registrarWithoutId();
         Long registrarId = registrarDao.insertRegistrar(registrar);

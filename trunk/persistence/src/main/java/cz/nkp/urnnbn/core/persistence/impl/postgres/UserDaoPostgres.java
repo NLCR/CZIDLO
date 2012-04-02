@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -142,11 +143,21 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
 
     @Override
     public void deleteUser(long id) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
     public void deleteAllUsers() throws DatabaseException {
-        deleteAllRecords(TABLE_NAME);
+        try {
+            deleteAllRecords(TABLE_NAME);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }

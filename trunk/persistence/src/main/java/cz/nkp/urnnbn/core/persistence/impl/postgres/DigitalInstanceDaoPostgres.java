@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -109,6 +110,11 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 
     @Override
     public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, digInstId, true);
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_ID, digInstId, true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }

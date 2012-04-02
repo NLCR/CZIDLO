@@ -18,6 +18,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
@@ -35,7 +36,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -201,7 +201,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     @Override
-    public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException {
+    public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         checkRecordExists(TABLE_NAME, ATTR_ID, id);
         //delete archiver - registrar is deleted in cascade
         deleteRecordsById(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id, true);
@@ -221,7 +221,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     @Override
-    public void deleteAllRegistrars() throws DatabaseException {
+    public void deleteAllRegistrars() throws DatabaseException, RecordReferencedException {
         DaoOperation operation = new DaoOperation() {
 
             @Override
