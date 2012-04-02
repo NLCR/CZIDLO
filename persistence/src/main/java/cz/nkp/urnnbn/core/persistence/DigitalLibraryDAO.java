@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.core.persistence;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -39,7 +40,7 @@ public interface DigitalLibraryDAO {
      */
     public void updateLibrary(DigitalLibrary library) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteLibrary(long id) throws DatabaseException, RecordNotFoundException;
+    public void deleteLibrary(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
-    public void deleteAllLibraries() throws DatabaseException;
+    public void deleteAllLibraries() throws DatabaseException, RecordReferencedException;
 }

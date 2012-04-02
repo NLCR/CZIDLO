@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -123,8 +124,13 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
 
     @Override
     public void deleteDigDocIdentifier(long digRepDbId, DigDocIdType type) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
-        deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
+        try {
+            checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
+            deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -133,6 +139,9 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
         try {
             deleteRecordsById(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, false);
         } catch (RecordNotFoundException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        } catch (RecordReferencedException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
         }

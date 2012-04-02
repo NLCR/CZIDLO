@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.core.persistence;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public interface ArchiverDAO {
 
     public void updateArchiver(Archiver archiver) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteArchiver(long id) throws DatabaseException, RecordNotFoundException;
+    public void deleteArchiver(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
-    public void deleteAllArchivers() throws DatabaseException;
+    public void deleteAllArchivers() throws DatabaseException, RecordReferencedException;
 }

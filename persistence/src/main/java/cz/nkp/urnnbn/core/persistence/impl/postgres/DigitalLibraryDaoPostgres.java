@@ -13,12 +13,12 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalLibrary;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateLibrary;
@@ -122,24 +122,12 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
     }
 
     @Override
-    public void deleteLibrary(long id) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(TABLE_NAME, ATTR_ID, id);
-        try {
-            StatementWrapper st = new DeleteRecordsByLongAttr(TABLE_NAME, ATTR_ID, id);
-            DaoOperation operation = new NoResultOperation(st);
-            runInTransaction(operation);
-        } catch (PersistenceException ex) {
-            //should never happen
-            logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
-        } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't delete digital library " + id);
-            throw new DatabaseException(ex);
-        }
+    public void deleteLibrary(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+        deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override
-    public void deleteAllLibraries() throws DatabaseException {
+    public void deleteAllLibraries() throws DatabaseException, RecordReferencedException {
         deleteAllRecords(TABLE_NAME);
     }
 }

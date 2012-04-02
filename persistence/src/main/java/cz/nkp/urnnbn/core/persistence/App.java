@@ -22,6 +22,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import java.io.File;
 import java.io.IOException;
@@ -77,12 +78,16 @@ public class App {
     }
 
     public void clearDatabase() throws DatabaseException {
-        factory.urnDao().deleteAllUrnNbns();
-        factory.documentDao().deleteAllDocuments();
-        factory.intelectualEntityDao().deleteAllEntities();
-        //kaskadove by se mely pomazat identifikatory intelektualnich entit
-        factory.archiverDao().deleteAllArchivers();
-        factory.userDao().deleteAllUsers();
+        try {
+            factory.urnDao().deleteAllUrnNbns();
+            factory.documentDao().deleteAllDocuments();
+            factory.intelectualEntityDao().deleteAllEntities();
+            //kaskadove by se mely pomazat identifikatory intelektualnich entit
+            factory.archiverDao().deleteAllArchivers();
+            factory.userDao().deleteAllUsers();
+        } catch (RecordReferencedException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void insertTestData() throws Exception {

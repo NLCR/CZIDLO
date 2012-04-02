@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -67,9 +68,9 @@ public interface DigitalDocumentDAO {
 
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException;
+    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
-    public void deleteAllDocuments() throws DatabaseException;
+    public void deleteAllDocuments() throws DatabaseException, RecordReferencedException;
     //TODO: implementovat, pokud bude potreba
     //public List<Long> getRepresentationsDbIdByIdentifier(DigRepIdType type, String idValue) throws DatabaseException;
     //public List<Long> getAllRepresentationsId() throws DatabaseException;

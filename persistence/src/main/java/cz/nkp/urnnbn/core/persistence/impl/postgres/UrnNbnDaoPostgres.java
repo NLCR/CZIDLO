@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -107,7 +108,12 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     public void deleteAllUrnNbns() throws DatabaseException {
-        deleteAllRecords(TABLE_NAME);
+        try {
+            deleteAllRecords(TABLE_NAME);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     private Object getSingleResult(ResultSet resultSet, ResultsetTransformer transformer) throws SQLException, RecordNotFoundException, MultipleRecordsException {

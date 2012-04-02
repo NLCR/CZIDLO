@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
@@ -147,12 +148,12 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     }
 
     @Override
-    public void deleteEntity(long id) throws DatabaseException, RecordNotFoundException {
+    public void deleteEntity(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         deleteRecordsById(TABLE_NAME, ATTR_ID, id, true);
     }
 
     @Override
-    public void deleteAllEntities() throws DatabaseException {
+    public void deleteAllEntities() throws DatabaseException, RecordReferencedException {
         deleteAllRecords(TABLE_NAME);
     }
 }

@@ -14,6 +14,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
@@ -103,7 +104,12 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
 
     @Override
     public void deleteUrn(UrnNbn urn) throws DatabaseException, RecordNotFoundException {
-        //TODO: recordNotFoundException to nikdy nehaze, poresit
-        deleteRecordsByStringAndString(TABLE_NAME, ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString(), ATTR_DOCUMENT_CODE, urn.getDocumentCode());
+        try {
+            //TODO: recordNotFoundException to nikdy nehaze, poresit
+            deleteRecordsByStringAndString(TABLE_NAME, ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString(), ATTR_DOCUMENT_CODE, urn.getDocumentCode());
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }

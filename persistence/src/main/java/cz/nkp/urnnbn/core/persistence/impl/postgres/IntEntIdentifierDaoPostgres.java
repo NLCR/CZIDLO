@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
@@ -94,10 +95,15 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
 
     @Override
     public void deleteIntEntIdentifier(long intEntDbId, IntEntIdType type) throws DatabaseException, RecordNotFoundException {
-        //todo: check, that intEnt exists (existence of intEntId is checked in deleteREcordsByLongAndString
-        deleteRecordsByLongAndString(TABLE_NAME,
-                IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId,
-                IntEntIdentifierDAO.ATTR_TYPE, type.name(), true);
+        try {
+            //todo: check, that intEnt exists (existence of intEntId is checked in deleteREcordsByLongAndString
+            deleteRecordsByLongAndString(TABLE_NAME,
+                    IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId,
+                    IntEntIdentifierDAO.ATTR_TYPE, type.name(), true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -106,6 +112,9 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
         try {
             deleteRecordsById(TABLE_NAME, ATTR_IE_ID, intEntDbId, false);
         } catch (RecordNotFoundException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        } catch (RecordReferencedException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
         }

@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -85,6 +86,11 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
 
     @Override
     public void deleteCatalog(long catalogId) throws DatabaseException, RecordNotFoundException {
-        deleteRecordsById(TABLE_NAME, ATTR_ID, catalogId, true);
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_ID, catalogId, true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }

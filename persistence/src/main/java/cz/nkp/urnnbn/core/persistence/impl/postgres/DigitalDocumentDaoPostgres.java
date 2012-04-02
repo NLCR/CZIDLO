@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -151,14 +152,14 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException {
+    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         //TODO: test
         //todo: nesmi se smazat urn
         deleteRecordsById(TABLE_NAME, ATTR_ID, digRepDbId, true);
     }
 
     @Override
-    public void deleteAllDocuments() throws DatabaseException {
+    public void deleteAllDocuments() throws DatabaseException, RecordReferencedException {
         deleteAllRecords(DigitalDocumentDAO.TABLE_NAME);
     }
 }

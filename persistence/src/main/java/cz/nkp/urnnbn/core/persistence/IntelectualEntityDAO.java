@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ public interface IntelectualEntityDAO {
 
     public void updateEntity(IntelectualEntity entity) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteEntity(long id) throws DatabaseException, RecordNotFoundException;
+    public void deleteEntity(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
-    public void deleteAllEntities() throws DatabaseException;
+    public void deleteAllEntities() throws DatabaseException, RecordReferencedException;
 }
