@@ -10,9 +10,13 @@ import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
+import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
+import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 
 /**
  *
@@ -24,6 +28,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         super(conn);
     }
 
+    @Override
     public void removeDigitalDocumentIdentifiers(long digRepId) throws UnknownDigDocException {
         try {
             factory.digRepIdDao().deleteAllIdentifiersOfDigDoc(digRepId);
@@ -34,6 +39,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         }
     }
 
+    @Override
     public void removeDigitalDocumentId(long digRepId, DigDocIdType type) throws UnknownDigDocException, DigRepIdNotDefinedException {
         try {
             factory.digRepIdDao().deleteDigDocIdentifier(digRepId, type);
@@ -47,6 +53,32 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             } else {
                 throw new RuntimeException(ex);
             }
+        }
+    }
+
+    @Override
+    public void removeArchiver(long archiverId) throws UnknownArchiverException, CannotBeRemovedException {
+        try {
+            factory.archiverDao().deleteArchiver(archiverId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownArchiverException(archiverId);
+        } catch (RecordReferencedException ex) {
+            throw new CannotBeRemovedException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void removeRegistrar(long registrarId) throws UnknownRegistrarException, CannotBeRemovedException {
+        try {
+            factory.registrarDao().deleteRegistrar(registrarId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownRegistrarException(registrarId);
+        } catch (RecordReferencedException ex) {
+            throw new CannotBeRemovedException(ex.getMessage());
         }
     }
 }
