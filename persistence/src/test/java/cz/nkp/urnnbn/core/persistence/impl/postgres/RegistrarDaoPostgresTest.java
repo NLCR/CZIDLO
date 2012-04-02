@@ -7,13 +7,16 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
 
 /**
@@ -243,18 +246,6 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-//    public void testActivateRegistrar() throws Exception {
-//        Registrar inserted = builder.registrarWithoutId();
-//        long id = registrarDao.insertRegistrar(inserted);
-//        registrarDao.activateRegistrar(id);
-//        Registrar fetched = registrarDao.getRegistrarById(id);
-//        assertTrue(fetched.isActivated());
-//        //deactivate
-//        fetched.setActivated(false);
-//        registrarDao.updateRegistrar(fetched);
-//        Registrar fetched2 = registrarDao.getRegistrarById(id);
-//        assertFalse(fetched2.isActivated());
-//    }
     /**
      * Test of deleteRegistrar method, of class RegistrarDaoPostgres.
      */
@@ -269,6 +260,19 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         assertFalse(admin1RegistrarsIds.contains(registrarId));
         List<Long> admin2RegistrarsIds = registrarDao.getRegistrarsIdManagedByUser(admin2.getId());
         assertFalse(admin2RegistrarsIds.contains(registrarId));
+    }
+
+    public void testDeleteRegistrar_withRegisteredDocument() throws Exception {
+        IntelectualEntity intEntity = entityPersisted();
+        Archiver archiver = archiverPersisted();
+        long registrarId = registrarDao.insertRegistrar(builder.registrarWithoutId());
+        DigitalDocument doc = documentPersisted(registrarId, archiver.getId(), intEntity.getId());
+        try {
+            registrarDao.deleteRegistrar(registrarId);
+            fail();
+        } catch (RecordReferencedException e) {
+            //ok
+        }
     }
 
     public void testDeleteRegistrar_getDeleted() throws Exception {
