@@ -20,6 +20,8 @@ public interface DigitalLibraryDAO {
     public String SEQ_NAME = "seq_DigitalLibrary";
     public String ATTR_ID = "id";
     public String ATTR_REGISTRAR_ID = "registrarId";
+    public String ATTR_CREATED = "created";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_NAME = "name";
     public String ATTR_DESCRIPTION = "description";
     public String ATTR_URL = "url";

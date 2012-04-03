@@ -6,10 +6,12 @@ package cz.nkp.urnnbn.core.persistence.impl.statements;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -28,10 +30,12 @@ public class InsertCatalog implements StatementWrapper {
         return "INSERT into " + CatalogDAO.TABLE_NAME
                 + "(" + CatalogDAO.ATTR_ID
                 + "," + CatalogDAO.ATTR_REG_ID
+                + "," + CatalogDAO.ATTR_CREATED
+                + "," + CatalogDAO.ATTR_UPDATED
                 + "," + CatalogDAO.ATTR_NAME
                 + "," + CatalogDAO.ATTR_DESC
                 + "," + CatalogDAO.ATTR_URL_PREFIX
-                + ") values(?,?,?,?,?)";
+                + ") values(?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -39,9 +43,12 @@ public class InsertCatalog implements StatementWrapper {
         try {
             st.setLong(1, catalog.getId());
             st.setLong(2, catalog.getRegistrarId());
-            st.setString(3, catalog.getName());
-            st.setString(4, catalog.getDescription());
-            st.setString(5, catalog.getUrlPrefix());
+            Timestamp now = DateTimeUtils.nowTs();
+            st.setTimestamp(3, now);
+            st.setTimestamp(4, now);
+            st.setString(5, catalog.getName());
+            st.setString(6, catalog.getDescription());
+            st.setString(7, catalog.getUrlPrefix());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

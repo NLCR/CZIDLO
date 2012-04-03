@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.core.persistence.impl.statements;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ public class UpdateArchiver implements StatementWrapper {
     @Override
     public String preparedStatement() {
         return "UPDATE " + ArchiverDAO.TABLE_NAME + " SET "
+                + ArchiverDAO.ATTR_UPDATED + "=?,"
                 + ArchiverDAO.ATTR_NAME + "=?,"
                 + ArchiverDAO.ATTR_DESCRIPTION + "=?"
                 + " WHERE " + ArchiverDAO.ATTR_ID + "=?";
@@ -34,9 +36,10 @@ public class UpdateArchiver implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setString(1, archiver.getName());
-            st.setString(2, archiver.getDescription());
-            st.setLong(3, archiver.getId());
+            st.setTimestamp(1, DateTimeUtils.nowTs());
+            st.setString(2, archiver.getName());
+            st.setString(3, archiver.getDescription());
+            st.setLong(4, archiver.getId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

@@ -12,37 +12,46 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import java.sql.Timestamp;
+import org.joda.time.DateTime;
 
 /**
  *
  * @author Martin Řehánek
  */
 public class InsertUrnNbn implements StatementWrapper {
-
+    
     private final UrnNbn urn;
-
-    public InsertUrnNbn(UrnNbn urn) {
+    private final DateTime created;
+    
+    public InsertUrnNbn(UrnNbn urn, DateTime created) {
         this.urn = urn;
+        this.created = created;
     }
-
+    
     @Override
     public String preparedStatement() {
         return "INSERT into " + UrnNbnDAO.TABLE_NAME
-                + "(" + UrnNbnDAO.ATTR_DIG_REP_ID
+                + "(" + UrnNbnDAO.ATTR_DIG_DOC_ID
+                + "," + UrnNbnDAO.ATTR_CREATED
+                + "," + UrnNbnDAO.ATTR_UPDATED
                 + "," + UrnNbnDAO.ATTR_REGISTRAR_CODE
                 + "," + UrnNbnDAO.ATTR_DOCUMENT_CODE
-                + "," + UrnNbnDAO.ATTR_CREATED
-                + ") values(?,?,?,?)";
+                + ") values(?,?,?,?,?)";
     }
-
+    
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, urn.getDigDocId());
-            st.setString(2, urn.getRegistrarCode().toString());
-            st.setString(3, urn.getDocumentCode());
             Timestamp now = DateTimeUtils.nowTs();
-            st.setTimestamp(4, now);
+            if (created == null) {
+                st.setTimestamp(2, now);
+            } else {
+                st.setTimestamp(2, DateTimeUtils.datetimeToTimestamp(created));
+            }
+            st.setTimestamp(3, now);
+            st.setString(4, urn.getRegistrarCode().toString());
+            st.setString(5, urn.getDocumentCode());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

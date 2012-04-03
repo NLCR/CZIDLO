@@ -20,11 +20,14 @@ public class UrnNbnRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
-        long digRepId = resultSet.getLong(UrnNbnDAO.ATTR_DIG_REP_ID);
-        RegistrarCode registrarCode = RegistrarCode.valueOf(resultSet.getString(UrnNbnDAO.ATTR_REGISTRAR_CODE));
-        String documentCode = resultSet.getString(UrnNbnDAO.ATTR_DOCUMENT_CODE);
+        long digRepId = resultSet.getLong(UrnNbnDAO.ATTR_DIG_DOC_ID);
         DateTime created = DateTimeUtils.timestampToDatetime(
                 resultSet.getTimestamp(UrnNbnDAO.ATTR_CREATED));
-        return new UrnNbn(registrarCode, documentCode, digRepId, created);
+        DateTime updated = DateTimeUtils.timestampToDatetime(
+                resultSet.getTimestamp(UrnNbnDAO.ATTR_UPDATED));
+        RegistrarCode registrarCode = RegistrarCode.valueOf(resultSet.getString(UrnNbnDAO.ATTR_REGISTRAR_CODE));
+        String documentCode = resultSet.getString(UrnNbnDAO.ATTR_DOCUMENT_CODE);
+        
+        return new UrnNbn(registrarCode, documentCode, digRepId, created, updated);
     }
 }

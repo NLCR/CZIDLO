@@ -19,6 +19,8 @@ public interface UserDAO {
     public String TABLE_NAME = "UserAccount";
     public String SEQ_NAME = "seq_UserAccount";
     public String ATTR_ID = "id";
+    public String ATTR_CREATED = "created";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_LOGIN = "login";
     public String ATTR_PASS = "password";
     public String ATTR_IS_ADMIN = "isAdmin";

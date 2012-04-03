@@ -5,9 +5,11 @@
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -20,6 +22,10 @@ public class DigitalLibraryRT implements ResultsetTransformer {
         DigitalLibrary library = new DigitalLibrary();
         library.setId(resultSet.getLong(DigitalLibraryDAO.ATTR_ID));
         library.setRegistrarId(resultSet.getLong(DigitalLibraryDAO.ATTR_REGISTRAR_ID));
+        Timestamp created = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_CREATED);
+        library.setCreated(DateTimeUtils.timestampToDatetime(created));
+        Timestamp updated = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_UPDATED);
+        library.setModified(DateTimeUtils.timestampToDatetime(updated));
         library.setName(resultSet.getString(DigitalLibraryDAO.ATTR_NAME));
         library.setDescription(resultSet.getString(DigitalLibraryDAO.ATTR_DESCRIPTION));
         library.setUrl(resultSet.getString(DigitalLibraryDAO.ATTR_URL));

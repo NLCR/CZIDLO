@@ -19,6 +19,8 @@ public interface ArchiverDAO {
     public String TABLE_NAME = "Archiver";
     public String SEQ_NAME = "seq_Archiver";
     public String ATTR_ID = "id";
+    public String ATTR_CREATED = "created";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_NAME = "name";
     public String ATTR_DESCRIPTION = "description";
 

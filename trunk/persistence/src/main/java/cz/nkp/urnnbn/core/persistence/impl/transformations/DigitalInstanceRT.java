@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -22,7 +23,10 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         instance.setId(resultSet.getLong(DigitalInstanceDAO.ATTR_ID));
         instance.setDigDocId(resultSet.getLong(DigitalInstanceDAO.ATTR_DIG_REP_ID));
         instance.setLibraryId(resultSet.getLong(DigitalInstanceDAO.ATTR_LIB_ID));
-        instance.setPublished(DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(DigitalInstanceDAO.ATTR_PUBLISHED)));
+        Timestamp created = resultSet.getTimestamp(DigitalInstanceDAO.ATTR_CREATED);
+        instance.setCreated(DateTimeUtils.timestampToDatetime(created));
+        Timestamp updated = resultSet.getTimestamp(DigitalInstanceDAO.ATTR_UPDATED);
+        instance.setModified(DateTimeUtils.timestampToDatetime(updated));
         instance.setUrl(resultSet.getString(DigitalInstanceDAO.ATTR_URL));
         instance.setFormat(resultSet.getString(DigitalInstanceDAO.ATTR_FORMAT));
         instance.setAccessibility(resultSet.getString(DigitalInstanceDAO.ATTR_ACCESS));

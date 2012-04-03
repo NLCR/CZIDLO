@@ -170,7 +170,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
-        DigDocIdentifier identifier = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier identifier = builder.digDocIdentifierWithoutIds();
         identifier.setDigDocId(inserted.getId());
         identifier.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(identifier);
@@ -178,7 +178,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         Long fetchedRepId = digDocDao.getDigDocDbIdByIdentifier(identifier);
         assertEquals(inserted.getId(), fetchedRepId.longValue());
         //try find with unknown value
-        DigDocIdentifier id2 = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id2 = builder.digDocIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
         id2.setValue(identifier.getValue() + "-new");
         try {
@@ -213,7 +213,8 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument repInserted = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId(), new DateTime());
+        //UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId(), new DateTime());
+        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId());
         urnDao.insertUrnNbn(urnInserted);
         try {
             registrarDao.getRegistrarById(repInserted.getId());

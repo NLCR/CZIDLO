@@ -6,8 +6,10 @@ package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -19,6 +21,10 @@ public class ArchiverRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         Archiver archiver = new Archiver();
         archiver.setId(resultSet.getLong(ArchiverDAO.ATTR_ID));
+        Timestamp created = resultSet.getTimestamp(ArchiverDAO.ATTR_CREATED);
+        archiver.setCreated(DateTimeUtils.timestampToDatetime(created));
+        Timestamp updated = resultSet.getTimestamp(ArchiverDAO.ATTR_UPDATED);
+        archiver.setModified(DateTimeUtils.timestampToDatetime(updated));
         archiver.setName(resultSet.getString(ArchiverDAO.ATTR_NAME));
         archiver.setDescription(resultSet.getString(ArchiverDAO.ATTR_DESCRIPTION));
         return archiver;

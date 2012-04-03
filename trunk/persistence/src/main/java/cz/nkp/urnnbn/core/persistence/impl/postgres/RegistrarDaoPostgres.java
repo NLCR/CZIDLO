@@ -110,7 +110,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             return (Registrar) runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.SEVERE, "No such registrar with code {0}", code);
+                logger.log(Level.WARNING, "No such registrar with code {0}", code);
                 throw (RecordNotFoundException) e;
             } else {
                 //should never happen

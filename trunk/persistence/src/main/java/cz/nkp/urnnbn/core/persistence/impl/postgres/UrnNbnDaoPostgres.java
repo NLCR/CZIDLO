@@ -30,6 +30,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -45,8 +46,12 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     public void insertUrnNbn(UrnNbn urn) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        insertUrnNbn(urn, null);
+    }
+    
+    public void insertUrnNbn(UrnNbn urn, DateTime created) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, urn.getDigDocId());
-        StatementWrapper st = new InsertUrnNbn(urn);
+        StatementWrapper st = new InsertUrnNbn(urn, created);
         DaoOperation operation = new NoResultOperation(st);
         try {
             runInTransaction(operation);
@@ -55,7 +60,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(urn.getDigDocId()));
+                IdPart digRepId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(urn.getDigDocId()));
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
                 throw new AlreadyPresentException(new IdPart[]{digRepId, registrarCode, documentCode});
@@ -67,7 +72,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     public UrnNbn getUrnNbnByDigRegId(long digRepId) throws DatabaseException, RecordNotFoundException {
-        return (UrnNbn) getRecordById(TABLE_NAME, ATTR_DIG_REP_ID, digRepId, new UrnNbnRT());
+        return (UrnNbn) getRecordById(TABLE_NAME, ATTR_DIG_DOC_ID, digRepId, new UrnNbnRT());
     }
 
     @Override
@@ -79,7 +84,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         try {
             return (UrnNbn) runInTransaction(operation);
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "No such urn:nbn with registrar code {0} and document code {1}", new Object[]{registrarCode, documentCode});
+            logger.log(Level.INFO, "No such urn:nbn with registrar code {0} and document code {1}", new Object[]{registrarCode, documentCode});
             throw (RecordNotFoundException) e;
         } catch (PersistenceException e) {
             //should never happen

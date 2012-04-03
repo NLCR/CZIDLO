@@ -27,7 +27,7 @@ public class DigitalDocumentRT implements ResultsetTransformer {
         Timestamp created = resultSet.getTimestamp(DigitalDocumentDAO.ATTR_CREATED);
         doc.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigitalDocumentDAO.ATTR_UPDATED);
-        doc.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
+        doc.setModified(DateTimeUtils.timestampToDatetime(updated));
         doc.setExtent(resultSet.getString(DigitalDocumentDAO.ATTR_EXTENT));
         doc.setFinancedFrom(resultSet.getString(DigitalDocumentDAO.ATTR_FINANCED));
         doc.setContractNumber(resultSet.getString(DigitalDocumentDAO.ATTR_CONTRACT_NUMBER));

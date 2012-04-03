@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnReservedDAO {
 
-    private static Logger logger = Logger.getLogger(UrnNbnReservedDaoPostgres.class.getName());
+    private static final Logger logger = Logger.getLogger(UrnNbnReservedDaoPostgres.class.getName());
 
     public UrnNbnReservedDaoPostgres(DatabaseConnector connector) {
         super(connector);
@@ -73,7 +73,7 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
         try {
             return (UrnNbn) runInTransaction(operation);
         } catch (RecordNotFoundException e) {
-            logger.log(Level.SEVERE, "No such booked urn:nbn with registrar code {0} and document code {1}", new Object[]{code.toString(), documentCode});
+            logger.log(Level.INFO, "No reserved urn:nbn with registrar code {0} and document code {1}", new Object[]{code.toString(), documentCode});
             throw (RecordNotFoundException) e;
         } catch (PersistenceException e) {
             //should never happen

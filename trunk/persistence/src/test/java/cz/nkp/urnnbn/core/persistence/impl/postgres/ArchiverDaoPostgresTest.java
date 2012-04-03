@@ -90,15 +90,15 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
 
     public void testUpdateArchiver() throws Exception {
         Archiver original = builder.archiverWithoutId();
+        original.setName("NKP");
         archiverDao.insertArchiver(original);
         Archiver updated = new Archiver(original);
-        updated.setName("NKP");
         updated.setName("Narodni knihovna v Praze");
         archiverDao.updateArchiver(updated);
         //get by id
         Archiver returned = archiverDao.getArchiverById(original.getId());
-        assertEquals(updated, returned);
-        assertFalse(original.equals(returned));
+        assertEquals(updated.getName(), returned.getName());
+        assertFalse(original.getName().equals(returned.getName()));
     }
 
     public void testUpdateNonexistingArchiver() throws Exception {

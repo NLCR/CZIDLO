@@ -23,7 +23,7 @@ public interface IntelectualEntityDAO {
     public String ATTR_ID = "id";
     public String ATTR_ENTITY_TYPE = "entityType";
     public String ATTR_CREATED = "created";
-    public String ATTR_UPDATED = "lastUpdated";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_DOC_TYPE = "documentType";
     public String ATTR_DIGITAL_BORN = "digitalBorn";
     public String ATTR_OTHER_ORIGINATOR = "otherOriginator";

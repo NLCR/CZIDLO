@@ -20,6 +20,8 @@ public interface DigDocIdentifierDAO {
     public String TABLE_NAME = "ddIdentifier";
     public String ATTR_REG_ID = "registrarId";
     public String ATTR_DIG_REP_ID = "digitalDocumentId";
+    public String ATTR_CREATED = "created";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_TYPE = "type";
     public String ATTR_VALUE = "idValue";
 

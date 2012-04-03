@@ -5,11 +5,13 @@
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -28,9 +30,11 @@ public class InsertDigDocIdentifier implements StatementWrapper {
         return "INSERT into " + DigDocIdentifierDAO.TABLE_NAME
                 + "(" + DigDocIdentifierDAO.ATTR_DIG_REP_ID
                 + "," + DigDocIdentifierDAO.ATTR_REG_ID
+                + "," + DigDocIdentifierDAO.ATTR_CREATED
+                + "," + DigDocIdentifierDAO.ATTR_UPDATED
                 + "," + DigDocIdentifierDAO.ATTR_TYPE
                 + "," + DigDocIdentifierDAO.ATTR_VALUE
-                + ") values(?,?,?,?)";
+                + ") values(?,?,?,?,?,?)";
     }
 
     @Override
@@ -38,8 +42,11 @@ public class InsertDigDocIdentifier implements StatementWrapper {
         try {
             st.setLong(1, identifier.getDigDocId());
             st.setLong(2, identifier.getRegistrarId());
-            st.setString(3, identifier.getType().toString());
-            st.setString(4, identifier.getValue());
+            Timestamp now = DateTimeUtils.nowTs();
+            st.setTimestamp(3, now);
+            st.setTimestamp(4, now);
+            st.setString(5, identifier.getType().toString());
+            st.setString(6, identifier.getValue());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

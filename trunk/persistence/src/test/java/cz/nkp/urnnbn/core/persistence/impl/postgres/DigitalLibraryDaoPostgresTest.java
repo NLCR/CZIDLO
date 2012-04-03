@@ -129,8 +129,8 @@ public class DigitalLibraryDaoPostgresTest extends AbstractDaoTest {
         libraryDao.updateLibrary(updated);
         //get by id
         DigitalLibrary returned = libraryDao.getLibraryById(original.getId());
-        assertEquals(updated, returned);
-        assertFalse(original.equals(returned));
+        assertEquals(updated.getName(), returned.getName());
+        assertFalse(original.getName().equals(returned.getName()));
     }
 
     /**

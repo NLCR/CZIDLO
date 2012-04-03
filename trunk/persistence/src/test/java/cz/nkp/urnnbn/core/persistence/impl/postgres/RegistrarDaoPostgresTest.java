@@ -289,7 +289,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         //add urnNbnBooking
         UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
-        urnSearchDao.insertUrnNbnSearch(search);
+        urnSearchDao.insertGenerator(search);
 
         //DELETE registrar
         registrarDao.deleteRegistrar(id);
@@ -322,7 +322,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
         //also urn:nbn booking should be deleted
         try {
-            urnSearchDao.getSearchByRegistrarId(registrar.getId());
+            urnSearchDao.getGeneratorByRegistrarId(registrar.getId());
             fail();
         } catch (RecordNotFoundException e) {
             //ok

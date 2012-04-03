@@ -6,9 +6,11 @@ package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -21,6 +23,10 @@ public class DigDocIdentifierRT implements ResultsetTransformer {
         DigDocIdentifier identifier = new DigDocIdentifier();
         identifier.setRegistrarId(resultSet.getLong(DigDocIdentifierDAO.ATTR_REG_ID));
         identifier.setDigDocId(resultSet.getLong(DigDocIdentifierDAO.ATTR_DIG_REP_ID));
+        Timestamp created = resultSet.getTimestamp(DigDocIdentifierDAO.ATTR_CREATED);
+        identifier.setCreated(DateTimeUtils.timestampToDatetime(created));
+        Timestamp updated = resultSet.getTimestamp(DigDocIdentifierDAO.ATTR_UPDATED);
+        identifier.setModified(DateTimeUtils.timestampToDatetime(updated));
         identifier.setType(DigDocIdType.valueOf(resultSet.getString(DigDocIdentifierDAO.ATTR_TYPE)));
         identifier.setValue(resultSet.getString(DigDocIdentifierDAO.ATTR_VALUE));
         return identifier;
