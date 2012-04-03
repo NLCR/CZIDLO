@@ -266,13 +266,14 @@ id/uuid:123
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalDocument xmlns="http://resolver.nkp.cz/v2/">
-    <id type="URN:NBN">urn:nbn:cz:boa001-000001</id>
+    <created>2012-02-08T06:34:03.434+01:00</created>
+    <modified>2012-02-08T06:34:03.434+01:00</modified>
+    <urnNbn>urn:nbn:cz:boa001-000001</urnNbn>
     <registrarScopeIdentifiers>
         <id type="K4_pid">uuid:123</id>
         <id type="signatura">3-1275.138</id>
     </registrarScopeIdentifiers>
     <colorDepth>24b</colorDepth>
-    <created>2012-02-08T06:34:03.230+01:00</created>
     <extent>223 stran</extent>
     <financed>norské fondy</financed>
     <modified>2012-02-08T06:34:03.230+01:00</modified>
@@ -470,8 +471,8 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstance xmlns="http://resolver.nkp.cz/v2/" active="true">
     <id type="INTERNAL">1</id>
-<created>2012-02-08T06:34:03.434+01:00</created>
-<modified>2012-02-08T06:34:03.434+01:00</modified>
+    <created>2012-02-08T06:34:03.434+01:00</created>
+    <modified>2012-02-08T06:34:03.434+01:00</modified>
     <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
     <format>djvu</format>
     <accessibility>veřejně přístupné</accessibility>
@@ -484,8 +485,9 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
         </registrar>
     </digitalLibrary>
     <digitalDocument>
-        <id type="INTERNAL">1</id>
-        <id type="URN:NBN">urn:nbn:cz:boa001-000001</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+        <urnNbn>urn:nbn:cz:boa001-000001</urnNbn>
         <registrarScopeIdentifiers>
             <id type="K4_pid">uuid:123</id>
             <id type="signatura">3-1275.138</id>
