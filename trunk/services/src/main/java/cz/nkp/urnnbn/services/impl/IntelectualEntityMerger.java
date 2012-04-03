@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 
 /**
  *

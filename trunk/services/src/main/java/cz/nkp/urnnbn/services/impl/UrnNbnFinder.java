@@ -48,14 +48,14 @@ public class UrnNbnFinder {
 
     private UrnNbnGenerator getSearchOrInsertNew() throws DatabaseException {
         try {
-            return factory.urnSearchDao().getSearchByRegistrarId(registrar.getId());
+            return factory.urnSearchDao().getGeneratorByRegistrarId(registrar.getId());
         } catch (RecordNotFoundException ex) {
             //ok, so new search will be inserted
             try {
                 logger.log(Level.SEVERE, "no urnNbnGenerator found for registrar with code {0}, inserting", registrar.getCode());
                 UrnNbnGenerator search = new UrnNbnGenerator();
                 search.setRegistrarId(registrar.getId());
-                factory.urnSearchDao().insertUrnNbnSearch(search);
+                factory.urnSearchDao().insertGenerator(search);
                 return search;
             } catch (AlreadyPresentException ex1) {
                 logger.log(Level.SEVERE, null, ex1);
@@ -70,7 +70,7 @@ public class UrnNbnFinder {
     private void updateLastFound(UrnNbnGenerator search, UrnNbn urn) throws DatabaseException {
         try {
             search.setLastDocumentCode(urn.getDocumentCode());
-            factory.urnSearchDao().updateUrnNbnSearch(search);
+            factory.urnSearchDao().updateGenerator(search);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, "failed to update last found urn " + urn.toString(), ex);
         }
