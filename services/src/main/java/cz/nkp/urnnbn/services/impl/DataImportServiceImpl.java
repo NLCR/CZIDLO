@@ -39,11 +39,13 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         authorization = new AuthorizationModule(factory);
     }
 
+    @Override
     public UrnNbn importNewRecord(RecordImport data, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigDocIdentifierCollisionException, UnknownArchiverException {
         authorization.checkAccessRights(data.getRegistrarCode(), login);
         return new RecordImporter(factory, data).run();
     }
 
+    @Override
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws AccessException, UnknownDigiLibException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigLibrary(instance.getLibraryId());
@@ -54,6 +56,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         }
     }
 
+    @Override
     public void addNewDigRepId(DigDocIdentifier id) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException {
         try {
             factory.digRepIdDao().insertDigDocId(id);
