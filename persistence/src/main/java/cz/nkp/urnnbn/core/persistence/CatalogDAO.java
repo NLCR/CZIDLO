@@ -20,6 +20,8 @@ public interface CatalogDAO {
     public String SEQ_NAME = "seq_Catalogue";
     public String ATTR_ID = "id";
     public String ATTR_REG_ID = "registrarId";
+    public String ATTR_CREATED = "created";
+    public String ATTR_UPDATED = "modified";
     public String ATTR_NAME = "name";
     public String ATTR_DESC = "description";
     public String ATTR_URL_PREFIX = "urlPrefix";

@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -20,11 +19,11 @@ public interface UrnNbnGeneratorDAO {
     public String ATTR_REGISTRAR_ID = "registrarId";
     public String ATTR_LAST_DOCUMENT_CODE = "lastDocumentCode";
 
-    public void insertUrnNbnSearch(UrnNbnGenerator search) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
+    public void insertGenerator(UrnNbnGenerator generator) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
-    public UrnNbnGenerator getSearchByRegistrarId(long registrarId) throws DatabaseException, RecordNotFoundException;
+    public UrnNbnGenerator getGeneratorByRegistrarId(long registrarId) throws DatabaseException, RecordNotFoundException;
 
-    public void updateUrnNbnSearch(UrnNbnGenerator search) throws DatabaseException, RecordNotFoundException;
+    public void updateGenerator(UrnNbnGenerator search) throws DatabaseException, RecordNotFoundException;
     //mazani by melo byt kaskadove pri smazani registratora
     //TODO: zkontrolovat, jestli to tak funguje
 }

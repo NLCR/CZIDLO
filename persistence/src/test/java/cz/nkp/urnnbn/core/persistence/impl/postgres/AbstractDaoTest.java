@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;

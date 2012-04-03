@@ -38,19 +38,19 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
     /**
      * Test of insertDigDocId method, of class DigRepIdentifierDaoPostgres.
      */
-    public void testInsertDigRepId() throws Exception {
+    public void testInsertDigDocId() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id = builder.digDocIdentifierWithoutIds();
         id.setType(DigDocIdType.valueOf("K4_pid"));
         id.setValue("uuid:123");
         id.setDigDocId(doc.getId());
         id.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(id);
         //insert another typ of identifiere
-        DigDocIdentifier id2 = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id2 = builder.digDocIdentifierWithoutIds();
         id2.setType(DigDocIdType.valueOf("signatura"));
         id2.setValue("nevim,neco");
         id2.setDigDocId(doc.getId());
@@ -58,11 +58,11 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         digRepIdDao.insertDigDocId(id2);
     }
 
-    public void testInsertDigRepId_emptyValue() throws Exception {
+    public void testInsertDigDocId_emptyValue() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        DigDocIdentifier id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id = builder.digDocIdentifierWithoutIds();
         id.setType(DigDocIdType.valueOf("K4_pid"));
         id.setValue(null);
         id.setDigDocId(doc.getId());
@@ -76,9 +76,9 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
 
     }
 
-    public void testInsertDigRepId_unknownDigRep() throws Exception {
+    public void testInsertDigDocId_unknownDigDoc() throws Exception {
         Registrar registrar = registrarPersisted();
-        DigDocIdentifier id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id = builder.digDocIdentifierWithoutIds();
         id.setDigDocId(ILLEGAL_ID);
         id.setRegistrarId(registrar.getId());
         try {
@@ -89,11 +89,11 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testInsertDigRepId_unknownRegistrar() throws Exception {
+    public void testInsertDigDocId_unknownRegistrar() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        DigDocIdentifier id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id = builder.digDocIdentifierWithoutIds();
         id.setDigDocId(doc.getId());
         id.setRegistrarId(ILLEGAL_ID);
         try {
@@ -104,11 +104,11 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testInsertDigRepId_insertTwiceSameIdTypeAndValueForSameDigRep() throws Exception {
+    public void testInsertDigDocId_insertTwiceSameIdTypeAndValueForSameDigDoc() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        DigDocIdentifier identifier = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier identifier = builder.digDocIdentifierWithoutIds();
         identifier.setDigDocId(doc.getId());
         identifier.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(identifier);
@@ -120,19 +120,19 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testInsertDigRepId_insertTwiceSameIdTypeAndValueForSameRegistrar() throws Exception {
+    public void testInsertDigDocId_insertTwiceSameIdTypeAndValueForSameRegistrar() throws Exception {
         Registrar registrar = registrarPersisted();
         //first digRep & id
         IntelectualEntity entity1 = entityPersisted();
         DigitalDocument doc1 = documentPersisted(registrar.getId(), entity1.getId());
-        DigDocIdentifier id1 = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id1 = builder.digDocIdentifierWithoutIds();
         id1.setDigDocId(doc1.getId());
         id1.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(id1);
         //second digRep & id
         IntelectualEntity entity2 = entityPersisted();
         DigitalDocument doc2 = documentPersisted(registrar.getId(), entity2.getId());
-        DigDocIdentifier id2 = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier id2 = builder.digDocIdentifierWithoutIds();
         id2.setDigDocId(doc2.getId());
         id2.setRegistrarId(registrar.getId());
         try {
@@ -173,12 +173,12 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertTrue(idList.contains(k4pid));
     }
 
-    public void testUpdateDigRepIdValue() throws Exception {
+    public void testUpdateDigDocIdValue() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
         inserted.setType(DigDocIdType.valueOf("my_Id"));
         inserted.setValue("oldValue");
         inserted.setDigDocId(doc.getId());
@@ -190,11 +190,11 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         digRepIdDao.updateDigRepIdValue(updated);
         //fetch
         DigDocIdentifier fetched = digRepIdDao.getIdList(doc.getId()).get(0);
-        assertEquals(updated, fetched);
-        assertFalse(inserted.equals(fetched));
+        assertEquals(updated.getValue(), fetched.getValue());
+        assertFalse(inserted.getValue().equals(fetched.getValue()));
     }
 
-    public void testUpdateDigRepIdValue_valueCollision() throws Exception {
+    public void testUpdateDigDocIdValue_valueCollision() throws Exception {
         Registrar registrar = registrarPersisted();
         DigDocIdType idType = DigDocIdType.valueOf("some_id_type");
         String collidingValue = "collision";
@@ -202,7 +202,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity1 = entityPersisted();
         DigitalDocument doc1 = documentPersisted(registrar.getId(), entity1.getId());
         //identifier of first digRep
-        DigDocIdentifier digRep1Id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier digRep1Id = builder.digDocIdentifierWithoutIds();
         digRep1Id.setType(idType);
         digRep1Id.setValue(collidingValue);
         digRep1Id.setDigDocId(doc1.getId());
@@ -213,7 +213,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity2 = entityPersisted();
         DigitalDocument doc2 = documentPersisted(registrar.getId(), entity2.getId());
         //insert identifier to digRep2
-        DigDocIdentifier digRep2Id = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier digRep2Id = builder.digDocIdentifierWithoutIds();
         digRep2Id.setType(idType);
         digRep2Id.setValue("okValue");
         digRep2Id.setDigDocId(doc2.getId());
@@ -230,12 +230,12 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testUpdateDigRepIdValue_unknownRegistrarOrDigRep() throws Exception {
+    public void testUpdateDigDocIdValue_unknownRegistrarOrDigRep() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(inserted);
@@ -259,12 +259,12 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testDeleteDigRepIdentifier() throws Exception {
+    public void testDeleteDigDocIdentifier() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(inserted);
@@ -274,12 +274,12 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertFalse(digRepIdDao.getIdList(doc.getId()).contains(inserted));
     }
 
-    public void testDeleteDigRepIdentifier_unknownDigRep() throws Exception {
+    public void testDeleteDigDocIdentifier_unknownDigDoc() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(inserted);
@@ -293,12 +293,12 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testDeleteDigRepIdentifier_deletedRecordDoesntExist() throws Exception {
+    public void testDeleteDigDocIdentifier_deletedRecordDoesntExist() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
         //insert identifier
-        DigDocIdentifier inserted = builder.digRepIdentifierWithoutIds();
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         digRepIdDao.insertDigDocId(inserted);
@@ -313,7 +313,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testDeleteAllDigRepIdsOfEntity() throws Exception {
+    public void testDeleteAllDigDocIdsOfEntity() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
@@ -339,7 +339,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertTrue(digRepIdDao.getIdList(doc.getId()).isEmpty());
     }
 
-    public void testDeleteAllDigReIds_noIds() throws Exception {
+    public void testDeleteAllDigDocIds_noIds() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());

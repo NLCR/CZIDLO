@@ -30,7 +30,7 @@ public class IntEntityRT implements ResultsetTransformer {
         entity.setCreated(DateTimeUtils.timestampToDatetime(created));
         //updated
         Timestamp updated = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_UPDATED);
-        entity.setLastUpdated(DateTimeUtils.timestampToDatetime(updated));
+        entity.setModified(DateTimeUtils.timestampToDatetime(updated));
         //other attribures
         entity.setDocumentType(resultSet.getString(IntelectualEntityDAO.ATTR_DOC_TYPE));
         entity.setDigitalBorn(resultSet.getBoolean(IntelectualEntityDAO.ATTR_DIGITAL_BORN));

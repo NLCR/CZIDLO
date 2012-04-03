@@ -108,15 +108,14 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
     public void updateLibrary(DigitalLibrary library) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(TABLE_NAME, ATTR_ID, library.getId());
         try {
-            final StatementWrapper st = new UpdateLibrary(library);
-            DaoOperation operation = new NoResultOperation(st);
+            DaoOperation operation = new NoResultOperation(new UpdateLibrary(library));
             runInTransaction(operation);
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't update digital library " + library.getId());
+            logger.log(Level.SEVERE, "Couldn''t update digital library {0}", library.getId());
             throw new DatabaseException(ex);
         }
     }

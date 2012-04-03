@@ -7,9 +7,11 @@ package cz.nkp.urnnbn.core.persistence.impl.statements;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 /**
  *
@@ -27,17 +29,22 @@ public class InsertArchiver implements StatementWrapper {
     public String preparedStatement() {
         return "INSERT into " + ArchiverDAO.TABLE_NAME
                 + "(" + ArchiverDAO.ATTR_ID
+                + "," + ArchiverDAO.ATTR_CREATED
+                + "," + ArchiverDAO.ATTR_UPDATED
                 + "," + ArchiverDAO.ATTR_NAME
                 + "," + ArchiverDAO.ATTR_DESCRIPTION
-                + ") values(?,?,?)";
+                + ") values(?,?,?,?,?)";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setLong(1, archiver.getId());
-            st.setString(2, archiver.getName());
-            st.setString(3, archiver.getDescription());
+            Timestamp now = DateTimeUtils.nowTs();
+            st.setTimestamp(2, now);
+            st.setTimestamp(3, now);
+            st.setString(4, archiver.getName());
+            st.setString(5, archiver.getDescription());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

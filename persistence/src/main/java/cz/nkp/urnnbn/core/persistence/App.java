@@ -179,7 +179,6 @@ public class App {
             babickaIsbn.setType(IntEntIdType.ISBN);
             babickaIsbn.setValue("8090119964");
             factory.intEntIdentifierDao().insertIntEntId(babickaIsbn);
-
             //publication
             Publication babickaPub = builder.publicationWithoutId();
             babickaPub.setIntEntId(babicka.getId());
@@ -192,7 +191,7 @@ public class App {
             //DR babickaMzk
             DigitalDocument babickaMzk = new DigitalDocument();
             babickaMzk.setIntEntId(babicka.getId());
-            babickaMzk.setArchiverId(mzk.getId());
+            babickaMzk.setArchiverId(archMk.getId());
             babickaMzk.setRegistrarId(mzk.getId());
             babickaMzk.setExtent("223 stran");
             babickaMzk.setFinancedFrom("norské fondy");

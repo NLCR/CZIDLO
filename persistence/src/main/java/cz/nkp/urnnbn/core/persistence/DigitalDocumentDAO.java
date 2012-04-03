@@ -25,7 +25,7 @@ public interface DigitalDocumentDAO {
     public String ATTR_ARCHIVER_ID = "archiverId";
     //
     public String ATTR_CREATED = "created";
-    public String ATTR_UPDATED = "lastUpdated";
+    public String ATTR_UPDATED = "modified";
     //TODO: updated/created by USER_ID
     //
     public String ATTR_EXTENT = "extent";

@@ -15,11 +15,11 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class InsertUrnNbnSearch implements StatementWrapper {
+public class InsertUrnNbnGenerator implements StatementWrapper {
 
     private final UrnNbnGenerator search;
 
-    public InsertUrnNbnSearch(UrnNbnGenerator search) {
+    public InsertUrnNbnGenerator(UrnNbnGenerator search) {
         this.search = search;
     }
 
