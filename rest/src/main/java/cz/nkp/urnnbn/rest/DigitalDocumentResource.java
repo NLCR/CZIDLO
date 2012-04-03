@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.net.URI;
@@ -138,7 +138,7 @@ public class DigitalDocumentResource extends Resource {
 
     private Response recordXmlResponse(boolean withDigitalInstances) {
         try {
-            DigitalDocumentIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(doc.getId());
+            RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(doc.getId());
             List<DigitalInstanceBuilder> instancesBuilders = withDigitalInstances
                     ? instancesBuilders(doc) : null;
             RegistrarBuilder regBuilder = new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);

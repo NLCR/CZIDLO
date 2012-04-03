@@ -19,8 +19,8 @@ import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.IOException;
@@ -60,13 +60,13 @@ public class Resource {
         return Services.instanceOf().dataUpdateService();
     }
 
-    DigitalDocumentIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
+    RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
         List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(digRepId);
-        List<DigitalDocumentIdentifierBuilder> builders = new ArrayList<DigitalDocumentIdentifierBuilder>(identifiers.size());
+        List<RegistrarScopeIdentifierBuilder> builders = new ArrayList<RegistrarScopeIdentifierBuilder>(identifiers.size());
         for (DigDocIdentifier id : identifiers) {
-            builders.add(new DigitalDocumentIdentifierBuilder(id));
+            builders.add(new RegistrarScopeIdentifierBuilder(id));
         }
-        return new DigitalDocumentIdentifiersBuilder(builders);
+        return new RegistrarScopeIdentifiersBuilder(builders);
     }
 
     RegistrarBuilder registrarBuilder(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) throws DatabaseException {

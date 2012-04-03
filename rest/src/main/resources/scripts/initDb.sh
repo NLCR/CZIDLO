@@ -9,5 +9,7 @@ DATABASE=resolver
 LOGIN=testuser
 PASSWORD=testpass
 
+echo "Inicializace databáze"
+echo "====================="
 export PGPASSWORD=$PASSWORD
 psql --no-password -U $LOGIN -d $DATABASE -h $HOST -f $SQL_SCRIPT
