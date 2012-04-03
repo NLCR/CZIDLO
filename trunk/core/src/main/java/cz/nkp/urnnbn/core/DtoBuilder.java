@@ -47,7 +47,7 @@ public class DtoBuilder {
         return archiver;
     }
 
-    public Catalog CatalogWithoutIdAndRegistrarId() {
+    public Catalog catalogWithoutIdAndRegistrarId() {
         Catalog catalog = new Catalog();
         catalog.setName("Aleph");
         catalog.setDescription("katalog Aleph");
@@ -57,7 +57,6 @@ public class DtoBuilder {
 
     public DigitalInstance digitalInstanceWithoutId() {
         DigitalInstance instance = new DigitalInstance();
-        instance.setPublished(now());
         instance.setUrl("http://kramerius.mzk.cz/handle/uuid:123");
         return instance;
     }
@@ -73,7 +72,7 @@ public class DtoBuilder {
     public DigitalDocument digDocWithoutIds() {
         DigitalDocument doc = new DigitalDocument();
         doc.setCreated(now());
-        doc.setLastUpdated(now());
+        doc.setModified(now());
         return doc;
     }
 
@@ -96,7 +95,7 @@ public class DtoBuilder {
         IntelectualEntity entity = new IntelectualEntity();
         entity.setEntityType(EntityType.MONOGRAPH);
         entity.setCreated(now());
-        entity.setLastUpdated(now());
+        entity.setModified(now());
         entity.setDigitalBorn(false);
         return entity;
     }

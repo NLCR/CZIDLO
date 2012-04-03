@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalDocument implements IdentifiableByLongAttribute {
+public class DigitalDocument implements IdentifiableWithDatestamps {
 
     private long id;
     private long intEntId;
@@ -18,7 +18,7 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
     private long archiverId;
     //
     private DateTime created;
-    private DateTime lastUpdated;
+    private DateTime modified;
     //
     private String financedFrom;
     private String contractNumber;
@@ -45,7 +45,7 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         registrarId = original.getRegistrarId();
         archiverId = original.getArchiverId();
         created = original.getCreated();
-        lastUpdated = original.getLastUpdated();
+        modified = original.getModified();
         extent = original.getExtent();
         financedFrom = original.getFinancedFrom();
         contractNumber = original.getContractNumber();
@@ -70,6 +70,7 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         this.archiverId = archiverId;
     }
 
+    @Override
     public DateTime getCreated() {
         return created;
     }
@@ -107,6 +108,7 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
@@ -119,12 +121,13 @@ public class DigitalDocument implements IdentifiableByLongAttribute {
         this.intEntId = intEntId;
     }
 
-    public DateTime getLastUpdated() {
-        return lastUpdated;
+    @Override
+    public DateTime getModified() {
+        return modified;
     }
 
-    public void setLastUpdated(DateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setModified(DateTime modified) {
+        this.modified = modified;
     }
 
     public long getRegistrarId() {

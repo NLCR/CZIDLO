@@ -10,14 +10,16 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstance implements IdentifiableByLongAttribute {
+public class DigitalInstance implements IdentifiableWithDatestamps {
 
     private long id;
     private long digDocId;
     private long libraryId;
+    private DateTime created;
+    private DateTime modified;
+    private boolean active;
     private String url;
     private String format;
-    private DateTime published;
     private String accessibility;
 
     public long getDigDocId() {
@@ -46,14 +48,6 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
         this.libraryId = libraryId;
     }
 
-    public DateTime getPublished() {
-        return published;
-    }
-
-    public void setPublished(DateTime published) {
-        this.published = published;
-    }
-
     public String getUrl() {
         return url;
     }
@@ -76,6 +70,32 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
 
     public void setAccessibility(String accessibility) {
         this.accessibility = accessibility;
+    }
+
+    @Override
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

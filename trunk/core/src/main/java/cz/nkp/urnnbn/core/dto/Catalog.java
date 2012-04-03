@@ -4,14 +4,18 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import org.joda.time.DateTime;
+
 /**
  *
  * @author Martin Řehánek
  */
-public class Catalog implements IdentifiableByLongAttribute {
+public class Catalog implements IdentifiableWithDatestamps {
 
     private long id;
     private long registrarId;
+    private DateTime created;
+    private DateTime modified;
     private String name;
     private String description;
     private String urlPrefix;
@@ -67,6 +71,24 @@ public class Catalog implements IdentifiableByLongAttribute {
 
     public void setUrlPrefix(String urlPrefix) {
         this.urlPrefix = urlPrefix;
+    }
+
+    @Override
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
     }
 
     @Override

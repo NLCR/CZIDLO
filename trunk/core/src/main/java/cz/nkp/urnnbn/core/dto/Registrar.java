@@ -44,6 +44,8 @@ public class Registrar extends Archiver {
         setId(archiver.getId());
         setName(archiver.getName());
         setDescription(archiver.getDescription());
+        setCreated(archiver.getCreated());
+        setModified(archiver.getModified());
     }
 
     @Override
