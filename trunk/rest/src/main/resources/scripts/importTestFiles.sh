@@ -6,7 +6,7 @@ BODY_TMP=/tmp/body;
 function import {
 INPUT_FILE=$1
 echo 
-echo Import dat ze souboru $INPUT_FILE
+echo "Import dat ze souboru $INPUT_FILE"
 echo "===================================================================================="
 curl --basic --user $LOGIN:$PASSWORD -D $HEADERS_TMP $URL -X $HTTP_METHOD -d @$INPUT_FILE -H 'Content-type: application/xml' >$BODY_TMP
 echo

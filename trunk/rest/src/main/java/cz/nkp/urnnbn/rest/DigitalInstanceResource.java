@@ -16,7 +16,7 @@ import cz.nkp.urnnbn.rest.exceptions.MethodForbiddenException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibraryBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +54,7 @@ public class DigitalInstanceResource extends Resource {
     private DigitalDocumentBuilder digRepBuilder(long digRepId) throws DatabaseException {
         DigitalDocument digRep = dataAccessService().digDocByInternalId(digRepId);
         UrnNbn urn = dataAccessService().urnByDigDocId(digRep.getId());
-        DigitalDocumentIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digRepId);
+        RegistrarScopeIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digRepId);
         return new DigitalDocumentBuilder(digRep, urn, idsBuilder, null, null, null, null);
     }
 

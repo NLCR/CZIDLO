@@ -1,0 +1,25 @@
+#!/bin/bash
+HEADERS_TMP=/tmp/headers
+BODY_TMP=/tmp/body
+
+REGISTRAR_CODE=tst02
+SIZE=5
+URL=https://localhost/api/v2/registrars/$REGISTRAR_CODE/urnNbnReservations?size=$SIZE
+HTTP_METHOD=POST
+LOGIN=mzkAdmin
+PASSWORD=mzkAdminPass
+
+echo
+echo "Rezervace balíku urn:nbn o velikosti $SIZE"
+echo "=========================================="
+curl --insecure --basic --user $LOGIN:$PASSWORD -D $HEADERS_TMP $URL -X $HTTP_METHOD >$BODY_TMP
+echo
+
+echo "Hlavicky"
+echo "--------"
+cat $HEADERS_TMP
+echo
+
+echo "Telo"
+echo "--------"
+cat $BODY_TMP | xmlindent
