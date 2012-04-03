@@ -60,6 +60,8 @@ GET http://localhost:8080/api/v2/registrars/boa001
     </digitalLibraries>
     <catalogs>
         <catalog>
+            <created>2012-02-08T06:34:03.434+01:00</created>
+            <modified>2012-02-08T06:34:03.434+01:00</modified>
             <name>Aleph</name>
             <description>katalog Aleph</description>
             <urlPrefix>http://aleph.mzk.cz</urlPrefix>
