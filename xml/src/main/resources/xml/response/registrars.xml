@@ -1,11 +1,183 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<r:registrars xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:registrar code="boa001">
-        <r:name>MZK</r:name>
-        <r:description>Moravská zemská knihovna</r:description>
-    </r:registrar>
-    <r:registrar code="aba001">
-        <r:name>NKP</r:name>
-        <r:description>Národní knihovna Praha</r:description>
-    </r:registrar>
-</r:registrars>
+<?xml version="1.0"?>
+<registrars xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
+    <registrar code="aba001">
+        <created>2012-04-03T22:04:26.021+02:00</created>
+        <name>Národní knihovna České republiky</name>
+        <description></description>
+    </registrar>
+    <registrar code="aba006">
+        <created>2012-04-03T22:04:26.093+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="aba007">
+        <created>2012-04-03T22:04:26.349+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="aba008">
+        <created>2012-04-03T22:04:26.660+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="aba010">
+        <created>2012-04-03T22:04:26.704+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="abe045">
+        <created>2012-04-03T22:04:26.745+02:00</created>
+        <name>Vojenský historický ústav – knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="abc135">
+        <created>2012-04-03T22:04:26.804+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="abe190">
+        <created>2012-04-03T22:04:26.859+02:00</created>
+        <name>Gender Studies, o.p.s. – knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="abe310">
+        <created>2012-04-03T22:04:26.914+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="abe323">
+        <created>2012-04-03T22:04:26.970+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="abe336">
+        <created>2012-04-03T22:04:27.026+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="abe343">
+        <created>2012-04-03T22:04:27.082+02:00</created>
+        <name>Národní archiv v Praze – knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="boa001">
+        <created>2012-04-03T22:04:27.136+02:00</created>
+        <name>Moravská zemská knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="bve301">
+        <created>2012-04-03T22:04:27.224+02:00</created>
+        <name>Regionální muzeum v Mikulově</name>
+        <description></description>
+    </registrar>
+    <registrar code="bve302">
+        <created>2012-04-03T22:04:27.281+02:00</created>
+        <name>Regionální muzeum v Mikulově</name>
+        <description></description>
+    </registrar>
+    <registrar code="cbe301">
+        <created>2012-04-03T22:04:27.337+02:00</created>
+        <name>Jihočeské muzeum v Českých Budějovicích - knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="ghe302">
+        <created>2012-04-03T22:04:27.393+02:00</created>
+        <name>Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB</name>
+        <description></description>
+    </registrar>
+    <registrar code="hka001">
+        <created>2012-04-03T22:04:27.449+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="hke302">
+        <created>2012-04-03T22:04:27.506+02:00</created>
+        <name>Muzeum východních Čech v Hradci Králové - společenskovědní knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="jhe301">
+        <created>2012-04-03T22:04:27.559+02:00</created>
+        <name>Muzeum Jindřichohradecka – odborná knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="kmg001">
+        <created>2012-04-03T22:04:27.636+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="ktg503">
+        <created>2012-04-03T22:04:27.704+02:00</created>
+        <name>Městská knihovna Horažďovice</name>
+        <description></description>
+    </registrar>
+    <registrar code="kve303">
+        <created>2012-04-03T22:04:27.772+02:00</created>
+        <name>Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="kvg001">
+        <created>2012-04-03T22:04:27.826+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="lia001">
+        <created>2012-04-03T22:04:27.882+02:00</created>
+        <name>Krajská vědecká knihovna v Liberci</name>
+        <description></description>
+    </registrar>
+    <registrar code="lid001">
+        <created>2012-04-03T22:04:27.935+02:00</created>
+        <name>Technická univerzita v Liberci - Univerzitní knihovna</name>
+        <description></description>
+    </registrar>
+    <registrar code="ola001">
+        <created>2012-04-03T22:04:27.969+02:00</created>
+        <name>Vědecká knihovna v Olomouci</name>
+        <description></description>
+    </registrar>
+    <registrar code="osa001">
+        <created>2012-04-03T22:04:28.028+02:00</created>
+        <name>název chybí</name>
+        <description>TODO:doplnit název</description>
+    </registrar>
+    <registrar code="pae302">
+        <created>2012-04-03T22:04:28.082+02:00</created>
+        <name>Státní okresní archiv Pardubice</name>
+        <description></description>
+    </registrar>
+    <registrar code="pna001">
+        <created>2012-04-03T22:04:28.136+02:00</created>
+        <name>Studijní a vědecká knihovna Plzeňského kraje</name>
+        <description></description>
+    </registrar>
+    <registrar code="roe301">
+        <created>2012-04-03T22:04:28.200+02:00</created>
+        <name>Muzeum Dr.Bohuslava Horáka v Rokycanech</name>
+        <description></description>
+    </registrar>
+    <registrar code="ulg001">
+        <created>2012-04-03T22:04:28.237+02:00</created>
+        <name>Severočeská vědecká knihovna v Ústí nad Labem</name>
+        <description></description>
+    </registrar>
+    <registrar code="zlg001">
+        <created>2012-04-03T22:04:28.294+02:00</created>
+        <name>Krajská knihovna Františka Bartoše, příspěvková organizace</name>
+        <description></description>
+    </registrar>
+    <registrar code="tst01">
+        <created>2012-04-03T22:04:28.336+02:00</created>
+        <name>Národní knihovna České republiky - test</name>
+        <description>testovací registrátor</description>
+    </registrar>
+    <registrar code="tst02">
+        <created>2012-04-03T22:04:28.382+02:00</created>
+        <name>Moravská zemská knihovna - test</name>
+        <description>testovací registrátor</description>
+    </registrar>
+    <registrar code="tst03">
+        <created>2012-04-03T22:04:28.437+02:00</created>
+        <name>Testovací registrátor</name>
+        <description></description>
+    </registrar>
+</registrars>

@@ -26,8 +26,8 @@ class AnalyticalBuilder extends IntelectualEntityBuilder {
     @Override
     public Element buildRootElement() {
         Element root = entityElement();
-        appendCreatedAndUpdated(root);
-        Element titleInfo = addElement(root, "titleInfo");
+        appendTimestamps(root);
+        Element titleInfo = appendElement(root, "titleInfo");
         appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "title", true);
         appendEntityIdentifier(titleInfo, IntEntIdType.SUB_TITLE, "subTitle", false);
         appendEntityIdentifier(root, IntEntIdType.OTHER, "otherId", false);

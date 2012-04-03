@@ -12,17 +12,17 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentIdentifierBuilder extends XmlBuilder {
+public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
 
     private final DigDocIdentifier id;
     private final String previousValue;
 
-    public DigitalDocumentIdentifierBuilder(DigDocIdentifier id) {
+    public RegistrarScopeIdentifierBuilder(DigDocIdentifier id) {
         this.id = id;
         this.previousValue = null;
     }
 
-    public DigitalDocumentIdentifierBuilder(DigDocIdentifier id, String previousValue) {
+    public RegistrarScopeIdentifierBuilder(DigDocIdentifier id, String previousValue) {
         this.id = id;
         this.previousValue = previousValue;
     }
@@ -34,7 +34,7 @@ public class DigitalDocumentIdentifierBuilder extends XmlBuilder {
         root.addAttribute(type);
         root.appendChild(id.getValue());
         if (previousValue != null) {
-            Element previousValueEl = addElement(root, "previousValue");
+            Element previousValueEl = appendElement(root, "previousValue");
             previousValueEl.appendChild(previousValue);
         }
         return root;

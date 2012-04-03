@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+<?xml version="1.0"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
+    <created>2012-04-03T23:13:20.166+02:00</created>
     <status>RESERVED</status>
-    <created>2012-02-08T07:11:28.211+01:00</created>
-    <registrarCode>boa001</registrarCode>
-    <value>urn:nbn:cz:boa001-000006</value>
+    <created>2012-04-03T23:13:20.166+02:00</created>
+    <registrarCode>tst02</registrarCode>
+    <value>urn:nbn:cz:tst02-000000</value>
 </urnNbn>

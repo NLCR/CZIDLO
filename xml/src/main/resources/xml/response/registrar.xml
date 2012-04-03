@@ -1,22 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<registrar xmlns="http://resolver.nkp.cz/v2/" code="boa001">
-    <name>MZK</name>
-    <description>Moravská zemská knihovna</description>
+<?xml version="1.0"?>
+<registrar xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" code="aba001" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
+    <created>2012-04-03T22:04:26.021+02:00</created>
+    <name>Národní knihovna České republiky</name>
+    <description></description>
     <digitalLibraries>
         <digitalLibrary>
-            <name>K4</name>
-            <description>Kramerius4</description>
-        </digitalLibrary>
-        <digitalLibrary>
-            <name>K3</name>
-            <description>Kramerius 3</description>
+            <created>2012-04-03T22:04:26.067+02:00</created>
+            <name>Kramerius Národní knihovna ČR</name>
+            <description>kod_rd:dkknkcr</description>
         </digitalLibrary>
     </digitalLibraries>
     <catalogs>
         <catalog>
-            <name>Aleph</name>
-            <description>katalog Aleph</description>
-            <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+            <created>2012-04-03T22:04:28.533+02:00</created>
+            <name>Aleph NKP</name>
+            <urlPrefix>http://aleph.nkp.cz</urlPrefix>
         </catalog>
     </catalogs>
 </registrar>

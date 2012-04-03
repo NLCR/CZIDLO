@@ -18,13 +18,13 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     private final DigitalDocument doc;
     private final UrnNbn urn;
-    private final DigitalDocumentIdentifiersBuilder identifiersBuilder;
+    private final RegistrarScopeIdentifiersBuilder identifiersBuilder;
     private final List<DigitalInstanceBuilder> instanceBuilderList;
     private final RegistrarBuilder registrarBuilder;
     private final ArchiverBuilder archiverBuilder;
     private final IntelectualEntityBuilder entityBuilder;
 
-    public DigitalDocumentBuilder(DigitalDocument rep, UrnNbn urn, DigitalDocumentIdentifiersBuilder identifiersBuilder, List<DigitalInstanceBuilder> instanceBuilders, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
+    public DigitalDocumentBuilder(DigitalDocument rep, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder, List<DigitalInstanceBuilder> instanceBuilders, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
         this.doc = rep;
         this.urn = urn;
         this.identifiersBuilder = identifiersBuilder;
@@ -34,11 +34,11 @@ public class DigitalDocumentBuilder extends XmlBuilder {
         this.entityBuilder = entityBuilder;
     }
 
+    @Override
     public Element buildRootElement() {
         Element root = new Element("digitalDocument", RESOLVER);
         //appendIdentifierElement(root, "INTERNAL", rep.getId());
-        appendElementWithContentIfNotNull(root, doc.getCreated(), "created");
-        appendElementWithContentIfNotNull(root, doc.getLastUpdated(), "lastUpdated");
+        appendTimestamps(root, doc, "digital document");
         appendElementWithContentIfNotNull(root, urn, "urnNbn");
         if (identifiersBuilder != null) {
             appendBuilderResultfNotNull(root, identifiersBuilder);
@@ -58,10 +58,10 @@ public class DigitalDocumentBuilder extends XmlBuilder {
     }
 
     private void appendTechnicalMetadata(Element root) {
-        Element technicalEl = addElement(root, "technicalMetadata");
+        Element technicalEl = appendElement(root, "technicalMetadata");
 
         //format
-        Element formatEl = addElement(technicalEl, "format");
+        Element formatEl = appendElement(technicalEl, "format");
         String format = doc.getFormat();
         if (format != null) {
             formatEl.appendChild(format);
@@ -74,11 +74,11 @@ public class DigitalDocumentBuilder extends XmlBuilder {
         //extent
         appendElementWithContentIfNotNull(technicalEl, doc.getExtent(), "extent");
         //resolution
-        Element resolutionEl = addElement(technicalEl, "resolution");
+        Element resolutionEl = appendElement(technicalEl, "resolution");
         appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionHorizontal(), "horizontal");
         appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionVertical(), "vertical");
         //compression
-        Element compressionEl = addElement(technicalEl, "compression");
+        Element compressionEl = appendElement(technicalEl, "compression");
         String compression = doc.getCompression();
         if (compression != null) {
             compressionEl.appendChild(compression);
@@ -89,12 +89,12 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             compressionEl.addAttribute(ratio);
         }
         //color
-        Element colorEl = addElement(technicalEl, "color");
+        Element colorEl = appendElement(technicalEl, "color");
         appendElementWithContentIfNotNull(colorEl, doc.getColorModel(), "model");
         appendElementWithContentIfNotNull(colorEl, doc.getColorDepth(), "depth");
         appendElementWithContentIfNotNull(technicalEl, doc.getIccProfile(), "iccProfile");
         //common picture characteristics
-        Element pictureEl = addElement(technicalEl, "pictureSize");
+        Element pictureEl = appendElement(technicalEl, "pictureSize");
         appendElementWithContentIfNotNull(pictureEl, doc.getPictureWidth(), "width");
         appendElementWithContentIfNotNull(pictureEl, doc.getPictureHeight(), "height");
     }

@@ -30,7 +30,7 @@ public class DigitalInstancesBuilder extends XmlBuilder {
     Element buildRootElement() {
         Element root = new Element("digitalInstances", RESOLVER);
         if (instanceBuilderList == null) {
-            Element countEl = addElement(root, "totalCount");
+            Element countEl = appendElement(root, "totalCount");
             countEl.appendChild(Long.toString(count));
         } else {
             for (DigitalInstanceBuilder builder : instanceBuilderList) {

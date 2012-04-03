@@ -11,18 +11,18 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentIdentifiersBuilder extends XmlBuilder {
+public class RegistrarScopeIdentifiersBuilder extends XmlBuilder {
 
-    private final List<DigitalDocumentIdentifierBuilder> identifierBuilders;
+    private final List<RegistrarScopeIdentifierBuilder> identifierBuilders;
 
-    public DigitalDocumentIdentifiersBuilder(List<DigitalDocumentIdentifierBuilder> identifierBuilders) {
+    public RegistrarScopeIdentifiersBuilder(List<RegistrarScopeIdentifierBuilder> identifierBuilders) {
         this.identifierBuilders = identifierBuilders;
     }
 
     @Override
     Element buildRootElement() {
         Element root = new Element("registrarScopeIdentifiers", RESOLVER);
-        for (DigitalDocumentIdentifierBuilder idBuilder : identifierBuilders) {
+        for (RegistrarScopeIdentifierBuilder idBuilder : identifierBuilders) {
             appendBuilderResultfNotNull(root, idBuilder);
         }
         return root;

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<digitalDocument xmlns="http://resolver.nkp.cz/v2/">
+    <created>2012-04-03T22:04:30.489+02:00</created>
+    <urnNbn>urn:nbn:cz:tst02-000001</urnNbn>
+    <registrarScopeIdentifiers>
+        <id type="K4_pid">uuid:123</id>
+        <id type="signatura">3-1275.138</id>
+    </registrarScopeIdentifiers>
+    <financed>norské fondy</financed>
+    <contractNumber>123</contractNumber>
+    <technicalMetadata>
+        <format version="1.0">JPEG</format>
+        <extent>223 stran</extent>
+        <resolution>
+            <horizontal>1280</horizontal>
+            <vertical>1024</vertical>
+        </resolution>
+        <compression ratio="0.3">LZW</compression>
+        <color>
+            <model>RGB</model>
+            <depth>24</depth>
+        </color>
+        <iccProfile>some ICC profile</iccProfile>
+        <pictureSize>
+            <width>600</width>
+            <height>1000</height>
+        </pictureSize>
+    </technicalMetadata>
+    <digitalInstance active="true">
+        <id type="INTERNAL">1</id>
+        <created>2012-04-03T22:04:30.644+02:00</created>
+        <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
+        <format>djvu</format>
+        <accessibility>veřejně přístupné</accessibility>
+    </digitalInstance>
+    <digitalInstance active="true">
+        <id type="INTERNAL">2</id>
+        <created>2012-04-03T22:04:30.676+02:00</created>
+        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+    </digitalInstance>
+    <digitalInstance active="true">
+        <id type="INTERNAL">3</id>
+        <created>2012-04-03T22:04:30.704+02:00</created>
+        <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
+    </digitalInstance>
+    <registrar code="tst02">
+        <created>2012-04-03T22:04:28.382+02:00</created>
+        <modified>2012-04-03T22:04:28.382+02:00</modified>
+        <name>Moravská zemská knihovna - test</name>
+        <description>testovací registrátor</description>
+    </registrar>
+    <archiver>
+        <id type="INTERNAL">1</id>
+        <created>2012-04-03T22:04:25.876+02:00</created>
+        <name>MK</name>
+        <description>Mala knihovna </description>
+    </archiver>
+    <intelectualEntity type="MONOGRAPH">
+        <created>2012-04-03T22:04:30.317+02:00</created>
+        <titleInfo>
+            <title>Babička</title>
+            <subTitle>obrazy z venkovského života</subTitle>
+        </titleInfo>
+        <isbn>8090119964</isbn>
+        <documentType>kniha</documentType>
+        <digitalBorn>false</digitalBorn>
+        <primaryOriginator type="CORPORATION">IBM print</primaryOriginator>
+        <otherOriginator>Adolf Kašpar</otherOriginator>
+        <publication>
+            <publisher>Československý spisovatel</publisher>
+            <place>V Praze</place>
+            <year>2011</year>
+        </publication>
+    </intelectualEntity>
+</digitalDocument>
