@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.dto;
 
 import cz.nkp.urnnbn.core.DigDocIdType;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -14,6 +15,8 @@ public class DigDocIdentifier {
 
     private long digDocId;
     private long registrarId;
+    private DateTime created;
+    private DateTime modified;
     private DigDocIdType type;
     private String value;
 
@@ -59,6 +62,22 @@ public class DigDocIdentifier {
         this.value = value;
     }
 
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -74,10 +93,7 @@ public class DigDocIdentifier {
         if (this.registrarId != other.registrarId) {
             return false;
         }
-        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
-            return false;
-        }
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+        if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
             return false;
         }
         return true;
@@ -85,11 +101,10 @@ public class DigDocIdentifier {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + (int) (this.digDocId ^ (this.digDocId >>> 32));
-        hash = 79 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
-        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
-        hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
+        int hash = 3;
+        hash = 53 * hash + (int) (this.digDocId ^ (this.digDocId >>> 32));
+        hash = 53 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
 

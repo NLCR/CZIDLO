@@ -4,13 +4,17 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import org.joda.time.DateTime;
+
 /**
  *
  * @author Martin Řehánek
  */
-public class User implements IdentifiableByLongAttribute {
+public class User implements IdentifiableWithDatestamps {
 
     private long id;
+    private DateTime created;
+    private DateTime modified;
     private String login;
     private String password;
     private boolean admin;
@@ -37,6 +41,7 @@ public class User implements IdentifiableByLongAttribute {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
@@ -58,6 +63,24 @@ public class User implements IdentifiableByLongAttribute {
     }
 
     @Override
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -69,29 +92,13 @@ public class User implements IdentifiableByLongAttribute {
         if (this.id != other.id) {
             return false;
         }
-        if ((this.login == null) ? (other.login != null) : !this.login.equals(other.login)) {
-            return false;
-        }
-        if ((this.password == null) ? (other.password != null) : !this.password.equals(other.password)) {
-            return false;
-        }
-        if (this.admin != other.admin) {
-            return false;
-        }
-        if ((this.email == null) ? (other.email != null) : !this.email.equals(other.email)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 67 * hash + (this.login != null ? this.login.hashCode() : 0);
-        hash = 67 * hash + (this.password != null ? this.password.hashCode() : 0);
-        hash = 67 * hash + (this.admin ? 1 : 0);
-        hash = 67 * hash + (this.email != null ? this.email.hashCode() : 0);
+        hash = 29 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 

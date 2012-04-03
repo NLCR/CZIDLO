@@ -4,14 +4,18 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import org.joda.time.DateTime;
+
 /**
  *
  * @author Martin Řehánek
  */
-public class DigitalLibrary implements IdentifiableByLongAttribute {
+public class DigitalLibrary implements IdentifiableWithDatestamps {
 
     private long id;
     private long registrarId;
+    private DateTime created;
+    private DateTime modified;
     private String name;
     private String description;
     private String url;
@@ -40,6 +44,7 @@ public class DigitalLibrary implements IdentifiableByLongAttribute {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
@@ -69,6 +74,24 @@ public class DigitalLibrary implements IdentifiableByLongAttribute {
     }
 
     @Override
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -80,29 +103,13 @@ public class DigitalLibrary implements IdentifiableByLongAttribute {
         if (this.id != other.id) {
             return false;
         }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-            return false;
-        }
-        if ((this.url == null) ? (other.url != null) : !this.url.equals(other.url)) {
-            return false;
-        }
-        if (this.registrarId != other.registrarId) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 73 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 73 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 73 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 73 * hash + (this.url != null ? this.url.hashCode() : 0);
-        hash = 73 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
+        int hash = 5;
+        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 }

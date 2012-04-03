@@ -17,11 +17,12 @@ public class UrnNbn {
 
     //urn:nbn:cz:aba001-123456
     private static final String PREFIX = "urn:nbn:cz:";
-    private static final Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}",Pattern.CASE_INSENSITIVE);
+    private static final Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}", Pattern.CASE_INSENSITIVE);
     private final Long digDocId;
     private final RegistrarCode registrarCode;
     private final String documentCode;
     private final DateTime created;
+    private final DateTime modified;
 
     /**
      * This constructor should be used when urn:nbn is being assigned or parsed
@@ -31,9 +32,10 @@ public class UrnNbn {
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId) {
         this.registrarCode = registrarCode;
-        this.documentCode = documentCode;
+        this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
         this.created = null;
+        this.modified = null;
     }
 
     /**
@@ -42,12 +44,14 @@ public class UrnNbn {
      * @param documentCode
      * @param digDocId
      * @param created 
+     * @param modified
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created, DateTime modified) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
         this.created = created;
+        this.modified = modified;
     }
 
     public String getDocumentCode() {
@@ -64,6 +68,10 @@ public class UrnNbn {
 
     public DateTime getCreated() {
         return created;
+    }
+
+    public DateTime getModified() {
+        return modified;
     }
 
     @Override

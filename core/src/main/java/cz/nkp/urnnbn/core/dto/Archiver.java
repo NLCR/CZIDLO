@@ -4,13 +4,17 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import org.joda.time.DateTime;
+
 /**
  *
  * @author Martin Řehánek
  */
-public class Archiver implements IdentifiableByLongAttribute{
+public class Archiver implements IdentifiableWithDatestamps {
 
     private long id;
+    private DateTime created;
+    private DateTime modified;
     private String name;
     private String description;
 
@@ -50,6 +54,24 @@ public class Archiver implements IdentifiableByLongAttribute{
     }
 
     @Override
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -61,21 +83,13 @@ public class Archiver implements IdentifiableByLongAttribute{
         if (this.id != other.id) {
             return false;
         }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 47 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 }

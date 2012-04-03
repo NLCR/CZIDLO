@@ -11,12 +11,12 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class IntelectualEntity implements IdentifiableByLongAttribute {
+public class IntelectualEntity implements IdentifiableWithDatestamps {
 
     private long id;
     private EntityType entityType;
     private DateTime created;
-    private DateTime lastUpdated;
+    private DateTime modified;
     private String documentType;
     private boolean digitalBorn = false;
     private String otherOriginator;
@@ -29,13 +29,14 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
         this.id = original.getId();
         this.entityType = original.getEntityType();
         this.created = original.getCreated();
-        this.lastUpdated = original.getLastUpdated();
+        this.modified = original.getModified();
         this.documentType = original.getDocumentType();
         this.digitalBorn = original.isDigitalBorn();
         this.otherOriginator = original.getOtherOriginator();
         this.degreeAwardingInstitution = original.getDegreeAwardingInstitution();
     }
 
+    @Override
     public DateTime getCreated() {
         return created;
     }
@@ -84,20 +85,23 @@ public class IntelectualEntity implements IdentifiableByLongAttribute {
         this.entityType = entityType;
     }
 
+    @Override
     public long getId() {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
 
-    public DateTime getLastUpdated() {
-        return lastUpdated;
+    @Override
+    public DateTime getModified() {
+        return modified;
     }
 
-    public void setLastUpdated(DateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setModified(DateTime modified) {
+        this.modified = modified;
     }
 
     @Override
