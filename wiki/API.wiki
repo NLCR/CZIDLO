@@ -300,20 +300,23 @@ id/uuid:123
     </intelectualEntity>
     <digitalInstance active="true">
         <id type="INTERNAL">1</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
-        <published>2012-02-08T06:34:03.407+01:00</published>
         <format>djvu</format>
         <accessibility>veřejně přístupné</accessibility>
     </digitalInstance>
     <digitalInstance active="true">
         <id type="INTERNAL">2</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
-        <published>2012-02-08T06:34:03.434+01:00</published>
     </digitalInstance>
     <digitalInstance active="true">
         <id type="INTERNAL">3</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
-        <published>2012-02-08T06:34:03.482+01:00</published>
     </digitalInstance>
 </digitalDocument>
 }}}
@@ -380,25 +383,29 @@ GET http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstan
 <digitalInstances xmlns="http://resolver.nkp.cz/v2/">
     <digitalInstance active="true">
         <id type="INTERNAL">1</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
-        <published>2012-02-08T06:34:03.407+01:00</published>
         <format>djvu</format>
         <accessibility>veřejně přístupné</accessibility>
     </digitalInstance>
     <digitalInstance active="true">
         <id type="INTERNAL">2</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
       <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
-        <published>2012-02-08T06:34:03.434+01:00</published>
     </digitalInstance>
     <digitalInstance active="true">
         <id type="INTERNAL">3</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
-        <published>2012-02-08T06:34:03.482+01:00</published>
     </digitalInstance>
     <digitalInstance active="true">
         <id type="INTERNAL">5</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
-        <published>2012-02-08T06:55:53.035+01:00</published>
     </digitalInstance>
 </digitalInstances>
 }}}
@@ -463,8 +470,9 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstance xmlns="http://resolver.nkp.cz/v2/" active="true">
     <id type="INTERNAL">1</id>
+<created>2012-02-08T06:34:03.434+01:00</created>
+<modified>2012-02-08T06:34:03.434+01:00</modified>
     <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
-    <published>2012-02-08T06:34:03.407+01:00</published>
     <format>djvu</format>
     <accessibility>veřejně přístupné</accessibility>
     <digitalLibrary>
