@@ -275,7 +275,7 @@ id/uuid:123
     <created>2012-02-08T06:34:03.230+01:00</created>
     <extent>223 stran</extent>
     <financed>norské fondy</financed>
-    <lastUpdated>2012-02-08T06:34:03.230+01:00</lastUpdated>
+    <modified>2012-02-08T06:34:03.230+01:00</modified>
     <resolution>1280x1024</resolution>
     <contractNumber>123</contractNumber>
     <registrar code="boa001">
@@ -289,7 +289,7 @@ id/uuid:123
         <subTitle>obrazy z venkovského života</subTitle>
         <documentType>kniha</documentType>
         <created>2012-02-08T06:34:03.099+01:00</created>
-        <lastUpdated>2012-02-08T06:34:03.099+01:00</lastUpdated>
+        <modified>2012-02-08T06:34:03.099+01:00</modified>
         <digitalBorn>false</digitalBorn>
         <publication>
             <publisher>Československý spisovatel</publisher>
@@ -487,7 +487,7 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
         <created>2012-02-08T06:34:03.230+01:00</created>
         <extent>223 stran</extent>
         <financed>norské fondy</financed>
-        <lastUpdated>2012-02-08T06:34:03.230+01:00</lastUpdated>
+        <modified>2012-02-08T06:34:03.230+01:00</modified>
         <resolution>1280x1024</resolution>
         <contractNumber>123</contractNumber>
     </digitalDocument>
