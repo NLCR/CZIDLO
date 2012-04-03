@@ -23,6 +23,7 @@ public class ArchiverBuilder extends XmlBuilder {
     Element buildRootElement() {
         Element root = new Element("archiver", RESOLVER);
         appendIdentifierElement(root, IDTYPE_INTERNAL, archiver.getId());
+        appendTimestamps(root, archiver, "archiver");
         appendElementWithContentIfNotNull(root, archiver.getName(), "name");
         appendElementWithContentIfNotNull(root, archiver.getDescription(), "description");
         return root;

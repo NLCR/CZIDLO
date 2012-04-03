@@ -26,8 +26,8 @@ class PeriodicalVolumeBuilder extends IntelectualEntityBuilder {
     @Override
     public Element buildRootElement() {
         Element root = entityElement();
-        appendCreatedAndUpdated(root);
-        Element titleInfo = addElement(root, "titleInfo");
+        appendTimestamps(root);
+        Element titleInfo = appendElement(root, "titleInfo");
         appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "periodicalTitle", true);
         appendEntityIdentifier(titleInfo, IntEntIdType.VOLUME_TITLE, "volumeTitle", true);
         appendEntityIdentifier(root, IntEntIdType.CCNB, "ccnb", false);

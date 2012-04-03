@@ -40,8 +40,8 @@ public class DigitalInstanceBuilder extends XmlBuilder {
         //taky dodat datum změny a vypisovat jako "deleted" pokud nebude null (tj. odstraněno)
         root.addAttribute(new Attribute("active", "true"));
         appendIdentifierElement(root, IDTYPE_INTERNAL, instance.getId());
+        appendTimestamps(root, instance, "digital instance");
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
-        appendElementWithContentIfNotNull(root, instance.getPublished(), "published");
         appendElementWithContentIfNotNull(root, instance.getFormat(), "format");
         appendElementWithContentIfNotNull(root, instance.getAccessibility(), "accessibility");
         appendBuilderResultfNotNull(root, digLibBuilder);

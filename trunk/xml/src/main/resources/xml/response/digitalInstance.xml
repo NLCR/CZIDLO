@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstance xmlns="http://resolver.nkp.cz/v2/">
     <id type="INTERNAL">1</id>
+    <created>2012-02-08T06:34:03.434+01:00</created>
     <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
     <published>2012-02-08T06:34:03.407+01:00</published>
     <format>djvu</format>
     <accessibility>veřejně přístupné</accessibility>
     <digitalLibrary>
+        <created>2012-02-08T06:34:03.434+01:00</created>
         <name>K4</name>
         <description>Kramerius4</description>
         <registrar code="boa001">
@@ -14,8 +16,8 @@
         </registrar>
     </digitalLibrary>
     <digitalDocument>
-        <id type="INTERNAL">1</id>
-        <id type="URN:NBN">urn:nbn:cz:boa001-000001</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <urnNbn>urn:nbn:cz:boa001-000001</urnNbn>
         <registrarScopeIdentifiers>
             <id type="K4_pid">uuid:123</id>
             <id type="signatura">3-1275.138</id>

@@ -25,6 +25,7 @@ public class CatalogBuilder extends XmlBuilder {
     Element buildRootElement() {
         Element root = new Element("catalog", RESOLVER);
         //appendIdentifierElement(root, IDTYPE_INTERNAL, catalog.getId());
+        appendTimestamps(root, catalog, "catalog");
         appendElementWithContentIfNotNull(root, catalog.getName(), "name");
         appendElementWithContentIfNotNull(root, catalog.getDescription(), "description");
         appendElementWithContentIfNotNull(root, catalog.getUrlPrefix(), "urlPrefix");

@@ -26,7 +26,7 @@ class PeriodicalIssueBuilder extends IntelectualEntityBuilder {
     @Override
     public Element buildRootElement() {
         Element root = entityElement();
-        Element titleInfo = addElement(root, "titleInfo");
+        Element titleInfo = appendElement(root, "titleInfo");
         appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "periodicalTitle", true);
         appendEntityIdentifier(titleInfo, IntEntIdType.VOLUME_TITLE, "volumeTitle", true);
         appendEntityIdentifier(titleInfo, IntEntIdType.ISSUE_TITLE, "issueTitle", true);

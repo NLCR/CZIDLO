@@ -77,15 +77,8 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         return result;
     }
 
-    void appendCreatedAndUpdated(Element root) {
-        Element created = appendElementWithContentIfNotNull(root, entity.getCreated(), "created");
-        if (created == null) {
-            logger.log(Level.WARNING, "empty value of \"created\" for intelectual entity {0}", entity.getId());
-        }
-        Element updated = appendElementWithContentIfNotNull(root, entity.getLastUpdated(), "lastUpdated");
-        if (updated == null) {
-            logger.log(Level.WARNING, "empty value of \"updated\" for intelectual entity {0}", entity.getId());
-        }
+    void appendTimestamps(Element root) {
+        appendTimestamps(root, entity, "intelectual entity");
     }
 
     void appendDocumentType(Element root) {
@@ -101,7 +94,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
 
     void appendPrimaryOriginator(Element root) {
         if (originator != null) {
-            Element originatorEl = addElement(root, "primaryOriginator");
+            Element originatorEl = appendElement(root, "primaryOriginator");
             Attribute type = new Attribute("type", originator.getType().name());
             originatorEl.addAttribute(type);
             originatorEl.appendChild(originator.getValue());
@@ -116,7 +109,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
 
     void appendPublication(Element root) {
         if (publication != null) {
-            Element pubEl = addElement(root, "publication");
+            Element pubEl = appendElement(root, "publication");
             appendElementWithContentIfNotNull(pubEl, publication.getPublisher(), "publisher");
             appendElementWithContentIfNotNull(pubEl, publication.getPlace(), "place");
             appendElementWithContentIfNotNull(pubEl, publication.getYear(), "year");
@@ -125,8 +118,8 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
 
     void appendSourceDocument(Element root) {
         if (srcDoc != null) {
-            Element srcDocEl = addElement(root, "sourceDocument");
-            Element titleInfo = addElement(srcDocEl, "titleInfo");
+            Element srcDocEl = appendElement(root, "sourceDocument");
+            Element titleInfo = appendElement(srcDocEl, "titleInfo");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getTitle(), "title");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getVolumeTitle(), "volumeTitle");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getIssueTitle(), "issueTitle");
@@ -134,7 +127,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIsbn(), "isbn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIssn(), "issn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getOtherId(), "otherId");
-            Element publicationEl = addElement(srcDocEl, "publication");
+            Element publicationEl = appendElement(srcDocEl, "publication");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublisher(), "publisher");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationPlace(), "place");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationYear(), "year");
@@ -151,7 +144,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         if (identifiers != null) {
             String value = intEntIdMap.get(type);
             if (value != null) {
-                Element idElement = addElement(root, elementName);
+                Element idElement = appendElement(root, elementName);
                 idElement.appendChild(value);
             } else if (mandatory) {
                 logger.log(Level.WARNING, "empty value of mandatory identifier {0} for entity {1}", new Object[]{type.toString(), entity.getId()});
