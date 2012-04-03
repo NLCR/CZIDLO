@@ -44,6 +44,8 @@ GET http://localhost:8080/api/v2/registrars/boa001
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <registrar xmlns="http://resolver.nkp.cz/v2/" code="boa001">
+    <created>2012-02-08T06:34:03.434+01:00</created>
+    <modified>2012-02-08T06:34:03.434+01:00</modified>
     <name>MZK</name>
     <description>Moravská zemská knihovna</description>
     <digitalLibraries>
@@ -280,6 +282,8 @@ id/uuid:123
     <resolution>1280x1024</resolution>
     <contractNumber>123</contractNumber>
     <registrar code="boa001">
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
         <name>MZK</name>
         <description>Moravská zemská knihovna</description>
     </registrar>
@@ -480,6 +484,8 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
         <name>K4</name>
         <description>Kramerius4</description>
         <registrar code="boa001">
+            <created>2012-02-08T06:34:03.434+01:00</created>
+            <modified>2012-02-08T06:34:03.434+01:00</modified>
             <name>MZK</name>
             <description>Moravská zemská knihovna</description>
         </registrar>
