@@ -298,19 +298,19 @@ id/uuid:123
         </publication>
         <originator type="CORPORATION">IBM print</originator>
     </intelectualEntity>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">1</id>
         <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
         <published>2012-02-08T06:34:03.407+01:00</published>
         <format>djvu</format>
         <accessibility>veřejně přístupné</accessibility>
     </digitalInstance>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">2</id>
         <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
         <published>2012-02-08T06:34:03.434+01:00</published>
     </digitalInstance>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">3</id>
         <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
         <published>2012-02-08T06:34:03.482+01:00</published>
@@ -350,7 +350,7 @@ POST http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInsta
 Tělo dotazu pak obsahuje:
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">
+<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/" active="true">
 <r:url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</r:url>
     <r:digitalLibraryId>4</r:digitalLibraryId>
     <r:format>jpg;pdf</r:format>
@@ -360,7 +360,7 @@ Tělo dotazu pak obsahuje:
 == Response ==
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">
+<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/" active="true">
     <id type="INTERNAL">5</id>
     <r:url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</r:url>
     <r:digitalLibraryId>4</r:digitalLibraryId>
@@ -378,24 +378,24 @@ GET http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstan
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstances xmlns="http://resolver.nkp.cz/v2/">
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">1</id>
         <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
         <published>2012-02-08T06:34:03.407+01:00</published>
         <format>djvu</format>
         <accessibility>veřejně přístupné</accessibility>
     </digitalInstance>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">2</id>
       <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
         <published>2012-02-08T06:34:03.434+01:00</published>
     </digitalInstance>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">3</id>
         <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
         <published>2012-02-08T06:34:03.482+01:00</published>
     </digitalInstance>
-    <digitalInstance>
+    <digitalInstance active="true">
         <id type="INTERNAL">5</id>
         <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
         <published>2012-02-08T06:55:53.035+01:00</published>
@@ -461,7 +461,7 @@ GET http://localhost:8080/api/v2/digitalInstances/id/1
 == Response ==
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<digitalInstance xmlns="http://resolver.nkp.cz/v2/">
+<digitalInstance xmlns="http://resolver.nkp.cz/v2/" active="true">
     <id type="INTERNAL">1</id>
     <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
     <published>2012-02-08T06:34:03.407+01:00</published>
