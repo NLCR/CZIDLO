@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -57,8 +58,9 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public void addNewDigRepId(DigDocIdentifier id) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException {
+    public void addRegistrarScopeIdentifier(DigDocIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, AccessException {
         try {
+            authorization.checkAccessRights(id.getRegistrarId(), login);
             factory.digRepIdDao().insertDigDocId(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -72,6 +74,17 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             }
         } catch (AlreadyPresentException ex) {
             throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+        }
+    }
+
+    @Override
+    public Archiver addNewArchiver(Archiver archiver) {
+        try {
+            Long id = factory.archiverDao().insertArchiver(archiver);
+            archiver.setId(id);
+            return archiver;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

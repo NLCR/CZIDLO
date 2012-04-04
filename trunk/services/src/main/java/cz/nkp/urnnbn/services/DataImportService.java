@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.services;
 
+import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -51,6 +52,8 @@ public interface DataImportService extends BusinessService {
             UnknownDigiLibException, UnknownDigDocException,
             AccessException;
 
-    public void addNewDigRepId(DigDocIdentifier newId) throws
+    public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws AccessException,
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
+
+    public Archiver addNewArchiver(Archiver archiver);
 }
