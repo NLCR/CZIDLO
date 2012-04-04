@@ -10,8 +10,10 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
+import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.rest.exceptions.RestException;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -19,6 +21,7 @@ import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import java.util.List;
 import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -37,17 +40,17 @@ public class DigitalDocumentIdentifiersResource extends Resource {
 
     @Context
     private UriInfo context;
-    private final DigitalDocument digRep;
+    private final DigitalDocument doc;
 
-    public DigitalDocumentIdentifiersResource(DigitalDocument digRep) {
-        this.digRep = digRep;
+    public DigitalDocumentIdentifiersResource(DigitalDocument doc) {
+        this.doc = doc;
     }
 
     @GET
     @Produces("application/xml")
     public String getIdentifiers() {
         try {
-            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
+            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(doc.getId());
             return builder.buildDocument().toXML();
         } catch (RestException e) {
             throw e;
@@ -63,7 +66,7 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     public String getIdentifier(@PathParam("idType") String idTypeStr) {
         DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
         try {
-            List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(digRep.getId());
+            List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(doc.getId());
             for (DigDocIdentifier id : identifiers) {
                 if (id.getType().equals(idType)) {
                     RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(id);
@@ -82,12 +85,14 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     @PUT
     @Path("/{idType}")
     @Produces("application/xml")
-    public Response setOrUpdateIdentifierValue(@PathParam("idType") String idTypeStr, String value) {
+    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req,
+            @PathParam("idType") String idTypeStr, String value) {
+        String login = req.getRemoteUser();
         DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
         try {
             DigDocIdentifier oldId = presentIdentifierOrNull(idType);
             if (oldId == null) { //insert new value
-                DigDocIdentifier newId = addNewIdentifier(idType, value);
+                DigDocIdentifier newId = addNewIdentifier(idType, value, login);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocument().toXML();
                 return Response.created(null).entity(responseXml).build();
             } else { //update value
@@ -104,7 +109,7 @@ public class DigitalDocumentIdentifiersResource extends Resource {
 
     private DigDocIdentifier presentIdentifierOrNull(DigDocIdType idType) {
         try {
-            List<DigDocIdentifier> idList = dataAccessService().digDocIdentifiersByDigDocId(digRep.getId());
+            List<DigDocIdentifier> idList = dataAccessService().digDocIdentifiersByDigDocId(doc.getId());
             for (DigDocIdentifier id : idList) {
                 if (id.getType().equals(idType)) {
                     return id;
@@ -116,11 +121,13 @@ public class DigitalDocumentIdentifiersResource extends Resource {
         }
     }
 
-    private DigDocIdentifier addNewIdentifier(DigDocIdType idType, String value) {
+    private DigDocIdentifier addNewIdentifier(DigDocIdType idType, String value, String login) {
         try {
             DigDocIdentifier newId = identifierInstance(idType, value);
-            dataImportService().addNewDigRepId(newId);
+            dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
+        } catch (AccessException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
@@ -136,8 +143,8 @@ public class DigitalDocumentIdentifiersResource extends Resource {
 
     private DigDocIdentifier identifierInstance(DigDocIdType idType, String value) {
         DigDocIdentifier result = new DigDocIdentifier();
-        result.setDigDocId(digRep.getId());
-        result.setRegistrarId(digRep.getRegistrarId());
+        result.setDigDocId(doc.getId());
+        result.setRegistrarId(doc.getRegistrarId());
         result.setType(idType);
         result.setValue(value);
         return result;
@@ -165,8 +172,8 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     @Produces("application/xml")
     public String removeAllIdentifiers() {
         try {
-            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(digRep.getId());
-            dataRemoveService().removeDigitalDocumentIdentifiers(digRep.getId());
+            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(doc.getId());
+            dataRemoveService().removeDigitalDocumentIdentifiers(doc.getId());
             return builder.buildDocument().toXML();
         } catch (UnknownDigDocException ex) {
             //should never happen
