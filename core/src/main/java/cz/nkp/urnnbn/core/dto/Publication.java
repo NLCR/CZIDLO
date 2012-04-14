@@ -10,8 +10,8 @@ package cz.nkp.urnnbn.core.dto;
  */
 public class Publication implements IdentifiableByLongAttribute {
 
-    private long intEntId;
-    public int year;
+    private Long intEntId;
+    public Integer year;
     public String place;
     public String publisher;
 
@@ -25,22 +25,30 @@ public class Publication implements IdentifiableByLongAttribute {
         this.publisher = cloneFrom.getPlace();
     }
 
-    @Override
-    public long getId() {
-        return getIntEntId();
-    }
-    
-    @Override
-    public void setId(long id){
-        setIntEntId(id);
-    }
-    
-    public long getIntEntId(){
+    public Long getIntEntId() {
         return intEntId;
     }
 
-    public void setIntEntId(long id) {
-        this.intEntId = id;
+    public void setIntEntId(Long intEntId) {
+        this.intEntId = intEntId;
+    }
+
+    @Override
+    public Long getId() {
+        return getIntEntId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        setIntEntId(id);
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
     public String getPlace() {
@@ -59,14 +67,6 @@ public class Publication implements IdentifiableByLongAttribute {
         this.publisher = publisher;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -76,16 +76,7 @@ public class Publication implements IdentifiableByLongAttribute {
             return false;
         }
         final Publication other = (Publication) obj;
-        if (this.intEntId != other.intEntId) {
-            return false;
-        }
-        if (this.year != other.year) {
-            return false;
-        }
-        if ((this.place == null) ? (other.place != null) : !this.place.equals(other.place)) {
-            return false;
-        }
-        if ((this.publisher == null) ? (other.publisher != null) : !this.publisher.equals(other.publisher)) {
+        if (this.intEntId != other.intEntId && (this.intEntId == null || !this.intEntId.equals(other.intEntId))) {
             return false;
         }
         return true;
@@ -94,10 +85,7 @@ public class Publication implements IdentifiableByLongAttribute {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + (int) (this.intEntId ^ (this.intEntId >>> 32));
-        hash = 89 * hash + this.year;
-        hash = 89 * hash + (this.place != null ? this.place.hashCode() : 0);
-        hash = 89 * hash + (this.publisher != null ? this.publisher.hashCode() : 0);
+        hash = 37 * hash + (this.intEntId != null ? this.intEntId.hashCode() : 0);
         return hash;
     }
 }

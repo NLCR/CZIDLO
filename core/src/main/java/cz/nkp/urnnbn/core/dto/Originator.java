@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.OriginType;
  */
 public class Originator implements IdentifiableByLongAttribute {
 
-    private long intEntId;
+    private Long intEntId;
     private OriginType type;
     private String value;
 
@@ -25,22 +25,22 @@ public class Originator implements IdentifiableByLongAttribute {
         value = inserted.getValue();
     }
 
-    public long getIntEntId() {
+    public Long getIntEntId() {
         return intEntId;
     }
 
+    public void setIntEntId(Long intEntId) {
+        this.intEntId = intEntId;
+    }
+
     @Override
-    public long getId() {
+    public Long getId() {
         return getIntEntId();
     }
 
-    public void setIntEntId(long intEntId) {
-        this.intEntId = intEntId;
-    }
-    
     @Override
-    public void setId(long id){
-        setIntEntId(intEntId);
+    public void setId(Long id) {
+        setIntEntId(id);
     }
 
     public OriginType getType() {
@@ -68,13 +68,7 @@ public class Originator implements IdentifiableByLongAttribute {
             return false;
         }
         final Originator other = (Originator) obj;
-        if (this.intEntId != other.intEntId) {
-            return false;
-        }
-        if (this.type != other.type) {
-            return false;
-        }
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+        if (this.intEntId != other.intEntId && (this.intEntId == null || !this.intEntId.equals(other.intEntId))) {
             return false;
         }
         return true;
@@ -82,10 +76,8 @@ public class Originator implements IdentifiableByLongAttribute {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + (int) (this.intEntId ^ (this.intEntId >>> 32));
-        hash = 41 * hash + (this.type != null ? this.type.hashCode() : 0);
-        hash = 41 * hash + (this.value != null ? this.value.hashCode() : 0);
+        int hash = 3;
+        hash = 97 * hash + (this.intEntId != null ? this.intEntId.hashCode() : 0);
         return hash;
     }
 }

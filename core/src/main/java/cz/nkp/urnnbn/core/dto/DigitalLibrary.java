@@ -12,8 +12,8 @@ import org.joda.time.DateTime;
  */
 public class DigitalLibrary implements IdentifiableWithDatestamps {
 
-    private long id;
-    private long registrarId;
+    private Long id;
+    private Long registrarId;
     private DateTime created;
     private DateTime modified;
     private String name;
@@ -31,6 +31,24 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
         url = original.getUrl();
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getRegistrarId() {
+        return registrarId;
+    }
+
+    public void setRegistrarId(Long registrarId) {
+        this.registrarId = registrarId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -39,30 +57,12 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
         this.description = description;
     }
 
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public long getRegistrarId() {
-        return registrarId;
-    }
-
-    public void setRegistrarId(long registrarId) {
-        this.registrarId = registrarId;
     }
 
     public String getUrl() {
@@ -100,7 +100,7 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
             return false;
         }
         final DigitalLibrary other = (DigitalLibrary) obj;
-        if (this.id != other.id) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -109,7 +109,7 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+        hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 }

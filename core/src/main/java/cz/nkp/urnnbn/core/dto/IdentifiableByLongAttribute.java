@@ -10,7 +10,7 @@ package cz.nkp.urnnbn.core.dto;
  */
 public interface IdentifiableByLongAttribute {
 
-    public long getId();
+    public Long getId();
 
-    public void setId(long id);
+    public void setId(Long id);
 }

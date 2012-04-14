@@ -10,7 +10,7 @@ package cz.nkp.urnnbn.core.dto;
  */
 public class SourceDocument implements IdentifiableByLongAttribute {
 
-    private long intEntId;
+    private Long intEntId;
     private String ccnb;
     private String isbn;
     private String issn;
@@ -39,14 +39,22 @@ public class SourceDocument implements IdentifiableByLongAttribute {
         publicationYear = inserted.getPublicationYear();
     }
 
+    public Long getIntEntId() {
+        return intEntId;
+    }
+
+    public void setIntEntId(Long intEntId) {
+        this.intEntId = intEntId;
+    }
+
     @Override
-    public long getId() {
+    public Long getId() {
         return getIntEntId();
     }
 
     @Override
-    public void setId(long id) {
-        setIntEntId(intEntId);
+    public void setId(Long id) {
+        setIntEntId(id);
     }
 
     public String getCcnb() {
@@ -55,14 +63,6 @@ public class SourceDocument implements IdentifiableByLongAttribute {
 
     public void setCcnb(String ccnb) {
         this.ccnb = ccnb;
-    }
-
-    public long getIntEntId() {
-        return intEntId;
-    }
-
-    public void setIntEntId(long intEntId) {
-        this.intEntId = intEntId;
     }
 
     public String getIsbn() {
@@ -146,7 +146,7 @@ public class SourceDocument implements IdentifiableByLongAttribute {
             return false;
         }
         final SourceDocument other = (SourceDocument) obj;
-        if (this.intEntId != other.intEntId) {
+        if (this.intEntId != other.intEntId && (this.intEntId == null || !this.intEntId.equals(other.intEntId))) {
             return false;
         }
         return true;
@@ -154,8 +154,8 @@ public class SourceDocument implements IdentifiableByLongAttribute {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + (int) (this.intEntId ^ (this.intEntId >>> 32));
+        int hash = 5;
+        hash = 59 * hash + (this.intEntId != null ? this.intEntId.hashCode() : 0);
         return hash;
     }
 }

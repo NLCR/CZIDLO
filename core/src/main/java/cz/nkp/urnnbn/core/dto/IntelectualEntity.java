@@ -13,12 +13,12 @@ import org.joda.time.DateTime;
  */
 public class IntelectualEntity implements IdentifiableWithDatestamps {
 
-    private long id;
+    private Long id;
     private EntityType entityType;
     private DateTime created;
     private DateTime modified;
     private String documentType;
-    private boolean digitalBorn = false;
+    private Boolean digitalBorn = false;
     private String otherOriginator;
     private String degreeAwardingInstitution;
 
@@ -34,6 +34,16 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
         this.digitalBorn = original.isDigitalBorn();
         this.otherOriginator = original.getOtherOriginator();
         this.degreeAwardingInstitution = original.getDegreeAwardingInstitution();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -53,11 +63,11 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
         this.degreeAwardingInstitution = degreeAwardingInstitution;
     }
 
-    public boolean isDigitalBorn() {
+    public Boolean isDigitalBorn() {
         return digitalBorn;
     }
 
-    public void setDigitalBorn(boolean digitalBorn) {
+    public void setDigitalBorn(Boolean digitalBorn) {
         this.digitalBorn = digitalBorn;
     }
 
@@ -86,16 +96,6 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
     }
 
     @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
     public DateTime getModified() {
         return modified;
     }
@@ -113,19 +113,7 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
             return false;
         }
         final IntelectualEntity other = (IntelectualEntity) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        if (this.entityType != other.entityType) {
-            return false;
-        }
-        if ((this.documentType == null) ? (other.documentType != null) : !this.documentType.equals(other.documentType)) {
-            return false;
-        }
-        if (this.digitalBorn != other.digitalBorn) {
-            return false;
-        }
-        if ((this.degreeAwardingInstitution == null) ? (other.degreeAwardingInstitution != null) : !this.degreeAwardingInstitution.equals(other.degreeAwardingInstitution)) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -134,11 +122,7 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 43 * hash + (this.entityType != null ? this.entityType.hashCode() : 0);
-        hash = 43 * hash + (this.documentType != null ? this.documentType.hashCode() : 0);
-        hash = 43 * hash + (this.digitalBorn ? 1 : 0);
-        hash = 43 * hash + (this.degreeAwardingInstitution != null ? this.degreeAwardingInstitution.hashCode() : 0);
+        hash = 23 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 }

@@ -12,10 +12,10 @@ import org.joda.time.DateTime;
  */
 public class DigitalDocument implements IdentifiableWithDatestamps {
 
-    private long id;
-    private long intEntId;
-    private long registrarId;
-    private long archiverId;
+    private Long id;
+    private Long intEntId;
+    private Long registrarId;
+    private Long archiverId;
     //
     private DateTime created;
     private DateTime modified;
@@ -34,7 +34,7 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
     private Integer colorDepth;
     private String iccProfile;
     private Integer pictureWidth;
-    private Integer pictureHight;
+    private Integer pictureHeight;
 
     public DigitalDocument() {
     }
@@ -59,15 +59,41 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
         colorDepth = original.getColorDepth();
         iccProfile = original.getIccProfile();
         pictureWidth = original.getPictureWidth();
-        pictureHight = original.getPictureHeight();
+        pictureHeight = original.getPictureHeight();
     }
 
-    public long getArchiverId() {
+    public Long getArchiverId() {
         return archiverId;
     }
 
-    public void setArchiverId(long archiverId) {
+    public void setArchiverId(Long archiverId) {
         this.archiverId = archiverId;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getIntEntId() {
+        return intEntId;
+    }
+
+    public void setIntEntId(Long intEntId) {
+        this.intEntId = intEntId;
+    }
+
+    public Long getRegistrarId() {
+        return registrarId;
+    }
+
+    public void setRegistrarId(Long registrarId) {
+        this.registrarId = registrarId;
     }
 
     @Override
@@ -104,38 +130,12 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
     }
 
     @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getIntEntId() {
-        return intEntId;
-    }
-
-    public void setIntEntId(long intEntId) {
-        this.intEntId = intEntId;
-    }
-
-    @Override
     public DateTime getModified() {
         return modified;
     }
 
     public void setModified(DateTime modified) {
         this.modified = modified;
-    }
-
-    public long getRegistrarId() {
-        return registrarId;
-    }
-
-    public void setRegistrarId(long registrarId) {
-        this.registrarId = registrarId;
     }
 
     public Integer getColorDepth() {
@@ -187,11 +187,11 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
     }
 
     public Integer getPictureHeight() {
-        return pictureHight;
+        return pictureHeight;
     }
 
     public void setPictureHeight(Integer height) {
-        this.pictureHight = height;
+        this.pictureHeight = height;
     }
 
     public String getIccProfile() {
@@ -235,7 +235,7 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
             return false;
         }
         final DigitalDocument other = (DigitalDocument) obj;
-        if (this.id != other.id) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -243,8 +243,8 @@ public class DigitalDocument implements IdentifiableWithDatestamps {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 7;
+        hash = 83 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 }
