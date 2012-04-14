@@ -24,7 +24,7 @@ public class DigitalInstanceUnmarshaller extends Unmarshaller {
         DigitalInstance result = new DigitalInstance();
         Element root = doc.getRootElement();
         result.setUrl(elementContentOrNull("url", root));
-        result.setLibraryId(Integer.valueOf(elementContentOrNull("digitalLibraryId", root)));
+        result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root)));
         result.setFormat(elementContentOrNull("format", root));
         result.setAccessibility(elementContentOrNull("accessibility", root));
         return result;

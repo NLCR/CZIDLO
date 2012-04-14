@@ -59,43 +59,58 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     private void appendTechnicalMetadata(Element root) {
         Element technicalEl = appendElement(root, "technicalMetadata");
-
         //format
-        Element formatEl = appendElement(technicalEl, "format");
         String format = doc.getFormat();
-        if (format != null) {
-            formatEl.appendChild(format);
-        }
         String formatVersion = doc.getFormatVersion();
-        if (formatVersion != null) {
-            Attribute version = new Attribute("version", formatVersion);
-            formatEl.addAttribute(version);
+        if (format != null || formatVersion != null) {
+            Element formatEl = appendElement(technicalEl, "format");
+            if (format != null) {
+                formatEl.appendChild(format);
+            }
+            if (formatVersion != null) {
+                formatEl.addAttribute(new Attribute("version", formatVersion));
+            }
         }
         //extent
         appendElementWithContentIfNotNull(technicalEl, doc.getExtent(), "extent");
         //resolution
-        Element resolutionEl = appendElement(technicalEl, "resolution");
-        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionHorizontal(), "horizontal");
-        appendElementWithContentIfNotNull(resolutionEl, doc.getResolutionVertical(), "vertical");
-        //compression
-        Element compressionEl = appendElement(technicalEl, "compression");
-        String compression = doc.getCompression();
-        if (compression != null) {
-            compressionEl.appendChild(compression);
+        Integer resolutionHorizontal = doc.getResolutionHorizontal();
+        Integer resolutionVertical = doc.getResolutionVertical();
+        if (resolutionHorizontal != null || resolutionVertical != null) {
+            Element resolutionEl = appendElement(technicalEl, "resolution");
+            appendElementWithContentIfNotNull(resolutionEl, resolutionHorizontal, "horizontal");
+            appendElementWithContentIfNotNull(resolutionEl, resolutionVertical, "vertical");
         }
+        //compression
+        String compression = doc.getCompression();
         Double compressionRatio = doc.getCompressionRatio();
-        if (compressionRatio != null) {
-            Attribute ratio = new Attribute("ratio", compressionRatio.toString());
-            compressionEl.addAttribute(ratio);
+        if (compression != null || compressionRatio != null) {
+            Element compressionEl = appendElement(technicalEl, "compression");
+            if (compression != null) {
+                compressionEl.appendChild(compression);
+            }
+            if (compressionRatio != null) {
+                Attribute ratio = new Attribute("ratio", compressionRatio.toString());
+                compressionEl.addAttribute(ratio);
+            }
         }
         //color
-        Element colorEl = appendElement(technicalEl, "color");
-        appendElementWithContentIfNotNull(colorEl, doc.getColorModel(), "model");
-        appendElementWithContentIfNotNull(colorEl, doc.getColorDepth(), "depth");
+        String colorModel = doc.getColorModel();
+        Integer colorDepth = doc.getColorDepth();
+        if (colorModel != null || colorDepth != null) {
+            Element colorEl = appendElement(technicalEl, "color");
+            appendElementWithContentIfNotNull(colorEl, colorModel, "model");
+            appendElementWithContentIfNotNull(colorEl, colorDepth, "depth");
+        }
+        //iccProfile
         appendElementWithContentIfNotNull(technicalEl, doc.getIccProfile(), "iccProfile");
-        //common picture characteristics
-        Element pictureEl = appendElement(technicalEl, "pictureSize");
-        appendElementWithContentIfNotNull(pictureEl, doc.getPictureWidth(), "width");
-        appendElementWithContentIfNotNull(pictureEl, doc.getPictureHeight(), "height");
+        //picture size
+        Integer pictureWidth = doc.getPictureWidth();
+        Integer pictureHeight = doc.getPictureHeight();
+        if (pictureWidth != null || pictureHeight != null) {
+            Element pictureEl = appendElement(technicalEl, "pictureSize");
+            appendElementWithContentIfNotNull(pictureEl, pictureWidth, "width");
+            appendElementWithContentIfNotNull(pictureEl, pictureHeight, "height");
+        }
     }
 }
