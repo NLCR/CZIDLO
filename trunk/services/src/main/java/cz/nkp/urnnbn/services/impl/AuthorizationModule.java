@@ -11,6 +11,8 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +30,7 @@ public class AuthorizationModule {
         this.factory = factory;
     }
 
-    public void checkAccessRights(long registrarId, String login) throws AccessException {
+    public void checkAccessRights(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             checkAccessRights(registrar, userByLogin(login));
@@ -39,7 +41,7 @@ public class AuthorizationModule {
         }
     }
 
-    public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException {
+    public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
             checkAccessRights(registrar, userByLogin(login));
@@ -50,28 +52,35 @@ public class AuthorizationModule {
         }
     }
 
-    private User userByLogin(String login) {
+    private User userByLogin(String login) throws UnknownUserException {
         try {
             return factory.userDao().getUserByLogin(login);
         } catch (DatabaseException ex) {
             Logger.getLogger(AuthorizationModule.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             Logger.getLogger(AuthorizationModule.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new UnknownUserException(login);
         }
     }
 
-    public void checkAccessRights(Registrar registrar, User user) throws AccessException {
+    private void checkAccessRights(Registrar registrar, User user) throws AccessException {
         try {
             List<Long> adminsOfRegistrar = factory.userDao().getAdminsOfRegistrar(registrar.getId());
             if (!adminsOfRegistrar.contains(user.getId())) {
-                throw new AccessException(user.getId(), registrar.getCode());
+                throw new AccessException(user.getLogin(), registrar.getCode());
             }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void checkAdminRights(String login) throws NotAdminException, UnknownUserException {
+        User user = userByLogin(login);
+        if (!user.isAdmin()) {
+            throw new NotAdminException(login);
         }
     }
 }

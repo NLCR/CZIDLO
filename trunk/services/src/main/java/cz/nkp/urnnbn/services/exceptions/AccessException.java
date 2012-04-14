@@ -5,18 +5,26 @@
 package cz.nkp.urnnbn.services.exceptions;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-
+    
 /**
  *
  * @author Martin Řehánek
  */
 public class AccessException extends Exception {
 
-    public AccessException(long userId, RegistrarCode registrarCode) {
-        super("user with id " + userId + " not allowed to manage registrar with code " + registrarCode);
+    private final String login;
+
+    public AccessException(String login, RegistrarCode registrarCode) {
+        super("user " + login + " not allowed to manage registrar with code " + registrarCode);
+        this.login = login;
     }
 
-    public AccessException(long userId, long registrarId) {
-        super("user with id " + userId + " not allowed to manage registrar with id " + registrarId);
+    public AccessException(String login, long registrarId) {
+        super("user " + login + " not allowed to manage registrar with id " + registrarId);
+        this.login = login;
+    }
+
+    public String getLogin() {
+        return login;
     }
 }
