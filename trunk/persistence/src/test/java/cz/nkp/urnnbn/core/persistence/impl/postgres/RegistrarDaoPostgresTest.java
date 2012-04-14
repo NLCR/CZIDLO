@@ -88,9 +88,8 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
 
     public void testGetRegistrarByCode() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
-        registrarDao.insertRegistrar(inserted);
-        RegistrarCode code = inserted.getCode();
-        Registrar fetched = registrarDao.getRegistrarByCode(code);
+        inserted.setId(registrarDao.insertRegistrar(inserted));
+        Registrar fetched = registrarDao.getRegistrarByCode(inserted.getCode());
         assertEquals(fetched, inserted);
     }
 
@@ -109,11 +108,11 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
      */
     public void testGetRegistrarById() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
-        long id = registrarDao.insertRegistrar(inserted);
-
-        Registrar returned = registrarDao.getRegistrarById(id);
+        inserted.setId(registrarDao.insertRegistrar(inserted));
+        
+        Registrar returned = registrarDao.getRegistrarById(inserted.getId());
         assertNotNull(returned);
-        assertEquals(id, returned.getId());
+        assertEquals(inserted.getId(), returned.getId());
     }
 
     public void testGetRegistrarById_IllegalId() throws Exception {
@@ -184,12 +183,13 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         registrarDao.insertRegistrar(original);
         Registrar updated = new Registrar(original);
         updated.setName("NKP");
-        updated.setName("Narodni knihovna v Praze");
+        updated.setDescription("Narodni knihovna v Praze");
         registrarDao.updateRegistrar(updated);
         //get by id
         Archiver returned = registrarDao.getRegistrarById(original.getId());
         assertEquals(updated, returned);
-        assertFalse(original.equals(returned));
+        assertFalse(original.getName().equals(returned.getName()));
+        assertFalse(original.getDescription().equals(returned.getDescription()));
     }
 
     public void testUpdateRegistrar_tryUpdatingUrnRegistrarCode() throws Exception {

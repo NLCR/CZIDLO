@@ -14,14 +14,20 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class PublicationRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         Publication publication = new Publication();
         publication.setIntEntId(resultSet.getLong(PublicationDAO.ATTR_INT_ENT_ID));
+        if (resultSet.wasNull()) {
+            publication.setIntEntId(null);
+        }
         publication.setPlace(resultSet.getString(PublicationDAO.ATTR_PLACE));
         publication.setPublisher(resultSet.getString(PublicationDAO.ATTR_PUBLISHER));
         publication.setYear(resultSet.getInt(PublicationDAO.ATTR_YEAR));
+        if (resultSet.wasNull()) {
+            publication.setYear(null);
+        }
         return publication;
     }
 }

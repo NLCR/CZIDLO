@@ -15,6 +15,11 @@ public class singleLongRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
-        return resultSet.getLong(1);
+        Long result = resultSet.getLong(1);
+        if (resultSet.wasNull()) {
+            return null;
+        } else {
+            return result;
+        }
     }
 }

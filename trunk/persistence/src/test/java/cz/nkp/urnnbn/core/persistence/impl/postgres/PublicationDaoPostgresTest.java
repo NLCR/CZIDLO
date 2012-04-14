@@ -97,12 +97,17 @@ public class PublicationDaoPostgresTest extends AbstractDaoTest {
         original.setIntEntId(entity.getId());
         publicationDao.insertPublication(original);
         Publication updated = new Publication(original);
-        updated.setPlace("somewhereElse");
         updated.setPublisher("someoneElse");
+        updated.setPlace("somewhereElse");
         updated.setYear(1984);
         publicationDao.updatePublication(updated);
         Publication fetched = publicationDao.getPublicationById(updated.getId());
-        assertEquals(updated, fetched);
-        assertFalse(original.equals(fetched));
+        assertEquals(updated.getPublisher(), fetched.getPublisher());
+        assertEquals(updated.getPlace(), fetched.getPlace());
+        assertEquals(updated.getYear(), fetched.getYear());
+        
+        assertFalse(original.getPublisher().equals(fetched.getPublisher()));
+        assertFalse(original.getPlace().equals(fetched.getPlace()));
+        assertFalse(original.getYear().equals(fetched.getYear()));
     }
 }

@@ -48,7 +48,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
      */
     public void testGetEntityByDbId() throws Exception {
         IntelectualEntity entity = builder.intEntityWithoutId();
-        long id = entityDao.insertIntelectualEntity(entity);
+        Long id = entityDao.insertIntelectualEntity(entity);
 
         IntelectualEntity returned = entityDao.getEntityByDbId(id);
         assertNotNull(returned);
@@ -142,8 +142,8 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         entityDao.updateEntity(updated);
 
         IntelectualEntity fetched = entityDao.getEntityByDbId(id);
-        assertEquals(updated, fetched);
-        assertFalse(inserted.equals(fetched));
+        assertEquals(updated.getDegreeAwardingInstitution(), fetched.getDegreeAwardingInstitution());
+        assertFalse(inserted.getDegreeAwardingInstitution().equals(fetched.getDegreeAwardingInstitution()));
     }
 
     /**

@@ -101,16 +101,16 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
         valueUpdated.setValue(inserted.getValue() + "-new");
         originatorDao.updateOriginator(valueUpdated);
         Originator fetchedValueUpdated = originatorDao.getOriginatorById(inserted.getId());
-        assertEquals(valueUpdated, fetchedValueUpdated);
-        assertFalse(inserted.equals(fetchedValueUpdated));
+        assertEquals(valueUpdated.getValue(), fetchedValueUpdated.getValue());
+        assertFalse(inserted.getValue().equals(fetchedValueUpdated.getValue()));
         //update type and value
         Originator updated = new Originator(inserted);
         updated.setType(inserted.getType() == OriginType.AUTHOR ? OriginType.CORPORATION : OriginType.AUTHOR);
         updated.setValue(inserted.getValue() + "-another");
         originatorDao.updateOriginator(updated);
         Originator fetchedUpdated = originatorDao.getOriginatorById(inserted.getId());
-        assertEquals(updated, fetchedUpdated);
-        assertFalse(inserted.equals(fetchedUpdated));
+        assertEquals(updated.getValue(), fetchedUpdated.getValue());
+        assertFalse(inserted.getValue().equals(fetchedUpdated.getValue()));
     }
 
     public void testUpdateOriginator_invalidEntityId() throws Exception {

@@ -15,6 +15,11 @@ public class SingleIntRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
-        return resultSet.getInt(1);
+        Integer result = resultSet.getInt(1);
+        if (resultSet.wasNull()) {
+            return null;
+        } else {
+            return result;
+        }
     }
 }

@@ -14,11 +14,14 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class SourceDocumentRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         SourceDocument doc = new SourceDocument();
         doc.setIntEntId(resultSet.getLong(SourceDocumentDAO.ATTR_INT_ENT_ID));
+        if (resultSet.wasNull()) {
+            doc.setIntEntId(null);
+        }
         doc.setTitle(resultSet.getString(SourceDocumentDAO.ATTR_TITLE));
         doc.setVolumeTitle(resultSet.getString(SourceDocumentDAO.ATTR_VOLUME_TITLE));
         doc.setIssueTitle(resultSet.getString(SourceDocumentDAO.ATTR_ISSUE_TITLE));
@@ -29,6 +32,9 @@ public class SourceDocumentRT implements ResultsetTransformer {
         doc.setPublicationPlace(resultSet.getString(SourceDocumentDAO.ATTR_PUB_PLACE));
         doc.setPublisher(resultSet.getString(SourceDocumentDAO.ATTR_PUBLISHER));
         doc.setPublicationYear(resultSet.getInt(SourceDocumentDAO.ATTR_PUB_YEAR));
+        if (resultSet.wasNull()) {
+            doc.setPublicationYear(null);
+        }
         return doc;
     }
 }
