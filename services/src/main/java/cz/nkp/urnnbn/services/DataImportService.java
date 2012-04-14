@@ -7,14 +7,18 @@ package cz.nkp.urnnbn.services;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import java.util.logging.Logger;
@@ -40,7 +44,7 @@ public interface DataImportService extends BusinessService {
     public UrnNbn importNewRecord(RecordImport data, String login) throws
             AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException,
-            DigDocIdentifierCollisionException, UnknownArchiverException;
+            DigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException;
 
     /**
      * Creates new digital instance for existing digital document.
@@ -50,10 +54,13 @@ public interface DataImportService extends BusinessService {
      */
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws
             UnknownDigiLibException, UnknownDigDocException,
-            AccessException;
+            AccessException,
+            UnknownUserException;
 
     public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws AccessException,
-            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
+            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, UnknownUserException;
 
-    public Archiver addNewArchiver(Archiver archiver);
+    public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
+
+    public Registrar insertNewRegistrar(Registrar registrar, String login) throws UnknownUserException, NotAdminException, RegistrarCollisionException;
 }
