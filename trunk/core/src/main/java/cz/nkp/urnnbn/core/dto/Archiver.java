@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
  */
 public class Archiver implements IdentifiableWithDatestamps {
 
-    private long id;
+    private Long id;
     private DateTime created;
     private DateTime modified;
     private String name;
@@ -27,22 +27,22 @@ public class Archiver implements IdentifiableWithDatestamps {
         description = original.getDescription();
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -80,7 +80,7 @@ public class Archiver implements IdentifiableWithDatestamps {
             return false;
         }
         final Archiver other = (Archiver) obj;
-        if (this.id != other.id) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -88,8 +88,8 @@ public class Archiver implements IdentifiableWithDatestamps {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 7;
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 }

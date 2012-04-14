@@ -12,39 +12,40 @@ import org.joda.time.DateTime;
  */
 public class DigitalInstance implements IdentifiableWithDatestamps {
 
-    private long id;
-    private long digDocId;
-    private long libraryId;
+    private Long id;
+    private Long digDocId;
+    private Long libraryId;
     private DateTime created;
     private DateTime modified;
-    private boolean active;
+    //TODO: ziskavat z databaze
+    private Boolean active = true;
     private String url;
     private String format;
     private String accessibility;
 
-    public long getDigDocId() {
+    public Long getDigDocId() {
         return digDocId;
     }
 
-    public void setDigDocId(long digDocId) {
+    public void setDigDocId(Long digDocId) {
         this.digDocId = digDocId;
     }
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     @Override
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getLibraryId() {
+    public Long getLibraryId() {
         return libraryId;
     }
 
-    public void setLibraryId(long libraryId) {
+    public void setLibraryId(Long libraryId) {
         this.libraryId = libraryId;
     }
 
@@ -90,11 +91,11 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
         this.modified = modified;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -107,7 +108,7 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
             return false;
         }
         final DigitalInstance other = (DigitalInstance) obj;
-        if (this.id != other.id) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -115,8 +116,8 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 5;
+        hash = 83 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 }

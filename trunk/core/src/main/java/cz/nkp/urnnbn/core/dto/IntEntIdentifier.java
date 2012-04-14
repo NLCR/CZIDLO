@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.IntEntIdType;
  */
 public class IntEntIdentifier {
 
-    private long intEntDbId;
+    private Long intEntDbId;
     private IntEntIdType type;
     private String value;
 
@@ -24,11 +24,11 @@ public class IntEntIdentifier {
         this.value = value;
     }
 
-    public long getIntEntDbId() {
+    public Long getIntEntDbId() {
         return intEntDbId;
     }
 
-    public void setIntEntDbId(long intEntDbId) {
+    public void setIntEntDbId(Long intEntDbId) {
         this.intEntDbId = intEntDbId;
     }
 
@@ -49,13 +49,10 @@ public class IntEntIdentifier {
             return false;
         }
         final IntEntIdentifier other = (IntEntIdentifier) obj;
-        if (this.intEntDbId != other.intEntDbId) {
+        if (this.intEntDbId != other.intEntDbId && (this.intEntDbId == null || !this.intEntDbId.equals(other.intEntDbId))) {
             return false;
         }
         if (this.type != other.type) {
-            return false;
-        }
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
             return false;
         }
         return true;
@@ -63,10 +60,9 @@ public class IntEntIdentifier {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + (int) (this.intEntDbId ^ (this.intEntDbId >>> 32));
-        hash = 17 * hash + (this.type != null ? this.type.hashCode() : 0);
-        hash = 17 * hash + (this.value != null ? this.value.hashCode() : 0);
+        int hash = 5;
+        hash = 83 * hash + (this.intEntDbId != null ? this.intEntDbId.hashCode() : 0);
+        hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
 }

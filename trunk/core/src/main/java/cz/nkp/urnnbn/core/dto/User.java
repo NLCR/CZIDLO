@@ -12,19 +12,29 @@ import org.joda.time.DateTime;
  */
 public class User implements IdentifiableWithDatestamps {
 
-    private long id;
+    private Long id;
     private DateTime created;
     private DateTime modified;
     private String login;
     private String password;
-    private boolean admin;
+    private Boolean admin;
     private String email;
 
-    public boolean isAdmin() {
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Boolean isAdmin() {
         return admin;
     }
 
-    public void setAdmin(boolean admin) {
+    public void setAdmin(Boolean admin) {
         this.admin = admin;
     }
 
@@ -34,16 +44,6 @@ public class User implements IdentifiableWithDatestamps {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getLogin() {
@@ -89,7 +89,7 @@ public class User implements IdentifiableWithDatestamps {
             return false;
         }
         final User other = (User) obj;
-        if (this.id != other.id) {
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -97,8 +97,8 @@ public class User implements IdentifiableWithDatestamps {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 5;
+        hash = 61 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 

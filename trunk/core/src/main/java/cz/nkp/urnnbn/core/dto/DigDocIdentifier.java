@@ -13,8 +13,8 @@ import org.joda.time.DateTime;
  */
 public class DigDocIdentifier {
 
-    private long digDocId;
-    private long registrarId;
+    private Long digDocId;
+    private Long registrarId;
     private DateTime created;
     private DateTime modified;
     private DigDocIdType type;
@@ -30,19 +30,19 @@ public class DigDocIdentifier {
         value = inserted.getValue();
     }
 
-    public long getDigDocId() {
+    public Long getDigDocId() {
         return digDocId;
     }
 
-    public void setDigDocId(long digDocId) {
+    public void setDigDocId(Long digDocId) {
         this.digDocId = digDocId;
     }
 
-    public long getRegistrarId() {
+    public Long getRegistrarId() {
         return registrarId;
     }
 
-    public void setRegistrarId(long registrarId) {
+    public void setRegistrarId(Long registrarId) {
         this.registrarId = registrarId;
     }
 
@@ -87,10 +87,10 @@ public class DigDocIdentifier {
             return false;
         }
         final DigDocIdentifier other = (DigDocIdentifier) obj;
-        if (this.digDocId != other.digDocId) {
+        if (this.digDocId != other.digDocId && (this.digDocId == null || !this.digDocId.equals(other.digDocId))) {
             return false;
         }
-        if (this.registrarId != other.registrarId) {
+        if (this.registrarId != other.registrarId && (this.registrarId == null || !this.registrarId.equals(other.registrarId))) {
             return false;
         }
         if (this.type != other.type && (this.type == null || !this.type.equals(other.type))) {
@@ -102,14 +102,9 @@ public class DigDocIdentifier {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 53 * hash + (int) (this.digDocId ^ (this.digDocId >>> 32));
-        hash = 53 * hash + (int) (this.registrarId ^ (this.registrarId >>> 32));
-        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 79 * hash + (this.digDocId != null ? this.digDocId.hashCode() : 0);
+        hash = 79 * hash + (this.registrarId != null ? this.registrarId.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
-    }
-
-    @Override
-    public String toString() {
-        return "DigDocIdentifier{" + "digDocId=" + digDocId + ", registrarId=" + registrarId + ", type=" + type + ", value=" + value + '}';
     }
 }
