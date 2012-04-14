@@ -21,6 +21,9 @@ public class ArchiverRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         Archiver archiver = new Archiver();
         archiver.setId(resultSet.getLong(ArchiverDAO.ATTR_ID));
+        if (resultSet.wasNull()) {
+            archiver.setId(null);
+        }
         Timestamp created = resultSet.getTimestamp(ArchiverDAO.ATTR_CREATED);
         archiver.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(ArchiverDAO.ATTR_UPDATED);

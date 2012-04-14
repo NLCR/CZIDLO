@@ -13,7 +13,6 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
 import java.util.Random;
-import org.joda.time.DateTime;
 
 /**
  *
@@ -42,7 +41,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalDocument doc = builder.digDocWithoutIds();
+        DigitalDocument doc = new DigitalDocument();
         doc.setIntEntId(entity.getId());
         doc.setRegistrarId(registrar.getId());
         doc.setArchiverId(archiver.getId());
@@ -52,7 +51,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDocument_ok_sameArchiverAndRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Registrar registrar = registrarPersisted();
-        DigitalDocument doc = builder.digDocWithoutIds();
+        DigitalDocument doc = new DigitalDocument();
         doc.setIntEntId(entity.getId());
         doc.setRegistrarId(registrar.getId());
         doc.setArchiverId(registrar.getId());
@@ -62,7 +61,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDocument_invalidRegistrar() throws Exception {
         IntelectualEntity entity = entityPersisted();
         Archiver archiver = archiverPersisted();
-        DigitalDocument doc = builder.digDocWithoutIds();
+        DigitalDocument doc = new DigitalDocument();
         doc.setIntEntId(entity.getId());
         doc.setRegistrarId(ILLEGAL_ID);
         doc.setArchiverId(archiver.getId());
@@ -76,7 +75,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
 
     public void testInsertDocument_invalidArchiver() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument doc = builder.digDocWithoutIds();
+        DigitalDocument doc = new DigitalDocument();
         Registrar registrar = registrarPersisted();
         doc.setIntEntId(entity.getId());
         doc.setRegistrarId(registrar.getId());
@@ -90,7 +89,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testInsertDocument_invalidEntity() throws Exception {
-        DigitalDocument doc = builder.digDocWithoutIds();
+        DigitalDocument doc = new DigitalDocument();
         Registrar registrar = registrarPersisted();
         Archiver archiver = archiverPersisted();
         doc.setIntEntId(ILLEGAL_ID);
@@ -176,7 +175,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         digRepIdDao.insertDigDocId(identifier);
         //fetch
         Long fetchedRepId = digDocDao.getDigDocDbIdByIdentifier(identifier);
-        assertEquals(inserted.getId(), fetchedRepId.longValue());
+        assertEquals(inserted.getId(), fetchedRepId);
         //try find with unknown value
         DigDocIdentifier id2 = builder.digDocIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
@@ -225,5 +224,27 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         //URN not removed
         UrnNbn urnFetched = urnDao.getUrnNbnByDigRegId(repInserted.getId());
         assertEquals(urnInserted, urnFetched);
+    }
+
+    public void testGetDocumentWithNullAttributeValues() throws Exception {
+        DigitalDocument inserted = new DigitalDocument();
+        inserted.setColorDepth(null);
+        inserted.setCompressionRatio(null);
+        inserted.setPictureHeight(null);
+        inserted.setPictureWidth(null);
+        inserted.setResolutionHorizontal(null);
+        inserted.setResolutionVertical(null);
+
+        inserted.setIntEntId(entityPersisted().getId());
+        inserted.setArchiverId(archiverPersisted().getId());
+        inserted.setRegistrarId(registrarPersisted().getId());
+        inserted.setId(digDocDao.insertDocument(inserted));
+        DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
+        assertEquals(null, fetched.getColorDepth());
+        assertEquals(null, fetched.getCompressionRatio());
+        assertEquals(null, fetched.getPictureHeight());
+        assertEquals(null, fetched.getPictureWidth());
+        assertEquals(null, fetched.getResolutionHorizontal());
+        assertEquals(null, fetched.getResolutionVertical());
     }
 }

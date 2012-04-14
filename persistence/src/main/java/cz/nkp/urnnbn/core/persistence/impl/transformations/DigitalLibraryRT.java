@@ -16,12 +16,16 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class DigitalLibraryRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         DigitalLibrary library = new DigitalLibrary();
         library.setId(resultSet.getLong(DigitalLibraryDAO.ATTR_ID));
+        if (resultSet.wasNull()) {
+            library.setId(null);
+        }
         library.setRegistrarId(resultSet.getLong(DigitalLibraryDAO.ATTR_REGISTRAR_ID));
+        library.setRegistrarId(null);
         Timestamp created = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_CREATED);
         library.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_UPDATED);

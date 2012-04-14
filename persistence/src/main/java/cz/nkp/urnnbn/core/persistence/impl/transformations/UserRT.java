@@ -16,11 +16,14 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class UserRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setId(resultSet.getLong(UserDAO.ATTR_ID));
+        if (resultSet.wasNull()) {
+            user.setId(null);
+        }
         Timestamp created = resultSet.getTimestamp(UserDAO.ATTR_CREATED);
         user.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(UserDAO.ATTR_UPDATED);
@@ -28,6 +31,9 @@ public class UserRT implements ResultsetTransformer {
         user.setLogin(resultSet.getString(UserDAO.ATTR_LOGIN));
         user.setPassword(resultSet.getString(UserDAO.ATTR_PASS));
         user.setAdmin(resultSet.getBoolean(UserDAO.ATTR_IS_ADMIN));
+        if (resultSet.wasNull()) {
+            user.setAdmin(null);
+        }
         user.setEmail(resultSet.getString(UserDAO.ATTR_EMAIL));
         return user;
     }

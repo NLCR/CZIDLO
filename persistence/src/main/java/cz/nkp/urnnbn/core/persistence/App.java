@@ -142,7 +142,7 @@ public class App {
             DigitalLibrary mzkK3 = insertLibrary("Kramerius 3", "testovací knihovna", "http://kramerius3.mzk.cz", mzk);
             //catalog aleph mzk
             Catalog alephMzk = insertCatalog("Aleph mzk", "http://iris.mzk.cz", mzk);
-                    
+
             //registrar nkp
             Registrar nkp = registrarMap.get("tst01");
             //nkpAdmin
@@ -152,7 +152,7 @@ public class App {
             DigitalLibrary nkpK4 = insertLibrary("Kramerius 4", "testovací knihovna", "http://kramerius4.nkp.cz", nkp);
             //catalog aleph nkp
             Catalog alephNkp = insertCatalog("Aleph nkp", "http://hades.mzk.cz", nkp);
- 
+
             //IE babicka
             IntelectualEntity babicka = new IntelectualEntity();
             babicka.setCreated(new DateTime());
@@ -328,14 +328,14 @@ public class App {
         return registrar;
     }
 
-    public DigitalDocument representationPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
-        DigitalDocument rep = builder.digDocWithoutIds();
-        rep.setIntEntId(intEntId);
-        rep.setRegistrarId(registrarId);
-        rep.setArchiverId(registrarId);
-        Long repId = factory.documentDao().insertDocument(rep);
-        rep.setId(repId);
-        return rep;
+    public DigitalDocument documentPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
+        DigitalDocument doc = new DigitalDocument();
+        doc.setIntEntId(intEntId);
+        doc.setRegistrarId(registrarId);
+        doc.setArchiverId(registrarId);
+        Long repId = factory.documentDao().insertDocument(doc);
+        doc.setId(repId);
+        return doc;
     }
 
     public DigitalLibrary libraryPersisted() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
@@ -368,42 +368,42 @@ public class App {
                 insertRegistrar("ABA001", "Národní knihovna České republiky", "", true);
         insertLibrary("Kramerius Národní knihovna ČR", "http://kramerius.nkp.cz", "kod_rd:dkknkcr", nk);
         addToMap(nk, result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABA006", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABA007", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABA008", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABA010", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE045", "Vojenský historický ústav – knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABC135", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE190", "Gender Studies, o.p.s. – knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE310", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE323", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE336", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ABE343", "Národní archiv v Praze – knihovna", ""),result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABA006", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABA007", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABA008", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABA010", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE045", "Vojenský historický ústav – knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABC135", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE190", "Gender Studies, o.p.s. – knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE310", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE323", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE336", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ABE343", "Národní archiv v Praze – knihovna", ""), result);
         Registrar mzk =
                 insertRegistrar("BOA001", "Moravská zemská knihovna", "");
         insertLibrary("Kramerius 4", "http://kramerius.mzk.cz", "aktuální verze knihovny Kramerius", mzk);
         insertLibrary("Kramerius 3", "http://kramerius3.mzk.cz", "předchozí verze knihovny Kramerius", mzk);
         addToMap(mzk, result);
-                addToMap(insertRegistrarWithDefaultLibrary("BVE301", "Regionální muzeum v Mikulově", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("BVE302", "Regionální muzeum v Mikulově", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("GHE302", "Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("HKA001", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("HKE302", "Muzeum východních Čech v Hradci Králové - společenskovědní knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("JHE301", "Muzeum Jindřichohradecka – odborná knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("KMG001", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("KTG503", "Městská knihovna Horažďovice", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("KVE303", "Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("KVG001", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("LIA001", "Krajská vědecká knihovna v Liberci", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("LID001", "Technická univerzita v Liberci - Univerzitní knihovna", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("OLA001", "Vědecká knihovna v Olomouci", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("OSA001", "název chybí", "TODO:doplnit název"),result);
-        addToMap(insertRegistrarWithDefaultLibrary("PAE302", "Státní okresní archiv Pardubice", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("PNA001", "Studijní a vědecká knihovna Plzeňského kraje", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ROE301", "Muzeum Dr.Bohuslava Horáka v Rokycanech", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ULG001", "Severočeská vědecká knihovna v Ústí nad Labem", ""),result);
-        addToMap(insertRegistrarWithDefaultLibrary("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", ""),result);//testovaci registratori
+        addToMap(insertRegistrarWithDefaultLibrary("BVE301", "Regionální muzeum v Mikulově", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("BVE302", "Regionální muzeum v Mikulově", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("CBE301", "Jihočeské muzeum v Českých Budějovicích - knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("GHE302", "Krajské muzeum Karlovarského kraje, příspěvková organizace, MUZEUM CHEB", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("HKA001", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("HKE302", "Muzeum východních Čech v Hradci Králové - společenskovědní knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("JHE301", "Muzeum Jindřichohradecka – odborná knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("KMG001", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("KTG503", "Městská knihovna Horažďovice", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("KVE303", "Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy Vary - Muzejní knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("KVG001", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("LIA001", "Krajská vědecká knihovna v Liberci", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("LID001", "Technická univerzita v Liberci - Univerzitní knihovna", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("OLA001", "Vědecká knihovna v Olomouci", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("OSA001", "název chybí", "TODO:doplnit název"), result);
+        addToMap(insertRegistrarWithDefaultLibrary("PAE302", "Státní okresní archiv Pardubice", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("PNA001", "Studijní a vědecká knihovna Plzeňského kraje", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ROE301", "Muzeum Dr.Bohuslava Horáka v Rokycanech", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ULG001", "Severočeská vědecká knihovna v Ústí nad Labem", ""), result);
+        addToMap(insertRegistrarWithDefaultLibrary("ZLG001", "Krajská knihovna Františka Bartoše, příspěvková organizace", ""), result);//testovaci registratori
         addToMap(insertRegistrarWithDefaultLibrary("TST01", "Národní knihovna České republiky - test", "testovací registrátor"), result);
         addToMap(insertRegistrarWithDefaultLibrary("TST02", "Moravská zemská knihovna - test", "testovací registrátor"), result);
         addToMap(insertRegistrarWithDefaultLibrary("TST03", "Testovací registrátor", ""), result);
@@ -411,7 +411,7 @@ public class App {
         insertCatalog("Aleph NKP", "http://aleph.nkp.cz", nk);
         insertCatalog("Aleph MZK", "http://aleph.mzk.cz", mzk);
         User legacyDataImporter = createUser("legacy", "todo_zmenit", "legacy@resolver.nkp.cz");
-        for(Registrar registrar : result.values()){
+        for (Registrar registrar : result.values()) {
             grantRegistrarToUser(legacyDataImporter, registrar);
         }
         return result;

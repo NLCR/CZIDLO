@@ -15,11 +15,14 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class OriginatorRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         Originator originator = new Originator();
         originator.setIntEntId(resultSet.getLong(OriginatorDAO.ATTR_INT_ENT_ID));
+        if (resultSet.wasNull()) {
+            originator.setIntEntId(null);
+        }
         originator.setType(OriginType.valueOf(resultSet.getString(OriginatorDAO.ATTR_TYPE)));
         originator.setValue(resultSet.getString(OriginatorDAO.ATTR_VALUE));
         return originator;

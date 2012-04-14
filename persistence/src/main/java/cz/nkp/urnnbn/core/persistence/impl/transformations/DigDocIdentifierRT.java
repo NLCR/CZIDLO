@@ -17,12 +17,18 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class DigDocIdentifierRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         DigDocIdentifier identifier = new DigDocIdentifier();
         identifier.setRegistrarId(resultSet.getLong(DigDocIdentifierDAO.ATTR_REG_ID));
+        if (resultSet.wasNull()) {
+            identifier.setRegistrarId(null);
+        }
         identifier.setDigDocId(resultSet.getLong(DigDocIdentifierDAO.ATTR_DIG_REP_ID));
+        if (resultSet.wasNull()) {
+            identifier.setDigDocId(null);
+        }
         Timestamp created = resultSet.getTimestamp(DigDocIdentifierDAO.ATTR_CREATED);
         identifier.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigDocIdentifierDAO.ATTR_UPDATED);

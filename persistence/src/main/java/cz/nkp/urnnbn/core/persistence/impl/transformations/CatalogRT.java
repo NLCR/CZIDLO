@@ -21,7 +21,13 @@ public class CatalogRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         Catalog catalog = new Catalog();
         catalog.setId(resultSet.getLong(CatalogDAO.ATTR_ID));
+        if (resultSet.wasNull()) {
+            catalog.setId(null);
+        }
         catalog.setRegistrarId(resultSet.getLong(CatalogDAO.ATTR_REG_ID));
+        if (resultSet.wasNull()) {
+            catalog.setRegistrarId(null);
+        }
         Timestamp created = resultSet.getTimestamp(CatalogDAO.ATTR_CREATED);
         catalog.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(CatalogDAO.ATTR_UPDATED);

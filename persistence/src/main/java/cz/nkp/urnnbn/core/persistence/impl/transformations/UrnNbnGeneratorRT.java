@@ -14,11 +14,14 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class UrnNbnGeneratorRT implements ResultsetTransformer {
-
+    
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(resultSet.getLong(UrnNbnGeneratorDAO.ATTR_REGISTRAR_ID));
+        if (resultSet.wasNull()) {
+            search.setRegistrarId(null);
+        }
         search.setLastDocumentCode(resultSet.getString(UrnNbnGeneratorDAO.ATTR_LAST_DOCUMENT_CODE));
         return search;
     }
