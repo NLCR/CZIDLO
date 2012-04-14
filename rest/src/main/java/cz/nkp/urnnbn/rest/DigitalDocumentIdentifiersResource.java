@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import java.util.List;
@@ -126,6 +127,8 @@ public class DigitalDocumentIdentifiersResource extends Resource {
             DigDocIdentifier newId = identifierInstance(idType, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
+        } catch (UnknownUserException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {

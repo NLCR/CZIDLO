@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
@@ -84,6 +85,8 @@ public class DigitalDocumentsResource extends Resource {
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
+        } catch (UnknownUserException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
         } catch (DigDocIdentifierCollisionException ex) {
