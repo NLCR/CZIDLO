@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -12,9 +13,11 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 /**
  *
@@ -42,6 +45,18 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             }
         } catch (AlreadyPresentException ex) {
             throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+        }
+    }
+
+    @Override
+    public void updateDigitalDocument(DigitalDocument doc, String login) throws AccessException, UnknownUserException, UnknownDigDocException {
+        try {
+            authorization.checkAccessRights(doc.getRegistrarId(), login);
+            factory.documentDao().updateDocument(doc);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownDigDocException(doc.getId());
         }
     }
 }
