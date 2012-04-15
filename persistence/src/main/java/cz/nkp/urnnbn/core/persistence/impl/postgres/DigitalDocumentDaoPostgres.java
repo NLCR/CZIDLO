@@ -147,8 +147,8 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public void updateDocument(DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
-        updateRecordWithLongPK(representation, TABLE_NAME, ATTR_ID, new UpdateDigitalDocument(representation));
+    public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException {
+        updateRecordWithLongPK(document, TABLE_NAME, ATTR_ID, new UpdateDigitalDocument(document));
     }
 
     @Override

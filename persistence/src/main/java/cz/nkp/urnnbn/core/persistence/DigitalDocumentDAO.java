@@ -57,8 +57,6 @@ public interface DigitalDocumentDAO {
 
     //vyhledavani dig.rep. podle urn takto:
     //z UrnNbnDao ziskame id digRep a pak pres nej vytahnem data digRep
-    public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException;
-
     //TODO: vyhledavani podle jednoznacneho identifikatoru v ramci registratora
     //pozor: RecordNotFoundException muze byt jak pro registrarora, tak pro samotnou DR
     //mohly bych to oddelit tak, ze pokud nenajde digRep, vrati null
@@ -67,6 +65,14 @@ public interface DigitalDocumentDAO {
     public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException;
 
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
+
+    /**
+     * 
+     * @param document digital document to be updated
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if digital document with id obtained from document doesn't exist
+     */
+    public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException;
 
     public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
