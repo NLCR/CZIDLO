@@ -53,14 +53,17 @@ public interface DataImportService extends BusinessService {
      * @return digital instance object with id set
      */
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws
-            UnknownDigiLibException, UnknownDigDocException,
-            AccessException,
-            UnknownUserException;
+            UnknownUserException, AccessException,
+            UnknownDigiLibException, UnknownDigDocException;
 
-    public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws AccessException,
-            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, UnknownUserException;
+    public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws
+            UnknownUserException, AccessException,
+            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
-    public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
+    public Archiver insertNewArchiver(Archiver archiver, String login) throws
+            UnknownUserException, NotAdminException;
 
-    public Registrar insertNewRegistrar(Registrar registrar, String login) throws UnknownUserException, NotAdminException, RegistrarCollisionException;
+    public Registrar insertNewRegistrar(Registrar registrar, String login) throws
+            UnknownUserException, NotAdminException,
+            RegistrarCollisionException;
 }

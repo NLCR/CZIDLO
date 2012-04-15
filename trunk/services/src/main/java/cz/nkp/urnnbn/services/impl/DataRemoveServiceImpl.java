@@ -14,9 +14,11 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 /**
  *
@@ -57,8 +59,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeArchiver(long archiverId) throws UnknownArchiverException, CannotBeRemovedException {
+    public void removeArchiver(long archiverId, String login) throws UnknownArchiverException, CannotBeRemovedException, NotAdminException, UnknownUserException {
         try {
+            authorization.checkAdminRights(login);
             factory.archiverDao().deleteArchiver(archiverId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -70,8 +73,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeRegistrar(long registrarId) throws UnknownRegistrarException, CannotBeRemovedException {
+    public void removeRegistrar(long registrarId, String login) throws UnknownRegistrarException, CannotBeRemovedException, NotAdminException, UnknownUserException {
         try {
+            authorization.checkAdminRights(login);
             factory.registrarDao().deleteRegistrar(registrarId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

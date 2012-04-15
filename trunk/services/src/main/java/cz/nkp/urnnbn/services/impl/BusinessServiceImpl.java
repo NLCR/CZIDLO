@@ -20,14 +20,16 @@ import java.util.logging.Logger;
 abstract class BusinessServiceImpl implements BusinessService {
 
     private static final Logger logger = Logger.getLogger(BusinessServiceImpl.class.getName());
-    DAOFactory factory;
+    final DAOFactory factory;
+    final AuthorizationModule authorization;
 
     public BusinessServiceImpl(DatabaseConnector conn) {
-        factory = new DAOFactory(conn);
+        this(new DAOFactory(conn));
     }
 
     public BusinessServiceImpl(DAOFactory factory) {
         this.factory = factory;
+        authorization = new AuthorizationModule(factory);
     }
 
     long registrarOfDigLibrary(long libraryId) throws DatabaseException, UnknownDigiLibException {

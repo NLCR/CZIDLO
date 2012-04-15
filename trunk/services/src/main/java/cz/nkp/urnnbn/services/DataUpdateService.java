@@ -5,9 +5,12 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 /**
  *
@@ -15,7 +18,11 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
  */
 public interface DataUpdateService extends BusinessService {
 
+    //TODO: access rights
     public void updateDigRepIdentifier(DigDocIdentifier id) throws
-            UnknownRegistrarException, UnknownDigDocException,
-            IdentifierConflictException;
+            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
+
+    public void updateDigitalDocument(DigitalDocument doc, String login) throws
+            AccessException, UnknownUserException,
+            UnknownDigDocException;
 }

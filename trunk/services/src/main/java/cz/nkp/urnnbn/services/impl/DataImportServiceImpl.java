@@ -36,12 +36,8 @@ import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
  */
 public class DataImportServiceImpl extends BusinessServiceImpl implements DataImportService {
 
-    //TODO: autentizaci a autorizaci by si mel zajistovat klient, ne jina sluzba
-    private final AuthorizationModule authorization;
-
     public DataImportServiceImpl(DatabaseConnector conn) {
         super(conn);
-        authorization = new AuthorizationModule(factory);
     }
 
     @Override

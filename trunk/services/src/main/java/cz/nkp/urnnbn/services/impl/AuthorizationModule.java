@@ -32,8 +32,10 @@ public class AuthorizationModule {
 
     public void checkAccessRights(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
-            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
-            checkAccessRights(registrar, userByLogin(login));
+            if (!isAdmin(login)) {
+                Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
+                checkAccessRights(registrar, userByLogin(login));
+            }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -43,8 +45,10 @@ public class AuthorizationModule {
 
     public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {
-            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
-            checkAccessRights(registrar, userByLogin(login));
+            if (!isAdmin(login)) {
+                Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
+                checkAccessRights(registrar, userByLogin(login));
+            }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -78,9 +82,13 @@ public class AuthorizationModule {
     }
 
     public void checkAdminRights(String login) throws NotAdminException, UnknownUserException {
-        User user = userByLogin(login);
-        if (!user.isAdmin()) {
+        if (!isAdmin(login)) {
             throw new NotAdminException(login);
         }
+    }
+
+    private boolean isAdmin(String login) throws UnknownUserException {
+        User user = userByLogin(login);
+        return (user.isAdmin());
     }
 }
