@@ -59,7 +59,7 @@ public abstract class AbstractDaoTest extends TestCase {
     final UrnNbnDAO urnDao;
     final UserDAO userDao;
     final UrnNbnReservedDAO urnBookedDao;
-    final UrnNbnGeneratorDAO urnSearchDao;
+    final UrnNbnGeneratorDAO urnGeneratorDao;
 
     public AbstractDaoTest(String testName) {
         super(testName);
@@ -86,7 +86,7 @@ public abstract class AbstractDaoTest extends TestCase {
         srcDocDao = daoFactory.srcDocDao();
         urnDao = daoFactory.urnDao();
         urnBookedDao = daoFactory.urnReservedDao();
-        urnSearchDao = daoFactory.urnSearchDao();
+        urnGeneratorDao = daoFactory.urnSearchDao();
     }
 
     @Override

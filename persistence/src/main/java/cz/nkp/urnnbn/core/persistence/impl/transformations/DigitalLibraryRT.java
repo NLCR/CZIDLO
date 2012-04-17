@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class DigitalLibraryRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         DigitalLibrary library = new DigitalLibrary();
@@ -25,7 +25,9 @@ public class DigitalLibraryRT implements ResultsetTransformer {
             library.setId(null);
         }
         library.setRegistrarId(resultSet.getLong(DigitalLibraryDAO.ATTR_REGISTRAR_ID));
-        library.setRegistrarId(null);
+        if (resultSet.wasNull()) {
+            library.setRegistrarId(null);
+        }
         Timestamp created = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_CREATED);
         library.setCreated(DateTimeUtils.timestampToDatetime(created));
         Timestamp updated = resultSet.getTimestamp(DigitalLibraryDAO.ATTR_UPDATED);

@@ -75,6 +75,9 @@ public class SourceDocumentDaoPostgresTest extends AbstractDaoTest {
         inserted.setIntEntId(entity.getId());
         srcDocDao.insertSrcDoc(inserted);
         SourceDocument fetched = srcDocDao.getSrcDocById(inserted.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getIntEntId());
         assertEquals(inserted, fetched);
     }
 

@@ -111,6 +111,12 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
         DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getIntEntId());
+        assertNotNull(fetched.getRegistrarId());
+        assertNotNull(fetched.getArchiverId());
         assertEquals(inserted, fetched);
     }
 

@@ -50,9 +50,11 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity entity = builder.intEntityWithoutId();
         Long id = entityDao.insertIntelectualEntity(entity);
 
-        IntelectualEntity returned = entityDao.getEntityByDbId(id);
-        assertNotNull(returned);
-        assertEquals(id, returned.getId());
+        IntelectualEntity fetched = entityDao.getEntityByDbId(id);
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertEquals(id, fetched.getId());
     }
 
     public void testGetEntityByIllegalDbId() throws Exception {
