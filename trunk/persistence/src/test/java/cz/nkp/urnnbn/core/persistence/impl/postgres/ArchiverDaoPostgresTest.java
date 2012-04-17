@@ -63,9 +63,11 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
         Archiver archiver = builder.archiverWithoutId();
         Long id = archiverDao.insertArchiver(archiver);
 
-        Archiver returned = archiverDao.getArchiverById(id);
-        assertNotNull(returned);
-        assertEquals(id, returned.getId());
+        Archiver fetched = archiverDao.getArchiverById(id);
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertEquals(id, fetched.getId());
     }
 
     public void testGetArchiverByIllegalId() throws Exception {

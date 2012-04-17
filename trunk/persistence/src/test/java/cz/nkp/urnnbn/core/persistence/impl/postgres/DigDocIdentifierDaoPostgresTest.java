@@ -171,6 +171,20 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertEquals(2, idList.size());
         assertTrue(idList.contains(oaiId));
         assertTrue(idList.contains(k4pid));
+        DigDocIdentifier fetchedFirst = idList.get(0);
+        DigDocIdentifier fetchedSecond = idList.get(1);
+        assertNotNull(fetchedFirst);
+        assertNotNull(fetchedFirst.getCreated());
+        assertNotNull(fetchedFirst.getDigDocId());
+        assertNotNull(fetchedFirst.getRegistrarId());
+        assertNotNull(fetchedFirst.getType());
+        assertNotNull(fetchedFirst.getValue());
+        assertNotNull(fetchedSecond);
+        assertNotNull(fetchedSecond.getCreated());
+        assertNotNull(fetchedSecond.getDigDocId());
+        assertNotNull(fetchedSecond.getRegistrarId());
+        assertNotNull(fetchedSecond.getType());
+        assertNotNull(fetchedSecond.getValue());
     }
 
     public void testUpdateDigDocIdValue() throws Exception {

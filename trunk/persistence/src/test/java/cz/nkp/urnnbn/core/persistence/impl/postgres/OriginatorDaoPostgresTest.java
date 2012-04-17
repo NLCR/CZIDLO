@@ -76,6 +76,9 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
         inserted.setIntEntId(entity.getId());
         originatorDao.insertOriginator(inserted);
         Originator fetched = originatorDao.getOriginatorById(inserted.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getIntEntId());
         assertEquals(inserted, fetched);
     }
 

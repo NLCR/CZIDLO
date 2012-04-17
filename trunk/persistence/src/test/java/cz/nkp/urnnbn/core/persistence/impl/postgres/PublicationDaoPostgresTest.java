@@ -76,6 +76,9 @@ public class PublicationDaoPostgresTest extends AbstractDaoTest {
         inserted.setIntEntId(entity.getId());
         publicationDao.insertPublication(inserted);
         Publication fetched = publicationDao.getPublicationById(inserted.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getIntEntId());
         assertEquals(inserted, fetched);
     }
 

@@ -111,6 +111,11 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         digInstDao.insertDigInstance(inserted);
         DigitalInstance fetched = digInstDao.getDigInstanceById(inserted.getId());
         assertEquals(inserted, fetched);
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getLibraryId());
+        assertNotNull(fetched.getDigDocId());
     }
 
     public void testGetDigInstanceById_unknownId() throws Exception {

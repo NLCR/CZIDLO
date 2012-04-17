@@ -59,6 +59,11 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         User inserted = builder.userWithoutId();
         Long insertedId = userDao.insertUser(inserted);
         User fetched = userDao.getUserById(insertedId);
+        assertNotNull(fetched);
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getLogin());
+        assertNotNull(fetched.getPassword());
         assertEquals(inserted, fetched);
     }
 

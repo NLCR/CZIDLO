@@ -75,6 +75,9 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         UrnNbn fetched = urnBookedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertEquals(fetched.getRegistrarCode(), inserted.getRegistrarCode());
         assertEquals(fetched.getDocumentCode(), inserted.getDocumentCode());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getRegistrarCode());
+        assertNotNull(fetched.getDocumentCode());
         assertNotNull(fetched.getCreated());
     }
 

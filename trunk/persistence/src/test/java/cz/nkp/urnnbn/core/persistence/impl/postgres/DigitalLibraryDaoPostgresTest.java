@@ -61,6 +61,9 @@ public class DigitalLibraryDaoPostgresTest extends AbstractDaoTest {
         //fetch
         DigitalLibrary fetched = libraryDao.getLibraryById(inserted.getId());
         assertEquals(inserted, fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getRegistrarId());
     }
 
     public void testGetLibraryByIllegalId() throws Exception {

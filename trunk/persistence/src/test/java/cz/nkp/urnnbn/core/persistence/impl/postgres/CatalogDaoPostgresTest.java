@@ -57,6 +57,10 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         catalogDao.insertCatalog(inserted);
         Catalog fetched = catalogDao.getCatalogById(inserted.getId());
         assertEquals(inserted, fetched);
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getRegistrarId());
     }
 
     public void testGetCatalog_byUnknownId() throws Exception {

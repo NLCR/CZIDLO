@@ -85,6 +85,11 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
         urnDao.insertUrnNbn(inserted);
         UrnNbn fetched = urnDao.getUrnNbnByDigRegId(rep.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getRegistrarCode());
+        assertNotNull(fetched.getDocumentCode());
+        assertNotNull(fetched.getDigDocId());
         assertEquals(inserted, fetched);
     }
     

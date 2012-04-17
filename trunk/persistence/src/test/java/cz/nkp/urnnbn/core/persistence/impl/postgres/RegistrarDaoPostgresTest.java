@@ -90,6 +90,10 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         Registrar inserted = builder.registrarWithoutId();
         inserted.setId(registrarDao.insertRegistrar(inserted));
         Registrar fetched = registrarDao.getRegistrarByCode(inserted.getCode());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getCreated());
+        assertNotNull(fetched.getId());
+        assertNotNull(fetched.getCode());
         assertEquals(fetched, inserted);
     }
 
@@ -289,7 +293,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         //add urnNbnBooking
         UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
-        urnSearchDao.insertGenerator(search);
+        urnGeneratorDao.insertGenerator(search);
 
         //DELETE registrar
         registrarDao.deleteRegistrar(id);
@@ -322,7 +326,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
         //also urn:nbn booking should be deleted
         try {
-            urnSearchDao.getGeneratorByRegistrarId(registrar.getId());
+            urnGeneratorDao.getGeneratorByRegistrarId(registrar.getId());
             fail();
         } catch (RecordNotFoundException e) {
             //ok
