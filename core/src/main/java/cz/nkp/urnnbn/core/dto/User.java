@@ -17,7 +17,7 @@ public class User implements IdentifiableWithDatestamps {
     private DateTime modified;
     private String login;
     private String password;
-    private Boolean admin;
+    private Boolean admin = Boolean.FALSE;
     private String email;
 
     @Override

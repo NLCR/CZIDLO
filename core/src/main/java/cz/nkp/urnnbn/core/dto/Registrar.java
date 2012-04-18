@@ -13,7 +13,7 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 public class Registrar extends Archiver {
 
     private RegistrarCode code;
-    private Boolean allowedToRegisterFreeUrnNbn = false;
+    private Boolean allowedToRegisterFreeUrnNbn = Boolean.FALSE;
 
     public Registrar() {
         super();
