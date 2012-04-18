@@ -5,8 +5,10 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
+import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -15,7 +17,7 @@ import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -54,7 +56,7 @@ public interface DataImportService extends BusinessService {
      */
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws
             UnknownUserException, AccessException,
-            UnknownDigiLibException, UnknownDigDocException;
+            UnknownDigLibException, UnknownDigDocException;
 
     public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws
             UnknownUserException, AccessException,
@@ -66,4 +68,12 @@ public interface DataImportService extends BusinessService {
     public Registrar insertNewRegistrar(Registrar registrar, String login) throws
             UnknownUserException, NotAdminException,
             RegistrarCollisionException;
+
+    public DigitalLibrary insertNewDigitalLibrary(DigitalLibrary library, long registrarId, String login) throws
+            UnknownUserException, AccessException,
+            UnknownRegistrarException;
+
+    public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws
+            UnknownUserException, AccessException,
+            UnknownRegistrarException;
 }

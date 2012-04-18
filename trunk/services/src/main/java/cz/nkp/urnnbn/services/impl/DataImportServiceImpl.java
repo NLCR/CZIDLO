@@ -5,8 +5,10 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
+import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -23,7 +25,7 @@ import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigiLibException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -47,7 +49,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws AccessException, UnknownDigiLibException, UnknownDigDocException, UnknownUserException {
+    public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws AccessException, UnknownDigLibException, UnknownDigDocException, UnknownUserException {
         try {
             long registrarId = registrarOfDigLibrary(instance.getLibraryId());
             authorization.checkAccessRights(registrarId, login);
@@ -98,6 +100,34 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             return registrar;
         } catch (AlreadyPresentException ex) {
             throw new RegistrarCollisionException(registrar.getCode().toString());
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public DigitalLibrary insertNewDigitalLibrary(DigitalLibrary library, long registrarId, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
+        try {
+            authorization.checkAccessRights(registrarId, login);
+            Long id = factory.digitalLibraryDao().insertLibrary(library);
+            library.setId(id);
+            return library;
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownRegistrarException(registrarId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
+        try {
+            authorization.checkAccessRights(registrarId, login);
+            Long id = factory.catalogDao().insertCatalog(catalog);
+            catalog.setId(id);
+            return catalog;
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownRegistrarException(registrarId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

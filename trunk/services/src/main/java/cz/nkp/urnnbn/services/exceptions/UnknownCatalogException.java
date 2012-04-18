@@ -8,9 +8,9 @@ package cz.nkp.urnnbn.services.exceptions;
  *
  * @author Martin Řehánek
  */
-public class UnknownDigiLibException extends Exception {
+public class UnknownCatalogException extends Exception {
 
-    public UnknownDigiLibException(long libraryId) {
-        super("unknown digital library with id: " + libraryId);
+    public UnknownCatalogException(long catalogId) {
+        super("unknown catalog with id: " + catalogId);
     }
 }
