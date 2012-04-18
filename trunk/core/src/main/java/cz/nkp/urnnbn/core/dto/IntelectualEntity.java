@@ -18,7 +18,7 @@ public class IntelectualEntity implements IdentifiableWithDatestamps {
     private DateTime created;
     private DateTime modified;
     private String documentType;
-    private Boolean digitalBorn = false;
+    private Boolean digitalBorn = Boolean.FALSE;
     private String otherOriginator;
     private String degreeAwardingInstitution;
 
