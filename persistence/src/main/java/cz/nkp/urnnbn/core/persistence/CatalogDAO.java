@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public interface CatalogDAO {
     public String ATTR_DESC = "description";
     public String ATTR_URL_PREFIX = "urlPrefix";
 
-    public Long insertCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
+    public Long insertCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException;
 
     public Catalog getCatalogById(long id) throws DatabaseException, RecordNotFoundException;
 

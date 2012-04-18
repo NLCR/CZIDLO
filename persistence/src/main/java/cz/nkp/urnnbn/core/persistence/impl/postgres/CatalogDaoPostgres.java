@@ -13,7 +13,6 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
@@ -40,7 +39,7 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
     }
 
     @Override
-    public Long insertCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public Long insertCatalog(Catalog catalog) throws DatabaseException, RecordNotFoundException {
         return insertRecordWithIdFromSequence(catalog, TABLE_NAME, SEQ_NAME, new InsertCatalog(catalog));
     }
 
