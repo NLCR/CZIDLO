@@ -12,11 +12,14 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
 import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
+import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
@@ -83,6 +86,34 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             throw new UnknownRegistrarException(registrarId);
         } catch (RecordReferencedException ex) {
             throw new CannotBeRemovedException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void removeDigitalLibrary(long libraryId, String login) throws UnknownUserException, AccessException, UnknownDigLibException, CannotBeRemovedException {
+        try {
+            long registrarId = registrarOfDigLibrary(libraryId);
+            authorization.checkAccessRights(registrarId, login);
+            factory.digitalLibraryDao().deleteLibrary(libraryId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownDigLibException(libraryId);
+        } catch (RecordReferencedException ex) {
+            throw new CannotBeRemovedException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void removeCatalog(long catalogId, String login) throws UnknownUserException, AccessException, UnknownCatalogException {
+        try {
+            long registrarId = registrarOfCatalog(catalogId);
+            authorization.checkAccessRights(registrarId, login);
+            factory.catalogDao().deleteCatalog(catalogId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownCatalogException(catalogId);
         }
     }
 }

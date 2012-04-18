@@ -12,11 +12,15 @@ import cz.nkp.urnnbn.core.RegistrarCode;
  */
 public class UnknownRegistrarException extends Exception {
 
+    public UnknownRegistrarException(RegistrarCode code, long registrarId) {
+        super("unknown registrar with code '" + code + "' and id " + registrarId);
+    }
+
     public UnknownRegistrarException(RegistrarCode code) {
-        super("unknown registrar with code " + code);
+        super("unknown registrar with code '" + code + "'");
     }
 
     public UnknownRegistrarException(long registrarId) {
-        super("unknown registrar with id: " + registrarId);
+        super("unknown registrar with id " + registrarId);
     }
 }
