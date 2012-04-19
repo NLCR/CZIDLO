@@ -21,6 +21,8 @@
             <!-- další názvové údaje -->
             <r:subTitle>Tato práce se zabývá stochastickými tahovými hrami na nekonečných grafech s lineárními výherními podmínkami.</r:subTitle>
         </r:titleInfo>
+        <!-- čČNB -->
+        <r:ccnb>cnb001282114</r:ccnb>
         <!-- jiný globální identifikátor školní práce -->
         <r:otherId>TODO</r:otherId>
         <!-- druh dokumentu -->

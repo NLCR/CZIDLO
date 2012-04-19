@@ -31,7 +31,6 @@ public class ThesisUnmarshaller extends IntelectualEntityUnmarshaller {
             appendId(result, identifierByElementName(titleInfoElement, "subTitle", IntEntIdType.SUB_TITLE, false));
         }
         appendId(result, identifierByElementName(entityEl, "ccnb", IntEntIdType.CCNB, false));
-        appendId(result, identifierByElementName(entityEl, "isbn", IntEntIdType.ISBN, false));
         appendId(result, identifierByElementName(entityEl, "otherId", IntEntIdType.OTHER, false));
         return result;
     }
