@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.IntEntIdType;
  *
  * @author Martin Řehánek
  */
-public class IntEntIdentifier {
+    public class IntEntIdentifier {
 
     private Long intEntDbId;
     private IntEntIdType type;
@@ -64,5 +64,10 @@ public class IntEntIdentifier {
         hash = 83 * hash + (this.intEntDbId != null ? this.intEntDbId.hashCode() : 0);
         hash = 83 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "IntEntIdentifier{" + "intEntDbId=" + intEntDbId + ", type=" + type + ", value=" + value + '}';
     }
 }
