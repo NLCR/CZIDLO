@@ -80,4 +80,9 @@ public class Originator implements IdentifiableByLongAttribute {
         hash = 97 * hash + (this.intEntId != null ? this.intEntId.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "Originator{" + "intEntId=" + intEntId + '}';
+    }
 }
