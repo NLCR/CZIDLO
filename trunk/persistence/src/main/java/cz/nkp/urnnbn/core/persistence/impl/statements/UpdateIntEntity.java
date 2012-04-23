@@ -40,7 +40,7 @@ public class UpdateIntEntity implements StatementWrapper {
         try {
             st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setString(2, entity.getDocumentType());
-            st.setBoolean(3, entity.isDigitalBorn());
+            st.setBoolean(3, entity.isDigitalBorn() == null ? false : entity.isDigitalBorn());
             st.setString(4, entity.getOtherOriginator());
             st.setString(5, entity.getDegreeAwardingInstitution());
             st.setLong(6, entity.getId());

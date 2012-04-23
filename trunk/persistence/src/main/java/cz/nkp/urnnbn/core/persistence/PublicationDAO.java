@@ -32,6 +32,9 @@ public interface PublicationDAO {
 
     public Publication getPublicationById(long id) throws DatabaseException, RecordNotFoundException;
 
+    public boolean publicationExists(long entityId) throws DatabaseException;
+
     public void updatePublication(Publication publication) throws DatabaseException, RecordNotFoundException;
-    //mazani resi intelektualni entita kaskadove  
+
+    public void removePublication(long id) throws DatabaseException;
 }

@@ -10,10 +10,12 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.OriginatorDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertOriginator;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateOriginator;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.OriginatorRT;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -40,7 +42,20 @@ public class OriginatorDaoPostgres extends AbstractDAO implements OriginatorDAO 
 
     @Override
     public void updateOriginator(Originator originator) throws DatabaseException, RecordNotFoundException {
-        System.err.println("dao:id:" + originator.getId());
         updateRecordWithLongPK(originator, TABLE_NAME, ATTR_INT_ENT_ID, new UpdateOriginator(originator));
+    }
+
+    public void removeOriginator(long id) throws DatabaseException {
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_INT_ENT_ID, id, false);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (RecordReferencedException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public boolean originatorExists(long entityId) throws DatabaseException {
+        return recordExists(TABLE_NAME, ATTR_INT_ENT_ID, entityId);
     }
 }

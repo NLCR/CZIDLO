@@ -31,6 +31,9 @@ public interface OriginatorDAO {
 
     public Originator getOriginatorById(long id) throws DatabaseException, RecordNotFoundException;
 
+    public boolean originatorExists(long entityId) throws DatabaseException;
+
     public void updateOriginator(Originator originator) throws DatabaseException, RecordNotFoundException;
-    //mazani resi intelektualni entita kaskadove  
+
+    public void removeOriginator(long id) throws DatabaseException;
 }

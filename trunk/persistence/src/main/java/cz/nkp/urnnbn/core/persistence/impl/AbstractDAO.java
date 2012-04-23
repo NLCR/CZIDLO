@@ -84,12 +84,24 @@ public abstract class AbstractDAO {
 
     protected void checkRecordExists(String tableName, String idAttrName, Long idValue) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
-        checkRecordExists(statement, tableName);
+        if (!recordExists(statement, tableName)) {
+            throw new RecordNotFoundException(tableName);
+        }
+    }
+
+    protected boolean recordExists(String tableName, String idAttrName, Long idValue) throws DatabaseException {
+        StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
+        return recordExists(statement, tableName);
     }
 
     protected void checkRecordExists(String tableName, String idAttrName, String idValue) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
         checkRecordExists(statement, tableName);
+    }
+
+    protected boolean recordExists(String tableName, String idAttrName, String idValue) throws DatabaseException {
+        StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
+        return recordExists(statement, tableName);
     }
 
     protected void checkRecordExists(String tableName,
@@ -100,6 +112,12 @@ public abstract class AbstractDAO {
     }
 
     private void checkRecordExists(final StatementWrapper statement, String tableName) throws DatabaseException, RecordNotFoundException {
+        if (!recordExists(statement, tableName)) {
+            throw new RecordNotFoundException(tableName);
+        }
+    }
+
+    private boolean recordExists(final StatementWrapper statement, String tableName) throws DatabaseException {
         DaoOperation recordCount = new DaoOperation() {
 
             @Override
@@ -111,15 +129,11 @@ public abstract class AbstractDAO {
         };
         try {
             Integer count = (Integer) runInTransaction(recordCount);
-            if (count == 0) {
-                throw new RecordNotFoundException(tableName);
-            }
-        } catch (RecordNotFoundException e) {
-            throw e;
+            return (count != 0);
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
-            return;
+            throw new DatabaseException(e);
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -243,7 +257,6 @@ public abstract class AbstractDAO {
             return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, dto.getId()});
-            System.err.println("state:" + ex.getSQLState());
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();

@@ -39,6 +39,9 @@ public interface SourceDocumentDAO {
 
     public SourceDocument getSrcDocById(long id) throws DatabaseException, RecordNotFoundException;
 
+    public boolean srcDocExists(long entityId) throws DatabaseException;
+
     public void updateSrcDoc(SourceDocument srcDoc) throws DatabaseException, RecordNotFoundException;
-    //mazani resi intelektualni entita kaskadove  
+
+    public void removeSrcDoc(long id) throws DatabaseException;
 }

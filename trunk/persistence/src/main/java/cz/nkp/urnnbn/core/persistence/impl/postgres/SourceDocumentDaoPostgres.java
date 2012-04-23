@@ -10,10 +10,12 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.SourceDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertSourceDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateSourceDocument;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SourceDocumentRT;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,5 +43,19 @@ public class SourceDocumentDaoPostgres extends AbstractDAO implements SourceDocu
     @Override
     public void updateSrcDoc(SourceDocument srcDoc) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(srcDoc, TABLE_NAME, ATTR_INT_ENT_ID, new UpdateSourceDocument(srcDoc));
+    }
+
+    public boolean srcDocExists(long entityId) throws DatabaseException {
+        return recordExists(TABLE_NAME, ATTR_INT_ENT_ID, entityId);
+    }
+
+    public void removeSrcDoc(long id) throws DatabaseException {
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_INT_ENT_ID, id, false);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        } catch (RecordReferencedException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 }
