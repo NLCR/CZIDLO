@@ -95,17 +95,32 @@ public class IntEntIdentifierDaoPostgresTest extends AbstractDaoTest {
         assertTrue(idList.contains(ccnb));
     }
 
-    //    /**
-//     * Test of updateIntEntIdValue method, of class IntEntIdentifierDaoPostgres.
-//     */
-//    public void testUpdateIntEntIdValue() throws Exception {
-//        System.out.println("updateIntEntIdValue");
-//        IntEntIdentifier id = null;
-//        IntEntIdentifierDaoPostgres instance = null;
-//        instance.updateIntEntIdValue(id);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-//    }
+    /**
+     * Test of updateIntEntIdValue method, of class IntEntIdentifierDaoPostgres.
+     */
+    public void testUpdateIntEntIdValue() throws Exception {
+        IntelectualEntity entity = entityPersisted();
+        //insert
+        IntEntIdentifier inserted = new IntEntIdentifier();
+        inserted.setIntEntDbId(entity.getId());
+        inserted.setType(IntEntIdType.ISBN);
+        inserted.setValue("oldValue");
+        intEntIdDao.insertIntEntId(inserted);
+        //update
+        IntEntIdentifier second = new IntEntIdentifier();
+        second.setIntEntDbId(entity.getId());
+        second.setType(IntEntIdType.ISBN);
+        second.setValue("newValue");
+        intEntIdDao.updateIntEntIdValue(second);
+        //check
+        List<IntEntIdentifier> idList = intEntIdDao.getIdList(entity.getId());
+        for (IntEntIdentifier id : idList) {
+            if (id.getType() == IntEntIdType.ISBN) {
+                assertEquals(second.getValue(), id.getValue());
+            }
+        }
+    }
+
     /**
      * Test of deleteIntEntIdentifier method, of class IntEntIdentifierDaoPostgres.
      */

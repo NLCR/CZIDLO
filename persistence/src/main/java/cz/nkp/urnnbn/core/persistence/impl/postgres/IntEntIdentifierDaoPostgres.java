@@ -20,8 +20,10 @@ import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntEntIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntIdentifierRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -89,17 +91,32 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
 
     @Override
     public void updateIntEntIdValue(IntEntIdentifier id) throws DatabaseException, RecordNotFoundException {
-        //TODO
-        throw new UnsupportedOperationException("Not supported yet.");
+        checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, id.getIntEntDbId());
+        try {
+            DaoOperation operation = new NoResultOperation(new UpdateIntEntIdentifier(id));
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return;
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot update {0}", new Object[]{IntelectualEntityDAO.TABLE_NAME, id});
+            if ("23503".equals(ex.getSQLState())) {
+                logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
+                throw new RecordNotFoundException();
+            } else {
+                throw new DatabaseException(ex);
+            }
+        }
     }
 
     @Override
     public void deleteIntEntIdentifier(long intEntDbId, IntEntIdType type) throws DatabaseException, RecordNotFoundException {
         try {
-            //todo: check, that intEnt exists (existence of intEntId is checked in deleteREcordsByLongAndString
+            checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, intEntDbId);
             deleteRecordsByLongAndString(TABLE_NAME,
                     IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId,
-                    IntEntIdentifierDAO.ATTR_TYPE, type.name(), true);
+                    IntEntIdentifierDAO.ATTR_TYPE, type.name(), false);
         } catch (RecordReferencedException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
