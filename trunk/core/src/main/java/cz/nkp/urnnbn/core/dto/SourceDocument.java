@@ -158,4 +158,9 @@ public class SourceDocument implements IdentifiableByLongAttribute {
         hash = 59 * hash + (this.intEntId != null ? this.intEntId.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "SourceDocument{" + "intEntId=" + intEntId + '}';
+    }
 }
