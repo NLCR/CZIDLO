@@ -32,16 +32,16 @@ public interface UserDAO {
 
     public Long insertUser(User user) throws DatabaseException, AlreadyPresentException;
 
-    public User getUserById(long id) throws DatabaseException, RecordNotFoundException;
+    public User getUserById(long id, boolean includePassword) throws DatabaseException, RecordNotFoundException;
 
-    public User getUserByLogin(String login) throws DatabaseException, RecordNotFoundException;
+    public User getUserByLogin(String login, boolean includePassword) throws DatabaseException, RecordNotFoundException;
 
     public List<Long> getAdminsOfRegistrar(long registrarId) throws DatabaseException, RecordNotFoundException;
 
-    //no need to implement now
     public List<Long> getAllUsersId() throws DatabaseException;
 
-    //no need to implement now
+    public List<User> getAllUsers(boolean includePasswords) throws DatabaseException;
+
     public void updateUser(User user) throws DatabaseException, RecordNotFoundException;
 
     public void deleteUser(long id) throws DatabaseException, RecordNotFoundException;

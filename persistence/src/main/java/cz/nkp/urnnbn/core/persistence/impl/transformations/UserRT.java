@@ -16,9 +16,15 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class UserRT implements ResultsetTransformer {
-    
+
+    private final boolean includePassword;
+
+    public UserRT(boolean includePassword) {
+        this.includePassword = includePassword;
+    }
+
     @Override
-    public Object transform(ResultSet resultSet) throws SQLException {
+    public User transform(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setId(resultSet.getLong(UserDAO.ATTR_ID));
         if (resultSet.wasNull()) {
@@ -29,7 +35,9 @@ public class UserRT implements ResultsetTransformer {
         Timestamp updated = resultSet.getTimestamp(UserDAO.ATTR_UPDATED);
         user.setModified(DateTimeUtils.timestampToDatetime(updated));
         user.setLogin(resultSet.getString(UserDAO.ATTR_LOGIN));
-        user.setPassword(resultSet.getString(UserDAO.ATTR_PASS));
+        if (includePassword) {
+            user.setPassword(resultSet.getString(UserDAO.ATTR_PASS));
+        }
         user.setAdmin(resultSet.getBoolean(UserDAO.ATTR_IS_ADMIN));
         if (resultSet.wasNull()) {
             user.setAdmin(null);

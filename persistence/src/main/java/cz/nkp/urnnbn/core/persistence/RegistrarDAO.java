@@ -39,7 +39,7 @@ public interface RegistrarDAO {
 
     public List<Long> getAllRegistrarsId() throws DatabaseException;
 
-    public List<Long> getRegistrarsIdManagedByUser(long userId) throws DatabaseException, RecordNotFoundException;
+    public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException;
 
     //urnRegistrarCode won't be updated
     public void updateRegistrar(Registrar registrar) throws DatabaseException, RecordNotFoundException;
