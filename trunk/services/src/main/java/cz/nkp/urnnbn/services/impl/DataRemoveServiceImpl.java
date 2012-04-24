@@ -8,6 +8,8 @@ import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
@@ -22,8 +24,6 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -128,6 +128,24 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownUserException(userId);
+        }
+    }
+
+    @Override
+    public void removeRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException, UnknownRegistrarException {
+        try {
+            authorization.checkAdminRights(login);
+            factory.userDao().deleteAdministrationRight(registrarId, userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            if (ex.getTableName().equals(UserDAO.TABLE_NAME)) {
+                throw new UnknownUserException(userId);
+            } else if (ex.getTableName().equals(RegistrarDAO.TABLE_NAME)) {
+                throw new UnknownRegistrarException(registrarId);
+            } else {
+                throw new RuntimeException(ex);
+            }
         }
     }
 }
