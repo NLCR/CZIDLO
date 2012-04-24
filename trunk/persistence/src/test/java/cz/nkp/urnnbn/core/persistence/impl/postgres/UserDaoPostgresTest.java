@@ -58,7 +58,7 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
     public void testGetUserById() throws Exception {
         User inserted = builder.userWithoutId();
         Long insertedId = userDao.insertUser(inserted);
-        User fetched = userDao.getUserById(insertedId);
+        User fetched = userDao.getUserById(insertedId, true);
         assertNotNull(fetched);
         assertNotNull(fetched.getId());
         assertNotNull(fetched.getCreated());
@@ -69,7 +69,7 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 
     public void testGetUserById_illegalId() throws Exception {
         try {
-            userDao.getUserById(ILLEGAL_ID);
+            userDao.getUserById(ILLEGAL_ID, true);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -82,13 +82,13 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
     public void testGetUserByLogin() throws Exception {
         User inserted = builder.userWithoutId();
         userDao.insertUser(inserted);
-        User fetched = userDao.getUserByLogin(inserted.getLogin());
+        User fetched = userDao.getUserByLogin(inserted.getLogin(), true);
         assertEquals(inserted, fetched);
     }
 
     public void testGetUserByLogin_unknownLogin() throws Exception {
         try {
-            userDao.getUserByLogin("someLoginThatIsNotInDatabase");
+            userDao.getUserByLogin("someLoginThatIsNotInDatabase", true);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -139,7 +139,23 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
      * Test of updateUser method, of class UserDaoPostgres.
      */
     public void testUpdateUser() throws Exception {
-        //TODO: implement when tested method is implemented
+        //insert
+        User inserted = builder.userWithoutId();
+        inserted.setId(userDao.insertUser(inserted));
+        //update
+        User updated = new User();
+        updated.setId(inserted.getId());
+        updated.setAdmin(!inserted.isAdmin());
+        updated.setEmail(inserted.getEmail() + "-new");
+        updated.setPassword(inserted.getPassword() + "-new");
+        updated.setLogin(inserted.getLogin() + "-new");
+        userDao.updateUser(updated);
+        //fetch
+        User fetched = userDao.getUserById(updated.getId(), true);
+        assertEquals(updated.getEmail(), fetched.getEmail());
+        assertEquals(updated.isAdmin(), fetched.isAdmin());
+        assertEquals(inserted.getLogin(), fetched.getLogin());
+        assertEquals(inserted.getPassword(), fetched.getPassword());
     }
 
     /**
@@ -150,7 +166,7 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         Long id = userDao.insertUser(user);
         userDao.deleteUser(id);
         try {
-            userDao.getUserById(id);
+            userDao.getUserById(id, false);
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -160,10 +176,10 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
     public void testDeleteUser_notReferencedFromRegistrar() throws Exception {
         //user without registrar
         User userWithoutRegistar = userPersisted();
-        assertEquals(0, registrarDao.getRegistrarsIdManagedByUser(userWithoutRegistar.getId()).size());
+        assertEquals(0, registrarDao.getRegistrarsManagedByUser(userWithoutRegistar.getId()).size());
         userDao.deleteUser(userWithoutRegistar.getId());
         try {
-            registrarDao.getRegistrarsIdManagedByUser(userWithoutRegistar.getId()).size();
+            registrarDao.getRegistrarsManagedByUser(userWithoutRegistar.getId()).size();
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -173,12 +189,12 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         User userWithSingleRegistrar = userPersisted();
         Registrar u1Registrar = registrarPersisted();
         registrarDao.addAdminOfRegistrar(u1Registrar.getId(), userWithSingleRegistrar.getId());
-        List<Long> registrarIdList = registrarDao.getRegistrarsIdManagedByUser(userWithSingleRegistrar.getId());
-        assertEquals(1, registrarIdList.size());
-        assertTrue(registrarIdList.contains(u1Registrar.getId()));
+        List<Registrar> registrarList = registrarDao.getRegistrarsManagedByUser(userWithSingleRegistrar.getId());
+        assertEquals(1, registrarList.size());
+        assertTrue(registrarList.contains(u1Registrar));
         userDao.deleteUser(userWithSingleRegistrar.getId());
         try {
-            registrarDao.getRegistrarsIdManagedByUser(userWithSingleRegistrar.getId());
+            registrarDao.getRegistrarsManagedByUser(userWithSingleRegistrar.getId());
             fail();
         } catch (RecordNotFoundException e) {
             //OK
@@ -190,13 +206,13 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         registrarDao.addAdminOfRegistrar(u2Reg1.getId(), userWithTwoRegistrars.getId());
         Registrar u2Reg2 = registrarPersisted();
         registrarDao.addAdminOfRegistrar(u2Reg2.getId(), userWithTwoRegistrars.getId());
-        List<Long> registrarIdList2 = registrarDao.getRegistrarsIdManagedByUser(userWithTwoRegistrars.getId());
-        assertEquals(2, registrarIdList2.size());
-        assertTrue(registrarIdList2.contains(u2Reg1.getId()));
-        assertTrue(registrarIdList2.contains(u2Reg2.getId()));
+        List<Registrar> registrarList2 = registrarDao.getRegistrarsManagedByUser(userWithTwoRegistrars.getId());
+        assertEquals(2, registrarList2.size());
+        assertTrue(registrarList2.contains(u2Reg1));
+        assertTrue(registrarList2.contains(u2Reg2));
         userDao.deleteUser(userWithTwoRegistrars.getId());
         try {
-            registrarDao.getRegistrarsIdManagedByUser(userWithTwoRegistrars.getId());
+            registrarDao.getRegistrarsManagedByUser(userWithTwoRegistrars.getId());
             fail();
         } catch (RecordNotFoundException e) {
             //OK

@@ -136,20 +136,20 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         registrarDao.addAdminOfRegistrar(managedByOne.getId(), user1.getId());
         registrarDao.addAdminOfRegistrar(managedByTwo.getId(), user1.getId());
         registrarDao.addAdminOfRegistrar(managedByTwo.getId(), user2.getId());
-        List<Long> managedByUser1 = registrarDao.getRegistrarsIdManagedByUser(user1.getId());
-        List<Long> managedByUser2 = registrarDao.getRegistrarsIdManagedByUser(user2.getId());
+        List<Registrar> managedByUser1 = registrarDao.getRegistrarsManagedByUser(user1.getId());
+        List<Registrar> managedByUser2 = registrarDao.getRegistrarsManagedByUser(user2.getId());
 
         assertEquals(2, managedByUser1.size());
         assertEquals(1, managedByUser2.size());
-        assertTrue(managedByUser1.contains(managedByOne.getId()));
-        assertTrue(managedByUser1.contains(managedByTwo.getId()));
-        assertFalse(managedByUser2.contains(managedByOne.getId()));
-        assertTrue(managedByUser2.contains(managedByTwo.getId()));
+        assertTrue(managedByUser1.contains(managedByOne));
+        assertTrue(managedByUser1.contains(managedByTwo));
+        assertFalse(managedByUser2.contains(managedByOne));
+        assertTrue(managedByUser2.contains(managedByTwo));
     }
 
-    public void testGetRegistrarsIdManagedByUser_IllegalId() throws Exception {
+    public void testGetRegistrarsManagedByUser_IllegalId() throws Exception {
         try {
-            registrarDao.getRegistrarsIdManagedByUser(ILLEGAL_ID);
+            registrarDao.getRegistrarsManagedByUser(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -254,16 +254,17 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
      * Test of deleteRegistrar method, of class RegistrarDaoPostgres.
      */
     public void testDeleteRegistrar() throws Exception {
-        long registrarId = registrarDao.insertRegistrar(builder.registrarWithoutId());
+        Registrar registrar = builder.registrarWithoutId();
+        registrar.setId(registrarDao.insertRegistrar(registrar));
         User admin1 = userPersisted();
         User admin2 = userPersisted();
-        registrarDao.addAdminOfRegistrar(registrarId, admin1.getId());
-        registrarDao.deleteRegistrar(registrarId);
+        registrarDao.addAdminOfRegistrar(registrar.getId(), admin1.getId());
+        registrarDao.deleteRegistrar(registrar.getId());
         //users no longer manage the removed registrar
-        List<Long> admin1RegistrarsIds = registrarDao.getRegistrarsIdManagedByUser(admin1.getId());
-        assertFalse(admin1RegistrarsIds.contains(registrarId));
-        List<Long> admin2RegistrarsIds = registrarDao.getRegistrarsIdManagedByUser(admin2.getId());
-        assertFalse(admin2RegistrarsIds.contains(registrarId));
+        List<Registrar> admin1Registrars = registrarDao.getRegistrarsManagedByUser(admin1.getId());
+        assertFalse(admin1Registrars.contains(registrar));
+        List<Registrar> admin2Registrars = registrarDao.getRegistrarsManagedByUser(admin2.getId());
+        assertFalse(admin2Registrars.contains(registrar));
     }
 
     public void testDeleteRegistrar_withRegisteredDocument() throws Exception {

@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUser;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateUser;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UserRT;
 import java.sql.Connection;
@@ -89,15 +90,15 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
     }
 
     @Override
-    public User getUserById(long id) throws DatabaseException, RecordNotFoundException {
-        return (User) getRecordById(TABLE_NAME, ATTR_ID, id, new UserRT());
+    public User getUserById(long id, boolean includePassword) throws DatabaseException, RecordNotFoundException {
+        return (User) getRecordById(TABLE_NAME, ATTR_ID, id, new UserRT(includePassword));
     }
 
     @Override
-    public User getUserByLogin(String login) throws DatabaseException, RecordNotFoundException {
+    public User getUserByLogin(String login, boolean includePassword) throws DatabaseException, RecordNotFoundException {
         try {
             StatementWrapper st = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_LOGIN, login);
-            DaoOperation operation = new SingleResultOperation(st, new UserRT());
+            DaoOperation operation = new SingleResultOperation(st, new UserRT(includePassword));
             return (User) runInTransaction(operation);
         } catch (RecordNotFoundException ex) {
             throw ex;
@@ -136,9 +137,13 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
         return getIdListOfAllRecords(TABLE_NAME, ATTR_ID);
     }
 
+    public List<User> getAllUsers(boolean includePasswords) throws DatabaseException {
+        return (List<User>) getAllRecords(TABLE_NAME, new UserRT(includePasswords));
+    }
+
     @Override
     public void updateUser(User user) throws DatabaseException, RecordNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        updateRecordWithLongPK(user, TABLE_NAME, ATTR_ID, new UpdateUser(user));
     }
 
     @Override

@@ -40,6 +40,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,8 +154,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
         return (List<Long>) getAllRecords(TABLE_NAME, new singleLongRT());
     }
 
-    @Override
-    public List<Long> getRegistrarsIdManagedByUser(long userId) throws DatabaseException, RecordNotFoundException {
+    public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(UserDAO.TABLE_NAME, UserDAO.ATTR_ID, userId);
         try {
             StatementWrapper st = new SelectSingleAttrByLongAttr(
@@ -162,7 +162,12 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
                     UserDAO.USER_REGISTRAR_ATTR_USER_ID, userId,
                     UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID);
             DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
-            return (List<Long>) runInTransaction(operation);
+            List<Long> identifiers = (List<Long>) runInTransaction(operation);
+            List<Registrar> result = new ArrayList<Registrar>(identifiers.size());
+            for (Long id : identifiers) {
+                result.add(getRegistrarById(id));
+            }
+            return result;
         } catch (PersistenceException ex) {
             //cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
