@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
@@ -60,4 +61,7 @@ public interface DataUpdateService extends BusinessService {
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, String login) throws
             UnknownUserException, NotAdminException,
             UnknownIntelectualEntity, IdentifierConflictException;
+    
+    public void updateUser(User user, String login) throws
+            UnknownUserException, NotAdminException;
 }

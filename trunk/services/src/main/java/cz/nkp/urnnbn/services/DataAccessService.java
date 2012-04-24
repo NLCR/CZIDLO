@@ -19,7 +19,10 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -44,7 +47,7 @@ public interface DataAccessService extends BusinessService {
     public Registrar registrarById(long id) throws DatabaseException;
 
     public Archiver archiverById(long id) throws DatabaseException;
-    
+
     public List<Archiver> archivers() throws DatabaseException;
 
     public IntelectualEntity entityById(long id) throws DatabaseException;
@@ -85,4 +88,10 @@ public interface DataAccessService extends BusinessService {
     public List<DigitalInstance> digInstancesByDigDocId(long digDocId) throws DatabaseException;
 
     public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException;
+
+    public List<User> users(String login, boolean includePasswords)
+            throws UnknownUserException, NotAdminException;
+
+    public List<Registrar> registrarsManagedByUser(long userId, String login)
+            throws UnknownUserException, NotAdminException;
 }

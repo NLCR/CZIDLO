@@ -22,6 +22,8 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -114,6 +116,18 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownCatalogException(catalogId);
+        }
+    }
+
+    @Override
+    public void removeUser(long userId, String login) throws UnknownUserException, NotAdminException, UnknownUserException {
+        try {
+            authorization.checkAdminRights(login);
+            factory.userDao().deleteUser(userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(userId);
         }
     }
 }

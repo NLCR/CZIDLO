@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -22,6 +23,7 @@ import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -130,6 +132,20 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             throw new UnknownRegistrarException(registrarId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public User addNewUser(User user, String login) throws UnknownUserException, NotAdminException, LoginConflictException {
+        try {
+            authorization.checkAdminRights(login);
+            Long id = factory.userDao().insertUser(user);
+            user.setId(id);
+            return user;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (AlreadyPresentException ex) {
+            throw new LoginConflictException(user.getLogin());
         }
     }
 }

@@ -35,13 +35,15 @@ public interface DataRemoveService {
     public void removeRegistrar(long registrarId, String login) throws
             UnknownUserException, NotAdminException,
             UnknownRegistrarException, CannotBeRemovedException;
-    
+
     public void removeDigitalLibrary(long libraryId, String login) throws
             UnknownUserException, AccessException,
             UnknownDigLibException, CannotBeRemovedException;
-    
+
     public void removeCatalog(long libraryId, String login) throws
             UnknownUserException, AccessException,
             UnknownCatalogException;
-    
+
+    public void removeUser(long userId, String login) throws
+            UnknownUserException, NotAdminException;
 }
