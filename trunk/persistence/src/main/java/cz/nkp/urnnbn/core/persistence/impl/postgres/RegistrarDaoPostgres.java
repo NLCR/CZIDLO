@@ -22,13 +22,11 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
-import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertRegistrar;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUserRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
@@ -184,23 +182,6 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     @Override
-    public void addAdminOfRegistrar(long registrarId, long userId) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(TABLE_NAME, ATTR_ID, registrarId);
-        checkRecordExists(UserDAO.TABLE_NAME, UserDAO.ATTR_ID, userId);
-        try {
-            StatementWrapper statement = new InsertUserRegistrar(userId, registrarId);
-            DaoOperation operation = new NoResultOperation(statement);
-            runInTransaction(operation);
-        } catch (PersistenceException ex) {
-            //should never happen
-            logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
-        } catch (SQLException ex) {
-            throw new DatabaseException(ex);
-        }
-    }
-
-    @Override
     public void activateRegistrar(long id) throws DatabaseException, RecordNotFoundException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -210,19 +191,6 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
         checkRecordExists(TABLE_NAME, ATTR_ID, id);
         //delete archiver - registrar is deleted in cascade
         deleteRecordsById(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id, true);
-//        try {
-//            //delete archiver - registrar is deleted in cascade
-//            StatementWrapper st = new DeleteRecordsByLongAttr(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id);
-//            DaoOperation operation = new NoResultOperation(st);
-//            runInTransaction(operation);
-//        } catch (PersistenceException ex) {
-//            //should never happen
-//            logger.log(Level.SEVERE, "Exception unexpected here", ex);
-//            return;
-//        } catch (SQLException ex) {
-//            logger.log(Level.SEVERE, "Couldn't delete registrar {0}", id);
-//            throw new DatabaseException(ex);
-//        }
     }
 
     @Override

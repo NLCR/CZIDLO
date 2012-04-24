@@ -163,8 +163,7 @@ public abstract class AbstractDaoTest extends TestCase {
 
     public User userPersisted() throws DatabaseException, AlreadyPresentException {
         User user = builder.userWithoutId();
-        long id = userDao.insertUser(user);
-        user.setId(id);
+        user.setId(userDao.insertUser(user));
         return user;
     }
 }

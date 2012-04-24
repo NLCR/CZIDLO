@@ -474,8 +474,8 @@ public class App {
         return user;
     }
 
-    private void grantRegistrarToUser(User user, Registrar registrar) throws DatabaseException, RecordNotFoundException {
-        factory.registrarDao().addAdminOfRegistrar(registrar.getId(), user.getId());
+    private void grantRegistrarToUser(User user, Registrar registrar) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        factory.userDao().insertAdministrationRight(registrar.getId(), user.getId());
         System.out.println("granted access to registrar '" + registrar.getName() + "' with code " + registrar.getCode() + " to user " + user.getLogin());
     }
 }

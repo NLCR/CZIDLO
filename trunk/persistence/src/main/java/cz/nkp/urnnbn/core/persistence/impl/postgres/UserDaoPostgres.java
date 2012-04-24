@@ -19,8 +19,10 @@ import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUser;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUserRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
@@ -84,6 +86,22 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public void insertAdministrationRight(long registrarId, long userId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        checkRecordExists(TABLE_NAME, ATTR_ID, userId);
+        checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
+        try {
+            StatementWrapper statement = new InsertUserRegistrar(userId, registrarId);
+            DaoOperation operation = new NoResultOperation(statement);
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return;
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -162,6 +180,19 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
             deleteAllRecords(TABLE_NAME);
         } catch (RecordReferencedException ex) {
             //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deleteAdministrationRight(long registarId, long userId) throws DatabaseException, RecordNotFoundException {
+        try {
+            checkRecordExists(TABLE_NAME, ATTR_ID, userId);
+            checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registarId);
+            deleteRecordsByLongAndLong(TABLE_USER_REGISTRAR_NAME,
+                    USER_REGISTRAR_ATTR_REGISTRAR_ID, registarId,
+                    USER_REGISTRAR_ATTR_USER_ID, registarId);
+        } catch (RecordReferencedException ex) {
+            //cannot happen 
             logger.log(Level.SEVERE, null, ex);
         }
     }
