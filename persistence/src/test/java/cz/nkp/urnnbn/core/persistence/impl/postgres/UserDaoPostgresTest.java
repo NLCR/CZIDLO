@@ -52,6 +52,32 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
+    public void testInsertAdministrationRight() throws Exception {
+        Registrar registrar = registrarPersisted();
+        User user = userPersisted();
+        userDao.insertAdministrationRight(registrar.getId(), user.getId());
+    }
+
+    public void testInsertAdministrationRight_unknownRegistrarId() throws Exception {
+        User user = userPersisted();
+        try {
+            userDao.insertAdministrationRight(ILLEGAL_ID, user.getId());
+            fail();
+        } catch (RecordNotFoundException e) {
+            //OK
+        }
+    }
+
+    public void testInsertAdministrationRight_unknownUserId() throws Exception {
+        Registrar registrar = registrarPersisted();
+        try {
+            userDao.insertAdministrationRight(registrar.getId(), ILLEGAL_ID);
+            fail();
+        } catch (RecordNotFoundException e) {
+            //OK
+        }
+    }
+
     /**
      * Test of getUserById method, of class UserDaoPostgres.
      */
@@ -100,9 +126,9 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         Registrar managedByOne = registrarPersisted();
         User managesOne = userPersisted();
         User managesTwo = userPersisted();
-        registrarDao.addAdminOfRegistrar(managedByTwo.getId(), managesOne.getId());
-        registrarDao.addAdminOfRegistrar(managedByTwo.getId(), managesTwo.getId());
-        registrarDao.addAdminOfRegistrar(managedByOne.getId(), managesTwo.getId());
+        userDao.insertAdministrationRight(managedByTwo.getId(), managesOne.getId());
+        userDao.insertAdministrationRight(managedByTwo.getId(), managesTwo.getId());
+        userDao.insertAdministrationRight(managedByOne.getId(), managesTwo.getId());
 
         //user managing single registrar
         List<Long> adminsOfManagedByOne = userDao.getAdminsOfRegistrar(managedByOne.getId());
@@ -188,7 +214,7 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         //user with single registrar
         User userWithSingleRegistrar = userPersisted();
         Registrar u1Registrar = registrarPersisted();
-        registrarDao.addAdminOfRegistrar(u1Registrar.getId(), userWithSingleRegistrar.getId());
+        userDao.insertAdministrationRight(u1Registrar.getId(), userWithSingleRegistrar.getId());
         List<Registrar> registrarList = registrarDao.getRegistrarsManagedByUser(userWithSingleRegistrar.getId());
         assertEquals(1, registrarList.size());
         assertTrue(registrarList.contains(u1Registrar));
@@ -203,9 +229,9 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
         //user with two registrars
         User userWithTwoRegistrars = userPersisted();
         Registrar u2Reg1 = registrarPersisted();
-        registrarDao.addAdminOfRegistrar(u2Reg1.getId(), userWithTwoRegistrars.getId());
+        userDao.insertAdministrationRight(u2Reg1.getId(), userWithTwoRegistrars.getId());
         Registrar u2Reg2 = registrarPersisted();
-        registrarDao.addAdminOfRegistrar(u2Reg2.getId(), userWithTwoRegistrars.getId());
+        userDao.insertAdministrationRight(u2Reg2.getId(), userWithTwoRegistrars.getId());
         List<Registrar> registrarList2 = registrarDao.getRegistrarsManagedByUser(userWithTwoRegistrars.getId());
         assertEquals(2, registrarList2.size());
         assertTrue(registrarList2.contains(u2Reg1));

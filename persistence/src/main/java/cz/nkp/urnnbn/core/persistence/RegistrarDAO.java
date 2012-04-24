@@ -44,8 +44,6 @@ public interface RegistrarDAO {
     //urnRegistrarCode won't be updated
     public void updateRegistrar(Registrar registrar) throws DatabaseException, RecordNotFoundException;
 
-    public void addAdminOfRegistrar(long registrarId, long userId) throws DatabaseException, RecordNotFoundException;
-
     public void activateRegistrar(long id) throws DatabaseException, RecordNotFoundException;
 
     public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException;

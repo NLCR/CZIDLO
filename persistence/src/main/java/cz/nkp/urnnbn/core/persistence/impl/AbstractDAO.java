@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteAllRecords;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAndLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAndStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
@@ -355,6 +356,35 @@ public abstract class AbstractDAO {
                     + "{1}={2} and {3}={4}",
                     new Object[]{tableName,
                         longAttrName, longAttrValue, stringAttrName, stringAttrValue});
+            if ("23503".equals(ex.getSQLState())) {
+                logger.log(Level.SEVERE, "Record is referenced from another table", ex);
+                throw new RecordReferencedException();
+            } else {
+                throw new DatabaseException(ex);
+            }
+        }
+    }
+
+    public void deleteRecordsByLongAndLong(
+            String tableName,
+            String firstAttrName, long firstAttrValue,
+            String secondAttrName, long secondAttrValue) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+        try {
+            StatementWrapper st = new DeleteRecordsByLongAndLongAttr(
+                    tableName,
+                    firstAttrName, firstAttrValue,
+                    secondAttrName, secondAttrValue);
+            DaoOperation operation = new NoResultOperation(st);
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return;
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot delete from {0} where "
+                    + "{1}={2} and {3}={4}",
+                    new Object[]{tableName,
+                        firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();

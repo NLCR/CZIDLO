@@ -128,25 +128,6 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testGetRegistrarsIdManagedByUser() throws Exception {
-        Registrar managedByOne = registrarPersisted();
-        Registrar managedByTwo = registrarPersisted();
-        User user1 = userPersisted();
-        User user2 = userPersisted();
-        registrarDao.addAdminOfRegistrar(managedByOne.getId(), user1.getId());
-        registrarDao.addAdminOfRegistrar(managedByTwo.getId(), user1.getId());
-        registrarDao.addAdminOfRegistrar(managedByTwo.getId(), user2.getId());
-        List<Registrar> managedByUser1 = registrarDao.getRegistrarsManagedByUser(user1.getId());
-        List<Registrar> managedByUser2 = registrarDao.getRegistrarsManagedByUser(user2.getId());
-
-        assertEquals(2, managedByUser1.size());
-        assertEquals(1, managedByUser2.size());
-        assertTrue(managedByUser1.contains(managedByOne));
-        assertTrue(managedByUser1.contains(managedByTwo));
-        assertFalse(managedByUser2.contains(managedByOne));
-        assertTrue(managedByUser2.contains(managedByTwo));
-    }
-
     public void testGetRegistrarsManagedByUser_IllegalId() throws Exception {
         try {
             registrarDao.getRegistrarsManagedByUser(ILLEGAL_ID);
@@ -224,32 +205,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testAddAdminOfRegistrar() throws Exception {
-        Registrar registrar = registrarPersisted();
-        User user = userPersisted();
-        registrarDao.addAdminOfRegistrar(registrar.getId(), user.getId());
-    }
-
-    public void testAddAdminOfRegistrar_unknownRegistrarId() throws Exception {
-        User user = userPersisted();
-        try {
-            registrarDao.addAdminOfRegistrar(ILLEGAL_ID, user.getId());
-            fail();
-        } catch (RecordNotFoundException e) {
-            //OK
-        }
-    }
-
-    public void testAddAdminOfRegistrar_unknownUserId() throws Exception {
-        Registrar registrar = registrarPersisted();
-        try {
-            registrarDao.addAdminOfRegistrar(registrar.getId(), ILLEGAL_ID);
-            fail();
-        } catch (RecordNotFoundException e) {
-            //OK
-        }
-    }
-
+    
     /**
      * Test of deleteRegistrar method, of class RegistrarDaoPostgres.
      */
@@ -258,7 +214,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         registrar.setId(registrarDao.insertRegistrar(registrar));
         User admin1 = userPersisted();
         User admin2 = userPersisted();
-        registrarDao.addAdminOfRegistrar(registrar.getId(), admin1.getId());
+        userDao.insertAdministrationRight(registrar.getId(), admin1.getId());
         registrarDao.deleteRegistrar(registrar.getId());
         //users no longer manage the removed registrar
         List<Registrar> admin1Registrars = registrarDao.getRegistrarsManagedByUser(admin1.getId());
@@ -341,15 +297,15 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         registrarWithTwoAdmins.setId(id);
         User admin1 = userPersisted();
         User admin2 = userPersisted();
-        registrarDao.addAdminOfRegistrar(registrarWithTwoAdmins.getId(), admin1.getId());
-        registrarDao.addAdminOfRegistrar(registrarWithTwoAdmins.getId(), admin2.getId());
+        userDao.insertAdministrationRight(registrarWithTwoAdmins.getId(), admin1.getId());
+        userDao.insertAdministrationRight(registrarWithTwoAdmins.getId(), admin2.getId());
 
         //registrar with single admin
         Registrar registrarWithSingleAdmin = builder.registrarWithoutId();
         id = registrarDao.insertRegistrar(registrarWithSingleAdmin);
         registrarWithSingleAdmin.setId(id);
         User admin3 = userPersisted();
-        registrarDao.addAdminOfRegistrar(registrarWithSingleAdmin.getId(), admin3.getId());
+        userDao.insertAdministrationRight(registrarWithSingleAdmin.getId(), admin3.getId());
 
         //registrar without admin
         Registrar registrarWithoutAdmin = builder.registrarWithoutId();
