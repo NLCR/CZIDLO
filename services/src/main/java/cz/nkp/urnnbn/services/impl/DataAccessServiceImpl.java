@@ -19,15 +19,17 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataAccessService;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -304,5 +306,27 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             }
         }
         return result;
+    }
+
+    @Override
+    public List<User> users(String login, boolean includePasswords) throws UnknownUserException, NotAdminException {
+        try {
+            authorization.checkAdminRights(login);
+            return factory.userDao().getAllUsers(includePasswords);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException {
+        try {
+            authorization.checkAdminRights(login);
+            return factory.registrarDao().getRegistrarsManagedByUser(userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(userId);
+        }
     }
 }

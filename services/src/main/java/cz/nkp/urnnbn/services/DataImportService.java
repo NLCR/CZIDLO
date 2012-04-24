@@ -11,9 +11,11 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -76,4 +78,8 @@ public interface DataImportService extends BusinessService {
     public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws
             UnknownUserException, AccessException,
             UnknownRegistrarException;
+
+    public User addNewUser(User user, String login) throws
+            UnknownUserException, NotAdminException,
+            LoginConflictException;
 }

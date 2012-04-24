@@ -58,12 +58,12 @@ public class AuthorizationModule {
 
     private User userByLogin(String login) throws UnknownUserException {
         try {
-            return factory.userDao().getUserByLogin(login);
+            return factory.userDao().getUserByLogin(login, true);
         } catch (DatabaseException ex) {
-            Logger.getLogger(AuthorizationModule.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            Logger.getLogger(AuthorizationModule.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             throw new UnknownUserException(login);
         }
     }

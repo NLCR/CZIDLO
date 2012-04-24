@@ -28,7 +28,7 @@ public class AuthenticationServiceImpl extends BusinessServiceImpl implements Au
             if (user == null || user.getLogin() == null || user.getPassword() == null) {
                 return null;
             }
-            User userByLogin = factory.userDao().getUserByLogin(user.getLogin());
+            User userByLogin = factory.userDao().getUserByLogin(user.getLogin(), true);
             if (userByLogin.getPassword().equals(user.getPassword())) {
                 return userByLogin;
             } else {

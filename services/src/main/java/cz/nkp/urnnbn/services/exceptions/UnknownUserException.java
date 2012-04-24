@@ -10,14 +10,11 @@ package cz.nkp.urnnbn.services.exceptions;
  */
 public class UnknownUserException extends Exception {
 
-    private final String login;
-
     public UnknownUserException(String login) {
         super("unknown user with login " + login);
-        this.login = login;
     }
 
-    public String getLogin() {
-        return login;
+    public UnknownUserException(Long userId) {
+        super("unknown user with id " + userId);
     }
 }

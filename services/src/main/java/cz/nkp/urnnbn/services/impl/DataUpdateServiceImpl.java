@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -129,5 +130,17 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity, IdentifierConflictException {
         authorization.checkAdminRights(login);
         new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
+    }
+
+    @Override
+    public void updateUser(User user, String login) throws UnknownUserException, NotAdminException {
+        try {
+            authorization.checkAdminRights(login);
+            factory.userDao().updateUser(user);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(user.getId());
+        }
     }
 }
