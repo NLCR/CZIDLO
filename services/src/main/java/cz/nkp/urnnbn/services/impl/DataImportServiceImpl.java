@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -26,6 +27,7 @@ import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -146,6 +148,26 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             throw new RuntimeException(ex);
         } catch (AlreadyPresentException ex) {
             throw new LoginConflictException(user.getLogin());
+        }
+    }
+
+    @Override
+    public void addRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException, RegistrarRightCollisionException, UnknownRegistrarException {
+        try {
+            authorization.checkAdminRights(login);
+            factory.userDao().insertAdministrationRight(registrarId, userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            if (ex.getTableName().equals(UserDAO.TABLE_NAME)) {
+                throw new UnknownUserException(userId);
+            } else if (ex.getTableName().equals(RegistrarDAO.TABLE_NAME)) {
+                throw new UnknownRegistrarException(registrarId);
+            } else {
+                throw new RuntimeException(ex);
+            }
+        } catch (AlreadyPresentException ex) {
+            throw new RegistrarRightCollisionException(userId, registrarId);
         }
     }
 }

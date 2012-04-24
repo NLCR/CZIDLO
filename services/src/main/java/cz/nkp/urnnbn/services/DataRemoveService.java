@@ -46,4 +46,8 @@ public interface DataRemoveService {
 
     public void removeUser(long userId, String login) throws
             UnknownUserException, NotAdminException;
+    
+    public void removeRegistrarRight(long userId, long registarId, String login) throws
+            UnknownUserException, NotAdminException,
+            UnknownRegistrarException;
 }

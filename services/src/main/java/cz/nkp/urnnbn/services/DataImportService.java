@@ -18,6 +18,7 @@ import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -82,4 +83,8 @@ public interface DataImportService extends BusinessService {
     public User addNewUser(User user, String login) throws
             UnknownUserException, NotAdminException,
             LoginConflictException;
+    
+    public void addRegistrarRight(long userId, long registrarId, String login) throws
+            UnknownUserException, NotAdminException,
+            RegistrarRightCollisionException, UnknownRegistrarException;
 }
