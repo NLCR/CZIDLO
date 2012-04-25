@@ -26,8 +26,7 @@ public class AddUserAccountDialogBox extends AbstractDialogBox {
 
 	public AddUserAccountDialogBox(UsersAdministrationPanel superPanel) {
 		this.superPanel = superPanel;
-		//TODO: i18n
-		setText("uživatelský účet" + " - " + constants.recordInsertion());
+		setText(constants.userAccount() + " - " + constants.recordInsertion());
 		setAnimationEnabled(true);
 		setWidget(contentPanel());
 		center();

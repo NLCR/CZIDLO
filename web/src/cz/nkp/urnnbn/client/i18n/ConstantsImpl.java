@@ -10,9 +10,9 @@ public interface ConstantsImpl extends Constants {
 
 	String localeEn();
 
-	String login();
+	String loginButton();
 
-	String logout();
+	String logoutButton();
 
 	String tabInfoLabel();
 
@@ -201,4 +201,20 @@ public interface ConstantsImpl extends Constants {
 	String yes();
 
 	String no();
+
+	String selectRegistrarCode();
+
+	String userAccount();
+
+	String user();
+
+	String login();
+	
+	String password();
+
+	String email();
+
+	String administrator();
+	
+	String userAccountList();
 }

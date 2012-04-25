@@ -27,8 +27,7 @@ public class EditUserDialogBox extends AbstractDialogBox {
 	public EditUserDialogBox(UsersAdministrationPanel superPanel, UserDTO user) {
 		this.superPanel = superPanel;
 		this.form = new UserDetailsForm(user);
-		//TODO: i18n
-		setText("uživatelský účet " + " - " + constants.recordAdjustment());
+		setText(constants.userAccount() + " - " + constants.recordAdjustment());
 		setAnimationEnabled(true);
 		setWidget(contentPanel());
 		center();

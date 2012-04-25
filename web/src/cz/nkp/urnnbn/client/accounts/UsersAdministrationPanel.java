@@ -85,7 +85,7 @@ public class UsersAdministrationPanel extends ScrollPanel {
 	}
 
 	private Label heading() {
-		Label label = new Label("Seznam uživatelských účtů");
+		Label label = new Label(constants.userAccountList());
 		// label.addStyleName(css.listHeading());
 		return label;
 	}

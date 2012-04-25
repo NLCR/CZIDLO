@@ -16,10 +16,8 @@ public class UserDetailsDialogBox extends AbstractDialogBox {
 	private final UserDTO user;
 
 	public UserDetailsDialogBox(UserDTO user) {
-		super();
 		this.user = user;
-		//TODO: i18n
-		String title = "uživatel " + user.getLogin() + " - " + constants.details();
+		String title = constants.user() + " - " + constants.details();
 		setTitle(title);
 		setText(title);
 		setAnimationEnabled(true);
@@ -30,12 +28,12 @@ public class UserDetailsDialogBox extends AbstractDialogBox {
 	private Panel contentPanel() {
 		VerticalPanel panel = new VerticalPanel();
 		Grid grid = new Grid(determineRows(), 2);
-		//TODO: i18n
-		grid.setWidget(0, 0, new Label("login" + ':'));
+		// TODO: i18n
+		grid.setWidget(0, 0, new Label(constants.login() + ':'));
 		grid.setWidget(0, 1, new Label(user.getLogin()));
-		grid.setWidget(1, 0, new Label("email" + ':'));
+		grid.setWidget(1, 0, new Label(constants.email() + ':'));
 		grid.setWidget(1, 1, new Label(user.getEmail()));
-		grid.setWidget(2, 0, new Label("administrátor" + ':'));
+		grid.setWidget(2, 0, new Label(constants.administrator() + ':'));
 		boolean superAdim = user.getRole() == ROLE.SUPER_ADMIN;
 		grid.setWidget(2, 1, new Label(superAdim ? constants.yes() : constants.no()));
 		if (user.getCreated() != null) {

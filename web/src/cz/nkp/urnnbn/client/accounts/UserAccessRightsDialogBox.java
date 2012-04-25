@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -67,6 +68,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 	}
 
 	private ArrayList<RegistrarDTO> subtract(ArrayList<RegistrarDTO> first, ArrayList<RegistrarDTO> second) {
+		@SuppressWarnings("unchecked")
 		ArrayList<RegistrarDTO> result = (ArrayList<RegistrarDTO>) first.clone();
 		for (RegistrarDTO toBeRemoved : second) {
 			result.remove(toBeRemoved);
@@ -76,8 +78,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
 	void reload() {
 		clear();
-		// TODO: i18n
-		setText("přístupová práva uživatele " + user.getLogin() + " k registrátorům");
+		setText(messages.registrarsAccessRigths(user.getLogin()));
 		setAnimationEnabled(true);
 		setWidget(contentPanel());
 	}
@@ -85,15 +86,20 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 	private Panel contentPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.add(registrarsGrid());
-		result.add(addRightButton());
-		result.add(closeButton());
+		result.add(buttons());
 		result.add(errorLabel);
 		return result;
 	}
 
+	private Panel buttons() {
+		HorizontalPanel result = new HorizontalPanel();
+		result.add(addRightButton());
+		result.add(closeButton());
+		return result;
+	}
+
 	private Button addRightButton() {
-		//TODO: i18n
-		return new Button("přidat právo", new ClickHandler() {
+		return new Button(constants.add(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -118,9 +124,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO: i18n
-				if (Window.confirm("opravdu odstranit přístupové právo uživatele " + user.getLogin() + " k registrátorovi "
-						+ registrar.getName())) {
+				if (Window.confirm(messages.confirmDeleteAccessRight(user.getLogin(), registrar.getName()))) {
 					accountsService.deleteRegistrarRight(user.getId(), registrar.getId(), new AsyncCallback<Void>() {
 
 						@Override

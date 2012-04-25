@@ -36,17 +36,17 @@ public class UserDetailsForm extends Form {
 	@Override
 	public FormFields buildFields() {
 		FormFields result = new FormFields();
-		Field login = new TextInputValueField(new LimitedLengthValidator(100), "login", originalUser.getLogin(), true);
+		Field login = new TextInputValueField(new LimitedLengthValidator(100), constants.login(), originalUser.getLogin(), true);
 		result.addField("login", login);
 		if (!editForm) {
 			Validator validator = new PasswordValidator(5, 10);
 			String generatedPassword = new PasswordGenerator((PasswordValidator) validator).generatePassword();
-			Field passwordField = new TextInputValueField(validator, "heslo", generatedPassword, true);
+			Field passwordField = new TextInputValueField(validator, constants.password(), generatedPassword, true);
 			result.addField("password", passwordField);
 		}
-		Field email = new TextInputValueField(new EmailValidator(), "email", originalUser.getEmail(), true);
+		Field email = new TextInputValueField(new EmailValidator(), constants.email(), originalUser.getEmail(), true);
 		result.addField("email", email);
-		Field admin = new BooleanValueField("admin", originalUser.getRole() == ROLE.SUPER_ADMIN);
+		Field admin = new BooleanValueField(constants.administrator(), originalUser.getRole() == ROLE.SUPER_ADMIN);
 		result.addField("admin", admin);
 		if (editForm) {
 			login.disable();

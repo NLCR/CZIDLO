@@ -25,11 +25,11 @@ public class UserPanel extends Composite {
 	protected void onLoad() {
 		absolutePanel.clear();
 		absolutePanel.setSize("221px", "128px");
-		Anchor lang = langAnchor();
+		Anchor lang = langAnchor(); 
 		absolutePanel.add(lang, 145, 20);
 
 		if (user.getLogin() == null) {
-			Anchor login = new Anchor(constants.login(), "spring_security_login");
+			Anchor login = new Anchor(constants.loginButton(), "spring_security_login");
 			absolutePanel.add(login, 145, 45);
 		} else {
 			Label userNameLbl = new Label(user.getLogin());
@@ -38,10 +38,9 @@ public class UserPanel extends Composite {
 			// absolutePanel.add(userNameLbl, 110, 45);
 			absolutePanel.add(userNameLbl, 145, 45);
 			// userNameLbl.setSize("135px", "17px");
-			Anchor logout = new Anchor(constants.logout(), "logout");
+			Anchor logout = new Anchor(constants.logoutButton(), "logout");
 			absolutePanel.add(logout, 145, 65);
 		}
-		// login.setSize("57px", "24px");
 	}
 
 	private Anchor langAnchor() {

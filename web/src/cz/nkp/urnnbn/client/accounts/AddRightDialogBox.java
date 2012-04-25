@@ -37,8 +37,7 @@ public class AddRightDialogBox extends AbstractDialogBox {
 		if (!otherRegistrars.isEmpty()) {
 			selectedRegistrar = otherRegistrars.get(0);
 		}
-		//TODO: i18n
-		setText("přístupová práva uživatele" + " - " + constants.recordInsertion());
+		setText(messages.registrarsAccessRigths(user.getLogin()) + " - " + constants.recordInsertion());
 		setAnimationEnabled(true);
 		setWidget(contentPanel());
 		center();
@@ -61,8 +60,8 @@ public class AddRightDialogBox extends AbstractDialogBox {
 	}
 
 	private Label heading() {
-		//TODO: i18n
-		return new Label("Zvolte kód registrátora");
+		//TODO: style
+		return new Label(constants.selectRegistrarCode());
 	}
 
 	private ListBox registrarList() {
