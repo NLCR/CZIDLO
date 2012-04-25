@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" output="test-classes" path="test"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/martin/lib/postgresql-8.4-702.jdbc4.jar"/>
+	<classpathentry kind="lib" path="/home/martin/lib/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/martin/NetBeansProjects/web-common/target/web-common-1.0-SNAPSHOT-jar-with-dependencies.jar"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

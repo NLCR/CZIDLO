@@ -1,0 +1,7 @@
+# Module web
+# RPC service class, partial path of RPC policy file
+cz.nkp.urnnbn.client.services.AuthService, EAAD08B10816B16EE034F55EAB9CEA1F.gwt.rpc
+cz.nkp.urnnbn.client.services.SearchService, 694F250BF137F2A5ABE1C41B196BFF31.gwt.rpc
+cz.nkp.urnnbn.client.services.InstitutionsService, C93A9D3FE94138C11E7C9E479AB76425.gwt.rpc
+cz.nkp.urnnbn.client.services.UserAccountService, 9A9CE59D3D31A2885B1B6F10E391EE1C.gwt.rpc
+cz.nkp.urnnbn.client.services.DataService, 5F31FB19C5BAA2EE20D92467740CA6A4.gwt.rpc

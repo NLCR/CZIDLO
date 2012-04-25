@@ -1,0 +1,2 @@
+serviceClass: cz.nkp.urnnbn.client.services.InstitutionsService
+path: C93A9D3FE94138C11E7C9E479AB76425.gwt.rpc

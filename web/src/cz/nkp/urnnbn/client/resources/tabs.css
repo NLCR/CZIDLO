@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+
+/* .gwt-TabLayoutPanel { */
+/*  height: 100%; */
+/* } */
+
+/* the tab bar */
+/* .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs { */
+/* } */
+
+/* the individual tab in the tab bar */
+/* .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab { */
+/*  cursor: pointer; */
+/*  cursor: hand; */
+/*  color: black; */
+/*  min-width: 6em; */
+/*  background-color: #C4D0DB; */
+/*  font-size: 9pt; */
+/*  text-align: center; */
+/*  float: left; */
+/*  margin-right: 5px; */
+/* } */
+
+@external 
+.gwt-TabLayoutPanelTab {
+ cursor: pointer;
+ cursor: hand;
+ color: red;
+ min-width: 6em;
+/*  background-color: #C4D0DB; */
+	  background-color: red; 
+ font-size: 9pt;
+ text-align: center;
+ float: left;
+ margin-right: 5px;
+}
+
+/* .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected { */
+/*  cursor: default; */
+/*  background-color: #ABBCCF; */
+/* } */
+
+/* .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent { */
+/*  border:5px solid #ABBCCF; */
+/* } */
+
+/* .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabInner { */
+/* } */

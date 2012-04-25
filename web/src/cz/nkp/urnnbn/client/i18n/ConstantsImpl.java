@@ -1,0 +1,204 @@
+package cz.nkp.urnnbn.client.i18n;
+
+import com.google.gwt.i18n.client.Constants;
+
+public interface ConstantsImpl extends Constants {
+
+	String headerSubtitle();
+
+	String localeCz();
+
+	String localeEn();
+
+	String login();
+
+	String logout();
+
+	String tabInfoLabel();
+
+	String tabSearchLabel();
+
+	String tabDataInputLabel();
+
+	String tabInstitutionsLabel();
+
+	String tabAccountManagementLabel();
+
+	String tabOaiAdapterLabel();
+
+	String tabHelpLabel();
+
+	// presunout
+
+	String tabSearchSearchButtonLabel();
+
+	String monograph();
+
+	String monographVolume();
+
+	String periodical();
+
+	String periodicalVolume();
+
+	String periodicalIssue();
+
+	String otherEntity();
+
+	String analytical();
+
+	String thesis();
+
+	String created();
+
+	String modified();
+
+	String documentType();
+
+	String digitalBorn();
+
+	String originatorAuthor();
+
+	String originatorCorporation();
+
+	String originatorEvent();
+
+	String otherOriginator();
+
+	String publisher();
+
+	String publicationPlace();
+
+	String publicationYear();
+
+	String title();
+
+	String subTitle();
+
+	String ccnb();
+
+	String isbn();
+
+	String issn();
+
+	String otherId();
+
+	String monographTitle();
+
+	String monographVolumeTitle();
+
+	String periodicalTitle();
+
+	String periodicalVolumeTitle();
+
+	String periodicalIssueTitle();
+
+	String thesisInstitution();
+
+	String sourceDoc();
+
+	String volumeTitle();
+
+	String issueTitle();
+
+	String registrar();
+
+	String archiver();
+
+	String digitalDocument();
+
+	String digitalDocuments();
+
+	String urnNbn();
+
+	String registrarScopeIdentifiers();
+
+	String identifier();
+
+	String idType();
+
+	String idValue();
+
+	String financed();
+
+	String contractNumber();
+
+	String technicalMetadata();
+
+	String format();
+
+	String formatVersion();
+
+	String extent();
+
+	String resolution();
+
+	String compressionAlgorithm();
+
+	String compressionRatio();
+
+	String colorModel();
+
+	String colorDepth();
+
+	String iccProfile();
+
+	String pictureSize();
+
+	String identifiers();
+
+	String accessibility();
+
+	String digitalLibrary();
+
+	String url();
+
+	String contains();
+
+	String archives();
+
+	String registrarList();
+
+	String archiverList();
+
+	String digitalLibraryList();
+
+	String catalogList();
+
+	String details();
+
+	String description();
+
+	String close();
+
+	String delete();
+
+	String add();
+
+	String insert();
+
+	String recordInsertion();
+
+	String recordAdjustment();
+
+	String save();
+
+	String edit();
+
+	String code();
+
+	String serverError();
+
+	String urlPrefix();
+
+	String catalog();
+
+	String id();
+
+	String moveOn();
+
+	String selectEntityType();
+
+	String yes();
+
+	String no();
+}

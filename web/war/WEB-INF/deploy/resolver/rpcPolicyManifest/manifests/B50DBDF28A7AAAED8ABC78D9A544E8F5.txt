@@ -1,0 +1,2 @@
+serviceClass: cz.nkp.urnnbn.client.SearchService
+path: 595CC88A17A52E8D026BD1A7496FA982.gwt.rpc
