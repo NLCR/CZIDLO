@@ -19,5 +19,5 @@ public interface AuthenticationService extends BusinessService {
      * @return instance of User fetched from database and null with user 
      * with provided login and password doesn't exist
      */
-    public User autheticatedUserOrNull(User user);
+    public User autheticatedUserOrNull(String login, String password);
 }

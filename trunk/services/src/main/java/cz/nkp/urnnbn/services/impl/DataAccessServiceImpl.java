@@ -319,9 +319,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public User userByLogin(String login, boolean includePassword) throws UnknownUserException {
+        try {
+            return factory.userDao().getUserByLogin(login, includePassword);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(login);
+        }
+    }
+
+    @Override
     public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException {
         try {
-            authorization.checkAdminRights(login);
             return factory.registrarDao().getRegistrarsManagedByUser(userId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
