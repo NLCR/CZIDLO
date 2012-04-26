@@ -89,9 +89,35 @@ public interface DataAccessService extends BusinessService {
 
     public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException;
 
+    /**
+     * 
+     * @param login login of user performing this operation
+     * @param includePasswords
+     * @return
+     * @throws UnknownUserException
+     * @throws NotAdminException 
+     */
     public List<User> users(String login, boolean includePasswords)
             throws UnknownUserException, NotAdminException;
 
+    /**
+     * 
+     * @param login login of user that is being lookuped
+     * @param includePassword
+     * @return
+     * @throws UnknownUserException 
+     */
+    public User userByLogin(String login, boolean includePassword)
+            throws UnknownUserException;
+
+    /**
+     * 
+     * @param userId
+     * @param login login of user performing this operation
+     * @return
+     * @throws UnknownUserException
+     * @throws NotAdminException 
+     */
     public List<Registrar> registrarsManagedByUser(long userId, String login)
             throws UnknownUserException, NotAdminException;
 }
