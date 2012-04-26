@@ -35,11 +35,10 @@ public class ResolverAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
-        User user = new User();
-        user.setLogin((String) auth.getPrincipal());
-        user.setPassword((String) auth.getCredentials());
+        String login = ((String) auth.getPrincipal());
+        String password = ((String) auth.getCredentials());
         AuthenticationService ser = Services.instanceOf().authenticationService();
-        User autheticated = ser.autheticatedUserOrNull(user);
+        User autheticated = ser.autheticatedUserOrNull(login, password);
         if (autheticated == null) {
             throw new BadCredentialsException("Bad Credentials");
         }
