@@ -19,6 +19,8 @@ public interface UserAccountServiceAsync {
 
 	void registrarsManagedByUser(Long userId, AsyncCallback<ArrayList<RegistrarDTO>> callback);
 
+	void registrarsManagedByUser(AsyncCallback<ArrayList<RegistrarDTO>> callback);
+
 	void deleteUser(Long userId, AsyncCallback<Void> callback);
 
 	void deleteRegistrarRight(long userId, long registrarId, AsyncCallback<Void> callback);

@@ -18,13 +18,6 @@ public class UserDTO implements Serializable {
 	private String created;
 	private String modified;
 
-	public UserDTO() {}
-
-	public UserDTO(String login, ROLE role) {
-		this.login = login;
-		this.role = role;
-	}
-
 	public Long getId() {
 		return id;
 	}

@@ -54,7 +54,7 @@ public abstract class AbstractService extends RemoteServiceServlet {
 					System.err.println("WARNING: no role for logged user " + login);
 					return notAuthenticated();
 				} else {
-					UserDTO result = new UserDTO(login, role);
+					UserDTO result = new UserDTO();
 					result.setLogin(login);
 					result.setRole(role);
 					return result;
@@ -62,6 +62,8 @@ public abstract class AbstractService extends RemoteServiceServlet {
 			}
 		}
 	}
+	
+	
 
 	private UserDTO notAuthenticated() {
 		UserDTO result = new UserDTO();

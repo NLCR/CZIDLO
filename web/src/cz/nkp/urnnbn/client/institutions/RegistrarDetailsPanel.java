@@ -155,7 +155,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			descPanel.add(new Label(registrar.getDescription()));
 			result.add(descPanel);
 		}
-		if (user.isSuperAdmin()) {
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(editRegistrarButton());
 		}
 		return result;
@@ -178,7 +178,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		result.setStyleName(css.block());
 		result.add(digitalLibrariesHeading());
 		result.add(librariesGrid());
-		if (user.isSuperAdmin()) {
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(addLibraryButton());
 		}
 		return result;
@@ -197,7 +197,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			Label name = new Label(lib.getName());
 			result.setWidget(i, 0, name);
 			result.setWidget(i, 1, libraryDetailsButton(lib));
-			if (user.isSuperAdmin()) {
+			if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 				result.setWidget(i, 2, libraryEditButton(lib));
 				result.setWidget(i, 3, libraryDeleteButton(lib));
 			}
@@ -249,7 +249,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 	}
 
 	private int libraryGridColumns() {
-		if (user.isSuperAdmin()) {
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			return 4;
 		} else {
 			return 2;
@@ -271,7 +271,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		result.setStyleName(css.block());
 		result.add(catalogsHeading());
 		result.add(catalogsGrid());
-		if (user.isSuperAdmin()) {
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(addCatalogButton());
 		}
 		return result;
@@ -284,7 +284,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			Label name = new Label(cat.getName());
 			result.setWidget(i, 0, name);
 			result.setWidget(i, 1, catalogDetailsButton(cat));
-			if (user.isSuperAdmin()) {
+			if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 				result.setWidget(i, 2, catalogEditButton(cat));
 				result.setWidget(i, 3, catalogDeleteButton(cat));
 			}
@@ -338,7 +338,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 	}
 
 	private int catalogGridColumns() {
-		if (user.isSuperAdmin()) {
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			return 4;
 		} else {
 			return 2;
@@ -374,4 +374,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		return result;
 	}
 
+	public boolean userManagesRegistrar(RegistrarDTO registrar) {
+		return superPanel.userManagesRegistrar(registrar);
+	}
 }

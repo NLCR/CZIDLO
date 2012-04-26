@@ -75,6 +75,17 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 			throw new ServerException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public ArrayList<RegistrarDTO> registrarsManagedByUser() throws ServerException {
+		try {
+			User userByLogin = readService.userByLogin(getUserLogin(), false);
+			List<Registrar> registrars = readService.registrarsManagedByUser(userByLogin.getId(), getUserLogin());
+			return transformRegistrars(registrars);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
+		}
+	}
 
 	private ArrayList<RegistrarDTO> transformRegistrars(List<Registrar> registrars) {
 		ArrayList<RegistrarDTO> result = new ArrayList<RegistrarDTO>(registrars.size());
