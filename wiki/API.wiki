@@ -1,3 +1,5 @@
+#summary Příklady operací dostupných přes aplikační rozhraní
+
 =REST API - příklady=
 
 Aplikační rozhraní systému slouží zejména k dvěma základním účelům:
