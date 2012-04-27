@@ -1,0 +1,38 @@
+#summary Uživatelské role a přístupová práva
+
+= Uživatelské role a přístupová práva =
+
+Systém realizuje správu uživatelských účtů. Tyto účty je možné používat jak pro uživatelský přístup přes webové rozhraní, tak přes API pro importy a další automatizované operace. Některé operace jsou přístupné oběma moduly, ale rozhodně ne všechny.
+
+Existují zde dvě uživatelské role - administrátor a správce registrátora. Každý uživatel může zastávat některou, obě, nebo žádnou z těchto rolí. Uživatel je administrátorem, pokud je takto nastaven patřičný příznak jeho účtu. Uživatel je správcem registrátora, pokud má přiřazeno právo ke správě tohoto registrátora.
+
+ == Administrátor ==
+Administrátor spravuje systém jako takový. Administrátorských účtů může být více. Administrátorovi je umožněno vykonávat tyto operace:
+ * vytvářet, mazat a měnit uživatelské účty. Zpětně není možné upravovat přihlašovací jméno ani heslo uživatele. Změnit lze email a to, zda je uživatel administrátorem.
+ * přidávat a odebírat kterémukoliv uživateli práva správy jednotlivých registrátorů
+ * vytvářet, mazat a upravovat registrátory. Registrátora není možné odstranit, pokud tento registruje některý digitální dokument. Editovat lze u registrátora název a popis, nikoliv kód registrátora. Ten je přiřazen jednou a natrvalo.
+ * vytvářet, mazat a upravovat archivátory. Archivátora není možné odstranit, pokud archivuje některý digitální dokument.
+ * editovat záznamy intelektuálních entit a digitálních dokumentů. Intelektuální entity nemají vlastníka, proto je může editovat jen administrátor. Digitální dokumenty sice vlastní (registruje) některý registrátor, přesto není povoleno, aby je zpětně upravoval. 
+ * přidávat, upravovat a odstraňovat digitální knihovny všech registrátorů. Digitální knihovnu není možné odstranit, pokud tato zpřístupňuje alespoň jednu digitální instanci některého digitálního dokumentu.
+ * přidávat, upravovat a odstraňovat katalogy všech registrátorů. 
+
+ == Správce registrátora ==
+Správce registrátora jedná jménem (spravuje) registrátora. Jednoho registrátora může spravovat více uživatelů. Jeden uživatel může na druhou stranu spravovat více registrátorů. To je použitelné například v situaci, kdy má organizace jednoho pracovníka, který řeší přiřazování URN:NBN, a zároveň disponuje více kódy registrátora (sigla, část B URN:NBN). Správce registrátora je oprávněn:
+ * přidávat, upravovat a odstraňovat digitální knihovny registrátora. Digitální knihovnu není možné odstranit, pokud tato zpřístupňuje alespoň jednu digitální instanci některého digitálního dokumentu.
+ * přidávat, upravovat a odstraňovat katalogy všech registrátora.
+ * registrovat digitální dokumenty jménem registrátora. Při této operaci je vráceno URN:NBN (nově přiřazené, nebo potvrzené) 
+ * připojovat digitální instance k digitálním dokumentům. Digitální instance musí být zpřístupněna některou digitální knihovnou, která patří registrátorovi, ke kterému má uživatel práva. Není nutné, aby byla digitální instance připojena pouze k digitálním dokumentům registrovaným registrátorem, ke kterému má uživatel práva. Může jít o jakýkoliv digitální dokument.
+ * odstraňovat digitální instance vlastněné registrátorem, ke kterému má uživatel práva. 
+ * přidávat a odebírat registrar-scope identifikátory k digitálním dokumentům. Uživatel musí mít právo správy registrátora, který registruje digitální dokument a ke kterému se registrar-scope identifikátor váže.
+ * měnit hodnoty registrar-scope identnifikátorů. Pravidla přístupu jsou stejná jako v předchozím bodě. Systém kontroluje, zda je registrar-scope identifikátor unikátní (jedinačné trojice registrátor + typ identifikátoru + hodnota identifikátoru) a pokud by změnou hodnoty vznikla kolize, tuto operaci nepovolí.
+
+= Očekávané operace, které nejsou podporovány =
+Některé operace, které by se daly očekávat, nejsou z různých důvodů realizovány. Jde zejména o:
+== Odstraňování intelektuálních entit a digitálních dokumentů ==
+Je důležité, aby záznam intelektuální entity a digitálního dokumentu byl zachován i v situaci, kdy není dostupná žádná instance digitálního dokumentu. Podle přítomných metadata tak bude možné zpětně zjistit, jakému titulu bylo konkrétní URN:NBN přiřazeno.
+
+== Odstranění registrátora/archivátora, který registruje/archivuje digitální dokumenty ==
+Datový model tohle neumožňuje. Pro každý dokument je evidována vazba na registrátora případně archivátora. Záznam registrátora/archivátora musí být pro každý digitální dokument možné zobrazit. Archivátora lze navíc změnit.
+
+== Editace záznamu digitálního dokumentu registrátorem ==
+Pokud má uživatel právo správy registrátora, který registruje digitální dokument, přesto nemůže měnit jeho metadatový záznam. 
