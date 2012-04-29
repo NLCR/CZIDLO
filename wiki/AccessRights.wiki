@@ -20,7 +20,8 @@ Administrátor spravuje systém jako takový. Administrátorských účtů můž
 Správce registrátora jedná jménem (spravuje) registrátora. Jednoho registrátora může spravovat více uživatelů. Jeden uživatel může na druhou stranu spravovat více registrátorů. To je použitelné například v situaci, kdy má organizace jednoho pracovníka, který řeší přiřazování URN:NBN, a zároveň disponuje více kódy registrátora (sigla, část B URN:NBN). Správce registrátora je oprávněn:
  * přidávat, upravovat a odstraňovat digitální knihovny registrátora. Digitální knihovnu není možné odstranit, pokud tato zpřístupňuje alespoň jednu digitální instanci některého digitálního dokumentu.
  * přidávat, upravovat a odstraňovat katalogy všech registrátora.
- * registrovat digitální dokumenty jménem registrátora. Při této operaci je vráceno URN:NBN (nově přiřazené, nebo potvrzené) 
+ * registrovat digitální dokumenty jménem registrátora. Při této operaci je vytvořen záznam intelektuální entity a digitálního dokumentu a v odpovědi je vráceno URN:NBN (nově přiřazené, nebo potvrzené)
+ * editovat záznam digitálního dokumentu vlastněného registrátorem, ke kterému má uživatel práva
  * připojovat digitální instance k digitálním dokumentům. Digitální instance musí být zpřístupněna některou digitální knihovnou, která patří registrátorovi, ke kterému má uživatel práva. Není nutné, aby byla digitální instance připojena pouze k digitálním dokumentům registrovaným registrátorem, ke kterému má uživatel práva. Může jít o jakýkoliv digitální dokument.
  * odstraňovat digitální instance vlastněné registrátorem, ke kterému má uživatel práva. 
  * přidávat a odebírat registrar-scope identifikátory k digitálním dokumentům. Uživatel musí mít právo správy registrátora, který registruje digitální dokument a ke kterému se registrar-scope identifikátor váže.
@@ -33,6 +34,3 @@ Je důležité, aby záznam intelektuální entity a digitálního dokumentu byl
 
 == Odstranění registrátora/archivátora, který registruje/archivuje digitální dokumenty ==
 Datový model tohle neumožňuje. Pro každý dokument je evidována vazba na registrátora případně archivátora. Záznam registrátora/archivátora musí být pro každý digitální dokument možné zobrazit. Archivátora lze navíc změnit.
-
-== Editace záznamu digitálního dokumentu registrátorem ==
-Pokud má uživatel právo správy registrátora, který registruje digitální dokument, přesto nemůže měnit jeho metadatový záznam. 
