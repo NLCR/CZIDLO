@@ -30,19 +30,21 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 		Grid grid = new Grid(determineRows(), 2);
 		grid.setWidget(0, 0, new Label(constants.title() + ':'));
 		grid.setWidget(0, 1, new Label(library.getName()));
-		grid.setWidget(1, 0, new Label(constants.description() + ':'));
-		grid.setWidget(1, 1, new Label(library.getDescription()));
-		grid.setWidget(2, 0, new Label(constants.url() + ':'));
-		grid.setWidget(2, 1, new Label(library.getUrl()));
-		grid.setWidget(3, 0, new Label(constants.contains() + ':'));
+		grid.setWidget(1, 0, new Label(constants.id() + ':'));
+		grid.setWidget(1, 1, new Label(library.getId().toString()));
+		grid.setWidget(2, 0, new Label(constants.description() + ':'));
+		grid.setWidget(2, 1, new Label(library.getDescription()));
+		grid.setWidget(3, 0, new Label(constants.url() + ':'));
+		grid.setWidget(3, 1, new Label(library.getUrl()));
+		grid.setWidget(4, 0, new Label(constants.contains() + ':'));
 		// TODO: dodat opravdový počet dokumentů
-		grid.setWidget(3, 1, new Label("0 dokumentů"));
+		grid.setWidget(4, 1, new Label("0 dokumentů"));
 		if (library.getCreated() != null) {
-			grid.setWidget(4, 0, new Label(constants.created() + ':'));
-			grid.setWidget(4, 1, new Label(library.getCreated()));
+			grid.setWidget(5, 0, new Label(constants.created() + ':'));
+			grid.setWidget(5, 1, new Label(library.getCreated()));
 			if (library.getModified() != null && !library.getModified().equals(library.getCreated())) {
-				grid.setWidget(5, 0, new Label(constants.modified() + ':'));
-				grid.setWidget(5, 1, new Label(library.getModified()));
+				grid.setWidget(6, 0, new Label(constants.modified() + ':'));
+				grid.setWidget(6, 1, new Label(library.getModified()));
 			}
 		}
 		panel.add(grid);
@@ -51,7 +53,7 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 	}
 
 	private int determineRows() {
-		int result = 4;
+		int result = 5;
 		if (library.getCreated() != null) {
 			result++;
 			if (library.getModified() != null && !library.getModified().equals(library.getCreated())) {
