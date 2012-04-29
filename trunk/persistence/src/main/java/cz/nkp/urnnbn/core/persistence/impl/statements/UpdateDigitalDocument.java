@@ -41,7 +41,8 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
                 + DigitalDocumentDAO.ATTR_COLOR_DEPTH + "=?,"
                 + DigitalDocumentDAO.ATTR_ICC_PROFILE + "=?,"
                 + DigitalDocumentDAO.ATTR_PIC_WIDTH + "=?,"
-                + DigitalDocumentDAO.ATTR_PIC_HEIGHT + "=?"
+                + DigitalDocumentDAO.ATTR_PIC_HEIGHT + "=?,"
+                + DigitalDocumentDAO.ATTR_ARCHIVER_ID + "=?"
                 + " WHERE " + DigitalDocumentDAO.ATTR_ID + "=?";
     }
 
@@ -63,7 +64,9 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
             st.setString(13, doc.getIccProfile());
             setIntOrNull(st, 14, doc.getPictureWidth());
             setIntOrNull(st, 15, doc.getPictureHeight());
-            st.setLong(16, doc.getId());
+            Long archiverId = doc.getArchiverId() != null? doc.getArchiverId() : doc.getRegistrarId();
+            st.setLong(16, archiverId);
+            st.setLong(17, doc.getId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
