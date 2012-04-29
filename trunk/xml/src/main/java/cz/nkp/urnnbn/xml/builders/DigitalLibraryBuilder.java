@@ -27,6 +27,7 @@ public class DigitalLibraryBuilder extends XmlBuilder {
         appendElementWithContentIfNotNull(root, lib.getName(), "name");
         appendIdentifierElement(root, IDTYPE_INTERNAL, lib.getId());
         appendElementWithContentIfNotNull(root, lib.getDescription(), "description");
+        appendElementWithContentIfNotNull(root, lib.getUrl(), "url");
         appendTimestamps(root, lib, "digital library");
         appendBuilderResultfNotNull(root, registrarBuilder);
         return root;
