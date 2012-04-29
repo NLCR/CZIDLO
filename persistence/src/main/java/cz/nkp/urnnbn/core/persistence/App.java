@@ -137,9 +137,9 @@ public class App {
             User mzkAdmin = createUser("mzkAdmin", "mzkAdminPass", "admin@mzk.cz");
             grantRegistrarToUser(mzkAdmin, mzk);
             //library K4 mzk
-            DigitalLibrary mzkK4 = insertLibrary("Kramerius 4", "testovací knihovna", "http://kramerius4.mzk.cz", mzk);
+            DigitalLibrary mzkK4 = insertLibrary("Kramerius 4", "http://kramerius4.mzk.cz", "testovací knihovna", mzk);
             //library K3 mzk
-            DigitalLibrary mzkK3 = insertLibrary("Kramerius 3", "testovací knihovna", "http://kramerius3.mzk.cz", mzk);
+            DigitalLibrary mzkK3 = insertLibrary("Kramerius 3", "http://kramerius3.mzk.cz", "testovací knihovna", mzk);
             //catalog aleph mzk
             Catalog alephMzk = insertCatalog("Aleph mzk", "http://iris.mzk.cz", mzk);
 
