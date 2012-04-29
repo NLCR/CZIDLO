@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
+import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 /**
@@ -39,7 +40,7 @@ public class Main implements EntryPoint {
 				HorizontalPanel headerPanel = headerPanel(user);
 				mainPanel.addNorth(headerPanel, 100);
 				// CONTENT
-				Panels content = new Panels(user);
+				TabsPanel content = new TabsPanel(user);
 				mainPanel.add(content);
 			}
 		});

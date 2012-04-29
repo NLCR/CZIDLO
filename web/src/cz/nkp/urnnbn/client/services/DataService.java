@@ -14,5 +14,4 @@ public interface DataService extends RemoteService {
 	void updateDigitalDocument(DigitalDocumentDTO doc, TechnicalMetadataDTO technical) throws ServerException;
 
 	void updateIntelectualEntity(IntelectualEntityDTO entity) throws ServerException;
-
 }

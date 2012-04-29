@@ -143,7 +143,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		result.add(namePanel);
 		// code
 		HorizontalPanel codePanel = new HorizontalPanel();
-		codePanel.add(new Label("kód" + ":"));
+		codePanel.add(new Label(constants.code() + ":"));
 		codePanel.add(new HTML("&nbsp"));
 		codePanel.add(new Label(registrar.getCode()));
 		result.add(codePanel);

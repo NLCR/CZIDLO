@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.client.resources.InsertRecordPanelCss;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
+import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class RecordDataPanel extends VerticalPanel {
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
@@ -34,19 +35,20 @@ public class RecordDataPanel extends VerticalPanel {
 	private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
 	private final TechnicalMetadataForm technicalMetadataForm = new TechnicalMetadataForm();
 
-	public RecordDataPanel(DataInputPanel superPanel,Boolean withUrnTextbox, IntelectualEntityForm intelectualEntForm, SourceDocumentForm srcDocForm, String intelectualEntType) {
+	public RecordDataPanel(DataInputPanel superPanel, Boolean withUrnTextbox, IntelectualEntityForm intelectualEntForm,
+			SourceDocumentForm srcDocForm, String intelectualEntType) {
 		this.superPanel = superPanel;
 		this.intelectualEntType = intelectualEntType;
 		this.intelectualEntForm = intelectualEntForm;
-		if (withUrnTextbox){
-			//TODO: form pro urn:nbn
+		if (withUrnTextbox) {
+			// TODO: form pro urn:nbn
 		}
 		this.srcDocform = srcDocForm;
 		loadArchivers();
 		reload();
 	}
 
-	public RecordDataPanel(DataInputPanel superPanel,Boolean withUrnTextbox, IntelectualEntityForm entityForm, String typeName) {
+	public RecordDataPanel(DataInputPanel superPanel, Boolean withUrnTextbox, IntelectualEntityForm entityForm, String typeName) {
 		this(superPanel, withUrnTextbox, entityForm, null, typeName);
 	}
 
@@ -69,7 +71,9 @@ public class RecordDataPanel extends VerticalPanel {
 
 	private void reload() {
 		clear();
-		digitalDocForm = new DigitalDocumentForm(archivers);
+		// TODO: registrar must be selected
+		RegistrarDTO registrar = null;
+		digitalDocForm = new DigitalDocumentForm(registrar, archivers);
 		add(backToEntityTypeSelectionButton());
 		add(intelectualEntHeading());
 		add(intelectualEntForm);

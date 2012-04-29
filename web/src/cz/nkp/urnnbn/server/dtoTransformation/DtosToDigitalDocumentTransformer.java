@@ -20,7 +20,6 @@ public class DtosToDigitalDocumentTransformer {
 		DigitalDocument result = new DigitalDocument();
 		if (docDto != null) {
 			result.setId(docDto.getId());
-			// registrar je null
 			result.setRegistrarId(docDto.getRegistrar().getId());
 			ArchiverDTO archiver = docDto.getArchiver();
 			if (archiver != null) {

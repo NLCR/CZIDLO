@@ -28,15 +28,13 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private static boolean EXPAND_TECHNICAL = false;
 	private static boolean EXPAND_IDENTIFIERS = false;
 	private static boolean EXPAND_DIGITAL_INSTANCES = false;
-	private final UserDTO user;
 
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final DigitalDocumentDTO dto;
 
-	public DigitalDocumentTreeBuilder(DigitalDocumentDTO dto, UserDTO user, SearchPanel superPanel) {
+	public DigitalDocumentTreeBuilder(DigitalDocumentDTO dto, SearchPanel superPanel) {
 		super(superPanel);
 		this.dto = dto;
-		this.user = user;
 	}
 
 	public TreeItem getItem() {
@@ -59,12 +57,16 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private Panel digitalDocumentItem() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.digitalDocument()));
-		// if (true) {
-		if (user.isSuperAdmin()) {
+		// spravce registratora nyni muze editovat zaznam svojeho DD
+		if (activeUser().isSuperAdmin() || activeUserManagesRegistrar()) {
 			result.add(new HTML("&nbsp&nbsp"));
 			result.add(editDocumentButton());
 		}
 		return result;
+	}
+
+	private boolean activeUserManagesRegistrar() {
+		return superPanel.userManagesRegistrar(dto.getRegistrar());
 	}
 
 	private Button editDocumentButton() {
@@ -85,7 +87,9 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			RegistrarDTO registrar = dto.getRegistrar();
 			// TODO: odkazovat se do aplikace na zaznam registratora
 			String url = "TODO";
-			//addLabeledItemIfValueNotNull(rootItem, constants.registrar(), registrar.getName() + " <a href=\"" + url + "\">podrobnosti</a>");
+			// addLabeledItemIfValueNotNull(rootItem, constants.registrar(),
+			// registrar.getName() + " <a href=\"" + url +
+			// "\">podrobnosti</a>");
 			addLabeledItemIfValueNotNull(rootItem, constants.registrar(), registrar.getName());
 		} else {
 			System.err.println("no registrar");
@@ -233,5 +237,9 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		} else {
 			return null;
 		}
+	}
+
+	private UserDTO activeUser() {
+		return superPanel.getActiveUser();
 	}
 }

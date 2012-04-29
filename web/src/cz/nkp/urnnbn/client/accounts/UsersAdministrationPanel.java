@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -19,18 +18,19 @@ import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
+import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
+import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-public class UsersAdministrationPanel extends ScrollPanel {
+public class UsersAdministrationPanel extends SingleTabContentPanel {
 
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-	private final UserDTO activeUser;
 	private ArrayList<UserDTO> users = new ArrayList<UserDTO>();
 
-	public UsersAdministrationPanel(UserDTO activeUser) {
-		this.activeUser = activeUser;
+	public UsersAdministrationPanel(TabsPanel superPanel) {
+		super(superPanel);
 	}
 
 	public void onLoad() {
@@ -125,7 +125,7 @@ public class UsersAdministrationPanel extends ScrollPanel {
 	}
 
 	private Button accessRights(final UserDTO user) {
-		//TODO: i18n
+		// TODO: i18n
 		return new Button("práva", new ClickHandler() {
 
 			@Override

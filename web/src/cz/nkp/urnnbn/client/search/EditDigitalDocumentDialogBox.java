@@ -42,13 +42,13 @@ public class EditDigitalDocumentDialogBox extends DialogBox {
 		return result;
 	}
 
-	public EditDigitalDocumentDialogBox(final DigitalDocumentDTO digDoc,  SearchPanel superPanel) {
+	public EditDigitalDocumentDialogBox(final DigitalDocumentDTO digDoc, SearchPanel superPanel) {
 		this.superPanel = superPanel;
 		institutionsService.getAllArchivers(new AsyncCallback<ArrayList<ArchiverDTO>>() {
 
 			@Override
 			public void onSuccess(ArrayList<ArchiverDTO> result) {
-				digDocForm = new DigitalDocumentForm(digDoc, result, digDoc.getArchiver());
+				digDocForm = new DigitalDocumentForm(digDoc, digDoc.getRegistrar(), result, digDoc.getArchiver());
 				setWidget(contentPanel());
 			}
 

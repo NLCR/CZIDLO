@@ -25,7 +25,9 @@ import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.client.services.SearchServiceAsync;
+import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
+import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
@@ -39,8 +41,8 @@ public class SearchPanel extends DockLayoutPanel {
 	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
 	private final ScrollPanel searchResultsPanel = new ScrollPanel();
 	private final TextBox searchBox = searchBox();
+	private final TabsPanel superPanel;
 
-	private final UserDTO user;
 	private Tree searchResultTree;
 
 	private TextBox searchBox() {
@@ -57,18 +59,18 @@ public class SearchPanel extends DockLayoutPanel {
 		return result;
 	}
 
-	public SearchPanel(String query, UserDTO user) {
+	public SearchPanel(TabsPanel superPanel, String searchString) {
 		super(Unit.PX);
-		this.user = user;
+		this.superPanel = superPanel;
 		addNorth(searchRequestPanel(), 45);
 		add(searchResultsPanel);
-		if (query != null) {
-			searchBox.setText(query);
-			search(query);
+		if (searchString != null) {
+			searchBox.setText(searchString);
+			search(searchString);
 		}
 	}
-	
-	public void refresh(){
+
+	public void refresh() {
 		search(searchBox.getText());
 	}
 
@@ -121,7 +123,7 @@ public class SearchPanel extends DockLayoutPanel {
 	private TreeItem resultsItem(String searchRequest, ArrayList<IntelectualEntityDTO> searchResults) {
 		TreeItem searchResult = new TreeItem(messages.searchResults(searchRequest, searchResults.size()));
 		for (IntelectualEntityDTO entity : searchResults) {
-			TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, user, this);
+			TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, superPanel.getActiveUser(), this);
 			if (entity.getDocuments() != null) {
 				appendDocuments(entityItem, entity.getDocuments());
 			}
@@ -142,10 +144,18 @@ public class SearchPanel extends DockLayoutPanel {
 	private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {
 		boolean expand = documents.size() <= MAX_DOCUMENTS_TO_EXPAND;
 		for (DigitalDocumentDTO doc : documents) {
-			DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, user, this);
+			DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, this);
 			TreeItem documentItem = builder.getItem();
 			entityItem.addItem(documentItem);
 			documentItem.setState(expand);
 		}
+	}
+
+	public boolean userManagesRegistrar(RegistrarDTO registrar) {
+		return superPanel.userManagesRegistrar(registrar);
+	}
+
+	public UserDTO getActiveUser() {
+		return superPanel.getActiveUser();
 	}
 }
