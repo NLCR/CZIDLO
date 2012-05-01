@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -12,6 +13,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.BusinessService;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import java.util.logging.Logger;
 
@@ -36,7 +38,7 @@ abstract class BusinessServiceImpl implements BusinessService {
 
     long registrarOfDigLibrary(long libraryId) throws DatabaseException, UnknownDigLibException {
         try {
-            DigitalLibrary lib = factory.digitalLibraryDao().getLibraryById(libraryId);
+            DigitalLibrary lib = factory.diglLibDao().getLibraryById(libraryId);
             return lib.getRegistrarId();
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigLibException(libraryId);
@@ -49,6 +51,16 @@ abstract class BusinessServiceImpl implements BusinessService {
             return catalog.getRegistrarId();
         } catch (RecordNotFoundException ex) {
             throw new UnknownCatalogException(catalogId);
+        }
+    }
+
+    long registrarOfDigInstance(long digInstanceId) throws DatabaseException, UnknownDigInstException {
+        try {
+            DigitalInstance instance = factory.digInstDao().getDigInstanceById(digInstanceId);
+            DigitalLibrary library = factory.diglLibDao().getLibraryById(instance.getLibraryId());
+            return library.getRegistrarId();
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownDigInstException(digInstanceId);
         }
     }
 }

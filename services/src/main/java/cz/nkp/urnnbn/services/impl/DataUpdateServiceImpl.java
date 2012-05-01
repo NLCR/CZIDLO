@@ -105,7 +105,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             long registrarId = registrarOfDigLibrary(library.getId());
             authorization.checkAccessRights(registrarId, login);
-            factory.digitalLibraryDao().updateLibrary(library);
+            factory.diglLibDao().updateLibrary(library);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
