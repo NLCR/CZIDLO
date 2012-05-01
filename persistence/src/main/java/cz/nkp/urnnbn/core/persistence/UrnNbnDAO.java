@@ -37,7 +37,7 @@ public interface UrnNbnDAO {
      */
     public void insertUrnNbn(UrnNbn urn, DateTime created) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
-    public UrnNbn getUrnNbnByDigRegId(long digRepId) throws DatabaseException, RecordNotFoundException;
+    public UrnNbn getUrnNbnByDigDocId(Long digDocId) throws DatabaseException, RecordNotFoundException;
 
     //this will be used when resolving or searching for new not assigned urn:nbn
     //todo: mozna optimalizovat a vyhnout se vyjimkam, pokud budu hledat neexistujici urn:nbn

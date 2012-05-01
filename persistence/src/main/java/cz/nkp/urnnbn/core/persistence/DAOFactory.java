@@ -80,7 +80,7 @@ public class DAOFactory {
         return registrarDao;
     }
 
-    public DigitalLibraryDAO digitalLibraryDao() {
+    public DigitalLibraryDAO diglLibDao() {
         if (libraryDao == null) {
             if (postgresImplemantation) {
                 libraryDao = new DigitalLibraryDaoPostgres(connector);

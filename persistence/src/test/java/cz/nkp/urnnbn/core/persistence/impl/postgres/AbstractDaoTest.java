@@ -76,7 +76,7 @@ public abstract class AbstractDaoTest extends TestCase {
         catalogDao = daoFactory.catalogDao();
         digRepIdDao = daoFactory.digRepIdDao();
         digInstDao = daoFactory.digInstDao();
-        libraryDao = daoFactory.digitalLibraryDao();
+        libraryDao = daoFactory.diglLibDao();
         entityDao = daoFactory.intelectualEntityDao();
         intEntIdDao = daoFactory.intEntIdentifierDao();
         originatorDao = daoFactory.originatorDao();

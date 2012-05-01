@@ -71,7 +71,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     @Override
-    public UrnNbn getUrnNbnByDigRegId(long digRepId) throws DatabaseException, RecordNotFoundException {
+    public UrnNbn getUrnNbnByDigDocId(Long digRepId) throws DatabaseException, RecordNotFoundException {
         return (UrnNbn) getRecordById(TABLE_NAME, ATTR_DIG_DOC_ID, digRepId, new UrnNbnRT());
     }
 
