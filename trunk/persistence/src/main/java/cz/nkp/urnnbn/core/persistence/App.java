@@ -343,7 +343,7 @@ public class App {
         Long registrarId = factory.registrarDao().insertRegistrar(registrar);
         DigitalLibrary library = builder.digLibraryWithoutIdAndRegistrarId();
         library.setRegistrarId(registrarId);
-        long id = factory.digitalLibraryDao().insertLibrary(library);
+        long id = factory.diglLibDao().insertLibrary(library);
         library.setId(id);
         return library;
     }
@@ -449,7 +449,7 @@ public class App {
         result.setUrl(url);
         result.setDescription(decription);
         result.setRegistrarId(registrar.getId());
-        result.setId(factory.digitalLibraryDao().insertLibrary(result));
+        result.setId(factory.diglLibDao().insertLibrary(result));
         System.out.println("created digital library " + result.getName() + " of registrar " + registrar.getName());
         return result;
     }

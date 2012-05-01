@@ -228,7 +228,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
             //ok
         }
         //URN not removed
-        UrnNbn urnFetched = urnDao.getUrnNbnByDigRegId(repInserted.getId());
+        UrnNbn urnFetched = urnDao.getUrnNbnByDigDocId(repInserted.getId());
         assertEquals(urnInserted, urnFetched);
     }
 

@@ -75,7 +75,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
-     * Test of getUrnNbnByDigRegId method, of class UrnNbnDaoPostgres.
+     * Test of getUrnNbnByDigDocId method, of class UrnNbnDaoPostgres.
      */
     public void testGetUrnNbnByDigRegId_ok() throws Exception {
         String documentCode = "123456";
@@ -84,7 +84,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
         UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
         urnDao.insertUrnNbn(inserted);
-        UrnNbn fetched = urnDao.getUrnNbnByDigRegId(rep.getId());
+        UrnNbn fetched = urnDao.getUrnNbnByDigDocId(rep.getId());
         assertNotNull(fetched);
         assertNotNull(fetched.getCreated());
         assertNotNull(fetched.getRegistrarCode());
@@ -95,7 +95,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     
     public void testGetUrnNbnByDigRegId_unknownDigRepId() throws Exception {
         try {
-            urnDao.getUrnNbnByDigRegId(ILLEGAL_ID);
+            urnDao.getUrnNbnByDigDocId(ILLEGAL_ID);
         } catch (RecordNotFoundException ex) {
             //ok
         }
@@ -161,7 +161,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         urnDao.insertUrnNbn(inserted);
         urnDao.deleteAllUrnNbns();
         try {
-            urnDao.getUrnNbnByDigRegId(registrar.getId());
+            urnDao.getUrnNbnByDigDocId(registrar.getId());
         } catch (RecordNotFoundException ex) {
             //ok
         }
@@ -176,7 +176,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         urnDao.insertUrnNbn(inserted);
         urnDao.deleteUrnNbn(inserted);
         try {
-            urnDao.getUrnNbnByDigRegId(registrar.getId());
+            urnDao.getUrnNbnByDigDocId(registrar.getId());
         } catch (RecordNotFoundException ex) {
             //ok
         }
