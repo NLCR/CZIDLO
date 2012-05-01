@@ -29,8 +29,7 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
     DigitalInstance run() throws DatabaseException, UnknownDigLibException, UnknownDigDocException {
         try {
             Long instanceId = factory.digInstDao().insertDigInstance(instance);
-            instance.setId(instanceId);
-            return instance;
+            return factory.digInstDao().getDigInstanceById(instanceId);
         } catch (RecordNotFoundException ex) {
             if (DigitalLibraryDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigLibException(instance.getLibraryId());
