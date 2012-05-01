@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -96,7 +97,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         try {
             long registrarId = registrarOfDigLibrary(libraryId);
             authorization.checkAccessRights(registrarId, login);
-            factory.digitalLibraryDao().deleteLibrary(libraryId);
+            factory.diglLibDao().deleteLibrary(libraryId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -146,6 +147,19 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             } else {
                 throw new RuntimeException(ex);
             }
+        }
+    }
+
+    @Override
+    public void removeDigitalInstance(long instanceId, String login) throws UnknownUserException, AccessException, UnknownDigInstException {
+        try {
+            long registrarId = registrarOfDigInstance(instanceId);
+            authorization.checkAccessRights(registrarId, login);
+            factory.digInstDao().deleteDigInstance(instanceId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownDigInstException(instanceId);
         }
     }
 }

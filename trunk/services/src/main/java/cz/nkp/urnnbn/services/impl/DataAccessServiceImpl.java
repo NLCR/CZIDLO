@@ -44,7 +44,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public UrnNbn urnByDigDocId(long digRepId) throws DatabaseException {
         try {
-            return factory.urnDao().getUrnNbnByDigRegId(digRepId);
+            return factory.urnDao().getUrnNbnByDigDocId(digRepId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
@@ -202,7 +202,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException {
         try {
-            return factory.digitalLibraryDao().getLibraries(registrarId);
+            return factory.diglLibDao().getLibraries(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigitalLibrary>emptyList();
@@ -288,7 +288,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException {
         try {
-            return factory.digitalLibraryDao().getLibraryById(libraryId);
+            return factory.diglLibDao().getLibraryById(libraryId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;

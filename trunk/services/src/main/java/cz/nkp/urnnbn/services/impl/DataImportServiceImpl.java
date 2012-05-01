@@ -113,7 +113,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public DigitalLibrary insertNewDigitalLibrary(DigitalLibrary library, long registrarId, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
         try {
             authorization.checkAccessRights(registrarId, login);
-            Long id = factory.digitalLibraryDao().insertLibrary(library);
+            Long id = factory.diglLibDao().insertLibrary(library);
             library.setId(id);
             return library;
         } catch (RecordNotFoundException ex) {

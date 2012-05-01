@@ -67,10 +67,16 @@ public class RecordImporter {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
             long ieId = findOrImportWithRollbackIntelectualEntity(transactionLog);
-            long digRepId = importDigitalRepersentationWithRollback(transactionLog, ieId);
-            importDigDocIdentifiersWithRollback(transactionLog, digRepId);
-            importUrnNbnWithRollback(urn, transactionLog, digRepId);
-            return urn;
+            long digDocId = importDigitalRepersentationWithRollback(transactionLog, ieId);
+            importDigDocIdentifiersWithRollback(transactionLog, digDocId);
+            importUrnNbnWithRollback(urn, transactionLog, digDocId);
+            try {
+                return factory.urnDao().getUrnNbnByDigDocId(digDocId);
+            } catch (DatabaseException ex) {
+                throw new RuntimeException(ex);
+            } catch (RecordNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 

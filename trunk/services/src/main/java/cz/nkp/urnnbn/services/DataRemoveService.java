@@ -12,6 +12,7 @@ import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -50,4 +51,8 @@ public interface DataRemoveService {
     public void removeRegistrarRight(long userId, long registarId, String login) throws
             UnknownUserException, NotAdminException,
             UnknownRegistrarException;
+    
+    public void removeDigitalInstance(long instanceId, String login) throws
+            UnknownUserException, AccessException,
+            UnknownDigInstException;
 }
