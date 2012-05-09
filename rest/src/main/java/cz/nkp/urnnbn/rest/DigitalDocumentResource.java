@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
+import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
@@ -139,13 +140,13 @@ public class DigitalDocumentResource extends Resource {
     private Response recordXmlResponse(boolean withDigitalInstances) {
         try {
             RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(doc.getId());
-            List<DigitalInstanceBuilder> instancesBuilders = withDigitalInstances
-                    ? instancesBuilders(doc) : null;
+            DigitalInstancesBuilder instancesBuilder = withDigitalInstances
+                    ? instancesBuilder(doc) : null;
             RegistrarBuilder regBuilder = new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);
             ArchiverBuilder archBuilder = (doc.getRegistrarId() == doc.getArchiverId())
                     ? null : new ArchiverBuilder(dataAccessService().archiverById(doc.getArchiverId()));
             IntelectualEntityBuilder entityBuilder = entityBuilder(doc.getIntEntId());
-            DigitalDocumentBuilder builder = new DigitalDocumentBuilder(doc, urn, digRepIdentifiersBuilder, instancesBuilders, regBuilder, archBuilder, entityBuilder);
+            DigitalDocumentBuilder builder = new DigitalDocumentBuilder(doc, urn, digRepIdentifiersBuilder, instancesBuilder, regBuilder, archBuilder, entityBuilder);
             String xml = builder.buildRootElement().toXML();
             return Response.ok().entity(xml).build();
         } catch (DatabaseException ex) {
@@ -154,14 +155,14 @@ public class DigitalDocumentResource extends Resource {
         }
     }
 
-    private List<DigitalInstanceBuilder> instancesBuilders(DigitalDocument rep) throws DatabaseException {
-        List<DigitalInstance> instances = dataAccessService().instancesByDigDocId(rep.getId());
+    private DigitalInstancesBuilder instancesBuilder(DigitalDocument doc) throws DatabaseException {
+        List<DigitalInstance> instances = dataAccessService().instancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);
             result.add(builder);
         }
-        return result;
+        return new DigitalInstancesBuilder(result);
     }
 
     private IntelectualEntityBuilder entityBuilder(long intEntId) throws DatabaseException {
