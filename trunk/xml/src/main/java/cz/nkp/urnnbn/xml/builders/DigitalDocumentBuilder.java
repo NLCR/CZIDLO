@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import java.util.List;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
@@ -19,16 +18,16 @@ public class DigitalDocumentBuilder extends XmlBuilder {
     private final DigitalDocument doc;
     private final UrnNbn urn;
     private final RegistrarScopeIdentifiersBuilder identifiersBuilder;
-    private final List<DigitalInstanceBuilder> instanceBuilderList;
+    private final DigitalInstancesBuilder instancesBuilder;
     private final RegistrarBuilder registrarBuilder;
     private final ArchiverBuilder archiverBuilder;
     private final IntelectualEntityBuilder entityBuilder;
 
-    public DigitalDocumentBuilder(DigitalDocument rep, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder, List<DigitalInstanceBuilder> instanceBuilders, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
-        this.doc = rep;
+    public DigitalDocumentBuilder(DigitalDocument doc, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder, DigitalInstancesBuilder instancesBuilder, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
+        this.doc = doc;
         this.urn = urn;
         this.identifiersBuilder = identifiersBuilder;
-        this.instanceBuilderList = instanceBuilders;
+        this.instancesBuilder = instancesBuilder;
         this.registrarBuilder = registrarBuilder;
         this.archiverBuilder = archiverBuilder;
         this.entityBuilder = entityBuilder;
@@ -40,20 +39,14 @@ public class DigitalDocumentBuilder extends XmlBuilder {
         //appendIdentifierElement(root, "INTERNAL", rep.getId());
         appendTimestamps(root, doc, "digital document");
         appendElementWithContentIfNotNull(root, urn, "urnNbn");
-        if (identifiersBuilder != null) {
-            appendBuilderResultfNotNull(root, identifiersBuilder);
-        }
         appendElementWithContentIfNotNull(root, doc.getFinancedFrom(), "financed");
         appendElementWithContentIfNotNull(root, doc.getContractNumber(), "contractNumber");
-        appendTechnicalMetadata(root);
-        if (instanceBuilderList != null) {
-            for (DigitalInstanceBuilder builder : instanceBuilderList) {
-                appendBuilderResultfNotNull(root, builder);
-            }
-        }
-        appendBuilderResultfNotNull(root, registrarBuilder);
-        appendBuilderResultfNotNull(root, archiverBuilder);
         appendBuilderResultfNotNull(root, entityBuilder);
+        appendTechnicalMetadata(root);
+        appendBuilderResultfNotNull(root, registrarBuilder);
+        appendBuilderResultfNotNull(root, identifiersBuilder);
+        appendBuilderResultfNotNull(root, archiverBuilder);
+        appendBuilderResultfNotNull(root, instancesBuilder);
         return root;
     }
 
