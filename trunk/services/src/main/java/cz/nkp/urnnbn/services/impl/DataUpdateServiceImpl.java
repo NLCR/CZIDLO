@@ -46,9 +46,9 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void updateDigRepIdentifier(DigDocIdentifier id) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException {
+    public void updateDigDocIdentifier(DigDocIdentifier id) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException {
         try {
-            factory.digRepIdDao().updateDigRepIdValue(id);
+            factory.digDocIdDao().updateDigDocIdValue(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {

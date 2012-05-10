@@ -269,7 +269,7 @@ public class RecordImporter {
             id.setDigDocId(digRepId);
             id.setRegistrarId(registrar.getId());
             try {
-                factory.digRepIdDao().insertDigDocId(id);
+                factory.digDocIdDao().insertDigDocId(id);
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);

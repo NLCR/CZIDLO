@@ -35,7 +35,7 @@ import java.util.Collection;
 public interface DataUpdateService extends BusinessService {
 
     //TODO: access rights
-    public void updateDigRepIdentifier(DigDocIdentifier id) throws
+    public void updateDigDocIdentifier(DigDocIdentifier id) throws
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
     public void updateDigitalDocument(DigitalDocument doc, String login) throws

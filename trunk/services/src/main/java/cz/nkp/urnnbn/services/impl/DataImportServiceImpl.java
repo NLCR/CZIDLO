@@ -67,7 +67,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public void addRegistrarScopeIdentifier(DigDocIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, AccessException, UnknownUserException {
         try {
             authorization.checkAccessRights(id.getRegistrarId(), login);
-            factory.digRepIdDao().insertDigDocId(id);
+            factory.digDocIdDao().insertDigDocId(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {

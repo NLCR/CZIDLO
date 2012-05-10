@@ -89,7 +89,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long id) throws DatabaseException {
         try {
-            return factory.digRepIdDao().getIdList(id);
+            return factory.digDocIdDao().getIdList(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigDocIdentifier>emptyList();
@@ -138,7 +138,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 
     @Override
     public List<IntelectualEntity> entitiesByIdValue(String value) throws DatabaseException {
-        List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdByIdentifierValue(value);
+        List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValue(value);
         List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
         for (long id : idList) {
             IntelectualEntity entity = entityById(id);

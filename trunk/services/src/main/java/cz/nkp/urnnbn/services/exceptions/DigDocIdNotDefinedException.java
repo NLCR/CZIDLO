@@ -10,9 +10,9 @@ import cz.nkp.urnnbn.core.DigDocIdType;
  *
  * @author Martin Řehánek
  */
-public class DigRepIdNotDefinedException extends Exception {
+public class DigDocIdNotDefinedException extends Exception {
 
-    public DigRepIdNotDefinedException(DigDocIdType type) {
+    public DigDocIdNotDefinedException(DigDocIdType type) {
         super("identifier for type '" + type.toString() + "' not defined");
     }
 }
