@@ -16,7 +16,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
-import cz.nkp.urnnbn.services.exceptions.DigRepIdNotDefinedException;
+import cz.nkp.urnnbn.services.exceptions.DigDocIdNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
@@ -37,27 +37,29 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeDigitalDocumentIdentifiers(long digRepId) throws UnknownDigDocException {
+    public void removeDigitalDocumentIdentifiers(long digDocId) throws UnknownDigDocException {
         try {
-            factory.digRepIdDao().deleteAllIdentifiersOfDigDoc(digRepId);
+            factory.digDocIdDao().deleteAllIdentifiersOfDigDoc(digDocId);
+            factory.documentDao().updateDocumentDatestamp(digDocId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            throw new UnknownDigDocException(digRepId);
+            throw new UnknownDigDocException(digDocId);
         }
     }
 
     @Override
-    public void removeDigitalDocumentId(long digRepId, DigDocIdType type) throws UnknownDigDocException, DigRepIdNotDefinedException {
+    public void removeDigitalDocumentId(long digDocId, DigDocIdType type) throws UnknownDigDocException, DigDocIdNotDefinedException {
         try {
-            factory.digRepIdDao().deleteDigDocIdentifier(digRepId, type);
+            factory.digDocIdDao().deleteDigDocIdentifier(digDocId, type);
+            factory.documentDao().updateDocumentDatestamp(digDocId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new UnknownDigDocException(digRepId);
+                throw new UnknownDigDocException(digDocId);
             } else if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new DigRepIdNotDefinedException(type);
+                throw new DigDocIdNotDefinedException(type);
             } else {
                 throw new RuntimeException(ex);
             }
