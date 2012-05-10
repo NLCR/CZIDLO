@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringAndStringAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntityRT;
@@ -35,6 +36,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -86,7 +88,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     }
 
     @Override
-    public List<Long> getEntitiesDbIdByIdentifier(IntEntIdType type, String idValue) throws DatabaseException {
+    public List<Long> getEntitiesDbIdListByIdentifier(IntEntIdType type, String idValue) throws DatabaseException {
         try {
             StatementWrapper st = new SelectIdentifiersByStringAndStringAttrs(
                     IntEntIdentifierDAO.TABLE_NAME,
@@ -104,13 +106,27 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
         }
     }
 
-    public List<Long> getEntitiesDbIdByIdentifierValue(String idValue) throws DatabaseException {
+    public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException {
         try {
             StatementWrapper st = new SelectSingleAttrByStringAttr(
                     IntEntIdentifierDAO.TABLE_NAME,
                     IntEntIdentifierDAO.ATTR_VALUE,
                     idValue,
                     IntEntIdentifierDAO.ATTR_IE_ID);
+            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            return (List<Long>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
             DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {

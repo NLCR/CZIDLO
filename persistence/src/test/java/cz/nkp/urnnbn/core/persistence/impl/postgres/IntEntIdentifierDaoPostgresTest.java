@@ -133,12 +133,12 @@ public class IntEntIdentifierDaoPostgresTest extends AbstractDaoTest {
         isbn.setValue("isbnValue");
         intEntIdDao.insertIntEntId(isbn);
         //fetch
-        List<Long> ids = entityDao.getEntitiesDbIdByIdentifier(isbn.getType(), isbn.getValue());
+        List<Long> ids = entityDao.getEntitiesDbIdListByIdentifier(isbn.getType(), isbn.getValue());
         assertEquals(1, ids.size());
         //delete
         intEntIdDao.deleteIntEntIdentifier(entity.getId(), isbn.getType());
         //fetch after deletion
-        List<Long> idsAfterDeleted = entityDao.getEntitiesDbIdByIdentifier(isbn.getType(), isbn.getValue());
+        List<Long> idsAfterDeleted = entityDao.getEntitiesDbIdListByIdentifier(isbn.getType(), isbn.getValue());
         assertEquals(0, idsAfterDeleted.size());
     }
 

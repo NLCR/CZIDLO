@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalDocumentRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
@@ -38,6 +39,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -124,6 +126,20 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
             throw new DatabaseException(ex);
         }
     }
+    
+    public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
+            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            return (List<Long>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
 
     @Override
     public Long getDigDocDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException {
@@ -149,13 +165,17 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     @Override
     public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(document, TABLE_NAME, ATTR_ID, new UpdateDigitalDocument(document));
+
     }
 
     @Override
-    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
-        //TODO: test
-        //todo: nesmi se smazat urn
-        deleteRecordsById(TABLE_NAME, ATTR_ID, digRepDbId, true);
+    public void updateDocumentDatestamp(Long digDocId) throws DatabaseException, RecordNotFoundException {
+        updateRecordTimestamp(TABLE_NAME, ATTR_ID, digDocId, ATTR_UPDATED);
+    }
+
+    @Override
+    public void deleteDocument(long digDocId) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+        deleteRecordsById(TABLE_NAME, ATTR_ID, digDocId, true);
     }
 
     @Override

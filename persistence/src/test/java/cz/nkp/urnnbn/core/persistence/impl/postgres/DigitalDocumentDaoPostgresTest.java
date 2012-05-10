@@ -13,6 +13,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
 import java.util.Random;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -194,44 +195,6 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    /**
-     * Test of updateDocument method, of class DigitalRepresentationDaoPostgres.
-     */
-    public void testUpdateDocument() throws Exception {
-        Registrar registrar = registrarPersisted();
-        IntelectualEntity entity = entityPersisted();
-        DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
-        DigitalDocument clone = new DigitalDocument(inserted);
-        clone.setColorDepth(24);
-        clone.setExtent("123s.");
-        clone.setFormat("djvu");
-        digDocDao.updateDocument(clone);
-        DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
-        assertEquals(clone, fetched);
-    }
-
-    /**
-     * Test of deleteDocument method, of class DigitalRepresentationDaoPostgres.
-     */
-    public void testDeleteDocument() throws Exception {
-        //create registrar with urn
-        Registrar registrar = registrarPersisted();
-        IntelectualEntity entity = entityPersisted();
-        DigitalDocument repInserted = documentPersisted(registrar.getId(), entity.getId());
-        //UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId(), new DateTime());
-        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", repInserted.getId());
-        urnDao.insertUrnNbn(urnInserted);
-        try {
-            registrarDao.getRegistrarById(repInserted.getId());
-            fail();
-        } catch (RecordNotFoundException e) {
-            //ok
-        }
-        //URN not removed
-        UrnNbn urnFetched = urnDao.getUrnNbnByDigDocId(repInserted.getId());
-        assertEquals(urnInserted, urnFetched);
-    }
-
     public void testGetDocumentWithNullAttributeValues() throws Exception {
         DigitalDocument inserted = new DigitalDocument();
         inserted.setColorDepth(null);
@@ -252,5 +215,108 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         assertEquals(null, fetched.getPictureWidth());
         assertEquals(null, fetched.getResolutionHorizontal());
         assertEquals(null, fetched.getResolutionVertical());
+    }
+
+    public void testGetDigDocsDbIdListByTimestamps_from_until() throws Exception {
+        //before - firstEnt - between - secondEnt - after
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DateTime before = new DateTime();
+        Thread.sleep(1000);
+        DigitalDocument firstDoc = documentPersisted(registrar.getId(), entity.getId());
+        Thread.sleep(1000);
+        DateTime between = new DateTime();
+        Thread.sleep(1000);
+        DigitalDocument secondDoc = documentPersisted(registrar.getId(), entity.getId());
+        Thread.sleep(1000);
+        DateTime after = new DateTime();
+        //before-before
+        List<Long> idList = digDocDao.getDigDocDbIdListByTimestamps(before, before);
+        assertTrue(idList.isEmpty());
+        //before-first
+        idList = digDocDao.getDigDocDbIdListByTimestamps(before, firstDoc.getModified());
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstDoc.getId()));
+        //before-between
+        idList = digDocDao.getDigDocDbIdListByTimestamps(before, between);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstDoc.getId()));
+        //before-second
+        idList = digDocDao.getDigDocDbIdListByTimestamps(before, secondDoc.getModified());
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstDoc.getId()));
+        assertTrue(idList.contains(secondDoc.getId()));
+        //before-after
+        idList = digDocDao.getDigDocDbIdListByTimestamps(before, after);
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstDoc.getId()));
+        assertTrue(idList.contains(secondDoc.getId()));
+        //between-between
+        idList = digDocDao.getDigDocDbIdListByTimestamps(between, between);
+        assertTrue(idList.isEmpty());
+        //between-second
+        idList = digDocDao.getDigDocDbIdListByTimestamps(between, secondDoc.getModified());
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondDoc.getId()));
+        //betwen-after
+        idList = digDocDao.getDigDocDbIdListByTimestamps(between, after);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondDoc.getId()));
+        //after-after
+        idList = digDocDao.getDigDocDbIdListByTimestamps(after, after);
+        assertTrue(idList.isEmpty());
+    }
+    
+    /**
+     * Test of updateDocument method, of class DigitalRepresentationDaoPostgres.
+     */
+    public void testUpdateDocument() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
+        DigitalDocument clone = new DigitalDocument(inserted);
+        clone.setColorDepth(24);
+        clone.setExtent("123s.");
+        clone.setFormat("djvu");
+        digDocDao.updateDocument(clone);
+        DigitalDocument fetched = digDocDao.getDocumentByDbId(inserted.getId());
+        assertEquals(clone, fetched);
+    }
+
+    public void testUpdateDocumentDatestamp() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
+        DigitalDocument beforeUpdate = digDocDao.getDocumentByDbId(inserted.getId());
+        digDocDao.updateDocumentDatestamp(inserted.getId());
+        DigitalDocument afterUpdate = digDocDao.getDocumentByDbId(inserted.getId());
+        assertTrue(beforeUpdate.getModified().isBefore(afterUpdate.getModified()));
+    }
+
+    /**
+     * Test of deleteDocument method, of class DigitalRepresentationDaoPostgres.
+     */
+    public void testDeleteDocument() throws Exception {
+        //create registrar with urn
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument docInserted = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", docInserted.getId());
+        urnDao.insertUrnNbn(urnInserted);
+        try {
+            digDocDao.deleteDocument(docInserted.getId());
+            fail();
+        } catch (Exception e) {
+            //ok 
+        }
+        //urn must be removed (moved to table ABANDONED) first
+        urnDao.deleteUrnNbn(urnInserted);
+        digDocDao.deleteDocument(docInserted.getId());
+        try {
+            urnDao.getUrnNbnByDigDocId(docInserted.getId());
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
     }
 }

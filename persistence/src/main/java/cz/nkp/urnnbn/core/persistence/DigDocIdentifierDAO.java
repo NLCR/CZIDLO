@@ -29,7 +29,7 @@ public interface DigDocIdentifierDAO {
 
     public List<DigDocIdentifier> getIdList(long digDocDbId) throws DatabaseException, RecordNotFoundException;
 
-    public void updateDigRepIdValue(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
+    public void updateDigDocIdValue(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
     /**
      * 

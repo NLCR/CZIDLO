@@ -201,7 +201,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         //update
         DigDocIdentifier updated = new DigDocIdentifier(inserted);
         updated.setValue("newValue");
-        digRepIdDao.updateDigRepIdValue(updated);
+        digRepIdDao.updateDigDocIdValue(updated);
         //fetch
         DigDocIdentifier fetched = digRepIdDao.getIdList(doc.getId()).get(0);
         assertEquals(updated.getValue(), fetched.getValue());
@@ -237,7 +237,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         DigDocIdentifier updated = new DigDocIdentifier(digRep2Id);
         updated.setValue(collidingValue);
         try {
-            digRepIdDao.updateDigRepIdValue(updated);
+            digRepIdDao.updateDigDocIdValue(updated);
             fail();
         } catch (AlreadyPresentException e) {
             //ok
@@ -257,7 +257,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         DigDocIdentifier updated = new DigDocIdentifier(inserted);
         updated.setRegistrarId(ILLEGAL_ID);
         try {
-            digRepIdDao.updateDigRepIdValue(updated);
+            digRepIdDao.updateDigDocIdValue(updated);
             fail();
         } catch (RecordNotFoundException e) {
             assertEquals(RegistrarDAO.TABLE_NAME, e.getTableName());
@@ -266,7 +266,7 @@ public class DigDocIdentifierDaoPostgresTest extends AbstractDaoTest {
         updated.setRegistrarId(registrar.getId());
         updated.setDigDocId(ILLEGAL_ID);
         try {
-            digRepIdDao.updateDigRepIdValue(updated);
+            digRepIdDao.updateDigDocIdValue(updated);
             fail();
         } catch (RecordNotFoundException e) {
             assertEquals(DigitalDocumentDAO.TABLE_NAME, e.getTableName());
