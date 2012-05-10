@@ -33,6 +33,8 @@ import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.TestCase;
 
 /**
@@ -129,9 +131,8 @@ public abstract class AbstractDaoTest extends TestCase {
         doc.setIntEntId(intEntId);
         doc.setRegistrarId(registrarId);
         doc.setArchiverId(registrarId);
-        Long repId = digDocDao.insertDocument(doc);
-        doc.setId(repId);
-        return doc;
+        Long id = digDocDao.insertDocument(doc);
+        return digDocDao.getDocumentByDbId(id);
     }
 
     public DigitalDocument documentPersisted(long registrarId, long archiverId, long intEntId) throws DatabaseException, RecordNotFoundException {
@@ -139,9 +140,8 @@ public abstract class AbstractDaoTest extends TestCase {
         doc.setIntEntId(intEntId);
         doc.setRegistrarId(registrarId);
         doc.setArchiverId(archiverId);
-        Long repId = digDocDao.insertDocument(doc);
-        doc.setId(repId);
-        return doc;
+        Long id = digDocDao.insertDocument(doc);
+        return digDocDao.getDocumentByDbId(id);
     }
 
     public DigitalLibrary libraryPersisted() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
@@ -157,8 +157,12 @@ public abstract class AbstractDaoTest extends TestCase {
     public IntelectualEntity entityPersisted() throws DatabaseException {
         IntelectualEntity entity = builder.intEntityWithoutId();
         long id = entityDao.insertIntelectualEntity(entity);
-        entity.setId(id);
-        return entity;
+        try {
+            return entityDao.getEntityByDbId(id);
+        } catch (RecordNotFoundException ex) {
+            Logger.getLogger(AbstractDaoTest.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     public User userPersisted() throws DatabaseException, AlreadyPresentException {

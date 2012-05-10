@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -40,7 +41,7 @@ public interface IntelectualEntityDAO {
      * @return list of intelectual entity db id
      * @throws DatabaseException 
      */
-    public List<Long> getEntitiesDbIdByIdentifier(IntEntIdType type, String idValue) throws DatabaseException;
+    public List<Long> getEntitiesDbIdListByIdentifier(IntEntIdType type, String idValue) throws DatabaseException;
 
     /**
      * Finds intelectual entities that have ieIdentifier of anye type with specified value
@@ -48,11 +49,10 @@ public interface IntelectualEntityDAO {
      * @return
      * @throws DatabaseException 
      */
-    public List<Long> getEntitiesDbIdByIdentifierValue(String idValue) throws DatabaseException;
+    public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException;
 
-    //TODO: zvazit, jestli budou potreba
-    //public List<Long> getAllEntitiesId() throws DatabaseException;
-    //public List<Long> getAllEntitiesId(EntityType type) throws DatabaseException;
+    public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+
     public Long getEntitiesCount() throws DatabaseException;
 
     public Long getEntitiesCount(EntityType type) throws DatabaseException;

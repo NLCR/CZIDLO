@@ -30,6 +30,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsContByStringA
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRecordTimestamp;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import java.sql.Connection;
@@ -258,6 +259,38 @@ public abstract class AbstractDAO {
             return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, dto.getId()});
+            if ("23503".equals(ex.getSQLState())) {
+                logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
+                throw new RecordNotFoundException();
+            } else {
+                throw new DatabaseException(ex);
+            }
+        }
+    }
+
+    /**
+     * Only for table that has single value PK of type long. 
+     * @param dto
+     * @param tableName
+     * @param idAttrName
+     * @param updateSt
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if some referenced record doesn't exist in another table
+     */
+    public void updateRecordTimestamp(
+            String tableName,
+            String idAttrName, Long idAttrValue,
+            String timeStampAttr) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(tableName, idAttrName, idAttrValue);
+        try {
+            DaoOperation operation = new NoResultOperation(new UpdateRecordTimestamp(tableName, idAttrName, idAttrValue, timeStampAttr));
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return;
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, idAttrValue});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();

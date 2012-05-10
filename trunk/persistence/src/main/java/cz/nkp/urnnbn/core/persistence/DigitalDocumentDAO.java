@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -51,7 +52,7 @@ public interface DigitalDocumentDAO {
      * @throws DatabaseException
      * @throws RecordNotFoundException if registrar, archiver or intelectual entity not found
      */
-    public Long insertDocument(DigitalDocument representation) throws DatabaseException, RecordNotFoundException;
+    public Long insertDocument(DigitalDocument doc) throws DatabaseException, RecordNotFoundException;
 
     public DigitalDocument getDocumentByDbId(long dbId) throws DatabaseException, RecordNotFoundException;
 
@@ -66,6 +67,8 @@ public interface DigitalDocumentDAO {
 
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
+    public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+
     /**
      * 
      * @param document digital document to be updated
@@ -73,6 +76,8 @@ public interface DigitalDocumentDAO {
      * @throws RecordNotFoundException if digital document with id obtained from document doesn't exist
      */
     public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException;
+
+    public void updateDocumentDatestamp(Long digDocId) throws DatabaseException, RecordNotFoundException;
 
     public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 

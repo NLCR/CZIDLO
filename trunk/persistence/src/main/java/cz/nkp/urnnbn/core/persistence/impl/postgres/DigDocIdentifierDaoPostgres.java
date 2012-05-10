@@ -95,7 +95,7 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public void updateDigRepIdValue(DigDocIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public void updateDigDocIdValue(DigDocIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, identifier.getDigDocId());
         try {

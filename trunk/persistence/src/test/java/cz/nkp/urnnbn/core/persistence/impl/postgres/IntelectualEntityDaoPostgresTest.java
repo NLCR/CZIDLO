@@ -13,6 +13,7 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -78,7 +79,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         isbn.setValue("isbnValue");
         intEntIdDao.insertIntEntId(isbn);
         //find by ISBN
-        List<Long> foundIds = entityDao.getEntitiesDbIdByIdentifier(IntEntIdType.ISBN, isbn.getValue());
+        List<Long> foundIds = entityDao.getEntitiesDbIdListByIdentifier(IntEntIdType.ISBN, isbn.getValue());
         assertEquals(1, foundIds.size());
         List<IntelectualEntity> foundEntities = new ArrayList<IntelectualEntity>(foundIds.size());
         for (Long dbId : foundIds) {
@@ -108,7 +109,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         intEntIdDao.insertIntEntId(ccnb);
 
         //find by the value
-        List<Long> foundIds = entityDao.getEntitiesDbIdByIdentifierValue(value);
+        List<Long> foundIds = entityDao.getEntitiesDbIdListByIdentifierValue(value);
         assertEquals(2, foundIds.size());
         assertTrue(foundIds.contains(entity1.getId()));
         assertTrue(foundIds.contains(entity2.getId()));
@@ -118,6 +119,122 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         }
         assertTrue(foundEntities.contains(entity1));
         assertTrue(foundEntities.contains(entity2));
+    }
+
+    public void testGetEntitiesDbIdListByTimestamps_from_until() throws Exception {
+        //before - firstEnt - between - secondEnt - after
+        DateTime before = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity firstEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime between = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity secondEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime after = new DateTime();
+        //before-before
+        List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(before, before);
+        assertTrue(idList.isEmpty());
+        //before-first
+        idList = entityDao.getEntitiesDbIdListByTimestamps(before, firstEnt.getModified());
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        //before-between
+        idList = entityDao.getEntitiesDbIdListByTimestamps(before, between);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        //before-second
+        idList = entityDao.getEntitiesDbIdListByTimestamps(before, secondEnt.getModified());
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
+        //before-after
+        idList = entityDao.getEntitiesDbIdListByTimestamps(before, after);
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
+        //between-between
+        idList = entityDao.getEntitiesDbIdListByTimestamps(between, between);
+        assertTrue(idList.isEmpty());
+        //between-second
+        idList = entityDao.getEntitiesDbIdListByTimestamps(between, secondEnt.getModified());
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondEnt.getId()));
+        //betwen-after
+        idList = entityDao.getEntitiesDbIdListByTimestamps(between, after);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondEnt.getId()));
+        //after-after
+        idList = entityDao.getEntitiesDbIdListByTimestamps(after, after);
+        assertTrue(idList.isEmpty());
+    }
+
+    public void testGetEntitiesDbIdListByTimestamps_from_only() throws Exception {
+        //before - firstEnt - between - secondEnt - after
+        DateTime before = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity firstEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime between = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity secondEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime after = new DateTime();
+        //before
+        List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(before, null);
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
+        //firstEnt
+        idList = entityDao.getEntitiesDbIdListByTimestamps(firstEnt.getModified(), null);
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
+        //betwen
+        idList = entityDao.getEntitiesDbIdListByTimestamps(between, null);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondEnt.getId()));
+        //secondEnt
+        idList = entityDao.getEntitiesDbIdListByTimestamps(secondEnt.getModified(), null);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(secondEnt.getId()));
+        //after
+        idList = entityDao.getEntitiesDbIdListByTimestamps(after, null);
+        assertTrue(idList.isEmpty());
+    }
+
+    public void testGetEntitiesDbIdListByTimestamps_until_only() throws Exception {
+        //before - firstEnt - between - secondEnt - after
+        DateTime before = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity firstEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime between = new DateTime();
+        Thread.sleep(1000);
+        IntelectualEntity secondEnt = entityPersisted();
+        Thread.sleep(1000);
+        DateTime after = new DateTime();
+        //before
+        List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(null, before);
+        assertTrue(idList.isEmpty());
+        //firstEnt
+        idList = entityDao.getEntitiesDbIdListByTimestamps(null, firstEnt.getModified());
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        //betwen
+        idList = entityDao.getEntitiesDbIdListByTimestamps(null, between);
+        assertEquals(1, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        //secondEnt
+        idList = entityDao.getEntitiesDbIdListByTimestamps(null, secondEnt.getModified());
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
+        //after
+        idList = entityDao.getEntitiesDbIdListByTimestamps(null, after);
+        assertEquals(2, idList.size());
+        assertTrue(idList.contains(firstEnt.getId()));
+        assertTrue(idList.contains(secondEnt.getId()));
     }
 
     /**
