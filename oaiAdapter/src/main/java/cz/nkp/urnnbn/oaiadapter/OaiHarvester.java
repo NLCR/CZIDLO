@@ -4,16 +4,14 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -26,9 +24,14 @@ import nu.xom.XPathContext;
  */
 public class OaiHarvester {
 
+    
+    public static final String OAI_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
+    
     private String oaiBaseUrl;
     private String metadataPrefix;
     private String setSpec;
+    
+        
     
     
     public OaiHarvester() {        
@@ -65,20 +68,13 @@ public class OaiHarvester {
     }
     
 
-    private Document getDocument(URL url) throws IOException, ParsingException {
-        System.out.println(url.toString());
-        Builder builder = new Builder();     
-        URLConnection con = url.openConnection();
-        InputStream is = con.getInputStream();        
-        return builder.build(is);       
-    }
     
     
     private String addIdentifiers(URL url, List<String> list) throws ParsingException, IOException {
-        Document document = getDocument(url);
+        Document document = XmlTools.getDocument(url);
         Element root = document.getRootElement();
 
-        XPathContext context = new XPathContext("oai", "http://www.openarchives.org/OAI/2.0/");
+        XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
         Nodes nodes = root.query("//oai:header/oai:identifier", context);
         for(int i = 0; i < nodes.size(); i++) {
             list.add(nodes.get(i).getValue());
@@ -97,7 +93,7 @@ public class OaiHarvester {
     
     public void parseRecord(String identifier) throws IOException, ParsingException {
         URL url = getRecordUrl(identifier);
-        Document document = getDocument(url);
+        Document document = XmlTools.getDocument(url);
         Element root = document.getRootElement();
         System.out.println(root.toXML().toString());                
     }
@@ -112,6 +108,7 @@ public class OaiHarvester {
         }
         return list;        
     }
+                    
     
 
     public String getOaiBaseUrl() {
