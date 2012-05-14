@@ -21,5 +21,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
