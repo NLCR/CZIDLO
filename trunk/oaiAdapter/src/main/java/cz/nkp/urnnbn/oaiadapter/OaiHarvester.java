@@ -134,20 +134,20 @@ public class OaiHarvester {
 
     public static void main(String[] args) {
         OaiHarvester oai = new OaiHarvester();
-        //oai.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
-        //oai.setMetadataPrefix("oai_dc");
-        //oai.setSetSpec("monograph");
+        oai.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
+        oai.setMetadataPrefix("oai_dc");
+        oai.setSetSpec("monograph");
 
-        oai.setOaiBaseUrl("http://oai.mzk.cz/");
-        oai.setMetadataPrefix("marc21");
-        oai.setSetSpec("collection:mollMaps");
+        //oai.setOaiBaseUrl("http://oai.mzk.cz/");
+        //oai.setMetadataPrefix("marc21");
+        //oai.setSetSpec("collection:mollMaps");
 
 
 
         try {
             Builder builder = new Builder();
-            Document stylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_import.xsl");
-            List<String> list = oai.getListIdentifiers(30);
+            Document stylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_import.xsl");
+            List<String> list = oai.getListIdentifiers(100);
             for (String id : list) {
                 Document doc = oai.getRecordDocument(id);
                 try {
