@@ -27,9 +27,13 @@ import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -338,5 +342,127 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         } catch (RecordNotFoundException ex) {
             throw new UnknownUserException(userId);
         }
+    }
+
+    @Override
+    public Set<UrnNbn> urnNbnsOfChangedRecords(Registrar registrar, DateTime from, DateTime until) {
+        try {
+            Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();
+            //1. vsechny zmenene DD, pak odfiltrovat podle id registratora, vytahnout urn:nbn
+            foundDigitalDocuments.addAll(findChangedDigDocs(registrar, from, until));
+            //2. vsechny zmenene identifikatory DD a pro kazdy nacist DD
+            foundDigitalDocuments.addAll(findDigDocsWithChangedIdentifier(from, until));
+            //3. digitalni dokumenty zmenenych dig. instanci
+            foundDigitalDocuments.addAll(findDigDocsOfChangedDigInstances(from, until));
+            //4. digitalni dokumenty zmenenych int. entit
+            foundDigitalDocuments.addAll(findDigDocsOfChangedIntEntities(from, until));
+            //remove dig docs of other registrars
+            Set<DigitalDocument> digDocsOfRegistrar = removeDigDocsOfOtherRegistrars(foundDigitalDocuments, registrar);
+            Set<UrnNbn> result = toUrnNbnSet(digDocsOfRegistrar);
+            //add changed urn:nbns
+            result.addAll(findChangedUrnNbns(registrar, from, until));
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(DateTime from, DateTime until) {
+        try {
+            Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();
+            //1. vsechny zmenene DD, pak odfiltrovat podle id registratora, vytahnout urn:nbn
+            foundDigitalDocuments.addAll(findChangedDigDocs(from, until));
+            //2. vsechny zmenene identifikatory DD a pro kazdy nacist DD
+            foundDigitalDocuments.addAll(findDigDocsWithChangedIdentifier(from, until));
+            //3. digitalni dokumenty zmenenych dig. instanci
+            foundDigitalDocuments.addAll(findDigDocsOfChangedDigInstances(from, until));
+            //4. digitalni dokumenty zmenenych int. entit
+            foundDigitalDocuments.addAll(findDigDocsOfChangedIntEntities(from, until));
+            Set<UrnNbn> result = toUrnNbnSet(foundDigitalDocuments);
+            //add changed urn:nbns
+            result.addAll(findChangedUrnNbns(from, until));
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private Collection<DigitalDocument> findDigDocsOfChangedIntEntities(DateTime from, DateTime until) throws DatabaseException {
+        List<Long> entityDbList = factory.intelectualEntityDao().getEntitiesDbIdListByTimestamps(from, until);
+        Set<DigitalDocument> result = new HashSet<DigitalDocument>();
+        for (Long entityId : entityDbList) {
+            result.addAll(digDocsOfIntEnt(entityId));
+        }
+        return result;
+    }
+
+    private List<DigitalDocument> findChangedDigDocs(Registrar registrar, DateTime from, DateTime until) throws DatabaseException {
+        try {
+            return factory.documentDao().getDigDocsByRegistrarIdAndTimestamps(registrar.getId(), from, until);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+            return Collections.<DigitalDocument>emptyList();
+        }
+    }
+
+    private List<DigitalDocument> findChangedDigDocs(DateTime from, DateTime until) throws DatabaseException {
+        return factory.documentDao().getDigDocsByTimestamps(from, until);
+    }
+
+    private Set<DigitalDocument> findDigDocsWithChangedIdentifier(DateTime from, DateTime until) throws DatabaseException {
+        List<DigDocIdentifier> identifiers = factory.digDocIdDao().getIdListByTimestamps(from, until);
+        Set<DigitalDocument> result = new HashSet<DigitalDocument>();
+        for (DigDocIdentifier id : identifiers) {
+            try {
+                result.add(factory.documentDao().getDocumentByDbId(id.getDigDocId()));
+            } catch (RecordNotFoundException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+
+    private Set<DigitalDocument> findDigDocsOfChangedDigInstances(DateTime from, DateTime until) throws DatabaseException {
+        List<DigitalInstance> digInstances = factory.digInstDao().getDigitalInstancesByTimestamps(from, until);
+        Set<DigitalDocument> result = new HashSet<DigitalDocument>();
+        for (DigitalInstance digInst : digInstances) {
+            try {
+                result.add(factory.documentDao().getDocumentByDbId(digInst.getDigDocId()));
+            } catch (RecordNotFoundException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+
+    private Set<DigitalDocument> removeDigDocsOfOtherRegistrars(Set<DigitalDocument> original, Registrar registrar) {
+        Set<DigitalDocument> result = new HashSet<DigitalDocument>(original.size());
+        for (DigitalDocument doc : original) {
+            if (doc.getRegistrarId() == registrar.getId()) {
+                result.add(doc);
+            }
+        }
+        return result;
+    }
+
+    private Set<UrnNbn> toUrnNbnSet(Set<DigitalDocument> docs) throws DatabaseException {
+        Set<UrnNbn> result = new HashSet<UrnNbn>(docs.size());
+        for (DigitalDocument doc : docs) {
+            try {
+                result.add(factory.urnDao().getUrnNbnByDigDocId(doc.getId()));
+            } catch (RecordNotFoundException ex) {
+                logger.log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+
+    private List<UrnNbn> findChangedUrnNbns(DateTime from, DateTime until) throws DatabaseException {
+        return factory.urnDao().getUrnNbnsByTimestamps(from, until);
+    }
+
+    private List<UrnNbn> findChangedUrnNbns(Registrar registrar, DateTime from, DateTime until) throws DatabaseException {
+        return factory.urnDao().getUrnNbnsByRegistrarCodeAndTimestamps(registrar.getCode(), from, until);
     }
 }
