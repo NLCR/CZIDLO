@@ -217,14 +217,14 @@ public class App {
             babickaMzkDrOaiId.setValue("uuid:123");
             babickaMzkDrOaiId.setRegistrarId(mzk.getId());
             babickaMzkDrOaiId.setDigDocId(babickaMzk.getId());
-            factory.digRepIdDao().insertDigDocId(babickaMzkDrOaiId);
+            factory.digDocIdDao().insertDigDocId(babickaMzkDrOaiId);
             //DR id type=OTHER
             DigDocIdentifier babickaMzkDrOtherId = new DigDocIdentifier();
             babickaMzkDrOtherId.setType(DigDocIdType.valueOf("signatura"));
             babickaMzkDrOtherId.setValue("3-1275.138");
             babickaMzkDrOtherId.setRegistrarId(mzk.getId());
             babickaMzkDrOtherId.setDigDocId(babickaMzk.getId());
-            factory.digRepIdDao().insertDigDocId(babickaMzkDrOtherId);
+            factory.digDocIdDao().insertDigDocId(babickaMzkDrOtherId);
 
 
             //babicka mzk v K4 mzk

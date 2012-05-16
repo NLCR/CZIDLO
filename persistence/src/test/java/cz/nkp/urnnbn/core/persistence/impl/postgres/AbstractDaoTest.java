@@ -4,8 +4,10 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.dto.Archiver;
+import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -48,7 +50,7 @@ public abstract class AbstractDaoTest extends TestCase {
     //DAOs
     final ArchiverDAO archiverDao;
     final CatalogDAO catalogDao;
-    final DigDocIdentifierDAO digRepIdDao;
+    final DigDocIdentifierDAO digDocIdDao;
     final DigitalInstanceDAO digInstDao;
     final DigitalLibraryDAO libraryDao;
     final DigitalDocumentDAO digDocDao;
@@ -76,7 +78,7 @@ public abstract class AbstractDaoTest extends TestCase {
         registrarDao = daoFactory.registrarDao();
         archiverDao = daoFactory.archiverDao();
         catalogDao = daoFactory.catalogDao();
-        digRepIdDao = daoFactory.digRepIdDao();
+        digDocIdDao = daoFactory.digDocIdDao();
         digInstDao = daoFactory.digInstDao();
         libraryDao = daoFactory.diglLibDao();
         entityDao = daoFactory.intelectualEntityDao();
@@ -133,6 +135,23 @@ public abstract class AbstractDaoTest extends TestCase {
         doc.setArchiverId(registrarId);
         Long id = digDocDao.insertDocument(doc);
         return digDocDao.getDocumentByDbId(id);
+    }
+
+    public DigDocIdentifier digDocIdentifierPersisted(long registrarId, long digDocId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
+        inserted.setDigDocId(digDocId);
+        inserted.setRegistrarId(registrarId);
+        digDocIdDao.insertDigDocId(inserted);
+        return digDocIdDao.getIdentifer(digDocId, inserted.getType());
+    }
+
+    public DigDocIdentifier digDocIdentifierPersisted(long registrarId, long digDocId, String type) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
+        inserted.setDigDocId(digDocId);
+        inserted.setRegistrarId(registrarId);
+        inserted.setType(DigDocIdType.valueOf(type));
+        digDocIdDao.insertDigDocId(inserted);
+        return digDocIdDao.getIdentifer(digDocId, inserted.getType());
     }
 
     public DigitalDocument documentPersisted(long registrarId, long archiverId, long intEntId) throws DatabaseException, RecordNotFoundException {

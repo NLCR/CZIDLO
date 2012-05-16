@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -28,6 +29,18 @@ public interface DigDocIdentifierDAO {
     public void insertDigDocId(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
     public List<DigDocIdentifier> getIdList(long digDocDbId) throws DatabaseException, RecordNotFoundException;
+
+    /**
+     * 
+     * @param digDocId id of digital document
+     * @param type type of registrar-scope identifier
+     * @return
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if digital document or registrar-scope identifier doesn't exist
+     */
+    public DigDocIdentifier getIdentifer(Long digDocId, DigDocIdType type) throws DatabaseException, RecordNotFoundException;
+
+    public List<DigDocIdentifier> getIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
     public void updateDigDocIdValue(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 

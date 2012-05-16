@@ -19,15 +19,19 @@ import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.MultipleRecordsException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAndStringAttrs;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsAndStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
@@ -48,7 +52,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     public void insertUrnNbn(UrnNbn urn) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         insertUrnNbn(urn, null);
     }
-    
+
     public void insertUrnNbn(UrnNbn urn, DateTime created) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, urn.getDigDocId());
         StatementWrapper st = new InsertUrnNbn(urn, created);
@@ -89,6 +93,38 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    //TODO: test
+    public List<UrnNbn> getUrnNbnsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
+            DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnRT());
+            return (List<UrnNbn>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    //TODO: test
+    public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsbyTimestampsAndStringAttr(TABLE_NAME,
+                    ATTR_UPDATED, from, until,
+                    ATTR_REGISTRAR_CODE, registrarCode.toString());
+            DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnRT());
+            return (List<UrnNbn>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
             throw new DatabaseException(ex);

@@ -67,6 +67,19 @@ public interface DigitalDocumentDAO {
 
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
+    /**
+     * 
+     * @param registrarId
+     * @param from
+     * @param until
+     * @return
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if registrar doesn't exist
+     */
+    public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException, RecordNotFoundException;
+
+    public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+
     public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
     /**

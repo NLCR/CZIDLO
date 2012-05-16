@@ -167,7 +167,7 @@ public class DAOFactory {
         return catalogDao;
     }
 
-    public DigDocIdentifierDAO digRepIdDao() {
+    public DigDocIdentifierDAO digDocIdDao() {
         if (digRepId == null) {
             if (postgresImplemantation) {
                 digRepId = new DigDocIdentifierDaoPostgres(connector);

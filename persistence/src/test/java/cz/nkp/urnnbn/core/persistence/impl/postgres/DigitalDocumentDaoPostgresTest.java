@@ -179,7 +179,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         DigDocIdentifier identifier = builder.digDocIdentifierWithoutIds();
         identifier.setDigDocId(inserted.getId());
         identifier.setRegistrarId(registrar.getId());
-        digRepIdDao.insertDigDocId(identifier);
+        digDocIdDao.insertDigDocId(identifier);
         //fetch
         Long fetchedRepId = digDocDao.getDigDocDbIdByIdentifier(identifier);
         assertEquals(inserted.getId(), fetchedRepId);
@@ -266,7 +266,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         idList = digDocDao.getDigDocDbIdListByTimestamps(after, after);
         assertTrue(idList.isEmpty());
     }
-    
+
     /**
      * Test of updateDocument method, of class DigitalRepresentationDaoPostgres.
      */

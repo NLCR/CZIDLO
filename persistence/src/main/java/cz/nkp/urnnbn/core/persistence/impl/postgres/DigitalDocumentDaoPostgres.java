@@ -25,6 +25,8 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsAndLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
@@ -126,7 +128,39 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
             throw new DatabaseException(ex);
         }
     }
-    
+
+    //TODO: test
+    public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
+        try {
+            StatementWrapper st = new SelectAllAttrsbyTimestampsAndLongAttr(TABLE_NAME,
+                    ATTR_UPDATED, from, until,
+                    ATTR_REGISTRAR_ID, registrarId);
+            DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
+            return (List<DigitalDocument>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
+            DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
+            return (List<DigitalDocument>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
     public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
             StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
