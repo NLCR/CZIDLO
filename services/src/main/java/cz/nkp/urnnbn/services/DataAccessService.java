@@ -24,7 +24,9 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  * TODO: zbavit se DatabaseException (resp. přeložit na RuntimeException)
@@ -120,4 +122,8 @@ public interface DataAccessService extends BusinessService {
      */
     public List<Registrar> registrarsManagedByUser(long userId, String login)
             throws UnknownUserException, NotAdminException;
+
+    public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(DateTime from, DateTime until);
+
+    public Set<UrnNbn> urnNbnsOfChangedRecords(Registrar registrar, DateTime from, DateTime until);
 }
