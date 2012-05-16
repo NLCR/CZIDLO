@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigDocIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigDocIdentifierRT;
 import java.sql.Connection;
@@ -32,6 +33,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -79,10 +81,34 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public List<DigDocIdentifier> getIdList(long digRepId) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepId);
+    public List<DigDocIdentifier> getIdList(long digDocId) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocId);
         try {
-            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_REP_ID, digRepId);
+            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_REP_ID, digDocId);
+            DaoOperation operation = new MultipleResultsOperation(st, new DigDocIdentifierRT());
+            return (List<DigDocIdentifier>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public DigDocIdentifier getIdentifer(Long digDocId, DigDocIdType type) throws DatabaseException, RecordNotFoundException {
+        List<DigDocIdentifier> idList = getIdList(digDocId);
+        for (DigDocIdentifier id : idList) {
+            if (id.getType().equals(type)) {
+                return id;
+            }
+        }
+        throw new RecordNotFoundException(TABLE_NAME);
+    }
+
+    public List<DigDocIdentifier> getIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
             DaoOperation operation = new MultipleResultsOperation(st, new DigDocIdentifierRT());
             return (List<DigDocIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {

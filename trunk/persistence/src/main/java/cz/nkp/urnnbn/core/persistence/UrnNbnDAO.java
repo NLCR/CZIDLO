@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import java.util.List;
 import org.joda.time.DateTime;
 
 /**
@@ -44,6 +45,11 @@ public interface UrnNbnDAO {
     //tj. vytvorit pro tohle novou metodu tady
     public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException;
 
+    public List<UrnNbn> getUrnNbnsByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+
+    public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException;
+
+    
     //TODO: test
     //booked->active nebo active->abandoned
     //misto atributu urn tam je registrarCode a documentCode

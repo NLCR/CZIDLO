@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -40,6 +41,8 @@ public interface DigitalInstanceDAO {
     public DigitalInstance getDigInstanceById(long id) throws DatabaseException, RecordNotFoundException;
 
     public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digDocId) throws DatabaseException, RecordNotFoundException;
+
+    public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
     public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException;
 
