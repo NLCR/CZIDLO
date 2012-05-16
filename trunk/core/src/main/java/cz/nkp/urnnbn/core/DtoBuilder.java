@@ -27,6 +27,7 @@ public class DtoBuilder {
 
     private int urnPrefixCounter = 100;
     private int loginSuffix = 0;
+    private int registrarScopeIdCounter = 0;
 
     private int nextUrnPrefixSuffix() {
         return urnPrefixCounter++;
@@ -34,6 +35,10 @@ public class DtoBuilder {
 
     private int nextLoginSuffix() {
         return loginSuffix++;
+    }
+
+    private String nextRegistrarScopeId() {
+        return String.valueOf(registrarScopeIdCounter++);
     }
 
     private DateTime now() {
@@ -78,8 +83,8 @@ public class DtoBuilder {
 
     public DigDocIdentifier digDocIdentifierWithoutIds() {
         DigDocIdentifier id = new DigDocIdentifier();
-        id.setType(DigDocIdType.valueOf("K4_pid"));
-        id.setValue("uuid:123");
+        id.setType(DigDocIdType.valueOf("test"));
+        id.setValue(nextRegistrarScopeId());
         return id;
     }
 
