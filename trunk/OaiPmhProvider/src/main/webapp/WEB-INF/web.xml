@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : web.xml
+    Created on : 9. květen 2012, 19:33
+    Author     : martin
+    Description:
+        Purpose of the document follows.
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <servlet>
+        <servlet-name>Provider</servlet-name>
+        <servlet-class>cz.nkp.urnnbn.oaipmhprovider.Servlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>indexjsp</servlet-name>
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Provider</servlet-name>
+        <url-pattern>/provider</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Provider</servlet-name>
+        <url-pattern>/Provider</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>indexjsp</servlet-name>
+        <url-pattern>/web</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+<!--    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>-->
+</web-app>
