@@ -23,10 +23,10 @@ public class ResolverConnector {
     public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
     public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v2/";
-    public static final String RESOLVER_BASE_URL = "http://resolver.nkp.cz/";//api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
+    public static final String RESOLVER_BASE_URL = "http://resolver-test.nkp.cz/";//api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
     public static final String RESOLVER_API_URL = RESOLVER_BASE_URL + "api/v2/";
-    //public static final String OAI_ADAPTER_ID = "OAI_Adapter";
-    public static final String OAI_ADAPTER_ID = "K4_pid";
+    public static final String OAI_ADAPTER_ID = "OAI_Adapter";
+    //public static final String OAI_ADAPTER_ID = "K4_pid";
 
     //private static final String RESOLVER_DIGITAL_DOCUMENT_URL = RESOLVER_API_URL + 
     //private static final String http://resolver.nkp.cz/api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
@@ -39,7 +39,9 @@ public class ResolverConnector {
     }
 
     public static boolean isDocumentAlreadyImported(String registrar, String identifier) throws IOException, ParsingException {
-        Document document = XmlTools.getDocument(getDigitalDocumentUrl(registrar, identifier), true);
+        String url = getDigitalDocumentUrl(registrar, identifier);
+        System.out.println(url);
+        Document document = XmlTools.getDocument(url, true);
         Element rootElement = document.getRootElement();
         if ("digitalDocument".equals(rootElement.getLocalName())) {
             return true;
@@ -63,6 +65,17 @@ public class ResolverConnector {
             //TODO spatna struktura dokumentu
             throw new RuntimeException();
         }
+    }
+
+    public static String getAllocatedURNNBN(Document document) {
+        Element rootElement = document.getRootElement();
+        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
+        Nodes node = rootElement.query("//oai:value", context);
+        if (node.size() < 1) {
+            //TODO spatna struktura dokumentu
+            throw new RuntimeException();
+        }
+        return node.get(0).getValue();
     }
 
     public static void main(String[] args) {
