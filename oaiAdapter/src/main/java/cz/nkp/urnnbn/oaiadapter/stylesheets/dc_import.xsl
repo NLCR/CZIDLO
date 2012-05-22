@@ -21,8 +21,10 @@
                 <xsl:call-template name="titleInfo"/>
                 <xsl:call-template name="documentType"/>                
                 <xsl:call-template name="creator"/>   
-                <xsl:call-template name="publication"/>    
+                <xsl:call-template name="contributor"/>   
+                <xsl:call-template name="publication"/>                 
             </r:monograph>
+            <xsl:call-template name="digitalDocument"/>
         </r:import>
     </xsl:template>
     
@@ -61,13 +63,22 @@
         </xsl:if>
     </xsl:template>
     
+
+    <xsl:template name="contributor">                       
+        <xsl:if test="//dc:contributor">
+            <r:otherOriginator>
+                <xsl:value-of select="//dc:contributor"/>
+            </r:otherOriginator>
+        </xsl:if>
+    </xsl:template>    
+    
     
     
     <xsl:template name="publication">        
-        <r:titleInfo>
+        <r:publication>
             <xsl:call-template name="publisher"/>    
             <xsl:call-template name="year"/>                    
-        </r:titleInfo>  
+        </r:publication>  
     </xsl:template>        
 
     
@@ -81,11 +92,24 @@
     
     <xsl:template name="year">                       
         <xsl:if test="//dc:date">
-            <r:publisher>
+            <r:year>
                 <xsl:value-of select="//dc:date"/>
-            </r:publisher>
+            </r:year>
         </xsl:if>
     </xsl:template>    
     
+    
+    
+    
+    <xsl:template name="digitalDocument">           
+        <r:digitalDocument>
+            <r:registrarScopeIdentifiers>
+                <r:id type="K4_pid">
+                    <xsl:value-of select="//dc:identifier"/>
+                </r:id>
+            </r:registrarScopeIdentifiers>
+            <r:technicalMetadata/>
+        </r:digitalDocument>
+    </xsl:template>    
      
 </xsl:stylesheet>
