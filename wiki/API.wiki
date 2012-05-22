@@ -333,7 +333,7 @@ id/uuid:123
 = Vložení/aktualizace registrar-scope identifikátoru =
 == Request ==
 {{{
-PUT http://localhost:8080/api/v2/resolver/http://localhost:8080/api/v2/resolver/$URN_NBN/identifiers/TEST2/identifiers/TEST2
+PUT http://localhost:8080/api/v2/resolver/$URN_NBN/identifiers/TEST2
 }}}
 Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 1234
