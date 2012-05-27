@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,13 +33,12 @@ public class RepositoryImpl implements Repository {
 
     private Services backend;
 
-    public static Repository instanceOf(Properties properties) {
-        return new RepositoryImpl(properties);
+    public static Repository instanceOf() {
+        return new RepositoryImpl();
     }
 
-    private RepositoryImpl(Properties properties) {
-        //TODO: vytahnout login, heslo, db z properties
-        Services.init(true);
+    private RepositoryImpl() {
+        Services.init(false);
         backend = Services.instanceOf();
     }
 

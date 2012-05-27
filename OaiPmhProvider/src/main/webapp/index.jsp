@@ -54,9 +54,8 @@
     </head>
     <body>
         <%
-                    //PropertyLoader loader = Configuration.getPropertyLoader();
-                    //String providerUrl = loader.loadString("provider.baseUrl");
-        String providerUrl = "http://localhost:8080/OaiPmhProvider/Provider";
+            PropertyLoader loader = Configuration.getPropertyLoader();
+            String providerUrl = loader.loadString("provider.baseUrl");
         %>
 
         <h1 align="center">Welcome to implementation of OAI-PMH repository for URN:NBN Resolver system</h1>
@@ -115,7 +114,7 @@
                                 <option value="<%=format.toString()%>"><%=format.toString()%>
                                 </option>
                                 <%}
-                                        ;%>
+                                    ;%>
                             </select>
                         </td>
                         <td><input type="text" size="10" name="identifier"/></td>
@@ -134,7 +133,7 @@
                                 <option value="<%=format.toString()%>"><%=format.toString()%>
                                 </option>
                                 <%}
-                                        ;%>
+                                    ;%>
                             </select>
                         </td>
                         <td/>
@@ -162,7 +161,7 @@
                                 <option value="<%=format.toString()%>"><%=format.toString()%>
                                 </option>
                                 <%}
-                                        ;%>
+                                    ;%>
                             </select>
                         </td>
                         <td/>
@@ -182,39 +181,39 @@
                 </tr>
             </table>
         </div>
-        
+
         <script type="text/javascript" >
             function disableEmptyInputs(form){
-            for (i=0;i<form.elements.length;i++){
-            element = form.elements[i];
-            //            console.log("index: " + i);
-            //            console.log("type: " + element.type);
-            //            console.log("name: " + element.name);
-            //            console.log("value: " + element.value);
-            if(isEmpty(element.value)){
-            element.disabled = true;
-            }
-            }
-            return true;
-            //return false;
+                for (i=0;i<form.elements.length;i++){
+                    element = form.elements[i];
+                    //            console.log("index: " + i);
+                    //            console.log("type: " + element.type);
+                    //            console.log("name: " + element.name);
+                    //            console.log("value: " + element.value);
+                    if(isEmpty(element.value)){
+                        element.disabled = true;
+                    }
+                }
+                return true;
+                //return false;
             }
 
             function isEmpty(value){
-            return (value == "");
+                return (value == "");
             }
 
             function buildIdentifier(form){
-            prefix = form.elements["idPrefix"];
-            base = form.elements["base"];
-            sysno = form.elements["sysno"];
-            identifier = prefix.value + ":" + base.value + "-" + sysno.value ;
-            form.elements["identifier"].value = identifier;
-            prefix.disabled = true;
-            base.disabled = true;
-            sysno.disabled = true;
-            //console.log(identifier);
-            //return false;
-            return true;
+                prefix = form.elements["idPrefix"];
+                base = form.elements["base"];
+                sysno = form.elements["sysno"];
+                identifier = prefix.value + ":" + base.value + "-" + sysno.value ;
+                form.elements["identifier"].value = identifier;
+                prefix.disabled = true;
+                base.disabled = true;
+                sysno.disabled = true;
+                //console.log(identifier);
+                //return false;
+                return true;
             }    
         </script>
     </body>
