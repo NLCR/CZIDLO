@@ -6,8 +6,15 @@ package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
+import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -23,23 +30,31 @@ public class ResolverConnector {
     public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
     public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v2/";
-    public static final String RESOLVER_BASE_URL = "http://resolver-test.nkp.cz/";//api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
+    public static final String RESOLVER_BASE_URL = "resolver-test.nkp.cz/";//api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
     public static final String RESOLVER_API_URL = RESOLVER_BASE_URL + "api/v2/";
-    public static final String OAI_ADAPTER_ID = "OAI_Adapter";
+    //public static final String OAI_ADAPTER_ID = "OAI_Adapter";
     //public static final String OAI_ADAPTER_ID = "K4_pid";
 
     //private static final String RESOLVER_DIGITAL_DOCUMENT_URL = RESOLVER_API_URL + 
     //private static final String http://resolver.nkp.cz/api/v2/registrars/tst02/digitalDocuments/id/K4_pid/uuid:123?format=xml
-    public static String getDigitalDocumentUrl(String registrar, String identifier) {
-        String url = RESOLVER_API_URL + "registrars/" + registrar
-                + "/digitalDocuments/id/" + OAI_ADAPTER_ID + "/"
+    public static String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
+        String url = "http://" + RESOLVER_API_URL + "registrars/" + registrar
+                + "/digitalDocuments/id/" + registarScopeId + "/"
                 + identifier + "?format=xml";
 
         return url;
     }
+    //http://resolver-test.nkp.cz/registrars/tsh01/digitalDocuments/id/OAI_Adapter/?format=xml
+    
 
-    public static boolean isDocumentAlreadyImported(String registrar, String identifier) throws IOException, ParsingException {
-        String url = getDigitalDocumentUrl(registrar, identifier);
+    public static String getImportDocumetUrl(String registrarCode) {
+        String url = "https://" + RESOLVER_API_URL + "registrars/" + registrarCode
+                + "/digitalDocuments";
+        return url;
+    }
+
+    public static boolean isDocumentAlreadyImported(String registrar, String identifier, String registarScopeId) throws IOException, ParsingException {
+        String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
         System.out.println(url);
         Document document = XmlTools.getDocument(url, true);
         Element rootElement = document.getRootElement();
@@ -67,6 +82,64 @@ public class ResolverConnector {
         }
     }
 
+    public static String importDocument(Document document, String registarCode, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException, ResolverConnectionException {
+        String url = getImportDocumetUrl(registarCode);
+        HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
+        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+        wr.write(document.toXML());
+        wr.flush();        
+        wr.close();
+        int responseCode = connection.getResponseCode();
+        if(responseCode != 200) { //TODO pokud ok, pak vzdy 200??
+            throw new ResolverConnectionException("Importing record document: response code != 200");
+        }        
+        //System.out.println("import code" + connection.getResponseCode());
+
+        InputStream is = connection.getInputStream();
+        Builder builder = new Builder();
+        Document responseDocument = builder.build(is);
+        String urnnbn = ResolverConnector.getAllocatedURNNBN(responseDocument);        
+        return urnnbn;
+        // System.out.println(responseDocument.toXML());
+    }
+
+    
+    public static void importDigitalInstance(Document document, String urnnbn, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException {
+        String url = getImportDigitalInstanceUrl(urnnbn);
+        HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
+        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+        wr.write(document.toXML());
+        wr.flush();        
+        wr.close();
+        System.out.println("dig instance code" + connection.getResponseCode());
+    }
+    
+    public static String getImportDigitalInstanceUrl(String urnnbn) {
+        String url = "https://" + RESOLVER_API_URL + "resolver/" + urnnbn
+                + "/digitalInstances";
+        return url;
+    }
+    
+    
+    public static String getUpdateRegistrarScopeIdUrl(String urnnbn, String registrarScopeId) {
+        String url = "https://" + RESOLVER_API_URL + "resolver/" + urnnbn
+                + "/identifiers/" + registrarScopeId;
+        return url;
+    }
+    
+    
+    public static void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
+        String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
+        HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
+        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+        wr.write(documentId);
+        wr.flush();
+        wr.close();
+        System.out.println("Put: " + connection.getResponseCode());
+        System.out.println("Put: " + connection.getResponseCode());        
+    }
+    
+
     public static String getAllocatedURNNBN(Document document) {
         Element rootElement = document.getRootElement();
         XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
@@ -79,15 +152,15 @@ public class ResolverConnector {
     }
 
     public static void main(String[] args) {
-        String registrar = "tst02";
-        String identifier = "uuid:123";
-        try {
-            boolean result = ResolverConnector.isDocumentAlreadyImported(registrar, identifier);
-            System.out.println("result: " + result);
-        } catch (IOException ex) {
-            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        String registrar = "tst02";
+//        String identifier = "uuid:123";
+//        try {
+//            boolean result = ResolverConnector.isDocumentAlreadyImported(registrar, identifier);
+//            System.out.println("result: " + result);
+//        } catch (IOException ex) {
+//            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (ParsingException ex) {
+//            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 }

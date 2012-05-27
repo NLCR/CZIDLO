@@ -57,6 +57,11 @@ public class XmlTools {
     public static Document getDocument(URL url) throws IOException, ParsingException {
         return getDocument(url, false);
     }
+    
+    public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException {
+        Builder builder = new Builder();
+        return builder.build(template, null);
+    }
 
     public static Document getDocument(URL url, boolean status404Allowed) throws IOException, ParsingException {
         System.out.println(url.toString());
@@ -92,7 +97,7 @@ public class XmlTools {
         return result;
     }
 
-    private javax.net.ssl.HttpsURLConnection getAuthConnection(String login, String password, String urlString, String method, boolean doOutput) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
+    public static HttpsURLConnection getAuthConnection(String login, String password, String urlString, String method, boolean doOutput) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
 
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
@@ -121,7 +126,7 @@ public class XmlTools {
         //String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
         URL url = new URL(urlString);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setDoOutput(true);
+        connection.setDoOutput(doOutput);
         connection.setRequestMethod(method);
         connection.setDoInput(true);
 
