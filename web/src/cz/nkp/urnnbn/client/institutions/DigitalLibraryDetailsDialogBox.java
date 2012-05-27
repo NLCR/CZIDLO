@@ -34,8 +34,10 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 		grid.setWidget(index++, 1, new Label(library.getName()));
 		grid.setWidget(index, 0, new Label(constants.id() + ':'));
 		grid.setWidget(index++, 1, new Label(library.getId().toString()));
-		grid.setWidget(index, 0, new Label(constants.description() + ':'));
-		grid.setWidget(index++, 1, new Label(library.getDescription()));
+		if (library.getDescription() != null) {
+			grid.setWidget(index, 0, new Label(constants.description() + ':'));
+			grid.setWidget(index++, 1, new Label(library.getDescription()));
+		}
 		if (library.getUrl() != null) {
 			grid.setWidget(index, 0, new Label(constants.url() + ':'));
 			grid.setWidget(index++, 1, new HTML(buildUrlOrNull(library.getUrl())));
@@ -65,8 +67,11 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 	}
 
 	private int determineRows() {
-		int result = 4;
+		int result = 3;
 		if (library.getUrl() != null) {
+			result++;
+		}
+		if (library.getDescription() != null){
 			result++;
 		}
 		if (library.getCreated() != null) {

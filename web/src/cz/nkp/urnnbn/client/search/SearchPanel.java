@@ -152,7 +152,7 @@ public class SearchPanel extends DockLayoutPanel {
 	}
 
 	public boolean userManagesRegistrar(RegistrarDTO registrar) {
-		return superPanel.userManagesRegistrar(registrar);
+		return getActiveUser().isLoggedUser() && superPanel.getRegistrarsManagedByUser().contains(registrar);
 	}
 
 	public UserDTO getActiveUser() {

@@ -110,6 +110,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			});
 
 			addLabeledItemAndButtonIfValueNotNull(rootItem, constants.archiver(), dto.getArchiver().getName(), button);
+		} else {
+			addLabeledItemIfValueNotNull(rootItem, constants.archiver(), dto.getRegistrar().getName());
 		}
 	}
 

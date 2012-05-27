@@ -8,12 +8,11 @@ import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
 public class DtosToDigitalDocumentTransformer {
 
 	private final DigitalDocumentDTO docDto;
-	private final TechnicalMetadataDTO t;
+	private final TechnicalMetadataDTO technicalMetadataDto;
 
 	public DtosToDigitalDocumentTransformer(DigitalDocumentDTO docDto, TechnicalMetadataDTO technicalDto) {
-		super();
 		this.docDto = docDto;
-		this.t = technicalDto;
+		this.technicalMetadataDto = technicalDto;
 	}
 
 	public DigitalDocument transform() {
@@ -28,19 +27,19 @@ public class DtosToDigitalDocumentTransformer {
 			result.setFinancedFrom(docDto.getFinanced());
 			result.setContractNumber(docDto.getContractNumber());
 		}
-		if (t != null) {
-			result.setFormat(t.getFormat());
-			result.setFormatVersion(t.getFormatVersion());
-			result.setExtent(t.getExtent());
-			result.setResolutionHorizontal(t.getResolutionHorizontal());
-			result.setResolutionVertical(t.getResolutionVertical());
-			result.setCompression(t.getCompression());
-			result.setCompressionRatio(t.getCompressionRatio());
-			result.setColorModel(t.getColorModel());
-			result.setColorDepth(t.getColorDepth());
-			result.setIccProfile(t.getIccProfile());
-			result.setPictureHeight(t.getPicturHeight());
-			result.setPictureWidth(t.getPictureWidth());
+		if (technicalMetadataDto != null) {
+			result.setFormat(technicalMetadataDto.getFormat());
+			result.setFormatVersion(technicalMetadataDto.getFormatVersion());
+			result.setExtent(technicalMetadataDto.getExtent());
+			result.setResolutionHorizontal(technicalMetadataDto.getResolutionHorizontal());
+			result.setResolutionVertical(technicalMetadataDto.getResolutionVertical());
+			result.setCompression(technicalMetadataDto.getCompression());
+			result.setCompressionRatio(technicalMetadataDto.getCompressionRatio());
+			result.setColorModel(technicalMetadataDto.getColorModel());
+			result.setColorDepth(technicalMetadataDto.getColorDepth());
+			result.setIccProfile(technicalMetadataDto.getIccProfile());
+			result.setPictureHeight(technicalMetadataDto.getPicturHeight());
+			result.setPictureWidth(technicalMetadataDto.getPictureWidth());
 		}
 		return result;
 	}

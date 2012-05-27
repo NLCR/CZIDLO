@@ -196,7 +196,7 @@ public interface ConstantsImpl extends Constants {
 
 	String moveOn();
 
-	String selectEntityType();
+	String intEntityType();
 
 	String yes();
 
@@ -209,12 +209,24 @@ public interface ConstantsImpl extends Constants {
 	String user();
 
 	String login();
-	
+
 	String password();
 
 	String email();
 
 	String administrator();
-	
+
 	String userAccountList();
+
+	String urnNbnWillBeInserted();
+
+	String back();
+
+	String assignedOrConfirmed();
+
+	String digitalInstance();
+
+	String digitalInstances();
+
+	String insertNewRecord();
 }

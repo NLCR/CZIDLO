@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.accounts.UsersAdministrationPanel;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.insertRecord.DataInputPanel;
 import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationPanel;
 import cz.nkp.urnnbn.client.search.SearchPanel;
 import cz.nkp.urnnbn.client.services.UserAccountService;
@@ -29,16 +30,17 @@ public class TabsPanel extends Composite {
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
 	private TabLayoutPanel tabLayoutPanel;
-	private ArrayList<RegistrarDTO> registrarsManagedByUser = new ArrayList<RegistrarDTO>(0);
+	// private ArrayList<RegistrarDTO> registrarsManagedByUser = new
+	// ArrayList<RegistrarDTO>(0);
+	private ArrayList<RegistrarDTO> registrarsManagedByUser = null;
 	private final UserDTO activeUser;
 
 	public TabsPanel(UserDTO activeUser) {
 		this.activeUser = activeUser;
 		loadRegistrarsManagedByUser();
 		initTabs();
+		// activatePanel(3);
 		activatePanel(1);
-		// activatePanel(1);
-		// activatePanel(2);
 	}
 
 	private void loadRegistrarsManagedByUser() {
@@ -63,13 +65,10 @@ public class TabsPanel extends Composite {
 		tabLayoutPanel = new TabLayoutPanel(1.5, Unit.EM);
 		tabLayoutPanel.setAnimationDuration(500);
 		tabLayoutPanel.setAnimationVertical(false);
-
 		// test panel - comment before building
 		// tabLayoutPanel.add(new TestPanel(), "test", false);
-
 		// info panel
 		tabLayoutPanel.add(new InfoPanel(this), constants.tabInfoLabel(), false);
-
 		// search panel
 		String query = com.google.gwt.user.client.Window.Location.getParameter("q");
 		if (query == null || query.isEmpty()) {
@@ -78,23 +77,19 @@ public class TabsPanel extends Composite {
 			tabLayoutPanel.add(new SearchPanel(this, query), constants.tabSearchLabel(), false);
 			activatePanel(1);
 		}
-
 		// institutions panel
 		tabLayoutPanel.add(new InstitutionsAdminstrationPanel(this), constants.tabInstitutionsLabel(), false);
-
-		// TODO: dodelat import zaznamu
-		// if (user.isLoggedUser()) {
-		// tabLayoutPanel.add(new DataInputPanel(),
-		// constants.tabDataInputLabel(), false);
-		// }
-
+		// insert record panel
+		if (activeUser.isLoggedUser()) {
+			tabLayoutPanel.add(new DataInputPanel(this), constants.tabDataInputLabel(), false);
+		}
+		// user accounts panel
 		if (activeUser.isSuperAdmin()) {
 			tabLayoutPanel.add(new UsersAdministrationPanel(this), constants.tabAccountManagementLabel(), false);
 		}
-
-		// TODO: napoveda
-		VerticalPanel help = new VerticalPanel();
-		tabLayoutPanel.add(help, constants.tabHelpLabel(), false);
+		// TODO: help panel
+		// VerticalPanel help = new VerticalPanel();
+		// tabLayoutPanel.add(help, constants.tabHelpLabel(), false);
 		initHistory(tabLayoutPanel);
 		initWidget(tabLayoutPanel);
 	}
@@ -131,8 +126,8 @@ public class TabsPanel extends Composite {
 		// tabLayoutPanel.animate(100);
 	}
 
-	public boolean userManagesRegistrar(RegistrarDTO registrar) {
-		return registrarsManagedByUser.contains(registrar);
+	public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() {
+		return registrarsManagedByUser;
 	}
 
 	public UserDTO getActiveUser() {

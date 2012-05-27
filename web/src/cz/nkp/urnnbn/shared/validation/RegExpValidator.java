@@ -7,7 +7,15 @@ public abstract class RegExpValidator extends Validator {
 	RegExp compiled;
 
 	public RegExpValidator(String regExp) {
-		compiled = RegExp.compile(regExp);
+		this(regExp, false);
+	}
+
+	public RegExpValidator(String regExp, boolean caseSensitive) {
+		if (caseSensitive) {
+			compiled = RegExp.compile(regExp);
+		} else {
+			compiled = RegExp.compile(regExp, "i");
+		}
 	}
 
 	@Override

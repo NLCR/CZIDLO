@@ -48,12 +48,13 @@ public abstract class Form extends VerticalPanel {
 	}
 
 	public boolean isFilledCorrectly() {
+		boolean result = true;
 		for (int i = 0; i < fields.size(); i++) {
 			if (!fields.getFieldByPosition(i).validValueInserted()) {
-				return false;
+				result = false;
 			}
 		}
-		return true;
+		return result;
 	}
 
 	public abstract Object getDto();

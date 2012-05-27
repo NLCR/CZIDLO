@@ -29,6 +29,8 @@ public interface MessagesImpl extends Messages {
 
 	public String validationInvalidPassword(int minLength, int maxLength);
 
+	public String validationInvalidUrnNbnPartC();
+
 	public String confirmDeleteDigitalLibrary(String libraryName);
 
 	public String confirmDeleteCatalog(String catalogName);
@@ -36,9 +38,9 @@ public interface MessagesImpl extends Messages {
 	public String confirmDeleteArchiver(String archiverName);
 
 	public String confirmDeleteRegistrar(String registrarName);
-	
+
 	public String confirmDeleteAccessRight(String userLogin, String registrarName);
-	
+
 	public String confirmDeleteUser(String userName);
 
 	public String registrarCannotBeDeleted(String registrarName);
@@ -46,6 +48,8 @@ public interface MessagesImpl extends Messages {
 	public String archiverCannotBeDeleted(String archiverName);
 
 	public String digitalLibraryCannotBeDeleted(String libraryName);
-	
+
 	public String registrarsAccessRigths(String userName);
+
+	public String serverError(String errorMessage);
 }

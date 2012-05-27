@@ -16,19 +16,31 @@ public class TextInputValueField extends Field {
 	private final boolean mandatory;
 
 	public TextInputValueField(Validator validator, String labelText, boolean mandatory) {
-		this(validator, labelText, null, mandatory);
+		this(validator, labelText, mandatory, true);
+	}
+
+	public TextInputValueField(Validator validator, String labelText, boolean mandatory, boolean withLabelInputboxSeparator) {
+		this(validator, labelText, null, mandatory, withLabelInputboxSeparator);
 	}
 
 	public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory) {
+		this(validator, labelText, value, mandatory, true);
+	}
+
+	public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory, boolean withLabelInputboxSeparator) {
 		this.validator = validator;
 		this.mandatory = mandatory;
-		label.setText(labelText + ": ");
+		if (withLabelInputboxSeparator) {
+			label.setText(labelText + ": ");
+		} else {
+			label.setText(labelText);
+		}
 		label.setStyleName(css.formLabel());
 		// todo: sirku textBoxu nastavovat parametrem konstruktoru
 		if (value != null) {
 			textBox.setValue(value.toString());
 		}
-		textBox.setWidth("200px");
+//		textBox.setWidth("200px");
 		textBox.addKeyUpHandler(textChangeHandler());
 	}
 

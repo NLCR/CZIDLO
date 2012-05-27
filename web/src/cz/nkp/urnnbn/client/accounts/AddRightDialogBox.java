@@ -60,7 +60,7 @@ public class AddRightDialogBox extends AbstractDialogBox {
 	}
 
 	private Label heading() {
-		//TODO: style
+		// TODO: style
 		return new Label(constants.selectRegistrarCode());
 	}
 
@@ -86,13 +86,13 @@ public class AddRightDialogBox extends AbstractDialogBox {
 			@Override
 			public void onClick(ClickEvent event) {
 				accountsService.insertRegistrarRight(user.getId(), selectedRegistrar.getId(), new AsyncCallback<Void>() {
-					
+
 					@Override
 					public void onSuccess(Void result) {
 						superDialogBox.addRight(selectedRegistrar);
-						AddRightDialogBox.this.hide();		
+						AddRightDialogBox.this.hide();
 					}
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
 						errorLabel.setText(constants.serverError() + ": " + caught.getMessage());

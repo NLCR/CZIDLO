@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class ArchiverListField extends Field {
 
-	private Label label = new Label(constants.archiver() + ": ");
+	private final Label label = label();
 	private final RegistrarDTO registrar;
 	private final ArrayList<ArchiverDTO> archivers;
 	ListBox archiversListBox = new ListBox();
@@ -20,14 +20,19 @@ public class ArchiverListField extends Field {
 		this(registrar, archivers, null);
 	}
 
+	private Label label() {
+		Label result = new Label(constants.archiver() + ": ");
+		result.setStyleName(css.formLabel());
+		return result;
+	}
+
 	public ArchiverListField(RegistrarDTO registrar, ArrayList<ArchiverDTO> archivers, ArchiverDTO selectedArchiver) {
 		this.registrar = registrar;
 		this.archivers = archivers;
-		label.setStyleName(css.formLabel());
 		initListBox(selectedArchiver);
 	}
-	
-	private void initListBox(ArchiverDTO selectedArchiver){
+
+	private void initListBox(ArchiverDTO selectedArchiver) {
 		archiversListBox.addItem(registrar.getName());
 		int selected = 0;
 		for (int i = 0; i < archivers.size(); i++) {

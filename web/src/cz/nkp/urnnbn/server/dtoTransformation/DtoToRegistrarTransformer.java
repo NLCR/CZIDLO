@@ -9,7 +9,6 @@ public class DtoToRegistrarTransformer {
 	private final RegistrarDTO registrar;
 
 	public DtoToRegistrarTransformer(RegistrarDTO archiver) {
-		super();
 		this.registrar = archiver;
 	}
 

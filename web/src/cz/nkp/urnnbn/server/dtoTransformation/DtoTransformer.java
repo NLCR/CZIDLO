@@ -26,6 +26,7 @@ import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
+import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public abstract class DtoTransformer {
@@ -71,5 +72,9 @@ public abstract class DtoTransformer {
 
 	public static CatalogDTO transformCatalog(Catalog catalog) {
 		return new CatalogDtoTransformer(catalog).transform();
+	}
+
+	public static UrnNbnDTO transformUrnNbn(UrnNbn urnNbn) {
+		return new UrnNbnToDtoTransformer(urnNbn).transform();
 	}
 }

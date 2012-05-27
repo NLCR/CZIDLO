@@ -1,16 +1,22 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class DataInputPanel extends ScrollPanel {
+import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
+import cz.nkp.urnnbn.client.tabs.TabsPanel;
+
+public class DataInputPanel extends SingleTabContentPanel {
 
 	Panel actualPanel;
+
+	public DataInputPanel(TabsPanel superPanel) {
+		super(superPanel);
+	}
 
 	@Override
 	public void onLoad() {
 		super.onLoad();
-		actualPanel = new SelectEntityTypePanel(this);
+		actualPanel = new SelectEntityParametersPanel(this);
 		reload();
 	}
 

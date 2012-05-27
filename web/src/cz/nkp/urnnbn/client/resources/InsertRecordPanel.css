@@ -1,5 +1,16 @@
 @CHARSET "UTF-8";
+
 .heading {
 	font-weight: bold;
 	font-size: 25px;
+}
+
+.errorLabel {
+	color: red;
+	font-weight: bold;
+}
+
+.urnNbnAssigned {
+	font-size: 15px;
+	font-weight: bold;
 }

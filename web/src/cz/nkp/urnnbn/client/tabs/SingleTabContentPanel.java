@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client.tabs;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
@@ -14,11 +16,15 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
 		this.superPanel = superPanel;
 	}
 
-	public boolean userManagesRegistrar(RegistrarDTO registrar){
-		return superPanel.userManagesRegistrar(registrar);
+	public boolean userManagesRegistrar(RegistrarDTO registrar) {
+		return getActiveUser().isLoggedUser() && superPanel.getRegistrarsManagedByUser().contains(registrar);
 	}
-	
-	public UserDTO getActiveUser(){
+
+	public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() {
+		return superPanel.getRegistrarsManagedByUser();
+	}
+
+	public UserDTO getActiveUser() {
 		return superPanel.getActiveUser();
 	}
 }

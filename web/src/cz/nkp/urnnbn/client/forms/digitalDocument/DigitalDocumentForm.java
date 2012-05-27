@@ -37,7 +37,6 @@ public class DigitalDocumentForm extends Form {
 		result.addField("archiver", new ArchiverListField(registrar, archivers, selectedArchiver));
 		result.addField("financed",
 				new TextInputValueField(new LimitedLengthValidator(100), constants.financed(), originalDto.getFinanced(), false));
-		// TODO: co s urn:nbn? - vlastni formular
 		// TODO: registrar scope identifiers
 		result.addField(
 				"contractNumber",
@@ -56,5 +55,4 @@ public class DigitalDocumentForm extends Form {
 		result.setArchiver((ArchiverDTO) fields.getFieldByKey("archiver").getInsertedValue());
 		return result;
 	}
-
 }
