@@ -20,10 +20,6 @@
         <url-pattern>/provider</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Provider</servlet-name>
-        <url-pattern>/Provider</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>indexjsp</servlet-name>
         <url-pattern>/web</url-pattern>
     </servlet-mapping>
@@ -33,7 +29,4 @@
             30
         </session-timeout>
     </session-config>
-<!--    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>-->
 </web-app>

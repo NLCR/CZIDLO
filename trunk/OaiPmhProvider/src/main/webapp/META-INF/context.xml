@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="OaiPmhProvider"/>
+<Context antiJARLocking="true" path="/OaiPmhProvider">
+    <Resource auth="Container" 
+            maxActive="100" maxIdle="30" maxWait="200" 
+            name="jdbc/postgres" 
+            type="javax.sql.DataSource" 
+            driverClassName="org.postgresql.Driver" 
+            url="jdbc:postgresql://localhost:5432/resolver" 
+            username="testuser"
+            password="testpass" 
+            />
+</Context>

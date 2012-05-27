@@ -16,8 +16,6 @@ import java.io.InputStream;
  */
 public class Configuration {
 
-    //private static String PROPERTIES_FILE = "provider-work.properties";
-    //private static String PROPERTIES_FILE = "provider-laptop.properties";
     private static final String PROPERTIES_FILE = "provider.properties";
     public static final String PROP_REPOSITORY_NAME = "provider.repositoryName";
     public static final String PROP_BASE_URL = "provider.baseUrl";
@@ -39,31 +37,21 @@ public class Configuration {
     private final int listRequestsMinutesValid;
 
     private Configuration() throws IOException {
-        //PropertyLoader loader = Configuration.getPropertyLoader();
-        //repository = RepositoryImpl.instanceOf(loader.getProperties());
-        repository = RepositoryImpl.instanceOf(null);
-//        repositoryName = loader.loadString(PROP_REPOSITORY_NAME);
-//        baseUrl = loader.loadString(PROP_BASE_URL);
-//        webUrl = loader.loadString(PROP_WEB_URL);
-//        earliestDatestamp = loader.loadString(PROP_EARLIEST_DATESTAMP);
-//        adminEmail = loader.loadString(PROP_ADMIN_EMAIL);
-//        listIdentifiersMaxSize = loader.loadInt(PROP_LIST_IDENTIFIERS_MAX_SIZE);
-//        listRecordsMaxSize = loader.loadInt(PROP_LIST_RECORDS_MAX_SIZE);
-//        listRequestsMinutesValid = loader.loadInt(PROP_LIST_REQUESTS_MINUTES_VALID);
-        
-        repositoryName = "rep";
-        baseUrl = "http://baseUrl.cz";
-        webUrl = "http://webUrl.cz";
-        earliestDatestamp = "2010-10-06T00:00:00Z";
-        adminEmail = "rehan@mzk.cz";
-        listIdentifiersMaxSize = 10;
-        listRecordsMaxSize = 5;
-        listRequestsMinutesValid = 5;
-
+        PropertyLoader loader = Configuration.getPropertyLoader();
+        repository = RepositoryImpl.instanceOf();
+        repositoryName = loader.loadString(PROP_REPOSITORY_NAME);
+        baseUrl = loader.loadString(PROP_BASE_URL);
+        webUrl = loader.loadString(PROP_WEB_URL);
+        earliestDatestamp = loader.loadString(PROP_EARLIEST_DATESTAMP);
+        adminEmail = loader.loadString(PROP_ADMIN_EMAIL);
+        listIdentifiersMaxSize = loader.loadInt(PROP_LIST_IDENTIFIERS_MAX_SIZE);
+        listRecordsMaxSize = loader.loadInt(PROP_LIST_RECORDS_MAX_SIZE);
+        listRequestsMinutesValid = loader.loadInt(PROP_LIST_REQUESTS_MINUTES_VALID);
     }
 
     public static PropertyLoader getPropertyLoader() throws IOException {
-        InputStream inputStream = Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+        //InputStream inputStream = Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE);
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(PROPERTIES_FILE);
         return new PropertyLoader(inputStream);
     }
 
