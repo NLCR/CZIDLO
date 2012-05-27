@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -150,12 +151,19 @@ public class XmlTools {
 
     public static void main(String[] args) {
         
-        String url = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000d/identifiers/OAI_Adapter";
-        String login =  Credentials.LOGIN;
+        String url = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/identifiers/OAI_Adapter";
+        String id = "uuid:039764f8-d6db-11e0-b2cd-0050569d679d";
         
+        String login =  Credentials.LOGIN;        
         String pass = Credentials.PASSWORD;
         try {
-            HttpsURLConnection connection = new XmlTools().getAuthConnection(login, pass, url, "PUT", false);
+            HttpsURLConnection connection = new XmlTools().getAuthConnection(login, pass, url, "PUT", true);
+            
+                                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+                    wr.write(id);
+                    wr.flush();
+                    wr.close();
+
             System.out.println(connection.getResponseCode());
             InputStream is = connection.getInputStream();
             Builder builder = new Builder();

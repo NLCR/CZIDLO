@@ -15,15 +15,13 @@
             
             
             
-    <xsl:template match="/">
-        <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
-            <r:monograph> 
-                <xsl:call-template name="url"/>
-                <xsl:call-template name="digitalLibraryId"/>                
-                <xsl:call-template name="format"/>   
-                <xsl:call-template name="accessibility"/>    
-            </r:monograph>
-        </r:import>
+    <xsl:template match="/">                
+        <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">        
+            <xsl:call-template name="url"/>
+            <xsl:call-template name="digitalLibraryId"/>                
+            <xsl:call-template name="format"/>   
+            <xsl:call-template name="accessibility"/>    
+        </r:digitalInstance>        
     </xsl:template>
         
     
