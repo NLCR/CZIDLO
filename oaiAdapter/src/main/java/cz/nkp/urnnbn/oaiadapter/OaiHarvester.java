@@ -170,7 +170,7 @@ public class OaiHarvester {
             Document stylesheetDI = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_digital_instance.xsl");
             List<String> list = oai.getListIdentifiers(15);            
             int i = 0;
-            String id = list.get(13);
+            String id = list.get(14);
 //            for (String id : list) {
 //                if (i++ <6) {
 //                    continue;
@@ -179,6 +179,7 @@ public class OaiHarvester {
                 Document doc = oai.getRecordDocument(id);
                 try {
                     Document output = XmlTools.getTransformedDocument(doc, stylesheet);
+                    Document outputDI = XmlTools.getTransformedDocument(doc, stylesheetDI);
                     try {
                         XmlTools.validateImport(output);
                     } catch (SAXException ex) {
@@ -233,9 +234,14 @@ public class OaiHarvester {
                     HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
 
-                    String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
-                    String xml = output.toXML();
+                    //String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
+                    String urlString = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/digitalInstances";
+                    //String xml = output.toXML();
+                    String xml = outputDI.toXML();
+                    
+                    System.out.println("----------------------------");                    
                     System.out.println(xml);
+                    System.out.println("----------------------------");
                     
                     URL url = new URL(urlString);
                     HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -290,8 +296,8 @@ public class OaiHarvester {
 //                    wr.close();
                       InputStream is = connection.getInputStream();
                       Document responseDocument = builder.build(is);
-                      String s = ResolverConnector.getAllocatedURNNBN(responseDocument);
-                      System.out.println("allocated urnnbn = " + s);
+                     // String s = ResolverConnector.getAllocatedURNNBN(responseDocument);
+                     // System.out.println("allocated urnnbn = " + s);
                       System.out.println(responseDocument.toXML());
 //
 
