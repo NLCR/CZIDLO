@@ -14,6 +14,11 @@
         a <a href="http://code.google.com/p/urnnbn-resolver-v2/wiki/API">zde</a>
         Pro ruční vyhledávání, vkladání či editaci záznamů a další administraci použijte <a href ="/web">webové rozhraní</a>.
         <br>
+        Pro hromadné sklízení záznamů použijte <a href ="/OaiPmhProvider/provider">rozhraní OAI-PMH</a>,
+        které je dostupné také <a href ="/OaiPmhProvider/web">webové rozhraní</a>.
+        <br>
+        Některé jednoduché operace dostupné přímo přes toto API:
+        <br>
         <a href ="/api/v2/registrars">Seznam registrátorů</a>
         <br>
         <a href ="/api/v2/digitalInstances">Digitální instance</a>
