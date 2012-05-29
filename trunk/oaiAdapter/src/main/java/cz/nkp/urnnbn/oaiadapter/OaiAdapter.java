@@ -11,10 +11,11 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nu.xom.Builder;
+import javax.xml.parsers.ParserConfigurationException;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -128,13 +129,16 @@ public class OaiAdapter {
         }
     }
 
-    private void importDocument(String identifier, Document document, Document importTemplate, Document digitalInstanceTemplate)
+    private boolean importDocument(String identifier, Document document, Document importTemplate, Document digitalInstanceTemplate)
             throws ResolverConnectionException, DocumentOperationException {
+        System.out.println("------------------------------------------------------");
+        System.out.println("Importing document - identifier: " + identifier);
         try {
             if (ResolverConnector.isDocumentAlreadyImported(getRegistrarCode(), identifier, OaiAdapter.REGISTAR_SCOPE_ID)) {
-                System.out.println("already imported: " + identifier);
-                return;
+                System.out.println("- already imported - skip.");
+                return false;
             }
+            System.out.println("- not imported yet - continue.");
         } catch (IOException ex) {
             throw new ResolverConnectionException("IOException occurred when testing if document is already imported. "
                     + "identifier: " + identifier
@@ -148,22 +152,61 @@ public class OaiAdapter {
         Document digitalInstanceDocument = null;
         try {
             importDocument = XmlTools.getTransformedDocument(document, importTemplate);
+            System.out.println("- import tranformation successful - continue.");
         } catch (XSLException ex) {
             throw new DocumentOperationException("XSLException occurred when transforming import document. "
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-        //XmlTools.validateImport(output);
+//        try {
+//            XmlTools.saveDocumentToFile(importDocument, "/home/hanis/tmp/outdd.xml");
+//        } catch (IOException ex) {
+//            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
         try {
-            digitalInstanceDocument = XmlTools.getTransformedDocument(document, digitalInstanceTemplate);            
+            XmlTools.validateImport(importDocument);
+        } catch (SAXException ex) {
+            throw new DocumentOperationException("- import invalid - skip \nMessage: " + ex.getMessage());
+        } catch (ParserConfigurationException ex) {
+            throw new DocumentOperationException("- import invalid - skip \nMessage: " + ex.getMessage());
+        } catch (ParsingException ex) {
+            throw new DocumentOperationException("- import invalid - skip \nMessage: " + ex.getMessage());
+        } catch (IOException ex) {
+            throw new DocumentOperationException("- import invalid - skip \nMessage: " + ex.getMessage());
+        }        
+
+        try {
+            digitalInstanceDocument = XmlTools.getTransformedDocument(document, digitalInstanceTemplate);
+            //System.out.println(digitalInstanceDocument.toXML());
+            System.out.println("- digital instance transformation successful - continue.");
         } catch (XSLException ex) {
             throw new DocumentOperationException("XSLException occurred when transforming digital instance document. "
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
+
+
+
+        try {
+            XmlTools.validateDigitalIntance(digitalInstanceDocument);
+            System.out.println("- import validation successful - continue.");
+            System.out.println("- digital instance validation successful - continue.");
+        } catch (SAXException ex) {
+            throw new DocumentOperationException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
+        } catch (ParserConfigurationException ex) {
+            throw new DocumentOperationException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
+        } catch (ParsingException ex) {
+            throw new DocumentOperationException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
+        } catch (IOException ex) {
+            throw new DocumentOperationException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
+        }
+
         String urnnbn = null;
         try {
-            urnnbn = ResolverConnector.importDocument(importDocument, registrarCode, login, password);                                                
+            urnnbn = ResolverConnector.importDocument(importDocument, registrarCode, login, password);
+            System.out.println("- import successfully added to resolver - continue.");
+            System.out.println("- URNNBN: " + urnnbn);
         } catch (IOException ex) {
             throw new ResolverConnectionException("IOException occurred when importing document. "
                     + "identifier: " + identifier
@@ -183,6 +226,7 @@ public class OaiAdapter {
         }
         try {
             ResolverConnector.putRegistrarScopeIdentifier(urnnbn, identifier, OaiAdapter.REGISTAR_SCOPE_ID, login, password);
+            System.out.println("- registrar scope id successfully added - continue.");
         } catch (NoSuchAlgorithmException ex) {
             throw new ResolverConnectionException("NoSuchAlgorithmException occurred when putting reg scope for urnnbn. "
                     + "identifier: " + identifier
@@ -204,6 +248,7 @@ public class OaiAdapter {
         }
         try {
             ResolverConnector.importDigitalInstance(digitalInstanceDocument, urnnbn, login, password);
+            System.out.println("- digital instance successfully added to resolver - continue.");
         } catch (IOException ex) {
             throw new ResolverConnectionException("IOException occurred when importing digital instance. "
                     + "identifier: " + identifier
@@ -221,8 +266,7 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-
-
+        return true;
     }
 
     public void run() throws TemplateException {
@@ -232,22 +276,38 @@ public class OaiAdapter {
 
         OaiHarvester harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
         int counter = 0;
+        int success = 0;
+        int all = 0;
+        int alreadyImported = 0;
         while (harvester.hasNext()) {
-            if(limit > 0 && counter++ >= limit) {
+            if (limit > 0 && counter++ >= limit) {
                 break;
             }
+            all++;
             Document recordDocument = harvester.getNext();
             String identifier = harvester.getLastIdentifier();
             try {
-                importDocument(identifier, recordDocument, importTemplate, digitalInstanceTemplate);
+                boolean result = importDocument(identifier, recordDocument, importTemplate, digitalInstanceTemplate);
+                if (result) {
+                    success++;
+                } else {
+                    alreadyImported++;
+                }
+                System.out.println("STATUS: OK");
             } catch (ResolverConnectionException ex) {
-                //TODO
-                Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);                
+                Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("STATUS: NOT OK");
             } catch (DocumentOperationException ex) {
                 //TODO
-                Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
+                System.out.println("STATUS: NOT OK");
             }
         }
+        System.out.println("ALL RECORDS: " + all);
+        System.out.println("SUCCESSFUL RECORDS (NEW): " + success);
+        System.out.println("SUCCESSFUL RECORDS:(ALREADY IMPORTED) " + alreadyImported);
+        System.out.println("NOT SUCCESSFUL " + (all - (success + alreadyImported)));
 
     }
 

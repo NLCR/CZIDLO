@@ -5,6 +5,8 @@
 package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.Credentials;
+import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
+import cz.nkp.urnnbn.oaiadapter.ResolverConnector;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,7 +66,7 @@ public class XmlTools {
     }
 
     public static Document getDocument(URL url, boolean status404Allowed) throws IOException, ParsingException {
-        System.out.println(url.toString());
+        //System.out.println(url.toString());
         Builder builder = new Builder();
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         InputStream is = null;
@@ -93,11 +95,13 @@ public class XmlTools {
         XSLTransform transform = new XSLTransform(stylesheet);
         Nodes output = transform.transform(input);
         Document result = XSLTransform.toDocument(output);
-        System.out.println(result.toXML());
+        //System.out.println(result.toXML());
         return result;
     }
 
-    public static HttpsURLConnection getAuthConnection(String login, String password, String urlString, String method, boolean doOutput) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
+    public static HttpsURLConnection getAuthConnection(String login, String password, 
+            String urlString, String method, boolean doOutput) 
+            throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
 
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
@@ -137,15 +141,21 @@ public class XmlTools {
         return connection;
     }
 
-    public static void validateImport(Document document) throws SAXException, ParserConfigurationException, ParsingException, ValidityException, IOException {
+    public static void validateImport(Document document) throws SAXException, ParserConfigurationException, ParsingException, IOException {
+        XmlTools.validateDocument(document, ResolverConnector.IMPORT_TEMPLATE_URL);       
+    }
+
+    public static void validateDigitalIntance(Document document) throws SAXException, ParserConfigurationException, ParsingException, IOException {
+        validateDocument(document, ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL);       
+    }
+    
+    
+    private static void validateDocument(Document document, String templateUrl) throws SAXException, ParserConfigurationException, ParsingException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        String schemaPath = "/home/hanis/prace/resolver/urnnbn-resolver-v2/legacyRecordsImport/src/main/java/cz/nkp/urnnbn/legacyrecordsimport/validation/import.xsd";
-        factory.setSchema(schemaFactory.newSchema(
-                new Source[]{new StreamSource(schemaPath)}));
-
+        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");    
+        factory.setSchema(schemaFactory.newSchema(new URL(templateUrl)));
         SAXParser parser = factory.newSAXParser();
         XMLReader reader = parser.getXMLReader();
         reader.setErrorHandler(new ImportErrorHandler());
@@ -153,39 +163,41 @@ public class XmlTools {
         Builder builder = new Builder(reader);
         builder.build(document.toXML(), null);
     }
+    
+    
 
     public static void main(String[] args) {
-        
-        String url = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/identifiers/OAI_Adapter";
-        String id = "uuid:039764f8-d6db-11e0-b2cd-0050569d679d";
-        
-        String login =  Credentials.LOGIN;        
-        String pass = Credentials.PASSWORD;
-        try {
-            HttpsURLConnection connection = new XmlTools().getAuthConnection(login, pass, url, "PUT", true);
-            
-                                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-                    wr.write(id);
-                    wr.flush();
-                    wr.close();
-
-            System.out.println(connection.getResponseCode());
-            InputStream is = connection.getInputStream();
-            Builder builder = new Builder();
-            Document responseDocument = builder.build(is);
-            System.out.println(responseDocument.toXML());
-            
-
-        } catch (ParsingException ex) {
-            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (KeyManagementException ex) {
-            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        
+//        String url = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/identifiers/OAI_Adapter";
+//        String id = "uuid:039764f8-d6db-11e0-b2cd-0050569d679d";
+//        
+//        String login =  Credentials.LOGIN;        
+//        String pass = Credentials.PASSWORD;
+//        try {
+//            HttpsURLConnection connection = new XmlTools().getAuthConnection(login, pass, url, "PUT", true);
+//            
+//                                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+//                    wr.write(id);
+//                    wr.flush();
+//                    wr.close();
+//
+//            //System.out.println(connection.getResponseCode());
+//            InputStream is = connection.getInputStream();
+//            Builder builder = new Builder();
+//            Document responseDocument = builder.build(is);
+//            //System.out.println(responseDocument.toXML());
+//            
+//
+//        } catch (ParsingException ex) {
+//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (NoSuchAlgorithmException ex) {
+//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (KeyManagementException ex) {
+//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (MalformedURLException ex) {
+//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 }

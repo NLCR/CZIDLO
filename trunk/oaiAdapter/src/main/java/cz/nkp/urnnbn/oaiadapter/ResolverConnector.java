@@ -27,6 +27,8 @@ import nu.xom.XPathContext;
  */
 public class ResolverConnector {
 
+    public static final String IMPORT_TEMPLATE_URL = "http://urnnbn-resolver-v2.googlecode.com/svn/trunk/xml/src/main/resources/xsd/recordImport.xsd.xml";
+    public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://urnnbn-resolver-v2.googlecode.com/svn/trunk/xml/src/main/resources/xsd/digitalInstanceImport.xsd.xml";
     public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
     public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v2/";
@@ -45,7 +47,6 @@ public class ResolverConnector {
         return url;
     }
     //http://resolver-test.nkp.cz/registrars/tsh01/digitalDocuments/id/OAI_Adapter/?format=xml
-    
 
     public static String getImportDocumetUrl(String registrarCode) {
         String url = "https://" + RESOLVER_API_URL + "registrars/" + registrarCode
@@ -55,7 +56,8 @@ public class ResolverConnector {
 
     public static boolean isDocumentAlreadyImported(String registrar, String identifier, String registarScopeId) throws IOException, ParsingException {
         String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
-        System.out.println(url);
+        //System.out.println(url);
+        //System.out.println(url);
         Document document = XmlTools.getDocument(url, true);
         Element rootElement = document.getRootElement();
         if ("digitalDocument".equals(rootElement.getLocalName())) {
@@ -65,7 +67,7 @@ public class ResolverConnector {
             Nodes codeNode = rootElement.query("//oai:code", context);
             if (codeNode.size() > 0) {
                 String code = codeNode.get(0).getValue();
-                System.out.println("code:" + code);
+                //System.out.println("code:" + code);
                 if (!(ERROR_CODE_DOCUMENT.equals(code) || ERROR_CODE_REGISTAR.equals(code))) {
                     //TODO spatne error code - neco je spatne ...staci kontrolovat jen tyto dva kody?                    
                     throw new RuntimeException();
@@ -87,58 +89,68 @@ public class ResolverConnector {
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
         OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
         wr.write(document.toXML());
-        wr.flush();        
+        wr.flush();
         wr.close();
         int responseCode = connection.getResponseCode();
-        if(responseCode != 200) { //TODO pokud ok, pak vzdy 200??
+        if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??
             throw new ResolverConnectionException("Importing record document: response code != 200");
-        }        
+        }
         //System.out.println("import code" + connection.getResponseCode());
 
         InputStream is = connection.getInputStream();
         Builder builder = new Builder();
         Document responseDocument = builder.build(is);
-        String urnnbn = ResolverConnector.getAllocatedURNNBN(responseDocument);        
+        String urnnbn = ResolverConnector.getAllocatedURNNBN(responseDocument);
         return urnnbn;
         // System.out.println(responseDocument.toXML());
     }
 
-    
-    public static void importDigitalInstance(Document document, String urnnbn, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException {
+    public static void importDigitalInstance(Document document, String urnnbn, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException, ResolverConnectionException {
         String url = getImportDigitalInstanceUrl(urnnbn);
+        //System.out.println(url);
+        //System.out.println(document.toXML());
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
         OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
         wr.write(document.toXML());
-        wr.flush();        
+        wr.flush();
         wr.close();
-        System.out.println("dig instance code" + connection.getResponseCode());
+        //System.out.println("dig instance code" + connection.getResponseCode());
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 201) { //TODO pokud ok, pak vzdy 201??
+            throw new ResolverConnectionException("Puttin digital instance: response code != 201");
+        }
+
     }
-    
+
     public static String getImportDigitalInstanceUrl(String urnnbn) {
         String url = "https://" + RESOLVER_API_URL + "resolver/" + urnnbn
                 + "/digitalInstances";
         return url;
     }
-    
-    
+
     public static String getUpdateRegistrarScopeIdUrl(String urnnbn, String registrarScopeId) {
         String url = "https://" + RESOLVER_API_URL + "resolver/" + urnnbn
                 + "/identifiers/" + registrarScopeId;
         return url;
     }
-    
-    
-    public static void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
+
+    public static void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException, ResolverConnectionException {
         String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
+        //System.out.println(url + " - " + documentId);
+
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
         OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
         wr.write(documentId);
         wr.flush();
         wr.close();
-        System.out.println("Put: " + connection.getResponseCode());
-        System.out.println("Put: " + connection.getResponseCode());        
+        //System.out.println("Put: " + connection.getResponseCode());
+        //System.out.println("Put: " + connection.getResponseCode());        
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 201) { //TODO pokud ok, pak vzdy 201??
+            throw new ResolverConnectionException("Puttin registrar scope identifier: response code != 201");
+        }
+        
     }
-    
 
     public static String getAllocatedURNNBN(Document document) {
         Element rootElement = document.getRootElement();
