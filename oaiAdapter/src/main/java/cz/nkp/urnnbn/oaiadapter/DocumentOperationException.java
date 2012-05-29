@@ -10,10 +10,10 @@ package cz.nkp.urnnbn.oaiadapter;
  */
 public class DocumentOperationException extends Exception {
     
-    DocumentOperationException() {
+    public DocumentOperationException() {
     }
 
-    DocumentOperationException(String msg) {
+    public DocumentOperationException(String msg) {
         super(msg);
     }
 
