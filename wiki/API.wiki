@@ -20,7 +20,7 @@ Formálněji a podrobněji je REST API popsáno v [https://docs.google.com/sprea
 = Záznam registrátorů =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/registrars
+GET http://resolver.nkp.cz/api/v2/registrars
 }}}
 == Response ==
 {{{
@@ -40,7 +40,7 @@ GET http://localhost:8080/api/v2/registrars
 = Záznam registrátora =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/registrars/boa001
+GET http://resolver.nkp.cz/api/v2/registrars/boa001
 }}}
 == Response ==
 {{{
@@ -75,7 +75,7 @@ GET http://localhost:8080/api/v2/registrars/boa001
 = Rezervace balíku URN:NBN =
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations?size=5
+POST http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations?size=5
 }}}
 == Response ==
 {{{
@@ -92,7 +92,7 @@ POST http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations?size=5
 = Seznam rezervovaných URN:NBN =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations
+GET http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations
 }}}
 == Response ==
 {{{
@@ -115,10 +115,10 @@ GET http://localhost:8080/api/v2/registrars/boa001/urnNbnReservations
 </urnNbnRerservations>
 }}}
 -----
-= Import metadat - URN:NBN bude vygenerováno =
+= Registrace DD - URN:NBN bude vygenerováno =
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
+POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
@@ -182,10 +182,10 @@ V těle http dotazu se nachází tento obsah:
 </urnNbn>
 }}}
 -----
-= Import metadat - URN:NBN bylo dříve rezervováno, teď je součástí metadat =
+= Registrace DD - URN:NBN bylo dříve rezervováno, teď je součástí metadat =
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
+POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
@@ -250,9 +250,12 @@ V těle http dotazu se nachází tento obsah:
 </urnNbn>
 }}}
 -----
+= Registrace DD - URN:NBN je součástí metadat a je generováno registrátorem =
+Vstup a výstup vypadá stejně, jako u předchozí operace (registrace DD - URN:NBN rezervováno). Rozdíl je v tom, že registrátor nemá záruku (z pohledu Rezolveru) v unikátnosti URN:NBN. Svůj podprostor si registrátor spravuje sám a je na něm, aby si zaručil jedinečnost. Možnost spravovat vlastní podprostor musí být konkrétnímu registrátorovi explicitně povolena administrátorem.
+-----
 = Počet digitálních dokumentů daného registrátora =
 {{{
-GET http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
+GET http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
 == Response ==
 {{{
@@ -265,7 +268,7 @@ GET http://localhost:8080/api/v2/registrars/boa001/digitalDocuments
 = Záznam digitálního dokumentu na základě registrar-scope identifikátoru =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/registrars/boa001/digitalDocuments/id/K4_p
+GET http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments/id/K4_p
 id/uuid:123
 }}}
 == Response ==
@@ -333,7 +336,7 @@ id/uuid:123
 = Vložení/aktualizace registrar-scope identifikátoru =
 == Request ==
 {{{
-PUT http://localhost:8080/api/v2/resolver/$URN_NBN/identifiers/TEST2
+PUT http://resolver.nkp.cz/api/v2/resolver/$URN_NBN/identifiers/TEST2
 }}}
 Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 1234
@@ -357,7 +360,7 @@ Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 = Vložení digitální instance = 
 == Request ==
 {{{
-POST http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
+POST http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
 }}}
 Tělo dotazu pak obsahuje:
 {{{
@@ -384,7 +387,7 @@ Tělo dotazu pak obsahuje:
 = Seznam digitálních instancí digitálního dokumentu =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
+GET http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
 }}}
 == Response ==
 {{{
@@ -422,7 +425,7 @@ GET http://localhost:8080/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstan
 = Zobrazení záznamu a stavu URN:NBN =
 == Request ==
 {{{
-GET http://localhost:8080/api/v2/urnnbn/urn:nbn:cz:boa001-000056
+GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
 }}}
 == Response ==
 === Pokud je urn:nbn používané ===
@@ -459,7 +462,7 @@ GET http://localhost:8080/api/v2/urnnbn/urn:nbn:cz:boa001-000056
 = Celkový počet digitálních instancí =
 == Request ===
 {{{
-GET http://localhost:8080/api/v2/digitalInstances
+GET http://resolver.nkp.cz/api/v2/digitalInstances
 }}}
 == Response ==
 {{{
@@ -472,7 +475,7 @@ GET http://localhost:8080/api/v2/digitalInstances
 = Záznam digitální instance =
 == Request ===
 {{{
-GET http://localhost:8080/api/v2/digitalInstances/id/1
+GET http://resolver.nkp.cz/api/v2/digitalInstances/id/1
 }}}
 == Response ==
 {{{
