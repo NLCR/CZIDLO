@@ -60,9 +60,11 @@ public class XmlTools {
         return getDocument(url, false);
     }
     
-    public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException {
+    public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException, XSLException {
         Builder builder = new Builder();
-        return builder.build(template, null);
+        Document document = builder.build(template, null);
+        XSLTransform transform = new XSLTransform(document);
+        return document;
     }
 
     public static Document getDocument(URL url, boolean status404Allowed) throws IOException, ParsingException {
