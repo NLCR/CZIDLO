@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.oaiadapter;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +25,15 @@ public class App {
         adapter.setOaiBaseUrl("http://oai.mzk.cz/");
         adapter.setMetadataPrefix("marc21");
         adapter.setSetSpec("collection:oldMaps");
-        adapter.setRegistrarCode("tsh03");
-        //adapter.setLimit(25);
+        adapter.setRegistrarCode("tsh02");                
+        adapter.setLimit(50);
+        
+//            adapter.setOutputStream(System.out);
+        try {
+            adapter.setOutputStream(new FileOutputStream("/home/hanis/prace/resolver/oai/log/log4.txt"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         Document importStylesheet = null;
         Document digitalInstanceStylesheet = null;

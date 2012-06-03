@@ -25,7 +25,7 @@ public class Test {
     public static void main(String[] args) {
         try {
             Builder builder = new Builder();
-            Logger.getLogger(Test.class.getName()).log(Level.INFO, "Nejaka zprava");
+            //Logger.getLogger(Test.class.getName()).log(Level.INFO, "Nejaka zprava");
             Document doc = XmlTools.getDocument("http://oai.mzk.cz/?verb=GetRecord&metadataPrefix=marc21&identifier=oai:aleph.mzk.cz:MZK03-001056568");
             Document importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl");
             Document digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl");            

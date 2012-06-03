@@ -6,33 +6,16 @@ package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.xml.parsers.ParserConfigurationException;
-import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 import nu.xom.XPathContext;
-import nu.xom.xslt.XSLException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -242,7 +225,17 @@ public class OaiHarvester {
 //    }
 
     public static void main(String[] args) {
-////        OaiHarvester oai = new OaiHarvester();
+
+        OaiHarvester harvester = new OaiHarvester("http://kramerius.mzk.cz/oaiprovider/", "oai_dc", "periodical");
+        int counter = 0;
+        while (harvester.hasNext()) {
+            System.out.println(harvester.getNext().toXML());
+            System.out.println("---------------------------------------------------------");
+            counter++;
+        }
+        System.out.println(counter);
+        
+        ////        OaiHarvester oai = new OaiHarvester();
 ////        oai.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
 ////        oai.setMetadataPrefix("oai_dc");
 ////        oai.setSetSpec("monograph");

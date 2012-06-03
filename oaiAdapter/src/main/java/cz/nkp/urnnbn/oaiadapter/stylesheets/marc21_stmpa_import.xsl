@@ -43,14 +43,10 @@
             <xsl:value-of select="//marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
         </xsl:variable>
         <r:title>
-            <xsl:choose>
-                <xsl:when test="string-length(normalize-space($title)) &gt; 99">
-                    <xsl:value-of select="substring(($title),1,100)"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$title"/>
-                </xsl:otherwise>
-            </xsl:choose>                        
+            <xsl:call-template name="adjustString">
+                <xsl:with-param name="string" select="$title"/>
+                <xsl:with-param name="maxLength" select="100"/>
+            </xsl:call-template>
         </r:title>
     </xsl:template>
    
@@ -59,16 +55,12 @@
         <xsl:variable name="sub_title">
             <xsl:value-of select="//marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
         </xsl:variable>
-        <xsl:if test="sub_title">
+        <xsl:if test="$sub_title">
             <r:subTitle>
-                <xsl:choose>
-                    <xsl:when test="string-length(normalize-space($sub_title)) &gt; 199">
-                        <xsl:value-of select="substring(($sub_title),1,200)"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="sub_title"/>
-                    </xsl:otherwise>
-                </xsl:choose>                        
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="$sub_title"/>
+                    <xsl:with-param name="maxLength" select="200"/>
+                </xsl:call-template>
             </r:subTitle>
         </xsl:if>        
     </xsl:template>
@@ -93,12 +85,17 @@
 
     
 
-    <xsl:template name="creator">                       
-        <xsl:if test="//marc:datafield[@tag='100']/marc:subfield[@code='a']">
-            <r:primaryOriginator type="AUTHOR">
-                <xsl:value-of select="//marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
+    <xsl:template name="creator">      
+        <xsl:variable name="creator">
+            <xsl:value-of select="//marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
+        </xsl:variable>
+        <xsl:if test="$creator">
+            <r:primaryOriginator type="AUTHOR">          
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="$creator"/>                    
+                </xsl:call-template>
             </r:primaryOriginator>
-        </xsl:if>
+        </xsl:if>        
     </xsl:template>
         
     
@@ -116,16 +113,12 @@
         <xsl:variable name="publisher">
             <xsl:value-of select="//marc:datafield[@tag='260']/marc:subfield[@code='b']"/>
         </xsl:variable>
-        <xsl:if test="publisher">
-            <r:publisher>
-                <xsl:choose>
-                    <xsl:when test="string-length(normalize-space($publisher)) &gt; 49">
-                        <xsl:value-of select="substring(($publisher),1,50)"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="publisher"/>
-                    </xsl:otherwise>
-                </xsl:choose>                        
+        <xsl:if test="$publisher">
+            <r:publisher>                
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="$publisher"/>
+                    <xsl:with-param name="maxLength" select="50"/>
+                </xsl:call-template>
             </r:publisher>
         </xsl:if>        
     </xsl:template>
@@ -133,10 +126,16 @@
 
 
 
-    <xsl:template name="place">                       
-        <xsl:if test="//marc:datafield[@tag='260']/marc:subfield[@code='a']">
+    <xsl:template name="place">        
+        <xsl:variable name="place">
+            <xsl:value-of select="//marc:datafield[@tag='260']/marc:subfield[@code='a']"/>
+        </xsl:variable>
+        <xsl:if test="$place">
             <r:place>
-                <xsl:value-of select="//marc:datafield[@tag='260']/marc:subfield[@code='a']"/>
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="$place"/>
+                    <xsl:with-param name="maxLength" select="50"/>
+                </xsl:call-template>
             </r:place>
         </xsl:if>
     </xsl:template>    
@@ -167,7 +166,7 @@
                     <xsl:value-of select="concat('mzk03:',$sysno)"/>
                 </r:id>
 
-                <xsl:variable name="sig">
+                 <!--<xsl:variable name="sig">
                     <xsl:value-of select="//marc:datafield[@tag='910']/marc:subfield[@code='b']"/>
                 </xsl:variable>                                    
                 <xsl:if test="$sig">
@@ -176,7 +175,7 @@
                     </r:id>
                 </xsl:if>                  
                 
-                <!--<xsl:variable name="sig_old">
+               <xsl:variable name="sig_old">
                     <xsl:value-of select="//marc:datafield[@tag='Z30']/marc:subfield[@code='9']"/>
                 </xsl:variable>                                    
                 <xsl:if test="$sig_old">
@@ -202,6 +201,69 @@
                 <r:format>JPEG 2000</r:format>
             </r:technicalMetadata>
         </r:digitalDocument>
-    </xsl:template>          
+    </xsl:template>     
+    
+    
+    
+    
+    <xsl:template name="cutString">
+        <xsl:param name="string"/>
+        <xsl:param name="maxLength"/>          
+        <xsl:variable name="length" select="string-length($string)"/>
+        <xsl:choose>
+            <xsl:when test="$length &gt; $maxLength">
+                <xsl:value-of select="substring($string, 1, $maxLength)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$string"/>
+            </xsl:otherwise>
+        </xsl:choose>                                
+    </xsl:template>
+    
+    <xsl:template name="adjustString">
+        <xsl:param name="string"/>
+        <xsl:param name="maxLength"/>  
+        <xsl:param name="punctuation">            
+            <xsl:text>:,;/[] </xsl:text>
+        </xsl:param>
+        <xsl:variable name="length" select="string-length($string)"/>
+        <xsl:choose>
+            <xsl:when test="$length=0"/>
+            <xsl:when test="contains($punctuation, substring($string,$length,1))">
+                <!--<a><xsl:value-of select="substring($string,1,$length - 1)"/></a>-->
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="substring($string,1,$length - 1)"/>
+                    <xsl:with-param name="maxLength" select="$maxLength"/>
+                    <xsl:with-param name="punctuation" select="$punctuation"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="contains($punctuation, substring($string,1,1))">
+                <!--<a><xsl:value-of select="substring($string,2,$length - 1)"/></a>-->
+                <xsl:call-template name="adjustString">
+                    <xsl:with-param name="string" select="substring($string,2,$length - 1)"/>
+                    <xsl:with-param name="maxLength" select="$maxLength"/>
+                    <xsl:with-param name="punctuation" select="$punctuation"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="not($string)"/>
+            <xsl:otherwise>
+                <xsl:choose>
+                    <xsl:when test="$maxLength">
+                        <xsl:call-template name="cutString">
+                            <xsl:with-param name="string" select="$string"/>
+                            <xsl:with-param name="maxLength" select="$maxLength"/>
+                        </xsl:call-template>				                        
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$string"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    
+    
+    
 
 </xsl:stylesheet>

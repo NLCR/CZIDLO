@@ -10,10 +10,10 @@ package cz.nkp.urnnbn.oaiadapter;
  */
 public class TemplateException extends Exception {
     
-    TemplateException() {
+    public TemplateException() {
     }
 
-    TemplateException(String msg) {
+    public TemplateException(String msg) {
         super(msg);
     }
 
