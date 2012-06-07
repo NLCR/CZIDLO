@@ -36,6 +36,12 @@ public class OaiHarvester {
     private String resumptionToken;
     private String lastIdentifier;
     
+    
+    
+    public OaiHarvester(String oaiBaseUrl, String metadataPrefix) {
+        this(oaiBaseUrl, metadataPrefix, null);
+    }
+    
     public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) {
         if(oaiBaseUrl == null) {
             throw new NullPointerException("oaiBasUrl not specified");
@@ -107,6 +113,7 @@ public class OaiHarvester {
 
     private Document getRecordDocument(String identifier) throws IOException, ParsingException {
         URL url = getRecordUrl(identifier);
+        System.out.println(url);
         Document document = XmlTools.getDocument(url);
         return document;
     }
@@ -226,7 +233,7 @@ public class OaiHarvester {
 
     public static void main(String[] args) {
 
-        OaiHarvester harvester = new OaiHarvester("http://kramerius.mzk.cz/oaiprovider/", "oai_dc", "periodical");
+        OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
         int counter = 0;
         while (harvester.hasNext()) {
             System.out.println(harvester.getNext().toXML());

@@ -17,20 +17,34 @@ public class App {
 
     //public static void 
     public static void main(String[] args) {
-                
-        
+
+
         OaiAdapter adapter = new OaiAdapter();
         adapter.setLogin(Credentials.LOGIN);
         adapter.setPassword(Credentials.PASSWORD);
-        adapter.setOaiBaseUrl("http://oai.mzk.cz/");
-        adapter.setMetadataPrefix("marc21");
-        adapter.setSetSpec("collection:oldMaps");
-        adapter.setRegistrarCode("tsh02");                
-        adapter.setLimit(50);
+//        adapter.setOaiBaseUrl("http://oai.mzk.cz/");
+//        adapter.setMetadataPrefix("marc21");
+//        adapter.setSetSpec("collection:oldMaps");
+//        adapter.setRegistrarCode("tsh02");                
+//        adapter.setLimit(50);
+//        adapter.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
+//        adapter.setMetadataPrefix("oai_dc");
+//        adapter.setSetSpec("periodical");
+//        adapter.setRegistrarCode("tsh01");
+
+
+        adapter.setOaiBaseUrl("http://duha.mzk.cz/oai");
+        adapter.setMetadataPrefix("oai_dc");
+        adapter.setRegistrarCode("tsh01");
+               
+            
+            
         
+        
+
 //            adapter.setOutputStream(System.out);
         try {
-            adapter.setOutputStream(new FileOutputStream("/home/hanis/prace/resolver/oai/log/log4.txt"));
+            adapter.setOutputStream(new FileOutputStream("/home/hanis/prace/resolver/oai/log/log7.txt"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -39,32 +53,37 @@ public class App {
         Document digitalInstanceStylesheet = null;
         try {
             Builder builder = new Builder();
-            importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl");
-            digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl");
+            //importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl");
+            //digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl");
+//            importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_import.xsl");
+//            digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_digital_instance.xsl");
+             importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl");
+             digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl");            
+            
         } catch (ParsingException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         adapter.setMetadataToImportTemplate(importStylesheet.toXML());
-      //  System.out.println(adapter.getMetadataToImportTemplate());
-        adapter.setMetadataToDigitalInstanceTemplate(digitalInstanceStylesheet.toXML());  
+        //  System.out.println(adapter.getMetadataToImportTemplate());
+        adapter.setMetadataToDigitalInstanceTemplate(digitalInstanceStylesheet.toXML());
         try {
             adapter.run();
         } catch (TemplateException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
 //        OaiAdapter adapter = new OaiAdapter();
 //        adapter.setLogin(Credentials.LOGIN);
 //        adapter.setPassword(Credentials.PASSWORD);

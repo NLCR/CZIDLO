@@ -12,18 +12,18 @@
             doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
             doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
             />
-            
-            
+                        
             
     <xsl:template match="/">
         <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
-            <r:monograph> 
+            <r:periodical> 
                 <xsl:call-template name="titleInfo"/>
+                <xsl:call-template name="issn"/>
                 <xsl:call-template name="documentType"/>                
                 <xsl:call-template name="creator"/>   
                 <xsl:call-template name="contributor"/>   
                 <xsl:call-template name="publication"/>                 
-            </r:monograph>
+            </r:periodical>
             <xsl:call-template name="digitalDocument"/>
         </r:import>
     </xsl:template>
@@ -45,13 +45,20 @@
     </xsl:template>
 
     <xsl:template name="documentType">        
-        <r:documentType>kniha</r:documentType>        
+        <xsl:if test="//dc:type">
+            <r:documentType>
+                <xsl:value-of select="//dc:type"/>
+            </r:documentType>        
+        </xsl:if>
     </xsl:template>
     
     
     <xsl:template name="title">                       
         <r:title>
-            <xsl:value-of select="//dc:title"/>
+            <xsl:call-template name="cutString">
+                <xsl:with-param name="string" select="//dc:title"/>
+                <xsl:with-param name="maxLength" select="50"/>
+            </xsl:call-template>		                                            
         </r:title>
     </xsl:template>
 
@@ -62,6 +69,18 @@
             </r:primaryOriginator>
         </xsl:if>
     </xsl:template>
+    
+    
+    <xsl:template name="issn">  
+        <xsl:variable name="issn">
+            <xsl:value-of select='//dc:identifier[starts-with(.,"issn:")]'/>
+        </xsl:variable>            
+        <xsl:if test='$issn and substring($issn,1,9) != "issn:issn" and string-length($issn) = 14'>
+            <r:issn>
+                <xsl:value-of select="substring($issn, 6)"/>
+            </r:issn>
+        </xsl:if>
+    </xsl:template>        
     
 
     <xsl:template name="contributor">                       
@@ -85,7 +104,10 @@
     <xsl:template name="publisher">                       
         <xsl:if test="//dc:publisher">
             <r:publisher>
-                <xsl:value-of select="//dc:publisher"/>
+                <xsl:call-template name="cutString">
+                    <xsl:with-param name="string" select="//dc:publisher"/>
+                    <xsl:with-param name="maxLength" select="50"/>
+                </xsl:call-template>		                                
             </r:publisher>
         </xsl:if>
     </xsl:template>    
@@ -107,12 +129,40 @@
     <xsl:template name="digitalDocument">           
         <r:digitalDocument>
             <r:registrarScopeIdentifiers>
-                <r:id type="K4_pid">
-                    <xsl:value-of select="//dc:identifier"/>
-                </r:id>
-            </r:registrarScopeIdentifiers>
+                <xsl:variable name="K4_pid">
+                    <xsl:value-of select='//dc:identifier[starts-with(.,"uuid")]'/>
+                </xsl:variable>            
+                <xsl:if test='$K4_pid'>
+                    <r:id type="K4_pid">
+                        <xsl:value-of select="$K4_pid"/>
+                    </r:id>
+                </xsl:if>
+            </r:registrarScopeIdentifiers>            
             <r:technicalMetadata/>
         </r:digitalDocument>
     </xsl:template>    
+    
+    
+    
+    
+    
+    <xsl:template name="cutString">
+        <xsl:param name="string"/>
+        <xsl:param name="maxLength"/>          
+        <xsl:variable name="length" select="string-length($string)"/>
+        <xsl:choose>
+            <xsl:when test="$length &gt; $maxLength">
+                <xsl:value-of select="substring($string, 1, $maxLength)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$string"/>
+            </xsl:otherwise>
+        </xsl:choose>                                
+    </xsl:template>
+    		                        
+        
+    
+    
+    
      
 </xsl:stylesheet>
