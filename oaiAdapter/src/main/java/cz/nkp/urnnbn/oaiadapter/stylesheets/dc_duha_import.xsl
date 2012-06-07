@@ -12,18 +12,16 @@
             doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
             doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
             />
-            
-            
+                        
             
     <xsl:template match="/">
         <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
-            <r:monograph> 
+            <r:analytical> 
                 <xsl:call-template name="titleInfo"/>
                 <xsl:call-template name="documentType"/>                
                 <xsl:call-template name="creator"/>   
-                <xsl:call-template name="contributor"/>   
-                <xsl:call-template name="publication"/>                 
-            </r:monograph>
+                <xsl:call-template name="sourceDocument"/>
+            </r:analytical>
             <xsl:call-template name="digitalDocument"/>
         </r:import>
     </xsl:template>
@@ -45,7 +43,7 @@
     </xsl:template>
 
     <xsl:template name="documentType">        
-        <r:documentType>kniha</r:documentType>        
+            <r:documentType>článek</r:documentType>        
     </xsl:template>
     
     
@@ -56,63 +54,32 @@
     </xsl:template>
 
     <xsl:template name="creator">                       
-        <xsl:if test="//dc:creator">
+        <xsl:if test="//dc:author">
             <r:primaryOriginator type="AUTHOR">
-                <xsl:value-of select="//dc:creator"/>
+                <xsl:value-of select="//dc:author"/>
             </r:primaryOriginator>
         </xsl:if>
     </xsl:template>
     
-
-    <xsl:template name="contributor">                       
-        <xsl:if test="//dc:contributor">
-            <r:otherOriginator>
-                <xsl:value-of select="//dc:contributor"/>
-            </r:otherOriginator>
-        </xsl:if>
-    </xsl:template>    
-    
-    
-    
-    <xsl:template name="publication">        
-        <r:publication>
-            <xsl:call-template name="publisher"/>    
-            <xsl:call-template name="year"/>                    
-        </r:publication>  
-    </xsl:template>        
-
-    
-    <xsl:template name="publisher">                       
-        <xsl:if test="//dc:publisher">
-            <r:publisher>
-                <xsl:value-of select="//dc:publisher"/>
-            </r:publisher>
-        </xsl:if>
-    </xsl:template>    
-    
-    <xsl:template name="year">   
-        <xsl:variable name="year">
-            <xsl:value-of select="//dc:date"/>
-        </xsl:variable>            
-        <xsl:if test="$year and floor($year) = $year">
-            <r:year>                
-                <xsl:value-of select="$year"/>
-            </r:year>
-        </xsl:if>        
-    </xsl:template>    
-    
-    
-    
+    <xsl:template name="sourceDocument">
+        <r:sourceDocument>
+            <r:titleInfo>
+                <r:title>Duha</r:title>
+            </r:titleInfo>
+            <!--<r:issn>1804-4255</r:issn>
+            <r:publication>
+                <r:publisher>Moravská zemská knihovna</r:publisher>
+                <r:place>Brno</r:place>
+            </r:publication>-->
+        </r:sourceDocument>    
+    </xsl:template>
     
     <xsl:template name="digitalDocument">           
         <r:digitalDocument>
-            <r:registrarScopeIdentifiers>
-                <r:id type="K4_pid">
-                    <xsl:value-of select="//dc:identifier"/>
-                </r:id>
-            </r:registrarScopeIdentifiers>
-            <r:technicalMetadata/>
+            <r:technicalMetadata>
+                <r:format>html</r:format>
+                </r:technicalMetadata>
         </r:digitalDocument>
-    </xsl:template>    
+    </xsl:template>        
      
 </xsl:stylesheet>
