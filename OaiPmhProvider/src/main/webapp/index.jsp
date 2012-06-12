@@ -25,30 +25,41 @@
                 margin-left: 20px;
                 /* border: 1px solid black;*/
             }
+
             th{
-                width: 50px;
+                /*width: 50px;*/
                 height: 1px;
                 overflow: hidden;
                 visibility: visible;
                 border: 1px solid black;
                 padding: 5px;
                 background: #21bdc6;
-                text-align: right;
+                /*text-align: right;*/
+                text-align: center;
                 vertical-align: middle;
                 text-indent: 5px;
             }
 
             td {
-                width: 50px;
+                /*width: 50px;*/
                 height: 1px;
                 overflow: hidden;
                 visibility: visible;
                 /*  border: 1px solid black;*/
                 padding: 5px;
                 background: #21bdc6;
-                text-align: right;
+                /*text-align: right;*/
+                text-align: center;
                 vertical-align: middle;
                 text-indent: 5px;
+            }
+
+            .descriptionText{
+
+            }
+
+            .verb{
+                text-align: left;
             }
         </style>
     </head>
@@ -58,10 +69,31 @@
             String providerUrl = loader.loadString("provider.baseUrl");
         %>
 
-        <h1 align="center">Welcome to implementation of OAI-PMH repository for URN:NBN Resolver system</h1>
+        <h1 align="center">OAI-PMH data provider</h1>
+        <p class="descriptionText">
+            Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider module of
+            <a href="http://code.google.com/p/urnnbn-resolver-v2/">URN:NBN Resolver</a>.
+            This particular instance,
+            which is deployed at <i><%=request.getHeader("host")%></i>,
+            handles language code <i><%=loader.loadString("resolver.languageCode")%></i>.
+            Each row in table below represents single operation. 
+            Each column allways contains button with name of the operation, 
+            clicking on the button launches the operation.
+            Rest of the columns contain those parameters, that are applicable to given operation.
+            Some operations are available in more than one form and are therefore present in multiple rows.
+            For example there are versions of <i>ListIdentifiers</i> and <i>ListRecords</i> for initial request
+            and versions for following requests identified by 
+            <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl"><i>resumtion tokens</i></a>.
+        </p>
+        <p class="descriptionText">
+            This is just simple web interface.
+            The actual base url is <a href="<%=providerUrl%>"><%=providerUrl%></a>. 
+        </p>
+
+        <div></div>
         <div>
             <table align="left" rules="all">
-                <caption>OAI-PMH requests</caption>
+                <!-- <caption><h2>OAI-PMH requests</h2></caption> -->
                 <tr>
                     <th>verb</th>
                     <th>metadataPrefix</th>
@@ -74,7 +106,7 @@
                 <tr>
                     <form action ="<%=providerUrl%>">
                         <input type="hidden" name="verb" value="Identify"/>
-                        <td>
+                        <td class="verb">
                             <input type="submit" value="Identify"/>
                         </td>
                     </form>
@@ -82,32 +114,59 @@
                 </tr>
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
-                        <td><input type="submit" value="ListSets"/></td>
                         <input type="hidden" name="verb" value="ListSets"/>
+                        <td class="verb">
+                            <input type="submit" value="ListSets"/>
+                        </td>
                     </form>
                     <td/><td/><td/><td/><td/><td/>
                 </tr>
                 <tr>
                     <form action ="<%=providerUrl%>">
-                        <td><input type="submit" value="ListSets"/></td>
                         <input type="hidden" name="verb" value="ListSets"/>
+                        <td class="verb">
+                            <input type="submit" value="ListSets"/>
+                        </td>
                         <td/><td/><td/><td/><td/>
                         <td><input type="text" name="resumptionToken" size="10" /></td>
                     </form>
                 </tr>
                 <tr>
-                    <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
-                        <td><input type="submit" value="ListMetadataFormats"/></td>
+                    <form action ="<%=providerUrl%>" onsubmit="return buildIdentifier(this)">
                         <input type="hidden" name="verb" value="ListMetadataFormats"/>
+                        <input type="hidden" name="identifier" value=""/>
+                        <td class="verb">
+                            <input type="submit" value="ListMetadataFormats"/>
+                        </td>
                         <td/>
-                        <td><input type="text" size="10" name="identifier"/></td>
+                        <td>
+                            urn:nbn:<%=loader.loadString("resolver.languageCode")%>:
+                            <input type="text" size="6" name="registrarCode"/>
+                            -
+                            <input type="text" size="6" name="documentCode" />
+                        </td>
                     </form>
                     <td/><td/><td/><td/>
                 </tr>
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
-                        <td><input type="submit" value="GetRecord"/></td>
+                        <input type="hidden" name="verb" value="ListMetadataFormats"/>
+                        <td class="verb">
+                            <input type="submit" value="ListMetadataFormats"/>
+                        </td>
+                        <td/>
+                        <td><input type="text" size="17" name="identifier"/></td>
+                    </form>
+                    <td/><td/><td/><td/>
+                </tr>
+
+                <tr>
+                    <form action ="<%=providerUrl%>" onsubmit="return buildIdentifier(this)">
                         <input type="hidden" name="verb" value="GetRecord"/>
+                        <input type="hidden" name="identifier" value=""/>
+                        <td class="verb">
+                            <input type="submit" value="GetRecord"/>
+                        </td>
                         <td>
                             <select name="metadataPrefix">
                                 <% for (MetadataFormat format : MetadataFormat.values()) {%>
@@ -117,16 +176,44 @@
                                     ;%>
                             </select>
                         </td>
-                        <td><input type="text" size="10" name="identifier"/></td>
+                        <td>
+                            urn:nbn:<%=loader.loadString("resolver.languageCode")%>:
+                            <input type="text" size="6" name="registrarCode"/>
+                            -
+                            <input type="text" size="6" name="documentCode" />
+                        </td>
+                    </form>
+                    <td/><td/><td/><td/>
+                </tr>
+
+                <tr>
+                    <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
+                        <input type="hidden" name="verb" value="GetRecord"/>
+                        <td class="verb">
+                            <input type="submit" value="GetRecord"/>
+                        </td>
+                        <td>
+                            <select name="metadataPrefix">
+                                <% for (MetadataFormat format : MetadataFormat.values()) {%>
+                                <option value="<%=format.toString()%>"><%=format.toString()%>
+                                </option>
+                                <%}
+                                    ;%>
+                            </select>
+                        </td>
+                        <td><input type="text" size="17" name="identifier"/></td>
                     </form>
                     <td/><td/><td/><td/>
                 </tr>
                 <tr>
                 </tr>
+                            
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
-                        <td><input type="submit" value="ListIdentifiers"/></td>
                         <input type="hidden" name="verb" value="ListIdentifiers"/>
+                        <td class="verb">
+                            <input type="submit" value="ListIdentifiers"/>
+                        </td>
                         <td>
                             <select name="metadataPrefix">
                                 <% for (MetadataFormat format : MetadataFormat.values()) {%>
@@ -143,18 +230,24 @@
                     </form>
                     <td/>
                 </tr>
+                            
                 <tr>
                     <form action ="<%=providerUrl%>">
-                        <td><input type="submit" value="ListIdentifiers"/></td>
                         <input type="hidden" name="verb" value="ListIdentifiers"/>
+                        <td class="verb">
+                            <input type="submit" value="ListIdentifiers"/>
+                        </td>
                         <td/><td/><td/><td/><td/>
                         <td><input type="text"  size="10" name="resumptionToken"/></td>
                     </form>
                 </tr>
+                        
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
-                        <td><input type="submit" value="ListRecords"/></td>
                         <input type="hidden" name="verb" value="ListRecords"/>
+                        <td class="verb">
+                            <input type="submit" value="ListRecords"/>
+                        </td>
                         <td>
                             <select name="metadataPrefix">
                                 <% for (MetadataFormat format : MetadataFormat.values()) {%>
@@ -173,8 +266,10 @@
                 </tr>
                 <tr>
                     <form action ="<%=providerUrl%>">
-                        <td><input type="submit" value="ListRecords"/></td>
                         <input type="hidden" name="verb" value="ListRecords"/>
+                        <td class="verb">
+                            <input type="submit" value="ListRecords"/>
+                        </td>
                         <td/><td/><td/><td/><td/>
                         <td><input type="text"  size="10" name="resumptionToken"/></td>
                     </form>
@@ -183,8 +278,23 @@
         </div>
 
         <script type="text/javascript" >
+            function isEmpty(value){
+                return (value == "");
+            }
+
+            function buildIdentifier(form){
+                registrarCode = form.elements["registrarCode"];
+                documentCode = form.elements["documentCode"];
+                identifier = "urn:nbn:<%=loader.loadString("resolver.languageCode")%>:" + registrarCode.value + "-" + documentCode.value ;
+                form.elements["identifier"].value = identifier;
+                registrarCode.disabled = true;
+                documentCode.disabled = true;
+                //console.log(identifier);
+                return true;
+            }
+            
             function disableEmptyInputs(form){
-                for (i=0;i<form.elements.length;i++){
+                for (i=0; i < form.elements.length; i++){
                     element = form.elements[i];
                     //            console.log("index: " + i);
                     //            console.log("type: " + element.type);
@@ -195,26 +305,7 @@
                     }
                 }
                 return true;
-                //return false;
             }
-
-            function isEmpty(value){
-                return (value == "");
-            }
-
-            function buildIdentifier(form){
-                prefix = form.elements["idPrefix"];
-                base = form.elements["base"];
-                sysno = form.elements["sysno"];
-                identifier = prefix.value + ":" + base.value + "-" + sysno.value ;
-                form.elements["identifier"].value = identifier;
-                prefix.disabled = true;
-                base.disabled = true;
-                sysno.disabled = true;
-                //console.log(identifier);
-                //return false;
-                return true;
-            }    
         </script>
     </body>
 </html>
