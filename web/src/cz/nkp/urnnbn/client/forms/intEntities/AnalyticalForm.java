@@ -48,6 +48,7 @@ public class AnalyticalForm extends IntelectualEntityForm {
 		result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
 		result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
 		result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
+		result.setDigitalBorn(Boolean.FALSE);
 		setPrimaryOriginatorFromFormFields(result);
 		return result;
 	}

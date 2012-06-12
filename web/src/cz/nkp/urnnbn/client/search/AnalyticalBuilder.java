@@ -21,7 +21,6 @@ public class AnalyticalBuilder extends EntityTreeItemBuilder {
 		addLabeledRowIfNotNull(constants.isbn(), dto.getIsbn());
 		addLabeledRowIfNotNull(constants.otherId(), dto.getOtherId());
 		addLabeledRowIfNotNull(constants.documentType(), dto.getDocumentType());
-		addDigitalBorn(dto.isDigitalBorn());
 		addLabeledRowIfNotNull(constants.otherOriginator(), dto.getOtherOriginator());
 		appendPrimaryOriginatorIfNotNull();
 		appendSourceDocumentIfNotNull();

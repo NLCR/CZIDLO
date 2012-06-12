@@ -124,6 +124,9 @@ public class RecordDataPanel extends VerticalPanel {
 		add(intelectualEntHeading());
 		add(intelectualEntForm);
 		if (srcDocform != null) {
+			Label srcDocLabel = new Label(constants.sourceDoc());
+			srcDocLabel.setStyleName(css.heading());
+			add(srcDocLabel);
 			add(srcDocform);
 		}
 		add(new HTML("<br/>"));
