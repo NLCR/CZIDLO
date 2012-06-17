@@ -11,14 +11,13 @@
             omit-xml-declaration="yes"
             doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
             doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
-            />
-                        
+            />                        
             
     <xsl:template match="/">
         <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
             <r:analytical> 
                 <xsl:call-template name="titleInfo"/>
-                <xsl:call-template name="documentType"/>                
+                <xsl:call-template name="documentType"/>   
                 <xsl:call-template name="creator"/>   
                 <xsl:call-template name="sourceDocument"/>
             </r:analytical>
@@ -27,8 +26,6 @@
     </xsl:template>
     
 
-    
-    
     <xsl:template name="titleInfo">        
         <r:titleInfo>
             <xsl:call-template name="title"/>    
@@ -37,19 +34,20 @@
     </xsl:template>    
 
     
-    
-    
     <xsl:template name="subTitle">        
     </xsl:template>
 
     <xsl:template name="documentType">        
-            <r:documentType>článek</r:documentType>        
+        <r:documentType>článek</r:documentType>        
     </xsl:template>
     
     
     <xsl:template name="title">                       
         <r:title>
-            <xsl:value-of select="//dc:title"/>
+            <xsl:call-template name="cutString">
+                <xsl:with-param name="string" select="//dc:title"/>
+                <xsl:with-param name="maxLength" select="100"/>
+            </xsl:call-template>	
         </r:title>
     </xsl:template>
 
@@ -66,8 +64,8 @@
             <r:titleInfo>
                 <r:title>Duha</r:title>
             </r:titleInfo>
-            <!--<r:issn>1804-4255</r:issn>
-            <r:publication>
+            <r:issn>1804-4255</r:issn>
+            <!--<r:publication>
                 <r:publisher>Moravská zemská knihovna</r:publisher>
                 <r:place>Brno</r:place>
             </r:publication>-->
@@ -78,8 +76,24 @@
         <r:digitalDocument>
             <r:technicalMetadata>
                 <r:format>html</r:format>
-                </r:technicalMetadata>
+            </r:technicalMetadata>
         </r:digitalDocument>
     </xsl:template>        
+
+    
+    
+    <xsl:template name="cutString">
+        <xsl:param name="string"/>
+        <xsl:param name="maxLength"/>          
+        <xsl:variable name="length" select="string-length($string)"/>
+        <xsl:choose>
+            <xsl:when test="$length &gt; $maxLength">
+                <xsl:value-of select="substring($string, 1, $maxLength)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$string"/>
+            </xsl:otherwise>
+        </xsl:choose>                                
+    </xsl:template>    
      
 </xsl:stylesheet>

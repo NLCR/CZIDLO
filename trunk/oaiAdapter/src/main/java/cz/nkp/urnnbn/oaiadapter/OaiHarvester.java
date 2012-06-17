@@ -23,46 +23,40 @@ import nu.xom.XPathContext;
  */
 public class OaiHarvester {
 
+    //private static final Logger logger = Logger.getLogger(OaiHarvester.class.getName());
     public static final String OAI_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
     private String oaiBaseUrl;
     private String metadataPrefix;
     private String setSpec;
-    //private String registrarCode;     
-    //private String login;
-    //private String password; 
-
     private Stack<String> identiriersStack;
-    private boolean next;
+    private boolean next = false;
     private String resumptionToken;
     private String lastIdentifier;
-    
-    
-    
-    public OaiHarvester(String oaiBaseUrl, String metadataPrefix) {
+
+    public OaiHarvester(String oaiBaseUrl, String metadataPrefix) throws OaiHarvesterException {
         this(oaiBaseUrl, metadataPrefix, null);
     }
-    
-    public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) {
-        if(oaiBaseUrl == null) {
+
+    public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) throws OaiHarvesterException {
+        if (oaiBaseUrl == null) {
             throw new NullPointerException("oaiBasUrl not specified");
         }
-        if(metadataPrefix == null) {
+        if (metadataPrefix == null) {
             throw new NullPointerException("metadataPrefix not specified");
-        }        
+        }
         this.oaiBaseUrl = oaiBaseUrl;
         this.metadataPrefix = metadataPrefix;
-        this.setSpec = setSpec;        
-        
+        this.setSpec = setSpec;
+
         this.next = true;
         identiriersStack = new Stack<String>();
         initHarvesting();
     }
-    
+
     private boolean isSetSpecified() {
         return setSpec != null;
     }
-            
-    
+
     private String getListIdentifiersPrefixUrl() {
         return oaiBaseUrl + "?verb=ListIdentifiers";
     }
@@ -91,8 +85,17 @@ public class OaiHarvester {
         return new URL(url);
     }
 
-    private String addIdentifiers(URL url) throws ParsingException, IOException {
-        Document document = XmlTools.getDocument(url);
+    private String addIdentifiers(URL url) throws OaiHarvesterException {
+        Document document = null;
+        try {
+            document = XmlTools.getDocument(url);
+        } catch (ParsingException ex) {
+            next = false;
+            throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
+        } catch (IOException ex) {
+            next = false;
+            throw new OaiHarvesterException("ListIdentifiers failed while fetching document.", url.toString());
+        }
         Element root = document.getRootElement();
 
         XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
@@ -111,10 +114,20 @@ public class OaiHarvester {
         return null;
     }
 
-    private Document getRecordDocument(String identifier) throws IOException, ParsingException {
-        URL url = getRecordUrl(identifier);
-        System.out.println(url);
-        Document document = XmlTools.getDocument(url);
+    private Document getRecordDocument(String identifier) throws OaiHarvesterException {
+        Document document = null;
+        try {
+            URL url = getRecordUrl(identifier);
+            try {
+                document = XmlTools.getDocument(url);
+            } catch (IOException ex) {
+                throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
+            } catch (ParsingException ex) {
+                throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
+            }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return document;
     }
 
@@ -128,302 +141,99 @@ public class OaiHarvester {
 //        }
 //        return list;
 //    }
-
-    private void initHarvesting() {
+    private void initHarvesting() throws OaiHarvesterException {
         try {
             URL url = getListIdentifiersUrl();
             String token = addIdentifiers(url);
             updateResumtionToken(token);
-        } catch (ParsingException ex) {
-            //TODO
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            //TODO
+        } catch (MalformedURLException ex) {
             Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void updateResumtionToken(String token) {
-        if(token == null) {
+        if (token == null) {
             next = false;
         }
-        this.resumptionToken = token;                
-    }    
-    
+        this.resumptionToken = token;
+    }
+
     public boolean hasNext() {
         return !identiriersStack.isEmpty() || next;
     }
-    
-    public Document getNext() {
-        String identifier = null;
-        try {
-            identifier = getNextId();
-        } catch (IOException ex) {
-            //TODO
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if(identifier == null) {
+
+    public Document getNext() throws OaiHarvesterException {
+        String identifier = getNextId();
+        if (identifier == null) {
             return null;
         }
         Document document = null;
-        try {
-            document = getRecordDocument(identifier);
-        } catch (IOException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        document = getRecordDocument(identifier);
         this.lastIdentifier = identifier;
-        return document;        
+        return document;
     }
-    
-    
+
     public String getLastIdentifier() {
         return lastIdentifier;
     }
-    
-    private String getNextId() throws IOException, ParsingException {
-        if(!hasNext()) {
+
+    private String getNextId() throws OaiHarvesterException {
+        if (!hasNext()) {
             return null;
         }
-        if(!identiriersStack.isEmpty()) {
+        if (!identiriersStack.isEmpty()) {
             return identiriersStack.pop();
         }
-        URL url = getResumptionTokenUrl(resumptionToken);
+        URL url = null;
+        try {
+            url = getResumptionTokenUrl(resumptionToken);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("url: " + url);
         String token = addIdentifiers(url);
+        System.out.println("token: " + token);
         updateResumtionToken(token);
-        return getNextId();                
+        return getNextId();
     }
-    
-    
-    
-    
-    
-    
-//
-//    public List<String> getListIdentifiers() throws ParsingException, IOException {
-//        return getListIdentifiers(-1);
-//    }
 
     public String getOaiBaseUrl() {
         return oaiBaseUrl;
     }
 
-//    public void setOaiBaseUrl(String oaiBaseUrl) {
-//        this.oaiBaseUrl = oaiBaseUrl;
-//    }
-
     public String getMetadataPrefix() {
         return metadataPrefix;
     }
-
-//    public void setMetadataPrefix(String metadataPrefix) {
-//        this.metadataPrefix = metadataPrefix;
-//    }
 
     public String getSetSpec() {
         return setSpec;
     }
 
-//    public void setSetSpec(String setSpec) {
-//        this.setSpec = setSpec;
-//    }
-
     public static void main(String[] args) {
+        try {
+            OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
+            int counter = 0;
+            while (harvester.hasNext()) {
+                Document doc = null;
+                try {
+                    doc = harvester.getNext();
+                } catch (OaiHarvesterException ex) {
+                    Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE,
+                            "cannot fetch a record: " + ex.getMessage() + ", " + ex.getUrl(), ex);
 
-        OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
-        int counter = 0;
-        while (harvester.hasNext()) {
-            System.out.println(harvester.getNext().toXML());
-            System.out.println("---------------------------------------------------------");
-            counter++;
+                }
+                if (doc != null) {
+                    System.out.println(doc.toXML());
+                    System.out.println("---------------------------------------------------------");
+                    counter++;
+                } else {
+                    System.out.println("doc is null");
+                }
+            }
+            System.out.println(counter);
+        } catch (OaiHarvesterException ex) {
+            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE,
+                    "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
         }
-        System.out.println(counter);
-        
-        ////        OaiHarvester oai = new OaiHarvester();
-////        oai.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
-////        oai.setMetadataPrefix("oai_dc");
-////        oai.setSetSpec("monograph");
-////        oai.setLogin(Credentials.LOGIN);
-////        oai.setPassword(Credentials.PASSWORD);
-////        oai.setRegistrarCode("tsh01");
-//        
-//
-//        //oai.setOaiBaseUrl("http://oai.mzk.cz/");
-//        //oai.setMetadataPrefix("marc21");
-//        //oai.setSetSpec("collection:mollMaps");
-//
-//
-//
-//        try {
-//            Builder builder = new Builder();
-//            Document stylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_import.xsl");
-//            Document stylesheetDI = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_digital_instance.xsl");
-//            List<String> list = oai.getListIdentifiers(15);            
-//            int i = 0;
-//            String id = list.get(14);
-////            for (String id : list) {
-////                if (i++ <6) {
-////                    continue;
-////                }
-//                System.out.println( "is there? " + ResolverConnector.isDocumentAlreadyImported(oai.getRegistrarCode(), id));
-//                Document doc = oai.getRecordDocument(id);
-//                try {
-//                    Document output = XmlTools.getTransformedDocument(doc, stylesheet);
-//                    Document outputDI = XmlTools.getTransformedDocument(doc, stylesheetDI);
-//                    try {
-//                        XmlTools.validateImport(output);
-//                    } catch (SAXException ex) {
-//                        Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                    } catch (ParserConfigurationException ex) {
-//                        Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                    } catch (ValidityException ex) {
-//                        Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                    //Document outputDI = XmlTools.getTransformedDocument(doc, stylesheetDI);
-////
-////                    SSLContext ctx = SSLContext.getInstance("TLS");
-////                    ctx.init(new KeyManager[0], new TrustManager[]{new X509TrustManager() {
-////
-////                            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-////                            }
-////
-////                            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-////                            }
-////
-////                            public X509Certificate[] getAcceptedIssuers() {
-////                                return null;
-////                            }
-////                        }}, new SecureRandom());
-////                    SSLContext.setDefault(ctx);
-//
-//
-//                    TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-//
-//                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-//                        return null;
-//                    }
-//
-//                    public void checkClientTrusted(
-//                            java.security.cert.X509Certificate[] certs, String authType) {
-//                    }
-//
-//                    public void checkServerTrusted(
-//                            java.security.cert.X509Certificate[] certs, String authType) {
-//                    }
-//                }};
-//
-//                    SSLContext sc = SSLContext.getInstance("SSL");
-//                    HostnameVerifier hv = new HostnameVerifier() {
-//
-//                        public boolean verify(String urlHostName, SSLSession session) {
-//                            return true;
-//                        }
-//                    };
-//                    HttpsURLConnection.setDefaultHostnameVerifier(hv);
-//                    sc.init(null, trustAllCerts, new java.security.SecureRandom());
-//                    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-//
-//
-//                    //String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
-//                    String urlString = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/digitalInstances";
-//                    //String xml = output.toXML();
-//                    String xml = outputDI.toXML();
-//                    
-//                    System.out.println("----------------------------");                    
-//                    System.out.println(xml);
-//                    System.out.println("----------------------------");
-//                    
-//                    URL url = new URL(urlString);
-//                    HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-//                    connection.setDoOutput(true);
-//                    connection.setRequestMethod("POST");                    
-//                    connection.setDoInput(true);
-//                    
-//                    String userPassword = oai.getLogin() + ":" + oai.getPassword();		
-//                    String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
-//                    connection.setRequestProperty("Content-type", "application/xml");
-//                    //connection.setRequestProperty("Content-Type",
-//				//"application/x-www-form-urlencoded");
-//                    connection.setRequestProperty("Authorization", "Basic " + encoding);                    
-//                    
-////                    connection.setHostnameVerifier(new HostnameVerifier() {
-////
-////                        @Override
-////                        public boolean verify(String arg0, SSLSession arg1) {
-////                            return true;
-////                        }
-////                    });
-//
-//                    
-//                    
-////                    connection.setUseCaches(false);
-////                    connection.setAllowUserInteraction(false);
-////                    connection.setRequestProperty("Authorization",
-////                            "Basic " + new sun.misc.BASE64Encoder().encode(userPassword.getBytes()));
-////
-//
-//
-//
-//                    //String xml = output.toXML();
-//                    OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-//                    wr.write(xml);
-//                    wr.flush();
-//                    wr.close();
-//                    System.out.println("code" + connection.getResponseCode());
-//
-//
-//                    // Get the response
-////    BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-////    String line;
-////    while ((line = rd.readLine()) != null) {
-////        System.out.println(line);
-////    }
-////    
-////    rd.close();                    
-////                    OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-////                    wr.write(xml);
-////                    wr.flush();
-////                    wr.close();
-//                      InputStream is = connection.getInputStream();
-//                      Document responseDocument = builder.build(is);
-//                     // String s = ResolverConnector.getAllocatedURNNBN(responseDocument);
-//                     // System.out.println("allocated urnnbn = " + s);
-//                      System.out.println(responseDocument.toXML());
-////
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//                    XmlTools.saveDocumentToFile(output, "/home/hanis/prace/resolver/oai/output/" + id + ".xml");
-//                    //XmlTools.saveDocumentToFile(outputDI, "/home/hanis/prace/resolver/oai/output/" + id + "_di.xml");
-//                } catch (KeyManagementException ex) {
-//                    Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                } catch (NoSuchAlgorithmException ex) {
-//                    Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                } catch (XSLException ex) {
-//                    Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//          //  }
-//        } catch (ParsingException ex) {
-//            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
-
 }
