@@ -4,16 +4,13 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import cz.nkp.urnnbn.oaiadapter.Credentials;
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 import cz.nkp.urnnbn.oaiadapter.ResolverConnector;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -28,15 +25,12 @@ import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.Serializer;
-import nu.xom.ValidityException;
 import nu.xom.xslt.XSLException;
 import nu.xom.xslt.XSLTransform;
 import org.xml.sax.SAXException;
@@ -59,7 +53,7 @@ public class XmlTools {
     public static Document getDocument(URL url) throws IOException, ParsingException {
         return getDocument(url, false);
     }
-    
+
     public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException, XSLException {
         Builder builder = new Builder();
         Document document = builder.build(template, null);
@@ -68,11 +62,9 @@ public class XmlTools {
     }
 
     public static Document getDocument(URL url, boolean status404Allowed) throws IOException, ParsingException {
-        //System.out.println(url.toString());
         Builder builder = new Builder();
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         InputStream is = null;
-
         if (status404Allowed && con.getResponseCode() == 404) {
             is = con.getErrorStream();
             if (is == null) {
@@ -97,66 +89,80 @@ public class XmlTools {
         XSLTransform transform = new XSLTransform(stylesheet);
         Nodes output = transform.transform(input);
         Document result = XSLTransform.toDocument(output);
-        //System.out.println(result.toXML());
         return result;
     }
 
-    public static HttpsURLConnection getAuthConnection(String login, String password, 
-            String urlString, String method, boolean doOutput) 
-            throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException {
+    public static HttpsURLConnection getAuthConnection(String login, String password,
+            String urlString, String method, boolean doOutput)
+            throws IOException {
 
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        HttpsURLConnection connection = null;
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-
-        public void checkClientTrusted(
-                java.security.cert.X509Certificate[] certs, String authType) {
-        }
-
-        public void checkServerTrusted(
-                java.security.cert.X509Certificate[] certs, String authType) {
-        }
-    }};
-        SSLContext sc = SSLContext.getInstance("SSL");
-        HostnameVerifier hv = new HostnameVerifier() {
-
-            public boolean verify(String urlHostName, SSLSession session) {
-                return true;
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
             }
-        };
-        HttpsURLConnection.setDefaultHostnameVerifier(hv);
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        //String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
-        URL url = new URL(urlString);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setDoOutput(doOutput);
-        connection.setRequestMethod(method);
-        connection.setDoInput(true);
 
-        String userPassword = login + ":" + password;
-        String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
-        connection.setRequestProperty("Content-type", "application/xml");
-        connection.setRequestProperty("Authorization", "Basic " + encoding);        
+            public void checkClientTrusted(
+                    java.security.cert.X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(
+                    java.security.cert.X509Certificate[] certs, String authType) {
+            }
+        }};
+            SSLContext sc = SSLContext.getInstance("SSL");
+            HostnameVerifier hv = new HostnameVerifier() {
+
+                public boolean verify(String urlHostName, SSLSession session) {
+                    return true;
+                }
+            };
+            HttpsURLConnection.setDefaultHostnameVerifier(hv);
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            //String urlString = "https://resolver-test.nkp.cz/api/v2/registrars/" + oai.getRegistrarCode() + "/digitalDocuments";
+            URL url = new URL(urlString);
+            connection = (HttpsURLConnection) url.openConnection();
+            connection.setDoOutput(doOutput);
+            connection.setRequestMethod(method);
+            connection.setDoInput(true);
+
+            String userPassword = login + ":" + password;
+            String encoding = new sun.misc.BASE64Encoder().encode(userPassword.getBytes());
+            connection.setRequestProperty("Content-type", "application/xml");
+            connection.setRequestProperty("Authorization", "Basic " + encoding);
+
+        } catch (KeyManagementException ex) {
+            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return connection;
     }
 
-    public static void validateImport(Document document) throws SAXException, ParserConfigurationException, ParsingException, IOException {
-        XmlTools.validateDocument(document, ResolverConnector.IMPORT_TEMPLATE_URL);       
+    public static void validateImport(Document document) throws DocumentOperationException {
+        try {
+            XmlTools.validateDocument(document, ResolverConnector.IMPORT_TEMPLATE_URL);
+        } catch (Exception ex) {
+            throw new DocumentOperationException(ex.getMessage());
+        }
     }
 
-    public static void validateDigitalIntance(Document document) throws SAXException, ParserConfigurationException, ParsingException, IOException {
-        validateDocument(document, ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL);       
+    public static void validateDigitalIntance(Document document) throws DocumentOperationException {
+        try {
+            XmlTools.validateDocument(document, ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL);
+        } catch (Exception ex) {
+            throw new DocumentOperationException(ex.getMessage());
+        }
     }
-    
-    
+
     private static void validateDocument(Document document, String templateUrl) throws SAXException, ParserConfigurationException, ParsingException, IOException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(false);
         factory.setNamespaceAware(true);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");    
+        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
         factory.setSchema(schemaFactory.newSchema(new URL(templateUrl)));
         SAXParser parser = factory.newSAXParser();
         XMLReader reader = parser.getXMLReader();
@@ -165,8 +171,6 @@ public class XmlTools {
         Builder builder = new Builder(reader);
         builder.build(document.toXML(), null);
     }
-    
-    
 
     public static void main(String[] args) {
 //        

@@ -8,11 +8,6 @@ import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -84,7 +79,7 @@ public class ResolverConnector {
         }
     }
 
-    public static String importDocument(Document document, String registarCode, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException, ResolverConnectionException {
+    public static String importDocument(Document document, String registarCode, String login, String password) throws IOException, ParsingException, ResolverConnectionException {
         String url = getImportDocumetUrl(registarCode);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
         OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
@@ -105,7 +100,8 @@ public class ResolverConnector {
         // System.out.println(responseDocument.toXML());
     }
 
-    public static void importDigitalInstance(Document document, String urnnbn, String login, String password) throws IOException, NoSuchAlgorithmException, KeyManagementException, ParsingException, ResolverConnectionException {
+    public static void importDigitalInstance(Document document, String urnnbn, String login, String password) 
+            throws IOException, ParsingException, ResolverConnectionException {
         String url = getImportDigitalInstanceUrl(urnnbn);
         //System.out.println(url);
         //System.out.println(document.toXML());
@@ -134,7 +130,8 @@ public class ResolverConnector {
         return url;
     }
 
-    public static void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password) throws NoSuchAlgorithmException, KeyManagementException, MalformedURLException, IOException, ResolverConnectionException {
+    public static void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password) 
+            throws  IOException, ResolverConnectionException {
         String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
         //System.out.println(url + " - " + documentId);
 

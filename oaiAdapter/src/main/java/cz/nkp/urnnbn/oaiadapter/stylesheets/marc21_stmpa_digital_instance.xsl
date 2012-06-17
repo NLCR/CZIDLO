@@ -37,7 +37,7 @@
     </xsl:template>    
 
     <xsl:template name="digitalLibraryId">                       
-        <r:digitalLibraryId>42</r:digitalLibraryId>      
+        <r:digitalLibraryId>45</r:digitalLibraryId>      
     </xsl:template>    
 
     <xsl:template name="format">                              
@@ -47,8 +47,7 @@
     <xsl:template name="accessibility">                       
             <r:accessibility>volně přístupné</r:accessibility>
     </xsl:template>       
-     
-     
+
      
 </xsl:stylesheet>
 

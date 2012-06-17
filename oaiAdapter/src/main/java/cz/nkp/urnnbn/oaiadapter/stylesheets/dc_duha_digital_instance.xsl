@@ -12,9 +12,7 @@
             doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
             doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
             />
-            
-            
-            
+  
     <xsl:template match="/">                
         <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">        
             <xsl:call-template name="url"/>
@@ -24,7 +22,6 @@
         </r:digitalInstance>        
     </xsl:template>
         
-    
     <xsl:template name="url">           
         <r:url>
             <xsl:value-of select='//dc:identifier'/>
@@ -32,7 +29,7 @@
     </xsl:template>    
 
     <xsl:template name="digitalLibraryId">                       
-        <r:digitalLibraryId>41</r:digitalLibraryId>      
+        <r:digitalLibraryId>43</r:digitalLibraryId>      
     </xsl:template>    
 
     <xsl:template name="format">                       
@@ -42,7 +39,5 @@
     <xsl:template name="accessibility">                       
         <r:accessibility>veřejné</r:accessibility>
     </xsl:template>       
-     
-     
-     
+    
 </xsl:stylesheet>
