@@ -9,9 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
@@ -35,16 +33,12 @@ public class PostgresPooledConnector implements PostgresConnector {
             if (pool == null) {
                 logger.log(Level.SEVERE, "Datasource not found");
                 throw new RuntimeException();
+            } else {
+                logger.log(Level.FINE, "Connection pool established");
             }
-
-//            logger.log(Level.SEVERE, "lets lookup context");
-//            Context envCtx = (Context) new InitialContext().lookup("java:comp/env");
-//            logger.log(Level.SEVERE, "context lookedup");
-//            pool = (DataSource) envCtx.lookup(JNDI_DB_CONNECTION_POOL_ID);
-//            logger.log(Level.FINE, "Connection pool established");
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Cannot load connection pool: {0}", e.getMessage());
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -53,7 +47,7 @@ public class PostgresPooledConnector implements PostgresConnector {
         try {
             return pool.getConnection();
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot obtain connection from pool: {1}", ex.getMessage());
+            logger.log(Level.SEVERE, "Cannot obtain connection from pool: {0}", ex.getMessage());
             throw new DatabaseException(ex);
         }
     }
