@@ -40,7 +40,6 @@ public class Identify extends OaiVerbResponse {
 
     @Override
     void createResponse() throws IOException {
-        System.err.println("creating identify response");
         addOaiElemenToIdentifyEl("repositoryName", config.getRepositoryName());
         addOaiElemenToIdentifyEl("baseURL", config.getBaseUrl());
         addOaiElemenToIdentifyEl("protocolVersion", "2.0");
