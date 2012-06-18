@@ -11,8 +11,10 @@ import java.net.URL;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
+import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.XPathContext;
@@ -97,11 +99,22 @@ public class OaiHarvester {
             throw new OaiHarvesterException("ListIdentifiers failed while fetching document.", url.toString());
         }
         Element root = document.getRootElement();
-
         XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
-        Nodes nodes = root.query("//oai:header/oai:identifier", context);
+        //Nodes nodes = root.query("//oai:header/oai:identifier", context);
+        Nodes nodes = root.query("//oai:header", context);
         for (int i = 0; i < nodes.size(); i++) {
-            identiriersStack.push(nodes.get(i).getValue());
+            Node header = nodes.get(i);
+            Nodes identifiers = header.query("oai:identifier", context);
+            if (identifiers == null || identifiers.size() < 1) {
+                throw new OaiHarvesterException("ListIdentifiers failed - no identifier in header element", url.toString());
+            }
+            Node identifier = identifiers.get(0);
+            String id = identifier.getValue();
+            Attribute status = ((Element) header).getAttribute("status");
+            if (status != null && status.getValue().equals("deleted")) {
+                continue;
+            }
+            identiriersStack.push(id);
         }
         Nodes resumption = root.query("//oai:resumptionToken", context);
         if (resumption.size() > 0) {
@@ -211,7 +224,8 @@ public class OaiHarvester {
 
     public static void main(String[] args) {
         try {
-            OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
+            //OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
+            OaiHarvester harvester = new OaiHarvester("http://oai.mzk.cz/", "marc21", "collection:mollMaps");
             int counter = 0;
             while (harvester.hasNext()) {
                 Document doc = null;

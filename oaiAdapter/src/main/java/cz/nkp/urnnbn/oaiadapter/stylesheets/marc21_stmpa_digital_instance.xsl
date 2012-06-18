@@ -37,7 +37,7 @@
     </xsl:template>    
 
     <xsl:template name="digitalLibraryId">                       
-        <r:digitalLibraryId>45</r:digitalLibraryId>      
+        <r:digitalLibraryId>43</r:digitalLibraryId>      
     </xsl:template>    
 
     <xsl:template name="format">                              
