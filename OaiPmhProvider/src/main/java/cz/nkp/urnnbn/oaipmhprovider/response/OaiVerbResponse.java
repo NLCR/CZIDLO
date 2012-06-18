@@ -18,7 +18,7 @@ import org.dom4j.Element;
  */
 public abstract class OaiVerbResponse extends OaiResponse {
 
-    private static final Logger logger = Logger.getLogger(OaiErrorResponse.class.getName());
+    protected static final Logger logger = Logger.getLogger(OaiVerbResponse.class.getName());
     protected Element rootEl;
 
     public OaiVerbResponse(String verbStr, Map<String, String[]> parameters) throws IOException {
@@ -35,7 +35,6 @@ public abstract class OaiVerbResponse extends OaiResponse {
         return doc;
     }
 
-    //abstract String[] getParametersAllowed();
     abstract String[] getRequiredArguments();
 
     abstract String[] getOptionalArguments();
