@@ -25,12 +25,12 @@ import nu.xom.XPathContext;
  */
 public class OaiHarvester {
 
-    //private static final Logger logger = Logger.getLogger(OaiHarvester.class.getName());
+    private static final Logger logger = Logger.getLogger(OaiHarvester.class.getName());
     public static final String OAI_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
     private String oaiBaseUrl;
     private String metadataPrefix;
     private String setSpec;
-    private Stack<String> identiriersStack;
+    private Stack<String> identifiersStack;
     private boolean next = false;
     private String resumptionToken;
     private String lastIdentifier;
@@ -51,7 +51,7 @@ public class OaiHarvester {
         this.setSpec = setSpec;
 
         this.next = true;
-        identiriersStack = new Stack<String>();
+        identifiersStack = new Stack<String>();
         initHarvesting();
     }
 
@@ -114,7 +114,7 @@ public class OaiHarvester {
             if (status != null && status.getValue().equals("deleted")) {
                 continue;
             }
-            identiriersStack.push(id);
+            identifiersStack.push(id);
         }
         Nodes resumption = root.query("//oai:resumptionToken", context);
         if (resumption.size() > 0) {
@@ -134,17 +134,17 @@ public class OaiHarvester {
             try {
                 document = XmlTools.getDocument(url);
             } catch (IOException ex) {
-                throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
+                throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
             } catch (ParsingException ex) {
-                throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
+                throw new OaiHarvesterException("Failed parsing document.", url.toString());
             }
         } catch (MalformedURLException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return document;
     }
 
-//    public List<String> getListIdentifiers(int limit) throws ParsingException, IOException {
+    //    public List<String> getListIdentifiers(int limit) throws ParsingException, IOException {
 //        URL url = getListIdentifiersUrl();
 //        List<String> list = new ArrayList<String>();
 //        String resumptionToken = addIdentifiers(url, list, limit);
@@ -160,7 +160,7 @@ public class OaiHarvester {
             String token = addIdentifiers(url);
             updateResumtionToken(token);
         } catch (MalformedURLException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -172,18 +172,17 @@ public class OaiHarvester {
     }
 
     public boolean hasNext() {
-        return !identiriersStack.isEmpty() || next;
+        return !identifiersStack.isEmpty() || next;
     }
 
     public Document getNext() throws OaiHarvesterException {
         String identifier = getNextId();
         if (identifier == null) {
             return null;
+        } else {
+            this.lastIdentifier = identifier;
+            return getRecordDocument(identifier);
         }
-        Document document = null;
-        document = getRecordDocument(identifier);
-        this.lastIdentifier = identifier;
-        return document;
     }
 
     public String getLastIdentifier() {
@@ -194,20 +193,25 @@ public class OaiHarvester {
         if (!hasNext()) {
             return null;
         }
-        if (!identiriersStack.isEmpty()) {
-            return identiriersStack.pop();
+        if (!identifiersStack.isEmpty()) {
+            return identifiersStack.pop();
+        } else {
+            loadNextIdentifiers();
+            return getNextId();
         }
+    }
+
+    private void loadNextIdentifiers() throws OaiHarvesterException {
         URL url = null;
         try {
             url = getResumptionTokenUrl(resumptionToken);
         } catch (MalformedURLException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         System.out.println("url: " + url);
         String token = addIdentifiers(url);
         System.out.println("token: " + token);
         updateResumtionToken(token);
-        return getNextId();
     }
 
     public String getOaiBaseUrl() {
@@ -232,9 +236,7 @@ public class OaiHarvester {
                 try {
                     doc = harvester.getNext();
                 } catch (OaiHarvesterException ex) {
-                    Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE,
-                            "cannot fetch a record: " + ex.getMessage() + ", " + ex.getUrl(), ex);
-
+                    logger.log(Level.SEVERE, "cannot fetch a record: " + ex.getMessage() + ", " + ex.getUrl(), ex);
                 }
                 if (doc != null) {
                     System.out.println(doc.toXML());
@@ -246,8 +248,7 @@ public class OaiHarvester {
             }
             System.out.println(counter);
         } catch (OaiHarvesterException ex) {
-            Logger.getLogger(OaiHarvester.class.getName()).log(Level.SEVERE,
-                    "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
+            logger.log(Level.SEVERE, "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
         }
     }
 }
