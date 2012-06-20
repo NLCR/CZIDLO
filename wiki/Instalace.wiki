@@ -1,22 +1,178 @@
 #summary Návod na instalaci Resolveru.
+#labels Featured,Phase-Deploy
 #sidebar TableOfContents
 
-<wiki:toc max_depth="1" />
+<wiki:toc max_depth="3" />
 
 = Předpoklady =
-Systém potřebuje ke svému provozu middleware, jehož instalace není předmětem této dokumentace. Jde o:
+Systém potřebuje ke svému provozu middleware, jehož instalace není předmětem této dokumentace. Jedná se o:
 
  * Apache Tomcat ve verzi 6 a vyšší. Případně jiný servletový kontejner. Korektní fungování všech součástí v jiných aplikačních serverech nezaručujeme. 
  * PostgreSQL ve verzi 8 a vyšší.
  * Apache HTTP Server či jiný webový server. Není úplně nutné tutu komponentu použít a je možné systém provozovat bez ní, má to ale spoustu nevýhod.
 
 = Instalační soubory =
-V sekci [API Downloads] fds
+V sekci [API Downloads] najdete vždy aktuální instalační balík *installation-verze.zip*. Ten by měl obsahovat zejména tyto soubory:
+ * *README.TXT* - návod k instalaci podobný tomuto dokumentu
+ * *web.war* - aplikace pro uživatelské webové rozhraní
+ * *api.war* - aplikace pro aplikační rozhraní pro rezolvování a přístup dalších systémů. API je popsáno [API zde].
+ * *OaiPmhProvider.war* - OAI-PMH data provider
+ * *initDatabase.sql* - SQL skript pro inicializaci databáze  
 
 
-= Details =
+= Instalace =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Nejprve je nutné stáhnout a rozbalit instalační balik.
+
+== Inicializace databáze ==
+Nejprve je potřeba vytvořit pro Resolver databázi pod některým databázovým uživatelem. Druhým krokem je vytvoření potřebných tabulek, sekvencí a indexů. K tomu slouží skript _initDatabase.sql_, který lze spustit např. programem psql.
+
+Skript také vytvoří prvotního uživatele, který disponuje administrátorskými právy. Jeho přihlašovací údaje jsou: 
+ * jméno: *admin*
+ * heslo: *adminPassword*
+Vzhledem k tomu, že není aktuálně možné uživatelská hesla měnit, *je nutné tohoto uživatele smazat, jakmile jím bude vytvořen nový uživatel s adminstrátorskými právy!*
+
+== Instalace webových aplikací ==
+Dalším krokem je instalace tří webových aplikací do servletového kontejneru. Ty jsou distribuovány v podobě war archivů. 
+Pro Apache Tomcat stačí nakopírovat soubory *web.war*, *api.war* a *OaiPmhProvider.war* do adresáře *$TOMCAT_HOME/webapps*. Tomcat se již postará o instalci aplikací, což by se mělo projevit v jeho logu ($TOMCAT_HOME/logs/catalina.out).
+
+Není nutné instalovat všechny aplikace. Ty fungují nezávisle na sobě, takže můžete zvolit některé z dalších možností nasazení. Např:
+ * web.war + api.war - pokud není požadováno rozhraní OAI-PMH
+ * api.war - jen pro importy a rezolovování (s tím, že část web bude dostupná jinde)
+ * každý modul v jiném aplikačním serveru (případně na různých strojích) - kvůli lepšímu škálování.
+ 
+== Napojení webových aplikací na databázi ==
+Všechny moduly (ať už nasazeny kdekoliv) musí být připojeny ke stejné databázi, která byla inicializována v sekci [Instalace]. 
+Pool databázových připojení aplikace získávají od aplikačního serveru pomocí JNDI. Připojení k databázi tedy musí být definováno v jednom z:
+ * $TOMCAT_HOME/conf/context.xml - globálně pro všechny aplikace
+ * $TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml - pro každou aplikaci zvlášť uvnitř nasazené aplikace
+ * $TOMCAT_HOME/conf/Catalina/localhost/$APPLICATION_NAME.xml - pro každou aplikaci zvlášť mimo nasazené aplikace
+Pro více informací konzultujte [http://tomcat.apache.org/tomcat-7.0-doc/config/context.html dokumentaci Tomcatu].
+
+Definice zdroje _databázové připojení_ pak vypadá nějak takto:
+<code language="xml">
+<Resource auth="Container"
+  driverClassName="org.postgresql.Driver"
+  maxActive="100" maxIdle="30" maxWait="200"
+  name="jdbc/postgres"
+  username="testuser"
+  password="testpass"
+  type="javax.sql.DataSource"
+  url="jdbc:postgresql://localhost:5432/resolver"
+/>
+</code>
+
+Mějte na paměti, že war archivy již obsahují definici kontextu aplikace (včetně tohoto zdroje), který Tomcat při instalaci nakopíruje do $TOMCAT_HOME/webapps/$NÁZEV_APLIKACE/META-INF/context.xml.
+
+== Konfigurace jednotlivých aplikací ==
+Každou z aplikací je možné (nutné) do určité míry konfigurovat. Konfigurace je vždy uložena v properties souborech.
+
+=== Aplikace api ===
+Konfiguraci lze nalézt v souboru $TOMCAT_HOME/webapps/api/WEB-INF/classes/api.properties. 
+
+{{{
+#if this is set to true the application will not allow imports and other data updates
+resolver.readOnly=false
+    
+#if running in development mode. default value is false
+resolver.develMode=false
+
+#two-letter language code in URN:NBN schema according to ISO 3166, e. g. "cz"
+#ATTENTION: this configuration is not used in current version of API module and language code is firmly set to "cz" in code.
+resolver.languageCode=cz
+
+#maximal number of prined urn:nbn records for operation GET v2/registrars/{REGISTRAR_CODE}/urnNbnReservations
+#if number of records is higher than this only the number itself is printed 
+api.getReseravations.maxReservedToPrint=100
+  
+#default number of records returned by operation POST /v2/registrars/{REGISTRAR_CODE}/urnNbnReservations
+api.reservation.defaultSize=10
+
+#maximal number of records returned by operation POST /v2/registrars/{REGISTRAR_CODE}/urnNbnReservations
+api.reservation.maxSize=100
+}}}
+
+=== Aplikace web ===
+Konfiguraci lze nalézt v souboru $TOMCAT_HOME/webapps/web/WEB-INF/classes/web.properties. 
+{{{
+#if this is set to true the application will not allow imports and other data updates
+resolver.readOnly=false
+
+#if running in development mode. default value is false
+resolver.develMode=false
+}}}
+
+
+=== Aplikace OaiPmhProvider ===
+Konfiguraci lze nalézt v souboru $TOMCAT_HOME/webapps/OaiPmhProvider/WEB-INF/classes/provider.properties.
+{{{
+#two-letter language code in URN:NBN schema according to ISO 3166, e. g. "cz"
+resolver.languageCode=cz
+
+#name of repository  (will be present in response of Identify operation)
+provider.repositoryName=URN:NBN Resolver for language code 'cz'
+
+#oai provider base url (will be present in response of Identify operation)
+provider.baseUrl=http://resolver.nkp.cz/OaiPmhProvider/provider
+
+#url of web interface of oai provider (will be present in response of Identify operation)
+provider.webUrl=http://resolver.nkp.cz/OaiPmhProvider/web
+
+#earliest datestamp (will be present in response of Identify operation)
+provider.earliestDatestamp=2010-10-06T00:00:00Z
+
+#email of administrator (will be present in response of Identify operation)  
+provider.adminEmail=rehan@mzk.cz
+
+#maximal number of records returned by operation ListIdentifiers
+#if result is bigger, resumption token is returned
+provider.ListIdentifiers.maxSize=100
+
+#maximal number of records returned by operation ListRecords  
+#if result is bigger, resumption token is returned
+provider.ListRecords.maxSize=50
+
+#number of minutes after which the ListIdentifier or ListRecord request is dropped
+#if not refreshed by following request with resumptionToken
+provider.ListRequests.minutesValid=5
+}}}
+
+= Logování =
+Jako logovací framework je použito standardní java.util.logging.
+Loggery jsou vždy pojmenovány plným názvem tříd (případně názvem nadtříd) metod, které něco logují. Je tedy možné připojit handlery na základě hierarchie balíků. Např.:
+ * cz.nkp.urnnbn.core.persistence pro modul persistence (přístup k databázi)
+ * *cz.nkp.urnnbn.services* pro servisní vrstvu
+ * *cz.nkp.urnnbn.rest* pro modul API
+ * *cz.nkp.urnnbn.oaipmhprovider* pro modul OAI-PMH provider
+ * *cz.nkp.urnnbn.server* pro serverovou část modulu WEB
+
+= Webový server jako frontend =
+V produkčním nasazení je nutné, aby byly aplikace dostupné na portu 80 (a 443).
+Samotný Tomcat většinou neběží pod rootem a nemůže tedy obsadit žádný port nižší než 1024 - obvykle je dostupný na portu 8080 (a 8443).
+
+Typickým řešením je použití webového serveru (např. Apache HTTP Server) jako frontendu s aplikačním serverem (Tomcat) jako backend. 
+Webový prohlížeč (či aplikace přistupující k API nebo OAI-PMH) potom komunikuje s webovým serverem, který zprostředkovává komunikaci s aplikačním serverem, typicky protokolem AJP. Aplikační server tak nemusí být přístupný vnějšímu světu. 
+
+Existuje několik způsobů, jak zajistit komunikaci mezi webovým a aplikačním serverm. Pro Apache HTTP Server např. pomocí modulů mod_proxy_ajp nebo mod_jk.
+
+Webový server pak může zajistit i další předzpracování paketů jako:
+ * podporu HTTPS
+ * přesměrování z HTTP na HTTPS, kde to je potřeba
+ * tento typ přesměrování:  http://myresolverdomain.cz/urn:nbn:cz:aba001-000001 --> http://mydomain.cz/api/v2/resolver/urn:nbn:cz:aba001-000001
+ * přesměrování http://myresolverdomain.cz --> http://myresolverdomain.cz/web
+ * rozložení zátěže mezi několik aplikačních serverů
+
+Pokud chcete používat API pro importy a jiné autorizované operace, je nutné nějak HTTPS zajistit. 
+Apache by navíc měl být více bezpečný, než samotný Tomcat, vzhledem k obrovskému množstí instalací (a nejen pro svět Javy).
+Je také vhodné realizovat různá přesměrování, čehož v samotném Tomcatu není jednoduché dosáhnout.
+
+= Lokace aplikací =
+Bez jakéhokoliv přesměrování a pouze s aplikačním serverem jsou aplikaci dostupné na těchto url:
+ * http://$DOMAIN:8080/web - webové rozhraní pro lidské klienty
+ * http://$DOMAIN:8080/api - API pro strojový přístup a také rezolvování
+ * http://$DOMAIN:8080/OaiPmhProvider - OAI-PMH provider s jednoduchým webovým rozhraním
+
+Vždy by měla být dostupná alespoň instalace Národní Knihovny České republiky na adrese [http://resolver.nkp.cz] ([http://resolver.nkp.cz/web WEB], [http://resolver.nkp.cz/api API], [http://resolver.nkp.cz/OaiPmhProvider OAI-PMH Provider]).
+
+
+
