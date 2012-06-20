@@ -167,12 +167,9 @@ Apache by navíc měl být více bezpečný, než samotný Tomcat, vzhledem k ob
 Je také vhodné realizovat různá přesměrování, čehož v samotném Tomcatu není jednoduché dosáhnout.
 
 = Lokace aplikací =
-Bez jakéhokoliv přesměrování a pouze s aplikačním serverem jsou aplikaci dostupné na těchto url:
- * http://$DOMAIN:8080/web - webové rozhraní pro lidské klienty
- * http://$DOMAIN:8080/api - API pro strojový přístup a také rezolvování
- * http://$DOMAIN:8080/OaiPmhProvider - OAI-PMH provider s jednoduchým webovým rozhraním
+Bez jakéhokoliv přesměrování a pouze s aplikačním serverem jsou aplikaci dostupné na těchto url (až na doménu):
+ * http://myresolverdomain.cz:8080/web - webové rozhraní pro lidské klienty
+ * http://myresolverdomain.cz:8080/api - API pro strojový přístup a také rezolvování
+ * http://myresolverdomain.cz:8080/OaiPmhProvider - OAI-PMH provider s jednoduchým webovým rozhraním
 
 Vždy by měla být dostupná alespoň instalace Národní Knihovny České republiky na adrese [http://resolver.nkp.cz] ([http://resolver.nkp.cz/web WEB], [http://resolver.nkp.cz/api API], [http://resolver.nkp.cz/OaiPmhProvider OAI-PMH Provider]).
-
-
-
