@@ -1,0 +1,22 @@
+#summary Návod na instalaci Resolveru.
+#sidebar TableOfContents
+
+<wiki:toc max_depth="1" />
+
+= Předpoklady =
+Systém potřebuje ke svému provozu middleware, jehož instalace není předmětem této dokumentace. Jde o:
+
+ * Apache Tomcat ve verzi 6 a vyšší. Případně jiný servletový kontejner. Korektní fungování všech součástí v jiných aplikačních serverech nezaručujeme. 
+ * PostgreSQL ve verzi 8 a vyšší.
+ * Apache HTTP Server či jiný webový server. Není úplně nutné tutu komponentu použít a je možné systém provozovat bez ní, má to ale spoustu nevýhod.
+
+= Instalační soubory =
+V sekci [API Downloads] fds
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
