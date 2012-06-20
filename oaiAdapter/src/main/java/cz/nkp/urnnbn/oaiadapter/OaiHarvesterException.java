@@ -9,9 +9,9 @@ package cz.nkp.urnnbn.oaiadapter;
  * @author hanis
  */
 public class OaiHarvesterException extends Exception {
-    
+
     private String url;
-    
+
     OaiHarvesterException() {
     }
 
@@ -19,7 +19,7 @@ public class OaiHarvesterException extends Exception {
         super(msg);
         this.url = url;
     }
-    
+
     public String getUrl() {
         return url;
     }

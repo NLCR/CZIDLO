@@ -33,7 +33,6 @@ public class OaiHarvester {
     private Stack<String> identifiersStack;
     private boolean next = false;
     private String resumptionToken;
-    private String lastIdentifier;
 
     public OaiHarvester(String oaiBaseUrl, String metadataPrefix) throws OaiHarvesterException {
         this(oaiBaseUrl, metadataPrefix, null);
@@ -175,18 +174,14 @@ public class OaiHarvester {
         return !identifiersStack.isEmpty() || next;
     }
 
-    public Document getNext() throws OaiHarvesterException {
+    public Record getNext() throws OaiHarvesterException {
         String identifier = getNextId();
         if (identifier == null) {
             return null;
         } else {
-            this.lastIdentifier = identifier;
-            return getRecordDocument(identifier);
+            Document document = getRecordDocument(identifier);
+            return new Record(identifier, document);
         }
-    }
-
-    public String getLastIdentifier() {
-        return lastIdentifier;
     }
 
     private String getNextId() throws OaiHarvesterException {
@@ -234,7 +229,7 @@ public class OaiHarvester {
             while (harvester.hasNext()) {
                 Document doc = null;
                 try {
-                    doc = harvester.getNext();
+                    doc = harvester.getNext().getDocument();
                 } catch (OaiHarvesterException ex) {
                     logger.log(Level.SEVERE, "cannot fetch a record: " + ex.getMessage() + ", " + ex.getUrl(), ex);
                 }

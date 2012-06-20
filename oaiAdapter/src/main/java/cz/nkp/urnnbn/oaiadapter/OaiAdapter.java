@@ -162,19 +162,21 @@ public class OaiAdapter {
         }
     }
 
-    private boolean importDocument(String identifier, Document document, Document importTemplate, Document digitalInstanceTemplate)
+    private boolean importDocument(Record record, Document importTemplate, Document digitalInstanceTemplate)
             throws OaiAdapterException {
-        report("------------------------------------------------------");
-        report("Importing document - identifier: " + identifier);
 
-        if (isDocumentAlreadyImported(identifier)) {
+        report("------------------------------------------------------");
+        report("Importing document - identifier: " + record.getIdentifier());
+
+        if (isDocumentAlreadyImported(record.getIdentifier())) {
             return false;
         }
 
+        String identifier = record.getIdentifier();
         Document importDocument = null;
         Document digitalInstanceDocument = null;
         try {
-            importDocument = XmlTools.getTransformedDocument(document, importTemplate);
+            importDocument = XmlTools.getTransformedDocument(record.getDocument(), importTemplate);
             report("- import tranformation successful - continue.");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming import document. "
@@ -195,7 +197,7 @@ public class OaiAdapter {
         }
 
         try {
-            digitalInstanceDocument = XmlTools.getTransformedDocument(document, digitalInstanceTemplate);
+            digitalInstanceDocument = XmlTools.getTransformedDocument(record.getDocument(), digitalInstanceTemplate);
             report("- digital instance transformation successful - continue.");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming digital instance document. "
@@ -258,7 +260,6 @@ public class OaiAdapter {
                     + ", ex: " + ex.getMessage());
         }
 
-
         return true;
     }
 
@@ -267,13 +268,13 @@ public class OaiAdapter {
             Document importTemplate = getImportTemplateDocument();
             Document digitalInstanceTemplate = getDigitalInstanceTemplateDocument();
 
-            
+
             report("REPORT:");
             report(" OAI base url: " + getOaiBaseUrl());
             report(" Metadata prefix: " + getMetadataPrefix());
             report(" Set: " + (setSpec == null ? "not set" : setSpec));
             report("-----------------------------------------------------");
-            
+
             OaiHarvester harvester = null;
             try {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
@@ -281,7 +282,7 @@ public class OaiAdapter {
                 report("OaiHarvester initialization failed. " + ex.getMessage() + ", url: " + ex.getMessage());
                 logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[]{ex.getMessage(), ex.getMessage()});
                 return;
-            }            
+            }
             int counter = 0;
             int success = 0;
             int all = 0;
@@ -289,27 +290,26 @@ public class OaiAdapter {
             while (harvester.hasNext()) {
                 if (limit > 0 && counter++ >= limit) {
                     break;
-                }                
+                }
                 try {
-                    Document recordDocument = harvester.getNext();
-                    String identifier = harvester.getLastIdentifier();
+                    Record record = harvester.getNext();
                     all++;
                     try {
-                        boolean result = importDocument(identifier, recordDocument, importTemplate, digitalInstanceTemplate);
-                        if (result) {
+                        boolean imported = importDocument(record, importTemplate, digitalInstanceTemplate);
+                        if (imported) {
                             success++;
-                            logger.log(Level.INFO, "Record successfully added. Identifier {0}", identifier);
+                            logger.log(Level.INFO, "Record successfully added. Identifier {0}", record.getIdentifier());
                         } else {
                             alreadyImported++;
                         }
-                        report("STATUS: OK");                        
+                        report("STATUS: OK");
                     } catch (OaiAdapterException ex) {
                         logger.log(Level.SEVERE, ex.getMessage());
                         report(ex.getMessage());
                         report("STATUS: NOT OK");
                     }
                 } catch (OaiHarvesterException ex) {
-                    logger.log(Level.SEVERE, "OaiHarvester exception while getting next document: {0}, url: {1}", 
+                    logger.log(Level.SEVERE, "OaiHarvester exception while getting next document: {0}, url: {1}",
                             new Object[]{ex.getMessage(), ex.getUrl()});
                     report("OaiHarvester exception while getting next document: " + ex.getMessage() + ", url: " + ex.getUrl());
                     report("STATUS: NOT OK");
