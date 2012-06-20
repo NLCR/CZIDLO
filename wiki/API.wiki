@@ -1,7 +1,6 @@
 #summary Příklady operací dostupných přes aplikační rozhraní
 #labels API,Featured,Phase-Implementation
 <wiki:toc max_depth="2" />
-#sidebar Aplikační rozhraní
 =Aplikační rozhraní=
 
 Aplikační rozhraní systému slouží zejména k dvěma základním účelům:
