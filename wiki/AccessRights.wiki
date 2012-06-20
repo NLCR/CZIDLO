@@ -1,5 +1,6 @@
 #summary Uživatelské role a přístupová práva
-
+#labels Featured,Phase-Requirements
+<wiki:toc max_depth="2" />
 = Uživatelské role a přístupová práva =
 
 Systém realizuje správu uživatelských účtů. Tyto účty je možné používat jak pro uživatelský přístup přes webové rozhraní, tak přes API pro importy a další automatizované operace. Některé operace jsou přístupné oběma moduly, ale rozhodně ne všechny.
