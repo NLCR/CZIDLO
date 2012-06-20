@@ -1,28 +1,37 @@
 #summary Příklady operací dostupných přes aplikační rozhraní
-
-=REST API - příklady=
+#labels API,Featured,Phase-Implementation
+<wiki:toc max_depth="2" />
+=Aplikační rozhraní=
 
 Aplikační rozhraní systému slouží zejména k dvěma základním účelům:
- # vkládání metadatových záznamů a zároveň rezervování urn:nbn identifikátoru pro publikaci popsanou tímto záznamem
- # zobrazení záznamu digitálního dokumentu nebo přesměrování do konkrétní digitální knihovny na základě hodnotu urn:nbn
+ # Vkládání metadatových záznamů a zároveň rezervování urn:nbn identifikátoru pro publikaci popsanou tímto záznamem.
+ # Zobrazení záznamu digitálního dokumentu nebo přesměrování do konkrétní digitální knihovny na základě hodnotu urn:nbn (_rezolvování_).
 Dále rozhraní umožňuje:
- # zobrazení záznamů registrátorů, stavu každého urn:nbn, hodnoty registrar-scope identifikátoru vybraného typu
- # rezervaci balíku urn:nbn, zobrazení celkového počtu rezervovaných urn:nbn
- # pro konkrétní digitální dokument vkládání/editaci/odstranění identifikátorů unikátních v rámci registrátora
- # resolvování na základě hodnoty těchto registrar-scope identifikátorů
+ # Zobrazení záznamů registrátorů, stavu každého urn:nbn, hodnoty registrar-scope identifikátoru vybraného typu.
+ # Rezervaci balíku URN:NBN, zobrazení celkového počtu rezervovaných URN:NBN.
+ # Pro konkrétní digitální dokument vkládání/editaci/odstranění registrar-scope identifikátorů.
+ # Rezolvování na základě trojice
+   * kódu registrátora,
+   * typu registrar-scope identifikátoru,
+   * hodnoty registrar-scope identifikátoru.
 
-Uvádíme příklady použití operací realizujících tyto funkce s ukázkami vstupních a výstupních dat. Nejsou zde použity nepovinné parametry, jako je např. parmetr digitalInstances u operací zobrazujících záznam digitálního dokumentu.
+Jedná se o *RESTful webové API*. Pro autentizaci je použita metoda _Basic access authentication_. Operace, které jsou autorizované, jsou dostupné jen přes _HTTPS_, čímž je zabráněno zachycení loginu a hesla, které jinak metoda posílá v otevřené formě. Při pokusu o provedení operace přes _HTTP_ bude vrácen kód 301 s přesměrováním na stejné _URL_, ale s prefixem _https://_. Je na administrátorovi, aby zpřístupnil alespoň tyto části aplikace přes _HTTPS_.
+
+=Příklady operací=
+
+Uvádíme zde příklady použití operací realizujících tyto funkce s ukázkami vstupních a výstupních dat. Nejsou zde použity nepovinné parametry, jako je např. parmetr digitalInstances u operací zobrazujících záznam digitálního dokumentu.
 Formálněji a podrobněji je REST API popsáno v [https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2 tomto dokumentu].
 
  * Vstupní data v xml jsou zejména u importu záznamů. Tyto xml pak musí být validní podle [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/resources/xsd/recordImport.xsd.xml xsd].
  * Druhým případem, kdy je vstupem xml je vkládání ditigálních instancí. Xml bude vypadat tak, jak je v ukázce. elementy url a archiverId budou povinné, elementy format a accessibility volitelné.
+
 -----
-= Záznam registrátorů =
-== Request ==
+== Záznam registrátorů ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/registrars
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:registrars xmlns:r="http://resolver.nkp.cz/v2/">
@@ -37,12 +46,12 @@ GET http://resolver.nkp.cz/api/v2/registrars
 </r:registrars>
 }}}
 -----
-= Záznam registrátora =
-== Request ==
+== Záznam registrátora ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/registrars/boa001
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <registrar xmlns="http://resolver.nkp.cz/v2/" code="boa001">
@@ -72,12 +81,12 @@ GET http://resolver.nkp.cz/api/v2/registrars/boa001
 </registrar>
 }}}
 -----
-= Rezervace balíku URN:NBN =
-== Request ==
+== Rezervace balíku URN:NBN ==
+=== Request ===
 {{{
 POST http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations?size=5
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbnReservation xmlns="http://resolver.nkp.cz/v2/">
@@ -89,12 +98,12 @@ POST http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations?size=5
 </urnNbnReservation>
 }}}
 -----
-= Seznam rezervovaných URN:NBN =
-== Request ==
+== Seznam rezervovaných URN:NBN ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbnRerservations xmlns="http://resolver.nkp.cz/v2/">
@@ -115,8 +124,8 @@ GET http://resolver.nkp.cz/api/v2/registrars/boa001/urnNbnReservations
 </urnNbnRerservations>
 }}}
 -----
-= Registrace DD - URN:NBN bude vygenerováno =
-== Request ==
+== Registrace DD - URN:NBN bude vygenerováno ==
+=== Request ===
 {{{
 POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
@@ -172,7 +181,7 @@ V těle http dotazu se nachází tento obsah:
     </r:digitalDocument>
 </r:import>
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbn xmlns="http://resolver.nkp.cz/v2/">
@@ -182,8 +191,8 @@ V těle http dotazu se nachází tento obsah:
 </urnNbn>
 }}}
 -----
-= Registrace DD - URN:NBN bylo dříve rezervováno, teď je součástí metadat =
-== Request ==
+== Registrace DD - URN:NBN bylo dříve rezervováno, teď je součástí metadat ==
+=== Request ===
 {{{
 POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
@@ -240,7 +249,7 @@ V těle http dotazu se nachází tento obsah:
     </r:digitalDocument>
 </r:import>
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbn xmlns="http://resolver.nkp.cz/v2/">
@@ -250,14 +259,15 @@ V těle http dotazu se nachází tento obsah:
 </urnNbn>
 }}}
 -----
-= Registrace DD - URN:NBN je součástí metadat a je generováno registrátorem =
+== Registrace DD - URN:NBN je součástí metadat a je generováno registrátorem ==
 Vstup a výstup vypadá stejně, jako u předchozí operace (registrace DD - URN:NBN rezervováno). Rozdíl je v tom, že registrátor nemá záruku (z pohledu Rezolveru) v unikátnosti URN:NBN. Svůj podprostor si registrátor spravuje sám a je na něm, aby si zaručil jedinečnost. Možnost spravovat vlastní podprostor musí být konkrétnímu registrátorovi explicitně povolena administrátorem.
 -----
-= Počet digitálních dokumentů daného registrátora =
+== Počet digitálních dokumentů daného registrátora ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:digitalDocuments xmlns:r="http://resolver.nkp.cz/v2/">
@@ -265,13 +275,13 @@ GET http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
 </r:digitalDocuments>
 }}}
 -----
-= Záznam digitálního dokumentu na základě registrar-scope identifikátoru =
-== Request ==
+== Záznam digitálního dokumentu na základě registrar-scope identifikátoru ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments/id/K4_p
 id/uuid:123
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalDocument xmlns="http://resolver.nkp.cz/v2/">
@@ -333,22 +343,22 @@ id/uuid:123
 </digitalDocument>
 }}}
 -----
-= Vložení/aktualizace registrar-scope identifikátoru =
-== Request ==
+== Vložení/aktualizace registrar-scope identifikátoru ==
+=== Request ===
 {{{
 PUT http://resolver.nkp.cz/api/v2/resolver/$URN_NBN/identifiers/TEST2
 }}}
 Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 1234
-== Response ==
-=== Pokud digitální dokument identifikátor tohoto typu zatím neměl ===
+=== Response ===
+==== Pokud digitální dokument identifikátor tohoto typu zatím neměl ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <id xmlns="http://resolver.nkp.cz/v2/">
     <newValue>1234</newValue>
 </id>
 }}}
-=== Pokud identifikátor existoval, je jeho hodnota změněna ===
+==== Pokud identifikátor existoval, je jeho hodnota změněna ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <id xmlns="http://resolver.nkp.cz/v2/">
@@ -357,8 +367,8 @@ Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 </id>
 }}}
 -----
-= Vložení digitální instance = 
-== Request ==
+== Vložení digitální instance ==
+=== Request ===
 {{{
 POST http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
 }}}
@@ -372,7 +382,7 @@ Tělo dotazu pak obsahuje:
     <r:accessibility>volně přístupné</r:accessibility>
 </r:digitalInstance>
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/" active="true">
@@ -384,12 +394,12 @@ Tělo dotazu pak obsahuje:
 </digitalInstance>
 }}}
 -----
-= Seznam digitálních instancí digitálního dokumentu =
-== Request ==
+== Seznam digitálních instancí digitálního dokumentu ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstances xmlns="http://resolver.nkp.cz/v2/">
@@ -422,13 +432,13 @@ GET http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInsta
 </digitalInstances>
 }}}
 -----
-= Zobrazení záznamu a stavu URN:NBN =
-== Request ==
+== Zobrazení záznamu a stavu URN:NBN ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
 }}}
-== Response ==
-=== Pokud je urn:nbn používané ===
+=== Response ===
+==== Pokud je urn:nbn používané ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbn xmlns="http://resolver.nkp.cz/v2/">
@@ -439,7 +449,7 @@ GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
     <digitalDocumentId>1</digitalDocumentId>
 </urnNbn>
 }}}
-=== Pokud je URN:NBN rezervované ===
+==== Pokud je URN:NBN rezervované ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbn xmlns="http://resolver.nkp.cz/v2/">
@@ -449,7 +459,7 @@ GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
     <value>urn:nbn:cz:boa001-000056</value>
 </urnNbn>
 }}}
-=== A pokud je zatím volné ===
+==== A pokud je zatím volné ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <urnNbn xmlns="http://resolver.nkp.cz/v2/">
@@ -459,12 +469,12 @@ GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
 </urnNbn>
 }}}
 -----
-= Celkový počet digitálních instancí =
-== Request ===
+== Celkový počet digitálních instancí ==
+=== Request ====
 {{{
 GET http://resolver.nkp.cz/api/v2/digitalInstances
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <r:digitalInstances xmlns:r="http://resolver.nkp.cz/v2/">
@@ -472,12 +482,12 @@ GET http://resolver.nkp.cz/api/v2/digitalInstances
 </r:digitalInstances>
 }}}
 -----
-= Záznam digitální instance =
-== Request ===
+== Záznam digitální instance ==
+=== Request ===
 {{{
 GET http://resolver.nkp.cz/api/v2/digitalInstances/id/1
 }}}
-== Response ==
+=== Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <digitalInstance xmlns="http://resolver.nkp.cz/v2/" active="true">
