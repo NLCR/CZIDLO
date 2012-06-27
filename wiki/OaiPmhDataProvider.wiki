@@ -1,5 +1,5 @@
 #summary Informace o OAI-PMH provideru pro záznamy v Resolveru
-#labels OAI-PMH,Phase-Design,Phase-Support
+#labels OAI-PMH,Phase-Design,Phase-Support,Featured
 
 = OAI-PMH Data provider =
 
