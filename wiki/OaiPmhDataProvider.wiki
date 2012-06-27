@@ -43,7 +43,55 @@ Jiné sety definovány nejsou.
 http://resolver.nkp.cz/OaiPmhProvider/provider?verb=GetRecord&metadataPrefix=oai_dc&identifier=urn:nbn:cz:aba001-0005du
 
 {{{
-
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate>2012-06-27T17:58:13Z</responseDate>
+    <request verb="GetRecord">http://resolver.nkp.cz/OaiPmhProvider/provider</request>
+    <GetRecord>
+        <record>
+            <header>
+                <identifier>urn:nbn:cz:aba001-0005du</identifier>
+                <datestamp>2012-04-11T11:37:42Z</datestamp>
+                <setSpec>registrar:aba001</setSpec>
+            </header>
+            <metadata>
+                <digitalDocument xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi2="http://www.w3.org/2001/XMLSchema-instance" xsi2:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
+                    <created>2012-04-11T11:37:42.065+02:00</created>
+                    <urnNbn>urn:nbn:cz:aba001-0005du</urnNbn>
+                    <financed>norskeFondy</financed>
+                    <contractNumber>37038</contractNumber>
+                    <intelectualEntity type="PERIODICAL_VOLUME">
+                        <created>2012-04-11T11:37:42.058+02:00</created>
+                        <titleInfo>
+                            <periodicalTitle>Officia propria in usum cleri provinciae Pragenae : suprema auctoritate Pii IX. Pontificis Maximi facta per s.r.c. revisione approbata et indulta : additis etiam officiis pro ecclesia universa praeceptis, quae in antiquioribus breviariis adhuc desiderantur. Pars prima, pro mensibus decembri, januario et februario</periodicalTitle>
+                            <volumeTitle>ročník 1.díl</volumeTitle>
+                        </titleInfo>
+                        <ccnb>cnb001581423</ccnb>
+                        <documentType>ročník novin</documentType>
+                        <digitalBorn>false</digitalBorn>
+                        <publication>
+                            <year>1865</year>
+                        </publication>
+                    </intelectualEntity>
+                    <technicalMetadata/>
+                    <registrar code="aba001">
+                        <created>2012-04-11T11:15:37.140+02:00</created>
+                        <name>Národní knihovna České republiky</name>
+                        <description/>
+                    </registrar>
+                    <registrarScopeIdentifiers>
+                        <id type="RDCZ">Pr000024211</id>
+                    </registrarScopeIdentifiers>
+                    <archiver>
+                        <id type="INTERNAL">4</id>
+                        <created>2012-04-11T11:15:37.140+02:00</created>
+                        <name>Národní knihovna České republiky</name>
+                        <description/>
+                    </archiver>
+                    <digitalInstances/>
+                </digitalDocument>
+            </metadata>
+        </record>
+    </GetRecord>
+</OAI-PMH>
 }}}
-
-
