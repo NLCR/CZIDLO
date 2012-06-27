@@ -1,0 +1,49 @@
+#summary Informace o OAI-PMH provideru pro záznamy v Resolveru
+#labels OAI-PMH,Phase-Design,Phase-Support
+
+= OAI-PMH Data provider =
+
+== Protokol OAI-PMH ==
+http://www.openarchives.org/OAI/openarchivesprotocol.html
+
+Tento protokol slouží k hromadnému sklízení metadatových záznamů různých repozitářů, jako jsou katalogy, digitální khihovny, apod.
+Jde o aplikační protokol nad HTTP. Autentizaci a autorizaci protokol neřeší, všechny záznamy jsou veřejně dostupné komukoliv.
+
+=== Příklady ===
+Příklady uvádím na OAI-PMH provideru [http://oai.mzk.cz/web Moravské zemské knihovny].
+
+Typicky harvester (sklízeč) sklízí záznamy takto:
+
+http://oai.mzk.cz/?verb=ListRecords&metadataPrefix=oai_dc&set=collection:atlases
+
+Tímto získá rovnou metadatové záznamy ve vybraném formátu (zde omezené na set _collection:atlases_). Někdy je efektivnější nejprve zjistit seznam vyhovujících identifikátorů:
+
+
+http://oai.mzk.cz/?verb=ListIdentifiers&metadataPrefix=oai_dc&set=collection:atlases
+
+a poté získávat záznamy pro jednotlivé identifikátory:
+
+http://oai.mzk.cz/?verb=GetRecord&metadataPrefix=ese&identifier=oai%3Aaleph.mzk.cz%3AMZK03-001036290
+
+Seznam vrácených záznamů/identifikátorů je možné omezit množinou (set) a časovými známkami vzniku/poslední změny záznamu.
+Při velkém počtu vracených záznamů/identifikátorů tyto nejsou vráceny všechny, ale je nutné dotazů provést několik a seznam stahovat po částach (_Flow controll_ pomocí _resumptionToken_).
+
+== Provider pro URN:NBN Resolver ==
+Funkci OAI-PMH Data provider realizuje aplikace *OaiPmhProvider*. Příkladem pro Resolver dostupný na http://resolver.nkp.cz je provider dostupný na 
+http://resolver.nkp.cz/OaiPmhProvider/provider, přičemž existuje také jednoduché webové rozhraní - http://resolver.nkp.cz/OaiPmhProvider.
+
+=== Identifikátory ===
+Idenitifikátory jsou URN:NBN ve základní podobě (např. urn:nbn:cz:aba001-0005du). Sklízí se tedy záznamy digitálních dokumentů, ke kterým jsou připojeny záznamy jejich intelektuální entity, registrátora a archivátora.
+
+=== Sety ===
+Pro každého registrátora existuje set, jehož název (setSpec) má formu *registrar:$KOD_REGISTRATORA*, např. *registrar:aba001*. 
+Jiné sety definovány nejsou.
+
+=== Příklad ===
+http://resolver.nkp.cz/OaiPmhProvider/provider?verb=GetRecord&metadataPrefix=oai_dc&identifier=urn:nbn:cz:aba001-0005du
+
+{{{
+
+}}}
+
+
