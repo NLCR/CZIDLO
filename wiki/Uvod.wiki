@@ -1,0 +1,22 @@
+= URN:NBN Resolver =
+Systém URN:NBN Resolver je nástroj pro správu identifikátorů [http://www.ietf.org/rfc/rfc3188.txt URN:NBN] v národním prostředí. Resolver by tedy měly provozovat národní knihovny, jakožto autority pro určený národní prostor (např. urn:nbn:cz pro Českou republiku). 
+
+= Vývoj =
+Software je licencován GNU GPL v3. 
+Vývoj probíhá pod záštitou [http://nkp.cz Národní knihovny České republiky] a je financován z projektu ... Ministerstva kultury ČR. 
+Systém navazuje na starší [http://code.google.com/p/urnnbnresolver/ urnnbnresolver] a zachovává jeho původní funkčnost. Přidává však další prvky, zejména dvě nová aplikační rozhraní (*OAI-PMH Data provider* a *RESTful API*). Výrazně většími možnostmi disponuje také webová část, která kromě samotného vyhledávání řeší správu uživatelských účtů, registrátorů, digitálních knihoven, katalogu a umožňuje ruční vkládání a editaci záznamů.  
+
+Ač vypadají oba Resolvery vizuálně podobně a oba používají webový framework [https://developers.google.com/web-toolkit/ GWT], jedná se o zcela nový systém. Převzat byl pouze datový model, který byl ale výrazně pozměněn, aby reflektoval nové požadavky a zároveň bylo možné převzít data ze staršího systému, transformovat a vložit do systému nového.
+
+= Hlavní funkce =
+Resolver zejména udržuje seznam všech přiřazených urn:nbn, resp. informace o stavu všech urn:nbn v národním prostoru (_volné_, _rezervované_, _přiřazené_, _opuštěné_). Stav se může změnit vykonáním některých operací, z nichž nejdůležitější je *registrace digitálního dokumentu* (_volné_ -> _přiřazené_). Tato operace vrací přidělené urn:nbn digitálnímu dokumentu, jehož metadata byla vstupem operace.
+
+Dále spravuje mapování digitálních dokumentů (identifikovaných urn:nbn) na aktuální URL, na nichž jsou dokumenty dostupné v elektronické podobě. Za korektnost URL ale zodpovídají jednotlivé zapojené instituce (registrátoři).
+
+Mezi další významné funkce systému patří:
+ * Rezolvování urn:nbn v rámci národního prostoru. Tedy přesměrování do digitálních knihoven, případně zobrazení metadatového záznamu digitálního dokumentu v xml nebo uživatelsky přívětivé podobě webové aplikace.
+ * Přiřazování URN:NBN ručně pomomcí webového rozhraní, nebo automatizovaně pomocí [API RESTful API].
+ * Zodpovědnost za podprostory (např. urn:nbn:cz:aba001) jsou delegovány zapojeným institucím. Ty pak musí zajistit mimojiné aktuálnost dodaných URL.
+ * Správa uživatelských účtů a přiřazení práv k registrátorům.
+ * OAI-PMH Provider pro hromadné sklízení záznamů Resolveru externími systémy.
+ * Ruční opravy zázamů prostřednictvím webového rozhraní.
