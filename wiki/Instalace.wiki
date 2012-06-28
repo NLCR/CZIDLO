@@ -1,6 +1,5 @@
 #summary Návod na instalaci Resolveru.
 #labels Featured,Phase-Deploy
-#sidebar TableOfContents
 
 <wiki:toc max_depth="3" />
 
