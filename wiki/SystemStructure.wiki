@@ -1,0 +1,34 @@
+#summary Stránka popisuje strukturu URN:NBN Resolveru
+#labels Phase-Requirements,Featured
+
+= Úvod =
+
+URN:NBN Resolver sestává ze tří webových aplikací a několika dalších sdílených modulů. Vzájemné závislosti jsou definovány pomocí Apache Maven. Následující diagram zobrazuje vzájemné závislost mezi moduly (externí knihovny nejsou znázorněny).
+
+https://dl.dropbox.com/u/7787647/resolver-wiki-images/architecture.jpg
+
+= Popis modulů =
+
+ * *core* obsahuje třídy používané všemi ostatními moduly, zejména _DTO_ objekty přenášející data z databáze, přes servisní vrstvu do prezentační vrstvy a zpět.
+ * *persistence* zajišťuje perzistenci dat aplikace, tedy načítání dat z databáze do _DTO_ objektů a naopak ukládání stavu _DTO_ objektů zpět do databáze. Nebyl použit žádný _ORM_ framework, ale relativně nízkoúrovňové _JDBC_. Samozřejmostí je použití *poolu připojení* k databázi a konstrukcí *PreparedStatement*. Modul je důkladně otestován - při každé kompilaci musí projít všech 178 jednotkových testů _JUnit_.
+ * *services* obsahuje kód servisní vrstvy. Ta překládá nízkoúrovňová volání modulu _persistence_ na vysokoúrovňová volání určená pro webové aplikace. Zajišťuje například překlad výjimek a řeší autorizaci operací.
+ * *web-common* obsahuje funkcionalitu sdílenou napříč webovými aplikacemi, jako je autentizace a načítání konfigurace z properties.
+ * *xml* má na starosti transformaci _DTO_ objektů do XML, která jsou výstupem aplikací _api_ a _OaiPmhProvider_. Druhou hlavní funkcí je validace a následná transformace XML získaných při importu záznamů v aplikaci _api_ zpět do _DTO_ objektů. K manipulaci s xml je použita knihovna [http://www.xom.nu/ xom].
+ * *api* zprostředkovává RESTful aplikační rozhraní pro _registraci digitálních dokumentů_, vkládání/odstraňování digitálních instancí a další operace. Zajišťuje také rezolvování.
+ * *web* je rozhraní určené pro přístup uživatelů, tedy vyhledávání záznamů, zobrazování metadat a správu uživatelských účtů, registrátorů, digitálních knihoven, katalogů apod.
+ * *oaiPmhProvider* realizuje OAI-PMH data provider pro záznamy uložené v databázi Resolveru.
+
+
+= Použité technologie =
+Veškeré moduly jsou napsány v jazyce Java 6. Webové aplikace, distribuované v podobě _war_ archivů, jsou určeny pro běh v servletovém kontejneru splňujícím specifikaci Java Servlet 3.0. Ostatní použité technologie jsou:
+ * [https://developers.google.com/web-toolkit/ Google Web Toolkit]
+ * [http://jersey.java.net/ Jersey]
+ * [http://static.springsource.org/spring-security/site/ Spring security]
+ * [http://www.postgresql.org/ PostgreSQL], JDBC
+ * [http://www.xom.nu/ XOM], XSLT, XSD, XPath
+ * [http://joda-time.sourceforge.net/ Joda Time]
+
+
+= Build ze zdrojových kódů =
+K vybudování jednotlivých aplikací není potřeba instalovat žádné další knihovny do lokálního repozitáře - všechny závislosti by měly být dostupné z Maven Central Repository. 
+Pro vytvoření war archivu některé z webových aplikací stačí tedy pomocí svn stáhnout zdrojové kódy a v kořenovém adresáři vybrané aplikace spustit _maven install_.
