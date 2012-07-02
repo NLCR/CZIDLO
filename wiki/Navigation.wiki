@@ -1,9 +1,11 @@
 * [Uvod Úvod]
 
-* [Instalace Instalace]
+* [DataModel Datový model]
 
 * [AccessRights Role a práva]
 
 * [API Aplikační rozhraní]
 
 * [OaiPmhDataProvider OAI-PMH data provider]
+
+* [Instalace Instalace]
