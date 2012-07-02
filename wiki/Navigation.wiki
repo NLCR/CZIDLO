@@ -2,6 +2,8 @@
 
 * [DataModel Datový model]
 
+* [SystemStructure Struktura systému]
+
 * [AccessRights Role a práva]
 
 * [API Aplikační rozhraní]
