@@ -1,0 +1,101 @@
+#summary Popis datového modelu
+
+<wiki:toc max_depth="5" />
+
+
+= Datový model =
+
+Datový model vychází z [http://code.google.com/p/urnnbnresolver/wiki/UpravaDatoveStruktury datového modelu R1] a je dále rozšířen tak, aby byly splněny nové požadavky na systém.
+
+== Koncepční model ==
+Následující obrázek popisuje vztahy mezi základními objekty.
+
+https://dl.dropbox.com/u/7787647/resolver-wiki-images/simplified_data_model.jpg
+
+== Fyzický model ==
+
+Realné vztahy mezi tabulkami v databázi ilustruje následující datový model.
+https://dl.dropbox.com/u/7787647/resolver-wiki-images/physical_model.png
+
+== Popis jednotlivých objektů ==
+Dále popíšeme sémantiku jednotlivých objektů (kvůli vyhrazenému termínu _Intelektuální entita_ zde budeme databázové entity nazývat objekty) a vztahy mezi nimi.
+
+=== Intelektuální entita ===
+Intelektuální entita (IE) má stejný význam jako v R1. Vyjadřuje
+manifest jednotky předlohy, která byla digitalizována.
+Intelektuální entitu digitálně reprezentuje jeden nebo více digitálních dokumentů. Více existujících digitálních dokumentů jedné IE znamená, že bylo digitalizováno několik jednotek manifestu téhož díla. Není
+důležité, zda šlo o různé jednotky, zásadní je, že proběhlo více digitalizací.
+Záznam IE je uložen v tabulce IntelectualEntity a podle typu IE dále v ta-
+bulkách _IeIdentifier_, _Originator_,_Publication_,_SourceDocument_.
+
+
+==== Typy intelektuálních entit ====
+Systém pracuje s několika typy intelektuálních entit. Vztahy mezi nimi,
+zejména dědičnost, ilustruje následující obrázek.
+https://dl.dropbox.com/u/7787647/resolver-wiki-images/intelectual_entities_conceptual.jpg
+
+Typ dokumentu je určen atributem _entityType_, který obsahuje některou
+z hodnot *MONOGRAPH*, *MONOGRAPH_VOLUME*, *PERIODICAL*, *PERIODICAL_VOLUME*, *PERIODICAL_ISSUE*, *THESIS*,
+*ANALYTICAL* nebo *OTHER*. Aplikaci je možné rozšířit o nové typy dokumentů bez nutnosti změny databázového schématu, ovšem při nutnosti  úpravy aplikačního kódu.
+
+K upřesnění typu dokumentu v lidsky čitelné podobě slouží atribut _documentType_. Jeho využití je vhodné, například pokud chceme u typu *MONOGRAPH* rozlišit, zda se jedná o knihu, rukopis nebo starý tisk. Doporučované je upřesnění druhu používat u typu *OTHER*, zde se můžou objevit hodnoty jako “mapa”, “grafika”, ...
+
+Jednotlivé typy IE se dále liší tím, zda mohou obsahovat záznam v tabulkách _Publication_, _Originator_ a _SourceDocument_.
+
+Navíc některé atributy samotné tabulky _IntelectualEntity_ jsou použitelné
+jen pro vybrané typy IE. Konkrétně se jedná o atributy digitalBorn a de-
+greeAwardingInstitution. DigitalBorn je použit pro všechny publikovatelné typy IE. Je to binární příznak, který označuje, zda dílo původně vzniklo v digitální podobě. _DegreeAwardingInstitution_ používá pouze typ vysokoškolské práce. Atribut slouží k identifikaci vysoké školy.
+
+Bylo by neefektivní jen kvůli nim vytvářet složitější hierarchii dědič-
+nosti mezi typy IE. Pro ty typy IE, kterých se vybraný atribut netýká, je
+na úrovni aplikace zajištěno, aby jeho hodnota nemohla být vyplněna. Při
+patřičném vložení do databáze je pak tomuto atributu přiřazena hodnota
+*NULL*. Obecně platí princip, že nedefinovanou hodnotu reprezentuje v databázi *NULL*.
+
+===== Identifikátory IE =====
+
+V R1 byly identifikátory dány napevno databázovým sché-
+matem. Jednalo se o atributy _cCNB_, _ISBN_, _ISSN_ a _jinyID_ tabulky _IntelektualniEntita_. V R2 existuje pro každý identifikátor záznam v tabulce _IeIdentifier_, přičemž na aplikační úrovni je pro každý typ IE definovaná sada identifikátorů,
+které mohou být pro tento typ definovány. Sadu identifikátorů pro jednotlivé
+typy dokumentů je možné rozšířit bez změny databáze.
+
+Identifikátor se skládá z _typu_ a _hodnoty_.
+Typ identifikátoru může být *TITLE*, *SUB_TITLE*, *VOLUME_TITLE*, *ISSUE_TITLE*, *ISBN*, *ISSN*, *CCNB* nebo *OTHER*.
+Hodnota identifikátoru pak může obsahovat jakýkoliv text, alespoň z pohledu databáze. Na aplikační úrovni je ale při importu nebo ručním vložení kontrolováno, zda hodnota splňuje definovaná omezení. Vždy je ohraničena maximální délka, u ISBN, ISSN a CCNB se navíc prověřuje korektnost syntaxe.
+
+Všimněte si, že za identifikátor se považují i názvové údaje. Tento přístup byl zvolen z toho důvodu, že i typy názvových údajů se liší mezi různými typy IE. Fungují tedy opravdu jako ostatní identifikátory. Navíc to umožňuje jednodušší implementaci vyhledávání podle hodnot identifikátorů a názvových údajů.
+
+===== Originator, Publication a SourceDocument =====
+Tabulka *Originator* reprezentuje primárního původce díla. Záznam se skládá z typu a hodnoty. Typ může být *AUTHOR* (autor), *CORPORATION*(korporace) nebo *EVENT* (akce/událost). Hodnota není nijak omezena. Každý typ IE může mít záznam v tabulce _Originator_.
+
+Tabulka *Publication* obsahuje údaje o vydání IE, tedy místo (atribut
+place) a rok (atribut pYear) vydání a vydavatele (atribut publisher). Záznam v této tabulce mohou mít všechny tzv. publikovatelné typy IE, aktuálně tedy všechny vyjma analytika.
+
+Tabulka *SourceDocument* obsahuje údaje o zdrojovém dokumentu, ve
+kterém je fyzicky obsažena IE typu _analytikum._ Atributy jsou shodné s vybranými atributy tabulek _IntelectualEntity_, _Originator_, a _Publication_, dále jsou přítomny atributy pro identifikátory _čČNB_, _ISBN_, _ISSN_, _jiný identifikátor_.
+
+===== Výčet typů IE =====
+
+Pro každý typ IE zde popíšeme, pro jakou třídu intlektuálních děl je určen. Dále uvedeme, které identifikátory může tento typ IE
+nabývat a které z nich jsou pro něj povinné.
+
+ * *Monografie* má v atributu _entityType_ hodnotu *MONOGRAPH*. Je určena pro monografické jednosvazkové publikace. Pokud by monografie byla složena z více svazků, je nutné považovat každý svazek za IE typu _Svazek monografie_. Povolenými identifikátory jsou povinný *TITLE*, dále *SUB_TITLE*, *ISBN*, *CCNB* a *OTHER*.
+ * *Svazek monografie* má v atributu _entityType_ hodnotu *MONOGRAPH_VOLUME*. Je určen pro jednotlivé svazky vícesvazkových monografií. Například svazky Encyclopædia Britannica, jejíž poslední vydání jich čítá 32. Kdybychom toto dílo digitalizovali a registrovali v R2, vznikne 32 IE (a minimálně 32 DD a tudíž 32 různých URN:NBN). Povolenými identifikátory jsou *TITLE* (povinný - identifikuje celou monografii), *VOLUME_TITLE* (povinný - identifikuje konkrétní svazek), *ISBN*, *CCNB* a *OTHER*.
+ * *Periodikum* má v atributu _entityType_ hodnotu *PERIODICAL*. Je určeno pro celá periodika (noviny, časopis, ... ). Povolenými identifikátory jsou *TITLE* (povinný), *SUB_TITLE*, *ISSN*, *CCNB* a *OTHER*.
+ * *Ročník/svazek periodika* má v atributu _entityType_ hodnotu *PERIODICAL_VOLUME*. Je určen pro celý ročník, případně svazek periodika. Povolenými identifikátory jsou *TITLE* (povinný - identifikuje periodikum), *VOLUME_TITLE* (povinný - identifikuje ročník/svazek), *ISSN*, *CCNB* a *OTHER*.
+ * *Číslo periodika* má v atributu _entityType_ hodnotu *PERIODICAL_ISSUE*. Je určeno pro číslo (výtisk) periodika. Např. _ranní pražské vydání Lidových noviny ze dne 1. 1. 1900_. Povolenými identifikátory jsou *TITLE* (povinný - identifikuje periodikum), *VOLUME_TITLE* (povinný - identifikuje ročník/svazek), *ISSUE_TITLE* (povinný - identifikuje číslo), *ISSN*, *CCNB* a *OTHER*.
+ * *Vysokoškolská práce* má v atributu _entityType_ hodnotu *THESIS*. Je určena pro vysokoškolské kvalifikační práce. Povolenými identifikátory jsou povinný *TITLE*, dále *SUB_TITLE*, *CCNB* a *OTHER*.
+ * *Analytikum* má v atributu _entityType_ hodnotu *ANALYTICAL*. Je určeno pro články, případně kapitoly, nebo jiné vnitřní části publikovaných dokumentů. Povolenými identifikátory jsou povinný *TITLE*, dále *SUB_TITLE*, a *OTHER*.
+ * *Jiný typ* má v atributu _entityType_ hodnotu *OTHER*. Je určeno všechno ostatní díla, pro která není možné použít jiný typ. Typ díla by měl být dále upřesněn v atributu *documentType*. Povolenými identifikátory jsou povinný *TITLE*, nepovinné *SUB_TITLE*, *ISBN*, *CCNB* a *OTHER*.
+
+
+
+
+
+
+
+
+
+
+
+ 
