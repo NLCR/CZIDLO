@@ -1,4 +1,5 @@
 #summary Popis datového modelu
+#labels Featured,Phase-Design
 
 <wiki:toc max_depth="5" />
 
@@ -87,6 +88,62 @@ nabývat a které z nich jsou pro něj povinné.
  * *Vysokoškolská práce* má v atributu _entityType_ hodnotu *THESIS*. Je určena pro vysokoškolské kvalifikační práce. Povolenými identifikátory jsou povinný *TITLE*, dále *SUB_TITLE*, *CCNB* a *OTHER*.
  * *Analytikum* má v atributu _entityType_ hodnotu *ANALYTICAL*. Je určeno pro články, případně kapitoly, nebo jiné vnitřní části publikovaných dokumentů. Povolenými identifikátory jsou povinný *TITLE*, dále *SUB_TITLE*, a *OTHER*.
  * *Jiný typ* má v atributu _entityType_ hodnotu *OTHER*. Je určeno všechno ostatní díla, pro která není možné použít jiný typ. Typ díla by měl být dále upřesněn v atributu *documentType*. Povolenými identifikátory jsou povinný *TITLE*, nepovinné *SUB_TITLE*, *ISBN*, *CCNB* a *OTHER*.
+
+=== Digitální dokument ===
+Digitální dokument (DD) *digitálně reprezentuje* intelektuální entitu. Vztah _digitálně reprezentuje_ znamená, že digitální dokument vznikl digitalizací IE, resp. některého jejího výtisku, protože IE se vztahuje k manifestu. DD odpovídá _Digitální reprezentaci_ v R1. Záznam DD obsahuje tabulka DigitalDocument.
+
+Každý digitální dokument má přiřazeno právě jedno _URN:NBN_. Je registrován právě jedním _Registrátorem_ a archivován jedním _Archivátorem_. Může mít několik tzv. _registar-scope identifikátorů_, podle kterých jej lze také rezolvovat.
+
+
+=== URN:NBN ===
+K URN:NBN může být přiřaen jeden, nebo žádný digitální dokument. URN:NBN ve stavu *ACTIVE* odpovídá záznam v tabulce _UrnNbn_. Je-li ve stavu *RESERVED*, je reprezentováno záznamem v tabulce _UrnNbnReserved_. Pro stav *ABANDONED* měla být určena tabulka _UrnNbnAbandoned_, ta však nevznikla. V průběhu vývoje bylo totiž upuštěno od požadavku mazat DD a tak tato tabulka pozbyla významu.
+
+
+=== Digitální instance ===
+_Digitální instance (DI)_ reprezentuje dostupnou instanci DD v některé digitální knihovně. Digitální instanci vlastní ten registrátor, který vlastní patřičnou digitální knihovnu. Nemusí to ale nutně být stejný registrátor, který registruje digitální dokument, o jehož instanci jde. Záznamy digitálních instancí jsou uloženy v tabulce _DigitalInstance_.
+
+
+=== Registrátoři a archivátoři ===
+====Archivátor====
+_Archivátor_ je instituce, která archivuje fyzický dokument, z kterého digitalizací vznikl DD. Záznam archivátora je uložen v tabulce Archiver.
+Archivátoři jsou “globální”. To znamená, že:
+ * archivátory vytváří a odstraňují adminstrátoři 
+ * kdokoliv může při operaci _registrace DD_ použít kteréhokoliv archivátora.
+
+Archivátora není nutné v rámci _registrace DD_ specifikovat. V tom případě převezme roli archivátora registrátor (registrátor je potomkem archivátora v hierarchii dědičnosti).
+
+====Registrátor====
+Registrátor reprezentuje instituci, která má přidělen kód registrátora (ten identifikuje podprostor v URN:NBN). Dále vlastní digitální khihovny a katalogy.
+
+Registrátor je potomkem archivátora. To znamená, že má všechny atri-
+buty i operace, jako archivátor. Archivátora zastupuje v jediné věci – po kud není při _registraci DD_ archivátor uveden, je použit registrátor. Záznam registrátora je tedy rozprostřen mezi tabulky Archiver a Registrar.
+
+Registrátor registruje digitální dokumenty operací _registrace DD_ a v odpovědi dostává přidělené URN:NBN.
+
+Při operaci _rezervace URN:NBN_ je do zásoby rezervován balík
+URN:NBN. Ty jsou pak uloženy v tabulce _UrnNbnReserved_. Z fyzického
+modelu databáze je zřejmé, že se rezervované URN:NB váží k registrátorovi, nikoliv k uživateli, který rezervaci provedl.
+
+Další tabulkou související s registrátorem je DdIdentifier. Zde jsou uloženy _registrar-scope identifikátory_ platné v rámci tohoto registrátora.
+
+Poslední tabulkou, která je ve vztahu s registrátorem, _je UrnNbnGenerator_. Zde je uloženo naposledy použité URN:NBN pro tohoto registrátora,
+které bylo nalezeno algoritmem pro hledání volných URN:NBN.
+
+
+=== Digitální knihovna ===
+Digitální khihovna reprezentuje konkrétní digitální knihovnu vlastněnou některým registrátorem, např. [http://kramerius.mzk.cz Kramerius MZK]. Digitální knihovna obsahuje digitální instance.
+
+
+=== Katalog ===
+_Katalog_ (tabulka _Catalogue_) slouží k rezolvování na základě zdroje přístupu. Stěžejním atributem je *urlPrefix*. Pokud je jeho hodnota prefixem URL, ze které přišel HTTP dotaz (hlavička *referer*), můžeme říci, že zdrojem dotazu je tento katalog.
+
+
+=== Uživatelský účet ===
+Tabulka _UserAccount_ obsahuje všechny uživatelské účty. Binární atribut *isAdmin* udává, zda má uživatel práva provádět administraci samotného Rezolveru. Uživatel může mít právo spravovat jednoho a více registrátorů. Tento vztah je implementován vazební tabulkou _User_Registrar_.
+
+
+
+
 
 
 
