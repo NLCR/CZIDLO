@@ -55,8 +55,7 @@ patřičném vložení do databáze je pak tomuto atributu přiřazena hodnota
 
 ===== Identifikátory IE =====
 
-V R1 byly identifikátory dány napevno databázovým sché-
-matem. Jednalo se o atributy _cCNB_, _ISBN_, _ISSN_ a _jinyID_ tabulky _IntelektualniEntita_. V R2 existuje pro každý identifikátor záznam v tabulce _IeIdentifier_, přičemž na aplikační úrovni je pro každý typ IE definovaná sada identifikátorů,
+V R1 byly identifikátory dány napevno databázovým schématem. Jednalo se o atributy _cCNB_, _ISBN_, _ISSN_ a _jinyID_ tabulky _IntelektualniEntita_. V R2 existuje pro každý identifikátor záznam v tabulce _IeIdentifier_, přičemž na aplikační úrovni je pro každý typ IE definovaná sada identifikátorů,
 které mohou být pro tento typ definovány. Sadu identifikátorů pro jednotlivé
 typy dokumentů je možné rozšířit bez změny databáze.
 
