@@ -1,0 +1,10 @@
+#summary Popis identifikátoru URN:NBN a jeho
+
+= Úvod =
+
+Stránka zatím nic neobsahuje, jenom poznámky o tom, co zde doplním.
+
+TODO:
+ * popis URN:NBN 
+ * stavový diagram URN:NBN (URN:NBN je neaktivní právě tehdy, má - li následníka)
+ * varianty přiřazování
