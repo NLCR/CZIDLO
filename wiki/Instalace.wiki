@@ -46,18 +46,20 @@ Pool databázových připojení aplikace získávají od aplikačního serveru p
  * $TOMCAT_HOME/conf/context.xml - globálně pro všechny aplikace. Pozor na to, že pro každou nasazenou aplikaci a definovaný zdroj (např. pool databázových připojení) je tento zdroj alokován. Např. při použití parametru _initialSize_ s hodnotu 3 a deseti nasazenými aplikacemi bude během nastartování alokováno hned 30 připojení do databáze!.
  * $TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml - pro každou aplikaci zvlášť uvnitř nasazené aplikace
  * $TOMCAT_HOME/conf/Catalina/localhost/$APPLICATION_NAME.xml - pro každou aplikaci zvlášť mimo nasazené aplikace
+
+Nejflexibilnější je poslední možnost. Zdroje jsou definovány pro každou aplikaci zvlášť a je možné pro každou zvlášť nakonfigurovat _maxActive_, _maxIdle_, _maxWait_. Také není nutné konfiguraci změnit při nasazení nové verze Resolveru - definice JNDI zdroje v $TOMCAT_HOME/conf/Catalina/localhost/$APPLICATION_NAME.xml přebyje definici zdroje se stejným jménem v $TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml. 
 Pro více informací konzultujte [http://tomcat.apache.org/tomcat-7.0-doc/config/context.html dokumentaci Tomcatu].
 
 Definice zdroje _databázové připojení_ pak vypadá nějak takto:
 <code language="xml">
-<Resource auth="Container"
+<Resource name="jdbc/postgres"
+  type="javax.sql.DataSource"
   driverClassName="org.postgresql.Driver"
-  maxActive="100" maxIdle="30" maxWait="200"
-  name="jdbc/postgres"
+  url="jdbc:postgresql://localhost:5432/resolver"
+  auth="Container"
   username="testuser"
   password="testpass"
-  type="javax.sql.DataSource"
-  url="jdbc:postgresql://localhost:5432/resolver"
+  maxActive="100" maxIdle="30" maxWait="200"
 />
 </code>
 
