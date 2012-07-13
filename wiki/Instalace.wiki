@@ -43,7 +43,7 @@ Není nutné instalovat všechny aplikace. Ty fungují nezávisle na sobě, tak�
 == Napojení webových aplikací na databázi ==
 Všechny moduly (ať už nasazeny kdekoliv) musí být připojeny ke stejné databázi, která byla inicializována v sekci [Instalace]. 
 Pool databázových připojení aplikace získávají od aplikačního serveru pomocí JNDI. Připojení k databázi tedy musí být definováno v jednom z:
- * $TOMCAT_HOME/conf/context.xml - globálně pro všechny aplikace
+ * $TOMCAT_HOME/conf/context.xml - globálně pro všechny aplikace. Pozor na to, že pro každou nasazenou aplikaci a definovaný zdroj (např. pool databázových připojení) je tento zdroj alokován. Např. při použití parametru _initialSize_ s hodnotu 3 a deseti nasazenými aplikacemi bude během nastartování alokováno hned 30 připojení do databáze!.
  * $TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml - pro každou aplikaci zvlášť uvnitř nasazené aplikace
  * $TOMCAT_HOME/conf/Catalina/localhost/$APPLICATION_NAME.xml - pro každou aplikaci zvlášť mimo nasazené aplikace
 Pro více informací konzultujte [http://tomcat.apache.org/tomcat-7.0-doc/config/context.html dokumentaci Tomcatu].
