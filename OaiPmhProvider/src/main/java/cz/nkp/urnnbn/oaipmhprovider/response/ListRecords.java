@@ -21,7 +21,7 @@ public class ListRecords extends AbstractListResponse {
 
     public ListRecords(Map<String, String[]> parameters) throws IOException {
         super("ListRecords", parameters);
-        partsManager = ResumptionTokenManager.instanceOf(ListRequestType.LIST_RECORDS, config.getListIdentifiersMaxSize());
+        partsManager = ResumptionTokenManager.instanceOf(ListRequestType.LIST_RECORDS, config.getListRecordsMaxSize());
     }
 
     @Override
