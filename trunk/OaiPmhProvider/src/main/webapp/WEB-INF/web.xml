@@ -7,6 +7,9 @@
         Purpose of the document follows.
 -->
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <listener>
+        <listener-class>cz.nkp.urnnbn.oaipmhprovider.conf.ContextListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Provider</servlet-name>
         <servlet-class>cz.nkp.urnnbn.oaipmhprovider.Servlet</servlet-class>

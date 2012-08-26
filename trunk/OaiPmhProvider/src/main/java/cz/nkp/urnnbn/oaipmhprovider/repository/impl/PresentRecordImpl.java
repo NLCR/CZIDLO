@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
 import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
 import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
@@ -33,6 +34,7 @@ import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -167,7 +169,18 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private Document transformToOaiDc(String metadataInResolverFormat) throws DocumentException {
-        //TODO: actual transformation
-        return Dom4jUtils.loadDocument(metadataInResolverFormat, false);
+        try {
+            String transformed = XOMUtils.transformDocument(
+                    metadataInResolverFormat,
+                    OaiPmhConfiguration.instanceOf().getResolverToOaidcTemplate().toXML()).toXML();
+            return Dom4jUtils.loadDocument(transformed, false);
+        } catch (Exception ex) {
+            if (ex instanceof DocumentException) {
+                throw (DocumentException) ex;
+            } else {
+                Logger.getLogger(PresentRecordImpl.class.getName()).log(Level.SEVERE, null, ex);
+                throw new DocumentException(ex);
+            }
+        }
     }
 }

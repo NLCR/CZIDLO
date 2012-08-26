@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
-import cz.nkp.urnnbn.oaipmhprovider.Configuration;
+import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
 import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -30,10 +30,10 @@ public class OaiResponse {
     protected Document doc;
     private Namespace oai = Namespace.get("http://www.openarchives.org/OAI/2.0/");
     protected Namespace xsi = DocumentHelper.createNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    protected Configuration config;
+    protected OaiPmhConfiguration config;
 
     public OaiResponse(String verbStr, Map<String, String[]> params) throws IOException {
-        config = Configuration.instanceOf();
+        config = OaiPmhConfiguration.instanceOf();
         this.verbStr = verbStr;
         this.arguments = decodeParameterMap(params);
     }
