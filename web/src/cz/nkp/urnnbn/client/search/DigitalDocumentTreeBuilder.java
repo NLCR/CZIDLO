@@ -202,7 +202,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private TreeItem digitalInstanceItem(TreeItem rootItem, DigitalInstanceDTO instanceDTO) {
 		String url = instanceDTO.getUrl();
-		TreeItem instanceItem = new TreeItem("<a href =\"" + url + "\">" + url + "</a>");
+		TreeItem instanceItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>");
 		addLabeledItemIfValueNotNull(instanceItem, constants.format(), instanceDTO.getFormat());
 		addLabeledItemIfValueNotNull(instanceItem, constants.accessibility(), instanceDTO.getAccessibility());
 		addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
