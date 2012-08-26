@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 import cz.nkp.urnnbn.client.forms.intEntities.SourceDocumentForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.PublicationDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
@@ -95,7 +96,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	abstract void addRows();
 
 	abstract String entityType();
-	
+
 	void addLabeledRowIfNotNull(String label, Object value) {
 		addLabeledRowIfNotNull(result, label, value);
 	}
@@ -176,5 +177,16 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 		result.append(separator).append(second);
 		result.append(separator).append(third);
 		return result.toString();
+	}
+
+	void appendAlephLinkIfEnabledAndCcnbPresent(String ccnb) {
+		ConfigurationData configuration = superPanel.getConfiguration();
+		if (configuration.showAlephLinks() && ccnb != null && ccnb.length() == 12) {
+			String docNumber = ccnb.substring(3);
+			String url = configuration.getAlephUrl() + "/F/?func=direct&doc_number=" + docNumber + "&local_base="
+					+ configuration.getAlephBase();
+			TreeItem alephItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + constants.showInCatalog() + "</a>");
+			result.addItem(alephItem);
+		}
 	}
 }

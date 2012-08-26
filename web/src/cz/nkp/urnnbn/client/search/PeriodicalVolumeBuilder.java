@@ -14,10 +14,7 @@ public class PeriodicalVolumeBuilder extends EntityTreeItemBuilder {
 
 	@Override
 	void addRows() {
-		// addRowIfNotNull(constants.periodicalTitle(),
-		// dto.getPeriodicalTitle());
-		// addRowIfNotNull(constants.periodicalVolumeTitle(),
-		// dto.getVolumeTitle());
+		appendAlephLinkIfEnabledAndCcnbPresent(dto.getCcnb());
 		addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle()));
 		addLabeledRowIfNotNull(constants.ccnb(), dto.getCcnb());
 		addLabeledRowIfNotNull(constants.issn(), dto.getIssn());

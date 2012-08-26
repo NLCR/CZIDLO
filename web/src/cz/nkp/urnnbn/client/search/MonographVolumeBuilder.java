@@ -14,8 +14,7 @@ public class MonographVolumeBuilder extends EntityTreeItemBuilder {
 
 	@Override
 	void addRows() {
-		// addRowIfNotNull(constants.monographTitle(), dto.getMonographTitle());
-		// addRowIfNotNull(constants.volumeTitle(), dto.getVolumeTitle());
+		appendAlephLinkIfEnabledAndCcnbPresent(dto.getCcnb());
 		addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getMonographTitle(), dto.getVolumeTitle()));
 		addLabeledRowIfNotNull(constants.ccnb(), dto.getCcnb());
 		addLabeledRowIfNotNull(constants.isbn(), dto.getIsbn());

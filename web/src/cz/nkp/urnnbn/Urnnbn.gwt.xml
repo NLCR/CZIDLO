@@ -44,4 +44,8 @@
 	 
 	 <servlet class="cz.nkp.urnnbn.server.services.UserAccountServiceImpl"
 	 path="/users"/>
+	 
+	 <servlet class="cz.nkp.urnnbn.server.services.ConfigurationServiceImpl"
+	 path="/conf"/>
+	 
 </module>

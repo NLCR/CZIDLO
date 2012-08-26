@@ -23,9 +23,12 @@ import com.google.gwt.user.client.ui.TreeItem;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
+import cz.nkp.urnnbn.client.services.ConfigurationService;
+import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.client.services.SearchServiceAsync;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
+import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
@@ -39,9 +42,11 @@ public class SearchPanel extends DockLayoutPanel {
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final SearchPanelCss css = SearchPanelResources.css();
 	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
+	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
 	private final ScrollPanel searchResultsPanel = new ScrollPanel();
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
+	private ConfigurationData configuration;
 
 	private Tree searchResultTree;
 
@@ -68,6 +73,21 @@ public class SearchPanel extends DockLayoutPanel {
 			searchBox.setText(searchString);
 			search(searchString);
 		}
+		loadConfigurationFromServer();
+	}
+
+	private void loadConfigurationFromServer() {
+		AsyncCallback<ConfigurationData> callback = new AsyncCallback<ConfigurationData>() {
+			public void onSuccess(ConfigurationData data) {
+				SearchPanel.this.configuration = data;
+			}
+
+			public void onFailure(Throwable caught) {
+				Window.alert(constants.serverError() + ": " + caught.getMessage());
+			}
+
+		};
+		configurationService.getConfiguration(callback);
 	}
 
 	public void refresh() {
@@ -157,5 +177,9 @@ public class SearchPanel extends DockLayoutPanel {
 
 	public UserDTO getActiveUser() {
 		return superPanel.getActiveUser();
+	}
+
+	public ConfigurationData getConfiguration() {
+		return configuration;
 	}
 }
