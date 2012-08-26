@@ -4,9 +4,9 @@
     Author     : Martin Řehánek
 --%>
 
+<%@page import="cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration"%>
 <%@page import="cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat"%>
 <%@page import="cz.nkp.urnnbn.oaipmhprovider.tools.PropertyLoader"%>
-<%@page import="cz.nkp.urnnbn.oaipmhprovider.Configuration"%>
 <%@page import="java.io.FileInputStream"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
@@ -65,17 +65,32 @@
     </head>
     <body>
         <%
-            PropertyLoader loader = Configuration.getPropertyLoader();
-            String providerUrl = loader.loadString("provider.baseUrl");
+            OaiPmhConfiguration conf = OaiPmhConfiguration.instanceOf();
+            String providerUrl = conf.getBaseUrl();
         %>
 
         <h1 align="center">OAI-PMH data provider</h1>
         <p class="descriptionText">
+            <h3>General information</h3>
             Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider module of
             <a href="http://code.google.com/p/urnnbn-resolver-v2/">URN:NBN Resolver</a>.
             This particular instance,
-            which is deployed at <i><%=request.getHeader("host")%></i>,
-            handles language code <i><%=loader.loadString("resolver.languageCode")%></i>.
+            which is deployed at <b><%=request.getHeader("host")%></b>,
+            handles language code <b><%=conf.getLanguageCode()%></b>.
+        </p>
+        <p>
+            For more information and troubleshooting please contact administrator
+            <a href="mailto:<%=conf.getAdminEmail()%>"><%=conf.getAdminName()%></a>.
+        </p>
+
+
+
+        <h3>Web interface description</h3>
+        <p class="descriptionText">
+            This is just simple web interface.
+            The actual base url is <a href="<%=providerUrl%>"><%=providerUrl%></a>. 
+        </p>
+        <p>
             Each row in table below represents single operation. 
             Each column allways contains button with name of the operation, 
             clicking on the button launches the operation.
@@ -85,10 +100,7 @@
             and versions for following requests identified by 
             <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl"><i>resumtion tokens</i></a>.
         </p>
-        <p class="descriptionText">
-            This is just simple web interface.
-            The actual base url is <a href="<%=providerUrl%>"><%=providerUrl%></a>. 
-        </p>
+
 
         <div></div>
         <div>
@@ -140,7 +152,7 @@
                         </td>
                         <td/>
                         <td>
-                            urn:nbn:<%=loader.loadString("resolver.languageCode")%>:
+                            urn:nbn:<%=conf.getLanguageCode()%>:
                             <input type="text" size="6" name="registrarCode"/>
                             -
                             <input type="text" size="6" name="documentCode" />
@@ -177,7 +189,7 @@
                             </select>
                         </td>
                         <td>
-                            urn:nbn:<%=loader.loadString("resolver.languageCode")%>:
+                            urn:nbn:<%=conf.getLanguageCode()%>:
                             <input type="text" size="6" name="registrarCode"/>
                             -
                             <input type="text" size="6" name="documentCode" />
@@ -207,7 +219,7 @@
                 </tr>
                 <tr>
                 </tr>
-                            
+
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
                         <input type="hidden" name="verb" value="ListIdentifiers"/>
@@ -230,7 +242,7 @@
                     </form>
                     <td/>
                 </tr>
-                            
+
                 <tr>
                     <form action ="<%=providerUrl%>">
                         <input type="hidden" name="verb" value="ListIdentifiers"/>
@@ -241,7 +253,7 @@
                         <td><input type="text"  size="10" name="resumptionToken"/></td>
                     </form>
                 </tr>
-                        
+
                 <tr>
                     <form action ="<%=providerUrl%>" onsubmit="return disableEmptyInputs(this)">
                         <input type="hidden" name="verb" value="ListRecords"/>
@@ -285,7 +297,7 @@
             function buildIdentifier(form){
                 registrarCode = form.elements["registrarCode"];
                 documentCode = form.elements["documentCode"];
-                identifier = "urn:nbn:<%=loader.loadString("resolver.languageCode")%>:" + registrarCode.value + "-" + documentCode.value ;
+                identifier = "urn:nbn:<%=conf.getLanguageCode()%>:" + registrarCode.value + "-" + documentCode.value ;
                 form.elements["identifier"].value = identifier;
                 registrarCode.disabled = true;
                 documentCode.disabled = true;

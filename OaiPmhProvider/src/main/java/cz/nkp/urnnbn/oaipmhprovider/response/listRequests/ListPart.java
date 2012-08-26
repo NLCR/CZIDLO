@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response.listRequests;
 
-import cz.nkp.urnnbn.oaipmhprovider.Configuration;
+import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ListPart {
         this.cursor = cursor;
         this.maxRecordsReturned = maxRecordsReturned;
         DateTime now = new DateTime();
-        this.validUntil = now.plusMinutes(Configuration.instanceOf().getListRequestsMinutesValid());
+        this.validUntil = now.plusMinutes(OaiPmhConfiguration.instanceOf().getListRequestsMinutesValid());
     }
 
     ListPart nextPart() throws IOException {

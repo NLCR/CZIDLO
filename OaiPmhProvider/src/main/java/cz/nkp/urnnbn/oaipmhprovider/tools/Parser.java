@@ -7,9 +7,7 @@ package cz.nkp.urnnbn.oaipmhprovider.tools;
 import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
 import cz.nkp.urnnbn.oaipmhprovider.OaiException;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
-import cz.nkp.urnnbn.oaipmhprovider.repository.IdentifierFactory;
 import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
-
 
 /**
  *
