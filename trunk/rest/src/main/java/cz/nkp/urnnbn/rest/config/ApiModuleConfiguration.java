@@ -6,10 +6,10 @@ package cz.nkp.urnnbn.rest.config;
 
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
-
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -36,14 +36,14 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     }
 
     /**
-     * 
+     *
      * @param properties InputStream containing properties
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     public void initialize(PropertyLoader loader) throws IOException {
         super.initialize(loader);
-        logger.info("Loading configuration");
+        logger.log(Level.INFO, "Initializing {0}", ApiModuleConfiguration.class.getName());
         urnReservationDefaultSize = loader.loadInt(PropertyKeys.URN_RESERVATION_DEFAULT_SIZE);
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
