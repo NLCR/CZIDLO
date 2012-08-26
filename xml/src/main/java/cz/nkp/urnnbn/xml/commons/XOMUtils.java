@@ -4,10 +4,7 @@
  */
 package cz.nkp.urnnbn.xml.commons;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -15,10 +12,9 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
+import nu.xom.*;
+import nu.xom.xslt.XSLException;
+import nu.xom.xslt.XSLTransform;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -27,22 +23,26 @@ import org.xml.sax.XMLReader;
 /**
  * TODO: poresit, jestli je to dobre s tema vyjimkama (validity vs parsing)
  * TODO: unit tests
+ *
  * @author Martin Řehánek
  */
 public class XOMUtils {
 
     static class MyErrorHandler implements ErrorHandler {
 
+        @Override
         public void warning(SAXParseException exception) throws SAXException {
             String message = buildMessage(exception);
             throw new SAXException("Warning: " + message);
         }
 
+        @Override
         public void error(SAXParseException exception) throws SAXException {
             String message = buildMessage(exception);
             throw new SAXException("Error: " + message);
         }
 
+        @Override
         public void fatalError(SAXParseException exception) throws SAXException {
             String message = buildMessage(exception);
             throw new SAXException("Fatal Error: " + message);
@@ -58,134 +58,134 @@ public class XOMUtils {
     }
 
     /**
-     * 
-     * @param xml File containing xml to be validated  and returned
+     *
+     * @param xml File containing xml to be validated and returned
      * @param schema xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByExternalXsd(File xml, File schema) throws ValidityException, ParsingException, IOException {
         return new Builder(readerValidatingByXsdFromFile(schema)).build(xml);
     }
 
     /**
-     * 
+     *
      * @param xml String containing xml to be validated and returned
      * @param schema xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByExternalXsd(String xml, File schema) throws ValidityException, ParsingException, IOException {
         return new Builder(readerValidatingByXsdFromFile(schema)).build(xml, null);
     }
 
     /**
-     * 
+     *
      * @param xml File containing xml to be validated and returned
      * @param schemaUrl url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByExternalXsd(File xml, URL schemaUrl) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByXsdFromUrl(schemaUrl)).build(xml);
     }
 
     /**
-     * 
+     *
      * @param xml String containing xml to be validated and returned
      * @param schemaUrl url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByExternalXsd(String xml, URL schemaUrl) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByXsdFromUrl(schemaUrl)).build(xml, null);
     }
 
     /**
-     * 
+     *
      * @param xml String containing xml to be validated and returned
      * @param schema String containing xsd
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByExternalXsd(String xml, String schema) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByXsdFromString(schema)).build(xml, null);
     }
 
     /**
-     * 
+     *
      * @param xml File containing xml to be validated and returned
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByInternalXsd(File xml) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByInternalXsd()).build(xml);
     }
 
     /**
-     * 
+     *
      * @param xml String containing xml to be validated and returned
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByInternalXsd(String xml) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByInternalXsd()).build(xml, null);
     }
 
     /**
-     * 
+     *
      * @param xml InputStream that document can be read from
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentValidByInternalXsd(InputStream xml) throws ParsingException, ValidityException, IOException {
         return new Builder(readerValidatingByInternalXsd()).build(xml);
     }
 
     /**
-     * 
+     *
      * @param xml File containing document to be read
      * @return
      * @throws ParsingException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentWithoutValidation(File xml) throws ParsingException, IOException {
         return new Builder().build(xml);
     }
 
     /**
-     * 
+     *
      * @param xml String containing document to be read
      * @return
      * @throws ParsingException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentWithoutValidation(String xml) throws ParsingException, IOException {
         return new Builder().build(xml, null);
     }
 
     /**
-     * 
+     *
      * @param in InputStream that document can be read from
      * @return
      * @throws ParsingException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Document loadDocumentWithoutValidation(InputStream in) throws ParsingException, IOException {
         return new Builder().build(in);
@@ -271,5 +271,26 @@ public class XOMUtils {
         } catch (SAXException ex) {
             throw new ValidityException(ex.getMessage(), ex);
         }
+    }
+
+    public static Document transformDocument(String inputXml, String xslt) throws ParsingException, ValidityException, IOException, XMLException, XSLException {
+        Builder builder = new Builder();
+        Document input = builder.build(inputXml, null);
+        Document stylesheet = builder.build(xslt, null);
+        return transformDocument(input, stylesheet);
+    }
+
+    public static Document transformDocument(Document input, Document xslt) throws XMLException, XSLException {
+        XSLTransform transform = new XSLTransform(xslt);
+        Nodes output = transform.transform(input);
+        return XSLTransform.toDocument(output);
+    }
+
+    public static void saveDocumentToFile(Document doc, File file) throws FileNotFoundException, IOException {
+        OutputStream out = new FileOutputStream(file);
+        Serializer serializer = new Serializer(out, "UTF-8");
+        serializer.setIndent(4);
+        serializer.setMaxLength(64);
+        serializer.write(doc);
     }
 }
