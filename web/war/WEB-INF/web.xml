@@ -19,7 +19,7 @@
 	</context-param>
 
 	<listener>
-		<listener-class>cz.nkp.urnnbn.server.ContextListener</listener-class>
+		<listener-class>cz.nkp.urnnbn.server.conf.ContextListener</listener-class>
 	</listener>
 
 	<!-- SPRING START -->
@@ -91,7 +91,17 @@
 		<servlet-name>userAccountService</servlet-name>
 		<url-pattern>/web/users</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>configurationService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.ConfigurationServiceImpl</servlet-class>
+	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>configurationService</servlet-name>
+		<url-pattern>/web/conf</url-pattern>
+	</servlet-mapping>
+	
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
