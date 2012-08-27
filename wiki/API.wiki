@@ -15,7 +15,7 @@ Dále rozhraní umožňuje:
    * typu registrar-scope identifikátoru,
    * hodnoty registrar-scope identifikátoru.
 
-Jedná se o *RESTful webové API*. Pro autentizaci je použita metoda _Basic access authentication_. Operace, které jsou autorizované, jsou dostupné jen přes _HTTPS_, čímž je zabráněno zachycení loginu a hesla, které jinak metoda posílá v otevřené formě. Při pokusu o provedení operace přes _HTTP_ bude vrácen kód 301 s přesměrováním na stejné _URL_, ale s prefixem _https://_. Je na administrátorovi, aby zpřístupnil alespoň tyto části aplikace přes _HTTPS_.
+Jedná se o *RESTful webové API*. Pro autentizaci je použita metoda _Basic access authentication_. Operace, které jsou autorizované, jsou dostupné jen přes _HTTPS_, čímž je zabráněno zachycení loginu a hesla, které jinak metoda posílá v otevřené formě. Při pokusu o provedení operace přes _HTTP_ bude vrácen kód 301 s přesměrováním na stejné _URL_, ale s prefixem _https://_. Je na administrátorovi, aby zpřístupnil alespoň tyto části aplikace přes _HTTPS_. 
 
 =Příklady operací=
 
@@ -24,6 +24,8 @@ Formálněji a podrobněji je REST API popsáno v [https://docs.google.com/sprea
 
  * Vstupní data v xml jsou zejména u importu záznamů. Tyto xml pak musí být validní podle [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/xml/src/main/resources/xsd/recordImport.xsd.xml xsd].
  * Druhým případem, kdy je vstupem xml je vkládání ditigálních instancí. Xml bude vypadat tak, jak je v ukázce. elementy url a archiverId budou povinné, elementy format a accessibility volitelné.
+
+Pro vyzkoušení základních operací je možné použít [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/rest/src/main/resources/scripts tyto skripty].
 
 -----
 == Záznam registrátorů ==
