@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Document   : recordImport.xsd.xml
-    Created on : 22. únor 2012, 11:59
-    Author     : Martin Řehánek
-    Description:
-        This XML Schema (W3C) document validates records
-        that are imported into application urnnbn-resolver-v2 
-        through its http rest api.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
--->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-elementFormDefault="qualified" 
-targetNamespace="http://resolver.nkp.cz/v2/" 
-xmlns:r="http://resolver.nkp.cz/v2/"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
-<!--    <xs:include schemaLocation="identifiers.xsd"/>-->
-    <xs:element name="import">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        Document   : recordImport.xsd.xml
+        Created on : 22. únor 2012, 11:59
+        Author     : Martin Řehánek
+        Description:
+            This XML Schema (W3C) document validates records
+            that are imported into application urnnbn-resolver-v2 
+            through its http rest api.
+            http://code.google.com/p/urnnbn-resolver-v2/
+            http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+    -->
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    elementFormDefault="qualified" 
+    targetNamespace="http://resolver.nkp.cz/v2/" 
+    xmlns:r="http://resolver.nkp.cz/v2/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <!--    <xs:include schemaLocation="identifiers.xsd"/>-->
+        <xs:element name="import">
         <xs:complexType>
             <xs:sequence>
                 <xs:choice>
@@ -236,6 +236,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- volume title -->
     <xs:simpleType name="volumeTitleType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -243,6 +244,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- issue title -->
     <xs:simpleType name="issueTitleType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -253,6 +255,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- type of document -->
     <xs:simpleType name="documentTypeType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -260,6 +263,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- other originator (illustrator, translator) -->
     <xs:simpleType name="otherOriginatorType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -268,6 +272,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- degree awarding institution -->
     <xs:simpleType name="degreeAwardingInstitutionType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -305,6 +310,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- publisher -->
     <xs:simpleType name="publisherType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -312,6 +318,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- place -->
     <xs:simpleType name="placeType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -520,101 +527,101 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="identifiers">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="isbn" type="r:isbnType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="ccnb" type="r:ccnbType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="issn" type="r:issnType" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    
-<!-- 
-ISBN
-====
-Akceptovány jsou jen československé isbn (prefix 80). Pokud se jedná o isbn-13,
-tak musí jít o knihovní isbn (prefix 978). 
-Platnost kontrolního součtu v posledním znaku se zde nekontroluje.
-Vyrobeno za pomocí dokumentu http://www.xfront.com/isbn.xsd
+        <xs:element name="identifiers">
+            <xs:complexType>
+                <xs:sequence>
+                    <xs:element name="isbn" type="r:isbnType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="ccnb" type="r:ccnbType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="issn" type="r:issnType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:element>
 
-isbn-10/13 bez oddělovačů
-(978){0,1}80\d([0-9]|){6}\d[0-9xX]
-např.:
-8090119964
-9788090119963
-809011996x
-809011996X
-978809011996x
-978809011996X
+    <!-- 
+    ISBN
+    ====
+    Akceptovány jsou jen československé isbn (prefix 80). Pokud se jedná o isbn-13,
+    tak musí jít o knihovní isbn (prefix 978). 
+    Platnost kontrolního součtu v posledním znaku se zde nekontroluje.
+    Vyrobeno za pomocí dokumentu http://www.xfront.com/isbn.xsd
 
-isbn-10/13 s pomlčkama
-(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]
-např.:
-80-9-01199-64
-978-80-901199-6-3
-80-7178-463-x
-80-7178-463-X
-978-80-7178-463-x
-978-80-7178-463-X
+    isbn-10/13 bez oddělovačů
+    (978){0,1}80\d([0-9]|){6}\d[0-9xX]
+    např.:
+    8090119964
+    9788090119963
+    809011996x
+    809011996X
+    978809011996x
+    978809011996X
 
-isbn-10/13 s mezerama
-(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]
-např.:
-80 9 01199 64
-978 80 901199 6 3
-80 7178 463 x
-80 7178 463 X
-978 80 7178 463 x
-978 80 7178 463 X
+    isbn-10/13 s pomlčkama
+    (978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]
+    např.:
+    80-9-01199-64
+    978-80-901199-6-3
+    80-7178-463-x
+    80-7178-463-X
+    978-80-7178-463-x
+    978-80-7178-463-X
 
-isbn-13 s pomlčkou před kódem 978 a jinak bez oddělovačů
-978-80\d([0-9]|){6}\d[0-9xX]
-např.:
-978-8090119964
-978-807178463x
-978-807178463X
+    isbn-10/13 s mezerama
+    (978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]
+    např.:
+    80 9 01199 64
+    978 80 901199 6 3
+    80 7178 463 x
+    80 7178 463 X
+    978 80 7178 463 x
+    978 80 7178 463 X
 
-celkem:
-(978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]
--->
-    <xs:simpleType name="isbnType">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="(978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]"/>
-        </xs:restriction>
-    </xs:simpleType>
+    isbn-13 s pomlčkou před kódem 978 a jinak bez oddělovačů
+    978-80\d([0-9]|){6}\d[0-9xX]
+    např.:
+    978-8090119964
+    978-807178463x
+    978-807178463X
 
-<!-- 
-čČNB
-====
-Skládá se z prefixu "cnb" případně "CNB" a dále 9 číslic.
+    celkem:
+    (978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]
+    -->
+        <xs:simpleType name="isbnType">
+            <xs:restriction base="xs:string">
+                <xs:pattern value="(978){0,1}80\d([0-9]|){6}\d[0-9xX]|(978-){0,1}80-\d([0-9]|-){6}\d-[0-9xX]|(978\s){0,1}80\s\d([0-9]|\s){6}\d\s[0-9xX]|978-80\d([0-9]|){6}\d[0-9xX]"/>
+            </xs:restriction>
+        </xs:simpleType>
 
-např.:
-cnb123456789
-CNB123456789
--->
-    <xs:simpleType name="ccnbType">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="cnb\d{9}|CNB\d{9}"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-<!-- 
-ISSN
-====
-Skládá se z dvou skupin čtyř znaků oddělených pomlčkou.
-Všechny znaky musí být číslice, jen poslední může nabývat hodnotu 'X', případně 'x'. 
-Poslední znak je kontrolním součtem. Stejně jako u ISBN se ani zde nekontroluje,
-jestli je kontrolní součet platný.
+    <!-- 
+    čČNB
+    ====
+    Skládá se z prefixu "cnb" případně "CNB" a dále 9 číslic.
 
     např.:
-    1234-5678
-    1234-567x
-    1234-567X
+    cnb123456789
+    CNB123456789
     -->
-    <xs:simpleType name="issnType">
-        <xs:restriction base="xs:string">
-            <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
-        </xs:restriction>
-    </xs:simpleType>
-</xs:schema>
+        <xs:simpleType name="ccnbType">
+            <xs:restriction base="xs:string">
+                <xs:pattern value="cnb\d{9}|CNB\d{9}"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+    <!-- 
+    ISSN
+    ====
+    Skládá se z dvou skupin čtyř znaků oddělených pomlčkou.
+    Všechny znaky musí být číslice, jen poslední může nabývat hodnotu 'X', případně 'x'. 
+    Poslední znak je kontrolním součtem. Stejně jako u ISBN se ani zde nekontroluje,
+    jestli je kontrolní součet platný.
+
+        např.:
+        1234-5678
+        1234-567x
+        1234-567X
+        -->
+        <xs:simpleType name="issnType">
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:schema>
