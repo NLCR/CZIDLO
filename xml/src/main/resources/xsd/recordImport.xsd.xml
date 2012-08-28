@@ -237,6 +237,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- volume title -->
     <xs:simpleType name="volumeTitleType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -244,6 +245,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- issue title -->
     <xs:simpleType name="issueTitleType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -254,6 +256,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- type of document -->
     <xs:simpleType name="documentTypeType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -261,6 +264,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- other originator (illustrator, translator) -->
     <xs:simpleType name="otherOriginatorType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -269,6 +273,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- degree awarding institution -->
     <xs:simpleType name="degreeAwardingInstitutionType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -306,6 +311,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- publisher -->
     <xs:simpleType name="publisherType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
@@ -313,6 +319,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- place -->
     <xs:simpleType name="placeType">
         <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
             <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
