@@ -222,7 +222,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="titleType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="100"/>
+<!--            <xs:maxLength value="100"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -230,21 +230,21 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="subTitleType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="200"/>
+            <!--<xs:maxLength value="200"/>-->
         </xs:restriction>
     </xs:simpleType>
     
     <!-- volume title -->
     <xs:simpleType name="volumeTitleType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
     <!-- issue title -->
     <xs:simpleType name="issueTitleType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -254,14 +254,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- type of document -->
     <xs:simpleType name="documentTypeType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
 
     <!-- other originator (illustrator, translator) -->
     <xs:simpleType name="otherOriginatorType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
 
@@ -269,7 +269,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- degree awarding institution -->
     <xs:simpleType name="degreeAwardingInstitutionType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -306,14 +306,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- publisher -->
     <xs:simpleType name="publisherType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
     <!-- place -->
     <xs:simpleType name="placeType">
         <xs:restriction base="xs:string">
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -342,7 +342,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="otherIdType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -362,6 +362,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- urn:nbn -->
     <xs:simpleType name="urnNbnType">
         <xs:restriction base="xs:string">
+            <!-- TODO: here hardcoced "CZ" -->
             <xs:pattern value="urn:nbn:cz:[A-Za-z0-9]{2,6}\-[A-Za-z0-9]{6}"/>
         </xs:restriction>
     </xs:simpleType>
@@ -401,7 +402,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="financedType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="100"/>
+            <!--<xs:maxLength value="100"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -435,14 +436,14 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="formatType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="20"/>
+            <!--<xs:maxLength value="20"/>-->
         </xs:restriction>
     </xs:simpleType>
     <!-- format version -->
     <xs:simpleType name="formatVersionType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="10"/>
+            <!--<xs:maxLength value="10"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -451,7 +452,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         <xs:simpleType>
             <xs:restriction base="xs:string">
                 <xs:minLength value="1"/>
-                <xs:maxLength value="200"/>
+                <!--<xs:maxLength value="200"/>-->
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
@@ -480,7 +481,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="compressionType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -497,7 +498,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="modelType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="20"/>
+            <!--<xs:maxLength value="20"/>-->
         </xs:restriction>
     </xs:simpleType>
     
@@ -506,7 +507,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <xs:simpleType name="iccProfileType">
         <xs:restriction base="xs:string">
             <xs:minLength value="1"/>
-            <xs:maxLength value="50"/>
+            <!--<xs:maxLength value="50"/>-->
         </xs:restriction>
     </xs:simpleType>
     
