@@ -111,7 +111,6 @@ např.:
     <xs:simpleType name="issnType">
         <xs:restriction base="xs:string">
             <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
-            <xs:maxLength value="200"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
