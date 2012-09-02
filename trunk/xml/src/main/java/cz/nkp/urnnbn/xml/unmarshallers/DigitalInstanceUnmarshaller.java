@@ -27,6 +27,7 @@ public class DigitalInstanceUnmarshaller extends Unmarshaller {
         result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root)));
         result.setFormat(elementContentOrNull("format", root));
         result.setAccessibility(elementContentOrNull("accessibility", root));
+        result.setActive(Boolean.TRUE);
         return result;
     }
 }
