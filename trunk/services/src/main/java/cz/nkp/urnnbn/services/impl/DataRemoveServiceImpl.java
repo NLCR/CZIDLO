@@ -153,11 +153,11 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeDigitalInstance(long instanceId, String login) throws UnknownUserException, AccessException, UnknownDigInstException {
+    public void deactivateDigitalInstance(long instanceId, String login) throws UnknownUserException, AccessException, UnknownDigInstException {
         try {
             long registrarId = registrarOfDigInstance(instanceId);
             authorization.checkAccessRights(registrarId, login);
-            factory.digInstDao().deleteDigInstance(instanceId);
+            factory.digInstDao().deactivateDigInstance(instanceId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
