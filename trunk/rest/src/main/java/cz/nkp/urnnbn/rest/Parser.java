@@ -115,7 +115,7 @@ public class Parser {
         }
     }
 
-    static URL parseUrl(String string, int maxUrlLength) {
+    static URL parseUrl(String string, int maxUrlLength) throws InvalidDataException {
         try {
             if (string != null && string.length() > maxUrlLength) {
                 throw new InvalidDataException("url '" + string + "' too long. Maximal length is " + maxUrlLength);

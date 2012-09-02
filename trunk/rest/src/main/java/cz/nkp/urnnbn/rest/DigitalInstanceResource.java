@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.rest.exceptions.DigitalInstanceAlreadyDeactivated;
+import cz.nkp.urnnbn.rest.exceptions.DigitalInstanceAlreadyDeactivatedException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.MethodForbiddenException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
@@ -83,7 +83,7 @@ public class DigitalInstanceResource extends Resource {
                 String login = req.getRemoteUser();
                 DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
                 if (!found.isActive()) {
-                    throw new DigitalInstanceAlreadyDeactivated(instance);
+                    throw new DigitalInstanceAlreadyDeactivatedException(instance);
                 } else {
                     dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
                     DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
