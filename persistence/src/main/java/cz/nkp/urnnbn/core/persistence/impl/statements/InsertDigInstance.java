@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
@@ -49,7 +49,7 @@ public class InsertDigInstance implements StatementWrapper {
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(4, now);
             st.setTimestamp(5, now);
-            st.setBoolean(6, true);
+            st.setBoolean(6, instance.isActive());
             st.setString(7, instance.getUrl());
             st.setString(8, instance.getFormat());
             st.setString(9, instance.getAccessibility());

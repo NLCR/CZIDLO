@@ -5,23 +5,22 @@ import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.dto.User;
-
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import java.io.File;
@@ -35,7 +34,7 @@ import java.util.logging.Logger;
 import org.joda.time.DateTime;
 
 public class App {
-
+    
     static String driver = "org.postgresql.Driver";
     static String login = "testuser";
     static String password = "testpass";
@@ -47,11 +46,11 @@ public class App {
     List<DigitalDocument> representations = new ArrayList<DigitalDocument>();
     private final DAOFactory factory;
     private final DtoBuilder builder = new DtoBuilder();
-
+    
     public App(DatabaseConnector connector) {
         this.factory = new DAOFactory(connector);
     }
-
+    
     public static void main(String[] args) {
         try {
 //            args = new String[1];
@@ -67,7 +66,7 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private static DatabaseConnector databaseConnector(String[] args) throws IOException {
         if (args.length == 0) {
             return DatabaseConnectorFactory.getConnector(driver, host, database, port, login, password);
@@ -76,7 +75,7 @@ public class App {
             return DatabaseConnectorFactory.getConnector(propertiesFile);
         }
     }
-
+    
     public void clearDatabase() throws DatabaseException {
         try {
             factory.urnDao().deleteAllUrnNbns();
@@ -89,7 +88,7 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private void insertTestData() throws Exception {
         try {
 
@@ -113,7 +112,7 @@ public class App {
             archMk3.setDescription("Mala knihovna 3");
             archMk3.setId(factory.archiverDao().insertArchiver(archMk3));
             System.out.println("created archiver MK3 with id " + archMk3.getId());
-
+            
             Map<String, Registrar> registrarMap = insertRegistrars();
 
             //superadmin
@@ -234,18 +233,21 @@ public class App {
             babickaMzk_v_K4mzk.setUrl("http://kramerius.mzk.cz/search/handle/uuid:123");
             babickaMzk_v_K4mzk.setFormat("djvu");
             babickaMzk_v_K4mzk.setAccessibility("veřejně přístupné");
+            babickaMzk_v_K4mzk.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4mzk);
             //babicka mzk v K3 mzk
             DigitalInstance babickaMzk_v_K3mzk = new DigitalInstance();
             babickaMzk_v_K3mzk.setDigDocId(babickaMzk.getId());
             babickaMzk_v_K3mzk.setLibraryId(mzkK3.getId());
             babickaMzk_v_K3mzk.setUrl("http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239");
+            babickaMzk_v_K3mzk.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaMzk_v_K3mzk);
             //babicka mzk v K4 nkp
             DigitalInstance babickaMzk_v_K4nkp = new DigitalInstance();
             babickaMzk_v_K4nkp.setDigDocId(babickaMzk.getId());
             babickaMzk_v_K4nkp.setLibraryId(nkpK4.getId());
             babickaMzk_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:123");
+            babickaMzk_v_K4nkp.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4nkp);
 
             //DR babicka nkp
@@ -264,6 +266,7 @@ public class App {
             babickaNkp_v_K4nkp.setFormat("jpg");
             babickaNkp_v_K4nkp.setAccessibility("public");
             babickaNkp_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:456");
+            babickaNkp_v_K4nkp.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaNkp_v_K4nkp);
 
 
@@ -304,7 +307,7 @@ public class App {
             factory.documentDao().insertDocument(babushkaNkp);
             UrnNbn babushaUrn = new UrnNbn(nkp.getCode(), "123456", babushkaNkp.getId());
             factory.urnDao().insertUrnNbn(babushaUrn);
-
+            
         } catch (RecordNotFoundException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DatabaseException ex) {
@@ -313,21 +316,21 @@ public class App {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public Archiver archiverPersisted() throws Exception {
         Archiver archiver = builder.archiverWithoutId();
         long id = factory.archiverDao().insertArchiver(archiver);
         archiver.setId(id);
         return archiver;
     }
-
+    
     Registrar registrarPersisted() throws Exception {
         Registrar registrar = builder.registrarWithoutId();
         long id = factory.registrarDao().insertRegistrar(registrar);
         registrar.setId(id);
         return registrar;
     }
-
+    
     public DigitalDocument documentPersisted(long registrarId, long intEntId) throws DatabaseException, RecordNotFoundException {
         DigitalDocument doc = new DigitalDocument();
         doc.setIntEntId(intEntId);
@@ -337,7 +340,7 @@ public class App {
         doc.setId(repId);
         return doc;
     }
-
+    
     public DigitalLibrary libraryPersisted() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         Registrar registrar = builder.registrarWithoutId();
         Long registrarId = factory.registrarDao().insertRegistrar(registrar);
@@ -347,21 +350,21 @@ public class App {
         library.setId(id);
         return library;
     }
-
+    
     public IntelectualEntity entityPersisted() throws DatabaseException {
         IntelectualEntity entity = builder.intEntityWithoutId();
         long id = factory.intelectualEntityDao().insertIntelectualEntity(entity);
         entity.setId(id);
         return entity;
     }
-
+    
     public User userPersisted() throws DatabaseException, AlreadyPresentException {
         User user = builder.userWithoutId();
         long id = factory.userDao().insertUser(user);
         user.setId(id);
         return user;
     }
-
+    
     private Map<String, Registrar> insertRegistrars() throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         Map<String, Registrar> result = new HashMap<String, Registrar>();
         Registrar nk =
@@ -416,16 +419,16 @@ public class App {
         }
         return result;
     }
-
+    
     private void addToMap(Registrar registrar, Map<String, Registrar> result) {
         result.put(registrar.getCode().toString(), registrar);
     }
-
+    
     private Registrar insertRegistrar(String code, String name, String description) throws DatabaseException, AlreadyPresentException {
         //TODO: pozdeji rucne odstranit pravo registrovat volne urn:nbn vsem registratorum
         return insertRegistrar(code, name, description, true);
     }
-
+    
     private Registrar insertRegistrar(String code, String name, String description, boolean allowedToRegisterFreeUrn) throws DatabaseException, AlreadyPresentException {
         Registrar result = new Registrar();
         result.setName(name);
@@ -436,13 +439,13 @@ public class App {
         System.out.println("created registrar " + result.getName() + " with code " + result.getCode());
         return result;
     }
-
+    
     private Registrar insertRegistrarWithDefaultLibrary(String code, String name, String description) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         Registrar registrar = insertRegistrar(code, name, description);
         insertLibrary(code + " default library", null, "defaultní digitální knihovna registrátora, prosím o editaci", registrar);
         return registrar;
     }
-
+    
     private DigitalLibrary insertLibrary(String name, String url, String decription, Registrar registrar) throws DatabaseException, RecordNotFoundException {
         DigitalLibrary result = new DigitalLibrary();
         result.setName(name);
@@ -453,7 +456,7 @@ public class App {
         System.out.println("created digital library " + result.getName() + " of registrar " + registrar.getName());
         return result;
     }
-
+    
     private Catalog insertCatalog(String name, String url, Registrar registrar) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         Catalog result = new Catalog();
         result.setName(name);
@@ -463,7 +466,7 @@ public class App {
         System.out.println("created catalog " + result.getName() + " of registrar " + registrar.getName());
         return result;
     }
-
+    
     private User createUser(String login, String password, String email) throws DatabaseException, AlreadyPresentException {
         User user = new User();
         user.setLogin(login);
@@ -473,7 +476,7 @@ public class App {
         System.out.println("created user " + user.getLogin() + ":" + user.getPassword());
         return user;
     }
-
+    
     private void grantRegistrarToUser(User user, Registrar registrar) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         factory.userDao().insertAdministrationRight(registrar.getId(), user.getId());
         System.out.println("granted access to registrar '" + registrar.getName() + "' with code " + registrar.getCode() + " to user " + user.getLogin());

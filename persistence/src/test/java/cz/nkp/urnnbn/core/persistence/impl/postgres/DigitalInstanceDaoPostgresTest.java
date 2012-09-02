@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
@@ -42,6 +42,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         instance.setDigDocId(doc.getId());
         instance.setLibraryId(lib.getId());
         instance.setUrl("http://something");
+        instance.setActive(Boolean.TRUE);
         digInstDao.insertDigInstance(instance);
     }
 
@@ -52,6 +53,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         instance.setDigDocId(rep.getId());
         instance.setLibraryId(ILLEGAL_ID);
         instance.setUrl("http://something");
+        instance.setActive(Boolean.TRUE);
         try {
             digInstDao.insertDigInstance(instance);
             fail();
@@ -66,6 +68,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         instance.setDigDocId(ILLEGAL_ID);
         instance.setLibraryId(lib.getId());
         instance.setUrl("http://something");
+        instance.setActive(Boolean.TRUE);
         try {
             digInstDao.insertDigInstance(instance);
             fail();
@@ -82,6 +85,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         DigitalInstance first = new DigitalInstance();
         first.setDigDocId(rep.getId());
         first.setLibraryId(lib.getId());
+        first.setActive(Boolean.TRUE);
         first.setUrl("http://something");
         digInstDao.insertDigInstance(first);
         //second
@@ -89,6 +93,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         second.setDigDocId(rep.getId());
         second.setLibraryId(lib.getId());
         second.setUrl("http://somethingElse");
+        second.setActive(Boolean.TRUE);
         digInstDao.insertDigInstance(second);
         //check that have been inserted
         List<DigitalInstance> instances = digInstDao.getDigitalInstancesOfDigDoc(rep.getId());
@@ -108,6 +113,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         inserted.setDigDocId(rep.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
+        inserted.setActive(Boolean.TRUE);
         digInstDao.insertDigInstance(inserted);
         DigitalInstance fetched = digInstDao.getDigInstanceById(inserted.getId());
         assertEquals(inserted, fetched);
@@ -141,9 +147,10 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
-     * Test of deleteDigInstance method, of class DigitalInstanceDaoPostgres.
+     * Test of deactivateDigInstance method, of class
+     * DigitalInstanceDaoPostgres.
      */
-    public void testDeleteDigInstance() throws Exception {
+    public void testDeactivateDigitalInstance() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument rep = documentPersisted(lib.getRegistrarId(), entity.getId());
@@ -152,15 +159,22 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         inserted.setDigDocId(rep.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
+        inserted.setActive(Boolean.TRUE);
         digInstDao.insertDigInstance(inserted);
-        digInstDao.getDigInstanceById(inserted.getId());
-        //delete
-        digInstDao.deleteDigInstance(inserted.getId());
-        try {
-            digInstDao.getDigInstanceById(inserted.getId());
-            fail();
-        } catch (RecordNotFoundException e) {
-            //ok
-        }
+        //fetch
+        DigitalInstance beforeDeactivation = digInstDao.getDigInstanceById(inserted.getId());
+        assertTrue(beforeDeactivation.isActive());
+        assertNotNull(beforeDeactivation.getCreated());
+        assertNotNull(beforeDeactivation.getModified());
+        
+        //deactivate
+        digInstDao.deactivateDigInstance(inserted.getId());
+        DigitalInstance deactivated = digInstDao.getDigInstanceById(inserted.getId());
+        assertFalse(deactivated.isActive());
+        assertNotNull(deactivated.getCreated());
+        assertNotNull(deactivated.getModified());
+        
+        //timestamps
+        assertTrue(beforeDeactivation.getModified().isBefore(deactivated.getModified()));
     }
 }
