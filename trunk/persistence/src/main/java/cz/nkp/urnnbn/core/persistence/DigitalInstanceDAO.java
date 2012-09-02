@@ -44,7 +44,7 @@ public interface DigitalInstanceDAO {
 
     public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
-    public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException;
+    public void deactivateDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException;
 
     public long getTotalCount() throws DatabaseException;
 }

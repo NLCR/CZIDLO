@@ -5,20 +5,21 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
+import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateDigitalInstance;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigInstance;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
@@ -49,7 +50,6 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, instance.getDigDocId());
         checkRecordExists(DigitalLibraryDAO.TABLE_NAME, DigitalLibraryDAO.ATTR_ID, instance.getLibraryId());
         DaoOperation operation = new DaoOperation() {
-
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
                 //get new id from sequence
@@ -126,10 +126,14 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     }
 
     @Override
-    public void deleteDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException {
+    public void deactivateDigInstance(long digInstId) throws DatabaseException, RecordNotFoundException {
         try {
-            deleteRecordsById(TABLE_NAME, ATTR_ID, digInstId, true);
-        } catch (RecordReferencedException ex) {
+            StatementWrapper st = new DeactivateDigitalInstance(digInstId);
+            DaoOperation operation = new NoResultOperation(st);
+            runInTransaction(operation);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
         }

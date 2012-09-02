@@ -4,12 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  *
@@ -32,13 +31,14 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         if (resultSet.wasNull()) {
             instance.setLibraryId(null);
         }
-        Timestamp created = resultSet.getTimestamp(DigitalInstanceDAO.ATTR_CREATED);
-        instance.setCreated(DateTimeUtils.timestampToDatetime(created));
-        Timestamp updated = resultSet.getTimestamp(DigitalInstanceDAO.ATTR_UPDATED);
-        instance.setModified(DateTimeUtils.timestampToDatetime(updated));
+        instance.setCreated(DateTimeUtils.timestampToDatetime(
+                resultSet.getTimestamp(DigitalInstanceDAO.ATTR_CREATED)));
+        instance.setModified(DateTimeUtils.timestampToDatetime(
+                resultSet.getTimestamp(DigitalInstanceDAO.ATTR_UPDATED)));
         instance.setUrl(resultSet.getString(DigitalInstanceDAO.ATTR_URL));
         instance.setFormat(resultSet.getString(DigitalInstanceDAO.ATTR_FORMAT));
         instance.setAccessibility(resultSet.getString(DigitalInstanceDAO.ATTR_ACCESS));
+        instance.setActive(resultSet.getBoolean(DigitalInstanceDAO.ATTR_ACTIVE));
         return instance;
     }
 }
