@@ -22,15 +22,15 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
@@ -38,6 +38,7 @@ import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 
 /**
  * TODO: test
+ *
  * @author Martin Řehánek
  */
 public class DataImportServiceImpl extends BusinessServiceImpl implements DataImportService {
@@ -47,9 +48,9 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public UrnNbn importNewRecord(RecordImport data, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, DigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
-        authorization.checkAccessRights(data.getRegistrarCode(), login);
-        return new RecordImporter(factory, data).run();
+    public UrnNbn importNewRecord(RecordImport importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
+        authorization.checkAccessRights(importData.getRegistrarCode(), login);
+        return new RecordImporter(factory, importData).run();
     }
 
     @Override
@@ -112,7 +113,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     @Override
     public DigitalLibrary insertNewDigitalLibrary(DigitalLibrary library, long registrarId, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
         try {
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             Long id = factory.diglLibDao().insertLibrary(library);
             library.setId(id);
             return library;
@@ -126,7 +127,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     @Override
     public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
         try {
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             Long id = factory.catalogDao().insertCatalog(catalog);
             catalog.setId(id);
             return catalog;

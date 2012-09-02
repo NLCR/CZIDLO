@@ -79,7 +79,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateRegistrar(Registrar registrar, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
         try {
-            authorization.checkAccessRights(registrar.getId(), login);
+            authorization.checkAccessRightsOrAdmin(registrar.getId(), login);
             factory.registrarDao().updateRegistrar(registrar);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -104,7 +104,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateDigitalLibrary(DigitalLibrary library, String login) throws UnknownUserException, AccessException, UnknownDigLibException {
         try {
             long registrarId = registrarOfDigLibrary(library.getId());
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.diglLibDao().updateLibrary(library);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -117,7 +117,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateCatalog(Catalog catalog, String login) throws UnknownUserException, AccessException, UnknownCatalogException {
         try {
             long registrarId = registrarOfCatalog(catalog.getId());
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.catalogDao().updateCatalog(catalog);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

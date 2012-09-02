@@ -4,10 +4,10 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -30,10 +30,39 @@ public class AuthorizationModule {
         this.factory = factory;
     }
 
+    /**
+     * Verifies that user has access_right to registar.
+     *
+     * @param registrarId internal id of registar
+     * @param login login of user that is supposed to have access right to
+     * registrar
+     * @throws AccessException if access right of user to registar doesn't exist
+     * @throws UnknownUserException if no such user with this login exists
+     */
     public void checkAccessRights(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
+            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
+            checkAccessRights(registrar, userByLogin(login));
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Verifies that user has access_right to registar or is administrator.
+     *
+     * @param registrarId internal id of registar
+     * @param login login of user that is supposed to have access right to
+     * registrar
+     * @throws AccessException if access right of user to registar doesn't exist
+     * @throws UnknownUserException if no such user with this login exists
+     */
+    public void checkAccessRightsOrAdmin(long registrarId, String login) throws AccessException, UnknownUserException {
+        try {
+            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             if (!isAdmin(login)) {
-                Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
                 checkAccessRights(registrar, userByLogin(login));
             }
         } catch (DatabaseException ex) {
@@ -43,12 +72,19 @@ public class AuthorizationModule {
         }
     }
 
+    /**
+     * Verifies that user has access_right to registar.
+     *
+     * @param registrarCode code of registrar
+     * @param login login of user that is supposed to have access right to
+     * registrar
+     * @throws AccessException if access right of user to registar doesn't exist
+     * @throws UnknownUserException if no such user with this login exists
+     */
     public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {
-            if (!isAdmin(login)) {
-                Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
-                checkAccessRights(registrar, userByLogin(login));
-            }
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
+            checkAccessRights(registrar, userByLogin(login));
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
