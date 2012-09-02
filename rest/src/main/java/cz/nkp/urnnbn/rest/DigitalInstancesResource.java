@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.rest.exceptions.DigitalInstanceAlreadyPresentException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
@@ -111,12 +112,14 @@ public class DigitalInstancesResource extends Resource {
             if (digDoc == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
-            Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getInstanceImportSchema());
-            DigitalInstance digInstFromImport = digitalInstanceFromDocument(doc);
-            digInstFromImport.setDigDocId(digDoc.getId());
-            Parser.parseUrl(digInstFromImport.getUrl(), MAX_URL_LENGTH);
-            DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digInstFromImport, login);
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digInstFromImport.getLibraryId());
+            Document xmlDocument = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getInstanceImportSchema());
+            DigitalInstance digInstFromClient = digitalInstanceFromDocument(xmlDocument);
+            //TODO: this validation move to xsd
+            Parser.parseUrl(digInstFromClient.getUrl(), MAX_URL_LENGTH);
+            checkNoOtherDigInstInSameLibraryPresent(digInstFromClient);
+            //actually import
+            DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digInstFromClient, login);
+            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digInstFromClient.getLibraryId());
             String responseXml = builder.buildDocument().toXML();
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
@@ -136,8 +139,24 @@ public class DigitalInstancesResource extends Resource {
         }
     }
 
-    private DigitalInstance digitalInstanceFromDocument(Document doc) {
-        DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(doc);
-        return unmarshaller.getDigitalInstance();
+    private DigitalInstance digitalInstanceFromDocument(Document xmlDocument) {
+        DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(xmlDocument);
+        DigitalInstance result = unmarshaller.getDigitalInstance();
+        result.setDigDocId(digDoc.getId());
+        return result;
+    }
+
+    private void checkNoOtherDigInstInSameLibraryPresent(DigitalInstance digInstFromClient) {
+        try {
+            List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
+            for (DigitalInstance instance : instances) {
+                if (instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
+                    throw new DigitalInstanceAlreadyPresentException(instance);
+                }
+            }
+        } catch (DatabaseException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
+        }
     }
 }
