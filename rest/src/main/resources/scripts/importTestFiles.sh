@@ -1,5 +1,5 @@
 #!/bin/bash
-#Tento skript slouzi k otestovani importu pro priklady importnich xml
+#Tento skript slouzi k otestovani operace "registrace DD" pro priklady importnich xml
 HEADERS_TMP=/tmp/headers
 BODY_TMP=/tmp/body;
 

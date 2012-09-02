@@ -5,8 +5,8 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -22,9 +22,9 @@ import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -74,8 +74,8 @@ public class DigitalDocumentResource extends Resource {
         switch (action) {
             case DECIDE:
                 //pokud pochazi z katalogu, udela se redirect s tim,
-                //ze se pouzije pouze DR patrici do DL registratora, ktery vlastni ten katalog
-                //pokud se nenajde DR, tak se chovej jako pri SHOW
+                //ze se pouzije pouze DI patrici do DL registratora, ktery vlastni ten katalog
+                //pokud se nenajde DI, tak se chovej jako pri SHOW
                 URI instanceUriByReferer = getDigInstUriByReferer(request.getHeader(HEADER_REFERER));
                 if (instanceUriByReferer != null) {
                     return redirectResponse(instanceUriByReferer);
@@ -87,7 +87,7 @@ public class DigitalDocumentResource extends Resource {
                 if (uriByReferer != null) {
                     return redirectResponse(uriByReferer);
                 } else {
-                    URI anyInstanceUri = getAnyDigInstanceUri();
+                    URI anyInstanceUri = getAnyActiveDigInstanceUri();
                     if (anyInstanceUri != null) {
                         return redirectResponse(anyInstanceUri);
                     } else {// no digital instance found
@@ -200,8 +200,8 @@ public class DigitalDocumentResource extends Resource {
                 for (DigitalLibrary library : libraries) {
                     //instance DD
                     for (DigitalInstance instance : instances) {
-                        //instance je ve vhodne knihovne
-                        if (instance.getLibraryId() == library.getId()) {
+                        //instance je ve vhodne knihovne a je aktivni
+                        if (instance.getLibraryId() == library.getId() && instance.isActive()) {
                             return toUri(instance.getUrl());
                         }
                     }
@@ -239,14 +239,15 @@ public class DigitalDocumentResource extends Resource {
         }
     }
 
-    private URI getAnyDigInstanceUri() {
+    private URI getAnyActiveDigInstanceUri() {
         try {
             List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-            if (!instances.isEmpty()) {
-                return toUri(instances.get(0).getUrl());
-            } else {
-                return null;
+            for (DigitalInstance instance : instances) {
+                if (instance.isActive()) {
+                    return toUri(instance.getUrl());
+                }
             }
+            return null;
         } catch (DatabaseException ex) {
             Logger.getLogger(DigitalDocumentResource.class.getName()).log(Level.SEVERE, null, ex);
             return null;
