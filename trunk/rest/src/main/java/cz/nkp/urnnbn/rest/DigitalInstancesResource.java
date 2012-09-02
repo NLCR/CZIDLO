@@ -49,8 +49,8 @@ public class DigitalInstancesResource extends Resource {
         digDoc = null;
     }
 
-    public DigitalInstancesResource(DigitalDocument digRep) {
-        this.digDoc = digRep;
+    public DigitalInstancesResource(DigitalDocument digDoc) {
+        this.digDoc = digDoc;
     }
 
     @GET

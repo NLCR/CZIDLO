@@ -17,6 +17,6 @@ public class UnknownDigitalInstanceException extends RestException {
     }
 
     public UnknownDigitalInstanceException() {
-        super(Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No digital instance found");
+        super(Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No active digital instance found");
     }
 }
