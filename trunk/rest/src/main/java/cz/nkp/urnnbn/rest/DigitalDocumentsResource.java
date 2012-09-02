@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
@@ -12,6 +11,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -89,7 +89,7 @@ public class DigitalDocumentsResource extends Resource {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
-        } catch (DigDocIdentifierCollisionException ex) {
+        } catch (RegistarScopeDigDocIdentifierCollisionException ex) {
             throw new InvalidDigDocIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
