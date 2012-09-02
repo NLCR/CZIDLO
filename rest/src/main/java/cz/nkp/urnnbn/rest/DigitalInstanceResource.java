@@ -4,20 +4,25 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.rest.exceptions.DigitalInstanceAlreadyDeactivated;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.MethodForbiddenException;
+import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibraryBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -40,21 +45,24 @@ public class DigitalInstanceResource extends Resource {
     @GET
     @Produces("application/xml")
     public String getDigitalInstance() {
+        return xmlBuilder(instance).buildDocument().toXML();
+    }
+
+    private DigitalInstanceBuilder xmlBuilder(DigitalInstance instance) {
         try {
-            DigitalDocumentBuilder digRepBuilder = digRepBuilder(instance.getDigDocId());
+            DigitalDocumentBuilder digDocBuilder = digDocBuilder(instance.getDigDocId());
             DigitalLibraryBuilder libBuilder = digLibBuilder(instance.getLibraryId());
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, libBuilder, digRepBuilder);
-            return builder.buildDocument().toXML();
+            return new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
     }
 
-    private DigitalDocumentBuilder digRepBuilder(long digRepId) throws DatabaseException {
-        DigitalDocument digRep = dataAccessService().digDocByInternalId(digRepId);
+    private DigitalDocumentBuilder digDocBuilder(long digDocId) throws DatabaseException {
+        DigitalDocument digRep = dataAccessService().digDocByInternalId(digDocId);
         UrnNbn urn = dataAccessService().urnByDigDocId(digRep.getId());
-        RegistrarScopeIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digRepId);
+        RegistrarScopeIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digDocId);
         return new DigitalDocumentBuilder(digRep, urn, idsBuilder, null, null, null, null);
     }
 
@@ -71,7 +79,28 @@ public class DigitalInstanceResource extends Resource {
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
-            return "<TODO>implementovat</TODO>";
+            try {
+                String login = req.getRemoteUser();
+                DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
+                if (!found.isActive()) {
+                    throw new DigitalInstanceAlreadyDeactivated(instance);
+                } else {
+                    dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
+                    DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
+                    return xmlBuilder(deactivated).buildDocument().toXML();
+                }
+            } catch (DatabaseException ex) {
+                logger.log(Level.SEVERE, ex.getMessage());
+                throw new InternalException(ex.getMessage());
+            } catch (UnknownUserException ex) {
+                throw new NotAuthorizedException(ex.getMessage());
+            } catch (AccessException ex) {
+                throw new NotAuthorizedException(ex.getMessage());
+            } catch (UnknownDigInstException ex) {
+                //should never happen
+                logger.log(Level.SEVERE, ex.getMessage());
+                throw new InternalException(ex);
+            }
         }
     }
 }
