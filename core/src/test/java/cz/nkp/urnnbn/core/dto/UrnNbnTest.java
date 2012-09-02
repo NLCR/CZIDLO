@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import junit.framework.TestCase;
 
 /**
@@ -27,6 +28,7 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_ok() {
+        CountryCode.initialize("cz");
         UrnNbn urn = UrnNbn.valueOf("urn:nbn:cz:aba001-123456");
         assertEquals(urn.getRegistrarCode().toString(), "aba001");
         assertEquals(urn.getDocumentCode(), "123456");
@@ -56,18 +58,21 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_ok_inUpperCase() {
+        CountryCode.initialize("cz");
         UrnNbn urn = UrnNbn.valueOf("URN:NBN:CZ:ABA001-123456");
         assertEquals(urn.getRegistrarCode().toString(), "aba001");
         assertEquals(urn.getDocumentCode(), "123456");
     }
 
     public void testValueOf_ok_alphNumDocumentCode() {
+        CountryCode.initialize("cz");
         UrnNbn.valueOf("URN:NBN:CZ:ABA001-123A56");
         UrnNbn.valueOf("URN:NBN:CZ:ABA001-aaaBBB");
         UrnNbn.valueOf("URN:NBN:CZ:ABA001-aaa123");
     }
 
     public void testValueOf_incorrectPrefix() {
+        CountryCode.initialize("cz");
         try {
             UrnNbn.valueOf("ur:nbn:cz:aba001-123456");
             fail();
@@ -83,6 +88,7 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_incorrectCountryCode() {
+        CountryCode.initialize("cz");
         try {
             UrnNbn.valueOf("urn:nbn:czz:aba001-123456");
             fail();
@@ -98,6 +104,7 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_incorrectRegistrarCode() {
+        CountryCode.initialize("cz");
         try {
             UrnNbn.valueOf("urn:nbn:cz:a-123456");
             fail();
@@ -125,6 +132,7 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_incorrectDocumentCode() {
+        CountryCode.initialize("cz");
         try {
             UrnNbn.valueOf("urn:nbn:cz:aba001-1234567");
             fail();
@@ -140,6 +148,7 @@ public class UrnNbnTest extends TestCase {
     }
 
     public void testValueOf_incorrectSeparator() {
+        CountryCode.initialize("cz");
         try {
             UrnNbn.valueOf("urn-nbn:cz:aba001-123456");
             fail();

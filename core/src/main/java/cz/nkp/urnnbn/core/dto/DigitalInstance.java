@@ -17,8 +17,7 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
     private Long libraryId;
     private DateTime created;
     private DateTime modified;
-    //TODO: ziskavat z databaze
-    private Boolean active = Boolean.TRUE;
+    private Boolean active;
     private String url;
     private String format;
     private String accessibility;

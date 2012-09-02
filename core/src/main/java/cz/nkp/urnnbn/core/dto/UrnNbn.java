@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,9 +16,8 @@ import org.joda.time.DateTime;
  */
 public class UrnNbn {
 
-    //urn:nbn:cz:aba001-123456
-    private static final String PREFIX = "urn:nbn:cz:";
-    private static final Pattern URN_NBN_PATTERN = Pattern.compile("urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}", Pattern.CASE_INSENSITIVE);
+    private static final String PREFIX = "urn:nbn:";
+    private static Pattern URN_NBN_PATTERN = null;
     private final Long digDocId;
     private final RegistrarCode registrarCode;
     private final String documentCode;
@@ -26,9 +26,10 @@ public class UrnNbn {
 
     /**
      * This constructor should be used when urn:nbn is being assigned or parsed
+     *
      * @param registrarCode
      * @param documentCode
-     * @param digDocId 
+     * @param digDocId
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId) {
         this.registrarCode = registrarCode;
@@ -38,12 +39,21 @@ public class UrnNbn {
         this.modified = null;
     }
 
+    private static Pattern getUrnNbnPattern() {
+        if (URN_NBN_PATTERN == null) {
+            URN_NBN_PATTERN = Pattern.compile(PREFIX + CountryCode.getCode() + ":[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}", Pattern.CASE_INSENSITIVE);
+        }
+        return URN_NBN_PATTERN;
+    }
+
     /**
-     * This constructor should be used when data is loaded from database in order to be presented
+     * This constructor should be used when data is loaded from database in
+     * order to be presented
+     *
      * @param registrarCode
      * @param documentCode
      * @param digDocId
-     * @param created 
+     * @param created
      * @param modified
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created, DateTime modified) {
@@ -76,19 +86,32 @@ public class UrnNbn {
 
     @Override
     public String toString() {
-        return PREFIX + registrarCode + "-" + documentCode;
+        return (PREFIX + CountryCode.getCode() + ':' + registrarCode + "-" + documentCode).toLowerCase();
     }
 
     public static UrnNbn valueOf(String string) {
         //urn:nbn:cz:aba001-123456
-        Matcher matcher = URN_NBN_PATTERN.matcher(string);
+        Matcher matcher = getUrnNbnPattern().matcher(string);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("'" + string + "' doesn't match " + URN_NBN_PATTERN);
+            throw new IllegalArgumentException("'" + string + "' doesn't match " + getUrnNbnPattern());
         }
-        String codes = string.substring(PREFIX.length());
-        String[] codesSplit = codes.split("-");
-        RegistrarCode registrarCode = RegistrarCode.valueOf(codesSplit[0]);
-        String documentCode = codesSplit[1].toLowerCase();
+        String[] tokens = string.split(":");
+        //these checks actually not needed since there's matching by regexp
+//        if (tokens.length != 4) {
+//            throw new IllegalArgumentException("Incorrect value of urn:nbn");
+//        }
+//        if (!"urn".equals(tokens[0].toLowerCase())) {
+//            throw new IllegalArgumentException("invalid prefix '" + tokens[0] + "', expected 'urn'");
+//        }
+//        if (!"nbn".equals(tokens[1].toLowerCase())) {
+//            throw new IllegalArgumentException("invalid prefix '" + tokens[1] + "', expected 'nbn'");
+//        }
+//        if (!CountryCode.getCode().equals(tokens[2].toLowerCase())) {
+//            throw new IllegalArgumentException("invalid national code '" + tokens[2] + "', expected '" + CountryCode.getCode() + "'");
+//        }
+        String[] registrarAndDocumentCodes = tokens[3].split("-");
+        RegistrarCode registrarCode = RegistrarCode.valueOf(registrarAndDocumentCodes[0]);
+        String documentCode = registrarAndDocumentCodes[1].toLowerCase();
         return new UrnNbn(registrarCode, documentCode, null);
     }
 

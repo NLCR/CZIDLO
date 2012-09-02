@@ -11,6 +11,11 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
+ * Class contains methods for loading and parsing values from propertis object
+ * (file) supplied in constructor. All the loadSomething methods load (and
+ * potentially parse) property by key. If value of this property is missing, the
+ * exception is thrown. On the other hand the loadSomethingOrNull alternatives
+ * return null if property value is missing.
  *
  * @author Martin Řehánek
  */
@@ -36,6 +41,12 @@ public class PropertyLoader {
         properties.load(inputStream);
     }
 
+    /**
+     *
+     * @param key string identifying the property
+     * @return value of property identified by key
+     * @throws IllegalArgumentException if property for given key is missing
+     */
     public String loadString(String key) {
         String result = loadStringOrNull(key);
         if (result == null) {
@@ -68,7 +79,8 @@ public class PropertyLoader {
     /**
      *
      * @param key
-     * @param mustExist if true exception is thrown in case that file doesn't exist
+     * @param mustExist if true exception is thrown in case that file doesn't
+     * exist
      * @return
      */
     public File loadFile(String key, boolean mustExist) {
