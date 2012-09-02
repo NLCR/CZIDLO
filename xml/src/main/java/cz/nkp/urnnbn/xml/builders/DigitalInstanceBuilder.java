@@ -36,9 +36,7 @@ public class DigitalInstanceBuilder extends XmlBuilder {
     @Override
     Element buildRootElement() {
         Element root = new Element("digitalInstance", RESOLVER);
-        //todo: dodat do databáze atribut active a při odstraňování nastavit na false
-        //taky dodat datum změny a vypisovat jako "deleted" pokud nebude null (tj. odstraněno)
-        root.addAttribute(new Attribute("active", "true"));
+        root.addAttribute(new Attribute("active", instance.isActive().toString()));
         appendIdentifierElement(root, IDTYPE_INTERNAL, instance.getId());
         appendTimestamps(root, instance, "digital instance");
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
