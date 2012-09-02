@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
@@ -13,13 +13,12 @@ import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalLibraryException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -135,14 +134,6 @@ public class DigitalInstancesResource extends Resource {
         } catch (RuntimeException e) {
             throw new InternalException(e);
         }
-    }
-
-    private DigitalInstance newDigitalInstance(long libraryId, URL url) {
-        DigitalInstance instance = new DigitalInstance();
-        instance.setLibraryId(libraryId);
-        instance.setDigDocId(digDoc.getId());
-        instance.setUrl(url.toString());
-        return instance;
     }
 
     private DigitalInstance digitalInstanceFromDocument(Document doc) {
