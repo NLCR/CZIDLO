@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -16,13 +15,14 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
+import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.DigDocIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
@@ -62,7 +62,7 @@ public class RecordImporter {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, DigDocIdentifierCollisionException, UnknownArchiverException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException {
         synchronized (RecordImporter.class) {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
@@ -195,11 +195,11 @@ public class RecordImporter {
         }
     }
 
-    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws DigDocIdentifierCollisionException {
+    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws RegistarScopeDigDocIdentifierCollisionException {
         try {
             List<DigDocIdentifier> ids = importDigRepIdentifiers(digRepId);
             logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
-        } catch (DigDocIdentifierCollisionException ex) {
+        } catch (RegistarScopeDigDocIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
             //because it will be removed together with registrar in cascade
             logger.info("failed to import digital document identifiers, rolling back");
@@ -262,7 +262,7 @@ public class RecordImporter {
         }
     }
 
-    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws DigDocIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws RegistarScopeDigDocIdentifierCollisionException, DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
         List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>();
         for (DigDocIdentifier id : data.getDigDogIdentifiers()) {
@@ -273,7 +273,7 @@ public class RecordImporter {
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
-                throw new DigDocIdentifierCollisionException(registrar, id);
+                throw new RegistarScopeDigDocIdentifierCollisionException(registrar, id);
             }
         }
         return result;

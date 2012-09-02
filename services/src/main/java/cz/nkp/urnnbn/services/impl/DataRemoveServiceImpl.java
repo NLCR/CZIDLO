@@ -98,7 +98,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeDigitalLibrary(long libraryId, String login) throws UnknownUserException, AccessException, UnknownDigLibException, CannotBeRemovedException {
         try {
             long registrarId = registrarOfDigLibrary(libraryId);
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.diglLibDao().deleteLibrary(libraryId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -113,7 +113,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeCatalog(long catalogId, String login) throws UnknownUserException, AccessException, UnknownCatalogException {
         try {
             long registrarId = registrarOfCatalog(catalogId);
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.catalogDao().deleteCatalog(catalogId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
