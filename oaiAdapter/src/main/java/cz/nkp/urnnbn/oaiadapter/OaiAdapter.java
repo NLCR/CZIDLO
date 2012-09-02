@@ -4,13 +4,17 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.utils.ImportParsingException;
+import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Document;
+import nu.xom.Nodes;
 import nu.xom.ParsingException;
+import nu.xom.XPathContext;
 import nu.xom.xslt.XSLException;
 
 /**
@@ -19,6 +23,10 @@ import nu.xom.xslt.XSLException;
  */
 public class OaiAdapter {
 
+    public enum Mode {
+        RESERVATION, BY_RESOLVER, BY_REGISTRAR
+    }
+    
     private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
     public static final String REGISTAR_SCOPE_ID = "OAI_Adapter";
     private String oaiBaseUrl;
@@ -29,12 +37,21 @@ public class OaiAdapter {
     private String registrarCode;
     private String login;
     private String password;
+    private Mode mode;
     private int limit = -1;
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
     }
 
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+    
     public String getOaiBaseUrl() {
         return oaiBaseUrl;
     }
@@ -111,6 +128,15 @@ public class OaiAdapter {
         this.reportLogger = new ReportLogger(os);
     }
 
+    
+    private boolean containsUrnnbn(Document document) {
+            XPathContext context = new XPathContext("r", ResolverConnector.RESOLVER_NAMESPACE);
+            Nodes urnnbn = document.getRootElement().
+                    query("//r:import/r:digitalDocument/r:urnNbn", context);
+            return urnnbn.size() == 1;
+    }
+ 
+    
     private Document getImportTemplateDocument() throws TemplateException {
         try {
             return XmlTools.getTemplateDocumentFromString(getMetadataToImportTemplate());
@@ -171,7 +197,6 @@ public class OaiAdapter {
         if (isDocumentAlreadyImported(record.getIdentifier())) {
             return false;
         }
-
         String identifier = record.getIdentifier();
         Document importDocument = null;
         Document digitalInstanceDocument = null;
@@ -183,12 +208,12 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-//        try {
-//            XmlTools.saveDocumentToFile(importDocument, "/home/hanis/tmp/outdd.xml");
-//        } catch (IOException ex) {
-//            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
+        try {
+            Refiner.RefineDocument(importDocument);
+        } catch (ImportParsingException ex) {
+            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         try {
             XmlTools.validateImport(importDocument);
             report("- import validation successful - continue.");
@@ -210,6 +235,11 @@ public class OaiAdapter {
             report("- digital instance validation successful - continue.");
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
+        }
+        System.out.println(importDocument.toXML());
+        if(!containsUrnnbn(importDocument)) {
+            System.out.println("doesnt contain urnnbn");
+            return false;
         }
         String urnnbn = null;
         try {
@@ -259,7 +289,6 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-
         return true;
     }
 

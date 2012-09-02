@@ -203,9 +203,9 @@ public class OaiHarvester {
         } catch (MalformedURLException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-        System.out.println("url: " + url);
+        //System.out.println("url: " + url);
         String token = addIdentifiers(url);
-        System.out.println("token: " + token);
+        //System.out.println("token: " + token);
         updateResumtionToken(token);
     }
 
@@ -223,8 +223,9 @@ public class OaiHarvester {
 
     public static void main(String[] args) {
         try {
+            OaiHarvester harvester = new OaiHarvester("http://kramerius.mzk.cz/oaiprovider", "oai_dc", "monograph");
             //OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
-            OaiHarvester harvester = new OaiHarvester("http://oai.mzk.cz/", "marc21", "collection:mollMaps");
+            //OaiHarvester harvester = new OaiHarvester("http://oai.mzk.cz/", "marc21", "collection:mollMaps");
             int counter = 0;
             while (harvester.hasNext()) {
                 Document doc = null;

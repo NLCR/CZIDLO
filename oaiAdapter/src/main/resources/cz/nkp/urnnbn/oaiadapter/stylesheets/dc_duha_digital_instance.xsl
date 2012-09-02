@@ -24,12 +24,12 @@
         
     <xsl:template name="url">           
         <r:url>
-            <xsl:value-of select='//dc:identifier'/>
+            <xsl:value-of select='//dc:identifier[starts-with(.,"http://")]'/>
         </r:url>
     </xsl:template>    
 
     <xsl:template name="digitalLibraryId">                       
-        <r:digitalLibraryId>43</r:digitalLibraryId>      
+        <r:digitalLibraryId>52</r:digitalLibraryId>      
     </xsl:template>    
 
     <xsl:template name="format">                       

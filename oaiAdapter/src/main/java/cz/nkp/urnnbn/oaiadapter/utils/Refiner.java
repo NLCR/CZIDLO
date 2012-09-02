@@ -19,24 +19,24 @@ import nu.xom.ParsingException;
  *
  * @author hanis
  */
-public class Parser {
+public class Refiner {
     
     public static final String NS = "http://resolver.nkp.cz/v2/";    
 
-    private Parser() {    
+    private Refiner() {    
     }
     
-    public static void parseDocument(Document document) throws ImportParsingException {
+    public static Document RefineDocument(Document document) throws ImportParsingException {
         Element root = document.getRootElement();
         if("import".equals(root.getLocalName())) {
-            Parser.parseImportElement(root);
+            Refiner.parseImportElement(root);
         }                                    
         try {
             XmlTools.validateImport(document);
         } catch (DocumentOperationException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println(document.toXML());        
+        return document;       
     }
     
     
@@ -54,63 +54,63 @@ public class Parser {
                     "thesis".equals(entityName) ||
                     "otherEntity".equals(entityName)                                       
                     ) {
-                Parser.parseEntityElement(entityElement);            
+                Refiner.parseEntityElement(entityElement);            
             }
         }
         Element digitalDocumentElement = importElement.getFirstChildElement("digitalDocument", NS);
         if(digitalDocumentElement != null) {
-            Parser.parseDigitalDocumentElement(digitalDocumentElement);
+            Refiner.parseDigitalDocumentElement(digitalDocumentElement);
         }            
     }
     
     private static void parseEntityElement(Element entityElement) {        
-        Element titleInfoElement = entityElement.getFirstChildElement("titleInfo", Parser.NS);
+        Element titleInfoElement = entityElement.getFirstChildElement("titleInfo", Refiner.NS);
         if(titleInfoElement != null) {
-            Parser.parseTitleInfoElement(titleInfoElement);
+            Refiner.parseTitleInfoElement(titleInfoElement);
         }                
-        Parser.parseAndMatch(entityElement, "ccnb", "cnb\\d{9}|CNB\\d{9}");
-        Parser.parseAndMatch(entityElement, "isbn", "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]");
-        Parser.parseAndMatch(entityElement, "issn", "\\d{4}-\\d{3}[0-9Xx]{1}");                
-        Parser.parseAndCut(entityElement, "otherId", 50, 1);  
-        Parser.parseAndCut(entityElement, "documentType", 50, 0);
+        Refiner.parseAndMatch(entityElement, "ccnb", "cnb\\d{9}|CNB\\d{9}");
+        Refiner.parseAndMatch(entityElement, "isbn", "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]");
+        Refiner.parseAndMatch(entityElement, "issn", "\\d{4}-\\d{3}[0-9Xx]{1}");                
+        Refiner.parseAndCut(entityElement, "otherId", 50, 1);  
+        Refiner.parseAndCut(entityElement, "documentType", 50, 0);
         //TODO:primaryOriginator
-        Parser.parseAndCut(entityElement, "otherOriginator", 50, 0);
-        Parser.parseAndMatch(entityElement, "digitalBorn", "true|false|0|1");  
-        Parser.parseAndCut(entityElement, "degreeAwardingInstitution", 50, 0);        
+        Refiner.parseAndCut(entityElement, "otherOriginator", 50, 0);
+        Refiner.parseAndMatch(entityElement, "digitalBorn", "true|false|0|1");  
+        Refiner.parseAndCut(entityElement, "degreeAwardingInstitution", 50, 0);        
         
-        Element publicationElement = entityElement.getFirstChildElement("publication", Parser.NS);
+        Element publicationElement = entityElement.getFirstChildElement("publication", Refiner.NS);
         if(publicationElement != null) {
-            Parser.parsePublicationElement(publicationElement);
+            Refiner.parsePublicationElement(publicationElement);
         }            
-        Element sourceDocumentElement = entityElement.getFirstChildElement("sourceDocument", Parser.NS);
+        Element sourceDocumentElement = entityElement.getFirstChildElement("sourceDocument", Refiner.NS);
         if(sourceDocumentElement != null) {
             parseEntityElement(sourceDocumentElement);
         }                  
     }
     
     private static void parseTitleInfoElement(Element titleInfoElement) {
-        Parser.parseAndCut(titleInfoElement, "title", 100, 1);  
-        Parser.parseAndCut(titleInfoElement, "subTitle", 200, 1);  
-        Parser.parseAndCut(titleInfoElement, "monographTitle", 100, 1);  
-        Parser.parseAndCut(titleInfoElement, "volumeTitle", 50, 0);  
-        Parser.parseAndCut(titleInfoElement, "periodicalTitle", 100, 1);
-        Parser.parseAndCut(titleInfoElement, "issueTitle", 50, 0);        
+        Refiner.parseAndCut(titleInfoElement, "title", 100, 1);  
+        Refiner.parseAndCut(titleInfoElement, "subTitle", 200, 1);  
+        Refiner.parseAndCut(titleInfoElement, "monographTitle", 100, 1);  
+        Refiner.parseAndCut(titleInfoElement, "volumeTitle", 50, 0);  
+        Refiner.parseAndCut(titleInfoElement, "periodicalTitle", 100, 1);
+        Refiner.parseAndCut(titleInfoElement, "issueTitle", 50, 0);        
     }
     
     
     private static void parsePublicationElement(Element publicationElement) {
-        Parser.parseAndCut(publicationElement, "publisher", 50, 0);  
-        Parser.parseAndCut(publicationElement, "place", 50, 0);  
-        Parser.parseAndMatch(publicationElement, "year", "\\d{1,4}");        
+        Refiner.parseAndCut(publicationElement, "publisher", 50, 0);  
+        Refiner.parseAndCut(publicationElement, "place", 50, 0);  
+        Refiner.parseAndMatch(publicationElement, "year", "\\d{1,4}");        
     }
     
 
     private static void parseDigitalDocumentElement(Element digitalDocumentElement) {
-        Parser.parseAndMatch(digitalDocumentElement, "archiverId", "\\d*");
-        Parser.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
+        Refiner.parseAndMatch(digitalDocumentElement, "archiverId", "\\d*");
+        Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
         //TODO: registrarScopeIdentifiers
-        Parser.parseAndCut(digitalDocumentElement, "financed", 100, 1);          
-        Element technicalMetadataElement = digitalDocumentElement.getFirstChildElement("technicalMetadata", Parser.NS);
+        Refiner.parseAndCut(digitalDocumentElement, "financed", 100, 1);          
+        Element technicalMetadataElement = digitalDocumentElement.getFirstChildElement("technicalMetadata", Refiner.NS);
         if(technicalMetadataElement != null) {
             parseTechnicalMetadataElement(technicalMetadataElement);
         }                    
@@ -118,21 +118,21 @@ public class Parser {
 
     
     private static void parseTechnicalMetadataElement(Element technicalMetadataElement) {
-        Parser.parseAndCut(technicalMetadataElement, "format", 20, 1);          
-        Parser.parseAndCut(technicalMetadataElement, "extent", 200, 1);          
-        Element resolutionElement = technicalMetadataElement.getFirstChildElement("resolution", Parser.NS);
+        Refiner.parseAndCut(technicalMetadataElement, "format", 20, 1);          
+        Refiner.parseAndCut(technicalMetadataElement, "extent", 200, 1);          
+        Element resolutionElement = technicalMetadataElement.getFirstChildElement("resolution", Refiner.NS);
         if(resolutionElement != null) {
             if(parseResolutionElement(resolutionElement)) {
                 technicalMetadataElement.removeChild(resolutionElement);
             }
         }            
-        Parser.parseAndCut(technicalMetadataElement, "compression", 50, 1);   
-        Element colorElement = technicalMetadataElement.getFirstChildElement("color", Parser.NS);
+        Refiner.parseAndCut(technicalMetadataElement, "compression", 50, 1);   
+        Element colorElement = technicalMetadataElement.getFirstChildElement("color", Refiner.NS);
         if(colorElement != null) {
             parseColorElement(colorElement);
         }           
-        Parser.parseAndCut(technicalMetadataElement, "iccProfile", 50, 1);   
-        Element pictureSizenElement = technicalMetadataElement.getFirstChildElement("pictureSize", Parser.NS);
+        Refiner.parseAndCut(technicalMetadataElement, "iccProfile", 50, 1);   
+        Element pictureSizenElement = technicalMetadataElement.getFirstChildElement("pictureSize", Refiner.NS);
         if(pictureSizenElement != null) {
             if(parsePictureSizeElement(pictureSizenElement)) {
                 technicalMetadataElement.removeChild(pictureSizenElement);
@@ -142,27 +142,27 @@ public class Parser {
     
     
     private static void parseColorElement(Element colorElement) {                        
-        Parser.parseAndCut(colorElement, "model", 20, 1);          
-        Parser.parseAndMatch(colorElement, "depth", "\\d*");        
+        Refiner.parseAndCut(colorElement, "model", 20, 1);          
+        Refiner.parseAndMatch(colorElement, "depth", "\\d*");        
     }    
     
     
     private static boolean parseResolutionElement(Element resolutionElement) {                        
-        boolean hRemoved = Parser.parseAndMatch(resolutionElement, "horizontal", "\\d*");
-        boolean vRemoved = Parser.parseAndMatch(resolutionElement, "vertical", "\\d*");
+        boolean hRemoved = Refiner.parseAndMatch(resolutionElement, "horizontal", "\\d*");
+        boolean vRemoved = Refiner.parseAndMatch(resolutionElement, "vertical", "\\d*");
         return hRemoved || vRemoved;
     }    
 
     
     private static boolean parsePictureSizeElement(Element pictureSizenElement) {                        
-        boolean wRemoved = Parser.parseAndMatch(pictureSizenElement, "width", "\\d*");
-        boolean hRemoved = Parser.parseAndMatch(pictureSizenElement, "height", "\\d*");
+        boolean wRemoved = Refiner.parseAndMatch(pictureSizenElement, "width", "\\d*");
+        boolean hRemoved = Refiner.parseAndMatch(pictureSizenElement, "height", "\\d*");
         return wRemoved || hRemoved;
     }        
     
     
     private static void parseAndCut(Element parent, String name, int maxLength, int minLength) {
-        Element el = parent.getFirstChildElement(name, Parser.NS);
+        Element el = parent.getFirstChildElement(name, Refiner.NS);
         if(el != null) {
             String value = el.getValue();
             if(value.length() > maxLength) {
@@ -177,7 +177,7 @@ public class Parser {
 
     
     private static boolean parseAndMatch(Element parent, String name, String regex) {
-        Element el = parent.getFirstChildElement(name, Parser.NS);
+        Element el = parent.getFirstChildElement(name, Refiner.NS);
         if(el != null) {
             String value = el.getValue();
             if (!value.matches(regex)) {
@@ -196,16 +196,14 @@ public class Parser {
         try {
             doc = builder.build(file);
         } catch (ParsingException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }                                
         try {
-            Parser.parseDocument(doc);
+            Refiner.RefineDocument(doc);
         } catch (ImportParsingException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    
+    }        
 }
