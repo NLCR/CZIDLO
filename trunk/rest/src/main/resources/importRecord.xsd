@@ -1,4 +1,4 @@
-    <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
     <!--
         Document   : recordImport.xsd.xml
         Created on : 22. únor 2012, 11:59
@@ -614,14 +614,14 @@
     Poslední znak je kontrolním součtem. Stejně jako u ISBN se ani zde nekontroluje,
     jestli je kontrolní součet platný.
 
-        např.:
-        1234-5678
-        1234-567x
-        1234-567X
-        -->
-        <xs:simpleType name="issnType">
-            <xs:restriction base="xs:string">
-                <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
-            </xs:restriction>
-        </xs:simpleType>
-    </xs:schema>
+    např.:
+    1234-5678
+    1234-567x
+    1234-567X
+    -->
+    <xs:simpleType name="issnType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{4}-\d{3}[0-9Xx]{1}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
