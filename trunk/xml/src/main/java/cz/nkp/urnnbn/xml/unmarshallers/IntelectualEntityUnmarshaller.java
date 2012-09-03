@@ -56,7 +56,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return IntelectualEntity object, never null
      */
     IntelectualEntity getIntelectualEntity() {
@@ -81,7 +81,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return Publication object or null
      */
     Publication getPublication() {
@@ -107,7 +107,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return Originator object or null
      */
     Originator getOriginator() {
@@ -126,7 +126,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return SourceDocument object or null
      */
     SourceDocument getSourceDocument() {
@@ -148,7 +148,9 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
                 result.setPublisher(elementContentOrNull("publisher", publicationEl));
                 result.setPublicationPlace(elementContentOrNull("place", publicationEl));
                 String yearStr = elementContentOrNull("year", publicationEl);
-                result.setPublicationYear(Integer.valueOf(yearStr));
+                if (yearStr != null) {
+                    result.setPublicationYear(Integer.valueOf(yearStr));
+                }
             }
             return result;
         } else {
@@ -157,7 +159,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return list of intelectual entity identifiers, never null
      */
     public abstract List<IntEntIdentifier> getIntEntIdentifiers();
@@ -169,11 +171,11 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @param rootEl
      * @param elementName
      * @param type
-     * @param mandatory 
+     * @param mandatory
      * @return IntEntIdentier or null
      */
     IntEntIdentifier identifierByElementName(Element rootEl, String elementName, IntEntIdType type, boolean mandatory) {
