@@ -5,16 +5,15 @@
 package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
-import nu.xom.xslt.XSLException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -22,45 +21,80 @@ import org.xml.sax.SAXException;
  */
 public class Test {
 
+    public void makeReservation() {
+        try {
+            List<String> reserveUrnnbnBundle = ResolverConnector.reserveUrnnbnBundle("tsh01", 5, Credentials.LOGIN, Credentials.PASSWORD);
+            for (String string : reserveUrnnbnBundle) {
+                System.out.println(string);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ResolverConnectionException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParsingException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void importDI() {
+        try {
+            String urn = "urn:nbn:cz:tsh01-0000qv";
+            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance3.xml";
+            String registrator = "tsh03";
+            Builder builder = new Builder();
+            Document digitalInstance = builder.build(new File(di));
+            ResolverConnector.importDigitalInstance(digitalInstance, urn, Credentials.LOGIN, Credentials.PASSWORD);
+        } catch (IOException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParsingException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ResolverConnectionException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void importDDwithDI() {
+        try {
+            String dd = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument.xml";
+            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance2.xml";
+            String registrator = "tsh02";
+            String oaiIdentifier = "myCollection:myId";
+
+            Builder builder = new Builder();
+            Document digitalDocument = builder.build(new File(dd));
+            Document digitalInstance = builder.build(new File(di));
+
+            OaiAdapter oaiAdapter = new OaiAdapter();
+            oaiAdapter.setLogin(Credentials.LOGIN);
+            oaiAdapter.setPassword(Credentials.PASSWORD);
+            oaiAdapter.setRegistrarCode(registrator);
+            oaiAdapter.setMode(OaiAdapter.Mode.BY_RESOLVER);
+
+            oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
+        } catch (ResolverConnectionException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (OaiAdapterException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParsingException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    //public void 
     public static void main(String[] args) {
-//        try {
-//            Builder builder = new Builder();
-//            //Logger.getLogger(Test.class.getName()).log(Level.INFO, "Nejaka zprava");
-//            //Document doc = XmlTools.getDocument("http://oai.mzk.cz/?verb=GetRecord&metadataPrefix=marc21&identifier=oai:aleph.mzk.cz:MZK03-001056568");
-//            //Document doc = XmlTools.getDocument("http://kramerius.mzk.cz/oaiprovider/?verb=GetRecord&identifier=uuid:40e2f4dd-91ad-11e0-bf0c-0050569d679d&metadataPrefix=oai_dc");
-//            Document doc = XmlTools.getDocument("http://duha.mzk.cz/oai?verb=GetRecord&identifier=oai:duha.mzk.cz:158&metadataPrefix=oai_dc");            
-//            
-//            
-////            Document importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_import.xsl");
-////            Document digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_digital_instance.xsl");            
-//            Document importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl");
-//            Document digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl");            
-//            
-//            //Document importStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl");
-//            //Document digitalInstanceStylesheet = builder.build("/home/hanis/prace/resolver/urnnbn-resolver-v2/oaiAdapter/src/main/java/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl");            
-//
-//            Document output = XmlTools.getTransformedDocument(doc, importStylesheet);
-//            Document output2 = XmlTools.getTransformedDocument(doc, digitalInstanceStylesheet);
-//            //System.out.println(output.toXML());
-//            XmlTools.saveDocumentToFile(output, "/home/hanis/prace/resolver/output/out.xml");
-//            XmlTools.saveDocumentToFile(output2, "/home/hanis/prace/resolver/output/outd.xml");
-//            XmlTools.validateImport(output);
-//            XmlTools.validateDigitalIntance(output2);
-//        } catch (SAXException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ParserConfigurationException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);        
-////        } catch (SAXException ex) {
-////            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-////        } catch (ParserConfigurationException ex) {
-////            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ValidityException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (XSLException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        
+            Test test = new Test();
+            //test.makeReservation();
+            test.importDDwithDI();
+          //  test.importDI();
+//        try {    
+//            ResolverConnector.removeDigitalInstance("35747", Credentials.LOGIN, Credentials.PASSWORD);
 //        } catch (IOException ex) {
 //            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ParsingException ex) {
+//        } catch (ResolverConnectionException ex) {
 //            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 

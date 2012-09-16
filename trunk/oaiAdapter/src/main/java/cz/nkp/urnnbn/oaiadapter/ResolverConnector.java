@@ -38,6 +38,7 @@ public class ResolverConnector {
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v2/";
     public static final String RESOLVER_BASE_URL = "resolver-test.nkp.cz/";
     public static final String RESOLVER_API_URL = RESOLVER_BASE_URL + "api/v2/";
+    public static final XPathContext CONTEXT = new XPathContext("r", RESOLVER_NAMESPACE);
 
     private static String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
         String url = "http://" + RESOLVER_API_URL + "registrars/" + registrar
@@ -53,7 +54,7 @@ public class ResolverConnector {
         return url;
     }
 
-    private static String getUrnnbnRegistrationUrl(String registrarCode, int size) {
+    private static String getUrnnbnReservationUrl(String registrarCode, int size) {
         String url = "https://" + RESOLVER_API_URL + "registrars/" + registrarCode
                 + "/urnNbnReservations?size=" + size;
         return url;
@@ -91,41 +92,57 @@ public class ResolverConnector {
         return url;
     }
 
-    public static boolean isDocumentAlreadyImported(String registrar, String identifier, String registarScopeId) throws IOException, ParsingException {
-        String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
-        Document document = XmlTools.getDocument(url, true);
-        Element rootElement = document.getRootElement();
-        if ("digitalDocument".equals(rootElement.getLocalName())) {
-            return true;
-        } else if ("error".equals(rootElement.getLocalName())) {
-            XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-            Nodes codeNode = rootElement.query("//oai:code", context);
-            if (codeNode.size() > 0) {
-                String code = codeNode.get(0).getValue();
-                //System.out.println("code:" + code);
-                if (!(ERROR_CODE_DOCUMENT.equals(code) || ERROR_CODE_REGISTAR.equals(code))) {
-                    //TODO spatne error code - neco je spatne ...staci kontrolovat jen tyto dva kody?                    
-                    throw new RuntimeException();
-                } else {
-                    return false;
-                }
-            } else {
-                //TODO spatna struktura dokumentu
-                throw new RuntimeException();
-            }
-        } else {
-            //TODO spatna struktura dokumentu
-            throw new RuntimeException();
+    public static String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws ResolverConnectionException {
+        String url = getDigitalDocumentUrl(registrar, registarScopeId, identifier);
+        Document document;
+        try {
+            document = XmlTools.getDocument(url, true);
+        } catch (IOException ex) {
+            throw new ResolverConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
+        } catch (ParsingException ex) {
+            throw new ResolverConnectionException("ParsingException occured while getting urnnbn by OAI_ADAPTER ID");
         }
+        Nodes nodes = document.query("/r:digitalDocument/r:urnNbn", CONTEXT);
+        if (nodes.size() > 0) {
+            return nodes.get(0).getValue();
+        }
+        return null;
+
     }
 
-    public static List<String> getDigitailInstancesIdList(String urnnbn) throws IOException, ParsingException {
+//    public static boolean isDocumentAlreadyImported(String registrar, String identifier, String registarScopeId) throws IOException, ParsingException {
+//        String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
+//        Document document = XmlTools.getDocument(url, true);
+//        Element rootElement = document.getRootElement();
+//        if ("digitalDocument".equals(rootElement.getLocalName())) {
+//            return true;
+//        } else if ("error".equals(rootElement.getLocalName())) {            
+//            Nodes codeNode = rootElement.query("//r:code", CONTEXT);
+//            if (codeNode.size() > 0) {
+//                String code = codeNode.get(0).getValue();
+//                //System.out.println("code:" + code);
+//                if (!(ERROR_CODE_DOCUMENT.equals(code) || ERROR_CODE_REGISTAR.equals(code))) {
+//                    //TODO spatne error code - neco je spatne ...staci kontrolovat jen tyto dva kody?                    
+//                    throw new RuntimeException();
+//                } else {
+//                    return false;
+//                }
+//            } else {
+//                //TODO spatna struktura dokumentu
+//                throw new RuntimeException();
+//            }
+//        } else {
+//            //TODO spatna struktura dokumentu
+//            throw new RuntimeException();
+//        }
+//    }
+    public static List<String> getDigitalInstancesIdList(String urnnbn) throws IOException, ParsingException {
         List<String> list = new ArrayList<String>();
         String url = getDigitalInsatancesUrl(urnnbn);
         Document document = XmlTools.getDocument(url, false);
         Element rootElement = document.getRootElement();
-        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-        Nodes idNodes = rootElement.query("//oai:digitalInstance/oai:id", context);
+        Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/r:id", CONTEXT);
+        //Nodes idNodes = rootElement.query("//r:digitalInstance/r:id", CONTEXT);
         for (int i = 0; i < idNodes.size(); i++) {
             list.add(idNodes.get(i).getValue());
         }
@@ -139,12 +156,16 @@ public class ResolverConnector {
         return document;
     }
 
-    public static UrnnbnStatus getUrnnbnStatus(String urnnbn) throws IOException, ParsingException {
+    public static UrnnbnStatus getUrnnbnStatus(String urnnbn) {
         String url = getUrnnbnStatusUrl(urnnbn);
-        Document document = XmlTools.getDocument(url, true);
+        Document document = null;
+        try {
+            document = XmlTools.getDocument(url, true);
+        } catch (Exception ex) {
+            return ResolverConnector.UrnnbnStatus.UNDEFINED;
+        }
         Element rootElement = document.getRootElement();
-        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-        Nodes statusNode = rootElement.query("//oai:status", context);
+        Nodes statusNode = rootElement.query("//r:status", CONTEXT);
         if (statusNode.size() > 0) {
             String status = statusNode.get(0).getValue();
             if ("FREE".equals(status)) {
@@ -160,7 +181,7 @@ public class ResolverConnector {
 
     public static List<String> reserveUrnnbnBundle(String registarCode, int bundleSize, String login, String password) throws IOException, ResolverConnectionException, ParsingException {
         List<String> urnnbnList = new ArrayList<String>();
-        String url = getUrnnbnRegistrationUrl(registarCode, bundleSize);
+        String url = getUrnnbnReservationUrl(registarCode, bundleSize);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
         int responseCode = connection.getResponseCode();
         if (responseCode != 201) { //TODO pokud ok, pak vzdy 200??
@@ -170,12 +191,7 @@ public class ResolverConnector {
         Builder builder = new Builder();
         Document responseDocument = builder.build(is);
         Element rootElement = responseDocument.getRootElement();
-        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-
-        Nodes nodes = rootElement.query("//oai:urnNbn", context);
-        System.out.println(responseDocument.toXML());
-        System.out.println(rootElement.toXML());
-        System.out.println(nodes.size());
+        Nodes nodes = rootElement.query("//r:urnNbn", CONTEXT);
         for (int i = 0; i < nodes.size(); i++) {
             urnnbnList.add(nodes.get(i).getValue());
         }
@@ -192,7 +208,7 @@ public class ResolverConnector {
         wr.close();
         int responseCode = connection.getResponseCode();
         if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??            
-            throw new ResolverConnectionException("Importing record document: response code != 200");
+            throw new ResolverConnectionException("Importing record document: response code expected 200,  found " + responseCode);
         }
         //System.out.println("import code" + connection.getResponseCode());
 
@@ -213,7 +229,7 @@ public class ResolverConnector {
         wr.close();
         int responseCode = connection.getResponseCode();
         if (responseCode != 201) { //TODO pokud ok, pak vzdy 201??
-            throw new ResolverConnectionException("Putting digital instance: response code != 201");
+            throw new ResolverConnectionException("Putting digital instance: response code expected 201,  found " + responseCode);
         }
 
     }
@@ -228,19 +244,22 @@ public class ResolverConnector {
         wr.close();
         int responseCode = connection.getResponseCode();
         if (responseCode != 201) { //TODO pokud ok, pak vzdy 201??
-            throw new ResolverConnectionException("Puttin registrar scope identifier: response code != 201");
+            throw new ResolverConnectionException("Puttin registrar scope identifier: response code expected 201,  found " + responseCode);
         }
 
     }
 
     public static void removeDigitalInstance(String id, String login, String password)
-            throws IOException, ResolverConnectionException {
-        String url = getRemoveDigitalInstanceUrl(id);
-        HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "DELETE", false);
-        int responseCode = connection.getResponseCode();
-        System.out.println("rc: " + responseCode);
-        if (responseCode != 200) {
-            throw new ResolverConnectionException("Removing digital instance: response code != 200");
+            throws ResolverConnectionException {
+        try {
+            String url = getRemoveDigitalInstanceUrl(id);
+            HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "DELETE", false);
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                throw new ResolverConnectionException("Removing digital instance: response code expected 200,  found " + responseCode);
+            }
+        } catch (IOException ex) {
+            throw new ResolverConnectionException("IOException occured while removing DI with id: " + id);
         }
     }
 
@@ -260,8 +279,7 @@ public class ResolverConnector {
 
     public static String getAllocatedURNNBN(Document document) {
         Element rootElement = document.getRootElement();
-        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-        Nodes node = rootElement.query("//oai:value", context);
+        Nodes node = rootElement.query("//r:value", CONTEXT);
         if (node.size() < 1) {
             //TODO spatna struktura dokumentu
             throw new RuntimeException();
@@ -271,14 +289,13 @@ public class ResolverConnector {
 
     private static List<String> getDigitalInstancesIdListByLibrary(String urnnbn, String libraryId) throws IOException, ParsingException {
         List<String> newIdList = new ArrayList<String>();
-        List<String> idList = getDigitailInstancesIdList(urnnbn);
+        List<String> idList = getDigitalInstancesIdList(urnnbn);
         for (String id : idList) {
             Document document = getDigitailInstanceById(id);
-            XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
-            Nodes nodes = document.query("//oai:digitalLibrary/oai:id", context);
+            Nodes nodes = document.query("//r:digitalLibrary/r:id", CONTEXT);
             if (nodes.size() > 0) {
                 String docLibraryId = nodes.get(0).getValue();
-                if(docLibraryId.endsWith(libraryId)) {
+                if (docLibraryId.endsWith(libraryId)) {
                     newIdList.add(id);
                 }
             }
@@ -286,18 +303,21 @@ public class ResolverConnector {
         return newIdList;
     }
 
-    public static void main(String[] args) {
+    public static void removeAllDigitalInstances(String urnnbn, String libraryId, String login, String password) throws ResolverConnectionException {
+        List<String> list = null;
         try {
-            //List<String> ids = ResolverConnector.getDigitailInstancesIdList("urn:nbn:cz:duha-0000vn");
-            List<String> ids = ResolverConnector.getDigitalInstancesIdListByLibrary("urn:nbn:cz:duha-0000vn", "52");
-            for (String string : ids) {
-                System.out.println(string);
-            }
+            list = ResolverConnector.getDigitalInstancesIdListByLibrary(urnnbn, libraryId);
         } catch (IOException ex) {
-            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ResolverConnectionException("IOException occured while getting DI id list for given unrnbn and library id");
         } catch (ParsingException ex) {
-            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ResolverConnectionException("ParsingException occured while getting DI id list for given unrnbn and library id");
+        }
+        for (String id : list) {
+            ResolverConnector.removeDigitalInstance(id, login, password);
         }
 
+    }
+
+    public static void main(String[] args) {
     }
 }
