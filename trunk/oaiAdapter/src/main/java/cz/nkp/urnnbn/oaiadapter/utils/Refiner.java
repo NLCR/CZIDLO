@@ -5,14 +5,17 @@
 package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
+import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
+import nu.xom.Node;
 import nu.xom.ParsingException;
 
 /**
@@ -26,7 +29,7 @@ public class Refiner {
     private Refiner() {    
     }
     
-    public static Document RefineDocument(Document document) throws ImportParsingException {
+    public static Document refineDocument(Document document) throws ImportParsingException {
         Element root = document.getRootElement();
         if("import".equals(root.getLocalName())) {
             Refiner.parseImportElement(root);
@@ -38,6 +41,28 @@ public class Refiner {
         }
         return document;       
     }
+    
+    public static Document putRegistrarScopeIdentifier(Document document, String oaiIdentifier) {
+        Element root = document.getRootElement();
+        Element digitalDocumentElement = root.getFirstChildElement("digitalDocument", Refiner.NS);        
+        if(digitalDocumentElement == null) {
+            digitalDocumentElement = new Element("r:digitalDocument", Refiner.NS);
+            root.appendChild(digitalDocumentElement);
+        }
+        Element registrarScopeIdentifiersElement = digitalDocumentElement.getFirstChildElement("registrarScopeIdentifiers", Refiner.NS);
+        if(registrarScopeIdentifiersElement == null) {
+            registrarScopeIdentifiersElement = new Element("r:registrarScopeIdentifiers", Refiner.NS);
+            int archiverIdPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("archiverId", Refiner.NS));
+            int position = (archiverIdPosition == -1) ? 0 : archiverIdPosition + 1;
+            digitalDocumentElement.insertChild(registrarScopeIdentifiersElement, position);
+        }
+            Element oaiAdapterScopeElement = new Element("r:id", Refiner.NS);
+        oaiAdapterScopeElement.addAttribute(new Attribute("type", OaiAdapter.REGISTAR_SCOPE_ID));
+        oaiAdapterScopeElement.appendChild(oaiIdentifier);
+        registrarScopeIdentifiersElement.appendChild(oaiAdapterScopeElement);
+        return document;       
+    }
+    
     
     
     private static void parseImportElement(Element importElement) {
@@ -57,7 +82,7 @@ public class Refiner {
                 Refiner.parseEntityElement(entityElement);            
             }
         }
-        Element digitalDocumentElement = importElement.getFirstChildElement("digitalDocument", NS);
+        Element digitalDocumentElement = importElement.getFirstChildElement("digitalDocument", Refiner.NS);
         if(digitalDocumentElement != null) {
             Refiner.parseDigitalDocumentElement(digitalDocumentElement);
         }            
@@ -190,7 +215,7 @@ public class Refiner {
 
     
     public static void main(String[] args) {
-        File file = new File("/home/hanis/prace/resolver/oai/parser-test/thesis.xml");
+        File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
         Builder builder = new Builder();
         Document doc = null;
         try {
@@ -201,9 +226,12 @@ public class Refiner {
             Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }                                
         try {
-            Refiner.RefineDocument(doc);
+            Refiner.refineDocument(doc);
         } catch (ImportParsingException ex) {
             Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }
+        Refiner.putRegistrarScopeIdentifier(doc, "oai:blablabla");
+        System.out.println(doc.toXML());
+        
     }        
 }

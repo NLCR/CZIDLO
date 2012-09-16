@@ -18,6 +18,7 @@ import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 
 /**
@@ -63,6 +64,11 @@ public class ResolverConnector {
         return url;
     }
 
+    private static String getDigitalInsatancesUrl(String urnnbn) {
+        String url = "http://" + RESOLVER_API_URL + "resolver/" + urnnbn + "/digitalInstances";
+        return url;
+    }
+
     private static String getImportDigitalInstanceUrl(String urnnbn) {
         String url = "https://" + RESOLVER_API_URL + "resolver/" + urnnbn
                 + "/digitalInstances";
@@ -77,6 +83,11 @@ public class ResolverConnector {
 
     private static String getRemoveDigitalInstanceUrl(String id) {
         String url = "https://" + RESOLVER_API_URL + "digitalInstances/id/" + id;
+        return url;
+    }
+
+    private static String getDigitalInstanceUrl(String id) {
+        String url = "http://" + RESOLVER_API_URL + "digitalInstances/id/" + id;
         return url;
     }
 
@@ -106,6 +117,26 @@ public class ResolverConnector {
             //TODO spatna struktura dokumentu
             throw new RuntimeException();
         }
+    }
+
+    public static List<String> getDigitailInstancesIdList(String urnnbn) throws IOException, ParsingException {
+        List<String> list = new ArrayList<String>();
+        String url = getDigitalInsatancesUrl(urnnbn);
+        Document document = XmlTools.getDocument(url, false);
+        Element rootElement = document.getRootElement();
+        XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
+        Nodes idNodes = rootElement.query("//oai:digitalInstance/oai:id", context);
+        for (int i = 0; i < idNodes.size(); i++) {
+            list.add(idNodes.get(i).getValue());
+        }
+        return list;
+    }
+
+    public static Document getDigitailInstanceById(String id) throws IOException, ParsingException {
+        List<String> list = new ArrayList<String>();
+        String url = getDigitalInstanceUrl(id);
+        Document document = XmlTools.getDocument(url, false);
+        return document;
     }
 
     public static UrnnbnStatus getUrnnbnStatus(String urnnbn) throws IOException, ParsingException {
@@ -160,7 +191,7 @@ public class ResolverConnector {
         wr.flush();
         wr.close();
         int responseCode = connection.getResponseCode();
-        if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??
+        if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??            
             throw new ResolverConnectionException("Importing record document: response code != 200");
         }
         //System.out.println("import code" + connection.getResponseCode());
@@ -170,7 +201,6 @@ public class ResolverConnector {
         Document responseDocument = builder.build(is);
         String urnnbn = ResolverConnector.getAllocatedURNNBN(responseDocument);
         return urnnbn;
-        // System.out.println(responseDocument.toXML());
     }
 
     public static void importDigitalInstance(Document document, String urnnbn, String login, String password)
@@ -214,6 +244,20 @@ public class ResolverConnector {
         }
     }
 
+    private static String writeInputStream(InputStream is) {
+        Builder builder = new Builder();
+        try {
+            Document responseDocument = builder.build(is);
+            return "RD:" + responseDocument.toXML();
+        } catch (ValidityException ex) {
+            return "V:" + ex.getMessage();
+        } catch (ParsingException ex) {
+            return "P:" + ex.getMessage();
+        } catch (IOException ex) {
+            return "IO:" + ex.getMessage();
+        }
+    }
+
     public static String getAllocatedURNNBN(Document document) {
         Element rootElement = document.getRootElement();
         XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
@@ -225,14 +269,35 @@ public class ResolverConnector {
         return node.get(0).getValue();
     }
 
+    private static List<String> getDigitalInstancesIdListByLibrary(String urnnbn, String libraryId) throws IOException, ParsingException {
+        List<String> newIdList = new ArrayList<String>();
+        List<String> idList = getDigitailInstancesIdList(urnnbn);
+        for (String id : idList) {
+            Document document = getDigitailInstanceById(id);
+            XPathContext context = new XPathContext("oai", RESOLVER_NAMESPACE);
+            Nodes nodes = document.query("//oai:digitalLibrary/oai:id", context);
+            if (nodes.size() > 0) {
+                String docLibraryId = nodes.get(0).getValue();
+                if(docLibraryId.endsWith(libraryId)) {
+                    newIdList.add(id);
+                }
+            }
+        }
+        return newIdList;
+    }
+
     public static void main(String[] args) {
         try {
-            ResolverConnector.removeDigitalInstance("35677",
-                    Credentials.LOGIN, Credentials.PASSWORD);
+            //List<String> ids = ResolverConnector.getDigitailInstancesIdList("urn:nbn:cz:duha-0000vn");
+            List<String> ids = ResolverConnector.getDigitalInstancesIdListByLibrary("urn:nbn:cz:duha-0000vn", "52");
+            for (String string : ids) {
+                System.out.println(string);
+            }
         } catch (IOException ex) {
             Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ResolverConnectionException ex) {
+        } catch (ParsingException ex) {
             Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 }

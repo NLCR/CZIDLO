@@ -61,10 +61,10 @@
                 <r:title>Duha</r:title>
             </r:titleInfo>
             <r:issn>1804-4255</r:issn>
-            <!--<r:publication>
+            <r:publication>
                 <r:publisher>Moravská zemská knihovna</r:publisher>
                 <r:place>Brno</r:place>
-            </r:publication>-->
+            </r:publication>
         </r:sourceDocument>    
     </xsl:template>
     
