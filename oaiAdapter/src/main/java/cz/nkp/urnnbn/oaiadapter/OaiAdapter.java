@@ -209,7 +209,7 @@ public class OaiAdapter {
                     + ", ex: " + ex.getMessage());
         }
         try {
-            Refiner.RefineDocument(importDocument);
+            Refiner.refineDocument(importDocument);
         } catch (ImportParsingException ex) {
             Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
