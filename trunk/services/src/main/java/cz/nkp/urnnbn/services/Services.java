@@ -5,14 +5,12 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.services.impl.AuthenticationServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataImportServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataRemoveServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,7 +21,7 @@ public class Services {
 
     private static final Logger logger = Logger.getLogger(Services.class.getName());
     private static Services instance;
-    private static final Integer MAX_URN_RESERVATION_SIZE = 100;
+    private static final Integer DEFAULT_MAX_URN_RESERVATION_SIZE = 100;
     private final DatabaseConnector connector;
     private final Integer urnNbnReservationMaxSize;
     private DataAccessService dataAccess;
@@ -36,26 +34,18 @@ public class Services {
     private Services(DatabaseConnector connector, Integer urnNbnReservationMaxSize) {
         this.connector = connector;
         if (urnNbnReservationMaxSize == null) {
-            this.urnNbnReservationMaxSize = MAX_URN_RESERVATION_SIZE;
+            this.urnNbnReservationMaxSize = DEFAULT_MAX_URN_RESERVATION_SIZE;
         } else {
             this.urnNbnReservationMaxSize = urnNbnReservationMaxSize;
         }
     }
 
-    public static void init(boolean develMode) {
-        init(develMode, null);
+    public static void init(DatabaseConnector con, Integer urnNbnReservationMaxSize) {
+        instance = new Services(con, urnNbnReservationMaxSize);
     }
 
-    public static void init(boolean develMode, Integer urnNbnReservationMaxSize) {
-        DatabaseConnector connector = null;
-        if (develMode) {
-            logger.log(Level.INFO, "initializing {0} in development mode", Services.class.getName());
-            connector = DatabaseConnectorFactory.getConnector(DevelDatabaseConfig.DRIVER, DevelDatabaseConfig.HOST, DevelDatabaseConfig.DATABASE, DevelDatabaseConfig.LOGIN, DevelDatabaseConfig.PASSWORD);
-        } else {
-            logger.log(Level.INFO, "initializing {0} in production mode", Services.class.getName());
-            connector = DatabaseConnectorFactory.getConnector();
-        }
-        instance = new Services(connector, urnNbnReservationMaxSize);
+    public static void init(DatabaseConnector con) {
+        instance = new Services(con, null);
     }
 
     public static Services instanceOf() {
