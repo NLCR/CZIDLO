@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Class contains methods for loading and parsing values from propertis object
+ * Class contains methods for loading and parsing values from properties object
  * (file) supplied in constructor. All the loadSomething methods load (and
  * potentially parse) property by key. If value of this property is missing, the
  * exception is thrown. On the other hand the loadSomethingOrNull alternatives
@@ -70,6 +70,23 @@ public class PropertyLoader {
 
     public Integer loadInt(String key) {
         Integer result = loadIntOrNull(key);
+        if (result == null) {
+            throw new IllegalArgumentException("Cannot load property '" + key + "'");
+        }
+        return result;
+    }
+
+    public Long loadLongOrNull(String key) {
+        String stringValue = loadStringOrNull(key);
+        if (stringValue == null) {
+            return null;
+        } else {
+            return Long.valueOf(stringValue);
+        }
+    }
+
+    public Long loadLong(String key) {
+        Long result = loadLongOrNull(key);
         if (result == null) {
             throw new IllegalArgumentException("Cannot load property '" + key + "'");
         }
