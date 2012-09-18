@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2012 Martin Řehánek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
@@ -19,7 +31,9 @@ import javax.sql.DataSource;
 public class PostgresPooledConnector implements PostgresConnector {
 
     static final Logger logger = Logger.getLogger(PostgresPooledConnector.class.getName());
-    /** Must be the same as in the META-INF/context.xml and WEB-INF/web.xml */
+    /**
+     * Must be the same as in the META-INF/context.xml and WEB-INF/web.xml
+     */
     private static final String JNDI_DB_CONNECTION_POOL_ID = "jdbc/postgres";
     private DataSource pool;
 

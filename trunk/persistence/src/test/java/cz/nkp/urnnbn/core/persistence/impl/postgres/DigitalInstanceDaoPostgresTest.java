@@ -80,23 +80,23 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testInsertDigInstance_twoInstancesForSameLibraryAndDigRep() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument doc = documentPersisted(lib.getRegistrarId(), entity.getId());
         //first instance
         DigitalInstance first = new DigitalInstance();
-        first.setDigDocId(rep.getId());
+        first.setDigDocId(doc.getId());
         first.setLibraryId(lib.getId());
         first.setActive(Boolean.TRUE);
         first.setUrl("http://something");
         digInstDao.insertDigInstance(first);
         //second
         DigitalInstance second = new DigitalInstance();
-        second.setDigDocId(rep.getId());
+        second.setDigDocId(doc.getId());
         second.setLibraryId(lib.getId());
         second.setUrl("http://somethingElse");
         second.setActive(Boolean.TRUE);
         digInstDao.insertDigInstance(second);
         //check that have been inserted
-        List<DigitalInstance> instances = digInstDao.getDigitalInstancesOfDigDoc(rep.getId());
+        List<DigitalInstance> instances = digInstDao.getDigitalInstancesOfDigDoc(doc.getId());
         assertTrue(instances.contains(first));
         assertTrue(instances.contains(second));
     }

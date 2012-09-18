@@ -74,8 +74,8 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
             return null;
         } catch (SQLException ex) {
 //            if ("23505".equals(ex.getSQLState())) {
-//                IdPart digRepId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getDigDocId()));
-//                IdPart digLibId = new IdPart(ATTR_DIG_REP_ID, Long.toString(instance.getLibraryId()));
+//                IdPart digRepId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(instance.getDigDocId()));
+//                IdPart digLibId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(instance.getLibraryId()));
 //                throw new AlreadyPresentException(new IdPart[]{digRepId, digLibId});
 //            } else {
             throw new DatabaseException(ex);
@@ -89,10 +89,10 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     }
 
     @Override
-    public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digRepId) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepId);
+    public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digDocId) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocId);
         try {
-            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_REP_ID, digRepId);
+            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_DOC_ID, digDocId);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalInstanceRT());
             return (List<DigitalInstance>) runInTransaction(operation);
         } catch (PersistenceException ex) {
