@@ -19,7 +19,7 @@ public interface DigitalInstanceDAO {
     public String TABLE_NAME = "DigitalInstance";
     public String SEQ_NAME = "seq_DigitalInstance";
     public String ATTR_ID = "id";
-    public String ATTR_DIG_REP_ID = "digitalDocumentId";
+    public String ATTR_DIG_DOC_ID = "digitalDocumentId";
     public String ATTR_LIB_ID = "digitalLibraryId";
     public String ATTR_CREATED = "created";
     public String ATTR_UPDATED = "modified";

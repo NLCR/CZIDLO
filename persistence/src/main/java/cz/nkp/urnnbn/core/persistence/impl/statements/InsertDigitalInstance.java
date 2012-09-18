@@ -28,7 +28,7 @@ public class InsertDigitalInstance implements StatementWrapper {
     public String preparedStatement() {
         return "INSERT into " + DigitalInstanceDAO.TABLE_NAME
                 + "(" + DigitalInstanceDAO.ATTR_ID
-                + "," + DigitalInstanceDAO.ATTR_DIG_REP_ID
+                + "," + DigitalInstanceDAO.ATTR_DIG_DOC_ID
                 + "," + DigitalInstanceDAO.ATTR_LIB_ID
                 + "," + DigitalInstanceDAO.ATTR_URL
                 + "," + DigitalInstanceDAO.ATTR_PUBLISHED

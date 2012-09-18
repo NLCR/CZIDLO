@@ -23,7 +23,7 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         if (resultSet.wasNull()) {
             instance.setId(null);
         }
-        instance.setDigDocId(resultSet.getLong(DigitalInstanceDAO.ATTR_DIG_REP_ID));
+        instance.setDigDocId(resultSet.getLong(DigitalInstanceDAO.ATTR_DIG_DOC_ID));
         if (resultSet.wasNull()) {
             instance.setDigDocId(null);
         }
