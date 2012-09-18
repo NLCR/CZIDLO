@@ -9,9 +9,9 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -97,16 +97,6 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigDocIdentifier>emptyList();
-        }
-    }
-
-    @Override
-    public List<DigitalInstance> instancesByDigDocId(long digRepId) throws DatabaseException {
-        try {
-            return factory.digInstDao().getDigitalInstancesOfDigDoc(digRepId);
-        } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigitalInstance>emptyList();
         }
     }
 
@@ -345,7 +335,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public Set<UrnNbn> urnNbnsOfChangedRecords(Registrar registrar, DateTime from, DateTime until) {
+    public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until) {
         try {
             Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();
             //1. vsechny zmenene DD, pak odfiltrovat podle id registratora, vytahnout urn:nbn
@@ -368,7 +358,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(DateTime from, DateTime until) {
+    public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until) {
         try {
             Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();
             //1. vsechny zmenene DD, pak odfiltrovat podle id registratora, vytahnout urn:nbn

@@ -13,10 +13,10 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -44,7 +44,7 @@ public interface DataImportService extends BusinessService {
      * @return UrnNbn that has been assigned or the one present in data if it
      * can be used
      * @throws AccessException if access right of user to registar doesn't exist
-     * @throws UrnNotFromRegistrarException If registsrar code in urn:nbn and
+     * @throws UrnNotFromRegistrarException If registrar code in urn:nbn and
      * registrar code from importData don't match
      * @throws UrnUsedException If this urn:nbn is allready being used
      * @throws UnknownRegistrarException if no such registrar with code obtained
