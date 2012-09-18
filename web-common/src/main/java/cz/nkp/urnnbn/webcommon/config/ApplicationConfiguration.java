@@ -4,7 +4,9 @@
  */
 package cz.nkp.urnnbn.webcommon.config;
 
+import cz.nkp.urnnbn.config.PropertyKeys;
 import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.IOException;
@@ -39,7 +41,11 @@ public class ApplicationConfiguration {
         adminName = loader.loadStringOrNull(PropertyKeys.ADMIN_NAME);
         adminEmail = loader.loadStringOrNull(PropertyKeys.ADMIN_EMAIL);
         CountryCode.initialize(languageCode);
-        Services.init(develMode);
+        if (develMode) {
+            Services.init(DatabaseConnectorFactory.getDevelConnector());
+        } else {
+            Services.init(DatabaseConnectorFactory.getJndiPoolledConnector());
+        }
     }
 
     public Boolean isServerReadOnly() {
