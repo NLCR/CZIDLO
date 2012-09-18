@@ -75,8 +75,8 @@ public class DigitalInstancesResource extends Resource {
         }
     }
 
-    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument rep) throws DatabaseException {
-        List<DigitalInstance> instances = dataAccessService().instancesByDigDocId(rep.getId());
+    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument doc) throws DatabaseException {
+        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
             //todo: i knihovny atd.
