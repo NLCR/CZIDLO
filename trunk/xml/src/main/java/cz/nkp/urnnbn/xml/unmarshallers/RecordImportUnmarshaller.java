@@ -1,11 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2011, 2012 Martin Řehánek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cz.nkp.urnnbn.xml.unmarshallers;
 
-import java.util.EnumMap;
-import nu.xom.Document;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -16,8 +26,10 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Node;
 
@@ -64,7 +76,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return IntelectualEntity object, never null
      */
     public IntelectualEntity getIntelectualEntity() {
@@ -72,7 +84,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return Publication object or null
      */
     public Publication getPublication() {
@@ -80,7 +92,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return Originator object or null
      */
     public Originator getOriginator() {
@@ -88,7 +100,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return SourceDocument object or null
      */
     public SourceDocument getSourceDocument() {
@@ -96,7 +108,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return list of intelectual entity identifiers, never null
      */
     public List<IntEntIdentifier> getIntEntIdentifiers() {
@@ -104,7 +116,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return DigitalDocument object, never null
      */
     public DigitalDocument getDigitalDocument() {
@@ -112,7 +124,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return list of digital document identifiers, never null
      */
     public List<DigDocIdentifier> getDigRepIdentifiers() {
@@ -120,7 +132,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return UrnNbn or null
      */
     public UrnNbn getUrnNbn() {
@@ -128,7 +140,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
     }
 
     /**
-     * 
+     *
      * @return archiver id or null
      */
     public Long getArchiverId() {
