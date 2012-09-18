@@ -150,7 +150,7 @@ public class DigitalInstancesResource extends Resource {
         try {
             List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
             for (DigitalInstance instance : instances) {
-                if (instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
+                if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
                     throw new DigitalInstanceAlreadyPresentException(instance);
                 }
             }
