@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.oaipmhprovider.repository.*;
 import cz.nkp.urnnbn.services.Services;
 import java.util.*;
@@ -29,7 +30,7 @@ public class RepositoryImpl implements Repository {
     }
 
     private RepositoryImpl() {
-        Services.init(false);
+        Services.init(DatabaseConnectorFactory.getJndiPoolledConnector());
         backend = Services.instanceOf();
     }
 
@@ -52,13 +53,13 @@ public class RepositoryImpl implements Repository {
 
     private Set<UrnNbn> getUrnNbnSet(String setSpec, DateTime fromDt, DateTime untilDt) {
         if (setSpec == null) {
-            return backend.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(fromDt, untilDt);
+            return backend.dataAccessService().urnNbnsOfChangedRecords(fromDt, untilDt);
         } else {
             Registrar registrar = registrarFromSetSpec(setSpec);
             if (registrar == null) {
                 return Collections.<UrnNbn>emptySet();
             } else {
-                return backend.dataAccessService().urnNbnsOfChangedRecords(registrar, fromDt, untilDt);
+                return backend.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(registrar, fromDt, untilDt);
             }
         }
     }

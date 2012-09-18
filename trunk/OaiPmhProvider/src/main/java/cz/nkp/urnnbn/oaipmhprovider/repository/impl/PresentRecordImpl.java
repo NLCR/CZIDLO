@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
 import cz.nkp.urnnbn.oaipmhprovider.repository.OaiSet;
 import cz.nkp.urnnbn.oaipmhprovider.repository.PresentRecord;
 import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Dom4jUtils;
+import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
@@ -50,7 +51,7 @@ import org.dom4j.DocumentException;
  */
 public class PresentRecordImpl implements PresentRecord {
 
-    private final Services backend;
+    private final DataAccessService backend;
     private final Registrar registrar;
     private final UrnNbn urnNbn;
     private final DateStamp lastUpdated;
@@ -62,7 +63,7 @@ public class PresentRecordImpl implements PresentRecord {
         this.urnNbn = urnNbn;
         this.lastUpdated = lastUpdated;
         this.format = format;
-        this.backend = backend;
+        this.backend = backend.dataAccessService();
     }
 
     @Override
@@ -122,7 +123,7 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private DigitalDocumentBuilder digDocBuilder(Long digDocId) throws DatabaseException {
-        DigitalDocument digDoc = backend.dataAccessService().digDocByInternalId(digDocId);
+        DigitalDocument digDoc = backend.digDocByInternalId(digDocId);
         IntelectualEntityBuilder intEntBuilder = intEntBuilder(digDoc.getIntEntId());
         RegistrarScopeIdentifiersBuilder registrarScopeIdsBuilder = registrarScopeIdsBuilder(digDocId);
         DigitalInstancesBuilder digitalInstancesBuilder = digitalInstancesBuilder(digDocId);
@@ -132,16 +133,16 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private IntelectualEntityBuilder intEntBuilder(Long entityId) throws DatabaseException {
-        IntelectualEntity intEnt = backend.dataAccessService().entityById(entityId);
-        List<IntEntIdentifier> intEntIdentifiers = backend.dataAccessService().intEntIdentifiersByIntEntId(intEnt.getId());
-        Publication publication = backend.dataAccessService().publicationByIntEntId(intEnt.getId());
-        Originator originator = backend.dataAccessService().originatorByIntEntId(intEnt.getId());
-        SourceDocument srcDoc = backend.dataAccessService().sourceDocumentByIntEntId(intEnt.getId());
+        IntelectualEntity intEnt = backend.entityById(entityId);
+        List<IntEntIdentifier> intEntIdentifiers = backend.intEntIdentifiersByIntEntId(intEnt.getId());
+        Publication publication = backend.publicationByIntEntId(intEnt.getId());
+        Originator originator = backend.originatorByIntEntId(intEnt.getId());
+        SourceDocument srcDoc = backend.sourceDocumentByIntEntId(intEnt.getId());
         return IntelectualEntityBuilder.instanceOf(intEnt, intEntIdentifiers, publication, originator, srcDoc);
     }
 
     private RegistrarScopeIdentifiersBuilder registrarScopeIdsBuilder(Long digDocId) throws DatabaseException {
-        List<DigDocIdentifier> digDocIdentifiers = backend.dataAccessService().digDocIdentifiersByDigDocId(digDocId);
+        List<DigDocIdentifier> digDocIdentifiers = backend.digDocIdentifiersByDigDocId(digDocId);
         List<RegistrarScopeIdentifierBuilder> idBuilderList = new ArrayList<RegistrarScopeIdentifierBuilder>(digDocIdentifiers.size());
         for (DigDocIdentifier id : digDocIdentifiers) {
             idBuilderList.add(new RegistrarScopeIdentifierBuilder(id));
@@ -150,7 +151,7 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private DigitalInstancesBuilder digitalInstancesBuilder(Long digDocId) throws DatabaseException {
-        List<DigitalInstance> digInstances = backend.dataAccessService().digInstancesByDigDocId(digDocId);
+        List<DigitalInstance> digInstances = backend.digInstancesByDigDocId(digDocId);
         List<DigitalInstanceBuilder> digInstBuilders = new ArrayList<DigitalInstanceBuilder>(digInstances.size());
         for (DigitalInstance digInst : digInstances) {
             digInstBuilders.add(new DigitalInstanceBuilder(digInst, libraryBuilder(digInst.getLibraryId()), null));
@@ -159,12 +160,12 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private DigitalLibraryBuilder libraryBuilder(Long libraryId) throws DatabaseException {
-        DigitalLibrary library = backend.dataAccessService().libraryByInternalId(libraryId);
+        DigitalLibrary library = backend.libraryByInternalId(libraryId);
         return new DigitalLibraryBuilder(library, null);
     }
 
     private ArchiverBuilder archiverBuilder(Long archiverId) throws DatabaseException {
-        Archiver archiver = backend.dataAccessService().archiverById(archiverId);
+        Archiver archiver = backend.archiverById(archiverId);
         return new ArchiverBuilder(archiver);
     }
 
