@@ -17,7 +17,7 @@ import javax.servlet.ServletContextListener;
  */
 public class ContextListener implements ServletContextListener {
 
-    private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
+    private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
     private static final String RECORD_IMPORT_XSD = "importRecord.xsd";
     private static final String INSTANCE_IMPORT_XSD = "importDigitalInstance.xsd";
