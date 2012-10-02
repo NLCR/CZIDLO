@@ -9,7 +9,7 @@ public interface MessagesImpl extends Messages {
 	// validation
 	public String validationEmptyField();
 
-	public String validationTooLong(int maxLength, int actualLength);
+	public String validationTooLong(int actualLength, int minLength, int maxLength);
 
 	public String validationInvalidCcnb();
 

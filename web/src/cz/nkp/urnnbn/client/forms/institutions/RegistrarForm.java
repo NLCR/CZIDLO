@@ -29,7 +29,7 @@ public class RegistrarForm extends Form {
 		FormFields result = new FormFields();
 		Field name = new TextInputValueField(new LimitedLengthValidator(100), constants.title(), originalRegistrar.getName(), true);
 		result.addField("name", name);
-		Field code = new TextInputValueField(new LimitedLengthValidator(6), constants.code(), originalRegistrar.getCode(), true);
+		Field code = new TextInputValueField(new LimitedLengthValidator(2,6), constants.code(), originalRegistrar.getCode(), true);
 		result.addField("code", code);
 		if (!registrarCodeEditable) {
 			code.disable();
