@@ -34,6 +34,11 @@ public class OtherEntityBuilder extends EntityTreeItemBuilder {
 	String entityType() {
 		return constants.otherEntity();
 	}
+	
+	@Override
+	String getAggregateTitle(){
+		return dto.getTitle();
+	}
 
 	@Override
 	IntelectualEntityDTO getDto() {

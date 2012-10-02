@@ -33,4 +33,8 @@ public class ConfigurationData implements Serializable {
 		this.alephBase = alephBase;
 	}
 
+	@Override
+	public String toString() {
+		return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase=" + alephBase + "]";
+	}
 }

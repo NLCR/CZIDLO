@@ -39,7 +39,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	public TreeItem getItem() {
 		TreeItem rootItem = new TreeItem(digitalDocumentItem());
-		addItemIfNotNull(rootItem, dto.getUrn());
+		appendUrnNbn(rootItem, dto.getUrn());
+		//addItemIfNotNull(rootItem, dto.getUrn());
 		addRegistrar(rootItem);
 		addArchiver(rootItem);
 		addLabeledItemIfValueNotNull(rootItem, constants.financed(), dto.getFinanced());
@@ -53,6 +54,23 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		addDigitalInstances(rootItem);
 		return rootItem;
 	}
+	
+	private void appendUrnNbn(TreeItem root, String urnNbn){
+		TreeItem urnNbnItem = root.addItem(new HTML(urnNbn));
+		//TODO: jen ukazka, dodelat
+		//TreeItem urnNbnItem = root.addItem(new HTML("<a href=\"http://resolver.nkp.cz/" + urnNbn + ">" + urnNbn + "</a>"));
+//		TreeItem predchudci = urnNbnItem.addItem("předchůdci");
+//		predchudci.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000001\">urn:nbn:cz:tst02-000001</a>"));
+//		predchudci.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000002\">urn:nbn:cz:tst02-000002</a>"));
+//		
+//		//urn:nbn:cz:tst02-000005
+//		TreeItem nasledovnici = urnNbnItem.addItem("následovníci");
+//		nasledovnici.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000007\">urn:nbn:cz:tst02-000007</a>"));
+//		nasledovnici.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000008\">urn:nbn:cz:tst02-000008</a>"));
+		
+	}
+	
+	
 
 	private Panel digitalDocumentItem() {
 		HorizontalPanel result = new HorizontalPanel();
@@ -188,7 +206,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private void addDigitalInstances(TreeItem rootItem) {
 		ArrayList<DigitalInstanceDTO> instances = dto.getInstances();
 		if (instances != null) {
-			for (DigitalInstanceDTO instanceDTO : instances) {
+			for (DigitalInstanceDTO instanceDTO : reorderActiveFirst(instances)) {
 				if (instanceDTO.getUrl() == null) {
 					System.err.println("empty url for instance with id " + instanceDTO.getId() == null ? "unknown" : instanceDTO.getId());
 				} else {
@@ -200,15 +218,39 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		}
 	}
 
+	private ArrayList<DigitalInstanceDTO> reorderActiveFirst(ArrayList<DigitalInstanceDTO> original) {
+		ArrayList<DigitalInstanceDTO> result = new ArrayList<DigitalInstanceDTO>(original.size());
+		ArrayList<DigitalInstanceDTO> deactivated = new ArrayList<DigitalInstanceDTO>(original.size());
+		for (DigitalInstanceDTO instance : original) {
+			if (instance.isActive()) {
+				result.add(instance);
+			} else {
+				deactivated.add(instance);
+			}
+		}
+		result.addAll(deactivated);
+		return result;
+	}
+
 	private TreeItem digitalInstanceItem(TreeItem rootItem, DigitalInstanceDTO instanceDTO) {
 		String url = instanceDTO.getUrl();
-		TreeItem instanceItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>");
+		TreeItem instanceItem = null;
+		if (instanceDTO.isActive()) {
+			instanceItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>");
+		} else {
+			instanceItem = new TreeItem(new HTML("<span style=\"color:grey\">" + constants.deactivatedDigitalInstance() + "</span>"));
+			addLabeledItemIfValueNotNull(instanceItem, constants.url(), instanceDTO.getUrl());
+		}
 		addLabeledItemIfValueNotNull(instanceItem, constants.format(), instanceDTO.getFormat());
 		addLabeledItemIfValueNotNull(instanceItem, constants.accessibility(), instanceDTO.getAccessibility());
 		addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
 		addLabeledItemIfValueNotNull(instanceItem, constants.created(), instanceDTO.getCreated());
 		if (instanceDTO.getModified() != null && !instanceDTO.getModified().equals(instanceDTO.getCreated())) {
-			addLabeledItemIfValueNotNull(instanceItem, constants.modified(), instanceDTO.getModified());
+			if (instanceDTO.isActive()) {
+				addLabeledItemIfValueNotNull(instanceItem, constants.modified(), instanceDTO.getModified());
+			} else {
+				addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getModified());
+			}
 		}
 		return instanceItem;
 	}

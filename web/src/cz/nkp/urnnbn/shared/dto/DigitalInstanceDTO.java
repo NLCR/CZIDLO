@@ -12,6 +12,15 @@ public class DigitalInstanceDTO implements Serializable {
 	private String url;
 	private String format;
 	private String accessibility;
+	private Boolean active;
+
+	public Boolean isActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
 
 	public Long getId() {
 		return id;

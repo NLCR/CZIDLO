@@ -51,6 +51,8 @@ public interface ConstantsImpl extends Constants {
 	String created();
 
 	String modified();
+	
+	String deactivated();
 
 	String documentType();
 
@@ -147,6 +149,8 @@ public interface ConstantsImpl extends Constants {
 	String identifiers();
 
 	String accessibility();
+	
+	String deactivatedDigitalInstance();
 
 	String digitalLibrary();
 
@@ -171,6 +175,8 @@ public interface ConstantsImpl extends Constants {
 	String close();
 
 	String delete();
+	
+	String deactivate();
 
 	String add();
 

@@ -46,6 +46,7 @@ public class DigitalInstanceForm extends Form {
 		result.setFormat((String) fields.getFieldByKey("format").getInsertedValue());
 		result.setAccessibility((String) fields.getFieldByKey("access").getInsertedValue());
 		result.setUrl((String) fields.getFieldByKey("url").getInsertedValue());
+		result.setActive(true);
 		return result;
 	}
 }

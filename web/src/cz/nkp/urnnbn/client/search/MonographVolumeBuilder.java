@@ -15,7 +15,9 @@ public class MonographVolumeBuilder extends EntityTreeItemBuilder {
 	@Override
 	void addRows() {
 		appendAlephLinkIfEnabledAndCcnbPresent(dto.getCcnb());
-		addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getMonographTitle(), dto.getVolumeTitle()));
+		//addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getMonographTitle(), dto.getVolumeTitle()));
+		addLabeledRowIfNotNull(constants.monographTitle(), dto.getMonographTitle());
+		addLabeledRowIfNotNull(constants.monographVolumeTitle(), dto.getVolumeTitle());
 		addLabeledRowIfNotNull(constants.ccnb(), dto.getCcnb());
 		addLabeledRowIfNotNull(constants.isbn(), dto.getIsbn());
 		addLabeledRowIfNotNull(constants.otherId(), dto.getOtherId());
@@ -30,6 +32,11 @@ public class MonographVolumeBuilder extends EntityTreeItemBuilder {
 	@Override
 	String entityType() {
 		return constants.monographVolume();
+	}
+	
+	@Override
+	String getAggregateTitle(){
+		return buildTitle(dto.getMonographTitle(), dto.getVolumeTitle());
 	}
 
 	IntelectualEntityDTO getDto() {

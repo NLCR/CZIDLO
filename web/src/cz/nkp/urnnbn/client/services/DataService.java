@@ -25,5 +25,5 @@ public interface DataService extends RemoteService {
 
 	DigitalInstanceDTO saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn) throws ServerException;
 
-	void deleteDigitalInstance(DigitalInstanceDTO instance) throws ServerException;
+	void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException;
 }

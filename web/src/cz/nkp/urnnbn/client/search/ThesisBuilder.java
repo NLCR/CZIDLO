@@ -32,6 +32,11 @@ public class ThesisBuilder extends EntityTreeItemBuilder {
 	String entityType() {
 		return constants.thesis();
 	}
+	
+	@Override
+	String getAggregateTitle(){
+		return dto.getTitle();
+	}
 
 	@Override
 	IntelectualEntityDTO getDto() {

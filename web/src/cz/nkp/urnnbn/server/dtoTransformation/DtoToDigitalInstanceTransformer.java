@@ -20,6 +20,7 @@ public class DtoToDigitalInstanceTransformer {
 		result.setDigDocId(urn.getDigdocId());
 		result.setFormat(original.getFormat());
 		result.setId(original.getId());
+		result.setActive(original.isActive());
 		result.setLibraryId(original.getLibrary().getId());
 		result.setUrl(original.getUrl());
 		return result;

@@ -37,6 +37,11 @@ public class MonographBuilder extends EntityTreeItemBuilder {
 	String entityType() {
 		return constants.monograph();
 	}
+	
+	@Override
+	String getAggregateTitle(){
+		return dto.getTitle();
+	}
 
 	@Override
 	IntelectualEntityDTO getDto() {

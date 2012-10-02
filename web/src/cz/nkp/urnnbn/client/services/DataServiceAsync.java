@@ -22,5 +22,5 @@ public interface DataServiceAsync {
 
 	void saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn, AsyncCallback<DigitalInstanceDTO> callback);
 
-	void deleteDigitalInstance(DigitalInstanceDTO instance, AsyncCallback<Void> callback);
+	void deactivateDigitalInstance(DigitalInstanceDTO instance, AsyncCallback<Void> callback);
 }

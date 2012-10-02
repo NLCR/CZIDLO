@@ -10,7 +10,9 @@ public class ConfigurationServiceImpl extends AbstractService implements Configu
 
 	@Override
 	public ConfigurationData getConfiguration() {
-		return WebModuleConfiguration.instanceOf().toConfigurationData();
+		ConfigurationData result = WebModuleConfiguration.instanceOf().toConfigurationData();
+//		System.err.println("sending" + result);
+		return result;
 	}
 
 }

@@ -15,7 +15,9 @@ public class PeriodicalVolumeBuilder extends EntityTreeItemBuilder {
 	@Override
 	void addRows() {
 		appendAlephLinkIfEnabledAndCcnbPresent(dto.getCcnb());
-		addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle()));
+		// addLabeledRowIfNotNull(constants.title(),buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle()));
+		addLabeledRowIfNotNull(constants.periodicalTitle(), dto.getPeriodicalTitle());
+		addLabeledRowIfNotNull(constants.periodicalVolumeTitle(), dto.getVolumeTitle());
 		addLabeledRowIfNotNull(constants.ccnb(), dto.getCcnb());
 		addLabeledRowIfNotNull(constants.issn(), dto.getIssn());
 		addLabeledRowIfNotNull(constants.otherId(), dto.getOtherId());
@@ -30,6 +32,11 @@ public class PeriodicalVolumeBuilder extends EntityTreeItemBuilder {
 	@Override
 	String entityType() {
 		return constants.periodicalVolume();
+	}
+
+	@Override
+	String getAggregateTitle() {
+		return buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle());
 	}
 
 	@Override

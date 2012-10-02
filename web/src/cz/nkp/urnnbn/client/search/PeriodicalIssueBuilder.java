@@ -15,7 +15,10 @@ public class PeriodicalIssueBuilder extends EntityTreeItemBuilder {
 	@Override
 	void addRows() {
 		appendAlephLinkIfEnabledAndCcnbPresent(dto.getCcnb());
-		addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle(), dto.getIssueTitle()));
+		//addLabeledRowIfNotNull(constants.title(), buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle(), dto.getIssueTitle()));
+		addLabeledRowIfNotNull(constants.periodicalTitle(), dto.getPeriodicalTitle());
+		addLabeledRowIfNotNull(constants.periodicalVolumeTitle(), dto.getVolumeTitle());
+		addLabeledRowIfNotNull(constants.periodicalIssueTitle(), dto.getIssueTitle());
 		addLabeledRowIfNotNull(constants.ccnb(), dto.getCcnb());
 		addLabeledRowIfNotNull(constants.issn(), dto.getIssn());
 		addLabeledRowIfNotNull(constants.otherId(), dto.getOtherId());
@@ -30,6 +33,11 @@ public class PeriodicalIssueBuilder extends EntityTreeItemBuilder {
 	@Override
 	String entityType() {
 		return constants.periodicalIssue();
+	}
+	
+	@Override
+	String getAggregateTitle(){
+		return buildTitle(dto.getPeriodicalTitle(), dto.getVolumeTitle(), dto.getIssueTitle());
 	}
 
 	@Override

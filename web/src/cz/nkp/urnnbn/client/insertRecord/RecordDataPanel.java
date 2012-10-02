@@ -277,11 +277,11 @@ public class RecordDataPanel extends VerticalPanel {
 	}
 
 	private Button deleteButton(final DigitalInstanceDTO instance) {
-		return new Button(constants.delete(), new ClickHandler() {
+		return new Button(constants.deactivate(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				dataService.deleteDigitalInstance(instance, new AsyncCallback<Void>() {
+				dataService.deactivateDigitalInstance(instance, new AsyncCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result) {

@@ -22,6 +22,7 @@ public class DigitalInstanceDtoTransformer extends DtoTransformer{
 		result.setCreated(dateTimeToStringOrNull(instance.getCreated()));
 		result.setModified(dateTimeToStringOrNull(instance.getModified()));
 		result.setUrl(instance.getUrl());
+		result.setActive(instance.isActive());
 		result.setLibrary(new DigitalLibraryDtoTransformer(library).transform());
 		return result;
 	}

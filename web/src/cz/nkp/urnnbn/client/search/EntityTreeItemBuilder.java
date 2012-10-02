@@ -69,7 +69,8 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
 	public TreeItem getItem() {
 		HorizontalPanel panel = new HorizontalPanel();
-		panel.add(new HTML(entityType()));
+		String rootText = getAggregateTitle() + "<span style=\"color:grey\"> (" +entityType() +  ")</span>"; 
+		panel.add(new HTML(rootText));
 		if (user.isSuperAdmin()) {
 			panel.add(new HTML("&nbsp&nbsp"));
 			panel.add(editEntityButton());
@@ -96,6 +97,8 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	abstract void addRows();
 
 	abstract String entityType();
+	
+	abstract String getAggregateTitle();
 
 	void addLabeledRowIfNotNull(String label, Object value) {
 		addLabeledRowIfNotNull(result, label, value);
@@ -162,7 +165,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 		}
 	}
 
-	String buildTitle(String first, String second) {
+	final String buildTitle(String first, String second) {
 		String separator = ", ";
 		StringBuilder result = new StringBuilder();
 		result.append(first);
@@ -170,7 +173,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 		return result.toString();
 	}
 
-	String buildTitle(String first, String second, String third) {
+	final String buildTitle(String first, String second, String third) {
 		String separator = ", ";
 		StringBuilder result = new StringBuilder();
 		result.append(first);
@@ -181,7 +184,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
 	void appendAlephLinkIfEnabledAndCcnbPresent(String ccnb) {
 		ConfigurationData configuration = superPanel.getConfiguration();
-		if (configuration.showAlephLinks() && ccnb != null && ccnb.length() == 12) {
+		if (configuration.showAlephLinks() && (ccnb != null) && (ccnb.length() == 12)) {
 			String docNumber = ccnb.substring(3);
 			String url = configuration.getAlephUrl() + "/F/?func=direct&doc_number=" + docNumber + "&local_base="
 					+ configuration.getAlephBase();

@@ -93,9 +93,9 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	}
 
 	@Override
-	public void deleteDigitalInstance(DigitalInstanceDTO instance) throws ServerException {
+	public void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException {
 		try {
-			deleteService.removeDigitalInstance(instance.getId(), getUserLogin());
+			deleteService.deactivateDigitalInstance(instance.getId(), getUserLogin());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());

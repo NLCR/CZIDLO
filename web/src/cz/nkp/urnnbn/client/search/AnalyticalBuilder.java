@@ -31,6 +31,11 @@ public class AnalyticalBuilder extends EntityTreeItemBuilder {
 	String entityType() {
 		return constants.analytical();
 	}
+	
+	@Override
+	String getAggregateTitle(){
+		return dto.getTitle();
+	}
 
 	@Override
 	IntelectualEntityDTO getDto() {
