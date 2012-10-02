@@ -11,7 +11,9 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,26 +36,35 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
         this.maxBatchSize = maxBatchSize;
     }
 
-    public List<UrnNbn> reserveUrnNbnBatch(int batchSize, Registrar registrar, long userId) throws DatabaseException {
-        //TODO: zkontrolvoat prava uzivatele k teto operaci
-        List<UrnNbn> result = new ArrayList<UrnNbn>(batchSize);
-        for (int i = 0; i < batchSize; i++) {
-            UrnNbn found = findAndSaveNewUrnNbn(registrar);
-            if (found != null) {
-                result.add(found);
+    @Override
+    public List<UrnNbn> reserveUrnNbnBatch(int batchSize, Registrar registrar, String login) throws UnknownUserException, AccessException {
+        try {
+            authorization.checkAccessRights(registrar.getId(), login);
+            List<UrnNbn> result = new ArrayList<UrnNbn>(batchSize);
+            for (int i = 0; i < batchSize; i++) {
+                UrnNbn found = findAndSaveNewUrnNbn(registrar);
+                if (found != null) {
+                    result.add(found);
+                }
             }
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
-        return result;
     }
 
-    public List<UrnNbn> getReservedUrnNbnList(long registrarId) throws DatabaseException, UnknownRegistrarException {
+    @Override
+    public List<UrnNbn> getReservedUrnNbnList(long registrarId) throws UnknownRegistrarException {
         try {
             return factory.urnReservedDao().getUrnNbnList(registrarId);
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(registrarId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
+    @Override
     public int getMaxBatchSize() {
         return maxBatchSize;
     }
