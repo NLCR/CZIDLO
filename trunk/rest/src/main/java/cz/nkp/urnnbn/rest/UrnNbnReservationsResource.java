@@ -4,21 +4,25 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.MethodForbiddenException;
+import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.builders.UrnNbnReservationBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnReservationsBuilder;
 import java.util.List;
 import java.util.logging.Level;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 /**
@@ -36,7 +40,7 @@ public class UrnNbnReservationsResource extends Resource {
 
     @GET
     @Produces("application/xml")
-    public String getReservations() {
+    public String getListOfReservations() {
         try {
             int maxBatchSize = urnReservationService().getMaxBatchSize();
             List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
@@ -44,9 +48,6 @@ public class UrnNbnReservationsResource extends Resource {
             return builder.buildDocument().toXML();
         } catch (UnknownRegistrarException ex) {
             //should never happen
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
@@ -62,7 +63,7 @@ public class UrnNbnReservationsResource extends Resource {
 
     @POST
     @Produces("application/xml")
-    public Response createReservation(@QueryParam(PARAM_SIZE) String sizeStr) {
+    public Response createReservation(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
         int size = sizeStr == null
                 ? ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize()
                 : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
@@ -70,17 +71,15 @@ public class UrnNbnReservationsResource extends Resource {
             throw new MethodForbiddenException();
         } else {
             try {
-                //TODO: INVALID_RESERVATION_SIZE : 400
-                //
-
-                int userId = 1;//TODO: zjistit z hlavicky
-                List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, userId);
+                String login = req.getRemoteUser();
+                List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, login);
                 UrnNbnReservationBuilder builder = new UrnNbnReservationBuilder(reserved);
                 String responseXml = builder.buildDocument().toXML();
                 return Response.created(null).entity(responseXml).build();
-            } catch (DatabaseException ex) {
-                logger.log(Level.SEVERE, ex.getMessage());
-                throw new InternalException(ex.getMessage());
+            } catch (UnknownUserException ex) {
+                throw new NotAuthorizedException(ex.getMessage());
+            } catch (AccessException ex) {
+                throw new NotAuthorizedException(ex.getMessage());
             }
         }
     }
