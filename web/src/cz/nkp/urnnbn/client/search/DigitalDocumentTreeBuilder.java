@@ -167,7 +167,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			}
 			addLabeledItemIfValueNotNull(metadataItem, constants.colorModel(), metadata.getColorModel());
 			if (metadata.getColorDepth() != null) {
-				addLabeledItemIfValueNotNull(metadataItem, constants.colorDepth(), metadata.getColorDepth());
+				String colorDepth = metadata.getColorDepth() + ' ' + constants.bits();
+				addLabeledItemIfValueNotNull(metadataItem, constants.colorDepth(), colorDepth);
 			}
 			addLabeledItemIfValueNotNull(metadataItem, constants.iccProfile(), metadata.getIccProfile());
 			if (metadata.getPictureWidth() != null && metadata.getPicturHeight() != null) {
@@ -187,7 +188,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		}
 		String horizontal = metadata.getResolutionHorizontal() == null ? "unknown" : metadata.getResolutionHorizontal().toString();
 		String vertical = metadata.getResolutionVertical() == null ? "unknown" : metadata.getResolutionVertical().toString();
-		return horizontal + "x" + vertical;
+		return horizontal + 'x' + vertical + ' ' + constants.dpi();
 	}
 
 	private String buildSizeString(TechnicalMetadataDTO metadata) {
@@ -196,7 +197,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		}
 		String width = metadata.getPictureWidth() == null ? "unknown" : metadata.getPictureWidth().toString();
 		String height = metadata.getPicturHeight() == null ? "unknown" : metadata.getPicturHeight().toString();
-		return width + "x" + height;
+		return width + 'x' + height + ' ' + constants.pixels();
 	}
 
 	void addLabeledItemIfValueNotNull(TreeItem item, String label, Object value) {
@@ -257,7 +258,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private void addDigitalLibrary(TreeItem instanceItem, final DigitalLibraryDTO library) {
 		if (library != null) {
-			Button button = new Button("podrobnosti");
+			Button button = new Button(constants.details());
 			button.addClickHandler(new ClickHandler() {
 
 				@Override

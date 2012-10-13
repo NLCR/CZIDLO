@@ -133,6 +133,8 @@ public interface ConstantsImpl extends Constants {
 	String extent();
 
 	String resolution();
+	
+	String dpi();
 
 	String compressionAlgorithm();
 
@@ -141,10 +143,14 @@ public interface ConstantsImpl extends Constants {
 	String colorModel();
 
 	String colorDepth();
+	
+	String bits();
 
 	String iccProfile();
 
 	String pictureSize();
+	
+	String pixels();
 
 	String identifiers();
 
