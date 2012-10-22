@@ -17,11 +17,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-elementFormDefault="qualified" 
-targetNamespace="http://resolver.nkp.cz/v2" 
-xmlns:r="http://resolver.nkp.cz/v2"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+           elementFormDefault="qualified" 
+           targetNamespace="http://resolver.nkp.cz/v2/" 
+           xmlns:r="http://resolver.nkp.cz/v2"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <xs:element name="error" type="r:errorType"/>
     
     
@@ -34,11 +34,27 @@ xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLS
     
     <xs:simpleType name="errorCodeType">
         <xs:restriction base="xs:string">
+            <xs:enumeration value="ALREADY_DEACTIVATED"/>
+            <xs:enumeration value="DIGITAL_INSTANCE_ALREADY_PRESENT"/>
+            <xs:enumeration value="INVALID_ARCHIVER_ID"/>
+            <xs:enumeration value="INVALID_DATA"/>
+            <xs:enumeration value="INVALID_DATA"/>
+            <xs:enumeration value="INVALID_DIGITAL_DOCUMENT_IDENTIFIER"/>
+            <xs:enumeration value="INVALID_DIGITAL_DOCUMENT_ID_TYPE"/>
+            <xs:enumeration value="INVALID_DIGITAL_INSTANCE_ID"/>
+            <xs:enumeration value="INVALID_QUERY_PARAM_VALUE"/>
             <xs:enumeration value="INVALID_REGISTRAR_CODE"/>
+            <xs:enumeration value="INVALID_URN_NBN"/>
+            <xs:enumeration value="MISSING_PARAMETER"/>
+            <xs:enumeration value="NOT_AUTHENTICATED"/>
+            <xs:enumeration value="NOT_AUTHORIZED"/>
+            <xs:enumeration value="NOT_DEFINED"/>
+            <xs:enumeration value="UNAUTHORIZED_REGISTRATION_MODE"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_DOCUMENT"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_INSTANCE"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_LIBRARY"/>
             <xs:enumeration value="UNKNOWN_REGISTRAR"/>
-            
             <xs:enumeration value="UNKNOWN_URN"/>
-            <xs:enumeration value="TODO_dalsi_druhy_chyb"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
