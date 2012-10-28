@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -43,8 +44,19 @@ public class RegistrarBuilder extends XmlBuilder {
         appendTimestamps(root, registrar, "registrar");
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");
         appendElementWithContentIfNotNull(root, registrar.getDescription(), "description");
+        appendRegistrationModes(root);
         appendBuilderResultfNotNull(root, librariesBuilder);
         appendBuilderResultfNotNull(root, catalogsBuilder);
         return root;
+    }
+
+    private void appendRegistrationModes(Element registrarEl) {
+        Element modesEl = appendElement(registrarEl, "registrationModes");
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean enabled = registrar.isRegistrationModeAllowed(mode);
+            Element modeEl = appendElement(modesEl, "mode");
+            modeEl.addAttribute(new Attribute("name", mode.name()));
+            modeEl.addAttribute(new Attribute("enabled", enabled.toString()));
+        }
     }
 }
