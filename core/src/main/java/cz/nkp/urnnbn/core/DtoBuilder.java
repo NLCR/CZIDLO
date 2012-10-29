@@ -7,9 +7,9 @@ package cz.nkp.urnnbn.core;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
@@ -125,6 +125,9 @@ public class DtoBuilder {
         registrar.setName("MZK");
         registrar.setDescription("Moravská zemská knihovna");
         registrar.setCode(RegistrarCode.valueOf("BOA" + nextUrnPrefixSuffix()));
+        for(UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()){
+            registrar.setRegistrationModeAllowed(mode, Boolean.FALSE);
+        }
         return registrar;
     }
 
