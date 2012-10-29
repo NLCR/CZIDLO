@@ -44,6 +44,13 @@ public interface UrnNbnReservationService extends BusinessService {
 
     /**
      *
+     * @param urn
+     * @return true if this urn is reserved
+     */
+    public boolean isReserved(UrnNbn urn);
+
+    /**
+     *
      * @return Maximal size of batch that can be booked.
      */
     public int getMaxBatchSize();

@@ -83,12 +83,12 @@ public class RecordImporter {
     private UrnNbn urnToBeUsed(RollbackRecord rollback) throws UrnNotFromRegistrarException, UrnUsedException {
         UrnNbn urnInInputData = data.getUrn();
         if (urnInInputData != null) {
-            logger.log(Level.INFO, "urn found in import data: {0}", urnInInputData);
+            logger.log(Level.INFO, "{0} found in import data", urnInInputData);
             //selected by registrar
             checkUrnBelongsToRegistrar(urnInInputData);
             checkUrnIsFree(urnInInputData);
             if (isReserved(urnInInputData)) {
-                logger.info("urn was reserved");
+                logger.log(Level.INFO, "{0} was reserved", urnInInputData);
                 removeFromReservedList(urnInInputData, rollback);
             } else {
                 rollback.setUrnAssignedByResolverOrRegistrar(urnInInputData);

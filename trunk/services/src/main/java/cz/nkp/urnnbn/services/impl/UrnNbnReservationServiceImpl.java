@@ -69,6 +69,21 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
         return maxBatchSize;
     }
 
+    @Override
+    public boolean isReserved(UrnNbn urn) {
+        try {
+            System.err.println("isReserved: " + urn);
+            factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
+            //when RecordNotFound is not thrown the urn:nbn is reserved
+            return true;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            System.err.println("NOT FOUND in RESERVED_URN_TABLE");
+            return false;
+        }
+    }
+
     //POZOR: nekdy vraci null. jeste rozmyslet, jak se tady zachovat
     //nejspis nakonec budou orm vyjimky nehlidane
     private UrnNbn findAndSaveNewUrnNbn(Registrar registrar) throws DatabaseException {
