@@ -51,7 +51,7 @@ public interface ConstantsImpl extends Constants {
 	String created();
 
 	String modified();
-	
+
 	String deactivated();
 
 	String documentType();
@@ -133,7 +133,7 @@ public interface ConstantsImpl extends Constants {
 	String extent();
 
 	String resolution();
-	
+
 	String dpi();
 
 	String compressionAlgorithm();
@@ -143,19 +143,19 @@ public interface ConstantsImpl extends Constants {
 	String colorModel();
 
 	String colorDepth();
-	
+
 	String bits();
 
 	String iccProfile();
 
 	String pictureSize();
-	
+
 	String pixels();
 
 	String identifiers();
 
 	String accessibility();
-	
+
 	String deactivatedDigitalInstance();
 
 	String digitalLibrary();
@@ -181,7 +181,7 @@ public interface ConstantsImpl extends Constants {
 	String close();
 
 	String delete();
-	
+
 	String deactivate();
 
 	String add();
@@ -241,6 +241,17 @@ public interface ConstantsImpl extends Constants {
 	String digitalInstances();
 
 	String insertNewRecord();
-	
+
 	String showInCatalog();
+
+	// modes of reservation
+	
+	String allowedRegistrationModes();
+
+	String modeByRegistrar();
+
+	String modeByResolver();
+
+	String modeByReservation();
+
 }

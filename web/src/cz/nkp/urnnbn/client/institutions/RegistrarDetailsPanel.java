@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -155,11 +156,41 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			descPanel.add(new Label(registrar.getDescription()));
 			result.add(descPanel);
 		}
+		// registration modes
+		result.add(registrationModesPanel());
+		// edit button 
 		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(editRegistrarButton());
 		}
 		return result;
 	}
+	
+	private VerticalPanel registrationModesPanel(){
+		VerticalPanel result = new VerticalPanel();
+		result.setStyleName(css.block());
+		//title
+		Label modesHeading = new Label(constants.allowedRegistrationModes());
+		modesHeading.setStyleName(css.listHeadingLevel2());
+		result.add(modesHeading);
+		//modes
+		result.add(registrationModePanel(constants.modeByResolver(), registrar.isRegModeByResolverAllowed()));
+		result.add(registrationModePanel(constants.modeByReservation(), registrar.isRegModeByReservationAllowed()));
+		result.add(registrationModePanel(constants.modeByRegistrar(),registrar.isRegModeByRegistrarAllowed()));
+		return result;
+	}
+	
+	private HorizontalPanel registrationModePanel(String label, boolean checked){
+		HorizontalPanel result = new HorizontalPanel();
+		result.add(new Label(label));
+		result.add(new HTML("&nbsp"));
+		CheckBox checkBox = new CheckBox();
+		checkBox.setValue(checked);
+		checkBox.setEnabled(false);
+		result.add(checkBox);
+		return result;
+	}
+	
+	
 
 	private Button editRegistrarButton() {
 		return new Button(constants.edit(), new ClickHandler() {
@@ -186,7 +217,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 	private Widget digitalLibrariesHeading() {
 		Label result = new Label(constants.digitalLibraryList());
-		result.setStyleName(css.listHeading());
+		result.setStyleName(css.listHeadingLevel2());
 		return result;
 	}
 
@@ -347,7 +378,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 	private Widget catalogsHeading() {
 		Label heading = new Label(constants.catalogList());
-		heading.setStyleName(css.listHeading());
+		heading.setStyleName(css.listHeadingLevel2());
 		return heading;
 	}
 

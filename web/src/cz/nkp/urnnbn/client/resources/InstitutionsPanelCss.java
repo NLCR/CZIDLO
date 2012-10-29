@@ -6,4 +6,7 @@ public interface InstitutionsPanelCss extends CssResource {
 	public String listHeading();
 
 	public String block();
+
+	public String listHeadingLevel2();
+
 }

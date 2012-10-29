@@ -3,9 +3,12 @@ package cz.nkp.urnnbn.shared.dto;
 import java.io.Serializable;
 
 public class RegistrarDTO extends ArchiverDTO implements Serializable {
-	private static final long serialVersionUID = 1524026185893558475L;
+	
+	private static final long serialVersionUID = -546318886531924354L;
 	private String code;
-	private boolean allowedToRegisterFreeUrnNbn;
+	private boolean regModeByRegistrarAllowed;
+	private boolean regModeByResolverAllowed;
+	private boolean regModeByReservationAllowed;
 
 	public String getCode() {
 		return code;
@@ -15,11 +18,27 @@ public class RegistrarDTO extends ArchiverDTO implements Serializable {
 		this.code = code;
 	}
 
-	public boolean isAllowedToRegisterFreeUrnNbn() {
-		return allowedToRegisterFreeUrnNbn;
+	public boolean isRegModeByRegistrarAllowed() {
+		return regModeByRegistrarAllowed;
 	}
 
-	public void setAllowedToRegisterFreeUrnNbn(boolean allowedToRegisterFreeUrnNbn) {
-		this.allowedToRegisterFreeUrnNbn = allowedToRegisterFreeUrnNbn;
+	public void setRegModeByRegistrarAllowed(boolean regModeByRegistrarAllowed) {
+		this.regModeByRegistrarAllowed = regModeByRegistrarAllowed;
+	}
+
+	public boolean isRegModeByResolverAllowed() {
+		return regModeByResolverAllowed;
+	}
+
+	public void setRegModeByResolverAllowed(boolean regModeByResolverAllowed) {
+		this.regModeByResolverAllowed = regModeByResolverAllowed;
+	}
+
+	public boolean isRegModeByReservationAllowed() {
+		return regModeByReservationAllowed;
+	}
+
+	public void setRegModeByReservationAllowed(boolean regModeByReservationAllowed) {
+		this.regModeByReservationAllowed = regModeByReservationAllowed;
 	}
 }

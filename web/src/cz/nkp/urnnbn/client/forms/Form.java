@@ -37,7 +37,10 @@ public abstract class Form extends VerticalPanel {
 		}
 		// TODO: odsazeni resit stylem
 		result.add(new HTML("&nbsp"));
-		result.add(field.getContentWidget());
+		Widget content = field.getContentWidget();
+		if (content != null) {
+			result.add(field.getContentWidget());
+		}
 		return result;
 	}
 
