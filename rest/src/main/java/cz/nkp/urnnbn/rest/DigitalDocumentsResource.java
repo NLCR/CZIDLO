@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -17,6 +18,7 @@ import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.rest.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.services.RecordImport;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -52,7 +54,9 @@ public class DigitalDocumentsResource extends Resource {
     private UriInfo context;
     private final Registrar registrar;
 
-    /** Creates a new instance of RegistrarsResource */
+    /**
+     * Creates a new instance of RegistrarsResource
+     */
     public DigitalDocumentsResource(Registrar registrar) {
         this.registrar = registrar;
     }
@@ -79,8 +83,33 @@ public class DigitalDocumentsResource extends Resource {
         try {
             Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getRecordImportSchema());
             RecordImport recordImport = getImportFromDocument(doc);
-            //TODO: pokud to nema registrator povoleno, nemuze vkladat urn:nbn ve stavu FREE
-            //kdyz se o to pokusi, tak tady dojde InvalidUrnException
+            UrnNbn urnFromImport = recordImport.getUrn();
+            if (urnFromImport == null) {
+                if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
+                    throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
+                }
+            } else {
+                //this is duplicated - same functionality in RecordImporter
+                //also method isReserved
+                //requires refactoring
+                if (!urnFromImport.getRegistrarCode().equals(registrar.getCode())) {
+                    throw new InvalidUrnException(urnFromImport.toString(), "doesn't match registrar code " + registrar.getCode().toString());
+                }
+                UrnNbnWithStatus urnWithStatus = urnWithStatus(urnFromImport);
+                if (urnWithStatus.getStatus() == UrnNbnWithStatus.Status.ACTIVE) {
+                    throw new InvalidUrnException(urnFromImport.toString(), "already active");
+                }
+                if (urnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
+                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
+                        throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
+                    }
+                } else {
+                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
+                        throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
+                    }
+                }
+            }
+
             UrnNbn urn = dataImportService().importNewRecord(recordImport, login);
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
@@ -157,5 +186,13 @@ public class DigitalDocumentsResource extends Resource {
         result.setDigDocIdentifiers(unmarshaller.getDigRepIdentifiers());
         result.setUrn(unmarshaller.getUrnNbn());
         return result;
+    }
+
+    private UrnNbnWithStatus urnWithStatus(UrnNbn urn) {
+        try {
+            return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode());
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
