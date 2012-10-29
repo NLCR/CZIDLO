@@ -12,10 +12,10 @@ import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownUrnException;
 import java.util.logging.Level;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Path;
 
 /**
  * REST Web Service
