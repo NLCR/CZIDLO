@@ -5,25 +5,25 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertRegistrar;
@@ -31,9 +31,10 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,7 +59,6 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     @Override
     public Long insertRegistrar(final Registrar registrar) throws DatabaseException, AlreadyPresentException {
         DaoOperation operation = new DaoOperation() {
-
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
                 //get new id
@@ -177,8 +177,8 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
 
     @Override
     public void updateRegistrar(final Registrar registrar) throws DatabaseException, RecordNotFoundException {
-        //there are no editable attributes in Registrar so only Archiver is updated
-        updateRecordWithLongPK(registrar, TABLE_NAME, ATTR_ID, new UpdateArchiver(registrar));
+        updateRecordWithLongPK(registrar, ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, new UpdateArchiver(registrar));
+        updateRecordWithLongPK(registrar, TABLE_NAME, ATTR_ID, new UpdateRegistrar(registrar));
     }
 
     @Override
@@ -196,7 +196,6 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     @Override
     public void deleteAllRegistrars() throws DatabaseException, RecordReferencedException {
         DaoOperation operation = new DaoOperation() {
-
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
                 //get all identifiers from registrars
