@@ -5,15 +5,18 @@
 package cz.nkp.urnnbn.core.dto;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class Registrar extends Archiver {
+public final class Registrar extends Archiver {
 
     private RegistrarCode code;
-    private Boolean allowedToRegisterFreeUrnNbn = Boolean.FALSE;
+    private Map<UrnNbnRegistrationMode, Boolean> modesAllowed = new EnumMap<UrnNbnRegistrationMode, Boolean>(UrnNbnRegistrationMode.class);
 
     public Registrar() {
         super();
@@ -21,7 +24,11 @@ public class Registrar extends Archiver {
 
     public Registrar(Registrar original) {
         super(original);
-        code = original.getCode();
+        this.code = original.getCode();
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean allowed = original.isRegistrationModeAllowed(mode);
+            this.setRegistrationModeAllowed(mode, allowed);
+        }
     }
 
     public RegistrarCode getCode() {
@@ -32,12 +39,17 @@ public class Registrar extends Archiver {
         this.code = code;
     }
 
-    public Boolean isAllowedToRegisterFreeUrnNbn() {
-        return allowedToRegisterFreeUrnNbn;
+    public Boolean isRegistrationModeAllowed(UrnNbnRegistrationMode mode) {
+        return modesAllowed.get(mode);
     }
 
-    public void setAllowedToRegisterFreeUrnNbn(Boolean allowedToRegisterFreeUrnNbn) {
-        this.allowedToRegisterFreeUrnNbn = allowedToRegisterFreeUrnNbn;
+    public void setRegistrationModeAllowed(UrnNbnRegistrationMode mode, Boolean allowed) {
+        modesAllowed.put(mode, allowed);
+    }
+
+    @Override
+    public String toString() {
+        return "Registrar{" + "code=" + code + '}';
     }
 
     public void loadDataFromArchiver(Archiver archiver) {
