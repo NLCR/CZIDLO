@@ -5,9 +5,9 @@
 package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
@@ -21,10 +21,14 @@ public interface RegistrarDAO {
     public String TABLE_NAME = "Registrar";
     public String ATTR_ID = "id";
     public String ATTR_CODE = "code";
-    public String ATTR_CAN_REGISTER_FREE_URN = "allowedToRegisterFreeUrnNbn";
+    public String ATTR_ALLOWED_REGISTRATION_MODE_BY_REGISTRAR = "allowedRegistrationModeByRegistrar";
+    public String ATTR_ALLOWED_REGISTRATION_MODE_BY_RESOLVER = "allowedRegistrationModeByResolver";
+    public String ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION = "allowedRegistrationModeByReservation";
 
     /**
-     * Should not use id from registrar but instead create new by means of database
+     * Should not use id from registrar but instead create new by means of
+     * database
+     *
      * @param archiver
      * @return id created
      * @throws DatabaseException

@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -113,7 +114,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     public void testGetRegistrarById() throws Exception {
         Registrar inserted = builder.registrarWithoutId();
         inserted.setId(registrarDao.insertRegistrar(inserted));
-        
+
         Registrar returned = registrarDao.getRegistrarById(inserted.getId());
         assertNotNull(returned);
         assertEquals(inserted.getId(), returned.getId());
@@ -160,6 +161,41 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         assertTrue(archiverIdList.contains(third.getId()));
     }
 
+    public void testRegistrarInsertAndGetAllowedModes() throws Exception {
+        Registrar first = builder.registrarWithoutId();
+        first.setId(registrarDao.insertRegistrar(first));
+        first = registrarDao.getRegistrarByCode(first.getCode());
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean allowed = first.isRegistrationModeAllowed(mode);
+            assertFalse(allowed);
+        }
+
+
+        Registrar second = builder.registrarWithoutId();
+        second.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR, true);
+        second.setId(registrarDao.insertRegistrar(second));
+        second = registrarDao.getRegistrarByCode(second.getCode());
+        assertTrue(second.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
+        assertFalse(second.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
+        assertFalse(second.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
+
+        Registrar third = builder.registrarWithoutId();
+        third.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER, true);
+        third.setId(registrarDao.insertRegistrar(third));
+        third = registrarDao.getRegistrarByCode(third.getCode());
+        assertFalse(third.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
+        assertTrue(third.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
+        assertFalse(third.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
+
+        Registrar fourth = builder.registrarWithoutId();
+        fourth.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION, true);
+        fourth.setId(registrarDao.insertRegistrar(fourth));
+        fourth = registrarDao.getRegistrarByCode(fourth.getCode());
+        assertFalse(fourth.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
+        assertFalse(fourth.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
+        assertTrue(fourth.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
+    }
+
     /**
      * Test of updateArchiver method, of class RegistrarDaoPostgres.
      */
@@ -167,8 +203,8 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         Registrar original = builder.registrarWithoutId();
         registrarDao.insertRegistrar(original);
         Registrar updated = new Registrar(original);
-        updated.setName("NKP");
-        updated.setDescription("Narodni knihovna v Praze");
+        updated.setName(original.getName() + " - changed");
+        updated.setDescription(original.getDescription() + " - changed");
         registrarDao.updateRegistrar(updated);
         //get by id
         Archiver returned = registrarDao.getRegistrarById(original.getId());
@@ -205,7 +241,42 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    
+    public void testUpdateAllowedModes() throws Exception {
+        //insert registrar with all modes disabled
+        Registrar inserted = builder.registrarWithoutId();
+        inserted.setId(registrarDao.insertRegistrar(inserted));
+        //check the database
+        Registrar fetched = registrarDao.getRegistrarByCode(inserted.getCode());
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean allowed = fetched.isRegistrationModeAllowed(mode);
+            assertFalse(allowed);
+        }
+
+        //enable all modes and update
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            fetched.setRegistrationModeAllowed(mode, true);
+        }
+        registrarDao.updateRegistrar(fetched);
+        //check the database
+        Registrar afterUpdate = registrarDao.getRegistrarById(fetched.getId());
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean allowed = afterUpdate.isRegistrationModeAllowed(mode);
+            assertTrue(allowed);
+        }
+
+        //disable all modes againd and update
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            afterUpdate.setRegistrationModeAllowed(mode, false);
+        }
+        registrarDao.updateRegistrar(afterUpdate);
+        //check the database
+        Registrar afterSecondUpdate = registrarDao.getRegistrarById(afterUpdate.getId());
+        for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
+            Boolean allowed = afterSecondUpdate.isRegistrationModeAllowed(mode);
+            assertFalse(allowed);
+        }
+    }
+
     /**
      * Test of deleteRegistrar method, of class RegistrarDaoPostgres.
      */
