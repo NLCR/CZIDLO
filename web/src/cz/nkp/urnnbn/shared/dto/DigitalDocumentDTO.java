@@ -11,7 +11,7 @@ public class DigitalDocumentDTO implements Serializable {
 	private ArchiverDTO archiver;
 	private String created;
 	private String modified;
-	private String urn;
+	private UrnNbnDTO urn;
 	private ArrayList<RegistrarScopeIdDTO> registrarScopeIdList;
 	private String financed;
 	private String contractNumber;
@@ -42,11 +42,11 @@ public class DigitalDocumentDTO implements Serializable {
 		this.archiver = archiver;
 	}
 
-	public String getUrn() {
+	public UrnNbnDTO getUrn() {
 		return urn;
 	}
 
-	public void setUrn(String urn) {
+	public void setUrn(UrnNbnDTO urn) {
 		this.urn = urn;
 	}
 

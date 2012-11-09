@@ -8,6 +8,7 @@ public class ConfigurationData implements Serializable {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
+	private String countryCode;
 
 	public boolean showAlephLinks() {
 		return showAlephLinks;
@@ -35,6 +36,15 @@ public class ConfigurationData implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase=" + alephBase + "]";
+		return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase=" + alephBase
+				+ ", countryCode=" + countryCode + "]";
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
 	}
 }

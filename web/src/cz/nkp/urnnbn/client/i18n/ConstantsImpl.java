@@ -244,14 +244,18 @@ public interface ConstantsImpl extends Constants {
 
 	String showInCatalog();
 
-	// modes of reservation
+	// URN:NBN registration modes
 	
 	String allowedRegistrationModes();
+	
+	String urnNbnRegistrationMode();
 
 	String modeByRegistrar();
 
 	String modeByResolver();
 
 	String modeByReservation();
-
+	
+	String inactiveDD();
+	
 }

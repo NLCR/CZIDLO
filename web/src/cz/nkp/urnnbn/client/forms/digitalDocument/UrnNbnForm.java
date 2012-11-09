@@ -11,8 +11,10 @@ import cz.nkp.urnnbn.shared.validation.UrnNbnPartCValidator;
 public class UrnNbnForm extends Form {
 
 	private final RegistrarDTO registrar;
+	private final String countryCode;
 
-	public UrnNbnForm(RegistrarDTO registrar) {
+	public UrnNbnForm(RegistrarDTO registrar, String countryCode) {
+		this.countryCode = countryCode;
 		this.registrar = registrar;
 		initForm();
 	}
@@ -26,12 +28,12 @@ public class UrnNbnForm extends Form {
 	}
 
 	String buildPrefix() {
-		return "urn:nbn:cz:" + registrar.getCode() + "-";
+		return "urn:nbn:" + countryCode + ":" + registrar.getCode() + "-";
 	}
 
 	@Override
 	public UrnNbnDTO getDto() {
 		String documentCode = (String) fields.getFieldByKey("urnNbn").getInsertedValue();
-		return new UrnNbnDTO(registrar.getCode(), documentCode, null);
+		return new UrnNbnDTO(countryCode, registrar.getCode(), documentCode, null, true);
 	}
 }

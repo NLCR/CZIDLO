@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
+import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class DigitalDocumentTreeBuilder extends TreeBuilder {
@@ -28,6 +29,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private static boolean EXPAND_TECHNICAL = false;
 	private static boolean EXPAND_IDENTIFIERS = false;
 	private static boolean EXPAND_DIGITAL_INSTANCES = false;
+	private static String API_VERSION = "v3";
 
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final DigitalDocumentDTO dto;
@@ -38,9 +40,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	public TreeItem getItem() {
-		TreeItem rootItem = new TreeItem(digitalDocumentItem());
+		TreeItem rootItem = new TreeItem(digitalDocumentItem(dto.getUrn().isActive()));
 		appendUrnNbn(rootItem, dto.getUrn());
-		//addItemIfNotNull(rootItem, dto.getUrn());
 		addRegistrar(rootItem);
 		addArchiver(rootItem);
 		addLabeledItemIfValueNotNull(rootItem, constants.financed(), dto.getFinanced());
@@ -52,29 +53,47 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		addIdentifiers(rootItem);
 		addTechnicalMetadata(rootItem);
 		addDigitalInstances(rootItem);
+		if (!dto.getUrn().isActive()) {
+			rootItem.setState(false);
+		}
 		return rootItem;
 	}
-	
-	private void appendUrnNbn(TreeItem root, String urnNbn){
-		TreeItem urnNbnItem = root.addItem(new HTML(urnNbn));
-		//TODO: jen ukazka, dodelat
-		//TreeItem urnNbnItem = root.addItem(new HTML("<a href=\"http://resolver.nkp.cz/" + urnNbn + ">" + urnNbn + "</a>"));
-//		TreeItem predchudci = urnNbnItem.addItem("předchůdci");
-//		predchudci.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000001\">urn:nbn:cz:tst02-000001</a>"));
-//		predchudci.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000002\">urn:nbn:cz:tst02-000002</a>"));
-//		
-//		//urn:nbn:cz:tst02-000005
-//		TreeItem nasledovnici = urnNbnItem.addItem("následovníci");
-//		nasledovnici.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000007\">urn:nbn:cz:tst02-000007</a>"));
-//		nasledovnici.addItem(new HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000008\">urn:nbn:cz:tst02-000008</a>"));
-		
-	}
-	
-	
 
-	private Panel digitalDocumentItem() {
+	private void appendUrnNbn(TreeItem root, UrnNbnDTO urnNbn) {
+		String urnNbnHtml = urnNbn.isActive() ? urnNbn.toString() : "<span style=\"color:grey;text-decoration:line-through;\">"
+				+ urnNbn.toString() + "</span>";
+
+		String linkToXml = "api/" + API_VERSION + "/resolver/" + urnNbn.toString() + "?action=show&format=xml";
+		String linkToXmlRecord = "<a href=\"" + linkToXml + "\" target=\"_blank\">záznam v xml</a>";
+
+		TreeItem urnNbnItem = root.addItem(urnNbnHtml + "&nbsp&nbsp" + linkToXmlRecord);
+		// TODO: jen ukazka, dodelat
+		// TreeItem urnNbnItem = root.addItem(new
+		// HTML("<a href=\"http://resolver.nkp.cz/" + urnNbn + ">" + urnNbn +
+		// "</a>"));
+		// TreeItem predchudci = urnNbnItem.addItem("předchůdci");
+		// predchudci.addItem(new
+		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000001\">urn:nbn:cz:tst02-000001</a>"));
+		// predchudci.addItem(new
+		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000002\">urn:nbn:cz:tst02-000002</a>"));
+		//
+		// //urn:nbn:cz:tst02-000005
+		// TreeItem nasledovnici = urnNbnItem.addItem("následovníci");
+		// nasledovnici.addItem(new
+		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000007\">urn:nbn:cz:tst02-000007</a>"));
+		// nasledovnici.addItem(new
+		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000008\">urn:nbn:cz:tst02-000008</a>"));
+
+	}
+
+	private Panel digitalDocumentItem(boolean active) {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.digitalDocument()));
+		if (active) {
+			result.add(new Label(constants.digitalDocument()));
+		} else {
+			result.add(new HTML("<span style=\"text-decoration:line-through;\">" + constants.digitalDocument() + "</span>"
+					+ " <span style=\"color:grey\">(" + constants.inactiveDD() + ")</span>"));
+		}
 		// spravce registratora nyni muze editovat zaznam svojeho DD
 		if (activeUser().isSuperAdmin() || activeUserManagesRegistrar()) {
 			result.add(new HTML("&nbsp&nbsp"));

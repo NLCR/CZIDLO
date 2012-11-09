@@ -46,7 +46,7 @@ public class SearchPanel extends DockLayoutPanel {
 	private final ScrollPanel searchResultsPanel = new ScrollPanel();
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
-	private ConfigurationData configuration;
+    private ConfigurationData configuration;
 
 	private Tree searchResultTree;
 

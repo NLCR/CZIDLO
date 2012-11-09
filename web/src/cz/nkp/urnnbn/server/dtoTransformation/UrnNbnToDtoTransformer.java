@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.server.dtoTransformation;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
@@ -13,6 +14,6 @@ public class UrnNbnToDtoTransformer extends DtoTransformer {
 
 	@Override
 	public UrnNbnDTO transform() {
-		return new UrnNbnDTO(original.getRegistrarCode().toString(), original.getDocumentCode(), original.getDigDocId());
+		return new UrnNbnDTO( CountryCode.getCode(), original.getRegistrarCode().toString(), original.getDocumentCode(), original.getDigDocId(), original.isActive());
 	}
 }

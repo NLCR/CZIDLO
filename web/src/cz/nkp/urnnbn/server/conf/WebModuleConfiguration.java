@@ -18,7 +18,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
-
+	
 	static public WebModuleConfiguration instanceOf() {
 		if (instance == null) {
 			instance = new WebModuleConfiguration();
@@ -50,12 +50,13 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	public String getAlephBase() {
 		return alephBase;
 	}
-
-	public ConfigurationData toConfigurationData() {
+	
+		public ConfigurationData toConfigurationData() {
 		ConfigurationData result = new ConfigurationData();
 		result.setShowAlephLinks(showAlephLinks);
 		result.setAlephBase(alephBase);
 		result.setAlephUrl(alephUrl);
+		result.setCountryCode(getLanguageCode());
 		return result;
 	}
 }

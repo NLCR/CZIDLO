@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
+import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
 public class DigialDocumentDtoTransformer extends DtoTransformer {
 
@@ -32,7 +33,7 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 	public DigitalDocumentDTO transform() {
 		DigitalDocumentDTO result = new DigitalDocumentDTO();
 		result.setId(doc.getId());
-		result.setUrn(urnNbn());
+		result.setUrn(urnNbnTransformed());
 		result.setRegistrar(registrarTransformed());
 		result.setArchiver(archiverTransformed());
 		if (result.getArchiver().getId() == result.getRegistrar().getId()) {
@@ -48,12 +49,12 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 		return result;
 	}
 
-	private String urnNbn() {
-		if (urn == null) {
-			System.err.println("no urn:nbn for document" + doc.getId());
+	private UrnNbnDTO urnNbnTransformed(){
+		if (urn == null){
+			System.err.println("no urn:nbn for digital document" + doc.getId());
 			return null;
-		} else {
-			return urn.toString();
+		}else{
+			return new UrnNbnToDtoTransformer(urn).transform();
 		}
 	}
 

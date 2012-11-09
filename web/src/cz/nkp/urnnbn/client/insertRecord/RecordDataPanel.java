@@ -24,10 +24,14 @@ import cz.nkp.urnnbn.client.forms.intEntities.SourceDocumentForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InsertRecordPanelCss;
+import cz.nkp.urnnbn.client.services.ConfigurationService;
+import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
+import cz.nkp.urnnbn.shared.ConfigurationData;
+import cz.nkp.urnnbn.shared.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
@@ -39,24 +43,33 @@ import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public class RecordDataPanel extends VerticalPanel {
+	// services
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
+	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
+	// css, constants, messages
 	private final InsertRecordPanelCss css = InsertRecordPanelResources.css();
 	private final ConstantsImpl constants = InsertRecordPanelResources.constants();
 	private final MessagesImpl messages = InsertRecordPanelResources.messages();
+	// superior panel
 	private final DataInputPanel superPanel;
-	private final String intelectualEntType;
+	// configuration
+	private ConfigurationData configuration;
+	// forms
 	private final IntelectualEntityForm intelectualEntForm;
 	private final SourceDocumentForm srcDocform;
 	private DigitalDocumentForm digitalDocForm;
-	private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
 	private final TechnicalMetadataForm technicalMetadataForm = new TechnicalMetadataForm();
-	private final UrnNbnForm urnNbnForm;
-	private final RegistrarDTO registrar;
-	ArrayList<DigitalLibraryDTO> librariesOfRegistrar = new ArrayList<DigitalLibraryDTO>();
+	private UrnNbnForm urnNbnForm;
 	private final Label errorLabel = errorLabel(null);
+	// actual data
+	private final String intelectualEntType;
 	private UrnNbnDTO urnNbnAssigned;
+	private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
+	private ArrayList<DigitalLibraryDTO> librariesOfRegistrar = new ArrayList<DigitalLibraryDTO>();
 	private final ArrayList<DigitalInstanceDTO> digitalInstances = new ArrayList<DigitalInstanceDTO>();
+	private final RegistrarDTO registrar;
+	UrnNbnRegistrationMode registrationMode;
 
 	public Label errorLabel(Integer size) {
 		Label result = new Label();
@@ -67,15 +80,16 @@ public class RecordDataPanel extends VerticalPanel {
 		return result;
 	}
 
-	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, Boolean withUrnTextbox,
+	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
 			IntelectualEntityForm intelectualEntForm, SourceDocumentForm srcDocForm, String intelectualEntType) {
 		this.superPanel = superPanel;
 		this.intelectualEntType = intelectualEntType;
 		this.intelectualEntForm = intelectualEntForm;
 		this.registrar = registrar;
+		this.registrationMode = registrationMode;
 		loadLibrariesOfRegistrar();
-		this.urnNbnForm = withUrnTextbox ? new UrnNbnForm(registrar) : null;
 		this.srcDocform = srcDocForm;
+		loadConfigurationFromServer();
 		loadArchivers();
 		loadInitialForms();
 	}
@@ -95,9 +109,9 @@ public class RecordDataPanel extends VerticalPanel {
 		});
 	}
 
-	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, Boolean withUrnTextbox, IntelectualEntityForm entityForm,
+	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode, IntelectualEntityForm entityForm,
 			String typeName) {
-		this(superPanel, registrar, withUrnTextbox, entityForm, null, typeName);
+		this(superPanel, registrar, registrationMode, entityForm, null, typeName);
 	}
 
 	private void loadArchivers() {
@@ -175,13 +189,9 @@ public class RecordDataPanel extends VerticalPanel {
 	}
 
 	private boolean formsFilledCorrectly() {
-		// TODO
-		 return intelectualEntForm.isFilledCorrectly() & (srcDocform == null
-		 || srcDocform.isFilledCorrectly())
-		 & digitalDocForm.isFilledCorrectly() &
-		 technicalMetadataForm.isFilledCorrectly()
-		 & (urnNbnForm == null || urnNbnForm.isFilledCorrectly());
-		//return true;
+		return intelectualEntForm.isFilledCorrectly() & (srcDocform == null || srcDocform.isFilledCorrectly())
+				& digitalDocForm.isFilledCorrectly() & technicalMetadataForm.isFilledCorrectly()
+				& (urnNbnForm == null || urnNbnForm.isFilledCorrectly());
 	}
 
 	private void importRecord() {
@@ -199,8 +209,6 @@ public class RecordDataPanel extends VerticalPanel {
 
 			@Override
 			public void onSuccess(UrnNbnDTO result) {
-				// TODO: remove
-				//result = new UrnNbnDTO("tst001", "000001", Long.valueOf(2));
 				RecordDataPanel.this.urnNbnAssigned = result;
 				reloadPanelAfterRecordInserted();
 			}
@@ -315,5 +323,28 @@ public class RecordDataPanel extends VerticalPanel {
 	public void removeDigitalInstance(DigitalInstanceDTO instance) {
 		digitalInstances.remove(instance);
 		reloadPanelAfterRecordInserted();
+	}
+
+	private void loadConfigurationFromServer() {
+		AsyncCallback<ConfigurationData> callback = new AsyncCallback<ConfigurationData>() {
+			public void onSuccess(ConfigurationData data) {
+				RecordDataPanel.this.configuration = data;
+				initUrnNbnFormIfNecessary();
+			}
+
+						public void onFailure(Throwable caught) {
+				Window.alert(constants.serverError() + ": " + caught.getMessage());
+			}
+
+		};
+		configurationService.getConfiguration(callback);
+	}
+	
+	private void initUrnNbnFormIfNecessary() {
+		if (registrationMode == UrnNbnRegistrationMode.BY_REGISTRAR || registrationMode == UrnNbnRegistrationMode.BY_RESERVATION){
+			this.urnNbnForm = new UrnNbnForm(registrar, configuration.getCountryCode());
+		}else {
+			this.urnNbnForm = null;
+		}
 	}
 }

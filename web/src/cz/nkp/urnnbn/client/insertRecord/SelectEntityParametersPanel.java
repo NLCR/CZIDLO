@@ -3,11 +3,12 @@ package cz.nkp.urnnbn.client.insertRecord;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -24,6 +25,7 @@ import cz.nkp.urnnbn.client.forms.intEntities.PeriodicalVolumeForm;
 import cz.nkp.urnnbn.client.forms.intEntities.SourceDocumentForm;
 import cz.nkp.urnnbn.client.forms.intEntities.ThesisForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.shared.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class SelectEntityParametersPanel extends VerticalPanel {
@@ -31,12 +33,15 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final DataInputPanel superPanel;
 	private final ListBox entityTypeListBox = entityTypeListBox();
-	private ListBox registrarsListBox;
-	private final CheckBox urnWillBeInserted = new CheckBox();
+	private ListBox registrars;
+	private ListBox registrationModes;
 	private final Timer timer = waitForRegistrarsTimer();
 
 	public SelectEntityParametersPanel(DataInputPanel superPanel) {
 		this.superPanel = superPanel;
+		// TODO: mozna implementovat jinak - zeptat se a pak se pravidelne ptat po intervalu,
+		// jestli registrarsManagedByUser nacetlo
+		// v super panelu
 		timer.schedule(300);
 	}
 
@@ -47,7 +52,8 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 			public void run() {
 				if (superPanel.getRegistrarsManagedByUser() != null) {
 					this.cancel();
-					registrarsListBox = registrarsListBox();
+					registrars = registrarsListBox();
+					registrationModes = registrationModesListBox();
 					loadForm();
 				}
 			}
@@ -60,6 +66,29 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		for (RegistrarDTO registrar : registrars) {
 			result.addItem(registrar.getCode());
 		}
+		result.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				registrationModes = registrationModesListBox();
+				loadForm();
+			}
+		});
+		return result;
+	}
+
+	private ListBox registrationModesListBox() {
+		RegistrarDTO registrar = selectedRegistrar();
+		ListBox result = new ListBox();
+		if (registrar.isRegModeByRegistrarAllowed()) {
+			result.addItem(constants.modeByRegistrar());
+		}
+		if (registrar.isRegModeByResolverAllowed()) {
+			result.addItem(constants.modeByResolver());
+		}
+		if (registrar.isRegModeByReservationAllowed()) {
+			result.addItem(constants.modeByReservation());
+		}
 		return result;
 	}
 
@@ -67,9 +96,11 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		clear();
 		add(selectEntityTypePanel());
 		add(selectRegistrarPanel());
-		add(urnInsertedManualyPanel());
+		add(selectRegistrationModePanel());
 		add(continueButton());
 	}
+
+	
 
 	private ListBox entityTypeListBox() {
 		final ListBox result = new ListBox();
@@ -87,14 +118,14 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 	private Panel selectRegistrarPanel() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.registrar() + ": "));
-		result.add(registrarsListBox);
+		result.add(registrars);
 		return result;
 	}
-
-	private Panel urnInsertedManualyPanel() {
+	
+	private Panel selectRegistrationModePanel() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.urnNbnWillBeInserted() + ": "));
-		result.add(urnWillBeInserted);
+		result.add(new Label(constants.urnNbnRegistrationMode() + ": "));
+		result.add(registrationModes);
 		return result;
 	}
 
@@ -116,32 +147,47 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 	}
 
 	private RecordDataPanel buildRecordPanel() {
-		Boolean withUrnTextbox = urnWillBeInserted.getValue();
+		UrnNbnRegistrationMode registrationMode = selectedRegistrationMode();
 		RegistrarDTO registrar = selectedRegistrar();
 		switch (entityTypeListBox.getSelectedIndex()) {
 		case 0:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new MonographForm(), constants.monograph());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographForm(), constants.monograph());
 		case 1:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new MonographVolumeForm(), constants.monographVolume());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographVolumeForm(), constants.monographVolume());
 		case 2:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new PeriodicalForm(), constants.periodical());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalForm(), constants.periodical());
 		case 3:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new PeriodicalVolumeForm(), constants.periodicalVolume());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalVolumeForm(), constants.periodicalVolume());
 		case 4:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new PeriodicalIssueForm(), constants.periodicalIssue());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalIssueForm(), constants.periodicalIssue());
 		case 5:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new AnalyticalForm(), new SourceDocumentForm(),
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new AnalyticalForm(), new SourceDocumentForm(),
 					constants.analytical());
 		case 6:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new ThesisForm(), constants.thesis());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new ThesisForm(), constants.thesis());
 		case 7:
-			return new RecordDataPanel(superPanel, registrar, withUrnTextbox, new OtherEntityForm(), constants.otherEntity());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new OtherEntityForm(), constants.otherEntity());
 		default:
 			return null;
 		}
 	}
 
 	private RegistrarDTO selectedRegistrar() {
-		return superPanel.getRegistrarsManagedByUser().get(registrarsListBox.getSelectedIndex());
+		return superPanel.getRegistrarsManagedByUser().get(registrars.getSelectedIndex());
+	}
+
+	private UrnNbnRegistrationMode selectedRegistrationMode() {
+		int index = registrationModes.getSelectedIndex();
+		String text = registrationModes.getItemText(index);
+		if (constants.modeByResolver().equals(text)) {
+			return UrnNbnRegistrationMode.BY_RESOLVER;
+		} else if (constants.modeByRegistrar().equals(text)) {
+			return UrnNbnRegistrationMode.BY_REGISTRAR;
+		} else if (constants.modeByReservation().equals(text)) {
+			return UrnNbnRegistrationMode.BY_RESERVATION;
+		} else {
+			System.err.println("Unknown urn:nbn registration mode \"" + text + "\"");
+			return null;
+		}
 	}
 }

@@ -1,7 +1,5 @@
 package cz.nkp.urnnbn.client.search;
 
-import com.google.gwt.user.client.ui.TreeItem;
-
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import cz.nkp.urnnbn.shared.dto.ie.MonographDTO;
@@ -30,7 +28,6 @@ public class MonographBuilder extends EntityTreeItemBuilder {
 		appendPublicationIfNotNull();
 		addTimestamps(dto);
 	}
-
 	
 
 	@Override
