@@ -14,6 +14,7 @@ public class UrnNbnToDtoTransformer extends DtoTransformer {
 
 	@Override
 	public UrnNbnDTO transform() {
-		return new UrnNbnDTO( CountryCode.getCode(), original.getRegistrarCode().toString(), original.getDocumentCode(), original.getDigDocId(), original.isActive());
+		return new UrnNbnDTO( CountryCode.getCode(), original.getRegistrarCode().toString(), original.getDocumentCode(), original.getDigDocId(), 
+				original.isActive(), dateTimeToStringOrNull(original.getCreated()), dateTimeToStringOrNull(original.getModified()));
 	}
 }

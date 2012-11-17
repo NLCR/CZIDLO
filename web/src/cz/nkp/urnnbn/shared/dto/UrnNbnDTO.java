@@ -11,17 +11,22 @@ public class UrnNbnDTO implements Serializable {
 	private String documentCode;
 	private Long digdocId;
 	private boolean active;
+	private String created;
+	private String lastModified;
 
-	public UrnNbnDTO(){}
+	public UrnNbnDTO() {}
 
-	public UrnNbnDTO(String countryCode, String registrarCode, String documentCode, Long digdocId, boolean active) {
+	public UrnNbnDTO(String countryCode, String registrarCode, String documentCode, Long digdocId, boolean active, String created,
+			String lastModified) {
 		this.countryCode = countryCode;
 		this.registrarCode = registrarCode;
 		this.documentCode = documentCode;
 		this.digdocId = digdocId;
 		this.active = active;
+		this.created = created;
+		this.lastModified = lastModified;
 	}
-	
+
 	public String getCountryCode() {
 		return countryCode;
 	}
@@ -53,13 +58,29 @@ public class UrnNbnDTO implements Serializable {
 	public void setDigdocId(Long digdocId) {
 		this.digdocId = digdocId;
 	}
-	
-	public boolean isActive(){
+
+	public boolean isActive() {
 		return active;
 	}
-	
-	public void setActive(boolean active){
+
+	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getCreated() {
+		return created;
+	}
+
+	public void setCreated(String created) {
+		this.created = created;
+	}
+
+	public String getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(String lastModified) {
+		this.lastModified = lastModified;
 	}
 
 	public String toString() {

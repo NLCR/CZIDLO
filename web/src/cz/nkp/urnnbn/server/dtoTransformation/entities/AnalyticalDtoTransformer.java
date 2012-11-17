@@ -56,13 +56,14 @@ public class AnalyticalDtoTransformer extends EntityDtoTransformer {
 
 	private SourceDocumentDTO sourceDocumentDto() {
 		SourceDocumentDTO dto = new SourceDocumentDTO();
+		dto.setTitle(srcDoc.getTitle());
+		dto.setVolumeTitle(srcDoc.getVolumeTitle());
+		dto.setIssueTitle(srcDoc.getIssueTitle());
 		dto.setCcnb(srcDoc.getCcnb());
 		dto.setIsbn(srcDoc.getIssn());
 		dto.setIssn(srcDoc.getIssn());
 		dto.setOtherId(srcDoc.getOtherId());
 		dto.setPublication(transformPublication());
-		dto.setTitle(srcDoc.getTitle());
-		dto.setVolumeTitle(srcDoc.getVolumeTitle());
 		return dto;
 	}
 

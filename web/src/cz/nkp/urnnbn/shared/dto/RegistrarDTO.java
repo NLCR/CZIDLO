@@ -3,7 +3,7 @@ package cz.nkp.urnnbn.shared.dto;
 import java.io.Serializable;
 
 public class RegistrarDTO extends ArchiverDTO implements Serializable {
-	
+
 	private static final long serialVersionUID = -546318886531924354L;
 	private String code;
 	private boolean regModeByRegistrarAllowed;

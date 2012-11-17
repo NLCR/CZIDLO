@@ -49,7 +49,6 @@ public abstract class DtoTransformer {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
 			return dateTime.toString(fmt);
 		} else {
-			// System.err.println("dateTime is null");
 			return null;
 		}
 	}

@@ -40,8 +40,10 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	public TreeItem getItem() {
-		TreeItem rootItem = new TreeItem(digitalDocumentItem(dto.getUrn().isActive()));
-		appendUrnNbn(rootItem, dto.getUrn());
+		TreeItem rootItem = new TreeItem(digitalDocumentItem(dto.getUrn().isActive(), dto.getUrn()));
+		addUrnNbn(rootItem);
+
+		// appendUrnNbn(rootItem, dto.getUrn());
 		addRegistrar(rootItem);
 		addArchiver(rootItem);
 		addLabeledItemIfValueNotNull(rootItem, constants.financed(), dto.getFinanced());
@@ -59,14 +61,17 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		return rootItem;
 	}
 
-	private void appendUrnNbn(TreeItem root, UrnNbnDTO urnNbn) {
+	private void addUrnNbn(TreeItem root) {
+		UrnNbnDTO urnNbn = dto.getUrn();
 		String urnNbnHtml = urnNbn.isActive() ? urnNbn.toString() : "<span style=\"color:grey;text-decoration:line-through;\">"
 				+ urnNbn.toString() + "</span>";
-
-		String linkToXml = "api/" + API_VERSION + "/resolver/" + urnNbn.toString() + "?action=show&format=xml";
+		String linkToXml = "/api/" + API_VERSION + "/urnnbn/" + urnNbn.toString() + "?action=show&format=xml";
 		String linkToXmlRecord = "<a href=\"" + linkToXml + "\" target=\"_blank\">záznam v xml</a>";
 
 		TreeItem urnNbnItem = root.addItem(urnNbnHtml + "&nbsp&nbsp" + linkToXmlRecord);
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.created(), urnNbn.getCreated());
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.modified(), urnNbn.getLastModified());
+
 		// TODO: jen ukazka, dodelat
 		// TreeItem urnNbnItem = root.addItem(new
 		// HTML("<a href=\"http://resolver.nkp.cz/" + urnNbn + ">" + urnNbn +
@@ -86,19 +91,26 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	}
 
-	private Panel digitalDocumentItem(boolean active) {
+	private Panel digitalDocumentItem(boolean active, UrnNbnDTO urnNbn) {
 		HorizontalPanel result = new HorizontalPanel();
+		// label
 		if (active) {
 			result.add(new Label(constants.digitalDocument()));
 		} else {
 			result.add(new HTML("<span style=\"text-decoration:line-through;\">" + constants.digitalDocument() + "</span>"
 					+ " <span style=\"color:grey\">(" + constants.inactiveDD() + ")</span>"));
 		}
-		// spravce registratora nyni muze editovat zaznam svojeho DD
+		// button to edit record
 		if (activeUser().isSuperAdmin() || activeUserManagesRegistrar()) {
 			result.add(new HTML("&nbsp&nbsp"));
 			result.add(editDocumentButton());
 		}
+		// link to record in xml
+		String linkToXml = "/api/" + API_VERSION + "/resolver/" + urnNbn.toString() + "?action=show&format=xml";
+		String linkToXmlRecord = "<a href=\"" + linkToXml + "\" target=\"_blank\">záznam v xml</a>";
+		result.add(new HTML("&nbsp&nbsp"));
+		result.add(new HTML(linkToXmlRecord));
+
 		return result;
 	}
 
@@ -135,7 +147,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private void addArchiver(TreeItem rootItem) {
 		if (dto.getArchiver() != null) {
-			Button button = new Button("podrobnosti");
+			Button button = new Button(constants.details());
 			button.addClickHandler(new ClickHandler() {
 
 				@Override

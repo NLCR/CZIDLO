@@ -69,7 +69,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
 	public TreeItem getItem() {
 		HorizontalPanel panel = new HorizontalPanel();
-		String rootText = getAggregateTitle() + "<span style=\"color:grey\"> (" +entityType() +  ")</span>"; 
+		String rootText = getAggregateTitle() + "<span style=\"color:grey\"> (" + entityType() + ")</span>";
 		panel.add(new HTML(rootText));
 		if (user.isSuperAdmin()) {
 			panel.add(new HTML("&nbsp&nbsp"));
@@ -97,7 +97,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	abstract void addRows();
 
 	abstract String entityType();
-	
+
 	abstract String getAggregateTitle();
 
 	void addLabeledRowIfNotNull(String label, Object value) {
@@ -109,12 +109,16 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	}
 
 	void appendSourceDocumentIfNotNull() {
-		TreeItem srcDocItem = new TreeItem(constants.sourceDoc());
+		String title = buildTitle(srcDoc.getTitle(), srcDoc.getVolumeTitle(), srcDoc.getIssueTitle()); 
+		String itemLabel = "<span class=\"" + css.attrLabel() + "\">" + constants.sourceDoc() + ": </span>" + title;
+		TreeItem srcDocItem = new TreeItem(itemLabel);
 		if (srcDoc != null) {
+			addLabeledRowIfNotNull(srcDocItem, constants.title(), srcDoc.getTitle());
+			addLabeledRowIfNotNull(srcDocItem, constants.volumeTitle(), srcDoc.getVolumeTitle());
+			addLabeledRowIfNotNull(srcDocItem, constants.issueTitle(), srcDoc.getIssueTitle());
 			addLabeledRowIfNotNull(srcDocItem, constants.ccnb(), srcDoc.getCcnb());
 			addLabeledRowIfNotNull(srcDocItem, constants.isbn(), srcDoc.getIsbn());
 			addLabeledRowIfNotNull(srcDocItem, constants.issn(), srcDoc.getIssn());
-			addLabeledRowIfNotNull(srcDocItem, constants.periodicalIssueTitle(), srcDoc.getIssueTitle());
 			addLabeledRowIfNotNull(srcDocItem, constants.otherId(), srcDoc.getOtherId());
 			PublicationDTO publication = srcDoc.getPublication();
 			if (publication != null) {
@@ -122,8 +126,6 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 				addLabeledRowIfNotNull(srcDocItem, constants.publicationYear(), publication.getPublicationYear());
 				addLabeledRowIfNotNull(srcDocItem, constants.publisher(), publication.getPublisher());
 			}
-			addLabeledRowIfNotNull(srcDocItem, constants.title(), srcDoc.getTitle());
-			addLabeledRowIfNotNull(srcDocItem, constants.volumeTitle(), srcDoc.getVolumeTitle());
 		}
 		result.addItem(srcDocItem);
 	}
@@ -169,7 +171,9 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 		String separator = ", ";
 		StringBuilder result = new StringBuilder();
 		result.append(first);
-		result.append(separator).append(second);
+		if (second != null) {
+			result.append(separator).append(second);
+		}
 		return result.toString();
 	}
 
@@ -177,8 +181,12 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 		String separator = ", ";
 		StringBuilder result = new StringBuilder();
 		result.append(first);
-		result.append(separator).append(second);
-		result.append(separator).append(third);
+		if (second != null) {
+			result.append(separator).append(second);
+		}
+		if (third != null) {
+			result.append(separator).append(third);
+		}
 		return result.toString();
 	}
 
