@@ -58,24 +58,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode) throws DatabaseException {
         try {
-            UrnNbn urn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code, documentCode);
-            return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
-        } catch (RecordNotFoundException ex) { //urn:nb not in table urn:nbn
+            UrnNbn urnNbn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code, documentCode);
+            if (urnNbn.isActive()) {
+                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.ACTIVE);
+            } else {
+                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.DEACTIVATED);
+            }
+        } catch (RecordNotFoundException ex) { //urn:nb not in table urnNbn
             try {
-                UrnNbn urn = factory.urnReservedDao().getUrn(code, documentCode);
-                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.RESERVED);
+                UrnNbn urnNbnReserved = factory.urnReservedDao().getUrn(code, documentCode);
+                return new UrnNbnWithStatus(urnNbnReserved, UrnNbnWithStatus.Status.RESERVED);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
-                try {
-                    //TODO: actually search in abandonedUrnNbn table
-                    UrnNbn urn = null;
-                    if (true) {
-                        throw new RecordNotFoundException();
-                    }
-                    return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ABANDONED);
-                } catch (RecordNotFoundException ex3) { //urn:nbn not even ebandoned
-                    UrnNbn urn = new UrnNbn(code, documentCode, null);
-                    return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
-                }
+                UrnNbn urn = new UrnNbn(code, documentCode, null);
+                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
             }
         }
     }

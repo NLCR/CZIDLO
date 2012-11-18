@@ -305,7 +305,7 @@ public class RecordImporter {
 
     private void removeInsertedUrnNbn(UrnNbn urn) {
         try {
-            factory.urnDao().deleteUrnNbn(urn);
+            factory.urnDao().deleteUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
         } catch (Throwable ex) {
             logger.log(Level.SEVERE, "rollback: Failed to remove " + urn.toString(), ex);
         }
