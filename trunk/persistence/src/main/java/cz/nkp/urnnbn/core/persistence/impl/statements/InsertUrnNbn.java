@@ -36,7 +36,8 @@ public class InsertUrnNbn implements StatementWrapper {
                 + "," + UrnNbnDAO.ATTR_UPDATED
                 + "," + UrnNbnDAO.ATTR_REGISTRAR_CODE
                 + "," + UrnNbnDAO.ATTR_DOCUMENT_CODE
-                + ") values(?,?,?,?,?)";
+                + "," + UrnNbnDAO.ATTR_ACTIVE
+                + ") values(?,?,?,?,?,?)";
     }
     
     @Override
@@ -52,6 +53,7 @@ public class InsertUrnNbn implements StatementWrapper {
             st.setTimestamp(3, now);
             st.setString(4, urn.getRegistrarCode().toString());
             st.setString(5, urn.getDocumentCode());
+            st.setBoolean(6, true);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

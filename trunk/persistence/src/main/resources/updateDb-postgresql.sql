@@ -1,0 +1,30 @@
+/* SQL script for updating database of Resolver from version 2 to version 3 */
+
+/* rename attribute for consistency (mode BY_REGISTRAR) */
+ALTER TABLE REGISTRAR RENAME COLUMN ALLOWEDTOREGISTERFREEURNNBN TO ALLOWEDREGISTRATIONMODEBYREGISTRAR;
+
+/* add new attribute to state whether registration mode BY_RESOLVER is allowed for registrar */
+ALTER TABLE REGISTRAR ADD COLUMN ALLOWEDREGISTRATIONMODEBYRESOLVER BOOLEAN;
+/* set false to all existing registars */
+UPDATE REGISTRAR SET ALLOWEDREGISTRATIONMODEBYRESOLVER = 'false';
+/* add NOT NULL constraint */
+ALTER TABLE REGISTRAR ALTER COLUMN ALLOWEDREGISTRATIONMODEBYRESOLVER SET NOT NULL;
+
+/* add new attribute to state whether registration mode BY_RESERVATION is allowed for registrar */
+ALTER TABLE REGISTRAR ADD COLUMN ALLOWEDREGISTRATIONMODEBYRESERVATION BOOLEAN;
+/* set false to all existing registars */
+UPDATE REGISTRAR SET ALLOWEDREGISTRATIONMODEBYRESERVATION = 'false';
+/* add NOT NULL constraint */
+ALTER TABLE REGISTRAR ALTER COLUMN ALLOWEDREGISTRATIONMODEBYRESERVATION SET NOT NULL;
+
+
+/* new attribute ACTIVE for urn:nbn */
+ALTER TABLE URNNBN ADD COLUMN ACTIVE BOOLEAN;
+/* set true to all existing urn:nbn */
+UPDATE URNNBN SET ACTIVE = 'true';
+/* add NOT NULL constraint */
+ALTER TABLE URNNBN  ALTER COLUMN ACTIVE SET NOT NULL;
+
+
+
+

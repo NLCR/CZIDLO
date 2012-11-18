@@ -30,7 +30,7 @@ public class UrnNbnRT implements ResultsetTransformer {
                 resultSet.getTimestamp(UrnNbnDAO.ATTR_UPDATED));
         RegistrarCode registrarCode = RegistrarCode.valueOf(resultSet.getString(UrnNbnDAO.ATTR_REGISTRAR_CODE));
         String documentCode = resultSet.getString(UrnNbnDAO.ATTR_DOCUMENT_CODE);
-
-        return new UrnNbn(registrarCode, documentCode, digRepId, created, updated);
+        boolean active = resultSet.getBoolean(UrnNbnDAO.ATTR_ACTIVE);
+        return new UrnNbn(registrarCode, documentCode, digRepId, created, updated, active);
     }
 }
