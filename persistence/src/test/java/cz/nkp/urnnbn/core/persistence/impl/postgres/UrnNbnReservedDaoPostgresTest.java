@@ -37,16 +37,16 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testInsertUrnNbn() throws Exception {
         Registrar registrar = registrarPersisted();
         UrnNbn urn = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(urn, registrar.getId());
+        urnReservedDao.insertUrnNbn(urn, registrar.getId());
     }
 
     public void testInsertUrnNbn_alreadyExists() throws Exception {
         Registrar registrar = registrarPersisted();
         UrnNbn first = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(first, registrar.getId());
+        urnReservedDao.insertUrnNbn(first, registrar.getId());
         UrnNbn second = new UrnNbn(registrar.getCode(), "000004", null);
         try {
-            urnBookedDao.insertUrnNbn(second, registrar.getId());
+            urnReservedDao.insertUrnNbn(second, registrar.getId());
             fail();
         } catch (AlreadyPresentException e) {
             //ok
@@ -56,7 +56,7 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
     public void testInsertUrnNbn_unknownRegistrarId() throws Exception {
         UrnNbn urn = new UrnNbn(RegistrarCode.valueOf("aaa000"), "000004", null);
         try {
-            urnBookedDao.insertUrnNbn(urn, ILLEGAL_ID);
+            urnReservedDao.insertUrnNbn(urn, ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -70,9 +70,9 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(inserted, registrar.getId());
+        urnReservedDao.insertUrnNbn(inserted, registrar.getId());
         //fetch
-        UrnNbn fetched = urnBookedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        UrnNbn fetched = urnReservedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertEquals(fetched.getRegistrarCode(), inserted.getRegistrarCode());
         assertEquals(fetched.getDocumentCode(), inserted.getDocumentCode());
         assertNotNull(fetched);
@@ -85,9 +85,9 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(inserted, registrar.getId());
+        urnReservedDao.insertUrnNbn(inserted, registrar.getId());
         try {
-            urnBookedDao.getUrn(RegistrarCode.valueOf("aaa000"), inserted.getDocumentCode());
+            urnReservedDao.getUrn(RegistrarCode.valueOf("aaa000"), inserted.getDocumentCode());
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -98,9 +98,9 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(inserted, registrar.getId());
+        urnReservedDao.insertUrnNbn(inserted, registrar.getId());
         try {
-            urnBookedDao.getUrn(inserted.getRegistrarCode(), "000005");
+            urnReservedDao.getUrn(inserted.getRegistrarCode(), "000005");
             fail();
         } catch (RecordNotFoundException e) {
             //ok
@@ -111,12 +111,12 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbn first = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(first, registrar.getId());
+        urnReservedDao.insertUrnNbn(first, registrar.getId());
         UrnNbn second = new UrnNbn(registrar.getCode(), "000007", null);
-        urnBookedDao.insertUrnNbn(second, registrar.getId());
+        urnReservedDao.insertUrnNbn(second, registrar.getId());
         UrnNbn third = new UrnNbn(registrar.getCode(), "00z007", null);
-        urnBookedDao.insertUrnNbn(third, registrar.getId());
-        List<UrnNbn> urnNbnList = urnBookedDao.getUrnNbnList(registrar.getId());
+        urnReservedDao.insertUrnNbn(third, registrar.getId());
+        List<UrnNbn> urnNbnList = urnReservedDao.getUrnNbnList(registrar.getId());
         assertEquals(3, urnNbnList.size());
         assertTrue(urnNbnList.contains(first));
         assertTrue(urnNbnList.contains(second));
@@ -130,12 +130,12 @@ public class UrnNbnReservedDaoPostgresTest extends AbstractDaoTest {
         //insert
         Registrar registrar = registrarPersisted();
         UrnNbn inserted = new UrnNbn(registrar.getCode(), "000004", null);
-        urnBookedDao.insertUrnNbn(inserted, registrar.getId());
+        urnReservedDao.insertUrnNbn(inserted, registrar.getId());
         //delete
-        urnBookedDao.deleteUrn(inserted);
+        urnReservedDao.deleteUrn(inserted);
         //fetch
         try {
-            urnBookedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+            urnReservedDao.getUrn(inserted.getRegistrarCode(), inserted.getDocumentCode());
             fail();
         } catch (RecordNotFoundException e) {
             //ok

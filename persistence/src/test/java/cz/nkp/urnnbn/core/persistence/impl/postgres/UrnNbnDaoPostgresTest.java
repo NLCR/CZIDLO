@@ -18,16 +18,16 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
  * @author Martin Řehánek
  */
 public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
-    
+
     public UrnNbnDaoPostgresTest(String testName) {
         super(testName);
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -39,11 +39,11 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     public void testInsertUrnNbn() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn urn = new UrnNbn(registrar.getCode(), "123456", rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn urn = new UrnNbn(registrar.getCode(), "123456", doc.getId());
         urnDao.insertUrnNbn(urn);
     }
-    
+
     public void testInsertUrnNbn_unknownDigRep() throws Exception {
         Registrar registrar = registrarPersisted();
         UrnNbn urn = new UrnNbn(registrar.getCode(), "123456", ILLEGAL_ID);
@@ -54,21 +54,21 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             //ok
         }
     }
-    
+
     public void testInsertUrnNbn_alreadyPresent() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn first = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn first = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(first);
-        UrnNbn second = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        UrnNbn second = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         try {
             urnDao.insertUrnNbn(second);
             fail();
         } catch (AlreadyPresentException e) {
             IdPart[] id = (IdPart[]) e.getPresentObjectId();
-            assertEquals(String.valueOf(rep.getId()), id[0].getValue());
+            assertEquals(String.valueOf(doc.getId()), id[0].getValue());
             assertEquals(registrar.getCode().toString(), id[1].getValue());
             assertEquals(documentCode, id[2].getValue());
         }
@@ -81,10 +81,10 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(inserted);
-        UrnNbn fetched = urnDao.getUrnNbnByDigDocId(rep.getId());
+        UrnNbn fetched = urnDao.getUrnNbnByDigDocId(doc.getId());
         assertNotNull(fetched);
         assertNotNull(fetched.getCreated());
         assertNotNull(fetched.getRegistrarCode());
@@ -92,7 +92,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetched.getDigDocId());
         assertEquals(inserted, fetched);
     }
-    
+
     public void testGetUrnNbnByDigRegId_unknownDigRepId() throws Exception {
         try {
             urnDao.getUrnNbnByDigDocId(ILLEGAL_ID);
@@ -102,25 +102,26 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     }
 
     /**
-     * Test of getUrnNbnByRegistrarCodeAndDocumentCode method, of class UrnNbnDaoPostgres.
+     * Test of getUrnNbnByRegistrarCodeAndDocumentCode method, of class
+     * UrnNbnDaoPostgres.
      */
     public void testGetUrnNbnByRegistrarCodeAndDocumentCode_ok() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(inserted);
-        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(),documentCode);
+        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), documentCode);
         assertEquals(inserted, fetched);
     }
-    
+
     public void testGetUrnNbnByRegistrarCodeAndDocumentCode_unknownRegistrarCode() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(inserted);
         try {
             urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode.valueOf("NOT99"), documentCode);
@@ -129,13 +130,13 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             //ok
         }
     }
-    
+
     public void testGetUrnNbnByRegistrarCodeAndDocumentCode_unknownDocumentCode() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(inserted);
         try {
             urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), "NOT_USED");
@@ -144,9 +145,37 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             //ok
         }
     }
-    
-    public void testChangeUrnNbnStatus() throws Exception {
-        
+
+    public void testDeactivateUrnNbn() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "123456", doc.getId());
+        urnDao.insertUrnNbn(inserted);
+        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertTrue(fetched.isActive());
+        //deactivation
+        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertFalse(deactivated.isActive());
+        //another deactivation
+        UrnNbn deactivatedAgain = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertFalse(deactivatedAgain.isActive());
+    }
+
+    public void testDeleteUrnNbn() throws Exception {
+        String documentCode = "123456";
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
+        urnDao.insertUrnNbn(inserted);
+        urnDao.deleteUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        try {
+            urnDao.getUrnNbnByDigDocId(registrar.getId());
+        } catch (RecordNotFoundException ex) {
+            //ok
+        }
     }
 
     /**
@@ -156,25 +185,10 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
+        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId());
         urnDao.insertUrnNbn(inserted);
         urnDao.deleteAllUrnNbns();
-        try {
-            urnDao.getUrnNbnByDigDocId(registrar.getId());
-        } catch (RecordNotFoundException ex) {
-            //ok
-        }
-    }
-    
-    public void testDeleteUrnNbn() throws Exception {
-        String documentCode = "123456";
-        Registrar registrar = registrarPersisted();
-        IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, rep.getId());
-        urnDao.insertUrnNbn(inserted);
-        urnDao.deleteUrnNbn(inserted);
         try {
             urnDao.getUrnNbnByDigDocId(registrar.getId());
         } catch (RecordNotFoundException ex) {

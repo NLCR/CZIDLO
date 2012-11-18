@@ -6,22 +6,23 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
-import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.MultipleRecordsException;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAndStringAttrs;
@@ -131,11 +132,23 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
+    public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
+        DaoOperation operation = new NoResultOperation(new DeactivateUrnNbn(registrarCode, documentCode));
+        try {
+            runInTransaction(operation);
+        } catch (PersistenceException e) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", e);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
     @Override
-    public void deleteUrnNbn(UrnNbn urn) throws DatabaseException {
+    public void deleteUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
         StatementWrapper wrapper = new DeleteByStringString(TABLE_NAME,
-                ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString(),
-                ATTR_DOCUMENT_CODE, urn.getDocumentCode());
+                ATTR_REGISTRAR_CODE, registrarCode.toString(),
+                ATTR_DOCUMENT_CODE, documentCode);
         DaoOperation operation = new NoResultOperation(wrapper);
         try {
             runInTransaction(operation);

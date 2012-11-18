@@ -309,8 +309,8 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         } catch (Exception e) {
             //ok 
         }
-        //urn must be removed (moved to table ABANDONED) first
-        urnDao.deleteUrnNbn(urnInserted);
+        //urn must be deactivated first
+        urnDao.deleteUrnNbn(urnInserted.getRegistrarCode(), urnInserted.getDocumentCode());
         digDocDao.deleteDocument(docInserted.getId());
         try {
             urnDao.getUrnNbnByDigDocId(docInserted.getId());
