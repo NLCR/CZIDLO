@@ -85,7 +85,7 @@ public class RepositoryImpl implements Repository {
             UrnNbn urnNbn = UrnNbn.valueOf(id.toString());
             UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode());
             switch (fetechedUrn.getStatus()) {
-                case ABANDONED:
+                case DEACTIVATED:
                     //TODO: potentially return another implementation subclass of Record like DeletedRecord
                     return null;
                 case ACTIVE:
