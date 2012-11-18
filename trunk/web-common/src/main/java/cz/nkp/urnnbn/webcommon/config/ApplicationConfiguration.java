@@ -26,7 +26,7 @@ public class ApplicationConfiguration {
     private String adminName;
     private String adminEmail;
 
-    static public ApplicationConfiguration instanceOf() {
+    public static ApplicationConfiguration instanceOf() {
         if (instance == null) {
             instance = new ApplicationConfiguration();
         }
