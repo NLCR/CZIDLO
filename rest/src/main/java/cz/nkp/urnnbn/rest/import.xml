@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:import xmlns:r="http://resolver.nkp.cz/v2">
+<r:import xmlns:r="http://resolver.nkp.cz/v3">
     <r:monograph>
         <!-- nesmi byt id typu internal. Pokud bude pritomno, ignorovat -->
         <r:isbn>8090119964</r:isbn>

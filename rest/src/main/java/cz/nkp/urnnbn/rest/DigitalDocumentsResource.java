@@ -88,7 +88,7 @@ public class DigitalDocumentsResource extends Resource {
                 if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
                     throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
                 }
-            } else {
+            } else { //urn:nbn in import data
                 //this is duplicated - same functionality in RecordImporter
                 //also method isReserved
                 //requires refactoring
@@ -96,20 +96,21 @@ public class DigitalDocumentsResource extends Resource {
                     throw new InvalidUrnException(urnFromImport.toString(), "doesn't match registrar code " + registrar.getCode().toString());
                 }
                 UrnNbnWithStatus urnWithStatus = urnWithStatus(urnFromImport);
-                if (urnWithStatus.getStatus() == UrnNbnWithStatus.Status.ACTIVE) {
-                    throw new InvalidUrnException(urnFromImport.toString(), "already active");
-                }
-                if (urnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
-                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
-                        throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
-                    }
-                } else {
-                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
-                        throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
-                    }
+                switch (urnWithStatus.getStatus()) {
+                    case ACTIVE:
+                        throw new InvalidUrnException(urnFromImport.toString(), " already active");
+                    case RESERVED:
+                        if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
+                            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
+                        }
+                    case DEACTIVATED:
+                        throw new InvalidUrnException(urnFromImport.toString(), "URN:NBN has been deactivated");
+                    case FREE:
+                        if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
+                            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
+                        }
                 }
             }
-
             UrnNbn urn = dataImportService().importNewRecord(recordImport, login);
             UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);

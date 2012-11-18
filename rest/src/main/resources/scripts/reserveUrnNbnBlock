@@ -4,7 +4,7 @@ BODY_TMP=/tmp/body
 
 REGISTRAR_CODE=tst02
 SIZE=5
-URL=https://localhost/api/v2/registrars/$REGISTRAR_CODE/urnNbnReservations?size=$SIZE
+URL=https://localhost/api/v3/registrars/$REGISTRAR_CODE/urnNbnReservations?size=$SIZE
 HTTP_METHOD=POST
 LOGIN=mzkAdmin
 PASSWORD=mzkAdminPass

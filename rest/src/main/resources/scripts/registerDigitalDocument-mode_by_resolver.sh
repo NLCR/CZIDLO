@@ -5,7 +5,7 @@ BODY_TMP=/tmp/import-body;
 rm $HEADERS_TMP
 rm $BODY_TMP
 
-    TITLE="Registrace digitálního dokumentu (mód BY_RESOLVER - urn:nbn přiřadí Resolver a vrátí v odpovědi)"
+TITLE="Registrace digitálního dokumentu (mód BY_RESOLVER - urn:nbn přiřadí Resolver a vrátí v odpovědi)"
 INPUT_FILE=data/importWithoutUrnNbn.xml
 
 HOST=localhost
@@ -13,7 +13,7 @@ LOGIN=nkpAdmin
 PASSWORD=nkpAdminPass
 REGISTRAR_CODE=tst02
 
-URL=https://$HOST/api/v2/registrars/${REGISTRAR_CODE}/digitalDocuments
+URL=https://$HOST/api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments
 
 echo 
 echo $TITLE

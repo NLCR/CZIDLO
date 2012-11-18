@@ -13,7 +13,7 @@ LOGIN=nkpAdmin
 PASSWORD=nkpAdminPass
 REGISTRAR_CODE=tst02
 
-URL=https://$HOST/api/v2/registrars/${REGISTRAR_CODE}/digitalDocuments
+URL=https://$HOST/api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments
 
 echo 
 echo $TITLE

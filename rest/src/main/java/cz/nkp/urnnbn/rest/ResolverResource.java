@@ -32,19 +32,22 @@ public class ResolverResource extends Resource {
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
-            UrnNbnWithStatus fetched = dataAccessService().
-                    urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
+            UrnNbnWithStatus fetched = dataAccessService()
+                    .urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
             switch (fetched.getStatus()) {
+                case DEACTIVATED:
                 case ACTIVE:
-                    DigitalDocument rep = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
-                    if (rep == null) {
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                    if (doc == null) {
                         throw new UnknownDigitalDocumentException(fetched.getUrn());
                     }
-                    return new DigitalDocumentResource(rep, fetched.getUrn());
+                    return new DigitalDocumentResource(doc, fetched.getUrn());
                 case FREE:
                     throw new UnknownUrnException(urnParsed);
-                default: //booked and abandoned
+                case RESERVED:
                     throw new UnknownDigitalDocumentException(fetched.getUrn());
+                default:
+                    throw new RuntimeException();
             }
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());

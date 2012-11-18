@@ -18,6 +18,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalInstanceException;
+import cz.nkp.urnnbn.rest.exceptions.UrnNbnDeactivated;
 import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
@@ -71,19 +72,27 @@ public class DigitalDocumentResource extends Resource {
         ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
         boolean withDigitalInstances = queryParamToBoolean(withDigitalInstancesStr, PARAM_WITH_DIG_INST, true);
         loadUrn();
+        if (!urn.isActive()) {
+            if (action == Action.REDIRECT) {
+                throw new UrnNbnDeactivated(urn);
+            } else { //action = SHOW or DECIDE or UNDEFINED
+                action = Action.SHOW;
+            }
+        }
         switch (action) {
             case DECIDE:
-                //pokud pochazi z katalogu, udela se redirect s tim,
-                //ze se pouzije pouze DI patrici do DL registratora, ktery vlastni ten katalog
-                //pokud se nenajde DI, tak se chovej jako pri SHOW
-                URI instanceUriByReferer = getDigInstUriByReferer(request.getHeader(HEADER_REFERER));
-                if (instanceUriByReferer != null) {
-                    return redirectResponse(instanceUriByReferer);
+                //pokud se najde vhodna digitalni instance, je presmerovano
+                //preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
+                //jinak se pouzije jakakoliv jina (aktivni) digitalni instance
+                //pokud neni digitalni instance nalezena, zobrazi se zaznam DD
+                URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+                if (digitalInstance != null) {
+                    return redirectResponse(digitalInstance);
                 } else {
                     return recordResponse(format, request, withDigitalInstances);
                 }
             case REDIRECT:
-                URI uriByReferer = getDigInstUriByReferer(request.getHeader(HEADER_REFERER));
+                URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
                 if (uriByReferer != null) {
                     return redirectResponse(uriByReferer);
                 } else {
@@ -184,26 +193,16 @@ public class DigitalDocumentResource extends Resource {
         return new DigitalInstancesResource(doc);
     }
 
-    private URI getDigInstUriByReferer(String refererUrl) {
-        if (refererUrl == null || refererUrl.isEmpty()) {
-            return null;
-        }
+    private URI getDigInstUriOrNull(String refererUrl) {
         try {
-            //vsechny digitalni instance DD
-            List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-            List<Catalog> catalogs = dataAccessService().catalogs();
-            //vsechny katalogy, u kterych se shoduje prefix
-            List<Catalog> matching = catalogsWithMatchingReferer(catalogs, refererUrl);
-            for (Catalog catalog : matching) {
-                //digitalni knihovny vlastnene stejnym registratorem, jako katalog
-                List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(catalog.getRegistrarId());
-                for (DigitalLibrary library : libraries) {
-                    //instance DD
-                    for (DigitalInstance instance : instances) {
-                        //instance je ve vhodne knihovne a je aktivni
-                        if (instance.getLibraryId() == library.getId() && instance.isActive()) {
-                            return toUri(instance.getUrl());
-                        }
+            List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(doc.getId());
+            DigitalInstance instanceByReferer = digInstanceByReferer(allDigitalInstanceds, refererUrl);
+            if (instanceByReferer != null) { //prefered uri found
+                return toUri(instanceByReferer.getUrl());
+            } else { //return any uri
+                for (DigitalInstance instance : allDigitalInstanceds) {
+                    if (instance.isActive()) {
+                        toUri(instance.getUrl());
                     }
                 }
             }
@@ -212,6 +211,30 @@ public class DigitalDocumentResource extends Resource {
             Logger.getLogger(DigitalDocumentResource.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+
+    private DigitalInstance digInstanceByReferer(List<DigitalInstance> allInstances, String refererUrl) throws DatabaseException {
+        if (refererUrl == null || refererUrl.isEmpty()) {
+            return null;
+        }
+        //vsechny katalogy 
+        List<Catalog> catalogs = dataAccessService().catalogs();
+        //vsechny katalogy, u kterych se shoduje prefix
+        List<Catalog> matching = catalogsWithMatchingReferer(catalogs, refererUrl);
+        for (Catalog catalog : matching) {
+            //digitalni knihovny vlastnene stejnym registratorem, jako katalog
+            List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(catalog.getRegistrarId());
+            for (DigitalLibrary library : libraries) {
+                //instance DD
+                for (DigitalInstance instance : allInstances) {
+                    //instance je ve vhodne knihovne a je aktivni
+                    if (instance.getLibraryId() == library.getId() && instance.isActive()) {
+                        return instance;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private List<Catalog> catalogsWithMatchingReferer(List<Catalog> catalogs, String url) {

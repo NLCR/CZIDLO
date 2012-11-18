@@ -9,7 +9,7 @@ PASSWORD=mzkAdminPass
 URNNBN=urn:nbn:cz:tst002-000001
 ID_TYPE=someIdType
 ID_VALUE=newValue
-URL=http://localhost:8080/api/v2/resolver/$URNNBN/identifiers/$ID_TYPE
+URL=http://localhost:8080/api/v3/resolver/$URNNBN/identifiers/$ID_TYPE
 
 echo
 echo "Vložení/aktualizace indentifkátoru digitálního dokument v rámci registrátora"

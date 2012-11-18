@@ -4,7 +4,7 @@ BODY_TMP=body;
 
 DIG_INST_ID=4
 TITLE="Deaktivacer digitalni instance s id $DIG_INST_ID"
-URL=https://localhost/api/v2/digitalInstances/id/$DIG_INST_ID
+URL=https://localhost/api/v3/digitalInstances/id/$DIG_INST_ID
 HTTP_METHOD=DELETE
 
 LOGIN=nkpAdmin
