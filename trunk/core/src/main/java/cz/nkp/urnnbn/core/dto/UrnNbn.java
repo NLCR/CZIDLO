@@ -23,6 +23,7 @@ public class UrnNbn {
     private final String documentCode;
     private final DateTime created;
     private final DateTime modified;
+    private final Boolean active;
 
     /**
      * This constructor should be used when urn:nbn is being assigned or parsed
@@ -37,6 +38,7 @@ public class UrnNbn {
         this.digDocId = digDocId;
         this.created = null;
         this.modified = null;
+        this.active = null;
     }
 
     private static Pattern getUrnNbnPattern() {
@@ -56,12 +58,13 @@ public class UrnNbn {
      * @param created
      * @param modified
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created, DateTime modified) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created, DateTime modified, boolean active) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
         this.created = created;
         this.modified = modified;
+        this.active = active;
     }
 
     public String getDocumentCode() {
@@ -82,6 +85,10 @@ public class UrnNbn {
 
     public DateTime getModified() {
         return modified;
+    }
+
+    public Boolean isActive() {
+        return active;
     }
 
     @Override

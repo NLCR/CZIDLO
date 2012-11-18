@@ -17,7 +17,7 @@ public class UrnNbnWithStatus {
         FREE,
         RESERVED,
         ACTIVE,
-        ABANDONED
+        DEACTIVATED
     }
     private final UrnNbn urn;
     private final Status status;
