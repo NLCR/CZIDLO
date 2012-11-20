@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
 import java.io.InputStream;
@@ -207,6 +208,8 @@ public class ResolverConnector {
         wr.flush();
         wr.close();
         int responseCode = connection.getResponseCode();
+        //Builder builder2 = new Builder();
+        //System.out.println(builder2.build(connection.getErrorStream()).toXML());
         if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??            
             throw new ResolverConnectionException("Importing record document: response code expected 200,  found " + responseCode);
         }
@@ -287,36 +290,19 @@ public class ResolverConnector {
         return node.get(0).getValue();
     }
 
-    private static List<String> getDigitalInstancesIdListByLibrary(String urnnbn, String libraryId) throws IOException, ParsingException {
-        List<String> newIdList = new ArrayList<String>();
+    public static DigitalInstance getDigitalInstanceByLibraryId(String urnnbn, DigitalInstance newDi) throws IOException, ParsingException {
         List<String> idList = getDigitalInstancesIdList(urnnbn);
         for (String id : idList) {
-            Document document = getDigitailInstanceById(id);
-            Nodes nodes = document.query("//r:digitalLibrary/r:id", CONTEXT);
-            if (nodes.size() > 0) {
-                String docLibraryId = nodes.get(0).getValue();
-                if (docLibraryId.endsWith(libraryId)) {
-                    newIdList.add(id);
-                }
+            Document document = getDigitailInstanceById(id);            
+            DigitalInstance oldDi = ImportDocumentHandler.getDigitalLibraryIdFromDocument(document);
+            System.out.println("odi:" + oldDi);
+            if (oldDi.getDigitalLibraryId().equals(newDi.getDigitalLibraryId())) {
+                    return oldDi;
             }
         }
-        return newIdList;
+        return null;
     }
 
-    public static void removeAllDigitalInstances(String urnnbn, String libraryId, String login, String password) throws ResolverConnectionException {
-        List<String> list = null;
-        try {
-            list = ResolverConnector.getDigitalInstancesIdListByLibrary(urnnbn, libraryId);
-        } catch (IOException ex) {
-            throw new ResolverConnectionException("IOException occured while getting DI id list for given unrnbn and library id");
-        } catch (ParsingException ex) {
-            throw new ResolverConnectionException("ParsingException occured while getting DI id list for given unrnbn and library id");
-        }
-        for (String id : list) {
-            ResolverConnector.removeDigitalInstance(id, login, password);
-        }
-
-    }
 
     public static void main(String[] args) {
     }

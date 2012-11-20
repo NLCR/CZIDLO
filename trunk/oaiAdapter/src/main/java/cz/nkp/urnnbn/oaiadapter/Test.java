@@ -56,9 +56,9 @@ public class Test {
     public void importDDwithDI() {
         try {
             String dd = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument.xml";
-            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance2.xml";
-            String registrator = "tsh02";
-            String oaiIdentifier = "myCollection:myId";
+            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance.xml";
+            String registrator = "tsh01";
+            String oaiIdentifier = "myCollection:myId233";
 
             Builder builder = new Builder();
             Document digitalDocument = builder.build(new File(dd));
@@ -68,7 +68,8 @@ public class Test {
             oaiAdapter.setLogin(Credentials.LOGIN);
             oaiAdapter.setPassword(Credentials.PASSWORD);
             oaiAdapter.setRegistrarCode(registrator);
-            oaiAdapter.setMode(OaiAdapter.Mode.BY_RESOLVER);
+            //oaiAdapter.setMode(OaiAdapter.Mode.BY_RESOLVER);
+            oaiAdapter.setMode(OaiAdapter.Mode.BY_REGISTRAR);
 
             oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
         } catch (ResolverConnectionException ex) {
@@ -87,8 +88,11 @@ public class Test {
     public static void main(String[] args) {
         
             Test test = new Test();
+    
             //test.makeReservation();
             test.importDDwithDI();
+           /// System.out.println(ResolverConnector.getDigitailInstanceById("35747").toXML());
+            
           //  test.importDI();
 //        try {    
 //            ResolverConnector.removeDigitalInstance("35747", Credentials.LOGIN, Credentials.PASSWORD);
