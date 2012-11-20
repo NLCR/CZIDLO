@@ -230,14 +230,36 @@ public class OaiAdapter {
         System.out.println("URNNBN: " + urnnbn);
         //From this point on the process id equils from all modes and statuses. ([check digital instances]
 
-        String digitalLibraryId = ImportDocumentHandler.getDigitalLibraryIdFromDocument(digitalInstance);
-        ResolverConnector.removeAllDigitalInstances(urnnbn, digitalLibraryId, login, password);
-        importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
-
-
-
-
-
+        DigitalInstance newDi = ImportDocumentHandler.getDigitalLibraryIdFromDocument(digitalInstance);
+        System.out.println(newDi);
+        DigitalInstance oldDi = null;
+        try {
+            oldDi = ResolverConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
+        } catch (IOException ex) {
+            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParsingException ex) {
+            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(oldDi == null) {
+            //di doesnt exist yet            
+            // IMPORT            
+            importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
+            System.out.println("DI doesn't exists ..importing DI");
+        } else {
+            System.out.println(oldDi);
+            //di already exist
+            if(newDi.isChanged(oldDi)) {
+                //di has been changed
+                // REMOVE
+                ResolverConnector.removeDigitalInstance(oldDi.getId(), login, password);
+                // IMPORT
+                importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
+                System.out.println("DI already exists and is modified ...removing old one and imporing new DI");
+            } else {
+                // no change ..do nothing
+                System.out.println("DI already exists and is not modified ...doing nothing");
+            }
+        }                
     }
 
     private void importDigitalInstance(Document digitalInstance, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
