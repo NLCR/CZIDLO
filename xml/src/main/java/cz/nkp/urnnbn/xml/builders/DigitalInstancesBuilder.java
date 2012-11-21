@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import java.util.List;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -40,11 +41,9 @@ public class DigitalInstancesBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalInstances", RESOLVER);
-        if (instanceBuilderList == null) {
-            Element countEl = appendElement(root, "totalCount");
-            countEl.appendChild(Long.toString(count));
-        } else {
+        Element root = new Element("digitalInstances", RESOLVER_NS);
+        root.addAttribute(new Attribute("count", Long.toString(count)));
+        if (instanceBuilderList != null) {
             for (DigitalInstanceBuilder builder : instanceBuilderList) {
                 appendBuilderResultfNotNull(root, builder);
             }

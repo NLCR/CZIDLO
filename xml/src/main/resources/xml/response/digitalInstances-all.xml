@@ -15,6 +15,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<r:digitalInstances xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:totalCount>4</r:totalCount>
-</r:digitalInstances>
+<response xmlns="http://resolver.nkp.cz/v3/">
+    <digitalInstances count="4"/>
+</response>

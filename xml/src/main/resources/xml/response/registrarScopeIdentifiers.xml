@@ -15,7 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<r:registrarScopeIdentifiers xmlns:r="http://resolver.nkp.cz/v2/">
-        <r:id type="OAI">123</r:id>
-        <r:id type="signatura">3-1275.138</r:id>
-</r:registrarScopeIdentifiers>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrarScopeIdentifiers>
+        <id type="OAI_harvester">1238</id>
+        <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
+    </registrarScopeIdentifiers>
+</response>

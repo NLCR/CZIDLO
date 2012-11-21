@@ -15,11 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<urnNbn xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
-    <created>2012-04-03T22:04:30.525+02:00</created>
-    <status>ACTIVE</status>
-    <created>2012-04-03T22:04:30.525+02:00</created>
-    <registrarCode>tst02</registrarCode>
-    <value>urn:nbn:cz:tst02-000001</value>
-    <digitalDocumentId>1</digitalDocumentId>
-</urnNbn>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <registrarCode>tst02</registrarCode>
+        <value>urn:nbn:cz:tst02-000003</value>
+        <digitalDocumentId>8</digitalDocumentId>
+        <created>2012-04-18T23:21:56.304+02:00</created>
+    </urnNbn>
+</response>

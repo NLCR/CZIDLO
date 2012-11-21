@@ -47,16 +47,16 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     @Override
     public Element buildRootElement() {
-        Element root = new Element("digitalDocument", RESOLVER);
-        //appendIdentifierElement(root, "INTERNAL", rep.getId());
-        appendTimestamps(root, doc, "digital document");
+        Element root = new Element("digitalDocument", RESOLVER_NS);
+        root.addAttribute(new Attribute("id", doc.getId().toString()));
         appendElementWithContentIfNotNull(root, urn, "urnNbn");
         appendElementWithContentIfNotNull(root, doc.getFinancedFrom(), "financed");
         appendElementWithContentIfNotNull(root, doc.getContractNumber(), "contractNumber");
+        appendTimestamps(root, doc, "digital document");
         appendBuilderResultfNotNull(root, entityBuilder);
         appendTechnicalMetadata(root);
-        appendBuilderResultfNotNull(root, registrarBuilder);
         appendBuilderResultfNotNull(root, identifiersBuilder);
+        appendBuilderResultfNotNull(root, registrarBuilder);
         appendBuilderResultfNotNull(root, archiverBuilder);
         appendBuilderResultfNotNull(root, instancesBuilder);
         return root;

@@ -15,4 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<r:registrarUniqueIdentifier xmlns:r="http://resolver.nkp.cz/v2" type="NewType">12345</r:registrarUniqueIdentifier>
+
+<digitalInstance xmlns="http://resolver.nkp.cz/v3/">
+    <url>https://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+    <digitalLibraryId>4</digitalLibraryId>
+    <format>jpg;pdf</format>
+    <accessibility>volně přístupné</accessibility>
+</digitalInstance>

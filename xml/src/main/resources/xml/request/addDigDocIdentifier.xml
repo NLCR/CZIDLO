@@ -15,7 +15,4 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<id xmlns="http://resolver.nkp.cz/v2/">
-    <newValue>1234</newValue>
-    <previousValue>1234g</previousValue>
-</id>
+<r:registrarUniqueIdentifier xmlns:r="http://resolver.nkp.cz/v3" type="NewType">12345</r:registrarUniqueIdentifier>

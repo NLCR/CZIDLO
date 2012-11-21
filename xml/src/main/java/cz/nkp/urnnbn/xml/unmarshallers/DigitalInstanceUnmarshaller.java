@@ -17,6 +17,8 @@
 package cz.nkp.urnnbn.xml.unmarshallers;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.UrlValidator;
 import nu.xom.Document;
 import nu.xom.Element;
 
@@ -35,10 +37,10 @@ public class DigitalInstanceUnmarshaller extends Unmarshaller {
     public DigitalInstance getDigitalInstance() {
         DigitalInstance result = new DigitalInstance();
         Element root = doc.getRootElement();
-        result.setUrl(elementContentOrNull("url", root));
-        result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root)));
-        result.setFormat(elementContentOrNull("format", root));
-        result.setAccessibility(elementContentOrNull("accessibility", root));
+        result.setUrl(elementContentOrNull("url", root, new UrlValidator(200)));
+        result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root, null)));
+        result.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(50)));
+        result.setAccessibility(elementContentOrNull("accessibility", root, new LimitedLengthEnhancer(50)));
         result.setActive(Boolean.TRUE);
         return result;
     }

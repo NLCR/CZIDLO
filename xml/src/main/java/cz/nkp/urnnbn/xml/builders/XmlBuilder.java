@@ -18,6 +18,7 @@ package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.IdentifiableWithDatestamps;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
+import cz.nkp.urnnbn.xml.config.WebModuleConfiguration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Attribute;
@@ -32,36 +33,39 @@ import org.joda.time.DateTime;
 public abstract class XmlBuilder {
 
     private static final Logger logger = Logger.getLogger(XmlBuilder.class.getName());
-    private static final String RESPONSE_SCHEMA = "http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd";
     private static final boolean INCLUDE_SCHEMA = true;
-    static String RESOLVER = Namespaces.RESOLVER;
+    private static String responseSchema = null;
+    static String RESOLVER_NS = Namespaces.RESOLVER_NS;
     static String IDTYPE_INTERNAL = "INTERNAL";
 
     abstract Element buildRootElement();
 
-    public Document buildDocument() {
-        Element rootElement = buildRootElement();
-        if (INCLUDE_SCHEMA) {
-            Attribute schemaLocation = new Attribute("xsi:schemaLocation", Namespaces.XSI, RESPONSE_SCHEMA);
-            rootElement.addAttribute(schemaLocation);
+    private static String getResponseSchema() {
+        if (responseSchema == null) {
+            responseSchema = Namespaces.XSI_NS + ' ' + WebModuleConfiguration.instanceOf().getResponseXsdLocation();
         }
-        return new Document(rootElement);
+        return responseSchema;
+    }
+
+    public Document buildDocument() {
+        Element response = new Element("response", RESOLVER_NS);
+        if (INCLUDE_SCHEMA) {
+            Attribute schemaLocation = new Attribute("xsi:schemaLocation", Namespaces.XSI_NS, getResponseSchema());
+            response.addAttribute(schemaLocation);
+        }
+        response.appendChild(buildRootElement());
+        return new Document(response);
     }
 
     Element appendElement(Element root, String elementName) {
-        Element child = new Element(elementName, RESOLVER);
+        Element child = new Element(elementName, RESOLVER_NS);
         root.appendChild(child);
         return child;
     }
 
-    void appendIdentifierElement(Element root, String idType, Object value) {
-        Element id = appendElementWithContentIfNotNull(root, value, "id");
-        id.addAttribute(new Attribute("type", idType));
-    }
-
     final Element appendElementWithContentIfNotNull(Element root, Object content, String elementName) {
         if (content != null) {
-            Element child = new Element(elementName, RESOLVER);
+            Element child = new Element(elementName, RESOLVER_NS);
             root.appendChild(child);
             child.appendChild(String.valueOf(content));
             return child;

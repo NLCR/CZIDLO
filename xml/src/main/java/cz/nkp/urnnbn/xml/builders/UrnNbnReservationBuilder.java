@@ -34,9 +34,9 @@ public class UrnNbnReservationBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("urnNbnReservation", RESOLVER);
+        Element root = new Element("urnNbnReservation", RESOLVER_NS);
         for (UrnNbn urnNbn : urnNbnList) {
-            Element urnEl = new Element("urnNbn", RESOLVER);
+            Element urnEl = new Element("urnNbn", RESOLVER_NS);
             urnEl.appendChild(urnNbn.toString());
             root.appendChild(urnEl);
         }

@@ -34,7 +34,7 @@ public class DigitalLibrariesBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalLibraries", RESOLVER);
+        Element root = new Element("digitalLibraries", RESOLVER_NS);
         for (DigitalLibrary library : libraryBuilderList) {
             DigitalLibraryBuilder builder = new DigitalLibraryBuilder(library, null);
             appendBuilderResultfNotNull(root, builder);

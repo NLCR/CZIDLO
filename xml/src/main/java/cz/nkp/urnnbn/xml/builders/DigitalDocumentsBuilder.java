@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -24,16 +25,16 @@ import nu.xom.Element;
  */
 public class DigitalDocumentsBuilder extends XmlBuilder {
 
-    private final int digRepCount;
+    private final int digDocCount;
 
     public DigitalDocumentsBuilder(int digRepCount) {
-        this.digRepCount = digRepCount;
+        this.digDocCount = digRepCount;
     }
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalDocuments", RESOLVER);
-        appendElementWithContentIfNotNull(root, digRepCount, "count");
+        Element root = new Element("digitalDocuments", RESOLVER_NS);
+        root.addAttribute(new Attribute("count", Integer.toString(digDocCount)));
         return root;
     }
 }

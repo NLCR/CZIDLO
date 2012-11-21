@@ -15,8 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<urnNbn xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
-    <status>FREE</status>
-    <registrarCode>tst02</registrarCode>
-    <value>urn:nbn:cz:tst02-000007</value>
-</urnNbn>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>FREE</status>
+        <registrarCode>tst02</registrarCode>
+        <value>urn:nbn:cz:tst02-0000a3</value>
+    </urnNbn>
+</response>
+

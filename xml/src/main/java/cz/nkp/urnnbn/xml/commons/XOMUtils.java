@@ -217,7 +217,6 @@ public class XOMUtils {
         } catch (ParserConfigurationException ex) {
             throw new ValidityException(ex.getMessage(), ex);
         } catch (SAXException ex) {
-
             throw new ValidityException(ex.getMessage(), ex);
         }
     }

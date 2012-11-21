@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.IOException;
 import junit.framework.TestCase;
+import nu.xom.Document;
 import nu.xom.ParsingException;
 
 /**
@@ -48,54 +49,66 @@ public class ImportExamples extends TestCase {
 
     public void testValidateMonographImport() throws Exception {
         String xmlString = toXmlString(importExamplesDir, "monograph.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+        System.err.println("file: " + xmlString);
+        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+        //Document doc = XOMUtils.loadDocumentValidByInternalXsd(xmlString);
+        assertNotNull(doc);
     }
 
-    public void testValidateMonographWithUrnImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "monograph-withUrnNbn.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidateMonographVolumeImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "monographVolume.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidatePeriodicalImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "periodical.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidatePeriodicalVolumeImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "periodicalVolume.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidatePeriodicalIssueImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "periodicalIssue.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidateThesisImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "thesis.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidateAnalyticalImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "analytical.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidateOtherEntity_mapImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "otherEntity-map.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
-    public void testValidateOtherEntity_musicSheetImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "otherEntity-musicSheet.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-    }
-
+//    public void testValidateMonographWithUrnImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "monograph-withUrnNbn.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidateMonographVolumeImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "monographVolume.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidatePeriodicalImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "periodical.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidatePeriodicalVolumeImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "periodicalVolume.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidatePeriodicalIssueImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "periodicalIssue.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidateThesisImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "thesis.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidateAnalyticalImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "analytical.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidateOtherEntity_mapImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "otherEntity-map.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
+//    public void testValidateOtherEntity_musicSheetImport() throws Exception {
+//        String xmlString = toXmlString(importExamplesDir, "otherEntity-musicSheet.xml");
+//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+//        assertNotNull(doc);
+//    }
+//
     private String toXmlString(File rootDir, String filename) throws ParsingException, IOException {
         File file = new File(rootDir.getAbsolutePath() + File.separator + filename);
         return XOMUtils.loadDocumentWithoutValidation(file).toXML();
