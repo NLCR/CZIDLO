@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2011, 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbnReservations>
+        <maxReservationSize>100</maxReservationSize>
+        <defaultReservationSize>10</defaultReservationSize>
+        <reserved size="8">
+            <urnNbn created="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:tst02-00000c</urnNbn>
+            <urnNbn created="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:tst02-00000d</urnNbn>
+            <urnNbn created="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:tst02-00000e</urnNbn>
+            <urnNbn created="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:tst02-00000f</urnNbn>
+            <urnNbn created="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:tst02-00000g</urnNbn>
+            <urnNbn created="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:tst02-00000h</urnNbn>
+            <urnNbn created="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:tst02-00000i</urnNbn>
+            <urnNbn created="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:tst02-00000j</urnNbn>
+        </reserved>
+    </urnNbnReservations>
+</response>

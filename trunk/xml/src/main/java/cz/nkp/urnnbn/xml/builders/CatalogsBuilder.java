@@ -34,7 +34,7 @@ public class CatalogsBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("catalogs", RESOLVER);
+        Element root = new Element("catalogs", RESOLVER_NS);
         for (Catalog catalog : catalogs) {
             CatalogBuilder builder = new CatalogBuilder(catalog, null);
             appendBuilderResultfNotNull(root, builder);

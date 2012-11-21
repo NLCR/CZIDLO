@@ -15,22 +15,61 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<registrar xmlns="http://resolver.nkp.cz/v2/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" code="aba001" xsi:schemaLocation="http://resolver.nkp.cz/v2/ http://iris.mzk.cz/cache/resolver-response.xsd">
-    <created>2012-04-03T22:04:26.021+02:00</created>
-    <name>Národní knihovna České republiky</name>
-    <description></description>
-    <digitalLibraries>
-        <digitalLibrary>
-            <created>2012-04-03T22:04:26.067+02:00</created>
-            <name>Kramerius Národní knihovna ČR</name>
-            <description>kod_rd:dkknkcr</description>
-        </digitalLibrary>
-    </digitalLibraries>
-    <catalogs>
-        <catalog>
-            <created>2012-04-03T22:04:28.533+02:00</created>
-            <name>Aleph NKP</name>
-            <urlPrefix>http://aleph.nkp.cz</urlPrefix>
-        </catalog>
-    </catalogs>
-</registrar>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrar code="boa001" id="16">
+        <name>Moravská zemská knihovna</name>
+        <description></description>
+        <created>2012-04-18T23:19:16.551+02:00</created>
+        <registrationModes>
+            <mode name="BY_RESOLVER" enabled="false" />
+            <mode name="BY_REGISTRAR" enabled="true" />
+            <mode name="BY_RESERVATION" enabled="false" />
+        </registrationModes>
+        <digitalLibraries>
+            <digitalLibrary id="13">
+                <!--complete record-->
+                <name>Kramerius 4</name>
+                <description>aktuální verze knihovny Kramerius</description>
+                <url>http://kramerius.mzk.cz</url>
+                <created>2012-04-18T23:19:16.577+02:00</created>
+                <modified>2012-04-18T23:19:16.577+02:00</modified>
+            </digitalLibrary>
+            <digitalLibrary id="14">
+                <!--minimal-->
+                <name>Kramerius 3</name>
+                <url>http://kramerius3.mzk.cz</url>
+                <created>2012-04-18T23:19:16.609+02:00</created>
+            </digitalLibrary>
+            <digitalLibrary id="15">
+                <!--https-->
+                <name>web Duhy</name>
+                <url>https://duha.mzk.cz</url>
+                <created>2012-04-18T23:19:16.609+02:00</created>
+            </digitalLibrary>
+        </digitalLibraries>
+        <catalogs>
+            <catalog id="2">
+                <!--complete-->
+                <name>Aleph MZK</name>
+                <description>Aleph MZK</description>
+                <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+                <created>2012-04-18T23:19:17.832+02:00</created>
+                <modified>2012-04-18T23:19:17.832+02:00</modified>
+            </catalog>
+            <catalog id="3">
+                <!--minimal-->
+                <name>Aleph MZK</name>
+                <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+                <created>2012-04-18T23:19:17.832+02:00</created>
+            </catalog>
+            <catalog id="4">
+                <!--https-->
+                <name>Aleph MZK</name>
+                <description>Aleph MZK</description>
+                <urlPrefix>https://aleph.mzk.cz</urlPrefix>
+                <created>2012-04-18T23:19:17.832+02:00</created>
+            </catalog>
+        </catalogs>
+    </registrar>
+</response>

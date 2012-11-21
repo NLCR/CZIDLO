@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -33,11 +34,11 @@ public class ArchiverBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("archiver", RESOLVER);
-        appendIdentifierElement(root, IDTYPE_INTERNAL, archiver.getId());
-        appendTimestamps(root, archiver, "archiver");
+        Element root = new Element("archiver", RESOLVER_NS);
+        root.addAttribute(new Attribute("id", archiver.getId().toString()));
         appendElementWithContentIfNotNull(root, archiver.getName(), "name");
         appendElementWithContentIfNotNull(root, archiver.getDescription(), "description");
+        appendTimestamps(root, archiver, "archiver");
         return root;
     }
 }

@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -35,12 +36,12 @@ public class CatalogBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("catalog", RESOLVER);
-        //appendIdentifierElement(root, IDTYPE_INTERNAL, catalog.getId());
-        appendTimestamps(root, catalog, "catalog");
+        Element root = new Element("catalog", RESOLVER_NS);
+        root.addAttribute(new Attribute("id", catalog.getId().toString()));
         appendElementWithContentIfNotNull(root, catalog.getName(), "name");
         appendElementWithContentIfNotNull(root, catalog.getDescription(), "description");
         appendElementWithContentIfNotNull(root, catalog.getUrlPrefix(), "urlPrefix");
+        appendTimestamps(root, catalog, "catalog");
         appendBuilderResultfNotNull(root, registrarBuilder);
         return root;
     }

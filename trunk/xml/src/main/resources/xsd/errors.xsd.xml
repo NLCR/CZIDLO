@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           elementFormDefault="qualified" 
+           targetNamespace="http://resolver.nkp.cz/v3/" 
+           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <xs:complexType name="errorType">
+        <xs:sequence>
+            <xs:element name="code" type="r:errorCodeType"/>
+            <xs:element name="message" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="errorCodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALREADY_DEACTIVATED"/>
+            <xs:enumeration value="DIGITAL_INSTANCE_ALREADY_PRESENT"/>
+            <xs:enumeration value="INVALID_ARCHIVER_ID"/>
+            <xs:enumeration value="INVALID_DATA"/>
+            <xs:enumeration value="INVALID_DATA"/>
+            <xs:enumeration value="INVALID_DIGITAL_DOCUMENT_IDENTIFIER"/>
+            <xs:enumeration value="INVALID_DIGITAL_DOCUMENT_ID_TYPE"/>
+            <xs:enumeration value="INVALID_DIGITAL_INSTANCE_ID"/>
+            <xs:enumeration value="INVALID_QUERY_PARAM_VALUE"/>
+            <xs:enumeration value="INVALID_REGISTRAR_CODE"/>
+            <xs:enumeration value="INVALID_URN_NBN"/>
+            <xs:enumeration value="MISSING_PARAMETER"/>
+            <xs:enumeration value="NOT_AUTHENTICATED"/>
+            <xs:enumeration value="NOT_AUTHORIZED"/>
+            <xs:enumeration value="NOT_DEFINED"/>
+            <xs:enumeration value="UNAUTHORIZED_REGISTRATION_MODE"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_DOCUMENT"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_INSTANCE"/>
+            <xs:enumeration value="UNKNOWN_DIGITAL_LIBRARY"/>
+            <xs:enumeration value="UNKNOWN_REGISTRAR"/>
+            <xs:enumeration value="UNKNOWN_URN"/>
+            <xs:enumeration value="URN_NBN_DEACTIVATED"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

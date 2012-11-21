@@ -1,13 +1,8 @@
 package cz.nkp.urnnbn.xml;
 
-//import dom4jutilszbytky.Dom4jUtils;
-//import dom4jutilszbytky.ValidationException;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Nodes;
@@ -27,39 +22,66 @@ public class Main {
     }
 
     private static void validateXml() {
-//        try {
-////            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/registrar.xml");
-////            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/response.xsd.xml");
-//          File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import.xml");
-//            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/request.xsd.xml");
-//           
-//            Dom4jUtils.validateBySchemaFromFile(toValidate, schema);
-//            System.err.println("Document is valid");
-//        } catch (ValidationException ex) {
-//            //Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//            System.err.println("Document is not valid: " + ex.getMessage());
-//        }
+        //registration of digital documents
+        File digDocRegistrationXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/analytical.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monograph-withUrnNbn.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monograph.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monographVolume.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/otherEntity-map.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/otherEntity-musicSheet.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodical.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodicalIssue.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodicalVolume.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/thesis.xml", digDocRegistrationXsd);
+
+        //import digital instance
+        File digInstImportXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/complete.xml", digInstImportXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/minimal.xml", digInstImportXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/https.xml", digInstImportXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/emptyOptionalElements.xml", digInstImportXsd);
+
+        //api responses
+        File responseXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/error.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/addDigitalInstance.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstance-deactivated.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstance-full.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstances.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstances-all.xml", responseXsd);
+        //urn:nbn
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-ACTIVE.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-FREE.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-RESERVED.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-DEACTIVATED.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-digDocRegResponse.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservations.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservation.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrar.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrars.xml", responseXsd);
+        //digital document
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocuments.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-MONOGRAPH.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-MONOGRAPH_VOLUME.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL_VOLUME.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL_ISSUE.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-ANALYTICAL.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-THESIS.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-OTHER.xml", responseXsd);
+
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifiers.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier-UPDATED.xml", responseXsd);
+
+    }
+
+    private static void validate(String docFileName, File xsdFile) {
+        File docFile = new File(docFileName);
         try {
-//            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/response/error.xml");
-//            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/xsd/response.xsd.xml");
-            File toValidate = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/identifiers.xml");
-            String toValidateStr = XOMUtils.loadDocumentWithoutValidation(toValidate).toXML();
-
-            File schema = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/identifiers.xsd.xml");
-           // FileInputStream schemaIn = new FileInputStream(schema);
-            //String schemaStr = XOMUtils.loadDocumentValidByInternalXsd(schemaIn).toXML();
-            String schemaStr = XOMUtils.loadDocumentWithoutValidation(schema).toXML();
-            
-            
-            //System.err.println("schema: " + schemaStr);
-            //schemaIn.close();
-            //URL schemaUrl = new URL("http://iris.mzk.cz/cache/importRecord.xsd");
-
-            //XOMUtils.loadDocumentValidByExternalXsd(toValidate, schema);
-            XOMUtils.loadDocumentValidByExternalXsd(toValidateStr, schemaStr);
-            //          XOMUtils.loadDocumentValidByExternalXsd(toValidate, schemaUrl);
-            //XOMUtils.loadDocumentValidByInternalXsd(new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/import_with_xsd.xml"));
-            System.err.println("Document is valid");
+            XOMUtils.loadDocumentValidByExternalXsd(docFile, xsdFile);
+            System.out.println(docFile.getAbsolutePath() + " is valid");
         } catch (ValidityException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
@@ -73,7 +95,7 @@ public class Main {
         try {
             File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
             nu.xom.Document doc = XOMUtils.loadDocumentWithoutValidation(in);
-            XPathContext context = new XPathContext("r", "http://resolver.nkp.cz/v2/");
+            XPathContext context = new XPathContext("r", "http://resolver.nkp.cz/v3/");
             Nodes nodes = doc.query("r:digitalInstance/r:url", context);
             System.out.println("nodes:" + nodes.size());
             for (int i = 0; i < nodes.size(); i++) {

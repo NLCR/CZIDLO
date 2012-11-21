@@ -48,22 +48,23 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("urnNbnRerservations", RESOLVER);
+        Element root = new Element("urnNbnReservations", RESOLVER_NS);
         appendElementWithContentIfNotNull(root, maxReservationSize, "maxReservationSize");
         appendElementWithContentIfNotNull(root, defaultReservationSize, "defaultReservationSize");
-        Element reserved = new Element("reserved", RESOLVER);
-        root.appendChild(reserved);
+        Element reservations = new Element("reserved", RESOLVER_NS);
+        root.appendChild(reservations);
         Attribute size = new Attribute("size", reservedSize.toString());
-        reserved.addAttribute(size);
+        reservations.addAttribute(size);
+
         if (urnNbnList != null) {
-            appendUrnNbnsFromList(reserved);
+            appendUrnNbnsFromList(reservations);
         }
         return root;
     }
 
     private void appendUrnNbnsFromList(Element root) {
         for (UrnNbn urnNbn : urnNbnList) {
-            Element element = new Element("urnNbn", RESOLVER);
+            Element element = new Element("urnNbn", RESOLVER_NS);
             element.appendChild(urnNbn.toString());
             Attribute created = new Attribute("created", urnNbn.getCreated().toString());
             element.addAttribute(created);

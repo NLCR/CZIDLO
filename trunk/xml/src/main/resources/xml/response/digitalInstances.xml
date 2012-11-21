@@ -15,27 +15,26 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<digitalInstances xmlns="http://resolver.nkp.cz/v2/">
-    <digitalInstance>
-        <id type="INTERNAL">1</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
-        <format>djvu</format>
-        <accessibility>veřejně přístupné</accessibility>
-    </digitalInstance>
-    <digitalInstance>
-        <id type="INTERNAL">2</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
-    </digitalInstance>
-    <digitalInstance>
-        <id type="INTERNAL">3</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
-    </digitalInstance>
-    <digitalInstance>
-        <id type="INTERNAL">5</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
-    </digitalInstance>
-</digitalInstances>
+<response xmlns="http://resolver.nkp.cz/v3/">
+    <digitalInstances>
+        <digitalInstance id="1" active="false">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
+            <created>2012-02-08T06:34:03.434+01:00</created>
+            <deactivated>2012-02-08T06:34:03.434+01:00</deactivated>
+        </digitalInstance>
+        <digitalInstance id="2" active="true">
+            <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+            <format>djvu</format>
+            <accessibility>veřejně přístupné</accessibility>
+            <created>2012-02-08T06:34:03.434+01:00</created>
+        </digitalInstance>
+        <digitalInstance id="3" active="true">
+            <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
+            <created>2012-02-08T06:34:03.434+01:00</created>
+        </digitalInstance>
+        <digitalInstance id="5" active="true">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
+            <created>2012-02-08T06:34:03.434+01:00</created>
+        </digitalInstance>
+    </digitalInstances>
+</response>

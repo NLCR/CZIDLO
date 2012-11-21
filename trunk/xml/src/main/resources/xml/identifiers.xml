@@ -21,7 +21,7 @@ Zde jsou uvedeny příklady identifikátorů použitých v importech,
 jejichž syntaxe se validována. Nekontrolují se ale kontrolní součty
 v ISNB, ISSN.
 -->
-<r:identifiers xmlns:r="http://resolver.nkp.cz/v2/">
+<r:identifiers xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- isbn-10 bez oddelovacu-->
     <r:isbn>8090119964</r:isbn> 
     <r:isbn>809011996x</r:isbn> 

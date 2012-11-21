@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         http://code.google.com/p/urnnbn-resolver-v2/
         http://code.google.com/p/urnnbn-resolver-v2/wiki/API
 -->
-<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- periodikum -->
     <r:periodical>
         <r:titleInfo>

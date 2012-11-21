@@ -47,16 +47,17 @@ public class DigitalInstanceBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalInstance", RESOLVER);
+        Element root = new Element("digitalInstance", RESOLVER_NS);
+        root.addAttribute(new Attribute("id", instance.getId().toString()));
         root.addAttribute(new Attribute("active", instance.isActive().toString()));
-        appendIdentifierElement(root, IDTYPE_INTERNAL, instance.getId());
-        appendTimestamps(root, instance, "digital instance");
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
         appendElementWithContentIfNotNull(root, instance.getFormat(), "format");
         appendElementWithContentIfNotNull(root, instance.getAccessibility(), "accessibility");
+        appendElementWithContentIfNotNull(root, instance.getCreated(), "created");
+        appendElementWithContentIfNotNull(root, instance.getModified(), "deactivated");
+        appendElementWithContentIfNotNull(root, digLibId, "digitalLibraryId");
         appendBuilderResultfNotNull(root, digLibBuilder);
         appendBuilderResultfNotNull(root, digDocBuilder);
-        appendElementWithContentIfNotNull(root, digLibId, "digitalLibraryId");
         return root;
     }
 }

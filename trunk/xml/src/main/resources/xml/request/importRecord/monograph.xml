@@ -6,7 +6,6 @@ This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
-        Example of valid record to be imported into application urnnbn-resolver-v2
+        Example of valid record to be imported into application urnnbn-resolver-v3
         through its http rest api.
         Intelectual Entity in this example is of type MONOGRAPH. 
         The type will be used for publications that do not come out periodically 
         and type MONOGRAPH_VOLUME cannot be used.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        http://code.google.com/p/urnnbn-resolver-v3/
+        http://code.google.com/p/urnnbn-resolver-v3/wiki/API
 -->
-<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- monografie -->
     <r:monograph>
         <r:titleInfo>
@@ -78,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
         <r:contractNumber>123</r:contractNumber>
         <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
-             digitálního dokumentu -->
+        digitálního dokumentu -->
         <r:technicalMetadata>
             <!-- typ a verze formátu -->
             <r:format version="1.0">jpeg</r:format>
@@ -95,9 +94,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- kompresní algoritmus a komprimační poměr -->
             <r:compression ratio="0.3">LZW</r:compression>
             <r:color>
-            <!-- barevný model (např. RGB, CMYK)-->
+                <!-- barevný model (např. RGB, CMYK)-->
                 <r:model>RGB</r:model>
-            <!-- bitová hloubka -->
+                <!-- bitová hloubka -->
                 <r:depth>24</r:depth>
             </r:color>
             <!-- ICC profil -->

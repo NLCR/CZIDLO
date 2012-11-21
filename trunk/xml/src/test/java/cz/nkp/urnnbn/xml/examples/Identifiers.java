@@ -20,10 +20,12 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.IOException;
 import junit.framework.TestCase;
+import nu.xom.Document;
 import nu.xom.ParsingException;
 
 /**
  * TODO: remove absolute paths
+ *
  * @author Martin Řehánek
  */
 public class Identifiers extends TestCase {
@@ -49,7 +51,9 @@ public class Identifiers extends TestCase {
 
     public void testValidateIdentifiers() throws Exception {
         String xmlString = toXmlString(xmlDir, "identifiers.xml");
-        XOMUtils.loadDocumentValidByExternalXsd(xmlString, identifiersSchema);
+        System.out.println("loading " + xmlString);
+        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, identifiersSchema);
+        assertNotNull(doc);
     }
 
     private String toXmlString(File rootDir, String filename) throws ParsingException, IOException {

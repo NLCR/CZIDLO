@@ -39,11 +39,12 @@ public class RegistrarBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("registrar", RESOLVER);
+        Element root = new Element("registrar", RESOLVER_NS);
         root.addAttribute(new Attribute("code", registrar.getCode().toString()));
-        appendTimestamps(root, registrar, "registrar");
+        root.addAttribute(new Attribute("id", registrar.getId().toString()));
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");
         appendElementWithContentIfNotNull(root, registrar.getDescription(), "description");
+        appendTimestamps(root, registrar, "registrar");
         appendRegistrationModes(root);
         appendBuilderResultfNotNull(root, librariesBuilder);
         appendBuilderResultfNotNull(root, catalogsBuilder);

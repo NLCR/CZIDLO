@@ -16,7 +16,9 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers;
 
+import cz.nkp.urnnbn.xml.commons.Namespaces;
 import cz.nkp.urnnbn.xml.commons.Xpath;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.ElementContentEnhancer;
 import java.util.logging.Logger;
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -34,8 +36,7 @@ public abstract class Unmarshaller {
     static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
     private static final String NS_PREFIX_NAME = "resolver";
     private static final String NS_PREFIX = NS_PREFIX_NAME + ":";
-    protected static final String NAMESPACE_URI = "http://resolver.nkp.cz/v2/";
-    private static final XPathContext context = new XPathContext(NS_PREFIX_NAME, NAMESPACE_URI);
+    private static final XPathContext context = new XPathContext(NS_PREFIX_NAME, Namespaces.RESOLVER_NS);
 
     static String prefixed(String elementName) {
         return NS_PREFIX + elementName;
@@ -66,22 +67,32 @@ public abstract class Unmarshaller {
         return parent.query(xpath.toString(), context);
     }
 
-    String elementContentOrNull(String elementName, ParentNode parent) {
+    String elementContentOrNull(String elementName, ParentNode parent, ElementContentEnhancer enhancer) {
         Node node = selectSingleElementOrNull(elementName, parent);
         if (node != null && (node instanceof Element)) {
-            return node.getValue();
+            String content = node.getValue();
+            if (enhancer != null) {
+                return enhancer.toEnhancedValueOrNull(content);
+            } else {
+                return content;
+            }
         } else {
             return null;
         }
     }
 
-    String attributeContentOrNull(String attributeName, ParentNode parent) {
+    String attributeContentOrNull(String attributeName, ParentNode parent, ElementContentEnhancer enhancer) {
         if (parent == null) {
             return null;
         } else {
             Attribute attr = selectSingleAttributeOrNull(attributeName, parent);
             if (attr != null) {
-                return attr.getValue();
+                String content = attr.getValue();
+                if (enhancer != null) {
+                    return enhancer.toEnhancedValueOrNull(content);
+                } else {
+                    return content;
+                }
             } else {
                 return null;
             }

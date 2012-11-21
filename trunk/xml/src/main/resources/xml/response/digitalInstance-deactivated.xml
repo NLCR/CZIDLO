@@ -15,10 +15,12 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<urnNbnReservation xmlns="http://resolver.nkp.cz/v2/">
-    <urnNbn>urn:nbn:cz:boa001-000006</urnNbn>
-    <urnNbn>urn:nbn:cz:boa001-000007</urnNbn>
-    <urnNbn>urn:nbn:cz:boa001-000008</urnNbn>
-    <urnNbn>urn:nbn:cz:boa001-000009</urnNbn>
-    <urnNbn>urn:nbn:cz:boa001-00000a</urnNbn>
-</urnNbnReservation>
+<response xmlns="http://resolver.nkp.cz/v3/">
+    <digitalInstance id="5" active="false">
+        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <deactivated>2012-02-10T06:34:03.434+01:00</deactivated>
+    </digitalInstance>
+</response>

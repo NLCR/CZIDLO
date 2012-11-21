@@ -18,6 +18,9 @@ package cz.nkp.urnnbn.xml.unmarshallers;
 
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.CcnbEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.IssnEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
 import java.util.ArrayList;
 import java.util.List;
 import nu.xom.Element;
@@ -39,12 +42,12 @@ public class PeriodicalUnmarshaller extends IntelectualEntityUnmarshaller {
         if (titleInfoElement == null) {
             logger.severe("missing element titleInfo");
         } else {
-            appendId(result, identifierByElementName(titleInfoElement, "title", IntEntIdType.TITLE, true));
-            appendId(result, identifierByElementName(titleInfoElement, "subTitle", IntEntIdType.SUB_TITLE, false));
+            appendId(result, identifierByElementName(titleInfoElement, "title", IntEntIdType.TITLE, true, new LimitedLengthEnhancer(100)));
+            appendId(result, identifierByElementName(titleInfoElement, "subTitle", IntEntIdType.SUB_TITLE, false, new LimitedLengthEnhancer(200)));
         }
-        appendId(result, identifierByElementName(entityEl, "ccnb", IntEntIdType.CCNB, false));
-        appendId(result, identifierByElementName(entityEl, "issn", IntEntIdType.ISSN, false));
-        appendId(result, identifierByElementName(entityEl, "otherId", IntEntIdType.OTHER, false));
+        appendId(result, identifierByElementName(entityEl, "ccnb", IntEntIdType.CCNB, false, new CcnbEnhancer()));
+        appendId(result, identifierByElementName(entityEl, "issn", IntEntIdType.ISSN, false, new IssnEnhancer()));
+        appendId(result, identifierByElementName(entityEl, "otherId", IntEntIdType.OTHER, false, new LimitedLengthEnhancer(50)));
         return result;
     }
 }

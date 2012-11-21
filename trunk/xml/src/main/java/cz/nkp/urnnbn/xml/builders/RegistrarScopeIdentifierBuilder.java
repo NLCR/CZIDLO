@@ -41,14 +41,12 @@ public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("id", RESOLVER);
-        Attribute type = new Attribute("type", id.getType().toString());
-        root.addAttribute(type);
-        root.appendChild(id.getValue());
+        Element root = new Element("id", RESOLVER_NS);
+        root.addAttribute(new Attribute("type", id.getType().toString()));
         if (previousValue != null) {
-            Element previousValueEl = appendElement(root, "previousValue");
-            previousValueEl.appendChild(previousValue);
+            root.addAttribute(new Attribute("previousValue", previousValue));
         }
+        root.appendChild(id.getValue());
         return root;
     }
 }

@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import nu.xom.Attribute;
 import nu.xom.Element;
 
 /**
@@ -35,9 +36,9 @@ public class DigitalLibraryBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalLibrary", RESOLVER);
+        Element root = new Element("digitalLibrary", RESOLVER_NS);
+        root.addAttribute(new Attribute("id", lib.getId().toString()));
         appendElementWithContentIfNotNull(root, lib.getName(), "name");
-        appendIdentifierElement(root, IDTYPE_INTERNAL, lib.getId());
         appendElementWithContentIfNotNull(root, lib.getDescription(), "description");
         appendElementWithContentIfNotNull(root, lib.getUrl(), "url");
         appendTimestamps(root, lib, "digital library");

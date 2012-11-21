@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,62 +46,59 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
      */
     DigitalDocument getDigitalDocument() {
         DigitalDocument digDoc = new DigitalDocument();
-        digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
-        digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl));
-        digDoc.setContractNumber(elementContentOrNull("contractNumber", digDocEl));
+        digDoc.setFinancedFrom(elementContentOrNull("financed", digDocEl, new LimitedLengthEnhancer(100)));
+        digDoc.setContractNumber(elementContentOrNull("contractNumber", digDocEl, new LimitedLengthEnhancer(20)));
         loadTechnicalMetadataToDocument(digDoc);
         return digDoc;
     }
 
     private void loadTechnicalMetadataToDocument(DigitalDocument digDoc) {
         Element root = selectSingleElementOrNull("technicalMetadata", digDocEl);
-        if (root == null) {
-            logger.severe("element \"technical\" not found");
-        } else {
+        if (root != null) {
             //format
-            digDoc.setFormat(elementContentOrNull("format", root));
+            digDoc.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(20)));
             Element formatEl = selectSingleElementOrNull("format", root);
-            digDoc.setFormatVersion(attributeContentOrNull("version", formatEl));
+            digDoc.setFormatVersion(attributeContentOrNull("version", formatEl, new LimitedLengthEnhancer(10)));
             //extent
-            digDoc.setExtent(elementContentOrNull("extent", root));
+            digDoc.setExtent(elementContentOrNull("extent", root, new LimitedLengthEnhancer(200)));
             //resolution
             Element resolutionEl = selectSingleElementOrNull("resolution", root);
             if (resolutionEl != null) {
-                String resWidthStr = elementContentOrNull("horizontal", resolutionEl);
+                String resWidthStr = elementContentOrNull("horizontal", resolutionEl, null);
                 if (resWidthStr != null) {
                     digDoc.setResolutionHorizontal(Integer.valueOf(resWidthStr));
                 }
-                String resHeightStr = elementContentOrNull("vertical", resolutionEl);
+                String resHeightStr = elementContentOrNull("vertical", resolutionEl, null);
                 if (resHeightStr != null) {
                     digDoc.setResolutionVertical(Integer.valueOf(resHeightStr));
                 }
             }
             //compression
-            digDoc.setCompression(elementContentOrNull("compression", root));
+            digDoc.setCompression(elementContentOrNull("compression", root, new LimitedLengthEnhancer(50)));
             Element compressionEl = selectSingleElementOrNull("compression", root);
-            String compressionRatioStr = attributeContentOrNull("ratio", compressionEl);
+            String compressionRatioStr = attributeContentOrNull("ratio", compressionEl, null);
             if (compressionRatioStr != null) {
                 digDoc.setCompressionRatio(Double.valueOf(compressionRatioStr));
             }
             //color
             Element colorEl = selectSingleElementOrNull("color", root);
             if (colorEl != null) {
-                digDoc.setColorModel(elementContentOrNull("model", colorEl));
-                String colorDepthStr = elementContentOrNull("depth", colorEl);
+                digDoc.setColorModel(elementContentOrNull("model", colorEl, new LimitedLengthEnhancer(20)));
+                String colorDepthStr = elementContentOrNull("depth", colorEl, null);
                 if (colorDepthStr != null) {
                     digDoc.setColorDepth(Integer.valueOf(colorDepthStr));
                 }
             }
             //ICC profile
-            digDoc.setIccProfile(elementContentOrNull("iccProfile", root));
+            digDoc.setIccProfile(elementContentOrNull("iccProfile", root, new LimitedLengthEnhancer(50)));
             //picture size
             Element pictureEl = selectSingleElementOrNull("pictureSize", root);
             if (pictureEl != null) {
-                String picWidthStr = elementContentOrNull("width", pictureEl);
+                String picWidthStr = elementContentOrNull("width", pictureEl, null);
                 if (picWidthStr != null) {
                     digDoc.setPictureWidth(Integer.valueOf(picWidthStr));
                 }
-                String picHeightStr = elementContentOrNull("height", pictureEl);
+                String picHeightStr = elementContentOrNull("height", pictureEl, null);
                 if (picHeightStr != null) {
                     digDoc.setPictureHeight(Integer.valueOf(picHeightStr));
                 }

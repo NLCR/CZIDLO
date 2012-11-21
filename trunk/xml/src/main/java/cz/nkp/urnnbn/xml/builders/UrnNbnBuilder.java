@@ -38,14 +38,13 @@ public class UrnNbnBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("urnNbn", RESOLVER);
+        Element root = new Element("urnNbn", RESOLVER_NS);
         UrnNbn urn = urnWithStatus.getUrn();
-        appendTimestamps(root);
         appendElementWithContentIfNotNull(root, urnWithStatus.getStatus().name(), "status");
-        appendElementWithContentIfNotNull(root, urn.getCreated(), "created");
         appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarCode");
         appendElementWithContentIfNotNull(root, urn.toString(), "value");
         appendElementWithContentIfNotNull(root, urn.getDigDocId(), "digitalDocumentId");
+        appendTimestamps(root);
         return root;
     }
 

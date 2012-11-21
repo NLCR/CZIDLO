@@ -24,6 +24,13 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.xml.commons.Namespaces;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.CcnbEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.ElementContentEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.IsbnEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.IssnEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.PositiveIntValidator;
 import java.util.List;
 import java.util.logging.Level;
 import nu.xom.Element;
@@ -52,7 +59,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
             case PERIODICAL_ISSUE:
                 return new PeriodicalIssueUnmarshaller(entityEl);
             case ANALYTICAL:
-                return new AnalytickaUnmarshaller(entityEl);
+                return new AnalyticalUnmarshaller(entityEl);
             case THESIS:
                 return new ThesisUnmarshaller(entityEl);
             case OTHER:
@@ -74,11 +81,11 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     IntelectualEntity getIntelectualEntity() {
         IntelectualEntity result = new IntelectualEntity();
         result.setEntityType(entityType);
-        result.setDocumentType(elementContentOrNull("documentType", entityEl));
-        String digitalBornStr = elementContentOrNull("digitalBorn", entityEl);
+        result.setDocumentType(elementContentOrNull("documentType", entityEl, new LimitedLengthEnhancer(50)));
+        String digitalBornStr = elementContentOrNull("digitalBorn", entityEl, null);
         result.setDigitalBorn(digitalBornStr == null ? false : Boolean.valueOf(digitalBornStr));
-        result.setOtherOriginator(elementContentOrNull("otherOriginator", entityEl));
-        result.setDegreeAwardingInstitution(elementContentOrNull("degreeAwardingInstitution", entityEl));
+        result.setOtherOriginator(elementContentOrNull("otherOriginator", entityEl, new LimitedLengthEnhancer(50)));
+        result.setDegreeAwardingInstitution(elementContentOrNull("degreeAwardingInstitution", entityEl, new LimitedLengthEnhancer(50)));
         return result;
     }
 
@@ -99,9 +106,9 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     Publication getPublication() {
         Element publicationEl = selectSingleElementOrNull("publication", entityEl);
         if (publicationEl != null) {
-            String publisher = elementContentOrNull("publisher", publicationEl);
-            String place = elementContentOrNull("place", publicationEl);
-            String yearStr = elementContentOrNull("year", publicationEl);
+            String publisher = elementContentOrNull("publisher", publicationEl, new LimitedLengthEnhancer(50));
+            String place = elementContentOrNull("place", publicationEl, new LimitedLengthEnhancer(50));
+            String yearStr = elementContentOrNull("year", publicationEl, new PositiveIntValidator());
             if (publisher == null && place == null && yearStr == null) {
                 return null;
             } else {
@@ -147,19 +154,19 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
             SourceDocument result = new SourceDocument();
             Element titleInfo = selectSingleElementOrNull("titleInfo", sourceDoc);
             if (titleInfo != null) {
-                result.setTitle(elementContentOrNull("title", titleInfo));
-                result.setVolumeTitle(elementContentOrNull("volumeTitle", titleInfo));
-                result.setIssueTitle(elementContentOrNull("issueTitle", titleInfo));
+                result.setTitle(elementContentOrNull("title", titleInfo, new LimitedLengthEnhancer(100)));
+                result.setVolumeTitle(elementContentOrNull("volumeTitle", titleInfo, new LimitedLengthEnhancer(50)));
+                result.setIssueTitle(elementContentOrNull("issueTitle", titleInfo, new LimitedLengthEnhancer(50)));
             }
-            result.setCcnb(elementContentOrNull("ccnb", sourceDoc));
-            result.setIsbn(elementContentOrNull("isbn", sourceDoc));
-            result.setIssn(elementContentOrNull("issn", sourceDoc));
-            result.setOtherId(elementContentOrNull("otherId", sourceDoc));
+            result.setCcnb(elementContentOrNull("ccnb", sourceDoc, new CcnbEnhancer()));
+            result.setIsbn(elementContentOrNull("isbn", sourceDoc, new IsbnEnhancer()));
+            result.setIssn(elementContentOrNull("issn", sourceDoc, new IssnEnhancer()));
+            result.setOtherId(elementContentOrNull("otherId", sourceDoc, new LimitedLengthEnhancer(50)));
             Element publicationEl = selectSingleElementOrNull("publication", sourceDoc);
             if (publicationEl != null) {
-                result.setPublisher(elementContentOrNull("publisher", publicationEl));
-                result.setPublicationPlace(elementContentOrNull("place", publicationEl));
-                String yearStr = elementContentOrNull("year", publicationEl);
+                result.setPublisher(elementContentOrNull("publisher", publicationEl, new LimitedLengthEnhancer(50)));
+                result.setPublicationPlace(elementContentOrNull("place", publicationEl, new LimitedLengthEnhancer(50)));
+                String yearStr = elementContentOrNull("year", publicationEl, new PositiveIntValidator());
                 if (yearStr != null) {
                     result.setPublicationYear(Integer.valueOf(yearStr));
                 }
@@ -190,24 +197,40 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
      * @param mandatory
      * @return IntEntIdentier or null
      */
-    IntEntIdentifier identifierByElementName(Element rootEl, String elementName, IntEntIdType type, boolean mandatory) {
-        Elements idElements = rootEl.getChildElements(elementName, NAMESPACE_URI);
+    IntEntIdentifier identifierByElementName(Element rootEl, String elementName, IntEntIdType type, boolean mandatory, ElementContentEnhancer enhancer) {
+        Elements idElements = rootEl.getChildElements(elementName, Namespaces.RESOLVER_NS);
         int found = idElements.size();
         if (found == 1) {
-            Element idEl = idElements.get(0);
-            IntEntIdentifier result = new IntEntIdentifier();
-            result.setType(type);
-            result.setValue(idEl.getValue());
-            return result;
+            return elementToIntEntId(idElements.get(0), type, enhancer);
         } else if (found > 1) {
             logger.log(Level.WARNING, "multiple elements {0} found, using first one", elementName);
-            return null;
+            return elementToIntEntId(idElements.get(0), type, enhancer);
         } else if (found == 0 && mandatory) {
             logger.log(Level.WARNING, "mandatory element {0} not found", elementName);
             return null;
         } else {
             return null;
         }
+    }
 
+    private IntEntIdentifier elementToIntEntId(Element e, IntEntIdType type, ElementContentEnhancer enhancer) {
+        String originalValue = e.getValue();
+        if (enhancer != null) {
+            String enhanced = enhancer.toEnhancedValueOrNull(originalValue);
+            if (enhanced != null) {
+                return elementToIntEntId(enhanced, type);
+            } else {
+                return null;
+            }
+        } else {
+            return elementToIntEntId(originalValue, type);
+        }
+    }
+
+    private IntEntIdentifier elementToIntEntId(String value, IntEntIdType type) {
+        IntEntIdentifier result = new IntEntIdentifier();
+        result.setType(type);
+        result.setValue(value);
+        return result;
     }
 }
