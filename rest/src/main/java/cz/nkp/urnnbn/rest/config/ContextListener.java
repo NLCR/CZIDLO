@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.rest.config;
 
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
+import cz.nkp.urnnbn.xml.config.WebModuleConfiguration;
 import java.io.InputStream;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
@@ -31,17 +32,17 @@ public class ContextListener implements ServletContextListener {
 
     private void loadPropertiesFile() {
         new ResourceUtilizer(logger) {
-
             @Override
             public void processResource(InputStream in) throws Exception {
-                ApiModuleConfiguration.instanceOf().initialize(new PropertyLoader(in));
+                PropertyLoader loader = new PropertyLoader(in);
+                ApiModuleConfiguration.instanceOf().initialize(loader);
+                WebModuleConfiguration.instanceOf().initialize(loader);
             }
         }.run(PROPERTIES_FILE);
     }
 
     private void loadRecordImportXsd() {
         new ResourceUtilizer(logger) {
-
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initRecordImportSchema(in);
@@ -51,7 +52,6 @@ public class ContextListener implements ServletContextListener {
 
     private void loadInstanceImportXsd() {
         new ResourceUtilizer(logger) {
-
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initInstanceImportSchema(in);
