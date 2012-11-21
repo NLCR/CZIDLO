@@ -156,7 +156,7 @@ public class DigitalDocumentResource extends Resource {
                     ? null : new ArchiverBuilder(dataAccessService().archiverById(doc.getArchiverId()));
             IntelectualEntityBuilder entityBuilder = entityBuilder(doc.getIntEntId());
             DigitalDocumentBuilder builder = new DigitalDocumentBuilder(doc, urn, digRepIdentifiersBuilder, instancesBuilder, regBuilder, archBuilder, entityBuilder);
-            String xml = builder.buildRootElement().toXML();
+            String xml = builder.buildDocument().toXML();
             return Response.ok().entity(xml).build();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());

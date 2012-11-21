@@ -27,7 +27,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer maxReservedSizeToPrint;
     private String recordImportSchema;
     private String instanceImportSchema;
-
+    
     static public ApiModuleConfiguration instanceOf() {
         if (instance == null) {
             instance = new ApiModuleConfiguration();
