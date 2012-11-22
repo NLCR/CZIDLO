@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class SelectRecordsContByStringAndLongAttrs implements StatementWrapper {
+public class SelectRecordsCountByStringAndLongAttrs implements StatementWrapper {
 
     private final String tableName;
     private final String longAttrName;
@@ -21,7 +21,7 @@ public class SelectRecordsContByStringAndLongAttrs implements StatementWrapper {
     private final String stringAttrName;
     private final String stringAttrValue;
 
-    public SelectRecordsContByStringAndLongAttrs(String tableName, String longAttrName, Long longAttrValue, String stringAttrName, String stringAttrValue) {
+    public SelectRecordsCountByStringAndLongAttrs(String tableName, String longAttrName, Long longAttrValue, String stringAttrName, String stringAttrValue) {
         this.tableName = tableName;
         this.longAttrName = longAttrName;
         this.longAttrValue = longAttrValue;

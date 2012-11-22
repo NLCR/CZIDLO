@@ -25,6 +25,12 @@ public interface UrnNbnDAO {
     public String ATTR_REGISTRAR_CODE = "registrarCode";
     public String ATTR_DOCUMENT_CODE = "documentCode";
     public String ATTR_ACTIVE = "active";
+    //predecessor/successor
+    public String SUCCESSOR_TABLE_NAME = "UrnNbnSuccessors";
+    public String ATTR_PRECESSOR_REGISTRAR_CODE = "predecessorRegCode";
+    public String ATTR_PRECESSOR_DOCUMENT_CODE = "predecessorDocCode";
+    public String ATTR_SUCCESSOR_REGISTRAR_CODE = "successorRegCode";
+    public String ATTR_SUCCESSOR_DOCUMENT_CODE = "successorDocCode";
 
     public void insertUrnNbn(UrnNbn urn) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
@@ -40,6 +46,8 @@ public interface UrnNbnDAO {
      */
     public void insertUrnNbn(UrnNbn urn, DateTime created) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
+    public void insertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
+
     public UrnNbn getUrnNbnByDigDocId(Long digDocId) throws DatabaseException, RecordNotFoundException;
 
     //this will be used when resolving or searching for new not assigned urn:nbn
@@ -51,6 +59,12 @@ public interface UrnNbnDAO {
 
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException;
 
+    public List<UrnNbn> getPredecessors(UrnNbn urn) throws DatabaseException;
+
+    public List<UrnNbn> getSuccessors(UrnNbn urn) throws DatabaseException;
+
+    public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
+
     public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
     //only for tests
@@ -58,4 +72,13 @@ public interface UrnNbnDAO {
 
     //only for tests
     public void deleteAllUrnNbns() throws DatabaseException;
+
+    //only for tests
+    public void deletePredecessors(UrnNbn urn) throws DatabaseException;
+
+    //only for tests
+    public void deleteSuccessors(UrnNbn urn) throws DatabaseException;
+
+    //only for tests
+    public void deleteAllPredecessors() throws DatabaseException;
 }

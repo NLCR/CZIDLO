@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.dto.Archiver;
@@ -67,6 +68,7 @@ public abstract class AbstractDaoTest extends TestCase {
 
     public AbstractDaoTest(String testName) {
         super(testName);
+        CountryCode.initialize("CZ");
         DatabaseConnector con = DatabaseConnectorFactory.getConnector(
                 DatabaseConfig.DRIVER,
                 DatabaseConfig.HOST,
@@ -107,6 +109,7 @@ public abstract class AbstractDaoTest extends TestCase {
 
     public void clearDatabase() throws Exception {
         urnDao.deleteAllUrnNbns();
+        urnDao.deleteAllPredecessors();
         digDocDao.deleteAllDocuments();
         entityDao.deleteAllEntities();
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
