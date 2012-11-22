@@ -12,7 +12,6 @@ import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
-import cz.nkp.urnnbn.core.persistence.exceptions.MultipleRecordsException;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
@@ -25,13 +24,18 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
+import cz.nkp.urnnbn.core.persistence.impl.statements.Select2StringsBy2Strings;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAndStringAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsAndStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.StringStringRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
-import java.sql.ResultSet;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -69,6 +73,28 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
                 throw new AlreadyPresentException(new IdPart[]{digRepId, registrarCode, documentCode});
+            } else {
+                throw new DatabaseException(ex);
+            }
+        }
+    }
+
+    public void insertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+        if (isPredecessesor(predecessor, successor)) {
+            throw new AlreadyPresentException(null);
+            //TODO: log somewhere else
+            //logger.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[]{predecessor.toString(), successor.toString()});
+        }
+        StatementWrapper st = new InsertUrnNbnPredecessor(predecessor, successor);
+        DaoOperation operation = new NoResultOperation(st);
+        try {
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+        } catch (SQLException ex) {
+            if ("23505".equals(ex.getSQLState())) {
+                throw new AlreadyPresentException(null);
             } else {
                 throw new DatabaseException(ex);
             }
@@ -132,6 +158,77 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
+    public List<UrnNbn> getPredecessors(UrnNbn successor) throws DatabaseException {
+        try {
+            StatementWrapper st = new Select2StringsBy2Strings(SUCCESSOR_TABLE_NAME,
+                    ATTR_SUCCESSOR_REGISTRAR_CODE, successor.getRegistrarCode().toString(),
+                    ATTR_SUCCESSOR_DOCUMENT_CODE, successor.getDocumentCode(),
+                    ATTR_PRECESSOR_REGISTRAR_CODE, ATTR_PRECESSOR_DOCUMENT_CODE);
+            DaoOperation operation = new MultipleResultsOperation(st, new StringStringRT());
+            List<String[]> urnNbnCodesList = (List<String[]>) runInTransaction(operation);
+            return regCodesDocCodesList(urnNbnCodesList);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return Collections.<UrnNbn>emptyList();
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public List<UrnNbn> getSuccessors(UrnNbn predecessor) throws DatabaseException {
+        try {
+            StatementWrapper st = new Select2StringsBy2Strings(SUCCESSOR_TABLE_NAME,
+                    ATTR_PRECESSOR_REGISTRAR_CODE, predecessor.getRegistrarCode().toString(),
+                    ATTR_PRECESSOR_DOCUMENT_CODE, predecessor.getDocumentCode(),
+                    ATTR_SUCCESSOR_REGISTRAR_CODE, ATTR_SUCCESSOR_DOCUMENT_CODE);
+            DaoOperation operation = new MultipleResultsOperation(st, new StringStringRT());
+            List<String[]> urnNbnCodesList = (List<String[]>) runInTransaction(operation);
+            return regCodesDocCodesList(urnNbnCodesList);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return Collections.<UrnNbn>emptyList();
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    private List<UrnNbn> regCodesDocCodesList(List<String[]> urnNbnCodesList) {
+        List<UrnNbn> result = new ArrayList<UrnNbn>(urnNbnCodesList.size());
+        for (String[] predecessorCodes : urnNbnCodesList) {
+            RegistrarCode registrarCode = RegistrarCode.valueOf(predecessorCodes[0]);
+            try {
+                UrnNbn urnNbn = getUrnNbnByRegistrarCodeAndDocumentCode(registrarCode, predecessorCodes[1]);
+                result.add(urnNbn);
+            } catch (DatabaseException ex) {
+                Logger.getLogger(UrnNbnDaoPostgres.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (RecordNotFoundException ex) {
+                Logger.getLogger(UrnNbnDaoPostgres.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+
+    public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException {
+        StatementWrapper st = new SelectCountBy4Strings(SUCCESSOR_TABLE_NAME,
+                ATTR_PRECESSOR_REGISTRAR_CODE, precessor.getRegistrarCode().toString(),
+                ATTR_PRECESSOR_DOCUMENT_CODE, precessor.getDocumentCode(),
+                ATTR_SUCCESSOR_REGISTRAR_CODE, successor.getRegistrarCode().toString(),
+                ATTR_SUCCESSOR_DOCUMENT_CODE, successor.getDocumentCode());
+        DaoOperation op = new SingleResultOperation(st, new singleLongRT());
+        try {
+            Long records = (Long) runInTransaction(op);
+            return records > 0;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        } catch (PersistenceException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return false;
+        }
+    }
+
     public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
         DaoOperation operation = new NoResultOperation(new DeactivateUrnNbn(registrarCode, documentCode));
         try {
@@ -170,19 +267,44 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
-    private Object getSingleResult(ResultSet resultSet, ResultsetTransformer transformer) throws SQLException, RecordNotFoundException, MultipleRecordsException {
-        Object result = null;
-        int found = 0;
-        while (resultSet.next()) {
-            result = transformer.transform(resultSet);
-            found++;
+    public void deletePredecessors(UrnNbn urn) throws DatabaseException {
+        try {
+            final StatementWrapper st = new DeleteByStringString(SUCCESSOR_TABLE_NAME,
+                    ATTR_SUCCESSOR_REGISTRAR_CODE, urn.getRegistrarCode().toString(),
+                    ATTR_SUCCESSOR_DOCUMENT_CODE, urn.getDocumentCode());
+            DaoOperation operation = new NoResultOperation(st);
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot delete predecessors of {0}", urn);
+            throw new DatabaseException(ex);
         }
-        if (found == 0) {
-            throw new RecordNotFoundException();
-        } else if (found != 1) {
-            throw new MultipleRecordsException();
-        } else {
-            return result;
+    }
+
+    public void deleteSuccessors(UrnNbn urn) throws DatabaseException {
+        try {
+            final StatementWrapper st = new DeleteByStringString(SUCCESSOR_TABLE_NAME,
+                    ATTR_PRECESSOR_REGISTRAR_CODE, urn.getRegistrarCode().toString(),
+                    ATTR_PRECESSOR_DOCUMENT_CODE, urn.getDocumentCode());
+            DaoOperation operation = new NoResultOperation(st);
+            runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Cannot delete successors of {0}", urn);
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public void deleteAllPredecessors() throws DatabaseException {
+        try {
+            deleteAllRecords(SUCCESSOR_TABLE_NAME);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 }

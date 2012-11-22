@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsContByStringAndLongAttrs;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAndLongAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAttr;
@@ -109,7 +109,7 @@ public abstract class AbstractDAO {
     protected void checkRecordExists(String tableName,
             String longAttrName, Long longAttrValue,
             String stringAttrName, String stringAttrValue) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper statement = new SelectRecordsContByStringAndLongAttrs(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
+        StatementWrapper statement = new SelectRecordsCountByStringAndLongAttrs(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
         checkRecordExists(statement, tableName);
     }
 
