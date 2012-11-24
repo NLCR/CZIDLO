@@ -265,6 +265,23 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertFalse(deactivatedAgain.isActive());
     }
 
+    public void testReactivateUrnNbn() throws Exception {
+        Registrar registrar = registrarPersisted();
+        IntelectualEntity entity = entityPersisted();
+        UrnNbn inserted = new UrnNbn(registrar.getCode(), "123456", documentPersisted(registrar.getId(), entity.getId()).getId());
+        urnDao.insertUrnNbn(inserted);
+        UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertTrue(fetched.isActive());
+        //deactivation
+        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertFalse(deactivated.isActive());
+        //reactivation
+        urnDao.reactivateUrnNbn(deactivated.getRegistrarCode(), deactivated.getDocumentCode());
+        UrnNbn reactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        assertTrue(reactivated.isActive());
+    }
+
     public void testDeleteUrnNbn() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
