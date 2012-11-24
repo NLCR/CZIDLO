@@ -13,28 +13,31 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class SelectRecordsCountByStringAttr implements StatementWrapper {
+public class SelectSingleAttrByLong implements StatementWrapper {
 
     private final String tableName;
-    private final String attributeName;
-    private final String idValue;
+    private final String whereAttrName;
+    private final Long whereAttrValue;
+    private final String selectAttrName;
 
-    public SelectRecordsCountByStringAttr(String tableName, String attributeName, String idValue) {
+    public SelectSingleAttrByLong(String tableName, String whereAttrName, Long whereAttrValue, String selectAttrName) {
         this.tableName = tableName;
-        this.attributeName = attributeName;
-        this.idValue = idValue;
+        this.whereAttrName = whereAttrName;
+        this.whereAttrValue = whereAttrValue;
+        this.selectAttrName = selectAttrName;
     }
 
     @Override
     public String preparedStatement() {
-        return "SELECT count(*) FROM " + tableName
-                + " WHERE " + attributeName + "=?";
+        return "SELECT " + selectAttrName
+                + " from " + tableName
+                + " WHERE " + whereAttrName + "=?";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setString(1, idValue);
+            st.setLong(1, whereAttrValue);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

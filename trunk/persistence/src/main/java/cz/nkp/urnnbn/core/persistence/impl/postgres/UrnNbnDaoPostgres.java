@@ -26,9 +26,9 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select2StringsBy2Strings;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAndStringAttrs;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsAndStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.StringStringRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
@@ -80,10 +80,14 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     public void insertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+        checkRecordExists(UrnNbnDAO.TABLE_NAME,
+                UrnNbnDAO.ATTR_REGISTRAR_CODE, predecessor.getRegistrarCode().toString(),
+                UrnNbnDAO.ATTR_DOCUMENT_CODE, predecessor.getDocumentCode());
+        checkRecordExists(UrnNbnDAO.TABLE_NAME,
+                UrnNbnDAO.ATTR_REGISTRAR_CODE, successor.getRegistrarCode().toString(),
+                UrnNbnDAO.ATTR_DOCUMENT_CODE, successor.getDocumentCode());
         if (isPredecessesor(predecessor, successor)) {
             throw new AlreadyPresentException(null);
-            //TODO: log somewhere else
-            //logger.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[]{predecessor.toString(), successor.toString()});
         }
         StatementWrapper st = new InsertUrnNbnPredecessor(predecessor, successor);
         DaoOperation operation = new NoResultOperation(st);
@@ -108,7 +112,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     public UrnNbn getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringAndStringAttrs(TABLE_NAME,
+        StatementWrapper wrapper = new SelectAllAttrsByStringString(TABLE_NAME,
                 ATTR_REGISTRAR_CODE, registrarCode.toString(),
                 ATTR_DOCUMENT_CODE, documentCode);
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnRT());
@@ -144,7 +148,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     //TODO: test
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllAttrsbyTimestampsAndStringAttr(TABLE_NAME,
+            StatementWrapper st = new SelectAllAttrsbyTimestampsString(TABLE_NAME,
                     ATTR_UPDATED, from, until,
                     ATTR_REGISTRAR_CODE, registrarCode.toString());
             DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnRT());

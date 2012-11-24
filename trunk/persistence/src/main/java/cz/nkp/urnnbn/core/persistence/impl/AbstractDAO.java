@@ -5,18 +5,18 @@
 package cz.nkp.urnnbn.core.persistence.impl;
 
 import cz.nkp.urnnbn.core.dto.IdentifiableByLongAttribute;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
-import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteAllRecords;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
@@ -24,15 +24,16 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAndLong
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAndStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAndLongAttrs;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByLong;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByStringLong;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRecordTimestamp;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -85,31 +86,31 @@ public abstract class AbstractDAO {
     }
 
     protected void checkRecordExists(String tableName, String idAttrName, Long idValue) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
+        StatementWrapper statement = new SelectCountByLong(tableName, idAttrName, idValue);
         if (!recordExists(statement, tableName)) {
             throw new RecordNotFoundException(tableName);
         }
     }
 
     protected boolean recordExists(String tableName, String idAttrName, Long idValue) throws DatabaseException {
-        StatementWrapper statement = new SelectRecordsCountByLongAttr(tableName, idAttrName, idValue);
+        StatementWrapper statement = new SelectCountByLong(tableName, idAttrName, idValue);
         return recordExists(statement, tableName);
     }
 
     protected void checkRecordExists(String tableName, String idAttrName, String idValue) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
+        StatementWrapper statement = new SelectCountByString(tableName, idAttrName, idValue);
         checkRecordExists(statement, tableName);
     }
 
-    protected boolean recordExists(String tableName, String idAttrName, String idValue) throws DatabaseException {
-        StatementWrapper statement = new SelectRecordsCountByStringAttr(tableName, idAttrName, idValue);
-        return recordExists(statement, tableName);
+    protected void checkRecordExists(String tableName, String firstAttrName, String firstAttrValue, String secondAttrName, String secondAttrValue) throws DatabaseException, RecordNotFoundException {
+        StatementWrapper statement = new SelectCountByStringString(tableName, firstAttrName, firstAttrValue, secondAttrName, secondAttrValue);
+        checkRecordExists(statement, tableName);
     }
 
     protected void checkRecordExists(String tableName,
             String longAttrName, Long longAttrValue,
             String stringAttrName, String stringAttrValue) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper statement = new SelectRecordsCountByStringAndLongAttrs(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
+        StatementWrapper statement = new SelectCountByStringLong(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
         checkRecordExists(statement, tableName);
     }
 
@@ -121,7 +122,6 @@ public abstract class AbstractDAO {
 
     private boolean recordExists(final StatementWrapper statement, String tableName) throws DatabaseException {
         DaoOperation recordCount = new DaoOperation() {
-
             @Override
             public Object run(Connection connection) throws SQLException, PersistenceException {
                 PreparedStatement st = OperationUtils.preparedStatementFromWrapper(connection, statement);
@@ -147,7 +147,6 @@ public abstract class AbstractDAO {
             final String sequence,
             final StatementWrapper insertSt) throws DatabaseException, RecordNotFoundException {
         DaoOperation operation = new DaoOperation() {
-
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
                 //get new id from sequence
@@ -201,16 +200,18 @@ public abstract class AbstractDAO {
     }
 
     /**
-     * Only for table that has single value PK of type long. 
-     * We must know the value of PK in advanced so this metod mostly used for cases
-     * when PK is FK to another table. 
+     * Only for table that has single value PK of type long. We must know the
+     * value of PK in advanced so this metod mostly used for cases when PK is FK
+     * to another table.
+     *
      * @param dto
      * @param tableName
      * @param idAttrName
      * @param st
      * @throws DatabaseException
      * @throws AlreadyPresentException if such PK value already exists
-     * @throws RecordNotFoundException if some referenced record doesn't exist in another table
+     * @throws RecordNotFoundException if some referenced record doesn't exist
+     * in another table
      */
     public void insertRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper st) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         DaoOperation operation = new NoResultOperation(st);
@@ -234,13 +235,15 @@ public abstract class AbstractDAO {
     }
 
     /**
-     * Only for table that has single value PK of type long. 
+     * Only for table that has single value PK of type long.
+     *
      * @param dto
      * @param tableName
      * @param idAttrName
      * @param updateSt
      * @throws DatabaseException
-     * @throws RecordNotFoundException if some referenced record doesn't exist in another table
+     * @throws RecordNotFoundException if some referenced record doesn't exist
+     * in another table
      */
     public void updateRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper updateSt) throws DatabaseException, RecordNotFoundException {
         //metoda checkRecordExists se musi zavolat, protoze jinak update nevrati
@@ -269,13 +272,15 @@ public abstract class AbstractDAO {
     }
 
     /**
-     * Only for table that has single value PK of type long. 
+     * Only for table that has single value PK of type long.
+     *
      * @param dto
      * @param tableName
      * @param idAttrName
      * @param updateSt
      * @throws DatabaseException
-     * @throws RecordNotFoundException if some referenced record doesn't exist in another table
+     * @throws RecordNotFoundException if some referenced record doesn't exist
+     * in another table
      */
     public void updateRecordTimestamp(
             String tableName,
@@ -302,7 +307,7 @@ public abstract class AbstractDAO {
 
     public List<Long> getIdListOfAllRecords(String tableName, String idAttributeName) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllIdentifiers(tableName, idAttributeName);
+            StatementWrapper st = new SelectIdentifiersAll(tableName, idAttributeName);
             DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
@@ -316,7 +321,7 @@ public abstract class AbstractDAO {
 
     public Long getAllRecordsCount(String tableName) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectRecordsCount(tableName);
+            StatementWrapper st = new SelectCount(tableName);
             DaoOperation operation = new SingleResultOperation(st, new singleLongRT());
             return (Long) runInTransaction(operation);
         } catch (PersistenceException ex) {

@@ -28,8 +28,8 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllIdentifiers;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLong;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
@@ -155,7 +155,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(UserDAO.TABLE_NAME, UserDAO.ATTR_ID, userId);
         try {
-            StatementWrapper st = new SelectSingleAttrByLongAttr(
+            StatementWrapper st = new SelectSingleAttrByLong(
                     UserDAO.TABLE_USER_REGISTRAR_NAME,
                     UserDAO.USER_REGISTRAR_ATTR_USER_ID, userId,
                     UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID);
@@ -199,7 +199,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
                 //get all identifiers from registrars
-                StatementWrapper getIdsWrapper = new SelectAllIdentifiers(TABLE_NAME, ATTR_ID);
+                StatementWrapper getIdsWrapper = new SelectIdentifiersAll(TABLE_NAME, ATTR_ID);
                 PreparedStatement getIdsStatement = connection.prepareStatement(getIdsWrapper.preparedStatement());
                 ResultSet idResultSet = getIdsStatement.executeQuery();
                 List<Long> idList = OperationUtils.resultSet2ListOfLong(idResultSet);

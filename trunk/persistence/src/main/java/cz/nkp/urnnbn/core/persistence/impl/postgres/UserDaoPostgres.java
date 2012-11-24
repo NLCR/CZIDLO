@@ -24,8 +24,8 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUser;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUserRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLong;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateUser;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UserRT;
@@ -56,7 +56,7 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException, AlreadyPresentException {
                 //find user with same login
-                StatementWrapper usersByLogin = new SelectSingleAttrByStringAttr(TABLE_NAME, ATTR_LOGIN, user.getLogin(), ATTR_ID);
+                StatementWrapper usersByLogin = new SelectSingleAttrByString(TABLE_NAME, ATTR_LOGIN, user.getLogin(), ATTR_ID);
                 PreparedStatement usersByLoginSt = OperationUtils.preparedStatementFromWrapper(connection, usersByLogin);
                 ResultSet presentIdResultSet = usersByLoginSt.executeQuery();
                 Long presentId = OperationUtils.resultSet2Long(presentIdResultSet);
@@ -133,7 +133,7 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
     public List<Long> getAdminsOfRegistrar(long registrarId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         try {
-            StatementWrapper st = new SelectSingleAttrByLongAttr(
+            StatementWrapper st = new SelectSingleAttrByLong(
                     TABLE_USER_REGISTRAR_NAME,
                     USER_REGISTRAR_ATTR_REGISTRAR_ID, registrarId,
                     USER_REGISTRAR_ATTR_USER_ID);

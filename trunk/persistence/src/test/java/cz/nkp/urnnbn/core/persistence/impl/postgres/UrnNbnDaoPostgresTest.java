@@ -77,17 +77,27 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     public void testInsertUrnNbnPrecessor() throws Exception {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn urn = new UrnNbn(registrar.getCode(), "123456", doc.getId());
-        urnDao.insertUrnNbn(urn);
-
-        DigitalDocument doc2 = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn urn2 = new UrnNbn(registrar.getCode(), "123457", doc2.getId());
-        urnDao.insertUrnNbn(urn2);
-
-        urnDao.insertUrnNbnPredecessor(urn, urn2);
+        UrnNbn predecessor = new UrnNbn(registrar.getCode(), "123456", documentPersisted(registrar.getId(), entity.getId()).getId());
+        UrnNbn successor = new UrnNbn(registrar.getCode(), "123457", documentPersisted(registrar.getId(), entity.getId()).getId());
         try {
-            urnDao.insertUrnNbnPredecessor(urn, urn2);
+            urnDao.insertUrnNbnPredecessor(predecessor, successor);
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
+
+        urnDao.insertUrnNbn(predecessor);
+        try {
+            urnDao.insertUrnNbnPredecessor(predecessor, successor);
+            fail();
+        } catch (RecordNotFoundException e) {
+            //ok
+        }
+
+        urnDao.insertUrnNbn(successor);
+        urnDao.insertUrnNbnPredecessor(predecessor, successor);
+        try {
+            urnDao.insertUrnNbnPredecessor(predecessor, successor);
             fail();
         } catch (AlreadyPresentException e) {
             //ok

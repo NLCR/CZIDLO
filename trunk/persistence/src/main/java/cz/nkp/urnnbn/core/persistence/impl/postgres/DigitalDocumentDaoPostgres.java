@@ -26,8 +26,8 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsAndLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCountByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsLong;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByLong;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
@@ -100,7 +100,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     @Override
     public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
-        StatementWrapper statement = new SelectRecordsCountByLongAttr(TABLE_NAME, ATTR_REGISTRAR_ID, registrarId);
+        StatementWrapper statement = new SelectCountByLong(TABLE_NAME, ATTR_REGISTRAR_ID, registrarId);
         DaoOperation operation = new SingleResultOperation(statement, new SingleIntRT());
         try {
             return (Integer) runInTransaction(operation);
@@ -133,7 +133,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         try {
-            StatementWrapper st = new SelectAllAttrsbyTimestampsAndLongAttr(TABLE_NAME,
+            StatementWrapper st = new SelectAllAttrsbyTimestampsLong(TABLE_NAME,
                     ATTR_UPDATED, from, until,
                     ATTR_REGISTRAR_ID, registrarId);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalDocumentRT());
