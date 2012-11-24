@@ -13,14 +13,14 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class SelectSingleAttrByStringAttr implements StatementWrapper {
+public class SelectSingleAttrByString implements StatementWrapper {
 
     private final String tableName;
     private final String whereAttrName;
     private final String whereAttrValue;
     private final String selectAttrName;
 
-    public SelectSingleAttrByStringAttr(String tableName, String whereAttrName, String whereAttrValue, String selectAttrName) {
+    public SelectSingleAttrByString(String tableName, String whereAttrName, String whereAttrValue, String selectAttrName) {
         this.tableName = tableName;
         this.whereAttrName = whereAttrName;
         this.whereAttrValue = whereAttrValue;

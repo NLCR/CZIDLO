@@ -11,11 +11,11 @@ import java.sql.PreparedStatement;
  *
  * @author Martin Řehánek
  */
-public class SelectRecordsCount implements StatementWrapper {
+public class SelectCount implements StatementWrapper {
 
     private final String tableName;
 
-    public SelectRecordsCount(String tableName) {
+    public SelectCount(String tableName) {
         this.tableName = tableName;
     }
 

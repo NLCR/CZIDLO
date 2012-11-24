@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnReserved;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAndStringAttrs;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnReservedRT;
 import java.sql.SQLException;
 import java.util.List;
@@ -66,7 +66,7 @@ public class UrnNbnReservedDaoPostgres extends AbstractDAO implements UrnNbnRese
 
     @Override
     public UrnNbn getUrn(RegistrarCode code, String documentCode) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringAndStringAttrs(TABLE_NAME,
+        StatementWrapper wrapper = new SelectAllAttrsByStringString(TABLE_NAME,
                 ATTR_REGISTRAR_CODE, code.toString(),
                 ATTR_DOCUMENT_CODE, documentCode);
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnReservedRT());

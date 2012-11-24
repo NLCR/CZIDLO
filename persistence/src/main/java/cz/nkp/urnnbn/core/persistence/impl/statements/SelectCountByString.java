@@ -13,13 +13,13 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class SelectRecordsCountByLongAttr implements StatementWrapper {
+public class SelectCountByString implements StatementWrapper {
 
     private final String tableName;
     private final String attributeName;
-    private final Long idValue;
+    private final String idValue;
 
-    public SelectRecordsCountByLongAttr(String tableName, String attributeName, Long idValue) {
+    public SelectCountByString(String tableName, String attributeName, String idValue) {
         this.tableName = tableName;
         this.attributeName = attributeName;
         this.idValue = idValue;
@@ -34,7 +34,7 @@ public class SelectRecordsCountByLongAttr implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, idValue);
+            st.setString(1, idValue);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

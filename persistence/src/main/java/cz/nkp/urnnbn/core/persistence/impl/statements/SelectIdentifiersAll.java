@@ -12,12 +12,12 @@ import java.sql.PreparedStatement;
  *
  * @author Martin Řehánek
  */
-public class SelectAllIdentifiers implements StatementWrapper{
+public class SelectIdentifiersAll implements StatementWrapper{
     
     private final String tableName;
     private final String attrName;
 
-    public SelectAllIdentifiers(String tableName, String attrName) {
+    public SelectIdentifiersAll(String tableName, String attrName) {
         this.tableName = tableName;
         this.attrName = attrName;
     }

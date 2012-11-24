@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2012 Martin Řehánek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
@@ -9,11 +21,11 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**
+/**s
  *
  * @author Martin Řehánek
  */
-public class SelectAllAttrsByStringAndStringAttrs implements StatementWrapper {
+public class SelectCountByStringString implements StatementWrapper {
 
     private final String tableName;
     private final String whereAttr1Name;
@@ -21,7 +33,7 @@ public class SelectAllAttrsByStringAndStringAttrs implements StatementWrapper {
     private final String whereAttr2Name;
     private final String whereAttr2Value;
 
-    public SelectAllAttrsByStringAndStringAttrs(
+    public SelectCountByStringString(
             String tableName,
             String whereAttr1Name, String whereAttr1Value,
             String whereAttr2Name, String whereAttr2Value) {
@@ -34,7 +46,7 @@ public class SelectAllAttrsByStringAndStringAttrs implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT * from " + tableName
+        return "SELECT count(*) from " + tableName
                 + " WHERE " + whereAttr1Name + "=?"
                 + " AND " + whereAttr2Name + "=?";
     }

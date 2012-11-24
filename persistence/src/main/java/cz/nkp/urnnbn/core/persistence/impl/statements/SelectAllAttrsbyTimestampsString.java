@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  *
  * @author Martin Řehánek
  */
-public class SelectAllAttrsbyTimestampsAndStringAttr implements StatementWrapper {
+public class SelectAllAttrsbyTimestampsString implements StatementWrapper {
 
     private final String tableName;
     private final String timstampAttrName;
@@ -25,7 +25,7 @@ public class SelectAllAttrsbyTimestampsAndStringAttr implements StatementWrapper
     private final String stringAttrName;
     private final String stringAttrValue;
 
-    public SelectAllAttrsbyTimestampsAndStringAttr(String tableName, String timstampAttrName, DateTime from, DateTime until, String stringAttrName, String stringAttrValue) {
+    public SelectAllAttrsbyTimestampsString(String tableName, String timstampAttrName, DateTime from, DateTime until, String stringAttrName, String stringAttrValue) {
         this.tableName = tableName;
         this.timstampAttrName = timstampAttrName;
         this.from = from;

@@ -22,9 +22,9 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntelectualEntity;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringAndStringAttrs;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectRecordsCount;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
@@ -90,7 +90,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     @Override
     public List<Long> getEntitiesDbIdListByIdentifier(IntEntIdType type, String idValue) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectIdentifiersByStringAndStringAttrs(
+            StatementWrapper st = new SelectIdentifiersByStringString(
                     IntEntIdentifierDAO.TABLE_NAME,
                     IntEntIdentifierDAO.ATTR_IE_ID,
                     IntEntIdentifierDAO.ATTR_TYPE, type.name(),
@@ -108,7 +108,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
 
     public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectSingleAttrByStringAttr(
+            StatementWrapper st = new SelectSingleAttrByString(
                     IntEntIdentifierDAO.TABLE_NAME,
                     IntEntIdentifierDAO.ATTR_VALUE,
                     idValue,
@@ -140,7 +140,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
 
     @Override
     public Long getEntitiesCount() throws DatabaseException {
-        StatementWrapper statement = new SelectRecordsCount(TABLE_NAME);
+        StatementWrapper statement = new SelectCount(TABLE_NAME);
         DaoOperation operation = new SingleResultOperation(statement, new singleLongRT());
         try {
             return (Long) runInTransaction(operation);
