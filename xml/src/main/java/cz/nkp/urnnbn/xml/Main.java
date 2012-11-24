@@ -24,16 +24,16 @@ public class Main {
     private static void validateXml() {
         //registration of digital documents
         File digDocRegistrationXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/analytical.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monograph-withUrnNbn.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monograph.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/monographVolume.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/otherEntity-map.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/otherEntity-musicSheet.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodical.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodicalIssue.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/periodicalVolume.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord/thesis.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/analytical.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monograph-withUrnNbn.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monograph.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monographVolume.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/otherEntity-map.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/otherEntity-musicSheet.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodical.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodicalIssue.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodicalVolume.xml", digDocRegistrationXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/thesis.xml", digDocRegistrationXsd);
 
         //import digital instance
         File digInstImportXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
