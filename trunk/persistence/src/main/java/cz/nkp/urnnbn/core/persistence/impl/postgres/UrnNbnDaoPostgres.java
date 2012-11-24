@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
+import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select2StringsBy2Strings;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
@@ -235,6 +236,18 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
         DaoOperation operation = new NoResultOperation(new DeactivateUrnNbn(registrarCode, documentCode));
+        try {
+            runInTransaction(operation);
+        } catch (PersistenceException e) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", e);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
+        DaoOperation operation = new NoResultOperation(new ReactivateUrnNbn(registrarCode, documentCode));
         try {
             runInTransaction(operation);
         } catch (PersistenceException e) {

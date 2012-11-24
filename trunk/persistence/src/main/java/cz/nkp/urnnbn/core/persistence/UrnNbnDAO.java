@@ -64,16 +64,19 @@ public interface UrnNbnDAO {
     public List<UrnNbn> getSuccessors(UrnNbn urn) throws DatabaseException;
 
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
+    
+    //only for tests, rollbacks
+    public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
     public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
-    //only for tests
+    //only for tests, rollbacks
     public void deleteUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
     //only for tests
     public void deleteAllUrnNbns() throws DatabaseException;
 
-    //only for tests
+    //only for tests, rollbacks
     public void deletePredecessors(UrnNbn urn) throws DatabaseException;
 
     //only for tests
