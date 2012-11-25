@@ -37,11 +37,11 @@ public interface DataAccessService extends BusinessService {
 
     static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors) throws DatabaseException;
 
     public DigitalDocument digDocByInternalId(long digDocId) throws DatabaseException;
 
-    public UrnNbn urnByDigDocId(long id) throws DatabaseException;
+    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) throws DatabaseException;
 
     public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long digDocId) throws DatabaseException;
 

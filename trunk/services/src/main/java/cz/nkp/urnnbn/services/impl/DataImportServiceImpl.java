@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
-import cz.nkp.urnnbn.services.RecordImport;
+import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
@@ -48,9 +48,9 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public UrnNbn importNewRecord(RecordImport importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
+    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
-        return new RecordImporter(factory, importData).run();
+        return new DigitalDocumentRegistrar(factory, importData).run();
     }
 
     @Override

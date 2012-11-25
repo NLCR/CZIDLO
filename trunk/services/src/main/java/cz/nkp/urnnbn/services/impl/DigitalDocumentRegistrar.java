@@ -5,6 +5,8 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -20,7 +22,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
-import cz.nkp.urnnbn.services.RecordImport;
+import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -36,22 +38,22 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class RecordImporter {
+public class DigitalDocumentRegistrar {
 
     private static final Logger logger = Logger.getLogger(DataImportService.class.getName());
     private final DAOFactory factory;
-    private final RecordImport data;
+    private final DigDocRegistrationData data;
     private final IntelectualEntityMerger merger;
     private final UrnNbnFinder finder;
 
-    RecordImporter(DAOFactory factory, RecordImport data) throws UnknownRegistrarException {
+    DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data) throws UnknownRegistrarException {
         this.data = data;
         this.factory = factory;
         this.merger = new IntelectualEntityMerger(factory);
         this.finder = initFinder(factory, data);
     }
 
-    private UrnNbnFinder initFinder(DAOFactory factory, RecordImport data) throws UnknownRegistrarException {
+    private UrnNbnFinder initFinder(DAOFactory factory, DigDocRegistrationData data) throws UnknownRegistrarException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
             return new UrnNbnFinder(factory, registrar);
@@ -63,13 +65,14 @@ public class RecordImporter {
     }
 
     public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException {
-        synchronized (RecordImporter.class) {
+        synchronized (DigitalDocumentRegistrar.class) {
             RollbackRecord transactionLog = new RollbackRecord();
             UrnNbn urn = urnToBeUsed(transactionLog);
-            long ieId = findOrImportWithRollbackIntelectualEntity(transactionLog);
-            long digDocId = importDigitalRepersentationWithRollback(transactionLog, ieId);
-            importDigDocIdentifiersWithRollback(transactionLog, digDocId);
-            importUrnNbnWithRollback(urn, transactionLog, digDocId);
+            long ieId = findOrImportIntelectualEntityWithRollback(transactionLog);
+            long digDocId = persistDigDocWithRollback(transactionLog, ieId);
+            persistDigDocIdentifiersWithRollback(transactionLog, digDocId);
+            persistUrnNbnWithRollback(urn, transactionLog, digDocId);
+            persistUrnNbnPredecessorsWithRollback(urn, transactionLog);
             try {
                 return factory.urnDao().getUrnNbnByDigDocId(digDocId);
             } catch (DatabaseException ex) {
@@ -135,7 +138,7 @@ public class RecordImporter {
     private void removeFromReservedList(UrnNbn urn, RollbackRecord rollback) {
         try {
             factory.urnReservedDao().deleteUrn(urn);
-            rollback.setUrnFromBookedList(urn);
+            rollback.setUrnFromReservedList(urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -153,21 +156,21 @@ public class RecordImporter {
         }
     }
 
-    private long findOrImportWithRollbackIntelectualEntity(RollbackRecord transactionLog) {
+    private long findOrImportIntelectualEntityWithRollback(RollbackRecord transactionLog) {
         IntelectualEntity iePresent = merger.getIntEntForMergingOrNull(data.getEntity());
         if (iePresent != null) {//suitable IE found
             logger.log(Level.INFO, "digital instance will be attached to existing intelectual entity with id {0}", iePresent.getId());
             return iePresent.getId();
         } else {//IE will be created
             logger.info("new intelectual entity will be created");
-            long id = importIntelectualEntityWithRollback(transactionLog);
+            long id = persistIntelectualEntityWithRollback(transactionLog);
             return id;
         }
     }
 
-    private Long importIntelectualEntityWithRollback(RollbackRecord transactionLog) {
+    private Long persistIntelectualEntityWithRollback(RollbackRecord transactionLog) {
         try {
-            Long ieId = importIntelectualEntity();
+            Long ieId = persistIntelectualEntity();
             logger.log(Level.INFO, "intelectual entity was imported with id {0}", ieId);
             transactionLog.setInsertedIntEntId(ieId);
             return ieId;
@@ -178,11 +181,11 @@ public class RecordImporter {
         }
     }
 
-    private long importDigitalRepersentationWithRollback(RollbackRecord transactionLog, long ieId) throws UnknownArchiverException {
+    private long persistDigDocWithRollback(RollbackRecord transactionLog, long ieId) throws UnknownArchiverException {
         try {
-            Long digRepId = importDigitalDocument(ieId);
+            Long digRepId = persistDigitalDocument(ieId);
             logger.log(Level.INFO, "digital document was imported with id {0}", digRepId);
-            transactionLog.setDigRepId(digRepId);
+            transactionLog.setDigDocId(digRepId);
             return digRepId;
         } catch (UnknownArchiverException ex) {
             logger.log(Level.INFO, "failed to import digital document, rolling back");
@@ -195,9 +198,9 @@ public class RecordImporter {
         }
     }
 
-    private void importDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws RegistarScopeDigDocIdentifierCollisionException {
+    private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws RegistarScopeDigDocIdentifierCollisionException {
         try {
-            List<DigDocIdentifier> ids = importDigRepIdentifiers(digRepId);
+            List<DigDocIdentifier> ids = persistDigDocIdentifiers(digRepId);
             logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
         } catch (RegistarScopeDigDocIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
@@ -212,9 +215,9 @@ public class RecordImporter {
         }
     }
 
-    private void importUrnNbnWithRollback(UrnNbn urn, RollbackRecord transactionLog, long digRepId) {
+    private void persistUrnNbnWithRollback(UrnNbn urn, RollbackRecord transactionLog, long digRepId) {
         try {
-            importUrnNbn(urn, digRepId);
+            persistUrnNbn(urn, digRepId);
             logger.log(Level.INFO, "{0} was inserted", urn);
         } catch (Throwable ex) {
             logger.log(Level.INFO, "failed to insert {0}, rolling back", urn);
@@ -223,7 +226,19 @@ public class RecordImporter {
         }
     }
 
-    private Long importIntelectualEntity() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    private void persistUrnNbnPredecessorsWithRollback(UrnNbn urn, RollbackRecord transactionLog) {
+        deactivateActivePredecessors(urn, transactionLog);
+        try {
+            persistPredecessors(data.getPredecessors(), urn);
+            logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[]{data.getPredecessors().size(), urn.toString()});
+        } catch (Throwable ex) {
+            logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back", new Object[]{data.getPredecessors().size(), urn.toString()});
+            rollbackTransaction(transactionLog);
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private Long persistIntelectualEntity() throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         Long ieId = factory.intelectualEntityDao().insertIntelectualEntity(data.getEntity());
         for (IntEntIdentifier id : data.getIntEntIds()) {
             id.setIntEntDbId(ieId);
@@ -247,7 +262,7 @@ public class RecordImporter {
         return ieId;
     }
 
-    private Long importDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
+    private Long persistDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
         DigitalDocument digRep = data.getDigitalDocument();
         digRep.setIntEntId(ieId);
         try {
@@ -262,7 +277,7 @@ public class RecordImporter {
         }
     }
 
-    private List<DigDocIdentifier> importDigRepIdentifiers(long digRepId) throws RegistarScopeDigDocIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+    private List<DigDocIdentifier> persistDigDocIdentifiers(long digRepId) throws RegistarScopeDigDocIdentifierCollisionException, DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
         List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>();
         for (DigDocIdentifier id : data.getDigDogIdentifiers()) {
@@ -279,23 +294,47 @@ public class RecordImporter {
         return result;
     }
 
-    private void importUrnNbn(UrnNbn urn, long digRepId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
-        UrnNbn withDigRepId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digRepId);
-        factory.urnDao().insertUrnNbn(withDigRepId);
+    private void persistUrnNbn(UrnNbn urn, long digDocId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+        UrnNbn withDigDocId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digDocId);
+        factory.urnDao().insertUrnNbn(withDigDocId);
+    }
+
+    private void persistPredecessors(List<UrnNbnWithStatus> predecessors, UrnNbn successor) throws DatabaseException {
+        for (UrnNbnWithStatus predecessor : predecessors) {
+            try {
+                factory.urnDao().insertUrnNbnPredecessor(predecessor.getUrn(), successor);
+            } catch (RecordNotFoundException e) {
+                logger.log(Level.WARNING, "{0} or {1} doesn't exist", new Object[]{predecessor.toString(), successor.toString()});
+            } catch (AlreadyPresentException e) {
+                logger.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[]{predecessor.toString(), successor.toString()});
+            }
+        }
     }
 
     private void rollbackTransaction(RollbackRecord rollback) {
         if (rollback.getUrnAssignedByResolverOrRegistrar() != null) {
-            logger.info("removing assigned urn:nbn");
-            removeInsertedUrnNbn(rollback.getUrnAssignedByResolverOrRegistrar());
+            UrnNbn urnNbn = rollback.getUrnAssignedByResolverOrRegistrar();
+            logger.log(Level.INFO, "removing predecessors of {0}", urnNbn);
+            removePredecessors(urnNbn);
+            logger.log(Level.INFO, "removing {0}", urnNbn.toString());
+            removeInsertedUrnNbn(urnNbn);
+            if (!rollback.getPredecessorsDeactivated().isEmpty()) {
+                reactivateUrnNbns(rollback.getPredecessorsDeactivated(), urnNbn);
+            }
         }
         if (rollback.getUrnFromReservedList() != null) {
-            logger.info("returning reserved urn:nbn");
-            putBackToReservedTable(rollback.getUrnFromReservedList());
+            UrnNbn urnNbn = rollback.getUrnFromReservedList();
+            logger.log(Level.INFO, "removing predecessors of {0}", urnNbn);
+            removePredecessors(urnNbn);
+            logger.log(Level.INFO, "returning reserved {0}", urnNbn.toString());
+            putBackToReservedTable(urnNbn);
+            if (!rollback.getPredecessorsDeactivated().isEmpty()) {
+                reactivateUrnNbns(rollback.getPredecessorsDeactivated(), urnNbn);
+            }
         }
-        if (rollback.getDigRepId() != null) {
+        if (rollback.getDigDocId() != null) {
             logger.info("removing created digital document");
-            removeInsertedDigitalDocument(rollback.getDigRepId());
+            removeInsertedDigitalDocument(rollback.getDigDocId());
         }
         if (rollback.getInsertedIntEntId() != null) {
             logger.info("removing created intelectual entity");
@@ -352,5 +391,40 @@ public class RecordImporter {
         }
         builder.append('}');
         return builder.toString();
+    }
+
+    private void removePredecessors(UrnNbn urnNbn) {
+        try {
+            factory.urnDao().deletePredecessors(urnNbn);
+        } catch (Throwable ex) {
+            logger.log(Level.SEVERE, "rollback: Failed to remove predecessors of {0}", urnNbn.toString());
+        }
+    }
+
+    private void reactivateUrnNbns(List<UrnNbn> predecessorsDeactivated, UrnNbn urn) {
+        for (UrnNbn predecessor : predecessorsDeactivated) {
+            try {
+                logger.log(Level.INFO, "reactivating deactivated predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
+                factory.urnDao().reactivateUrnNbn(predecessor.getRegistrarCode(), predecessor.getDocumentCode());
+            } catch (Throwable ex) {
+                logger.log(Level.SEVERE, "rollback: Failed to reactivat predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
+            }
+        }
+    }
+
+    private void deactivateActivePredecessors(UrnNbn urn, RollbackRecord transactionLog) {
+        List<UrnNbn> predecessorsDeactivated = new ArrayList<UrnNbn>();
+        for (UrnNbnWithStatus predecessor : data.getPredecessors()) {
+            if (predecessor.getStatus() == Status.ACTIVE) {
+                try {
+                    UrnNbn urnDeactivated = predecessor.getUrn();
+                    factory.urnDao().deactivateUrnNbn(urnDeactivated.getRegistrarCode(), urnDeactivated.getDocumentCode());
+                    predecessorsDeactivated.add(urnDeactivated);
+                } catch (DatabaseException ex) {
+                    logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
+                }
+            }
+        }
+        transactionLog.setPredecessorsDeactivated(predecessorsDeactivated);
     }
 }
