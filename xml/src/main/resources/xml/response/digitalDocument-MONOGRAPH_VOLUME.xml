@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <digitalDocument id="7">
         <urnNbn>urn:nbn:cz:tst02-000002</urnNbn>
+        <successors>
+            <urnNbn>urn:nbn:cz:tst02-000007</urnNbn>
+            <urnNbn>urn:nbn:cz:tst02-000008</urnNbn>    
+        </successors>
         <financed>norské fondy</financed>
         <contractNumber>123</contractNumber>
         <created>2012-04-18T23:21:55.984+02:00</created>

@@ -22,6 +22,7 @@ public class Main {
     }
 
     private static void validateXml() {
+        //request
         //registration of digital documents
         File digDocRegistrationXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/analytical.xml", digDocRegistrationXsd);
@@ -55,9 +56,10 @@ public class Main {
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-FREE.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-RESERVED.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-DEACTIVATED.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-digDocRegResponse.xml", responseXsd);
+        //reservations
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservations.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservation.xml", responseXsd);
+        //registrars
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrar.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrars.xml", responseXsd);
         //digital document
@@ -74,6 +76,11 @@ public class Main {
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifiers.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier.xml", responseXsd);
         validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier-UPDATED.xml", responseXsd);
+
+        //response to registerDD
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byResolver.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byRegistrar.xml", responseXsd);
+        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byReservation.xml", responseXsd);
 
     }
 

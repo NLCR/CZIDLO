@@ -19,9 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
+        <value>urn:nbn:cz:tst02-00001s</value>
+        <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>
-        <value>urn:nbn:cz:tst02-000003</value>
-        <digitalDocumentId>8</digitalDocumentId>
-        <created>2012-04-18T23:21:56.304+02:00</created>
+        <documentCode>00001s</documentCode>
+        <digitalDocumentId>93</digitalDocumentId>
+        <created>2012-11-25T02:09:02.297+01:00</created>
+        <predecessors>
+            <urnNbn>urn:nbn:cz:tst02-00001o</urnNbn>
+            <urnNbn>urn:nbn:cz:tst02-00001h</urnNbn>
+        </predecessors>
     </urnNbn>
 </response>

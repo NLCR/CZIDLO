@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2012 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,13 +15,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+
+
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
+        <value>urn:nbn:cz:tst02-00001x</value>
+        <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>
-        <value>urn:nbn:cz:tst02-00000s</value>
-        <digitalDocumentId>63</digitalDocumentId>
-        <created>2012-11-19T01:28:04.006+01:00</created>
+        <documentCode>00001x</documentCode>
+        <digitalDocumentId>98</digitalDocumentId>
+        <created>2012-11-25T02:42:39.978+01:00</created>
+        <predecessors>
+            <urnNbn>urn:nbn:cz:tst02-00001o</urnNbn>
+            <urnNbn>urn:nbn:cz:tst02-00001h</urnNbn>
+        </predecessors>
     </urnNbn>
 </response>
-

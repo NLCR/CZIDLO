@@ -19,7 +19,6 @@ package cz.nkp.urnnbn.xml.unmarshallers;
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
 import java.util.ArrayList;
@@ -131,19 +130,6 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                 }
                 return result;
             }
-        }
-    }
-
-    /**
-     *
-     * @return UrnNbn or null
-     */
-    UrnNbn getUrnNbn() {
-        Element urnEl = (Element) selectSingleElementOrNull("urnNbn", digDocEl);
-        if (urnEl == null) {
-            return null;
-        } else {
-            return UrnNbn.valueOf(urnEl.getValue());
         }
     }
 

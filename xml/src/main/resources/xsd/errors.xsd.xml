@@ -34,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:restriction base="xs:string">
             <xs:enumeration value="ALREADY_DEACTIVATED"/>
             <xs:enumeration value="DIGITAL_INSTANCE_ALREADY_PRESENT"/>
+            <xs:enumeration value="INCORRECT_PREDECESSOR_FREE"/>
+            <xs:enumeration value="INCORRECT_PREDECESSOR_RESERVED"/>
             <xs:enumeration value="INVALID_ARCHIVER_ID"/>
             <xs:enumeration value="INVALID_DATA"/>
             <xs:enumeration value="INVALID_DATA"/>

@@ -24,7 +24,6 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.EnumMap;
 import java.util.List;
@@ -129,14 +128,6 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      */
     public List<DigDocIdentifier> getDigRepIdentifiers() {
         return digDocUnmarshaller.getDigDocIdentifiers();
-    }
-
-    /**
-     *
-     * @return UrnNbn or null
-     */
-    public UrnNbn getUrnNbn() {
-        return digDocUnmarshaller.getUrnNbn();
     }
 
     /**

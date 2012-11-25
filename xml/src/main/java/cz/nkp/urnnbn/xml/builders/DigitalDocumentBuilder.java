@@ -49,7 +49,9 @@ public class DigitalDocumentBuilder extends XmlBuilder {
     public Element buildRootElement() {
         Element root = new Element("digitalDocument", RESOLVER_NS);
         root.addAttribute(new Attribute("id", doc.getId().toString()));
-        appendElementWithContentIfNotNull(root, urn, "urnNbn");
+        appendUrnNbn(root, urn);
+        appendPredecessors(root, urn);
+        appendSuccessors(root, urn);
         appendElementWithContentIfNotNull(root, doc.getFinancedFrom(), "financed");
         appendElementWithContentIfNotNull(root, doc.getContractNumber(), "contractNumber");
         appendTimestamps(root, doc, "digital document");
