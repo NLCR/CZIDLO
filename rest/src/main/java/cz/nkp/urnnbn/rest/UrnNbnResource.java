@@ -4,10 +4,10 @@
  */
 package cz.nkp.urnnbn.rest;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
@@ -29,7 +29,7 @@ public class UrnNbnResource extends Resource {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnStr);
             UrnNbnWithStatus urnWithStatus = dataAccessService().
-                    urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
+                    urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
             return new UrnNbnBuilder(urnWithStatus).buildDocument().toXML();
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());

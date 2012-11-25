@@ -33,7 +33,7 @@ public class ResolverResource extends Resource {
         try {
             UrnNbn urnParsed = Parser.parseUrn(urnPar);
             UrnNbnWithStatus fetched = dataAccessService()
-                    .urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode());
+                    .urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
                 case DEACTIVATED:
                 case ACTIVE:

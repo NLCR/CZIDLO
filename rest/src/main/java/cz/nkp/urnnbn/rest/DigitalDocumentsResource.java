@@ -7,12 +7,14 @@ package cz.nkp.urnnbn.rest;
 import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.rest.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
@@ -20,7 +22,7 @@ import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
-import cz.nkp.urnnbn.services.RecordImport;
+import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -31,6 +33,8 @@ import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -39,6 +43,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -50,6 +55,7 @@ import nu.xom.Document;
  */
 public class DigitalDocumentsResource extends Resource {
 
+    private static final String PARAM_URN = "urn";
     @Context
     private UriInfo context;
     private final Registrar registrar;
@@ -77,42 +83,19 @@ public class DigitalDocumentsResource extends Resource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String importDigitalDocument(@Context HttpServletRequest req,
-            String content) {
+    public String registerDigitalDocument(@Context HttpServletRequest req, String content,
+            @QueryParam(PARAM_URN) String urnParam,
+            @QueryParam(value = "predUrn") final List<String> predecessors) {
         String login = req.getRemoteUser();
         try {
             Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getRecordImportSchema());
-            RecordImport recordImport = getImportFromDocument(doc);
-            UrnNbn urnFromImport = recordImport.getUrn();
-            if (urnFromImport == null) {
-                if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
-                    throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
-                }
-            } else { //urn:nbn in import data
-                //this is duplicated - same functionality in RecordImporter
-                //also method isReserved
-                //requires refactoring
-                if (!urnFromImport.getRegistrarCode().equals(registrar.getCode())) {
-                    throw new InvalidUrnException(urnFromImport.toString(), "doesn't match registrar code " + registrar.getCode().toString());
-                }
-                UrnNbnWithStatus urnWithStatus = urnWithStatus(urnFromImport);
-                switch (urnWithStatus.getStatus()) {
-                    case ACTIVE:
-                        throw new InvalidUrnException(urnFromImport.toString(), " already active");
-                    case RESERVED:
-                        if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
-                            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
-                        }
-                    case DEACTIVATED:
-                        throw new InvalidUrnException(urnFromImport.toString(), "URN:NBN has been deactivated");
-                    case FREE:
-                        if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
-                            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
-                        }
-                }
+            DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
+            registrationData.setUrn(urnNbnFromParam(urnParam));
+            if (!predecessors.isEmpty()) {
+                registrationData.setPredecessors(predecessorsFromParams(predecessors));
             }
-            UrnNbn urn = dataImportService().importNewRecord(recordImport, login);
-            UrnNbnWithStatus withStatus = new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.ACTIVE);
+            UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
+            UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocument().toXML();
         } catch (UnknownUserException ex) {
@@ -164,9 +147,9 @@ public class DigitalDocumentsResource extends Resource {
         }
     }
 
-    private RecordImport getImportFromDocument(Document doc) {
+    private DigDocRegistrationData digDocRegistrationDataFromDoc(Document doc) {
         RecordImportUnmarshaller unmarshaller = new RecordImportUnmarshaller(doc);
-        RecordImport result = new RecordImport();
+        DigDocRegistrationData result = new DigDocRegistrationData();
         //intelectual entity
         result.setEntity(unmarshaller.getIntelectualEntity());
         result.setIntEntIds(unmarshaller.getIntEntIdentifiers());
@@ -185,15 +168,61 @@ public class DigitalDocumentsResource extends Resource {
         digDoc.setArchiverId(archiverId);
         result.setDigitalDocument(digDoc);
         result.setDigDocIdentifiers(unmarshaller.getDigRepIdentifiers());
-        result.setUrn(unmarshaller.getUrnNbn());
         return result;
     }
 
-    private UrnNbnWithStatus urnWithStatus(UrnNbn urn) {
+    private UrnNbn urnNbnFromParam(String urnParam) throws InvalidUrnException, UnauthorizedRegistrationModeException {
+        if (urnParam == null || urnParam.isEmpty()) {
+            if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
+                throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
+            } else {
+                return null;
+            }
+        }
+
+        //this is duplicated - same functionality in RecordImporter
+        //also method isReserved
+        //requires refactoring
+        UrnNbn urnNbn = UrnNbn.valueOf(urnParam);
+        if (!urnNbn.getRegistrarCode().equals(registrar.getCode())) {
+            throw new InvalidUrnException(urnNbn.toString(), "doesn't match registrar code " + registrar.getCode().toString());
+        }
+        Status status = urnWithStatus(urnNbn, false).getStatus();
+        System.err.println("STATUS: " + status);
+        if (status == Status.ACTIVE) {
+            throw new InvalidUrnException(urnNbn.toString(), " already active");
+        }
+        if (status == Status.DEACTIVATED) {
+            throw new InvalidUrnException(urnNbn.toString(), " has been deactivated");
+        }
+        if (status == Status.RESERVED && !registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
+            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
+        }
+        if (status == Status.FREE && !registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
+            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
+        }
+        return urnNbn;
+    }
+
+    private UrnNbnWithStatus urnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
         try {
-            return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode());
+            return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {
+        List<UrnNbnWithStatus> predecessorList = new ArrayList<UrnNbnWithStatus>(predecessorParams.size());
+        for (String predecessor : predecessorParams) {
+            UrnNbn urnNbn = UrnNbn.valueOf(predecessor);
+            UrnNbnWithStatus withStatus = urnWithStatus(urnNbn, false);
+            Status status = withStatus.getStatus();
+            if (status == Status.RESERVED || status == Status.FREE) {
+                throw new IncorrectPredecessorException(withStatus);
+            }
+            predecessorList.add(withStatus);
+        }
+        return predecessorList;
     }
 }
