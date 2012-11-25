@@ -124,7 +124,7 @@ public class DigitalDocumentResource extends Resource {
     private void loadUrn() {
         if (urn == null) {
             try {
-                urn = dataAccessService().urnByDigDocId(doc.getId());
+                urn = dataAccessService().urnByDigDocId(doc.getId(), true);
             } catch (DatabaseException ex) {
                 logger.log(Level.SEVERE, ex.getMessage());
                 throw new InternalException(ex.getMessage());

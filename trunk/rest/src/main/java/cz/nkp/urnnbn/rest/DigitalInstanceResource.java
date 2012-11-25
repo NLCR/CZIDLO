@@ -60,10 +60,10 @@ public class DigitalInstanceResource extends Resource {
     }
 
     private DigitalDocumentBuilder digDocBuilder(long digDocId) throws DatabaseException {
-        DigitalDocument digRep = dataAccessService().digDocByInternalId(digDocId);
-        UrnNbn urn = dataAccessService().urnByDigDocId(digRep.getId());
+        DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
+        UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
         RegistrarScopeIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digDocId);
-        return new DigitalDocumentBuilder(digRep, urn, idsBuilder, null, null, null, null);
+        return new DigitalDocumentBuilder(digDoc, urn, idsBuilder, null, null, null, null);
     }
 
     private DigitalLibraryBuilder digLibBuilder(long libraryId) throws DatabaseException {
