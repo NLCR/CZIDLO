@@ -6,7 +6,7 @@ import java.util.Collections;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.server.dtoTransformation.entities.DtotoIntelectualEntityTransformer;
-import cz.nkp.urnnbn.services.RecordImport;
+import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
@@ -18,7 +18,7 @@ public class RecordImportTransformer {
 	private final DigitalDocumentDTO digDoc;
 	private final UrnNbnDTO urnNbn;
 	private final ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers;
-	private final RecordImport result = new RecordImport();
+	private final DigDocRegistrationData result = new DigDocRegistrationData();
 
 	public RecordImportTransformer(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
 			ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) {
@@ -28,7 +28,7 @@ public class RecordImportTransformer {
 		this.registrarScopeIdentifiers = registrarScopeIdentifiers;
 	}
 
-	public RecordImport transform() {
+	public DigDocRegistrationData transform() {
 		transformEntity();
 		transformDigDoc();
 		transformUrn();

@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.shared.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UrnNbnDTO implements Serializable {
 
@@ -13,11 +14,13 @@ public class UrnNbnDTO implements Serializable {
 	private boolean active;
 	private String created;
 	private String lastModified;
+	private List<UrnNbnDTO> predecessors;
+	private List<UrnNbnDTO> successors;
 
 	public UrnNbnDTO() {}
 
 	public UrnNbnDTO(String countryCode, String registrarCode, String documentCode, Long digdocId, boolean active, String created,
-			String lastModified) {
+			String lastModified, List<UrnNbnDTO> predecessors, List<UrnNbnDTO> successors) {
 		this.countryCode = countryCode;
 		this.registrarCode = registrarCode;
 		this.documentCode = documentCode;
@@ -25,6 +28,8 @@ public class UrnNbnDTO implements Serializable {
 		this.active = active;
 		this.created = created;
 		this.lastModified = lastModified;
+		this.predecessors = predecessors;
+		this.successors = successors;
 	}
 
 	public String getCountryCode() {
@@ -81,6 +86,22 @@ public class UrnNbnDTO implements Serializable {
 
 	public void setLastModified(String lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	public List<UrnNbnDTO> getPredecessors() {
+		return predecessors;
+	}
+
+	public void setPredecessors(List<UrnNbnDTO> predecessors) {
+		this.predecessors = predecessors;
+	}
+
+	public List<UrnNbnDTO> getSuccessors() {
+		return successors;
+	}
+
+	public void setSuccessors(List<UrnNbnDTO> successors) {
+		this.successors = successors;
 	}
 
 	public String toString() {

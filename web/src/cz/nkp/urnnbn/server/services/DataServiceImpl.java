@@ -59,8 +59,8 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	public UrnNbnDTO saveRecord(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
 			ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException {
 		try {
-			UrnNbn assigned = createService.importNewRecord(
-					new RecordImportTransformer(intEnt, digDoc, urnNbn, registrarScopeIdentifiers).transform(), getUserLogin());
+			UrnNbn assigned = createService.registerDigitalDocument(new RecordImportTransformer(intEnt, digDoc, urnNbn,
+					registrarScopeIdentifiers).transform(), getUserLogin());
 			return DtoTransformer.transformUrnNbn(assigned);
 		} catch (Exception e) {
 			e.printStackTrace();

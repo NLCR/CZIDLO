@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.search;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -63,32 +64,66 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private void addUrnNbn(TreeItem root) {
 		UrnNbnDTO urnNbn = dto.getUrn();
-		String urnNbnHtml = urnNbn.isActive() ? urnNbn.toString() : "<span style=\"color:grey;text-decoration:line-through;\">"
+		String urnNbnItemHtml = urnNbn.isActive() ? urnNbn.toString() : "<span style=\"color:grey;text-decoration:line-through;\">"
 				+ urnNbn.toString() + "</span>";
-		String linkToXml = "/api/" + API_VERSION + "/urnnbn/" + urnNbn.toString() + "?action=show&format=xml";
-		String linkToXmlRecord = "<a href=\"" + linkToXml + "\" target=\"_blank\">záznam v xml</a>";
-
-		TreeItem urnNbnItem = root.addItem(urnNbnHtml + "&nbsp&nbsp" + linkToXmlRecord);
+		TreeItem urnNbnItem = root.addItem(urnNbnItemHtml);
 		addLabeledItemIfValueNotNull(urnNbnItem, constants.created(), urnNbn.getCreated());
 		addLabeledItemIfValueNotNull(urnNbnItem, constants.modified(), urnNbn.getLastModified());
 
-		// TODO: jen ukazka, dodelat
-		// TreeItem urnNbnItem = root.addItem(new
-		// HTML("<a href=\"http://resolver.nkp.cz/" + urnNbn + ">" + urnNbn +
-		// "</a>"));
-		// TreeItem predchudci = urnNbnItem.addItem("předchůdci");
-		// predchudci.addItem(new
-		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000001\">urn:nbn:cz:tst02-000001</a>"));
-		// predchudci.addItem(new
-		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000002\">urn:nbn:cz:tst02-000002</a>"));
-		//
-		// //urn:nbn:cz:tst02-000005
-		// TreeItem nasledovnici = urnNbnItem.addItem("následovníci");
-		// nasledovnici.addItem(new
-		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000007\">urn:nbn:cz:tst02-000007</a>"));
-		// nasledovnici.addItem(new
-		// HTML("<a href=\"http://resolver.nkp.cz/urn:nbn:cz:tst02-000008\">urn:nbn:cz:tst02-000008</a>"));
+		// predecessors
+		List<UrnNbnDTO> predecessors = urnNbn.getPredecessors();
+		if (predecessors != null && !predecessors.isEmpty()) {
+			TreeItem predecessorsItem = urnNbnItem.addItem("předchůdci");
+			for (UrnNbnDTO predecessor : predecessors) {
+				predecessorsItem.addItem(urnNbnItemHtlm(predecessor));
+			}
+			predecessorsItem.setState(true);
+		}
 
+		// successors
+		List<UrnNbnDTO> successors = urnNbn.getSuccessors();
+		if (successors != null && !successors.isEmpty()) {
+			TreeItem successorsItem = urnNbnItem.addItem("následovníci");
+			for (UrnNbnDTO successor : successors) {
+				successorsItem.addItem(urnNbnItemHtlm(successor));
+			}
+			successorsItem.setState(true);
+		}
+	}
+
+	private String urnNbnItemHtlm(UrnNbnDTO urnNbn) {
+		return urnNbn.toString() + "&nbsp&nbsp" + linkToDigDocHtmlByUrnNbn(urnNbn, constants.showRecord()) + "&nbsp&nbsp"
+				+ linkToDigDocXmlByUrnNbn(urnNbn, constants.showRecordInXml());
+	}
+
+	private String linkToDigDocXmlByUrnNbn(UrnNbnDTO urnNbn, String linkText) {
+		return linkToResolver(urnNbn, linkText, "show", "xml", true);
+	}
+
+	private String linkToDigDocHtmlByUrnNbn(UrnNbnDTO urnNbn, String linkText) {
+		return linkToResolver(urnNbn, linkText, "show", "html", true);
+	}
+
+	private String linkToResolver(UrnNbnDTO urn, String linkText, String action, String format, boolean inNewWindow) {
+		StringBuilder result = new StringBuilder();
+		result.append("<a href=");
+		result.append("\"");
+		// url itself
+		result.append("/api").append('/').append(API_VERSION).append('/').append("resolver").append('/');
+		// result.append("/resolver");
+		result.append(urn.toString());
+		result.append("?action=").append(action);
+		if (!action.equals("decide")) {
+			result.append("&format=").append(format);
+		}
+		result.append("\"");
+		if (inNewWindow) {
+			result.append(" target=\"_blank\"");
+		}
+		result.append(">");
+		result.append(linkText);
+		result.append("</a>");
+		return result.toString();
 	}
 
 	private Panel digitalDocumentItem(boolean active, UrnNbnDTO urnNbn) {
@@ -97,8 +132,10 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		if (active) {
 			result.add(new Label(constants.digitalDocument()));
 		} else {
-			result.add(new HTML("<span style=\"text-decoration:line-through;\">" + constants.digitalDocument() + "</span>"
-					+ " <span style=\"color:grey\">(" + constants.inactiveDD() + ")</span>"));
+			// result.add(new
+			// HTML("<span style=\"text-decoration:line-through;\">" +
+			// constants.digitalDocument() + "</span>"
+			result.add(new HTML(constants.digitalDocument() + " <span style=\"color:grey\">(" + constants.inactiveDD() + ")</span>"));
 		}
 		// button to edit record
 		if (activeUser().isSuperAdmin() || activeUserManagesRegistrar()) {
@@ -106,11 +143,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			result.add(editDocumentButton());
 		}
 		// link to record in xml
-		String linkToXml = "/api/" + API_VERSION + "/resolver/" + urnNbn.toString() + "?action=show&format=xml";
-		String linkToXmlRecord = "<a href=\"" + linkToXml + "\" target=\"_blank\">záznam v xml</a>";
-		result.add(new HTML("&nbsp&nbsp"));
-		result.add(new HTML(linkToXmlRecord));
-
+		result.add(new HTML("&nbsp&nbsp" + linkToDigDocXmlByUrnNbn(urnNbn, constants.showRecordInXml())));
 		return result;
 	}
 

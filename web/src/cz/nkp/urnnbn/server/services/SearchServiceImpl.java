@@ -45,11 +45,11 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private ArrayList<IntelectualEntityDTO> searchByUrnNbn(String request) {
 		try {
 			UrnNbn urnNbn = UrnNbn.valueOf(request);
-			UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode());
-			if (urnFetched.getStatus() == Status.ACTIVE ||  
-					urnFetched.getStatus() == Status.DEACTIVATED) {
+			UrnNbnWithStatus urnFetched = readService
+					.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+			if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
 				DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
-				//List allways contains just single item
+				// List allways contains just single item
 				IntelectualEntity entity = readService.entityById(digDoc.getIntEntId());
 				ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(1);
 				result.add(transformedEntity(entity));
@@ -127,7 +127,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private UrnNbn urnNbnOfDocument(DigitalDocument digitalDocument) {
 		try {
-			return readService.urnByDigDocId(digitalDocument.getId());
+			return readService.urnByDigDocId(digitalDocument.getId(), true);
 		} catch (DatabaseException e) {
 			log("error getting urn:nbn for dd" + digitalDocument.getId());
 			return null;

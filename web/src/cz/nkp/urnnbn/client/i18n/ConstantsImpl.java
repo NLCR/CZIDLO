@@ -245,9 +245,9 @@ public interface ConstantsImpl extends Constants {
 	String showInCatalog();
 
 	// URN:NBN registration modes
-	
+
 	String allowedRegistrationModes();
-	
+
 	String urnNbnRegistrationMode();
 
 	String modeByRegistrar();
@@ -255,7 +255,11 @@ public interface ConstantsImpl extends Constants {
 	String modeByResolver();
 
 	String modeByReservation();
-	
+
 	String inactiveDD();
-	
+
+	String showRecord();
+
+	String showRecordInXml();
+
 }
