@@ -56,7 +56,7 @@ public interface DataImportService extends BusinessService {
      * from importData) existes
      * @throws UnknownUserException if no such user with this login exists
      */
-    public UrnNbn importNewRecord(RecordImport importData, String login) throws
+    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws
             AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException,
             RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException;

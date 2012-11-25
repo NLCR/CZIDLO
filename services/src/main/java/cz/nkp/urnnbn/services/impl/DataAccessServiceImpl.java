@@ -46,9 +46,14 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbn urnByDigDocId(long digRepId) throws DatabaseException {
+    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) throws DatabaseException {
         try {
-            return factory.urnDao().getUrnNbnByDigDocId(digRepId);
+            UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(id);
+            if (withPredecessorsAndSuccessors) {
+                urn.setPredecessors(factory.urnDao().getPredecessors(urn));
+                urn.setSuccessors(factory.urnDao().getSuccessors(urn));
+            }
+            return urn;
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
@@ -56,9 +61,13 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode) throws DatabaseException {
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode, boolean withPredecessorsAndSuccessors) throws DatabaseException {
         try {
             UrnNbn urnNbn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code, documentCode);
+            if (withPredecessorsAndSuccessors) {
+                urnNbn.setPredecessors(factory.urnDao().getPredecessors(urnNbn));
+                urnNbn.setSuccessors(factory.urnDao().getSuccessors(urnNbn));
+            }
             if (urnNbn.isActive()) {
                 return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.ACTIVE);
             } else {

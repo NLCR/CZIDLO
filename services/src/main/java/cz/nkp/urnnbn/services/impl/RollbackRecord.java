@@ -5,25 +5,29 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Identifiers of imported intelectual entity and digital instance records are stored here
- * to be used in possible rollback.
+ * Identifiers of imported intelectual entity and digital instance records are
+ * stored here to be used in possible rollback.
+ *
  * @author Martin Řehánek
  */
 public class RollbackRecord {
 
     private Long insertedIntEntId = null;
-    private Long digRepId = null;
+    private Long digDocId = null;
     private UrnNbn urnAssignedByResolverOrRegistrar = null;
-    private UrnNbn urnFromBookedList = null;
+    private UrnNbn urnFromReservedList = null;
+    private List<UrnNbn> predecessorsDeactivated = null;
 
-    public Long getDigRepId() {
-        return digRepId;
+    public Long getDigDocId() {
+        return digDocId;
     }
 
-    public void setDigRepId(Long digRepId) {
-        this.digRepId = digRepId;
+    public void setDigDocId(Long digRepId) {
+        this.digDocId = digRepId;
     }
 
     public UrnNbn getUrnAssignedByResolverOrRegistrar() {
@@ -35,11 +39,11 @@ public class RollbackRecord {
     }
 
     public UrnNbn getUrnFromReservedList() {
-        return urnFromBookedList;
+        return urnFromReservedList;
     }
 
-    public void setUrnFromBookedList(UrnNbn urnFromBookedList) {
-        this.urnFromBookedList = urnFromBookedList;
+    public void setUrnFromReservedList(UrnNbn urnFromBookedList) {
+        this.urnFromReservedList = urnFromBookedList;
     }
 
     public Long getInsertedIntEntId() {
@@ -48,5 +52,13 @@ public class RollbackRecord {
 
     public void setInsertedIntEntId(Long insertedIntEntId) {
         this.insertedIntEntId = insertedIntEntId;
+    }
+
+    public List<UrnNbn> getPredecessorsDeactivated() {
+        return predecessorsDeactivated == null ? Collections.<UrnNbn>emptyList() : predecessorsDeactivated;
+    }
+
+    public void setPredecessorsDeactivated(List<UrnNbn> predecessorsDeactivated) {
+        this.predecessorsDeactivated = predecessorsDeactivated;
     }
 }

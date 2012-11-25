@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -13,13 +14,14 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class RecordImport {
+public class DigDocRegistrationData {
 
     IntelectualEntity entity;
     List<IntEntIdentifier> intEntIds;
@@ -28,6 +30,7 @@ public class RecordImport {
     SourceDocument sourceDoc;
     DigitalDocument digitalDocument;
     List<DigDocIdentifier> digDocIdentifiers;
+    List<UrnNbnWithStatus> predecessors;
     UrnNbn urn;
     RegistrarCode registrarCode;
 
@@ -101,5 +104,13 @@ public class RecordImport {
 
     public void setRegistrarCode(RegistrarCode registrarCode) {
         this.registrarCode = registrarCode;
+    }
+
+    public List<UrnNbnWithStatus> getPredecessors() {
+        return predecessors == null ? Collections.<UrnNbnWithStatus>emptyList() : predecessors;
+    }
+
+    public void setPredecessors(List<UrnNbnWithStatus> predecessors) {
+        this.predecessors = predecessors;
     }
 }
