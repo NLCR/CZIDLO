@@ -17,8 +17,10 @@
 package cz.nkp.urnnbn.xml.builders;
 
 import cz.nkp.urnnbn.core.dto.IdentifiableWithDatestamps;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
 import cz.nkp.urnnbn.xml.config.WebModuleConfiguration;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Attribute;
@@ -93,5 +95,31 @@ public abstract class XmlBuilder {
         } else if (!modified.equals(created)) {
             appendElementWithContentIfNotNull(rootElement, entity.getModified(), "modified");
         }
+    }
+
+    protected void appendPredecessors(Element root, UrnNbn urn) {
+        List<UrnNbn> predecessors = urn.getPredecessors();
+        if (predecessors != null && !predecessors.isEmpty()) {
+            Element predecessorsEl = new Element("predecessors", RESOLVER_NS);
+            for (UrnNbn predecessor : predecessors) {
+                appendUrnNbn(predecessorsEl, predecessor);
+            }
+            root.appendChild(predecessorsEl);
+        }
+    }
+
+    protected void appendSuccessors(Element root, UrnNbn urn) {
+        List<UrnNbn> successors = urn.getSuccessors();
+        if (successors != null && !successors.isEmpty()) {
+            Element predecessorsEl = new Element("successors", RESOLVER_NS);
+            for (UrnNbn successor : successors) {
+                appendUrnNbn(predecessorsEl, successor);
+            }
+            root.appendChild(predecessorsEl);
+        }
+    }
+
+    protected void appendUrnNbn(Element root, UrnNbn urnNbn) {
+        appendElementWithContentIfNotNull(root, urnNbn, "urnNbn");
     }
 }

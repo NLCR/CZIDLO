@@ -165,6 +165,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="digitalDocument">
         <xs:sequence>
             <xs:element name="urnNbn" type="r:urnNbnType"/>
+            <xs:element name="predecessors" type="r:predecessors" minOccurs="0"/>
+            <xs:element name="successors" type="r:successors" minOccurs="0"/>
             <xs:element name="financed" type="xs:string" minOccurs="0"/>
             <xs:element name="contractNumber" type="xs:string" minOccurs="0"/>
             <xs:element name="created" type="xs:dateTime"/>
@@ -200,11 +202,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="registrarCode" type="xs:string"/> 
             <xs:element name="value" type="r:urnNbnType"/> 
+            <xs:element name="countryCode" type="r:countryCode"/> 
+            <xs:element name="registrarCode" type="r:registrarCode"/> 
+            <xs:element name="documentCode" type="r:documentCode"/> 
             <xs:element name="digitalDocumentId" type="xs:int" minOccurs="0"/> 
             <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="predecessors" type="r:predecessors" minOccurs="0"/>
+            <xs:element name="successors" type="r:successors" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -281,6 +287,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="periodicalTitle" type="xs:string" minOccurs="0"/>
             <xs:element name="volumeTitle" type="xs:string" minOccurs="0"/>
             <xs:element name="issueTitle" type="xs:string" minOccurs="0"/>
+        </xs:sequence> 
+    </xs:complexType>
+    
+    <!--predecessors-->
+    <xs:complexType name="predecessors">
+        <xs:sequence>
+            <xs:element name="urnNbn" type="r:urnNbnType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence> 
+    </xs:complexType>
+    
+    <!--successors-->
+    <xs:complexType name="successors">
+        <xs:sequence>
+            <xs:element name="urnNbn" type="r:urnNbnType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence> 
     </xs:complexType>
     

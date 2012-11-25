@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import java.util.logging.Level;
@@ -41,10 +42,14 @@ public class UrnNbnBuilder extends XmlBuilder {
         Element root = new Element("urnNbn", RESOLVER_NS);
         UrnNbn urn = urnWithStatus.getUrn();
         appendElementWithContentIfNotNull(root, urnWithStatus.getStatus().name(), "status");
-        appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarCode");
         appendElementWithContentIfNotNull(root, urn.toString(), "value");
+        appendElementWithContentIfNotNull(root, CountryCode.getCode(), "countryCode");
+        appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarCode");
+        appendElementWithContentIfNotNull(root, urn.getDocumentCode(), "documentCode");
         appendElementWithContentIfNotNull(root, urn.getDigDocId(), "digitalDocumentId");
         appendTimestamps(root);
+        appendPredecessors(root, urn);
+        appendSuccessors(root, urn);
         return root;
     }
 

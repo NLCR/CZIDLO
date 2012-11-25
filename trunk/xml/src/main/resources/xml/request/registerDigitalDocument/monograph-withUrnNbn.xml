@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
-    Document   : analytical.xml
+    Document   : monograph-withUrnNbn.xml
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- předem rezervané urn:nbn -->
-        <r:urnNbn>urn:nbn:cz:tst02-00003b</r:urnNbn>
+        <!--<r:urnNbn>urn:nbn:cz:tst02-00003b</r:urnNbn>-->
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">3234</r:id>

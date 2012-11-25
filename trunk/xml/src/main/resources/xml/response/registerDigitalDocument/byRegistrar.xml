@@ -18,20 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
-        <status>DEACTIVATED</status>
-        <value>urn:nbn:cz:tst02-00001o</value>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:tst02-0000x3</value>
         <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>
-        <documentCode>00001o</documentCode>
-        <digitalDocumentId>89</digitalDocumentId>
-        <created>2012-11-24T23:08:06.237+01:00</created>
-        <modified>2012-11-25T02:09:02.310+01:00</modified>
+        <documentCode>0000x3</documentCode>
+        <digitalDocumentId>103</digitalDocumentId>
+        <created>2012-11-25T03:02:31.320+01:00</created>
         <predecessors>
-            <urnNbn>urn:nbn:cz:tst02-000011</urnNbn>
-            <urnNbn>urn:nbn:cz:tst02-00001h</urnNbn>
+            <urnNbn>urn:nbn:cz:tst02-0000x1</urnNbn>
+            <urnNbn>urn:nbn:cz:tst02-00001o</urnNbn>
         </predecessors>
-        <successors>
-            <urnNbn>urn:nbn:cz:tst02-00001s</urnNbn>
-        </successors>
     </urnNbn>
 </response>
+
