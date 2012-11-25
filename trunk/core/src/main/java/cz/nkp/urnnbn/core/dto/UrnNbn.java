@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.core.dto;
 
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.joda.time.DateTime;
@@ -24,6 +25,8 @@ public class UrnNbn {
     private final DateTime created;
     private final DateTime modified;
     private final Boolean active;
+    List<UrnNbn> predecessors;
+    List<UrnNbn> successors;
 
     /**
      * This constructor should be used when urn:nbn is being assigned or parsed
@@ -103,23 +106,26 @@ public class UrnNbn {
             throw new IllegalArgumentException("'" + string + "' doesn't match " + getUrnNbnPattern());
         }
         String[] tokens = string.split(":");
-        //these checks actually not needed since there's matching by regexp
-//        if (tokens.length != 4) {
-//            throw new IllegalArgumentException("Incorrect value of urn:nbn");
-//        }
-//        if (!"urn".equals(tokens[0].toLowerCase())) {
-//            throw new IllegalArgumentException("invalid prefix '" + tokens[0] + "', expected 'urn'");
-//        }
-//        if (!"nbn".equals(tokens[1].toLowerCase())) {
-//            throw new IllegalArgumentException("invalid prefix '" + tokens[1] + "', expected 'nbn'");
-//        }
-//        if (!CountryCode.getCode().equals(tokens[2].toLowerCase())) {
-//            throw new IllegalArgumentException("invalid national code '" + tokens[2] + "', expected '" + CountryCode.getCode() + "'");
-//        }
-        String[] registrarAndDocumentCodes = tokens[3].split("-");
+         String[] registrarAndDocumentCodes = tokens[3].split("-");
         RegistrarCode registrarCode = RegistrarCode.valueOf(registrarAndDocumentCodes[0]);
         String documentCode = registrarAndDocumentCodes[1].toLowerCase();
         return new UrnNbn(registrarCode, documentCode, null);
+    }
+
+    public List<UrnNbn> getPredecessors() {
+        return predecessors;
+    }
+
+    public void setPredecessors(List<UrnNbn> predecessors) {
+        this.predecessors = predecessors;
+    }
+
+    public List<UrnNbn> getSuccessors() {
+        return successors;
+    }
+
+    public void setSuccessors(List<UrnNbn> successors) {
+        this.successors = successors;
     }
 
     @Override
