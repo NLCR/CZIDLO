@@ -4,15 +4,15 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigDocIdNotDefinedException extends Exception {
+public class RegistrarScopeIdentifierNotDefinedException extends Exception {
 
-    public DigDocIdNotDefinedException(DigDocIdType type) {
+    public RegistrarScopeIdentifierNotDefinedException(RegistrarScopeIdType type) {
         super("identifier for type '" + type.toString() + "' not defined");
     }
 }

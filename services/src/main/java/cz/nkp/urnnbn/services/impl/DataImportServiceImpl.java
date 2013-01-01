@@ -6,15 +6,15 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -25,7 +25,7 @@ import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -48,7 +48,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
+    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
         return new DigitalDocumentRegistrar(factory, importData).run();
     }
@@ -65,14 +65,14 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public void addRegistrarScopeIdentifier(DigDocIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, AccessException, UnknownUserException {
+    public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException, AccessException, UnknownUserException {
         try {
             authorization.checkAccessRights(id.getRegistrarId(), login);
-            factory.digDocIdDao().insertDigDocId(id);
+            factory.digDocIdDao().insertRegistrarScopeId(id);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
+            if (RegistrarScopeIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigDocException(id.getDigDocId());
             } else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownRegistrarException(id.getRegistrarId());

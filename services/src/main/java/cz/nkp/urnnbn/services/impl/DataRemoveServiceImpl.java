@@ -4,11 +4,11 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -16,8 +16,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
-import cz.nkp.urnnbn.services.exceptions.DigDocIdNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -37,29 +37,33 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeDigitalDocumentIdentifiers(long digDocId) throws UnknownDigDocException {
+    public void removeDigitalDocumentIdentifiers(long digDocId, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
-            factory.digDocIdDao().deleteAllIdentifiersOfDigDoc(digDocId);
+            long registrarId = registrarOfDigDoc(digDocId);
+            authorization.checkAccessRights(registrarId, login);
+            factory.digDocIdDao().deleteRegistrarScopeIds(digDocId);
             factory.documentDao().updateDocumentDatestamp(digDocId);
-        } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigDocException(digDocId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void removeDigitalDocumentId(long digDocId, DigDocIdType type) throws UnknownDigDocException, DigDocIdNotDefinedException {
+    public void removeDigitalDocumentId(long digDocId, RegistrarScopeIdType type, String login) throws UnknownUserException, AccessException, UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException {
         try {
-            factory.digDocIdDao().deleteDigDocIdentifier(digDocId, type);
+            long registrarId = registrarOfDigDoc(digDocId);
+            authorization.checkAccessRights(registrarId, login);
+            factory.digDocIdDao().deleteRegistrarScopeId(digDocId, type);
             factory.documentDao().updateDocumentDatestamp(digDocId);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             if (DigitalDocumentDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigDocException(digDocId);
-            } else if (DigDocIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-                throw new DigDocIdNotDefinedException(type);
+            } else if (RegistrarScopeIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
+                throw new RegistrarScopeIdentifierNotDefinedException(type);
             } else {
                 throw new RuntimeException(ex);
             }

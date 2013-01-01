@@ -4,11 +4,11 @@
  */
 package cz.nkp.urnnbn.services;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
-import cz.nkp.urnnbn.services.exceptions.DigDocIdNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -23,11 +23,13 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
  */
 public interface DataRemoveService {
 
-    //TODO: access rights
-    public void removeDigitalDocumentIdentifiers(long digDocId) throws UnknownDigDocException;
+    public void removeDigitalDocumentIdentifiers(long digDocId, String login) throws
+            UnknownUserException, AccessException,
+            UnknownDigDocException;
 
-    //TODO: access rights
-    public void removeDigitalDocumentId(long digDocId, DigDocIdType type) throws UnknownDigDocException, DigDocIdNotDefinedException;
+    public void removeDigitalDocumentId(long digDocId, RegistrarScopeIdType type, String login) throws
+            UnknownUserException, AccessException,
+            UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException;
 
     public void removeArchiver(long archiverId, String login) throws
             UnknownUserException, NotAdminException,

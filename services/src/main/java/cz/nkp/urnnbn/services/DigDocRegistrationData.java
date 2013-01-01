@@ -6,12 +6,12 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import java.util.Collections;
@@ -29,17 +29,17 @@ public class DigDocRegistrationData {
     Originator originator;
     SourceDocument sourceDoc;
     DigitalDocument digitalDocument;
-    List<DigDocIdentifier> digDocIdentifiers;
+    List<RegistrarScopeIdentifier> registrarScopeIdentifiers;
     List<UrnNbnWithStatus> predecessors;
     UrnNbn urn;
     RegistrarCode registrarCode;
 
-    public List<DigDocIdentifier> getDigDogIdentifiers() {
-        return digDocIdentifiers;
+    public List<RegistrarScopeIdentifier> getDigDogIdentifiers() {
+        return registrarScopeIdentifiers;
     }
 
-    public void setDigDocIdentifiers(List<DigDocIdentifier> digDocIdentifiers) {
-        this.digDocIdentifiers = digDocIdentifiers;
+    public void setDigDocIdentifiers(List<RegistrarScopeIdentifier> digDocIdentifiers) {
+        this.registrarScopeIdentifiers = digDocIdentifiers;
     }
 
     public IntelectualEntity getEntity() {

@@ -6,17 +6,17 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -49,7 +49,7 @@ public interface DataImportService extends BusinessService {
      * @throws UrnUsedException If this urn:nbn is allready being used
      * @throws UnknownRegistrarException if no such registrar with code obtained
      * from importData object exists
-     * @throws RegistarScopeDigDocIdentifierCollisionException if registrar
+     * @throws RegistarScopeIdentifierCollisionException if registrar
      * scope identifier with same type and value as one of those present in
      * importData already exists (for given registrar)
      * @throws UnknownArchiverException if no such archiver (with id obtained
@@ -59,7 +59,7 @@ public interface DataImportService extends BusinessService {
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws
             AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException,
-            RegistarScopeDigDocIdentifierCollisionException, UnknownArchiverException, UnknownUserException;
+            RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException;
 
     /**
      * Creates new digital instance for existing digital document.
@@ -79,7 +79,7 @@ public interface DataImportService extends BusinessService {
             UnknownUserException, AccessException,
             UnknownDigLibException, UnknownDigDocException;
 
-    public void addRegistrarScopeIdentifier(DigDocIdentifier newId, String login) throws
+    public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws
             UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
