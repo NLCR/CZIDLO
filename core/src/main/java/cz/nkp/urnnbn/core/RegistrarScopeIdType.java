@@ -8,18 +8,18 @@ package cz.nkp.urnnbn.core;
  *
  * @author Martin Řehánek
  */
-public class DigDocIdType {
+public class RegistrarScopeIdType {
 
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 20;
-    private static char[] SPECIAL_CHARACTERS_ALLOWED = new char[]{'_'};
+    private static char[] SPECIAL_CHARACTERS_ALLOWED = {'_', '-', ':'};
     private String value;
 
-    private DigDocIdType(String value) {
+    private RegistrarScopeIdType(String value) {
         this.value = value;
     }
 
-    public static DigDocIdType valueOf(String stringValue) {
+    public static RegistrarScopeIdType valueOf(String stringValue) {
         if (stringValue == null) {
             throw new NullPointerException();
         }
@@ -44,7 +44,7 @@ public class DigDocIdType {
                 }
             }
         }
-        return new DigDocIdType(stringValue);
+        return new RegistrarScopeIdType(stringValue);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DigDocIdType {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DigDocIdType other = (DigDocIdType) obj;
+        final RegistrarScopeIdType other = (RegistrarScopeIdType) obj;
         if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
             return false;
         }
