@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class UnknownDigitalLibraryException extends RestException {
+public class UnknownDigitalLibraryException extends ApiException {
 
     public UnknownDigitalLibraryException(String errorMessage) {
         super(Status.NOT_FOUND, "UNKNOWN_DIGITAL_LIBRARY", errorMessage);

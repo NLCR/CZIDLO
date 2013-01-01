@@ -4,27 +4,26 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.rest.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidArchiverIdException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
+import cz.nkp.urnnbn.rest.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeDigDocIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -74,7 +73,9 @@ public class DigitalDocumentsResource extends Resource {
             int digRepCount = dataAccessService().digitalDocumentsCount(registrar.getId());
             DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digRepCount);
             return builder.buildDocument().toXML();
-        } catch (DatabaseException ex) {
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
@@ -88,6 +89,7 @@ public class DigitalDocumentsResource extends Resource {
             @QueryParam(value = "predUrn") final List<String> predecessors) {
         String login = req.getRemoteUser();
         try {
+            
             Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getRecordImportSchema());
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
             registrationData.setUrn(urnNbnFromParam(urnParam));
@@ -102,8 +104,8 @@ public class DigitalDocumentsResource extends Resource {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
-        } catch (RegistarScopeDigDocIdentifierCollisionException ex) {
-            throw new InvalidDigDocIdentifier(ex.getMessage());
+        } catch (RegistarScopeIdentifierCollisionException ex) {
+            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {
@@ -113,13 +115,11 @@ public class DigitalDocumentsResource extends Resource {
             throw new InternalException(ex);
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
-        } catch (RuntimeException e) {
-            logger.log(Level.SEVERE, "unexpected application state", e);
-            if (e instanceof WebApplicationException) {
-                throw e;
-            } else {
-                throw new InternalException(e);
-            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -131,17 +131,20 @@ public class DigitalDocumentsResource extends Resource {
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
         try {
-            DigDocIdType type = Parser.parseDigRepIdType(idTypeStr);
-            DigDocIdentifier id = new DigDocIdentifier();
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
+            RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
+            RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
             id.setRegistrarId(registrar.getId());
             id.setType(type);
             id.setValue(idValue);
-            DigitalDocument digRep = dataAccessService().digDocByIdentifier(id);
-            if (digRep == null) {
+            DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
+            if (digDoc == null) {
                 throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
             }
-            return new DigitalDocumentResource(digRep, null);
-        } catch (DatabaseException ex) {
+            return new DigitalDocumentResource(digDoc, null);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
@@ -167,11 +170,12 @@ public class DigitalDocumentsResource extends Resource {
         digDoc.setRegistrarId(registrar.getId());
         digDoc.setArchiverId(archiverId);
         result.setDigitalDocument(digDoc);
-        result.setDigDocIdentifiers(unmarshaller.getDigRepIdentifiers());
+        result.setDigDocIdentifiers(unmarshaller.getRegistrarScopeIdentifiers());
         return result;
     }
 
     private UrnNbn urnNbnFromParam(String urnParam) throws InvalidUrnException, UnauthorizedRegistrationModeException {
+        //System.err.println("urnNbnFromParam");
         if (urnParam == null || urnParam.isEmpty()) {
             if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
                 throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
@@ -205,11 +209,7 @@ public class DigitalDocumentsResource extends Resource {
     }
 
     private UrnNbnWithStatus urnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
-        try {
-            return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
-        } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
-        }
+        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
     }
 
     public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {

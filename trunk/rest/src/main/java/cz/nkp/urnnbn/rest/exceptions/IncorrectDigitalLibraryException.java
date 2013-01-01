@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class IncorrectDigitalLibraryException extends RestException {
+public class IncorrectDigitalLibraryException extends ApiException {
 
     public IncorrectDigitalLibraryException(String message) {
         super(Status.BAD_REQUEST, "INCORRECT_DIGITAL_LIBRARY", message);

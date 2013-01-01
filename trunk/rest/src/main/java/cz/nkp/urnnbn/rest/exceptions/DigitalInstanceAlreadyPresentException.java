@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstanceAlreadyPresentException extends RestException {
+public class DigitalInstanceAlreadyPresentException extends ApiException {
 
     public DigitalInstanceAlreadyPresentException(DigitalInstance instance) {
         super(Response.Status.FORBIDDEN, "DIGITAL_INSTANCE_ALREADY_PRESENT",

@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class NotAuthorizedException extends RestException {
+public class NotAuthorizedException extends ApiException {
 
     public NotAuthorizedException(String errorMessage) {
         super(Status.UNAUTHORIZED, "NOT_AUTHORIZED", errorMessage);

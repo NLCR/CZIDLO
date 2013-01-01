@@ -15,14 +15,13 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class RestException extends WebApplicationException {
+public class ApiException extends WebApplicationException {
 
-    public RestException(Status status, String errorCode, String errorMessage) {
+    public ApiException(Status status, String errorCode, String errorMessage) {
         super(buildResponse(status, errorCode, errorMessage, null));
-        //    super(Response.status(status).entity(buildEntityXml(errorCode, errorMessage)).type("text/xml").build());
     }
 
-    public RestException(Status status, String errorCode, String errorMessage, Map<String, Object> headers) {
+    public ApiException(Status status, String errorCode, String errorMessage, Map<String, Object> headers) {
         super(buildResponse(status, errorCode, errorMessage, headers));
     }
 

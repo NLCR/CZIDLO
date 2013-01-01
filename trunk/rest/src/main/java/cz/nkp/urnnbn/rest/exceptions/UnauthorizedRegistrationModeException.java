@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class UnauthorizedRegistrationModeException extends RestException {
+public class UnauthorizedRegistrationModeException extends ApiException {
 
     public UnauthorizedRegistrationModeException(String errorMessage) {
         super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage);

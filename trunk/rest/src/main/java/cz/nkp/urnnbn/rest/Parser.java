@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdType;
@@ -35,10 +35,10 @@ public class Parser {
         }
     }
 
-    static DigDocIdType parseDigRepIdType(String idTypeStr) {
+    static RegistrarScopeIdType parseRegistrarScopeIdType(String idTypeStr) {
         try {
-            return DigDocIdType.valueOf(idTypeStr);
-        } catch (RuntimeException e) {
+            return RegistrarScopeIdType.valueOf(idTypeStr);
+        } catch (IllegalArgumentException e) {
             throw new InvalidDigDocIdType(idTypeStr, e.getMessage());
         }
     }

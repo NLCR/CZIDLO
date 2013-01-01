@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class MethodForbiddenException extends RestException {
+public class MethodForbiddenException extends ApiException {
 
     public MethodForbiddenException() {
         super(Status.FORBIDDEN, "FORBIDDEN", "This method is (temporarily) not allowed");

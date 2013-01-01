@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class UnknownRegistrarException extends RestException {
+public class UnknownRegistrarException extends ApiException {
 
     public UnknownRegistrarException(RegistrarCode sigla) {
         super(Status.NOT_FOUND, "UNKNOWN_REGISTRAR", "There is no registrar with sigla '" + sigla + "'");

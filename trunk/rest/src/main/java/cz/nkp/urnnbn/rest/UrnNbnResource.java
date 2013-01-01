@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import java.util.logging.Level;
@@ -14,6 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 
 /**
  *
@@ -31,7 +31,9 @@ public class UrnNbnResource extends Resource {
             UrnNbnWithStatus urnWithStatus = dataAccessService().
                     urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
             return new UrnNbnBuilder(urnWithStatus).buildDocument().toXML();
-        } catch (DatabaseException ex) {
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }

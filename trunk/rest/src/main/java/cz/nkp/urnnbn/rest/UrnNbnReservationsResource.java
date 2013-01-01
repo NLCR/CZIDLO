@@ -22,6 +22,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -63,10 +64,11 @@ public class UrnNbnReservationsResource extends Resource {
 
     @POST
     @Produces("application/xml")
-    public Response createReservation(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
-        int size = sizeStr == null
-                ? ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize()
-                : Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
+    public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
+        int size = ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
+        if (sizeStr != null) {
+            size = Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
+        }
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
@@ -80,6 +82,11 @@ public class UrnNbnReservationsResource extends Resource {
                 throw new NotAuthorizedException(ex.getMessage());
             } catch (AccessException ex) {
                 throw new NotAuthorizedException(ex.getMessage());
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (RuntimeException ex) {
+                logger.log(Level.SEVERE, ex.getMessage());
+                throw new InternalException(ex.getMessage());
             }
         }
     }
