@@ -5,10 +5,10 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
@@ -25,6 +26,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +48,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) throws DatabaseException {
+    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
         try {
             UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(id);
             if (withPredecessorsAndSuccessors) {
@@ -57,11 +59,13 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode, boolean withPredecessorsAndSuccessors) throws DatabaseException {
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode code, String documentCode, boolean withPredecessorsAndSuccessors) {
         try {
             UrnNbn urnNbn = factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(code, documentCode);
             if (withPredecessorsAndSuccessors) {
@@ -80,230 +84,301 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 UrnNbn urn = new UrnNbn(code, documentCode, null);
                 return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
+            } catch (DatabaseException ex3) {
+                throw new RuntimeException(ex3);
             }
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public DigitalDocument digDocByInternalId(long digRepId) throws DatabaseException {
+    public DigitalDocument digDocByInternalId(long digRepId) {
         try {
             return factory.documentDao().getDocumentByDbId(digRepId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long id) throws DatabaseException {
+    public List<RegistrarScopeIdentifier> registrarScopeIdentifiers(long id) {
         try {
-            return factory.digDocIdDao().getIdList(id);
+            return factory.digDocIdDao().getRegistrarScopeIds(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigDocIdentifier>emptyList();
+            return Collections.<RegistrarScopeIdentifier>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Registrar registrarById(long id) throws DatabaseException {
+    public RegistrarScopeIdentifier registrarScopeIdentifier(long digDocId, RegistrarScopeIdType type) throws RegistrarScopeIdentifierNotDefinedException {
+        List<RegistrarScopeIdentifier> identifiers = registrarScopeIdentifiers(digDocId);
+        for (RegistrarScopeIdentifier id : identifiers) {
+            if (type.equals(id.getType())) {
+                return id;
+            }
+        }
+        throw new RegistrarScopeIdentifierNotDefinedException(type);
+    }
+
+    @Override
+    public Registrar registrarById(long id) {
         try {
             return factory.registrarDao().getRegistrarById(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Archiver archiverById(long id) throws DatabaseException {
+    public Archiver archiverById(long id) {
         try {
             return factory.archiverDao().getArchiverById(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public IntelectualEntity entityById(long id) throws DatabaseException {
+    public IntelectualEntity entityById(long id) {
         try {
             return factory.intelectualEntityDao().getEntityByDbId(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<IntelectualEntity> entitiesByIdValue(String value) throws DatabaseException {
-        List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValue(value);
-        List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
-        for (long id : idList) {
-            IntelectualEntity entity = entityById(id);
-            if (entity != null) {
-                result.add(entity);
+    public List<IntelectualEntity> entitiesByIdValue(String value) {
+        try {
+            List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValue(value);
+            List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
+            for (long id : idList) {
+                IntelectualEntity entity = entityById(id);
+                if (entity != null) {
+                    result.add(entity);
+                }
             }
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
-        return result;
     }
 
     @Override
-    public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) throws DatabaseException {
+    public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) {
         try {
             return factory.intEntIdentifierDao().getIdList(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<IntEntIdentifier>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Publication publicationByIntEntId(long intEntId) throws DatabaseException {
+    public Publication publicationByIntEntId(long intEntId) {
         try {
             return factory.publicationDao().getPublicationById(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.FINE, "no publication found for entity {0}", intEntId);
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Originator originatorByIntEntId(long intEntId) throws DatabaseException {
+    public Originator originatorByIntEntId(long intEntId) {
         try {
             return factory.originatorDao().getOriginatorById(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.FINE, "no primary originator found for entity {0}", intEntId);
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public SourceDocument sourceDocumentByIntEntId(long intEntId) throws DatabaseException {
+    public SourceDocument sourceDocumentByIntEntId(long intEntId) {
         try {
             return factory.srcDocDao().getSrcDocById(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.FINE, "no souce document found for entity {0}", intEntId);
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Registrar registrarByCode(RegistrarCode code) throws DatabaseException {
+    public Registrar registrarByCode(RegistrarCode code) {
         try {
             return factory.registrarDao().getRegistrarByCode(code);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException {
+    public List<DigitalLibrary> librariesByRegistrarId(long registrarId) {
         try {
             return factory.diglLibDao().getLibraries(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigitalLibrary>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<Catalog> catalogs() throws DatabaseException {
-        return factory.catalogDao().getCatalogs();
+    public List<Catalog> catalogs() {
+        try {
+            return factory.catalogDao().getCatalogs();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
-    public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException {
+    public List<Catalog> catalogsByRegistrarId(long registrarId) {
         try {
             return factory.catalogDao().getCatalogs(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<Catalog>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<Registrar> registrars() throws DatabaseException {
-        return factory.registrarDao().getAllRegistrars();
+    public List<Registrar> registrars() {
+        try {
+            return factory.registrarDao().getAllRegistrars();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
-    public int digitalDocumentsCount(long registrarId) throws DatabaseException {
+    public int digitalDocumentsCount(long registrarId) {
         try {
             return factory.documentDao().getDigDocCount(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return 0;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException {
+    public DigitalDocument digDocByIdentifier(RegistrarScopeIdentifier id) {
         try {
-            Long digRepId = factory.documentDao().getDigDocDbIdByIdentifier(id);
-            return factory.documentDao().getDocumentByDbId(digRepId);
+            Long digDocId = factory.documentDao().getDigDocIdByRegistrarScopeId(id);
+            return factory.documentDao().getDocumentByDbId(digDocId);
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
+            //logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<DigitalDocument> digDocsOfIntEnt(long intEntId) throws DatabaseException {
+    public List<DigitalDocument> digDocsOfIntEnt(long intEntId) {
         try {
             return factory.documentDao().getDocumentsOfIntEntity(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigitalDocument>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public long digitalInstancesCount() throws DatabaseException {
-        return factory.digInstDao().getTotalCount();
+    public long digitalInstancesCount() {
+        try {
+            return factory.digInstDao().getTotalCount();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
-    public List<DigitalInstance> digInstancesByDigDocId(long digDocId) throws DatabaseException {
+    public List<DigitalInstance> digInstancesByDigDocId(long digDocId) {
         try {
             return factory.digInstDao().getDigitalInstancesOfDigDoc(digDocId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return Collections.<DigitalInstance>emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public DigitalInstance digInstanceByInternalId(long id) throws DatabaseException {
+    public DigitalInstance digInstanceByInternalId(long id) {
         try {
             return factory.digInstDao().getDigInstanceById(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException {
+    public DigitalLibrary libraryByInternalId(long libraryId) {
         try {
             return factory.diglLibDao().getLibraryById(libraryId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<Archiver> archivers() throws DatabaseException {
-        List<Archiver> includingRegistrars = factory.archiverDao().getAllArchivers();
-        List<Long> registrarIdList = factory.registrarDao().getAllRegistrarsId();
-        List<Archiver> result = new ArrayList<Archiver>(includingRegistrars.size() - registrarIdList.size());
-        for (Archiver archiverOrRegistrar : includingRegistrars) {
-            if (!registrarIdList.contains(archiverOrRegistrar.getId())) {
-                result.add(archiverOrRegistrar);
+    public List<Archiver> archivers() {
+        try {
+            List<Archiver> includingRegistrars = factory.archiverDao().getAllArchivers();
+            List<Long> registrarIdList = factory.registrarDao().getAllRegistrarsId();
+            List<Archiver> result = new ArrayList<Archiver>(includingRegistrars.size() - registrarIdList.size());
+            for (Archiver archiverOrRegistrar : includingRegistrars) {
+                if (!registrarIdList.contains(archiverOrRegistrar.getId())) {
+                    result.add(archiverOrRegistrar);
+                }
             }
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
-        return result;
     }
 
     @Override
@@ -405,9 +480,9 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     private Set<DigitalDocument> findDigDocsWithChangedIdentifier(DateTime from, DateTime until) throws DatabaseException {
-        List<DigDocIdentifier> identifiers = factory.digDocIdDao().getIdListByTimestamps(from, until);
+        List<RegistrarScopeIdentifier> identifiers = factory.digDocIdDao().getRegistrarScopeIdsByTimestamps(from, until);
         Set<DigitalDocument> result = new HashSet<DigitalDocument>();
-        for (DigDocIdentifier id : identifiers) {
+        for (RegistrarScopeIdentifier id : identifiers) {
             try {
                 result.add(factory.documentDao().getDocumentByDbId(id.getDigDocId()));
             } catch (RecordNotFoundException ex) {

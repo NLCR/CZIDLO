@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -14,6 +13,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -35,7 +35,7 @@ import java.util.Collection;
 public interface DataUpdateService extends BusinessService {
 
     //TODO: access rights
-    public void updateDigDocIdentifier(DigDocIdentifier id) throws
+    public void updateDigDocIdentifier(RegistrarScopeIdentifier id) throws
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
     public void updateDigitalDocument(DigitalDocument doc, String login) throws

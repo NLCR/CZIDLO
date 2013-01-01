@@ -5,10 +5,10 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -17,11 +17,12 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.List;
 import java.util.Set;
@@ -37,58 +38,60 @@ public interface DataAccessService extends BusinessService {
 
     static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors) throws DatabaseException;
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors);
 
-    public DigitalDocument digDocByInternalId(long digDocId) throws DatabaseException;
+    public DigitalDocument digDocByInternalId(long digDocId);
 
-    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) throws DatabaseException;
+    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors);
 
-    public List<DigDocIdentifier> digDocIdentifiersByDigDocId(long digDocId) throws DatabaseException;
+    public List<RegistrarScopeIdentifier> registrarScopeIdentifiers(long digDocId);
 
-    public Registrar registrarById(long id) throws DatabaseException;
+    public RegistrarScopeIdentifier registrarScopeIdentifier(long digDocId, RegistrarScopeIdType type) throws RegistrarScopeIdentifierNotDefinedException;
 
-    public Archiver archiverById(long id) throws DatabaseException;
+    public Registrar registrarById(long id);
 
-    public List<Archiver> archivers() throws DatabaseException;
+    public Archiver archiverById(long id);
 
-    public IntelectualEntity entityById(long id) throws DatabaseException;
+    public List<Archiver> archivers();
 
-    public List<IntelectualEntity> entitiesByIdValue(String value) throws DatabaseException;
+    public IntelectualEntity entityById(long id);
 
-    public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) throws DatabaseException;
+    public List<IntelectualEntity> entitiesByIdValue(String value);
 
-    //pokud nenajde, vrati null
-    public Publication publicationByIntEntId(long intEntId) throws DatabaseException;
-
-    //pokud nenajde, vrati null
-    public Originator originatorByIntEntId(long intEntId) throws DatabaseException;
+    public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId);
 
     //pokud nenajde, vrati null
-    public SourceDocument sourceDocumentByIntEntId(long intEntId) throws DatabaseException;
+    public Publication publicationByIntEntId(long intEntId);
 
-    public Registrar registrarByCode(RegistrarCode code) throws DatabaseException;
+    //pokud nenajde, vrati null
+    public Originator originatorByIntEntId(long intEntId);
 
-    public List<DigitalLibrary> librariesByRegistrarId(long registrarId) throws DatabaseException;
+    //pokud nenajde, vrati null
+    public SourceDocument sourceDocumentByIntEntId(long intEntId);
 
-    public List<Catalog> catalogsByRegistrarId(long registrarId) throws DatabaseException;
+    public Registrar registrarByCode(RegistrarCode code);
 
-    public List<Catalog> catalogs() throws DatabaseException;
+    public List<DigitalLibrary> librariesByRegistrarId(long registrarId);
 
-    public List<Registrar> registrars() throws DatabaseException;
+    public List<Catalog> catalogsByRegistrarId(long registrarId);
 
-    public int digitalDocumentsCount(long registrarId) throws DatabaseException;
+    public List<Catalog> catalogs();
 
-    public DigitalDocument digDocByIdentifier(DigDocIdentifier id) throws DatabaseException;
+    public List<Registrar> registrars();
 
-    public List<DigitalDocument> digDocsOfIntEnt(long intEntId) throws DatabaseException;
+    public int digitalDocumentsCount(long registrarId);
 
-    public long digitalInstancesCount() throws DatabaseException;
+    public DigitalDocument digDocByIdentifier(RegistrarScopeIdentifier id);
 
-    public DigitalInstance digInstanceByInternalId(long id) throws DatabaseException;
+    public List<DigitalDocument> digDocsOfIntEnt(long intEntId);
 
-    public List<DigitalInstance> digInstancesByDigDocId(long digDocId) throws DatabaseException;
+    public long digitalInstancesCount();
 
-    public DigitalLibrary libraryByInternalId(long libraryId) throws DatabaseException;
+    public DigitalInstance digInstanceByInternalId(long id);
+
+    public List<DigitalInstance> digInstancesByDigDocId(long digDocId);
+
+    public DigitalLibrary libraryByInternalId(long libraryId);
 
     /**
      *
