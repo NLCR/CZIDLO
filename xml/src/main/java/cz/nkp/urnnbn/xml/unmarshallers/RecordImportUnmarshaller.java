@@ -17,12 +17,12 @@
 package cz.nkp.urnnbn.xml.unmarshallers;
 
 import cz.nkp.urnnbn.core.EntityType;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import java.util.EnumMap;
@@ -126,8 +126,8 @@ public class RecordImportUnmarshaller extends Unmarshaller {
      *
      * @return list of digital document identifiers, never null
      */
-    public List<DigDocIdentifier> getDigRepIdentifiers() {
-        return digDocUnmarshaller.getDigDocIdentifiers();
+    public List<RegistrarScopeIdentifier> getRegistrarScopeIdentifiers() {
+        return digDocUnmarshaller.getRegistrarScopeIdentifiers();
     }
 
     /**

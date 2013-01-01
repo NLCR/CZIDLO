@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalInstance id="35" active="false">
+        <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <created>2012-09-19T00:39:41.117+02:00</created>
+        <deactivated>2012-11-26T00:46:36.519+01:00</deactivated>
+        <digitalLibrary id="38">
+            <name>Kramerius 4</name>
+            <description>testovací digitální knihovna</description>
+            <url>http://kramerius4.mzk.cz</url>
+            <created>2012-04-18T23:19:19.574+02:00</created>
+            <registrar code="tst02" id="38">
+                <name>Moravská zemská knihovna - test</name>
+                <description>testovací registrátor</description>
+                <created>2012-04-18T23:19:17.727+02:00</created>
+                <modified>2012-10-29T10:39:30.882+01:00</modified>
+                <registrationModes>
+                    <mode name="BY_RESOLVER" enabled="true" />
+                    <mode name="BY_REGISTRAR" enabled="false" />
+                    <mode name="BY_RESERVATION" enabled="true" />
+                </registrationModes>
+            </registrar>
+        </digitalLibrary>
+        <digitalDocument id="11">
+            <urnNbn>urn:nbn:cz:tst02-000006</urnNbn>
+            <financed>norské fondy</financed>
+            <contractNumber>123</contractNumber>
+            <created>2012-04-18T23:21:57.250+02:00</created>
+            <modified>2012-11-25T23:26:17.782+01:00</modified>
+            <technicalMetadata>
+                <format version="1.0">jpeg</format>
+                <extent>1 x jpeg2000</extent>
+                <resolution>
+                    <horizontal>1280</horizontal>
+                    <vertical>1024</vertical>
+                </resolution>
+                <compression ratio="0.3">LZW</compression>
+                <color>
+                    <model>RGB</model>
+                    <depth>24</depth>
+                </color>
+                <iccProfile>some ICC profile</iccProfile>
+                <pictureSize>
+                    <width>600</width>
+                    <height>1000</height>
+                </pictureSize>
+            </technicalMetadata>
+            <registrarScopeIdentifiers />
+        </digitalDocument>
+    </digitalInstance>
+</response>

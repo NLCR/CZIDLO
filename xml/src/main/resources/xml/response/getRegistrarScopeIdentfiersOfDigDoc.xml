@@ -20,5 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <registrarScopeIdentifiers>
         <id type="OAI_harvester">1238</id>
         <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
+        <id type="TEST2">1234g</id>
     </registrarScopeIdentifiers>
 </response>

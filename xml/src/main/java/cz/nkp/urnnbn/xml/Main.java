@@ -18,70 +18,99 @@ public class Main {
 
     public static void main(String[] args) {
         //xpathTest();
-        validateXml();
+        validateXmlExamples();
     }
 
-    private static void validateXml() {
-        //request
-        //registration of digital documents
-        File digDocRegistrationXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/analytical.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monograph-withUrnNbn.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monograph.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/monographVolume.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/otherEntity-map.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/otherEntity-musicSheet.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodical.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodicalIssue.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/periodicalVolume.xml", digDocRegistrationXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/thesis.xml", digDocRegistrationXsd);
+    private static void validateXmlExamples() {
+        //TODO: move to the test class, rootDirs should be relative
+        validateDigDocRegistrationExamples();
+        validateDigitalInstanceImportExamples();
+        validateResponseExamples();
+    }
 
+    private static void validateDigDocRegistrationExamples() {
+        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
+        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/";
+        validate(rootDir + "analytical.xml", xsd);
+        validate(rootDir + "monograph-withUrnNbn.xml", xsd);
+        validate(rootDir + "monograph.xml", xsd);
+        validate(rootDir + "monographVolume.xml", xsd);
+        validate(rootDir + "otherEntity-map.xml", xsd);
+        validate(rootDir + "otherEntity-musicSheet.xml", xsd);
+        validate(rootDir + "periodical.xml", xsd);
+        validate(rootDir + "periodicalIssue.xml", xsd);
+        validate(rootDir + "periodicalVolume.xml", xsd);
+        validate(rootDir + "thesis.xml", xsd);
+    }
+
+    private static void validateDigitalInstanceImportExamples() {
+        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
+        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/";
+        validate(rootDir + "complete.xml", xsd);
+        validate(rootDir + "minimal.xml", xsd);
+        validate(rootDir + "https.xml", xsd);
+        validate(rootDir + "emptyOptionalElements.xml", xsd);
+    }
+
+    private static void validateResponseExamples() {
+        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
+        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
+        //some error
+        validate(rootDir + "error.xml", xsd);
         //import digital instance
-        File digInstImportXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/complete.xml", digInstImportXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/minimal.xml", digInstImportXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/https.xml", digInstImportXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/emptyOptionalElements.xml", digInstImportXsd);
+        validate(rootDir + "addDigitalInstance.xml", xsd);
+        //reserve 
+        validate(rootDir + "reserveUrnNbns.xml", xsd);
+        //get reservations
+        validate(rootDir + "getUrnNbnReservations.xml", xsd);
+        //get registrars
+        validate(rootDir + "getRegistrars.xml", xsd);
+        validate(rootDir + "getRegistrarsWithLibrariesAndCatalogs.xml", xsd);
+        //get registrar
+        validate(rootDir + "getRegistrar.xml", xsd);
+        validate(rootDir + "getRegistrarsWithoutLibrariesAndCatalogs.xml", xsd);
+        //get digital documents
+        validate(rootDir + "getDigitalDocuments.xml", xsd);
+        //get digital document
+        validate(rootDir + "getDigDoc-MONOGRAPH.xml", xsd);
+        validate(rootDir + "getDigDoc-MONOGRAPH_VOLUME.xml", xsd);
+        validate(rootDir + "getDigDoc-PERIODICAL.xml", xsd);
+        validate(rootDir + "getDigDoc-PERIODICAL_VOLUME.xml", xsd);
+        validate(rootDir + "getDigDoc-PERIODICAL_ISSUE.xml", xsd);
+        validate(rootDir + "getDigDoc-ANALYTICAL.xml", xsd);
+        validate(rootDir + "getDigDoc-THESIS.xml", xsd);
+        validate(rootDir + "getDigDoc-OTHER.xml", xsd);
+        //get digital instances of digital document
+        validate(rootDir + "getDigitalInstancesOfDigDoc.xml", xsd);
+        //get registrar scope identifiers of digital document
+        validate(rootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsd);
+        //delete all registrar-scope identifiers of digital document
+        validate(rootDir + "deleteRegistrarScopeIdentifiersOfDigDoc.xml", xsd);
+        //get registrar-scope identifier value
+        validate(rootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsd);
+        //set registrar-scope identifier value
+        validate(rootDir + "postRegistrarScopeIdentifier-insert.xml", xsd);
+        validate(rootDir + "postRegistrarScopeIdentifier-update.xml", xsd);
+        //delete registrar-scope identifier
+        validate(rootDir + "deleteRegistrarScopeIdenfier.xml", xsd);
 
-        //api responses
-        File responseXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/error.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/addDigitalInstance.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstance-deactivated.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstance-full.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstances.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalInstances-all.xml", responseXsd);
-        //urn:nbn
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-ACTIVE.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-FREE.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-RESERVED.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnnbn-DEACTIVATED.xml", responseXsd);
-        //reservations
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservations.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/urnNbnReservation.xml", responseXsd);
-        //registrars
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrar.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrars.xml", responseXsd);
-        //digital document
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocuments.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-MONOGRAPH.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-MONOGRAPH_VOLUME.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL_VOLUME.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-PERIODICAL_ISSUE.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-ANALYTICAL.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-THESIS.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/digitalDocument-OTHER.xml", responseXsd);
-
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifiers.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registrarScopeIdentifier-UPDATED.xml", responseXsd);
+        //get urn:nbn
+        validate(rootDir + "getUrnNbn-ACTIVE.xml", xsd);
+        validate(rootDir + "getUrnNbn-FREE.xml", xsd);
+        validate(rootDir + "getUrnNbn-RESERVED.xml", xsd);
+        validate(rootDir + "getUrnNbn-DEACTIVATED.xml", xsd);
+        //get all digital instances
+        validate(rootDir + "getAllDigitalInstances.xml", xsd);
+        //get digital instance
+        validate(rootDir + "getDigitalInstanceById.xml", xsd);
+        validate(rootDir + "getDigitalInstanceById-deactivated.xml", xsd);
+        //deactivate digital instance
+        validate(rootDir + "deactivateDigitalInstance.xml", xsd);
 
         //response to registerDD
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byResolver.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byRegistrar.xml", responseXsd);
-        validate("/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/registerDigitalDocument/byReservation.xml", responseXsd);
-
+        validate(rootDir + "registerDigitalDocument/byResolver.xml", xsd);
+        validate(rootDir + "registerDigitalDocument/byRegistrar.xml", xsd);
+        validate(rootDir + "registerDigitalDocument/byReservation.xml", xsd);
     }
 
     private static void validate(String docFileName, File xsdFile) {

@@ -16,7 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
@@ -26,15 +26,15 @@ import nu.xom.Element;
  */
 public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
 
-    private final DigDocIdentifier id;
+    private final RegistrarScopeIdentifier id;
     private final String previousValue;
 
-    public RegistrarScopeIdentifierBuilder(DigDocIdentifier id) {
+    public RegistrarScopeIdentifierBuilder(RegistrarScopeIdentifier id) {
         this.id = id;
         this.previousValue = null;
     }
 
-    public RegistrarScopeIdentifierBuilder(DigDocIdentifier id, String previousValue) {
+    public RegistrarScopeIdentifierBuilder(RegistrarScopeIdentifier id, String previousValue) {
         this.id = id;
         this.previousValue = previousValue;
     }

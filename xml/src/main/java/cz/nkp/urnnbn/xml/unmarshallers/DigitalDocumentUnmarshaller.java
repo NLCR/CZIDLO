@@ -16,9 +16,9 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
 import java.util.ArrayList;
@@ -109,22 +109,22 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
      *
      * @return list of digital document identifiers, never null
      */
-    List<DigDocIdentifier> getDigDocIdentifiers() {
+    List<RegistrarScopeIdentifier> getRegistrarScopeIdentifiers() {
         Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digDocEl);
         if (identifiersEl == null) {
-            return Collections.<DigDocIdentifier>emptyList();
+            return Collections.<RegistrarScopeIdentifier>emptyList();
         } else {
             Nodes nodes = selectNodes(new Xpath(prefixed("id")), identifiersEl);
             if (nodes.size() == 0) {
-                return Collections.<DigDocIdentifier>emptyList();
+                return Collections.<RegistrarScopeIdentifier>emptyList();
             } else {
-                List<DigDocIdentifier> result = new ArrayList<DigDocIdentifier>(nodes.size());
+                List<RegistrarScopeIdentifier> result = new ArrayList<RegistrarScopeIdentifier>(nodes.size());
                 for (int i = 0; i < nodes.size(); i++) {
                     Element idEl = (Element) nodes.get(i);
                     String type = idEl.getAttribute("type").getValue();
                     String value = idEl.getValue();
-                    DigDocIdentifier id = new DigDocIdentifier();
-                    id.setType(DigDocIdType.valueOf(type));
+                    RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
+                    id.setType(RegistrarScopeIdType.valueOf(type));
                     id.setValue(value);
                     result.add(id);
                 }
