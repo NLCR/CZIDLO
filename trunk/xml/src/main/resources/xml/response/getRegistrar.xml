@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2011, 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrar code="tst02" id="38">
+        <name>Moravská zemská knihovna - test</name>
+        <description>testovací registrátor</description>
+        <created>2012-04-18T23:19:17.727+02:00</created>
+        <modified>2012-10-29T10:39:30.882+01:00</modified>
+        <registrationModes>
+            <mode name="BY_RESOLVER" enabled="true" />
+            <mode name="BY_REGISTRAR" enabled="true" />
+            <mode name="BY_RESERVATION" enabled="true" />
+        </registrationModes>
+        <digitalLibraries>
+            <digitalLibrary id="38">
+                <name>Kramerius 4</name>
+                <description>testovací knihovna</description>
+                <url>http://kramerius4.mzk.cz</url>
+                <created>2012-04-18T23:19:19.574+02:00</created>
+            </digitalLibrary>
+            <digitalLibrary id="39">
+                <name>Kramerius 3</name>
+                <description>testovací knihovna</description>
+                <url>http://kramerius3.mzk.cz</url>
+                <created>2012-04-18T23:19:19.605+02:00</created>
+            </digitalLibrary>
+        </digitalLibraries>
+        <catalogs>
+            <catalog id="3">
+                <name>Aleph mzk</name>
+                <urlPrefix>http://iris.mzk.cz</urlPrefix>
+                <created>2012-04-18T23:19:19.622+02:00</created>
+            </catalog>
+        </catalogs>
+    </registrar>
+</response>

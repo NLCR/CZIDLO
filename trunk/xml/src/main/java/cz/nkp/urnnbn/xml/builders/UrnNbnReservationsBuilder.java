@@ -27,6 +27,7 @@ import nu.xom.Element;
  */
 public class UrnNbnReservationsBuilder extends XmlBuilder {
 
+    private static final int MAX_RESERVATION_TO_BE_PRINTED = 50;
     private final int maxReservationSize;
     private final int defaultReservationSize;
     private final List<UrnNbn> urnNbnList;
@@ -56,14 +57,18 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
         Attribute size = new Attribute("size", reservedSize.toString());
         reservations.addAttribute(size);
 
-        if (urnNbnList != null) {
+        if (urnNbnList != null && !urnNbnList.isEmpty()) {
             appendUrnNbnsFromList(reservations);
         }
         return root;
     }
 
     private void appendUrnNbnsFromList(Element root) {
+        int counter = 0;
         for (UrnNbn urnNbn : urnNbnList) {
+            if (++counter > MAX_RESERVATION_TO_BE_PRINTED) {
+                break;
+            }
             Element element = new Element("urnNbn", RESOLVER_NS);
             element.appendChild(urnNbn.toString());
             Attribute created = new Attribute("created", urnNbn.getCreated().toString());

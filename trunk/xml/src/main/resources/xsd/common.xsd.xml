@@ -52,13 +52,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+    
     <!-- identifier value -->
     <xs:simpleType name="registarScopeIdValueType">
-        <xs:restriction base="xs:string">
-            <!-- $ - _ . + ! * ' ( ) , : @ -->
-            <xs:pattern value="[A-Za-z0-9$\-_\.+!\*'\(\),:@]{1,60}"/>
+        <!-- In API V2 were allowed only these characters: A-Z a-z 0-9 $ - _ . + ! * ' ( ) , : @ -->
+        <!-- Now are allowed all reserved and unreserved URI characters as specified in RFC 3986 (sections 2.2 and 2.3)-->
+        <!-- unreserved characters: -->
+        <!-- A-Z a-z 0-9 -_.~ -->
+        <!-- reserved characters (must be url-encoded): -->
+        <!-- ! * ' ( ) ; : @ & = + $ , / ? # [ ] -->
+        <!-- i.e. these characters are newly allowed: ? [ ] ; & = / #-->
+        <xs:restriction base="xs:token">
+            <xs:pattern value="[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,/\?#\[\]]{1,60}"/>
         </xs:restriction>
     </xs:simpleType>
+    
     <!-- identifier type -->
     <xs:simpleType name="registarScopeIdTypeType">
         <xs:restriction base="xs:token">
