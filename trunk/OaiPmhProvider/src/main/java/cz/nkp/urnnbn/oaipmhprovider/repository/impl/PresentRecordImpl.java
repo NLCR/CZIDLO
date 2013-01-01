@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaipmhprovider.repository.impl;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -14,6 +13,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -142,9 +142,9 @@ public class PresentRecordImpl implements PresentRecord {
     }
 
     private RegistrarScopeIdentifiersBuilder registrarScopeIdsBuilder(Long digDocId) throws DatabaseException {
-        List<DigDocIdentifier> digDocIdentifiers = backend.digDocIdentifiersByDigDocId(digDocId);
-        List<RegistrarScopeIdentifierBuilder> idBuilderList = new ArrayList<RegistrarScopeIdentifierBuilder>(digDocIdentifiers.size());
-        for (DigDocIdentifier id : digDocIdentifiers) {
+        List<RegistrarScopeIdentifier> identifiers = backend.registrarScopeIdentifiers(digDocId);
+        List<RegistrarScopeIdentifierBuilder> idBuilderList = new ArrayList<RegistrarScopeIdentifierBuilder>(identifiers.size());
+        for (RegistrarScopeIdentifier id : identifiers) {
             idBuilderList.add(new RegistrarScopeIdentifierBuilder(id));
         }
         return new RegistrarScopeIdentifiersBuilder(idBuilderList);
