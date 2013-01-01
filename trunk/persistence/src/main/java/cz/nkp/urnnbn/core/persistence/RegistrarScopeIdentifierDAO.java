@@ -18,7 +18,7 @@ import org.joda.time.DateTime;
  */
 public interface RegistrarScopeIdentifierDAO {
 
-    public String TABLE_NAME = "ddIdentifier";
+    public String TABLE_NAME = "registrarScopeId";
     public String ATTR_REG_ID = "registrarId";
     public String ATTR_DIG_DOC_ID = "digitalDocumentId";
     public String ATTR_CREATED = "created";
