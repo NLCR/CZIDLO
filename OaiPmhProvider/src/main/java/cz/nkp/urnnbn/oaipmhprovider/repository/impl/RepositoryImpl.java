@@ -8,13 +8,10 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.oaipmhprovider.repository.*;
 import cz.nkp.urnnbn.services.Services;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.DateTime;
 
 /**
@@ -70,48 +67,33 @@ public class RepositoryImpl implements Repository {
         } else {
             String withoutPrefix = setSpec.substring(REGISTRAR_SET_PREFIX.length());
             RegistrarCode code = RegistrarCode.valueOf(withoutPrefix);
-            try {
-                return backend.dataAccessService().registrarByCode(code);
-            } catch (DatabaseException ex) {
-                Logger.getLogger(RepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
-                return null;
-            }
+            return backend.dataAccessService().registrarByCode(code);
         }
     }
 
     @Override
     public Record getRecord(Identifier id, MetadataFormat format, boolean validate) {
-        try {
-            UrnNbn urnNbn = UrnNbn.valueOf(id.toString());
-            UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode());
-            switch (fetechedUrn.getStatus()) {
-                case DEACTIVATED:
-                    //TODO: potentially return another implementation subclass of Record like DeletedRecord
-                    return null;
-                case ACTIVE:
-                    return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
-                case FREE:
-                    return null;
-                case RESERVED:
-                    return null;
-                default:
-                    return null;
-            }
-        } catch (DatabaseException ex) {
-            Logger.getLogger(RepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+        UrnNbn urnNbn = UrnNbn.valueOf(id.toString());
+        UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        switch (fetechedUrn.getStatus()) {
+            case DEACTIVATED:
+                //TODO: potentially return another implementation subclass of Record like DeletedRecord
+                return null;
+            case ACTIVE:
+                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
+            case FREE:
+                return null;
+            case RESERVED:
+                return null;
+            default:
+                return null;
         }
     }
 
     @Override
     public Iterable<OaiSet> getSets() {
-        try {
-            List<Registrar> registrars = backend.dataAccessService().registrars();
-            return toOaiSets(registrars);
-        } catch (DatabaseException ex) {
-            Logger.getLogger(RepositoryImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        List<Registrar> registrars = backend.dataAccessService().registrars();
+        return toOaiSets(registrars);
     }
 
     private List<OaiSet> toOaiSets(List<Registrar> registrars) {

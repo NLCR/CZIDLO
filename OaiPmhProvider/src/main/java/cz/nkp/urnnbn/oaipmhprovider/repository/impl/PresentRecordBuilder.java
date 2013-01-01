@@ -4,11 +4,11 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.repository.impl;
 
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
@@ -68,8 +68,8 @@ public class PresentRecordBuilder {
     }
 
     private void updateTimestampFromRegistrarScopeIds(Long digDocId) throws DatabaseException {
-        List<DigDocIdentifier> digDocIdentifiers = backend.dataAccessService().digDocIdentifiersByDigDocId(digDocId);
-        for (DigDocIdentifier id : digDocIdentifiers) {
+        List<RegistrarScopeIdentifier> identifiers = backend.dataAccessService().registrarScopeIdentifiers(digDocId);
+        for (RegistrarScopeIdentifier id : identifiers) {
             updateLastDateStamp(id.getModified());
         }
     }
