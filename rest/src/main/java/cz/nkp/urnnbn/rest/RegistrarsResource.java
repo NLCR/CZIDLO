@@ -14,12 +14,12 @@ import cz.nkp.urnnbn.xml.builders.RegistrarsBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
@@ -35,20 +35,31 @@ public class RegistrarsResource extends Resource {
     private static final String PARAM_CATALOGS = "catalogs";
     @Context
     private UriInfo context;
-    
 
     @GET
     @Produces("application/xml")
     public String getRegistrars(
-            @DefaultValue("false") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
-            @DefaultValue("false") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+            @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
+            @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         try {
-            boolean addDigitalLibraries = queryParamToBoolean(addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
-            boolean addCatalogs = queryParamToBoolean(addCatalogsStr, PARAM_CATALOGS, false);
+            boolean addDigitalLibraries = false;
+            if (addDigLibsStr != null) {
+                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+            }
+            boolean addCatalogs = false;
+            if (addCatalogsStr != null) {
+                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+            }
             List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
             RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
             return builder.buildDocument().toXML();
         } catch (DatabaseException ex) {
+            //TODO: rid of this exception
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
@@ -66,7 +77,7 @@ public class RegistrarsResource extends Resource {
                 throw new UnknownRegistrarException(sigla);
             }
             return new RegistrarResource(registrar);
-        } catch (DatabaseException ex) {
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }

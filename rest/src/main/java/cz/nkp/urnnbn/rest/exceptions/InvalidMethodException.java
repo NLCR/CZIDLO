@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
  * @author Martin Řehánek
  * @deprecated won't work because of Jersey lack of support
  */
-public class InvalidMethodException extends RestException {
+public class InvalidMethodException extends ApiException {
 
     public static enum MethodAllowed {
 

@@ -4,17 +4,18 @@
  */
 package cz.nkp.urnnbn.rest;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.rest.exceptions.ApiException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
-import cz.nkp.urnnbn.rest.exceptions.InvalidDigDocIdentifier;
+import cz.nkp.urnnbn.rest.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.rest.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.rest.exceptions.NotDefinedException;
-import cz.nkp.urnnbn.rest.exceptions.RestException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -29,6 +30,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -51,9 +53,9 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     @Produces("application/xml")
     public String getIdentifiers() {
         try {
-            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(doc.getId());
+            RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
             return builder.buildDocument().toXML();
-        } catch (RestException e) {
+        } catch (ApiException e) {
             throw e;
         } catch (Throwable ex) {
             logger.log(Level.SEVERE, ex.getMessage());
@@ -65,21 +67,21 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String getIdentifier(@PathParam("idType") String idTypeStr) {
-        DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
+        RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
         try {
-            List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(doc.getId());
-            for (DigDocIdentifier id : identifiers) {
+            List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
+            for (RegistrarScopeIdentifier id : identifiers) {
                 if (id.getType().equals(idType)) {
                     RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(id);
                     return builder.buildDocument().toXML();
                 }
             }
             throw new NotDefinedException(idType);
-        } catch (RestException e) {
+        } catch (WebApplicationException e) {
             throw e;
-        } catch (Throwable ex) {
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex);
+            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -89,42 +91,67 @@ public class DigitalDocumentIdentifiersResource extends Resource {
     public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req,
             @PathParam("idType") String idTypeStr, String value) {
         String login = req.getRemoteUser();
-        DigDocIdType idType = Parser.parseDigRepIdType(idTypeStr);
+        RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
         try {
-            DigDocIdentifier oldId = presentIdentifierOrNull(idType);
+            RegistrarScopeIdentifier oldId = presentIdentifierOrNull(idType);
             if (oldId == null) { //insert new value
-                DigDocIdentifier newId = addNewIdentifier(idType, value, login);
+                RegistrarScopeIdentifier newId = addNewIdentifier(idType, value, login);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocument().toXML();
                 return Response.created(null).entity(responseXml).build();
             } else { //update value
-                DigDocIdentifier newId = updateIdentifier(idType, value);
+                RegistrarScopeIdentifier newId = updateIdentifier(idType, value);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocument().toXML();
                 return Response.ok().entity(responseXml).build();
             }
-        } catch (RestException e) {
+        } catch (WebApplicationException e) {
             throw e;
-        } catch (Throwable e) {
-            throw new InternalException(e);
+        } catch (RuntimeException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
         }
     }
 
-    private DigDocIdentifier presentIdentifierOrNull(DigDocIdType idType) {
+    @DELETE
+    @Path("/{idType}")
+    @Produces("application/xml")
+    public String deleteIdentifier(@Context HttpServletRequest req,
+            @PathParam("idType") String idTypeStr) {
+        String login = req.getRemoteUser();
         try {
-            List<DigDocIdentifier> idList = dataAccessService().digDocIdentifiersByDigDocId(doc.getId());
-            for (DigDocIdentifier id : idList) {
-                if (id.getType().equals(idType)) {
-                    return id;
-                }
-            }
+            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
+            RegistrarScopeIdentifier identifier = dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
+            dataRemoveService().removeDigitalDocumentId(doc.getId(), idType, login);
+            RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(identifier);
+            return builder.buildDocument().toXML();
+        } catch (RegistrarScopeIdentifierNotDefinedException ex) {
+            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
+        } catch (UnknownUserException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
+        } catch (AccessException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
+        } catch (UnknownDigDocException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
+        }
+    }
+
+    private RegistrarScopeIdentifier presentIdentifierOrNull(RegistrarScopeIdType idType) {
+        try {
+            return dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
+        } catch (RegistrarScopeIdentifierNotDefinedException ex) {
             return null;
-        } catch (DatabaseException ex) {
-            throw new InternalException(ex);
         }
     }
 
-    private DigDocIdentifier addNewIdentifier(DigDocIdType idType, String value, String login) {
+    private RegistrarScopeIdentifier addNewIdentifier(RegistrarScopeIdType idType, String value, String login) {
         try {
-            DigDocIdentifier newId = identifierInstance(idType, value);
+            RegistrarScopeIdentifier newId = identifierInstance(idType, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
         } catch (UnknownUserException ex) {
@@ -140,12 +167,14 @@ public class DigitalDocumentIdentifiersResource extends Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            throw new InvalidDigDocIdentifier(ex.getMessage());
+            //should never happen here
+            logger.log(Level.SEVERE, null, ex);
+            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
     }
 
-    private DigDocIdentifier identifierInstance(DigDocIdType idType, String value) {
-        DigDocIdentifier result = new DigDocIdentifier();
+    private RegistrarScopeIdentifier identifierInstance(RegistrarScopeIdType idType, String value) {
+        RegistrarScopeIdentifier result = new RegistrarScopeIdentifier();
         result.setDigDocId(doc.getId());
         result.setRegistrarId(doc.getRegistrarId());
         result.setType(idType);
@@ -153,9 +182,9 @@ public class DigitalDocumentIdentifiersResource extends Resource {
         return result;
     }
 
-    private DigDocIdentifier updateIdentifier(DigDocIdType idType, String value) {
+    private RegistrarScopeIdentifier updateIdentifier(RegistrarScopeIdType idType, String value) {
         try {
-            DigDocIdentifier id = identifierInstance(idType, value);
+            RegistrarScopeIdentifier id = identifierInstance(idType, value);
             dataUpdateService().updateDigDocIdentifier(id);
             return id;
         } catch (UnknownRegistrarException ex) {
@@ -167,17 +196,24 @@ public class DigitalDocumentIdentifiersResource extends Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            throw new InvalidDigDocIdentifier(ex.getMessage());
+            //should never happen here
+            logger.log(Level.SEVERE, null, ex);
+            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
     }
 
     @DELETE
     @Produces("application/xml")
-    public String removeAllIdentifiers() {
+    public String removeAllIdentifiers(@Context HttpServletRequest req) {
+        String login = req.getRemoteUser();
         try {
-            RegistrarScopeIdentifiersBuilder builder = digRepIdentifiersBuilder(doc.getId());
-            dataRemoveService().removeDigitalDocumentIdentifiers(doc.getId());
+            RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
+            dataRemoveService().removeDigitalDocumentIdentifiers(doc.getId(), login);
             return builder.buildDocument().toXML();
+        } catch (UnknownUserException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
+        } catch (AccessException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
             //should never happen
             logger.log(Level.SEVERE, ex.getMessage());

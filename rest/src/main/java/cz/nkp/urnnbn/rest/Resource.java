@@ -5,9 +5,9 @@
 package cz.nkp.urnnbn.rest;
 
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.InvalidDataException;
@@ -19,15 +19,15 @@ import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
+import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.List;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -60,10 +60,10 @@ public class Resource {
         return Services.instanceOf().dataUpdateService();
     }
 
-    RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder(long digRepId) throws DatabaseException {
-        List<DigDocIdentifier> identifiers = dataAccessService().digDocIdentifiersByDigDocId(digRepId);
+    RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) throws DatabaseException {
+        List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);
         List<RegistrarScopeIdentifierBuilder> builders = new ArrayList<RegistrarScopeIdentifierBuilder>(identifiers.size());
-        for (DigDocIdentifier id : identifiers) {
+        for (RegistrarScopeIdentifier id : identifiers) {
             builders.add(new RegistrarScopeIdentifierBuilder(id));
         }
         return new RegistrarScopeIdentifiersBuilder(builders);
@@ -100,10 +100,5 @@ public class Resource {
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         }
-    }
-
-    boolean queryParamToBoolean(String stringValue, String paramName, boolean defaultValue) {
-        return "".equals(stringValue) ? defaultValue
-                : Parser.parseBooleanQueryParam(stringValue, paramName);
     }
 }

@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Martin Řehánek
  */
-public class UrnNbnDeactivated extends RestException {
+public class UrnNbnDeactivated extends ApiException {
 
     public UrnNbnDeactivated(UrnNbn urn) {
         super(Response.Status.FORBIDDEN, "URN_NBN_DEACTIVATED", urn.toString() + " has been deactivated at " + urn.getModified().toString());

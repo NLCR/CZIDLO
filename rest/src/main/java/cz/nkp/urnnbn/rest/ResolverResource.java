@@ -7,13 +7,13 @@ package cz.nkp.urnnbn.rest;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.rest.exceptions.UnknownUrnException;
 import java.util.logging.Level;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
@@ -49,7 +49,10 @@ public class ResolverResource extends Resource {
                 default:
                     throw new RuntimeException();
             }
-        } catch (DatabaseException ex) {
+
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }

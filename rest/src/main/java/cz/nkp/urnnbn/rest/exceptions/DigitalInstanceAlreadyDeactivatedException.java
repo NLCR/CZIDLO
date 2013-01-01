@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstanceAlreadyDeactivatedException extends RestException {
+public class DigitalInstanceAlreadyDeactivatedException extends ApiException {
 
     public DigitalInstanceAlreadyDeactivatedException(DigitalInstance instance) {
         super(Response.Status.FORBIDDEN, "ALREADY_DEACTIVATED",

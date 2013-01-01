@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class UnknownUrnException extends RestException {
+public class UnknownUrnException extends ApiException {
 
     public UnknownUrnException(UrnNbn urn) {
         super(Status.NOT_FOUND, "UNKNOWN_URN", "No such urn '" + urn.toString() + "' has been assigned yet");

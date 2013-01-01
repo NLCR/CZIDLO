@@ -38,6 +38,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -68,45 +69,55 @@ public class DigitalDocumentResource extends Resource {
             @DefaultValue("html") @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr,
             @Context HttpServletRequest request) {
-        Action action = Parser.parseAction(actionStr, PARAM_ACTION);
-        ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
-        boolean withDigitalInstances = queryParamToBoolean(withDigitalInstancesStr, PARAM_WITH_DIG_INST, true);
-        loadUrn();
-        if (!urn.isActive()) {
-            if (action == Action.REDIRECT) {
-                throw new UrnNbnDeactivated(urn);
-            } else { //action = SHOW or DECIDE or UNDEFINED
-                action = Action.SHOW;
+        try {
+            Action action = Parser.parseAction(actionStr, PARAM_ACTION);
+            ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
+            boolean withDigitalInstances = true;
+            if (withDigitalInstancesStr != null) {
+                withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             }
-        }
-        switch (action) {
-            case DECIDE:
-                //pokud se najde vhodna digitalni instance, je presmerovano
-                //preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
-                //jinak se pouzije jakakoliv jina (aktivni) digitalni instance
-                //pokud neni digitalni instance nalezena, zobrazi se zaznam DD
-                URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-                if (digitalInstance != null) {
-                    return redirectResponse(digitalInstance);
-                } else {
-                    return recordResponse(format, request, withDigitalInstances);
+            loadUrn();
+            if (!urn.isActive()) {
+                if (action == Action.REDIRECT) {
+                    throw new UrnNbnDeactivated(urn);
+                } else { //action = SHOW or DECIDE or UNDEFINED
+                    action = Action.SHOW;
                 }
-            case REDIRECT:
-                URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-                if (uriByReferer != null) {
-                    return redirectResponse(uriByReferer);
-                } else {
-                    URI anyInstanceUri = getAnyActiveDigInstanceUri();
-                    if (anyInstanceUri != null) {
-                        return redirectResponse(anyInstanceUri);
-                    } else {// no digital instance found
-                        throw new UnknownDigitalInstanceException();
+            }
+            switch (action) {
+                case DECIDE:
+                    //pokud se najde vhodna digitalni instance, je presmerovano
+                    //preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
+                    //jinak se pouzije jakakoliv jina (aktivni) digitalni instance
+                    //pokud neni digitalni instance nalezena, zobrazi se zaznam DD
+                    URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+                    if (digitalInstance != null) {
+                        return redirectResponse(digitalInstance);
+                    } else {
+                        return recordResponse(format, request, withDigitalInstances);
                     }
-                }
-            case SHOW:
-                return recordResponse(format, request, withDigitalInstances);
-            default:
-                return recordXmlResponse(withDigitalInstances);
+                case REDIRECT:
+                    URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+                    if (uriByReferer != null) {
+                        return redirectResponse(uriByReferer);
+                    } else {
+                        URI anyInstanceUri = getAnyActiveDigInstanceUri();
+                        if (anyInstanceUri != null) {
+                            return redirectResponse(anyInstanceUri);
+                        } else {// no digital instance found
+                            throw new UnknownDigitalInstanceException();
+                        }
+                    }
+                case SHOW:
+                    return recordResponse(format, request, withDigitalInstances);
+                default:
+                    return recordXmlResponse(withDigitalInstances);
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -123,12 +134,7 @@ public class DigitalDocumentResource extends Resource {
 
     private void loadUrn() {
         if (urn == null) {
-            try {
-                urn = dataAccessService().urnByDigDocId(doc.getId(), true);
-            } catch (DatabaseException ex) {
-                logger.log(Level.SEVERE, ex.getMessage());
-                throw new InternalException(ex.getMessage());
-            }
+            urn = dataAccessService().urnByDigDocId(doc.getId(), true);
         }
     }
 
@@ -148,7 +154,7 @@ public class DigitalDocumentResource extends Resource {
 
     private Response recordXmlResponse(boolean withDigitalInstances) {
         try {
-            RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder = digRepIdentifiersBuilder(doc.getId());
+            RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder = registrarScopeIdentifiersBuilder(doc.getId());
             DigitalInstancesBuilder instancesBuilder = withDigitalInstances
                     ? instancesBuilder(doc) : null;
             RegistrarBuilder regBuilder = new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);
@@ -263,17 +269,12 @@ public class DigitalDocumentResource extends Resource {
     }
 
     private URI getAnyActiveDigInstanceUri() {
-        try {
-            List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-            for (DigitalInstance instance : instances) {
-                if (instance.isActive()) {
-                    return toUri(instance.getUrl());
-                }
+        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
+        for (DigitalInstance instance : instances) {
+            if (instance.isActive()) {
+                return toUri(instance.getUrl());
             }
-            return null;
-        } catch (DatabaseException ex) {
-            Logger.getLogger(DigitalDocumentResource.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
         }
+        return null;
     }
 }

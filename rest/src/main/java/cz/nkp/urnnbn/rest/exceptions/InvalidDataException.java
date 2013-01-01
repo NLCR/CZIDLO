@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InvalidDataException extends RestException {
+public class InvalidDataException extends ApiException {
 
     public InvalidDataException(String message) {
         super(Status.BAD_REQUEST, "INVALID_DATA", message);

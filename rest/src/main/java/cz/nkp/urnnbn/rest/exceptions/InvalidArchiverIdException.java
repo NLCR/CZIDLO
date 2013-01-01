@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InvalidArchiverIdException extends RestException {
+public class InvalidArchiverIdException extends ApiException {
 
     public InvalidArchiverIdException(String errorMessage) {
         super(Status.BAD_REQUEST, "INVALID_ARCHIVER_ID", errorMessage);

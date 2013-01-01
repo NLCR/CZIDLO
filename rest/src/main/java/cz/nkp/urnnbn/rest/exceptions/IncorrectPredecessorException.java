@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class IncorrectPredecessorException extends RestException {
+public class IncorrectPredecessorException extends ApiException {
 
     public IncorrectPredecessorException(UrnNbnWithStatus urn) {
         super(Status.BAD_REQUEST, getErrorCode(urn), urn.getUrn().toString());

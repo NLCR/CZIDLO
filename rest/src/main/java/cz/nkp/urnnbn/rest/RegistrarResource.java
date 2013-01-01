@@ -10,10 +10,10 @@ import cz.nkp.urnnbn.rest.exceptions.InternalException;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 
 /**
  * REST Web Service
@@ -33,14 +33,26 @@ public class RegistrarResource extends Resource {
     @GET
     @Produces("application/xml")
     public String getRegistrar(
-            @DefaultValue("true") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
-            @DefaultValue("true") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+            @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
+            @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         try {
-            boolean addDigitalLibraries = queryParamToBoolean(addDigLibsStr, PARAM_DIGITAL_LIBRARIES, true);
-            boolean addCatalogs = queryParamToBoolean(addCatalogsStr, PARAM_CATALOGS, true);
+            boolean addDigitalLibraries = true;
+            if (addDigLibsStr != null) {
+                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+            }
+            boolean addCatalogs = true;
+            if (addCatalogsStr != null) {
+                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+            }
             RegistrarBuilder builder = registrarBuilder(registrar, addDigitalLibraries, addCatalogs);
             return builder.buildDocument().toXML();
         } catch (DatabaseException ex) {
+            //TODO: rid of DatabaseException here
+            logger.log(Level.SEVERE, ex.getMessage());
+            throw new InternalException(ex.getMessage());
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }

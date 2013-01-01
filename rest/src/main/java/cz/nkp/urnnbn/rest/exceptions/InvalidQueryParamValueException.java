@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InvalidQueryParamValueException extends RestException {
+public class InvalidQueryParamValueException extends ApiException {
 
     public InvalidQueryParamValueException(String paramName, String paramValue, String message) {
         super(Status.BAD_REQUEST, "INVALID_QUERY_PARAM_VALUE",

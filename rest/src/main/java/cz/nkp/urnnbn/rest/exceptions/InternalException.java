@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InternalException extends RestException {
+public class InternalException extends ApiException {
 
     public InternalException(String errorMessage) {
         super(Status.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", errorMessage);

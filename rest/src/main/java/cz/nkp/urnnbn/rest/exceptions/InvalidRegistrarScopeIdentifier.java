@@ -10,9 +10,9 @@ import javax.ws.rs.core.Response.Status;
  *
  * @author Martin Řehánek
  */
-public class InvalidDigDocIdentifier extends RestException {
+public class InvalidRegistrarScopeIdentifier extends ApiException {
 
-    public InvalidDigDocIdentifier(String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_IDENTIFIER", errorMessage);
+    public InvalidRegistrarScopeIdentifier(String errorMessage) {
+        super(Status.BAD_REQUEST, "INVALID_REGISTRAR_SCOPE_IDENTIFIER", errorMessage);
     }
 }

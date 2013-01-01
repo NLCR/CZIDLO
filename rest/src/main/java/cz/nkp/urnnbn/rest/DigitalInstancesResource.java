@@ -95,7 +95,7 @@ public class DigitalInstancesResource extends Resource {
                 throw new UnknownDigitalInstanceException(id);
             }
             return new DigitalInstanceResource(instance);
-        } catch (DatabaseException ex) {
+        } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }
@@ -147,16 +147,11 @@ public class DigitalInstancesResource extends Resource {
     }
 
     private void checkNoOtherDigInstInSameLibraryPresent(DigitalInstance digInstFromClient) {
-        try {
-            List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
-            for (DigitalInstance instance : instances) {
-                if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
-                    throw new DigitalInstanceAlreadyPresentException(instance);
-                }
+        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
+        for (DigitalInstance instance : instances) {
+            if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
+                throw new DigitalInstanceAlreadyPresentException(instance);
             }
-        } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
         }
     }
 }

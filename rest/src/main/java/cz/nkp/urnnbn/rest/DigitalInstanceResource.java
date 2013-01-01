@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 
 /**
@@ -62,7 +63,7 @@ public class DigitalInstanceResource extends Resource {
     private DigitalDocumentBuilder digDocBuilder(long digDocId) throws DatabaseException {
         DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
         UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
-        RegistrarScopeIdentifiersBuilder idsBuilder = digRepIdentifiersBuilder(digDocId);
+        RegistrarScopeIdentifiersBuilder idsBuilder = registrarScopeIdentifiersBuilder(digDocId);
         return new DigitalDocumentBuilder(digDoc, urn, idsBuilder, null, null, null, null);
     }
 
@@ -89,9 +90,6 @@ public class DigitalInstanceResource extends Resource {
                     DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
                     return xmlBuilder(deactivated).buildDocument().toXML();
                 }
-            } catch (DatabaseException ex) {
-                logger.log(Level.SEVERE, ex.getMessage());
-                throw new InternalException(ex.getMessage());
             } catch (UnknownUserException ex) {
                 throw new NotAuthorizedException(ex.getMessage());
             } catch (AccessException ex) {
@@ -100,6 +98,11 @@ public class DigitalInstanceResource extends Resource {
                 //should never happen
                 logger.log(Level.SEVERE, ex.getMessage());
                 throw new InternalException(ex);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (RuntimeException ex) {
+                logger.log(Level.SEVERE, ex.getMessage());
+                throw new InternalException(ex.getMessage());
             }
         }
     }
