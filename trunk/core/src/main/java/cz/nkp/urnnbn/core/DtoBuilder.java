@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.core;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -15,6 +14,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.User;
 import org.joda.time.DateTime;
@@ -81,9 +81,9 @@ public class DtoBuilder {
         return doc;
     }
 
-    public DigDocIdentifier digDocIdentifierWithoutIds() {
-        DigDocIdentifier id = new DigDocIdentifier();
-        id.setType(DigDocIdType.valueOf("test"));
+    public RegistrarScopeIdentifier registrarScopeIdentifierWithoutIds() {
+        RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
+        id.setType(RegistrarScopeIdType.valueOf("test"));
         id.setValue(nextRegistrarScopeId());
         return id;
     }

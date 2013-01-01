@@ -10,9 +10,9 @@ import junit.framework.TestCase;
  *
  * @author Martin Řehánek
  */
-public class DigRepIdTypeTest extends TestCase {
+public class RegistrarScopeIdTypeTest extends TestCase {
 
-    public DigRepIdTypeTest(String testName) {
+    public RegistrarScopeIdTypeTest(String testName) {
         super(testName);
     }
 
@@ -27,29 +27,29 @@ public class DigRepIdTypeTest extends TestCase {
     }
 
     /**
-     * Test of valueOf method, of class DigDocIdType.
+     * Test of valueOf method, of class RegistrarScopeIdType.
      */
     public void testValueOf() {
         try {
-            DigDocIdType.valueOf(null);
+            RegistrarScopeIdType.valueOf(null);
             fail();
         } catch (NullPointerException e) {
             //null
         }
         try {
-            DigDocIdType.valueOf("a");
+            RegistrarScopeIdType.valueOf("a");
             fail();
         } catch (IllegalArgumentException e) {
             //too short
         }
         try {
-            DigDocIdType.valueOf("incredibly_long_identifier_type");
+            RegistrarScopeIdType.valueOf("incredibly_long_identifier_type");
             fail();
         } catch (IllegalArgumentException e) {
             //too long
         }
         try {
-            DigDocIdType.valueOf("something+else");
+            RegistrarScopeIdType.valueOf("incorrect+char");
             fail();
         } catch (IllegalArgumentException e) {
             //contains illegal character
@@ -57,10 +57,10 @@ public class DigRepIdTypeTest extends TestCase {
     }
 
     /**
-     * Test of toString method, of class DigDocIdType.
+     * Test of toString method, of class RegistrarScopeIdType.
      */
     public void testToString() {
-        DigDocIdType idType = DigDocIdType.valueOf("my_id_Type1");
-        assertEquals("my_id_Type1", idType.toString());
+        String idType = "abc_DEF-012:";
+        assertEquals(idType, RegistrarScopeIdType.valueOf(idType).toString());
     }
 }

@@ -4,26 +4,26 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import org.joda.time.DateTime;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigDocIdentifier {
+public class RegistrarScopeIdentifier {
 
     private Long digDocId;
     private Long registrarId;
     private DateTime created;
     private DateTime modified;
-    private DigDocIdType type;
+    private RegistrarScopeIdType type;
     private String value;
 
-    public DigDocIdentifier() {
+    public RegistrarScopeIdentifier() {
     }
 
-    public DigDocIdentifier(DigDocIdentifier inserted) {
+    public RegistrarScopeIdentifier(RegistrarScopeIdentifier inserted) {
         registrarId = inserted.getRegistrarId();
         digDocId = inserted.getDigDocId();
         type = inserted.getType();
@@ -46,11 +46,11 @@ public class DigDocIdentifier {
         this.registrarId = registrarId;
     }
 
-    public DigDocIdType getType() {
+    public RegistrarScopeIdType getType() {
         return type;
     }
 
-    public void setType(DigDocIdType type) {
+    public void setType(RegistrarScopeIdType type) {
         this.type = type;
     }
 
@@ -86,7 +86,7 @@ public class DigDocIdentifier {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final DigDocIdentifier other = (DigDocIdentifier) obj;
+        final RegistrarScopeIdentifier other = (RegistrarScopeIdentifier) obj;
         if (this.digDocId != other.digDocId && (this.digDocId == null || !this.digDocId.equals(other.digDocId))) {
             return false;
         }
