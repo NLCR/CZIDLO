@@ -5,10 +5,10 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import java.util.List;
@@ -176,19 +176,19 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument inserted = documentPersisted(registrar.getId(), entity.getId());
-        DigDocIdentifier identifier = builder.digDocIdentifierWithoutIds();
+        RegistrarScopeIdentifier identifier = builder.registrarScopeIdentifierWithoutIds();
         identifier.setDigDocId(inserted.getId());
         identifier.setRegistrarId(registrar.getId());
-        digDocIdDao.insertDigDocId(identifier);
+        registrarScopeIdDao.insertRegistrarScopeId(identifier);
         //fetch
-        Long fetchedRepId = digDocDao.getDigDocDbIdByIdentifier(identifier);
+        Long fetchedRepId = digDocDao.getDigDocIdByRegistrarScopeId(identifier);
         assertEquals(inserted.getId(), fetchedRepId);
         //try find with unknown value
-        DigDocIdentifier id2 = builder.digDocIdentifierWithoutIds();
+        RegistrarScopeIdentifier id2 = builder.registrarScopeIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
         id2.setValue(identifier.getValue() + "-new");
         try {
-            digDocDao.getDigDocDbIdByIdentifier(id2);
+            digDocDao.getDigDocIdByRegistrarScopeId(id2);
             fail();
         } catch (RecordNotFoundException e) {
             //ok

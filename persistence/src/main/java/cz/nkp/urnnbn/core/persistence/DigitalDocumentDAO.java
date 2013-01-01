@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import java.util.List;
@@ -61,7 +61,7 @@ public interface DigitalDocumentDAO {
     //TODO: vyhledavani podle jednoznacneho identifikatoru v ramci registratora
     //pozor: RecordNotFoundException muze byt jak pro registrarora, tak pro samotnou DR
     //mohly bych to oddelit tak, ze pokud nenajde digRep, vrati null
-    public Long getDigDocDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException;
+    public Long getDigDocIdByRegistrarScopeId(RegistrarScopeIdentifier id) throws DatabaseException, RecordNotFoundException;
 
     public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException;
 

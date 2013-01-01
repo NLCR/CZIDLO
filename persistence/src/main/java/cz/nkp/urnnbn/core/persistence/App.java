@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
@@ -8,7 +8,7 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -212,19 +212,19 @@ public class App {
             UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());
             factory.urnDao().insertUrnNbn(babickaUrn);
             //DR id type=OAI
-            DigDocIdentifier babickaMzkDrOaiId = new DigDocIdentifier();
-            babickaMzkDrOaiId.setType(DigDocIdType.valueOf("K4_pid"));
+            RegistrarScopeIdentifier babickaMzkDrOaiId = new RegistrarScopeIdentifier();
+            babickaMzkDrOaiId.setType(RegistrarScopeIdType.valueOf("K4_pid"));
             babickaMzkDrOaiId.setValue("uuid:123");
             babickaMzkDrOaiId.setRegistrarId(mzk.getId());
             babickaMzkDrOaiId.setDigDocId(babickaMzk.getId());
-            factory.digDocIdDao().insertDigDocId(babickaMzkDrOaiId);
+            factory.digDocIdDao().insertRegistrarScopeId(babickaMzkDrOaiId);
             //DR id type=OTHER
-            DigDocIdentifier babickaMzkDrOtherId = new DigDocIdentifier();
-            babickaMzkDrOtherId.setType(DigDocIdType.valueOf("signatura"));
+            RegistrarScopeIdentifier babickaMzkDrOtherId = new RegistrarScopeIdentifier();
+            babickaMzkDrOtherId.setType(RegistrarScopeIdType.valueOf("signatura"));
             babickaMzkDrOtherId.setValue("3-1275.138");
             babickaMzkDrOtherId.setRegistrarId(mzk.getId());
             babickaMzkDrOtherId.setDigDocId(babickaMzk.getId());
-            factory.digDocIdDao().insertDigDocId(babickaMzkDrOtherId);
+            factory.digDocIdDao().insertRegistrarScopeId(babickaMzkDrOtherId);
 
 
             //babicka mzk v K4 mzk

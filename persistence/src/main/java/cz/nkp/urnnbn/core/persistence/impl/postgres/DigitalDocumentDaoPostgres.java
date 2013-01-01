@@ -4,25 +4,25 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
@@ -176,17 +176,18 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public Long getDigDocDbIdByIdentifier(DigDocIdentifier id) throws DatabaseException, RecordNotFoundException {
+    public Long getDigDocIdByRegistrarScopeId(RegistrarScopeIdentifier id) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectSingleAttrByLongStringString(
-                DigDocIdentifierDAO.TABLE_NAME, DigDocIdentifierDAO.ATTR_DIG_REP_ID,
-                DigDocIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
-                DigDocIdentifierDAO.ATTR_TYPE, id.getType().toString(),
-                DigDocIdentifierDAO.ATTR_VALUE, id.getValue());
+                RegistrarScopeIdentifierDAO.TABLE_NAME, RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID,
+                RegistrarScopeIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
+                RegistrarScopeIdentifierDAO.ATTR_TYPE, id.getType().toString(),
+                RegistrarScopeIdentifierDAO.ATTR_VALUE, id.getValue());
         DaoOperation operation = new SingleResultOperation(statement, new singleLongRT());
         try {
             return (Long) runInTransaction(operation);
         } catch (RecordNotFoundException e) {
-            throw e;
+            //throw e;
+            throw new RecordNotFoundException(id.toString());
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);

@@ -4,9 +4,9 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
@@ -16,22 +16,22 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class UpdateDigDocIdentifier implements StatementWrapper {
+public class UpdateRegistrarScopeIdentifier implements StatementWrapper {
 
-    private final DigDocIdentifier id;
+    private final RegistrarScopeIdentifier id;
 
-    public UpdateDigDocIdentifier(DigDocIdentifier id) {
+    public UpdateRegistrarScopeIdentifier(RegistrarScopeIdentifier id) {
         this.id = id;
     }
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + DigDocIdentifierDAO.TABLE_NAME + " SET "
-                + DigDocIdentifierDAO.ATTR_UPDATED + "=?,"
-                + DigDocIdentifierDAO.ATTR_VALUE + "=?"
-                + " WHERE " + DigDocIdentifierDAO.ATTR_REG_ID + "=?"
-                + " AND " + DigDocIdentifierDAO.ATTR_DIG_REP_ID + "=?"
-                + " AND " + DigDocIdentifierDAO.ATTR_TYPE + "=?";
+        return "UPDATE " + RegistrarScopeIdentifierDAO.TABLE_NAME + " SET "
+                + RegistrarScopeIdentifierDAO.ATTR_UPDATED + "=?,"
+                + RegistrarScopeIdentifierDAO.ATTR_VALUE + "=?"
+                + " WHERE " + RegistrarScopeIdentifierDAO.ATTR_REG_ID + "=?"
+                + " AND " + RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID + "=?"
+                + " AND " + RegistrarScopeIdentifierDAO.ATTR_TYPE + "=?";
     }
 
     @Override

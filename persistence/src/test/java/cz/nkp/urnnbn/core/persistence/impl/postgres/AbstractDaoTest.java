@@ -5,20 +5,19 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.CountryCode;
-import cz.nkp.urnnbn.core.DigDocIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
@@ -27,6 +26,7 @@ import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import cz.nkp.urnnbn.core.persistence.OriginatorDAO;
 import cz.nkp.urnnbn.core.persistence.PublicationDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.SourceDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
@@ -51,7 +51,7 @@ public abstract class AbstractDaoTest extends TestCase {
     //DAOs
     final ArchiverDAO archiverDao;
     final CatalogDAO catalogDao;
-    final DigDocIdentifierDAO digDocIdDao;
+    final RegistrarScopeIdentifierDAO registrarScopeIdDao;
     final DigitalInstanceDAO digInstDao;
     final DigitalLibraryDAO libraryDao;
     final DigitalDocumentDAO digDocDao;
@@ -80,7 +80,7 @@ public abstract class AbstractDaoTest extends TestCase {
         registrarDao = daoFactory.registrarDao();
         archiverDao = daoFactory.archiverDao();
         catalogDao = daoFactory.catalogDao();
-        digDocIdDao = daoFactory.digDocIdDao();
+        registrarScopeIdDao = daoFactory.digDocIdDao();
         digInstDao = daoFactory.digInstDao();
         libraryDao = daoFactory.diglLibDao();
         entityDao = daoFactory.intelectualEntityDao();
@@ -140,21 +140,21 @@ public abstract class AbstractDaoTest extends TestCase {
         return digDocDao.getDocumentByDbId(id);
     }
 
-    public DigDocIdentifier digDocIdentifierPersisted(long registrarId, long digDocId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
-        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
+    public RegistrarScopeIdentifier registrarScopeIdPersisted(long registrarId, long digDocId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(digDocId);
         inserted.setRegistrarId(registrarId);
-        digDocIdDao.insertDigDocId(inserted);
-        return digDocIdDao.getIdentifer(digDocId, inserted.getType());
+        registrarScopeIdDao.insertRegistrarScopeId(inserted);
+        return registrarScopeIdDao.getRegistrarScopeId(digDocId, inserted.getType());
     }
 
-    public DigDocIdentifier digDocIdentifierPersisted(long registrarId, long digDocId, String type) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
-        DigDocIdentifier inserted = builder.digDocIdentifierWithoutIds();
+    public RegistrarScopeIdentifier registrarScopeIdPersisted(long registrarId, long digDocId, String type) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+        RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(digDocId);
         inserted.setRegistrarId(registrarId);
-        inserted.setType(DigDocIdType.valueOf(type));
-        digDocIdDao.insertDigDocId(inserted);
-        return digDocIdDao.getIdentifer(digDocId, inserted.getType());
+        inserted.setType(RegistrarScopeIdType.valueOf(type));
+        registrarScopeIdDao.insertRegistrarScopeId(inserted);
+        return registrarScopeIdDao.getRegistrarScopeId(digDocId, inserted.getType());
     }
 
     public DigitalDocument documentPersisted(long registrarId, long archiverId, long intEntId) throws DatabaseException, RecordNotFoundException {

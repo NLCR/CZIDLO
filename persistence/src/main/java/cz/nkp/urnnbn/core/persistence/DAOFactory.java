@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigDocIdentifierDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarScopeIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalInstanceDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalLibraryDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
@@ -34,7 +34,7 @@ public class DAOFactory {
     //DAO instances
     private ArchiverDAO archiverDao;
     private CatalogDAO catalogDao;
-    private DigDocIdentifierDAO digRepId;
+    private RegistrarScopeIdentifierDAO digRepId;
     private DigitalInstanceDAO digInst;
     private DigitalLibraryDAO libraryDao;
     private DigitalDocumentDAO representationDao;
@@ -167,10 +167,10 @@ public class DAOFactory {
         return catalogDao;
     }
 
-    public DigDocIdentifierDAO digDocIdDao() {
+    public RegistrarScopeIdentifierDAO digDocIdDao() {
         if (digRepId == null) {
             if (postgresImplemantation) {
-                digRepId = new DigDocIdentifierDaoPostgres(connector);
+                digRepId = new RegistrarScopeIdentifierDaoPostgres(connector);
             } else if (oracleImplementation) {
             }
         }
