@@ -4,29 +4,29 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.DigDocIdType;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigDocIdentifierDAO;
-import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigDocIdentifier;
+import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigDocIdentifier;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.DigDocIdentifierRT;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarScopeIdentifierRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -39,23 +39,23 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocIdentifierDAO {
+public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements RegistrarScopeIdentifierDAO {
 
-    private static final Logger logger = Logger.getLogger(DigDocIdentifierDaoPostgres.class.getName());
+    private static final Logger logger = Logger.getLogger(RegistrarScopeIdentifierDaoPostgres.class.getName());
 
-    public DigDocIdentifierDaoPostgres(DatabaseConnector con) {
+    public RegistrarScopeIdentifierDaoPostgres(DatabaseConnector con) {
         super(con);
     }
 
     @Override
-    public void insertDigDocId(final DigDocIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public void insertRegistrarScopeId(final RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, identifier.getDigDocId());
         DaoOperation operation = new DaoOperation() {
 
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                StatementWrapper insert = new InsertDigDocIdentifier(identifier);
+                StatementWrapper insert = new InsertRegistrarScopeIdentifier(identifier);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
                 insertSt.executeUpdate();
                 return null;
@@ -68,8 +68,8 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart intEntId = new IdPart(DigDocIdentifierDAO.ATTR_DIG_REP_ID, Long.toString(identifier.getDigDocId()));
-                IdPart type = new IdPart(DigDocIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
+                IdPart intEntId = new IdPart(RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, Long.toString(identifier.getDigDocId()));
+                IdPart type = new IdPart(RegistrarScopeIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
                 throw new AlreadyPresentException(new IdPart[]{intEntId, type});
             } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
@@ -81,12 +81,12 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public List<DigDocIdentifier> getIdList(long digDocId) throws DatabaseException, RecordNotFoundException {
+    public List<RegistrarScopeIdentifier> getRegistrarScopeIds(long digDocId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocId);
         try {
-            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_REP_ID, digDocId);
-            DaoOperation operation = new MultipleResultsOperation(st, new DigDocIdentifierRT());
-            return (List<DigDocIdentifier>) runInTransaction(operation);
+            StatementWrapper st = new SelectAllAttrsByLongAttr(TABLE_NAME, ATTR_DIG_DOC_ID, digDocId);
+            DaoOperation operation = new MultipleResultsOperation(st, new RegistrarScopeIdentifierRT());
+            return (List<RegistrarScopeIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
@@ -96,9 +96,9 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
         }
     }
 
-    public DigDocIdentifier getIdentifer(Long digDocId, DigDocIdType type) throws DatabaseException, RecordNotFoundException {
-        List<DigDocIdentifier> idList = getIdList(digDocId);
-        for (DigDocIdentifier id : idList) {
+    public RegistrarScopeIdentifier getRegistrarScopeId(Long digDocId, RegistrarScopeIdType type) throws DatabaseException, RecordNotFoundException {
+        List<RegistrarScopeIdentifier> idList = getRegistrarScopeIds(digDocId);
+        for (RegistrarScopeIdentifier id : idList) {
             if (id.getType().equals(type)) {
                 return id;
             }
@@ -106,11 +106,11 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
         throw new RecordNotFoundException(TABLE_NAME);
     }
 
-    public List<DigDocIdentifier> getIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
+    public List<RegistrarScopeIdentifier> getRegistrarScopeIdsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
             StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
-            DaoOperation operation = new MultipleResultsOperation(st, new DigDocIdentifierRT());
-            return (List<DigDocIdentifier>) runInTransaction(operation);
+            DaoOperation operation = new MultipleResultsOperation(st, new RegistrarScopeIdentifierRT());
+            return (List<RegistrarScopeIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
@@ -121,11 +121,11 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public void updateDigDocIdValue(DigDocIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public void updateRegistrarScopeIdValue(RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, identifier.getDigDocId());
         try {
-            StatementWrapper updateSt = new UpdateDigDocIdentifier(identifier);
+            StatementWrapper updateSt = new UpdateRegistrarScopeIdentifier(identifier);
             DaoOperation operation = new NoResultOperation(updateSt);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
@@ -136,8 +136,8 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
             logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0},digRepId:{1}, type:{2}", new Object[]{identifier.getRegistrarId(), identifier.getDigDocId(), identifier.getType().toString()});
             System.err.println("state:" + ex.getSQLState());
             if ("23505".equals(ex.getSQLState())) {
-                IdPart intEntId = new IdPart(DigDocIdentifierDAO.ATTR_DIG_REP_ID, Long.toString(identifier.getDigDocId()));
-                IdPart type = new IdPart(DigDocIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
+                IdPart intEntId = new IdPart(RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, Long.toString(identifier.getDigDocId()));
+                IdPart type = new IdPart(RegistrarScopeIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
                 throw new AlreadyPresentException(new IdPart[]{intEntId, type});
             } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
@@ -149,10 +149,10 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public void deleteDigDocIdentifier(long digRepDbId, DigDocIdType type) throws DatabaseException, RecordNotFoundException {
+    public void deleteRegistrarScopeId(long digRepDbId, RegistrarScopeIdType type) throws DatabaseException, RecordNotFoundException {
         try {
             checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
-            deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
+            deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_DOC_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
         } catch (RecordReferencedException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
@@ -160,10 +160,10 @@ public class DigDocIdentifierDaoPostgres extends AbstractDAO implements DigDocId
     }
 
     @Override
-    public void deleteAllIdentifiersOfDigDoc(long digRepDbId) throws DatabaseException, RecordNotFoundException {
+    public void deleteRegistrarScopeIds(long digRepDbId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
         try {
-            deleteRecordsById(TABLE_NAME, ATTR_DIG_REP_ID, digRepDbId, false);
+            deleteRecordsById(TABLE_NAME, ATTR_DIG_DOC_ID, digRepDbId, false);
         } catch (RecordNotFoundException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
