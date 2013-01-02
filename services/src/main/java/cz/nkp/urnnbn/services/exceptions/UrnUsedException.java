@@ -15,7 +15,7 @@ public class UrnUsedException extends Exception {
     private final UrnNbn urn;
 
     public UrnUsedException(UrnNbn urn) {
-        super("already used by another digital instance");
+        super("already used by another digital document");
         this.urn = urn;
     }
 
