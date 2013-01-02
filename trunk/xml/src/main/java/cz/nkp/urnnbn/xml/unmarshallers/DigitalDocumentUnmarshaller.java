@@ -17,8 +17,10 @@
 package cz.nkp.urnnbn.xml.unmarshallers;
 
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
 import java.util.ArrayList;
@@ -131,6 +133,44 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                 return result;
             }
         }
+    }
+
+    /**
+     *
+     * @return UrnNbn or null
+     */
+    UrnNbn getUrnNbn() {
+        Element urnEl = urnNbnElement();
+        if (urnEl != null) {
+            String urnValue = elementContentOrNull("value", urnEl);
+            if (urnValue != null) {
+                return UrnNbn.valueOf(urnValue);
+            }
+        }
+        return null;
+    }
+
+    List<UrnNbnWithStatus> getPredecessors() {
+        Element urnEl = urnNbnElement();
+        if (urnEl != null) {
+            Nodes predecessors = selectNodes(new Xpath(prefixed("predecessor")), urnEl);
+            if (predecessors != null && predecessors.size() != 0) {
+                List<UrnNbnWithStatus> result = new ArrayList<UrnNbnWithStatus>(predecessors.size());
+                for (int i = 0; i < predecessors.size(); i++) {
+                    Element predecessor = (Element) predecessors.get(i);
+                    UrnNbn urnNbn = UrnNbn.valueOf(attributeContentOrNull("value", predecessor));
+                    String note = attributeContentOrNull("note", predecessor);
+                    UrnNbnWithStatus urn = new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.FREE, note);
+                    result.add(urn);
+                }
+                return result;
+            }
+        }
+        return Collections.<UrnNbnWithStatus>emptyList();
+    }
+
+    private Element urnNbnElement() {
+        return (Element) selectSingleElementOrNull("urnNbn", digDocEl);
     }
 
     /**

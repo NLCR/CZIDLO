@@ -25,10 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <documentCode>0000x3</documentCode>
         <digitalDocumentId>103</digitalDocumentId>
         <created>2012-11-25T03:02:31.320+01:00</created>
-        <predecessors>
-            <urnNbn>urn:nbn:cz:tst02-0000x1</urnNbn>
-            <urnNbn>urn:nbn:cz:tst02-00001o</urnNbn>
-        </predecessors>
+        <predecessor value="urn:nbn:cz:tst02-0000x1"/>
+        <predecessor value="urn:nbn:cz:tst02-00001o" note="predchudce"/>
     </urnNbn>
 </response>
 

@@ -41,7 +41,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </registrar>
         </digitalLibrary>
         <digitalDocument id="11">
-            <urnNbn>urn:nbn:cz:tst02-000006</urnNbn>
+            <urnNbn>
+                <value>urn:nbn:cz:tst02-000006</value>
+                <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce"/>
+                <predecessor value="urn:nbn:cz:tst02-000003"/>
+                <successor value="urn:nbn:cz:tst02-000006" note="naslednik"/>
+                <successor value="urn:nbn:cz:tst02-000007"/>
+            </urnNbn>
             <financed>norské fondy</financed>
             <contractNumber>123</contractNumber>
             <created>2012-04-18T23:21:57.250+02:00</created>

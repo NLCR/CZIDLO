@@ -18,15 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <digitalDocument id="11">
-        <urnNbn>urn:nbn:cz:tst02-000006</urnNbn>
-        <predecessors>
-            <urnNbn>urn:nbn:cz:tst02-000005</urnNbn>
-            <urnNbn>urn:nbn:cz:tst02-000004</urnNbn>    
-        </predecessors>
-        <successors>
-            <urnNbn>urn:nbn:cz:tst02-000007</urnNbn>
-            <urnNbn>urn:nbn:cz:tst02-000008</urnNbn>    
-        </successors>
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+        </urnNbn>
         <financed>norské fondy</financed>
         <contractNumber>123</contractNumber>
         <created>2012-04-18T23:21:57.250+02:00</created>

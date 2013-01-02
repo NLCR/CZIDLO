@@ -41,7 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </registrar>
         </digitalLibrary>
         <digitalDocument id="9">
-            <urnNbn>urn:nbn:cz:tst02-000004</urnNbn>
+            <urnNbn>
+                <value>urn:nbn:cz:tst02-000004</value>
+            </urnNbn>
             <financed>norské fondy</financed>
             <contractNumber>123</contractNumber>
             <created>2012-04-18T23:21:56.517+02:00</created>

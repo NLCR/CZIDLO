@@ -26,12 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <digitalDocumentId>89</digitalDocumentId>
         <created>2012-11-24T23:08:06.237+01:00</created>
         <modified>2012-11-25T02:09:02.310+01:00</modified>
-        <predecessors>
-            <urnNbn>urn:nbn:cz:tst02-000011</urnNbn>
-            <urnNbn>urn:nbn:cz:tst02-00001h</urnNbn>
-        </predecessors>
-        <successors>
-            <urnNbn>urn:nbn:cz:tst02-00001s</urnNbn>
-        </successors>
+        <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce"/>
+        <predecessor value="urn:nbn:cz:tst02-000003"/>
+        <successor value="urn:nbn:cz:tst02-000006" note="naslednik"/>
+        <successor value="urn:nbn:cz:tst02-000007"/>
     </urnNbn>
 </response>
