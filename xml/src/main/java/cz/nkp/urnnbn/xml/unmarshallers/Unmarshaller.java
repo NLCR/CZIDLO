@@ -67,6 +67,10 @@ public abstract class Unmarshaller {
         return parent.query(xpath.toString(), context);
     }
 
+    String elementContentOrNull(String elementName, ParentNode parent) {
+        return elementContentOrNull(elementName, parent, null);
+    }
+
     String elementContentOrNull(String elementName, ParentNode parent, ElementContentEnhancer enhancer) {
         Node node = selectSingleElementOrNull(elementName, parent);
         if (node != null && (node instanceof Element)) {
@@ -79,6 +83,10 @@ public abstract class Unmarshaller {
         } else {
             return null;
         }
+    }
+
+    String attributeContentOrNull(String attributeName, ParentNode parent) {
+        return attributeContentOrNull(attributeName, parent, null);
     }
 
     String attributeContentOrNull(String attributeName, ParentNode parent, ElementContentEnhancer enhancer) {

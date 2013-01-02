@@ -242,6 +242,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="archiverId" type="xs:long" minOccurs="0" maxOccurs="1"/>
+                <!-- urn:nbn element -->
+                <xs:element name="urnNbn" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="value" type="r:urnNbnType" minOccurs="0"/> 
+                            <xs:element name="predecessor" type="r:predecessor" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="registrarScopeIdentifiers" type="r:registrarScopeIdentifiers" minOccurs="0" maxOccurs="1" />
                 <xs:element name="financed" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="contractNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>

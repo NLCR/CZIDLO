@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.IdentifiableWithDatestamps;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
@@ -98,28 +99,37 @@ public abstract class XmlBuilder {
     }
 
     protected void appendPredecessors(Element root, UrnNbn urn) {
-        List<UrnNbn> predecessors = urn.getPredecessors();
+        List<UrnNbnWithStatus> predecessors = urn.getPredecessors();
         if (predecessors != null && !predecessors.isEmpty()) {
-            Element predecessorsEl = new Element("predecessors", RESOLVER_NS);
-            for (UrnNbn predecessor : predecessors) {
-                appendUrnNbn(predecessorsEl, predecessor);
+            for (UrnNbnWithStatus predecessor : predecessors) {
+                Element predecessorEl = new Element("predecessor", RESOLVER_NS);
+                predecessorEl.addAttribute(new Attribute("value", predecessor.getUrn().toString()));
+                if (predecessor.getNote() != null) {
+                    predecessorEl.addAttribute(new Attribute("note", predecessor.getNote()));
+                }
+                root.appendChild(predecessorEl);
             }
-            root.appendChild(predecessorsEl);
         }
     }
 
     protected void appendSuccessors(Element root, UrnNbn urn) {
-        List<UrnNbn> successors = urn.getSuccessors();
+        List<UrnNbnWithStatus> successors = urn.getSuccessors();
         if (successors != null && !successors.isEmpty()) {
-            Element predecessorsEl = new Element("successors", RESOLVER_NS);
-            for (UrnNbn successor : successors) {
-                appendUrnNbn(predecessorsEl, successor);
+            for (UrnNbnWithStatus successor : successors) {
+                Element predecessorEl = new Element("successor", RESOLVER_NS);
+                predecessorEl.addAttribute(new Attribute("value", successor.getUrn().toString()));
+                if (successor.getNote() != null) {
+                    predecessorEl.addAttribute(new Attribute("note", successor.getNote()));
+                }
+                root.appendChild(predecessorEl);
             }
-            root.appendChild(predecessorsEl);
         }
     }
 
-    protected void appendUrnNbn(Element root, UrnNbn urnNbn) {
-        appendElementWithContentIfNotNull(root, urnNbn, "urnNbn");
+    protected Element appendUrnNbnElement(Element root, UrnNbn urnNbn) {
+        Element predecessorEl = new Element("urnNbn", RESOLVER_NS);
+        appendElementWithContentIfNotNull(predecessorEl, urnNbn, "value");
+        root.appendChild(predecessorEl);
+        return predecessorEl;
     }
 }

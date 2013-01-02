@@ -69,7 +69,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- identifikátor archivátora -->
         <r:archiverId>3</r:archiverId>
         <!-- předem rezervané urn:nbn -->
-        <!--<r:urnNbn>urn:nbn:cz:tst02-00003b</r:urnNbn>-->
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:tst02-00003b</r:value>
+            <r:predecessor value="urn:nbn:cz:tst02-000030" note="bla"/>
+            <r:predecessor value="urn:nbn:cz:tst02-000031" note="blabla"/>
+            <r:predecessor value="urn:nbn:cz:tst02-000032" note="blablabla"/>
+        </r:urnNbn>
         <!-- seznam identifikátorů v rámci registrátora -->
         <r:registrarScopeIdentifiers>
             <r:id type="OAI_harvester">3234</r:id>
