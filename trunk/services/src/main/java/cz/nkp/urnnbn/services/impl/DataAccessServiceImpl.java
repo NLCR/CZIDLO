@@ -73,17 +73,17 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                 urnNbn.setSuccessors(factory.urnDao().getSuccessors(urnNbn));
             }
             if (urnNbn.isActive()) {
-                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.ACTIVE);
+                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.ACTIVE, null);
             } else {
-                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.DEACTIVATED);
+                return new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.DEACTIVATED, null);
             }
         } catch (RecordNotFoundException ex) { //urn:nb not in table urnNbn
             try {
                 UrnNbn urnNbnReserved = factory.urnReservedDao().getUrn(code, documentCode);
-                return new UrnNbnWithStatus(urnNbnReserved, UrnNbnWithStatus.Status.RESERVED);
+                return new UrnNbnWithStatus(urnNbnReserved, UrnNbnWithStatus.Status.RESERVED, null);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
                 UrnNbn urn = new UrnNbn(code, documentCode, null);
-                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE);
+                return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE, null);
             } catch (DatabaseException ex3) {
                 throw new RuntimeException(ex3);
             }
