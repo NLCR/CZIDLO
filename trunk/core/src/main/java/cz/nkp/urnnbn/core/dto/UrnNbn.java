@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.core.dto;
 
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +26,8 @@ public class UrnNbn {
     private final DateTime created;
     private final DateTime modified;
     private final Boolean active;
-    List<UrnNbn> predecessors;
-    List<UrnNbn> successors;
+    List<UrnNbnWithStatus> predecessors;
+    List<UrnNbnWithStatus> successors;
 
     /**
      * This constructor should be used when urn:nbn is being assigned or parsed
@@ -112,19 +113,19 @@ public class UrnNbn {
         return new UrnNbn(registrarCode, documentCode, null);
     }
 
-    public List<UrnNbn> getPredecessors() {
+    public List<UrnNbnWithStatus> getPredecessors() {
         return predecessors;
     }
 
-    public void setPredecessors(List<UrnNbn> predecessors) {
+    public void setPredecessors(List<UrnNbnWithStatus> predecessors) {
         this.predecessors = predecessors;
     }
 
-    public List<UrnNbn> getSuccessors() {
+    public List<UrnNbnWithStatus> getSuccessors() {
         return successors;
     }
 
-    public void setSuccessors(List<UrnNbn> successors) {
+    public void setSuccessors(List<UrnNbnWithStatus> successors) {
         this.successors = successors;
     }
 

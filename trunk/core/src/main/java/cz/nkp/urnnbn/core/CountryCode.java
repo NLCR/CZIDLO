@@ -27,7 +27,7 @@ public class CountryCode {
      */
     public static void initialize(String code) {
         if (CountryCode.code != null) {
-            Logger.getLogger(CountryCode.class.getName()).log(Level.WARNING, "Initializing country code for the second time (was ''{0}'', now setting ''{1}''", new Object[]{CountryCode.code, code});
+            Logger.getLogger(CountryCode.class.getName()).log(Level.WARNING, "Initializing country code for the second time (was ''{0}'', now setting ''{1}'')", new Object[]{CountryCode.code, code});
         }
         CountryCode.code = code.toLowerCase();
     }
