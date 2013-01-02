@@ -42,7 +42,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -84,18 +83,11 @@ public class DigitalDocumentsResource extends Resource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String registerDigitalDocument(@Context HttpServletRequest req, String content,
-            @QueryParam(PARAM_URN) String urnParam,
-            @QueryParam(value = "predUrn") final List<String> predecessors) {
+    public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
         String login = req.getRemoteUser();
         try {
-            
             Document doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getRecordImportSchema());
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
-            registrationData.setUrn(urnNbnFromParam(urnParam));
-            if (!predecessors.isEmpty()) {
-                registrationData.setPredecessors(predecessorsFromParams(predecessors));
-            }
             UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
             UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
@@ -171,6 +163,10 @@ public class DigitalDocumentsResource extends Resource {
         digDoc.setArchiverId(archiverId);
         result.setDigitalDocument(digDoc);
         result.setDigDocIdentifiers(unmarshaller.getRegistrarScopeIdentifiers());
+        //urn:nbn
+        result.setUrn(unmarshaller.getUrnNbn());
+        //predecessors
+        result.setPredecessors(unmarshaller.getPredecessors());
         return result;
     }
 
@@ -192,7 +188,6 @@ public class DigitalDocumentsResource extends Resource {
             throw new InvalidUrnException(urnNbn.toString(), "doesn't match registrar code " + registrar.getCode().toString());
         }
         Status status = urnWithStatus(urnNbn, false).getStatus();
-        System.err.println("STATUS: " + status);
         if (status == Status.ACTIVE) {
             throw new InvalidUrnException(urnNbn.toString(), " already active");
         }
