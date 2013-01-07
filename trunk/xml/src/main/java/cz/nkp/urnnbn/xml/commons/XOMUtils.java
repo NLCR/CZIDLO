@@ -18,19 +18,11 @@ package cz.nkp.urnnbn.xml.commons;
 
 import java.io.*;
 import java.net.URL;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
 import nu.xom.*;
 import nu.xom.xslt.XSLException;
-import nu.xom.xslt.XSLTransform;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
 
 /**
  * TODO: poresit, jestli je to dobre s tema vyjimkama (validity vs parsing)
@@ -71,79 +63,79 @@ public class XOMUtils {
 
     /**
      *
-     * @param xml File containing xml to be validated and returned
-     * @param schema xsd file
+     * @param xmlFile File containing xml to be validated and returned
+     * @param xsdFile xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
      * @throws IOException
      */
-    public static Document loadDocumentValidByExternalXsd(File xml, File schema) throws ValidityException, ParsingException, IOException {
-        return new Builder(readerValidatingByXsdFromFile(schema)).build(xml);
+    public static Document loadDocumentValidByExternalXsd(File xmlFile, File xsdFile) throws ValidityException, ParsingException, IOException {
+        return new ExternalXsdValitatingXmlLoader(xsdFile).loadDocument(xmlFile);
     }
 
     /**
      *
-     * @param xml String containing xml to be validated and returned
-     * @param schema xsd file
+     * @param xmlString String containing xml to be validated and returned
+     * @param xsdFile xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
      * @throws IOException
      */
-    public static Document loadDocumentValidByExternalXsd(String xml, File schema) throws ValidityException, ParsingException, IOException {
-        return new Builder(readerValidatingByXsdFromFile(schema)).build(xml, null);
+    public static Document loadDocumentValidByExternalXsd(String xmlString, File xsdFile) throws ValidityException, ParsingException, IOException {
+        return new ExternalXsdValitatingXmlLoader(xsdFile).loadDocument(xmlString);
     }
 
     /**
      *
-     * @param xml File containing xml to be validated and returned
-     * @param schemaUrl url of the schema
+     * @param xmlFile File containing xml to be validated and returned
+     * @param xsdUrl url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
      * @throws IOException
      */
-    public static Document loadDocumentValidByExternalXsd(File xml, URL schemaUrl) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByXsdFromUrl(schemaUrl)).build(xml);
+    public static Document loadDocumentValidByExternalXsd(File xmlFile, URL xsdUrl) throws ParsingException, ValidityException, IOException {
+        return new ExternalXsdValitatingXmlLoader(xsdUrl).loadDocument(xmlFile);
     }
 
     /**
      *
-     * @param xml String containing xml to be validated and returned
-     * @param schemaUrl url of the schema
+     * @param xmlString String containing xml to be validated and returned
+     * @param xsdUrl url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
      * @throws IOException
      */
-    public static Document loadDocumentValidByExternalXsd(String xml, URL schemaUrl) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByXsdFromUrl(schemaUrl)).build(xml, null);
+    public static Document loadDocumentValidByExternalXsd(String xmlString, URL xsdUrl) throws ParsingException, ValidityException, IOException {
+        return new ExternalXsdValitatingXmlLoader(xsdUrl).loadDocument(xmlString);
     }
 
     /**
      *
-     * @param xml String containing xml to be validated and returned
-     * @param schema String containing xsd
+     * @param xmlString String containing xml to be validated and returned
+     * @param xsdString String containing xsd
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
      * @throws IOException
      */
-    public static Document loadDocumentValidByExternalXsd(String xml, String schema) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByXsdFromString(schema)).build(xml, null);
+    public static Document loadDocumentValidByExternalXsd(String xmlString, String xsdString) throws ParsingException, ValidityException, IOException {
+        return new ExternalXsdValitatingXmlLoader(xsdString).loadDocument(xmlString);
     }
 
     /**
      *
-     * @param xml File containing xml to be validated and returned
+     * @param xmlFile File containing xml to be validated and returned
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
      * @throws IOException
      */
-    public static Document loadDocumentValidByInternalXsd(File xml) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByInternalXsd()).build(xml);
+    public static Document loadDocumentValidByInternalXsd(File xmlFile) throws ParsingException, ValidityException, IOException {
+        return new InternalXsdValidatingXmlLoader().loadDocument(xmlFile);
     }
 
     /**
@@ -155,7 +147,7 @@ public class XOMUtils {
      * @throws IOException
      */
     public static Document loadDocumentValidByInternalXsd(String xml) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByInternalXsd()).build(xml, null);
+        return new InternalXsdValidatingXmlLoader().loadDocument(xml);
     }
 
     /**
@@ -167,134 +159,50 @@ public class XOMUtils {
      * @throws IOException
      */
     public static Document loadDocumentValidByInternalXsd(InputStream xml) throws ParsingException, ValidityException, IOException {
-        return new Builder(readerValidatingByInternalXsd()).build(xml);
+        return new InternalXsdValidatingXmlLoader().loadDocument(xml);
     }
 
     /**
      *
-     * @param xml File containing document to be read
+     * @param xmlFile File containing document to be read
      * @return
      * @throws ParsingException
      * @throws IOException
      */
-    public static Document loadDocumentWithoutValidation(File xml) throws ParsingException, IOException {
-        return new Builder().build(xml);
+    public static Document loadDocumentWithoutValidation(File xmlFile) throws ParsingException, IOException {
+        return new NonvalidatingXmlLoader().loadDocument(xmlFile);
     }
 
     /**
      *
-     * @param xml String containing document to be read
+     * @param xmlString String containing document to be read
      * @return
      * @throws ParsingException
      * @throws IOException
      */
-    public static Document loadDocumentWithoutValidation(String xml) throws ParsingException, IOException {
-        return new Builder().build(xml, null);
+    public static Document loadDocumentWithoutValidation(String xmlString) throws ParsingException, IOException {
+        return new NonvalidatingXmlLoader().loadDocument(xmlString);
     }
 
     /**
      *
-     * @param in InputStream that document can be read from
+     * @param xmlStream InputStream that document can be read from
      * @return
      * @throws ParsingException
      * @throws IOException
      */
-    public static Document loadDocumentWithoutValidation(InputStream in) throws ParsingException, IOException {
-        return new Builder().build(in);
-    }
-
-    private static XMLReader readerValidatingByXsdFromString(String schema) throws ValidityException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(false);
-            factory.setNamespaceAware(true);
-            SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(new StringReader(schema))}));
-            SAXParser parser = factory.newSAXParser();
-            XMLReader reader = parser.getXMLReader();
-            reader.setErrorHandler(new MyErrorHandler());
-            return reader;
-        } catch (ParserConfigurationException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        } catch (SAXException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        }
-    }
-
-    private static XMLReader readerValidatingByXsdFromFile(File schema) throws ValidityException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(false);
-            factory.setNamespaceAware(true);
-            SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(schema)}));
-            SAXParser parser = factory.newSAXParser();
-            XMLReader reader = parser.getXMLReader();
-            reader.setErrorHandler(new MyErrorHandler());
-            return reader;
-        } catch (ParserConfigurationException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        } catch (SAXException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        }
-    }
-
-    private static XMLReader readerValidatingByXsdFromUrl(URL url) throws ValidityException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(false);
-            factory.setNamespaceAware(true);
-            SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            InputStream in = null;
-            try {
-                in = url.openStream();
-                factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(in)}));
-                SAXParser parser = factory.newSAXParser();
-                XMLReader reader = parser.getXMLReader();
-                reader.setErrorHandler(new MyErrorHandler());
-                return reader;
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-            }
-        } catch (IOException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        } catch (ParserConfigurationException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        } catch (SAXException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        }
-    }
-
-    private static XMLReader readerValidatingByInternalXsd() throws ValidityException {
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setValidating(true);
-            factory.setNamespaceAware(true);
-            SAXParser parser = factory.newSAXParser();
-            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
-            XMLReader reader = parser.getXMLReader();
-            reader.setErrorHandler(new MyErrorHandler());
-            return reader;
-        } catch (ParserConfigurationException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        } catch (SAXException ex) {
-            throw new ValidityException(ex.getMessage(), ex);
-        }
+    public static Document loadDocumentWithoutValidation(InputStream xmlStream) throws ParsingException, IOException {
+        return new NonvalidatingXmlLoader().loadDocument(xmlStream);
     }
 
     public static Document transformDocument(String inputXml, String xslt) throws ParsingException, ValidityException, IOException, XMLException, XSLException {
-        Builder builder = new Builder();
-        Document input = builder.build(inputXml, null);
-        Document stylesheet = builder.build(xslt, null);
-        return transformDocument(input, stylesheet);
+        XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
+        return transformer.transform(inputXml);
     }
 
-    public static Document transformDocument(Document input, Document xslt) throws XMLException, XSLException {
-        XSLTransform transform = new XSLTransform(xslt);
-        Nodes output = transform.transform(input);
-        return XSLTransform.toDocument(output);
+    public static Document transformDocument(Document inputDoc, Document xslt) throws XMLException, XSLException {
+        XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
+        return transformer.transform(inputDoc);
     }
 
     public static void saveDocumentToFile(Document doc, File file) throws FileNotFoundException, IOException {
