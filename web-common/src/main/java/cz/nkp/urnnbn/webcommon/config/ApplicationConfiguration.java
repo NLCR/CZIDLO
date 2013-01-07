@@ -16,22 +16,14 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class ApplicationConfiguration {
+public abstract class ApplicationConfiguration {
 
     private static final Logger appLogger = Logger.getLogger(ApplicationConfiguration.class.getName());
-    private static ApplicationConfiguration instance = null;
     private Boolean serverReadOnly;
     private Boolean develMode;
     private String languageCode;
     private String adminName;
     private String adminEmail;
-
-    public static ApplicationConfiguration instanceOf() {
-        if (instance == null) {
-            instance = new ApplicationConfiguration();
-        }
-        return instance;
-    }
 
     public void initialize(PropertyLoader loader) throws IOException {
         appLogger.fine("Loading configuration");
