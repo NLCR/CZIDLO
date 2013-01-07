@@ -26,15 +26,15 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class WebModuleConfiguration extends ApplicationConfiguration {
+public class XmlModuleConfiguration extends ApplicationConfiguration {
 
-    private static final Logger logger = Logger.getLogger(WebModuleConfiguration.class.getName());
-    private static WebModuleConfiguration instance = null;
+    private static final Logger logger = Logger.getLogger(XmlModuleConfiguration.class.getName());
+    private static XmlModuleConfiguration instance = null;
     private String responseXsdLocation;
 
-    static public WebModuleConfiguration instanceOf() {
+    static public XmlModuleConfiguration instanceOf() {
         if (instance == null) {
-            instance = new WebModuleConfiguration();
+            instance = new XmlModuleConfiguration();
         }
         return instance;
     }
@@ -47,8 +47,8 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
     @Override
     public void initialize(PropertyLoader loader) throws IOException {
         super.initialize(loader);
-        logger.log(Level.INFO, "Initializing {0}", WebModuleConfiguration.class.getName());
-        responseXsdLocation = loader.loadString(PropertyKeys.RENSPONSE_XSD_LOCATION);
+        logger.log(Level.INFO, "Initializing {0}", XmlModuleConfiguration.class.getName());
+        responseXsdLocation = loader.loadString(PropertyKeys.RESPONSE_XSD_LOCATION);
     }
 
     public String getResponseXsdLocation() {

@@ -22,5 +22,5 @@ package cz.nkp.urnnbn.xml.config;
  */
 class PropertyKeys {
 
-    public static final String RENSPONSE_XSD_LOCATION = "web.response.xsd";
+    public static final String RESPONSE_XSD_LOCATION = "resolver.api.response-xsd";
 }
