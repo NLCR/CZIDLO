@@ -91,13 +91,15 @@ public class DigitalDocumentRegistrar {
             //selected by registrar
             checkUrnBelongsToRegistrar(urnInInputData);
             checkUrnIsFree(urnInInputData);
-            if (isReserved(urnInInputData)) {
+            UrnNbn urnNbnReserved = urnNbnReserved(urnInInputData);
+            if (urnNbnReserved != null) {
                 logger.log(Level.INFO, "{0} was reserved", urnInInputData);
                 removeFromReservedList(urnInInputData, rollback);
+                return urnNbnReserved;
             } else {
                 rollback.setUrnAssignedByResolverOrRegistrar(urnInInputData);
+                return urnInInputData;
             }
-            return urnInInputData;
         } else {//urn will be assigned by registrar
             logger.log(Level.INFO, "no urn found in import data, assigning new one");
             UrnNbn assignedByResolver = assignFreeUrnNbn();
@@ -124,15 +126,14 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private boolean isReserved(UrnNbn urn) {
+    private UrnNbn urnNbnReserved(UrnNbn urn) {
         try {
-            factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
+            return factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
             //when RecordNotFound is not thrown the urn:nbn is reserved
-            return true;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            return false;
+            return null;
         }
     }
 
@@ -264,14 +265,14 @@ public class DigitalDocumentRegistrar {
     }
 
     private Long persistDigitalDocument(long ieId) throws DatabaseException, RecordNotFoundException, UnknownArchiverException {
-        DigitalDocument digRep = data.getDigitalDocument();
-        digRep.setIntEntId(ieId);
+        DigitalDocument digDoc = data.getDigitalDocument();
+        digDoc.setIntEntId(ieId);
         try {
             return factory.documentDao().insertDocument(data.getDigitalDocument());
         } catch (RecordNotFoundException e) {
             if (e.getTableName().equals(ArchiverDAO.TABLE_NAME)) {
-                logger.log(Level.INFO, "unkown archiver with id {0}", digRep.getArchiverId());
-                throw new UnknownArchiverException(digRep.getArchiverId());
+                logger.log(Level.INFO, "unkown archiver with id {0}", digDoc.getArchiverId());
+                throw new UnknownArchiverException(digDoc.getArchiverId());
             } else {
                 throw e;
             }
@@ -296,7 +297,7 @@ public class DigitalDocumentRegistrar {
     }
 
     private void persistUrnNbn(UrnNbn urn, long digDocId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
-        UrnNbn withDigDocId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digDocId);
+        UrnNbn withDigDocId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digDocId, urn.getReserved());
         factory.urnDao().insertUrnNbn(withDigDocId);
     }
 
@@ -419,11 +420,14 @@ public class DigitalDocumentRegistrar {
             if (predecessor.getStatus() == Status.ACTIVE) {
                 try {
                     UrnNbn urnDeactivated = predecessor.getUrn();
+                    logger.log(Level.INFO, "deactivating {0} (predecessor of {1})", new Object[]{urnDeactivated, urn});
                     factory.urnDao().deactivateUrnNbn(urnDeactivated.getRegistrarCode(), urnDeactivated.getDocumentCode());
                     predecessorsDeactivated.add(urnDeactivated);
                 } catch (DatabaseException ex) {
                     logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
                 }
+            }else{
+                logger.log(Level.INFO, "predecessor {0} of {1} already deactivated", new Object[]{predecessor, urn});
             }
         }
         transactionLog.setPredecessorsDeactivated(predecessorsDeactivated);

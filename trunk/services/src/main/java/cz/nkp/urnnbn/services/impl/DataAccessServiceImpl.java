@@ -82,7 +82,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                 UrnNbn urnNbnReserved = factory.urnReservedDao().getUrn(code, documentCode);
                 return new UrnNbnWithStatus(urnNbnReserved, UrnNbnWithStatus.Status.RESERVED, null);
             } catch (RecordNotFoundException ex2) { //urn:nbn also not reserved
-                UrnNbn urn = new UrnNbn(code, documentCode, null);
+                UrnNbn urn = new UrnNbn(code, documentCode, null, null);
                 return new UrnNbnWithStatus(urn, UrnNbnWithStatus.Status.FREE, null);
             } catch (DatabaseException ex3) {
                 throw new RuntimeException(ex3);
