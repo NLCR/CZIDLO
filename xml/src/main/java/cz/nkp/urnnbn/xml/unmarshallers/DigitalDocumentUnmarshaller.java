@@ -160,7 +160,7 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                     Element predecessor = (Element) predecessors.get(i);
                     UrnNbn urnNbn = UrnNbn.valueOf(attributeContentOrNull("value", predecessor));
                     String note = attributeContentOrNull("note", predecessor);
-                    UrnNbnWithStatus urn = new UrnNbnWithStatus(urnNbn, UrnNbnWithStatus.Status.FREE, note);
+                    UrnNbnWithStatus urn = new UrnNbnWithStatus(urnNbn, null, note);
                     result.add(urn);
                 }
                 return result;

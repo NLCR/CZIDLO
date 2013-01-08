@@ -16,13 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
-        <status>RESERVED</status>
-        <value>urn:nbn:cz:tst02-00001f</value>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:tst02-00001s</value>
         <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>
-        <documentCode>00001f</documentCode>
-        <created>2012-11-24T20:17:47.946+01:00</created>
+        <documentCode>00001s</documentCode>
+        <digitalDocumentId>93</digitalDocumentId>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce"/>
+        <predecessor value="urn:nbn:cz:tst02-000003"/>
     </urnNbn>
 </response>
+

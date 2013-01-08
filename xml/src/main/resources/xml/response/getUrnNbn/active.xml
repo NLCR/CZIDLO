@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
-Copyright (C) 2012 Martin Řehánek
+Copyright (C) 2011, 2012 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,17 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
-        <value>urn:nbn:cz:tst02-0000x3</value>
+        <value>urn:nbn:cz:tst02-00001s</value>
         <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>
-        <documentCode>0000x3</documentCode>
-        <digitalDocumentId>103</digitalDocumentId>
+        <documentCode>00001s</documentCode>
+        <digitalDocumentId>93</digitalDocumentId>
         <registered>2012-11-25T02:09:02.297+01:00</registered>
-        <predecessor value="urn:nbn:cz:tst02-0000x1"/>
-        <predecessor value="urn:nbn:cz:tst02-00001o" note="predchudce"/>
+        <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce"/>
+        <predecessor value="urn:nbn:cz:tst02-000003"/>
     </urnNbn>
 </response>
+
 
