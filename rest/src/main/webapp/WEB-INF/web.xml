@@ -11,22 +11,22 @@
     <context-param>
         <param-name>resolverConfig</param-name>
         <param-value>
-         /api.properties
+            /api.properties
         </param-value>
     </context-param>
     <listener>
-        <listener-class>cz.nkp.urnnbn.rest.config.ContextListener</listener-class>
+        <listener-class>cz.nkp.urnnbn.api.config.ContextListener</listener-class>
     </listener>
     <!-- SPRING START -->
     <listener>
         <listener-class>
-        org.springframework.web.context.ContextLoaderListener
+            org.springframework.web.context.ContextLoaderListener
         </listener-class>
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-         /WEB-INF/securityContext.xml
+            /WEB-INF/securityContext.xml
         </param-value>
     </context-param>
     <filter>
@@ -39,14 +39,66 @@
     </filter-mapping>
     <!-- SPRING END -->
     <servlet>
-        <servlet-name>ServletAdaptor</servlet-name>
+        <servlet-name>indexjsp</servlet-name>
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>ServletAdaptor-v2</servlet-name>
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <!--        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>-->
+        <init-param>
+            <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>cz.nkp.urnnbn.api.v2</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <servlet>
+        <servlet-name>ServletAdaptor-v3</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <!--        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+        </init-param>-->
+        <init-param>
+            <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>cz.nkp.urnnbn.api.v3</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+        
     <servlet-mapping>
-        <servlet-name>ServletAdaptor</servlet-name>
+        <servlet-name>indexjsp</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletAdaptor-v2</servlet-name>
+        <url-pattern>/v2/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletAdaptor-v3</servlet-name>
         <url-pattern>/v3/*</url-pattern>
     </servlet-mapping>
+    <!--    <servlet-mapping>
+        <servlet-name>ServletAdaptor</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>-->
+    
+    
     <session-config>
         <session-timeout>
             30
