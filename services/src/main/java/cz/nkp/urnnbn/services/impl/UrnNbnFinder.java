@@ -84,7 +84,7 @@ public class UrnNbnFinder {
             iterationFromLastStepIncrease++;
             UrnNbnDocumentCode tested = previous.getNext(step);
             if (isAvailable(tested)) {
-                return new UrnNbn(registrar.getCode(), tested.toString(), null);
+                return new UrnNbn(registrar.getCode(), tested.toString(), null, null);
             } else {
                 int newStep = increaseStep(step, iterationFromLastStepIncrease);
                 if (newStep != step) {//step has been increased
