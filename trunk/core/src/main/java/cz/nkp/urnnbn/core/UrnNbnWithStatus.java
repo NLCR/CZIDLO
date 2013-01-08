@@ -62,4 +62,9 @@ public class UrnNbnWithStatus {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "UrnNbnWithStatus{" + "urn=" + urn + ", status=" + status + ", note=" + note + '}';
+    }
 }

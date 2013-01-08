@@ -23,8 +23,9 @@ public class UrnNbn {
     private final Long digDocId;
     private final RegistrarCode registrarCode;
     private final String documentCode;
-    private final DateTime created;
-    private final DateTime modified;
+    private final DateTime reserved;
+    private final DateTime registered;
+    private final DateTime deactivated;
     private final Boolean active;
     List<UrnNbnWithStatus> predecessors;
     List<UrnNbnWithStatus> successors;
@@ -36,12 +37,13 @@ public class UrnNbn {
      * @param documentCode
      * @param digDocId
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
-        this.created = null;
-        this.modified = null;
+        this.reserved = reserved;
+        this.registered = null;
+        this.deactivated = null;
         this.active = null;
     }
 
@@ -60,14 +62,15 @@ public class UrnNbn {
      * @param documentCode
      * @param digDocId
      * @param created
-     * @param modified
+     * @param deactivated
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime created, DateTime modified, boolean active) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated, boolean active) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
-        this.created = created;
-        this.modified = modified;
+        this.reserved = reserved;
+        this.registered = registered;
+        this.deactivated = deactivated;
         this.active = active;
     }
 
@@ -83,12 +86,16 @@ public class UrnNbn {
         return registrarCode;
     }
 
-    public DateTime getCreated() {
-        return created;
+    public DateTime getReserved() {
+        return reserved;
     }
 
-    public DateTime getModified() {
-        return modified;
+    public DateTime getRegistered() {
+        return registered;
+    }
+
+    public DateTime getDeactivated() {
+        return deactivated;
     }
 
     public Boolean isActive() {
@@ -107,10 +114,10 @@ public class UrnNbn {
             throw new IllegalArgumentException("'" + string + "' doesn't match " + getUrnNbnPattern());
         }
         String[] tokens = string.split(":");
-         String[] registrarAndDocumentCodes = tokens[3].split("-");
+        String[] registrarAndDocumentCodes = tokens[3].split("-");
         RegistrarCode registrarCode = RegistrarCode.valueOf(registrarAndDocumentCodes[0]);
         String documentCode = registrarAndDocumentCodes[1].toLowerCase();
-        return new UrnNbn(registrarCode, documentCode, null);
+        return new UrnNbn(registrarCode, documentCode, null, null);
     }
 
     public List<UrnNbnWithStatus> getPredecessors() {
