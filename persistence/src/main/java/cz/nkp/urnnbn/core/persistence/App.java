@@ -1,14 +1,13 @@
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -17,6 +16,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -209,7 +209,7 @@ public class App {
             babickaMzk.setPictureHeight(1000);
             babickaMzk.setId(factory.documentDao().insertDocument(babickaMzk));
             //urn:nbn:cz:boa001-000001
-            UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId());
+            UrnNbn babickaUrn = new UrnNbn(mzk.getCode(), "000001", babickaMzk.getId(), null);
             factory.urnDao().insertUrnNbn(babickaUrn);
             //DR id type=OAI
             RegistrarScopeIdentifier babickaMzkDrOaiId = new RegistrarScopeIdentifier();
@@ -259,7 +259,7 @@ public class App {
             babickaNkp.setIntEntId(babicka.getId());
             babickaNkp.setContractNumber("123456");
             babickaNkp.setId(factory.documentDao().insertDocument(babickaNkp));
-            UrnNbn babickaNkpUrn = new UrnNbn(nkp.getCode(), "000001", babickaNkp.getId());
+            UrnNbn babickaNkpUrn = new UrnNbn(nkp.getCode(), "000001", babickaNkp.getId(), null);
             factory.urnDao().insertUrnNbn(babickaNkpUrn);
             DigitalInstance babickaNkp_v_K4nkp = new DigitalInstance();
             babickaNkp_v_K4nkp.setDigDocId(babickaNkp.getId());
@@ -306,7 +306,7 @@ public class App {
             babushkaNkp.setIntEntId(babushka.getId());
             babushkaNkp.setId(factory.documentDao().insertDocument(babushkaNkp));
             factory.documentDao().insertDocument(babushkaNkp);
-            UrnNbn babushaUrn = new UrnNbn(nkp.getCode(), "123456", babushkaNkp.getId());
+            UrnNbn babushaUrn = new UrnNbn(nkp.getCode(), "123456", babushkaNkp.getId(), null);
             factory.urnDao().insertUrnNbn(babushaUrn);
 
         } catch (RecordNotFoundException ex) {

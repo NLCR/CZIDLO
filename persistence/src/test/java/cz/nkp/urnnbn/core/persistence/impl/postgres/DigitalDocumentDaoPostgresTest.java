@@ -301,7 +301,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument docInserted = documentPersisted(registrar.getId(), entity.getId());
-        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", docInserted.getId());
+        UrnNbn urnInserted = new UrnNbn(registrar.getCode(), "BOA001", docInserted.getId(), null);
         urnDao.insertUrnNbn(urnInserted);
         try {
             digDocDao.deleteDocument(docInserted.getId());

@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -20,8 +21,9 @@ public interface UrnNbnDAO {
 
     public String TABLE_NAME = "UrnNbn";
     public String ATTR_DIG_DOC_ID = "digitalDocumentId";
-    public String ATTR_CREATED = "created";
-    public String ATTR_UPDATED = "modified";
+    public String ATTR_RESERVED = "reserved";
+    public String ATTR_REGISTERED = "registered";
+    public String ATTR_DEACTIVATED = "deactivated";
     public String ATTR_REGISTRAR_CODE = "registrarCode";
     public String ATTR_DOCUMENT_CODE = "documentCode";
     public String ATTR_ACTIVE = "active";
@@ -31,22 +33,18 @@ public interface UrnNbnDAO {
     public String ATTR_PRECESSOR_DOCUMENT_CODE = "predecessorDocCode";
     public String ATTR_SUCCESSOR_REGISTRAR_CODE = "successorRegCode";
     public String ATTR_SUCCESSOR_DOCUMENT_CODE = "successorDocCode";
-
-    public void insertUrnNbn(UrnNbn urn) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
+    public String ATTR_NOTE = "note";
 
     /**
      *
      * @param urn
-     * @param created creation timestamp to be set to newly created urn:nbn.
-     * This should be used when urn:nbn from urnNbnReserved is used and we wish
-     * to keep as "created" the timestamp of reservation.
      * @throws DatabaseException
      * @throws AlreadyPresentException
      * @throws RecordNotFoundException
      */
-    public void insertUrnNbn(UrnNbn urn, DateTime created) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
+    public void insertUrnNbn(UrnNbn urn) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
-    public void insertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
+    public void insertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor, String note) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 
     public UrnNbn getUrnNbnByDigDocId(Long digDocId) throws DatabaseException, RecordNotFoundException;
 
@@ -59,12 +57,12 @@ public interface UrnNbnDAO {
 
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException;
 
-    public List<UrnNbn> getPredecessors(UrnNbn urn) throws DatabaseException;
+    public List<UrnNbnWithStatus> getPredecessors(UrnNbn urn) throws DatabaseException;
 
-    public List<UrnNbn> getSuccessors(UrnNbn urn) throws DatabaseException;
+    public List<UrnNbnWithStatus> getSuccessors(UrnNbn urn) throws DatabaseException;
 
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
-    
+
     //only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 

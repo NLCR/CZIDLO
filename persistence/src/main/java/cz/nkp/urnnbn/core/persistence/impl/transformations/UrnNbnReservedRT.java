@@ -22,7 +22,7 @@ public class UrnNbnReservedRT implements ResultsetTransformer {
     public Object transform(ResultSet resultSet) throws SQLException {
         RegistrarCode registrarCode = RegistrarCode.valueOf(resultSet.getString(UrnNbnReservedDAO.ATTR_REGISTRAR_CODE));
         String documentCode = resultSet.getString(UrnNbnReservedDAO.ATTR_DOCUMENT_CODE);
-        DateTime created = DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(UrnNbnReservedDAO.ATTR_CREATED));
-        return new UrnNbn(registrarCode, documentCode, null, created, null, false);
+        DateTime reserved = DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(UrnNbnReservedDAO.ATTR_CREATED));
+        return new UrnNbn(registrarCode, documentCode, null, reserved, null, null, false);
     }
 }
