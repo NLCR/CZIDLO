@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.oaipmhprovider.conf;
 
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
+import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
 import java.io.InputStream;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
@@ -32,7 +33,9 @@ public class ContextListener implements ServletContextListener {
 
             @Override
             public void processResource(InputStream in) throws Exception {
-                OaiPmhConfiguration.instanceOf().initialize(new PropertyLoader(in));
+                PropertyLoader loader = new PropertyLoader(in);
+                OaiPmhConfiguration.instanceOf().initialize(loader);
+                XmlModuleConfiguration.instanceOf().initialize(loader);
             }
         }.run(PROPERTIES_FILE);
     }

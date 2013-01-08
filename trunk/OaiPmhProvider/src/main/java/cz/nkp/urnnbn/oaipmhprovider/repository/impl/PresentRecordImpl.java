@@ -104,7 +104,7 @@ public class PresentRecordImpl implements PresentRecord {
     private Document buildContent() {
         try {
             DigitalDocumentBuilder digDocBuilder = digDocBuilder(urnNbn.getDigDocId());
-            String metadataInResolverFormat = digDocBuilder.buildDocument().toXML();
+            String metadataInResolverFormat = digDocBuilder.buildDocumentWithoutResponseHeader().toXML();
             switch (format) {
                 case resolver:
                     return Dom4jUtils.loadDocument(metadataInResolverFormat, false);
@@ -171,17 +171,14 @@ public class PresentRecordImpl implements PresentRecord {
 
     private Document transformToOaiDc(String metadataInResolverFormat) throws DocumentException {
         try {
-            String transformed = XOMUtils.transformDocument(
-                    metadataInResolverFormat,
-                    OaiPmhConfiguration.instanceOf().getResolverToOaidcTemplate().toXML()).toXML();
+            nu.xom.Document original = XOMUtils.loadDocumentWithoutValidation(metadataInResolverFormat);
+            String transformed = OaiPmhConfiguration.instanceOf().getResolverToOaidcTransformer().transform(original).toXML();
             return Dom4jUtils.loadDocument(transformed, false);
+        } catch (DocumentException ex) {
+            throw ex;
         } catch (Exception ex) {
-            if (ex instanceof DocumentException) {
-                throw (DocumentException) ex;
-            } else {
-                Logger.getLogger(PresentRecordImpl.class.getName()).log(Level.SEVERE, null, ex);
-                throw new DocumentException(ex);
-            }
+            Logger.getLogger(PresentRecordImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DocumentException(ex);
         }
     }
 }

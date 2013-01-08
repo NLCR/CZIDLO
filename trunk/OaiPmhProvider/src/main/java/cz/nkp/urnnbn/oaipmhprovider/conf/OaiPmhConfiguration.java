@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.oaipmhprovider.repository.Repository;
 import cz.nkp.urnnbn.oaipmhprovider.repository.impl.RepositoryImpl;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
+import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+import nu.xom.xslt.XSLException;
 
 /**
  *
@@ -23,7 +25,6 @@ import nu.xom.ValidityException;
 public class OaiPmhConfiguration extends ApplicationConfiguration {
 
     private static final Logger logger = Logger.getLogger(OaiPmhConfiguration.class.getName());
-    //private static final String PROPERTIES_FILE = "provider.properties";
     private static OaiPmhConfiguration instance = null;
     private Repository repository;
     private String repositoryName;
@@ -33,7 +34,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
     private int listIdentifiersMaxSize;
     private int listRecordsMaxSize;
     private int listRequestsMinutesValid;
-    private Document resolverToOaidcTemplate;
+    private XsltXmlTransformer resolverToOaidcTransformer;
 
     /**
      *
@@ -55,8 +56,9 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
         listRequestsMinutesValid = loader.loadInt(PropertyKeys.LIST_REQUESTS_MINUTES_VALID);
     }
 
-    void initResolverToOaidcTemplate(InputStream in) throws ParsingException, ValidityException, IOException {
-        resolverToOaidcTemplate = XOMUtils.loadDocumentWithoutValidation(in);
+    void initResolverToOaidcTemplate(InputStream in) throws ParsingException, ValidityException, IOException, XSLException {
+        Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
+        resolverToOaidcTransformer = new XsltXmlTransformer(xslt);
     }
 
     public static OaiPmhConfiguration instanceOf() {
@@ -113,7 +115,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
         return listRequestsMinutesValid;
     }
 
-    public Document getResolverToOaidcTemplate() {
-        return resolverToOaidcTemplate;
+    public XsltXmlTransformer getResolverToOaidcTransformer() {
+        return resolverToOaidcTransformer;
     }
 }
