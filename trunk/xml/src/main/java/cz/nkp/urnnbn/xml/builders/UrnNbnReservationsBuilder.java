@@ -54,7 +54,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
         appendElementWithContentIfNotNull(root, defaultReservationSize, "defaultReservationSize");
         Element reservations = new Element("reserved", RESOLVER_NS);
         root.appendChild(reservations);
-        Attribute size = new Attribute("size", reservedSize.toString());
+        Attribute size = new Attribute("totalSize", reservedSize.toString());
         reservations.addAttribute(size);
 
         if (urnNbnList != null && !urnNbnList.isEmpty()) {
@@ -71,8 +71,8 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
             }
             Element element = new Element("urnNbn", RESOLVER_NS);
             element.appendChild(urnNbn.toString());
-            Attribute created = new Attribute("created", urnNbn.getCreated().toString());
-            element.addAttribute(created);
+            Attribute reserved = new Attribute("created", urnNbn.getReserved().toString());
+            element.addAttribute(reserved);
             root.appendChild(element);
         }
     }

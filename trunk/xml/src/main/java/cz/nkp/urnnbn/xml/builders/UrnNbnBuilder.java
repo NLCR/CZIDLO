@@ -19,10 +19,8 @@ package cz.nkp.urnnbn.xml.builders;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import nu.xom.Element;
-import org.joda.time.DateTime;
 
 /**
  *
@@ -55,17 +53,8 @@ public class UrnNbnBuilder extends XmlBuilder {
 
     void appendTimestamps(Element rootElement) {
         UrnNbn urn = urnWithStatus.getUrn();
-        DateTime created = urn.getCreated();
-        if (created == null) {
-            logger.log(Level.WARNING, "empty value of \"created\" for urn:nbn  {0}", urn.toString());
-        } else {
-            appendElementWithContentIfNotNull(rootElement, urn.getCreated(), "created");
-        }
-        DateTime modified = urn.getModified();
-        if (modified == null) {
-            logger.log(Level.WARNING, "empty value of \"modified\" for urn:nbn  {0}", urn.toString());
-        } else if (!modified.equals(created)) {
-            appendElementWithContentIfNotNull(rootElement, urn.getModified(), "modified");
-        }
+        appendElementWithContentIfNotNull(rootElement, urn.getReserved(), "reserved");
+        appendElementWithContentIfNotNull(rootElement, urn.getRegistered(), "registered");
+        appendElementWithContentIfNotNull(rootElement, urn.getDeactivated(), "deactivated");
     }
 }

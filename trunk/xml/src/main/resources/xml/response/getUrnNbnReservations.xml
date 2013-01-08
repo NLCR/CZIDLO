@@ -20,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <urnNbnReservations>
         <maxReservationSize>100</maxReservationSize>
         <defaultReservationSize>10</defaultReservationSize>
-        <reserved size="8">
-            <urnNbn created="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:tst02-00000c</urnNbn>
-            <urnNbn created="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:tst02-00000d</urnNbn>
-            <urnNbn created="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:tst02-00000e</urnNbn>
-            <urnNbn created="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:tst02-00000f</urnNbn>
-            <urnNbn created="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:tst02-00000g</urnNbn>
-            <urnNbn created="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:tst02-00000h</urnNbn>
-            <urnNbn created="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:tst02-00000i</urnNbn>
-            <urnNbn created="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:tst02-00000j</urnNbn>
+        <reserved totalSize="8">
+            <urnNbn reserved="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:tst02-00000c</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:tst02-00000d</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:tst02-00000e</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:tst02-00000f</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:tst02-00000g</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:tst02-00000h</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:tst02-00000i</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:tst02-00000j</urnNbn>
         </reserved>
     </urnNbnReservations>
 </response>

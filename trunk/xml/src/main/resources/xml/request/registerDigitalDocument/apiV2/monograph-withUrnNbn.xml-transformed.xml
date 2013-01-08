@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v3:import xmlns:v3="http://resolver.nkp.cz/v3/">
+    <v3:monograph>
+        <v3:titleInfo>
+            <v3:title>Babička</v3:title>
+            <v3:subTitle>Obrazy z venkovského života</v3:subTitle>
+        </v3:titleInfo>
+        <v3:ccnb>cnb002251177</v3:ccnb>
+        <v3:isbn>8090119964</v3:isbn>
+        <v3:otherId>DOI:TODO</v3:otherId>
+        <v3:documentType>kniha</v3:documentType>
+        <v3:digitalBorn>false</v3:digitalBorn>
+        <v3:primaryOriginator type="AUTHOR">Božena Němcová</v3:primaryOriginator>
+        <v3:otherOriginator>Adolf Kašpar</v3:otherOriginator>
+        <v3:publication>
+            <v3:publisher>Československý spisovatel</v3:publisher>
+            <v3:place>V Praze</v3:place>
+            <v3:year>2011</v3:year>
+        </v3:publication>
+    </v3:monograph>
+    <v3:digitalDocument>
+        <v3:archiverId>3</v3:archiverId>
+        <v3:urnNbn>
+            <v3:value>urn:nbn:cz:tst02-00003b</v3:value>
+        </v3:urnNbn>
+        <v3:registrarScopeIdentifiers>
+            <v3:id type="OAI_harvester">3234</v3:id>
+            <v3:id type="signatura">PK-0123.666</v3:id>
+            <v3:id type="K4_pid">uuid:38bfc69d-1e10-4822-b7a4-c7531bb4aedg</v3:id>
+        </v3:registrarScopeIdentifiers>
+        <v3:financed>norské fondy</v3:financed>
+        <v3:contractNumber>123</v3:contractNumber>
+        <v3:technicalMetadata>
+            <v3:format version="1.0">jpeg</v3:format>
+            <v3:extent>245 x jpeg2000;245 x mods-alto;1
+                x mods</v3:extent>
+            <v3:resolution>
+                <v3:horizontal>1280</v3:horizontal>
+                <v3:vertical>1024</v3:vertical>
+            </v3:resolution>
+            <v3:compression ratio="0.3">LZW</v3:compression>
+            <v3:color>
+                <v3:model>RGB</v3:model>
+                <v3:depth>24</v3:depth>
+            </v3:color>
+            <v3:iccProfile>some ICC profile</v3:iccProfile>
+            <v3:pictureSize>
+                <v3:width>600</v3:width>
+                <v3:height>1000</v3:height>
+            </v3:pictureSize>
+        </v3:technicalMetadata>
+    </v3:digitalDocument>
+</v3:import>

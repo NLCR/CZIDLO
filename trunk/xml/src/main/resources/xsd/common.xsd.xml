@@ -170,7 +170,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="registrarCode" type="r:registrarCode" minOccurs="0"/> 
             <xs:element name="documentCode" type="r:documentCode" minOccurs="0"/> 
             <xs:element name="digitalDocumentId" type="xs:int" minOccurs="0"/> 
-            <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="reserved" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="registered" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="deactivated" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="predecessor" type="r:predecessor" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="successor" type="r:successor" minOccurs="0" maxOccurs="unbounded"/>

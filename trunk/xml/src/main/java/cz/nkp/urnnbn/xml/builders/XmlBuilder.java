@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.IdentifiableWithDatestamps;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
-import cz.nkp.urnnbn.xml.config.WebModuleConfiguration;
+import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,12 +45,12 @@ public abstract class XmlBuilder {
 
     private static String getResponseSchema() {
         if (responseSchema == null) {
-            responseSchema = Namespaces.XSI_NS + ' ' + WebModuleConfiguration.instanceOf().getResponseXsdLocation();
+            responseSchema = Namespaces.XSI_NS + ' ' + XmlModuleConfiguration.instanceOf().getResponseXsdLocation();
         }
         return responseSchema;
     }
 
-    public Document buildDocument() {
+    public Document buildDocumentWithResponseHeader() {
         Element response = new Element("response", RESOLVER_NS);
         if (INCLUDE_SCHEMA) {
             Attribute schemaLocation = new Attribute("xsi:schemaLocation", Namespaces.XSI_NS, getResponseSchema());
@@ -58,6 +58,15 @@ public abstract class XmlBuilder {
         }
         response.appendChild(buildRootElement());
         return new Document(response);
+    }
+
+    public Document buildDocumentWithoutResponseHeader() {
+        Element rootEl = buildRootElement();
+        if (INCLUDE_SCHEMA) {
+            Attribute schemaLocation = new Attribute("xsi:schemaLocation", Namespaces.XSI_NS, getResponseSchema());
+            rootEl.addAttribute(schemaLocation);
+        }
+        return new Document(rootEl);
     }
 
     Element appendElement(Element root, String elementName) {

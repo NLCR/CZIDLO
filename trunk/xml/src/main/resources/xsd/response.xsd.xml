@@ -29,6 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:include schemaLocation="technicalMetadata.xsd.xml"/>
     <xs:include schemaLocation="errors.xsd.xml"/>
     
+    <!--OAI response doesn't need r:response element-->
+    <xs:element name="digitalDocument" type="r:digitalDocument"/>
+    
     <xs:element name="response">
         <xs:complexType>
             <xs:choice>
@@ -199,7 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <xs:sequence>
                         <xs:element name="urnNbn" type="r:urnNbnReserved" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
-                    <xs:attribute name="size" use="optional" type="xs:int"/>
+                    <xs:attribute name="totalSize" use="optional" type="xs:int"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -208,7 +211,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="urnNbnReserved">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="created" use="optional" type="xs:dateTime"/>
+                <xs:attribute name="reserved" use="optional" type="xs:dateTime"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

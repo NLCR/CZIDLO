@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2011, 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Document   : analytical.xml
+    Created on : 22. únor 2012, 11:59
+    Author     : Martin Řehánek
+    Description:
+        Example of valid record to be imported into application urnnbn-resolver-v2
+        through its http rest api.
+        Intelectual Entity in this example is of type PERIODICAL_VOLUME.
+        The type will be used for whole physical (and/or) logical volumes
+        of periodical publication. 
+        http://code.google.com/p/urnnbn-resolver-v2/
+        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+-->
+<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+    <!-- ročník případně jiný svazek periodika -->
+    <r:periodicalVolume>
+        <r:titleInfo>
+            <!-- název periodika (povinný údaj) -->
+            <r:periodicalTitle>Rudé právo</r:periodicalTitle>
+            <!-- název ročníku/svazku (povinný údaj) -->
+            <r:volumeTitle>ročník 1945</r:volumeTitle>
+        </r:titleInfo>
+        <!-- čČNB periodika -->
+        <r:ccnb>cnb000431774</r:ccnb>
+        <!-- ISBN periodika -->
+        <r:issn>0032-6569</r:issn>
+        <!-- jiný globální identifikátor periodika -->
+        <r:otherId>SICI:TODO</r:otherId>
+        <!-- druh dokumentu -->
+        <r:documentType>ročník novin</r:documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <r:digitalBorn>false</r:digitalBorn>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <r:primaryOriginator type="CORPORATION">Komunistická strana Československa</r:primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
+        <!-- informace o publikování -->
+        <r:publication>
+            <!-- název vydavatele -->
+            <r:publisher>Ústřední výbor KSČ</r:publisher>
+            <!-- místo vydání -->
+            <r:place>Praha</r:place>
+            <!-- rok vydání -->
+            <r:year>1945</r:year>
+        </r:publication>
+    </r:periodicalVolume>
+    <r:digitalDocument>
+        <!-- identifikátor archivátora -->
+        <r:archiverId>3</r:archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <r:registrarScopeIdentifiers>
+            <r:id type="OAI_harvester">1236</r:id>
+            <r:id type="K4_uuid">38bfc69d-1d10-4822-b7a4-c7531bb4aedi</r:id>
+        </r:registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <r:financed>norské fondy</r:financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <r:contractNumber>123</r:contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <r:technicalMetadata>
+            <!-- typ a verze formátu -->
+            <r:format version="1.0">jpeg</r:format>
+            <!-- rozsah (v počtu souborů) -->
+            <r:extent>12 x jpeg2000;12 x mods-alto;1 x mods</r:extent>
+            <!-- rozlišení nastavené na skeneru v dpi-->
+            <r:resolution>
+                <!-- horizontální -->
+                <r:horizontal>1280</r:horizontal>
+                <!-- vertikální -->
+                <r:vertical>1024</r:vertical>
+            </r:resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <!-- barevný model -->
+                <r:model>RGB</r:model>
+                <!-- bitová hloubka -->
+                <r:depth>24</r:depth>
+            </r:color>
+            <!-- ICC profil -->
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>
