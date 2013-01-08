@@ -9,9 +9,13 @@
     </head>
     <body>
         <h1>Resolver urn:nbn - aplikační rozhraní</h1>
-        Aplikační rozhraní je popsáno 
-        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">zde</a> 
-        a <a href="http://code.google.com/p/urnnbn-resolver-v3/wiki/API">zde</a>
+        Aplikační programové rozhraní je popsáno 
+        <a href="http://code.google.com/p/urnnbn-resolver-v2/wiki/API">zde</a>. 
+        Tato verze Resolveru podporuje API ve verzi 3 
+        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V3)</a>
+        a kvůli zpětně kompatibilitě i verzi 2
+        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V2)</a>
+        .
         Pro ruční vyhledávání, vkladání či editaci záznamů a další administraci použijte <a href ="/web">webové rozhraní</a>.
         <br>
         Pro hromadné sklízení záznamů použijte <a href ="/OaiPmhProvider/provider">rozhraní OAI-PMH</a>,
