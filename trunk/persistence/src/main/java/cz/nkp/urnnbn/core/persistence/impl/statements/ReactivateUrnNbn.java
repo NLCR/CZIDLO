@@ -17,7 +17,6 @@
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
@@ -40,14 +39,14 @@ public class ReactivateUrnNbn implements StatementWrapper {
 
     public String preparedStatement() {
         return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET "
-                + UrnNbnDAO.ATTR_UPDATED + "=?,"
+                + UrnNbnDAO.ATTR_DEACTIVATED + "=?,"
                 + UrnNbnDAO.ATTR_ACTIVE + "=?"
                 + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE + "=?";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setTimestamp(1, DateTimeUtils.nowTs());
+            st.setTimestamp(1, null);
             st.setBoolean(2, true);
             st.setString(3, registrarCode.toString());
             st.setString(4, documentCode);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Martin Řehánek
+ * Copyright (C) 2013 Martin Řehánek
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,14 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class StringStringRT implements ResultsetTransformer {
+public class ThreeStringsRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
-        String[] result = new String[2];
+        String[] result = new String[3];
         result[0] = resultSet.getString(1);
         result[1] = resultSet.getString(2);
+        result[2] = resultSet.getString(3);
         return result;
     }
 }

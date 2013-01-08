@@ -40,7 +40,7 @@ public class DeactivateUrnNbn implements StatementWrapper {
 
     public String preparedStatement() {
         return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET "
-                + UrnNbnDAO.ATTR_UPDATED + "=?,"
+                + UrnNbnDAO.ATTR_DEACTIVATED + "=?,"
                 + UrnNbnDAO.ATTR_ACTIVE + "=?"
                 + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE + "=?";
     }

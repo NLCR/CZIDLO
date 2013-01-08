@@ -31,10 +31,12 @@ public class InsertUrnNbnPredecessor implements StatementWrapper {
 
     private final UrnNbn predecessor;
     private final UrnNbn successor;
+    private final String note;
 
-    public InsertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor) {
+    public InsertUrnNbnPredecessor(UrnNbn predecessor, UrnNbn successor, String note) {
         this.predecessor = predecessor;
         this.successor = successor;
+        this.note = note;
     }
 
     @Override
@@ -44,7 +46,8 @@ public class InsertUrnNbnPredecessor implements StatementWrapper {
                 + "," + UrnNbnDAO.ATTR_PRECESSOR_DOCUMENT_CODE
                 + "," + UrnNbnDAO.ATTR_SUCCESSOR_REGISTRAR_CODE
                 + "," + UrnNbnDAO.ATTR_SUCCESSOR_DOCUMENT_CODE
-                + ") values(?,?,?,?)";
+                + "," + UrnNbnDAO.ATTR_NOTE
+                + ") values(?,?,?,?,?)";
     }
 
     @Override
@@ -54,6 +57,7 @@ public class InsertUrnNbnPredecessor implements StatementWrapper {
             st.setString(2, predecessor.getDocumentCode());
             st.setString(3, successor.getRegistrarCode().toString());
             st.setString(4, successor.getDocumentCode());
+            st.setString(5, note);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
