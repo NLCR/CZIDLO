@@ -37,7 +37,7 @@ public class ElementAppender {
         Element identifierEl = headerEl.addElement("identifier");
         //identifierEl.addText(record.getId().toString());
         identifierEl.addText(record.getId().toString());
-        
+
         Element datestampEl = headerEl.addElement("datestamp");
         datestampEl.addText(record.getDateStamp().toString());
         appendSetSpecType(headerEl, record);
@@ -70,6 +70,13 @@ public class ElementAppender {
 
     private static void appendMetadata(Element recordEl, PresentRecord record) throws IOException {
         Element metadataEl = recordEl.addElement("metadata");
+        if (record == null) {
+            System.err.println("record==null");
+        } else if (record.getMetadata() == null) {
+            System.err.println("record.getMetadata() == null");
+        }else if (record.getMetadata().getRootElement() == null){
+            System.err.println("record.getMetadata().getRootElement() == null");
+        }
         metadataEl.add(record.getMetadata().getRootElement().detach());
         Element metadataRootEl = (Element) metadataRootElPath.selectSingleNode(metadataEl);
         if (metadataRootEl != null) {

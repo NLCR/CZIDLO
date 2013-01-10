@@ -20,7 +20,7 @@ public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
     private static final String PROPERTIES_FILE = "provider.properties";
-    private static final String RESOLVER_TO_OAIDC_XSLT = "resolverToOaiDc.xsd";
+    private static final String RESOLVER_TO_OAIDC_XSLT = "resolverToOaiDc.xsl";
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
