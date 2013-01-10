@@ -133,7 +133,7 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0},digRepId:{1}, type:{2}", new Object[]{identifier.getRegistrarId(), identifier.getDigDocId(), identifier.getType().toString()});
+            logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0}, digDocId:{1}, type:{2}", new Object[]{identifier.getRegistrarId(), identifier.getDigDocId(), identifier.getType().toString()});
             System.err.println("state:" + ex.getSQLState());
             if ("23505".equals(ex.getSQLState())) {
                 IdPart intEntId = new IdPart(RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, Long.toString(identifier.getDigDocId()));
@@ -149,10 +149,10 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
     }
 
     @Override
-    public void deleteRegistrarScopeId(long digRepDbId, RegistrarScopeIdType type) throws DatabaseException, RecordNotFoundException {
+    public void deleteRegistrarScopeId(long digDocDbId, RegistrarScopeIdType type) throws DatabaseException, RecordNotFoundException {
         try {
-            checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
-            deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_DOC_ID, digRepDbId, ATTR_TYPE, type.toString(), true);
+            checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocDbId);
+            deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_DOC_ID, digDocDbId, ATTR_TYPE, type.toString(), true);
         } catch (RecordReferencedException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);
@@ -160,10 +160,10 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
     }
 
     @Override
-    public void deleteRegistrarScopeIds(long digRepDbId) throws DatabaseException, RecordNotFoundException {
-        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digRepDbId);
+    public void deleteRegistrarScopeIds(long digDocDbId) throws DatabaseException, RecordNotFoundException {
+        checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocDbId);
         try {
-            deleteRecordsById(TABLE_NAME, ATTR_DIG_DOC_ID, digRepDbId, false);
+            deleteRecordsById(TABLE_NAME, ATTR_DIG_DOC_ID, digDocDbId, false);
         } catch (RecordNotFoundException ex) {
             //should never happen
             logger.log(Level.SEVERE, null, ex);

@@ -68,10 +68,10 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
-                IdPart digRepId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(urn.getDigDocId()));
+                IdPart digDocId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(urn.getDigDocId()));
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
-                throw new AlreadyPresentException(new IdPart[]{digRepId, registrarCode, documentCode});
+                throw new AlreadyPresentException(new IdPart[]{digDocId, registrarCode, documentCode});
             } else {
                 throw new DatabaseException(ex);
             }
@@ -105,8 +105,8 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     @Override
-    public UrnNbn getUrnNbnByDigDocId(Long digRepId) throws DatabaseException, RecordNotFoundException {
-        return (UrnNbn) getRecordById(TABLE_NAME, ATTR_DIG_DOC_ID, digRepId, new UrnNbnRT());
+    public UrnNbn getUrnNbnByDigDocId(Long digDocId) throws DatabaseException, RecordNotFoundException {
+        return (UrnNbn) getRecordById(TABLE_NAME, ATTR_DIG_DOC_ID, digDocId, new UrnNbnRT());
     }
 
     @Override

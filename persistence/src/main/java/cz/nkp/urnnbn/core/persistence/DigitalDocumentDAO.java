@@ -46,21 +46,25 @@ public interface DigitalDocumentDAO {
     public String ATTR_PIC_HEIGHT = "pictureHeight";
 
     /**
-     * 
+     *
      * @param representation
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if registrar, archiver or intelectual entity not found
+     * @throws RecordNotFoundException if registrar, archiver or intelectual
+     * entity not found
      */
     public Long insertDocument(DigitalDocument doc) throws DatabaseException, RecordNotFoundException;
 
     public DigitalDocument getDocumentByDbId(long dbId) throws DatabaseException, RecordNotFoundException;
 
-    //vyhledavani dig.rep. podle urn takto:
-    //z UrnNbnDao ziskame id digRep a pak pres nej vytahnem data digRep
-    //TODO: vyhledavani podle jednoznacneho identifikatoru v ramci registratora
-    //pozor: RecordNotFoundException muze byt jak pro registrarora, tak pro samotnou DR
-    //mohly bych to oddelit tak, ze pokud nenajde digRep, vrati null
+    /**
+     *
+     * @param id
+     * @return
+     * @throws DatabaseException
+     * @throws RecordNotFoundException if registrar or digital document is
+     * doesn't exist
+     */
     public Long getDigDocIdByRegistrarScopeId(RegistrarScopeIdentifier id) throws DatabaseException, RecordNotFoundException;
 
     public Integer getDigDocCount(long registrarId) throws RecordNotFoundException, DatabaseException;
@@ -68,7 +72,7 @@ public interface DigitalDocumentDAO {
     public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException;
 
     /**
-     * 
+     *
      * @param registrarId
      * @param from
      * @param until
@@ -83,22 +87,17 @@ public interface DigitalDocumentDAO {
     public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
     /**
-     * 
+     *
      * @param document digital document to be updated
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document with id obtained from document doesn't exist
+     * @throws RecordNotFoundException if digital document with id obtained from
+     * document doesn't exist
      */
     public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException;
 
     public void updateDocumentDatestamp(Long digDocId) throws DatabaseException, RecordNotFoundException;
 
-    public void deleteDocument(long digRepDbId) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
+    public void deleteDocument(long digitalDocumentId) throws DatabaseException, RecordNotFoundException, RecordReferencedException;
 
     public void deleteAllDocuments() throws DatabaseException, RecordReferencedException;
-    //TODO: implementovat, pokud bude potreba
-    //public List<Long> getRepresentationsDbIdByIdentifier(DigRepIdType type, String idValue) throws DatabaseException;
-    //public List<Long> getAllRepresentationsId() throws DatabaseException;
-    //public List<Long> getRepresentationsId(DigRepType type) throws DatabaseException;
-    //public Long getRepresentationsCount() throws DatabaseException;
-    //public Long getRepresentationsCount(DigRepType type) throws DatabaseException;
 }
