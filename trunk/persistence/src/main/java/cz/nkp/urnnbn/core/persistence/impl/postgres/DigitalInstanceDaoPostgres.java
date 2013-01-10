@@ -73,13 +73,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
-//            if ("23505".equals(ex.getSQLState())) {
-//                IdPart digRepId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(instance.getDigDocId()));
-//                IdPart digLibId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(instance.getLibraryId()));
-//                throw new AlreadyPresentException(new IdPart[]{digRepId, digLibId});
-//            } else {
             throw new DatabaseException(ex);
-//            }
         }
     }
 

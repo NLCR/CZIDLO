@@ -62,7 +62,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testInsertDigInstance_unknownDigRep() throws Exception {
+    public void testInsertDigInstance_unknownDigDoc() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         DigitalInstance instance = new DigitalInstance();
         instance.setDigDocId(ILLEGAL_ID);
@@ -77,7 +77,7 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testInsertDigInstance_twoInstancesForSameLibraryAndDigRep() throws Exception {
+    public void testInsertDigInstance_twoInstancesForSameLibraryAndDigDoc() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(lib.getRegistrarId(), entity.getId());
@@ -133,11 +133,11 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         }
     }
 
-    public void testGetDigitalInstancesOfDigRep() throws Exception {
-        //uz se testuje v testInsertDigInstance_twoInstancesForSameLibraryAndDigRep
+    public void testGetDigitalInstancesOfDigDoc() throws Exception {
+        //uz se testuje v testInsertDigInstance_twoInstancesForSameLibraryAndDigDoc
     }
 
-    public void testGetDigitalInstancesOfDigRep_unknownId() throws Exception {
+    public void testGetDigitalInstancesOfDigDoc_unknownId() throws Exception {
         try {
             digInstDao.getDigitalInstancesOfDigDoc(ILLEGAL_ID);
             fail();

@@ -49,8 +49,8 @@ public interface RegistrarScopeIdentifierDAO {
      * @param digDocDbId
      * @param idType
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document with id digRepDbId doesn't exist 
-     * or the identifier for digital document with id digRepDbId and type idType doesn't exist
+     * @throws RecordNotFoundException if digital document with id digDocDbId doesn't exist 
+     * or the identifier for digital document with id digDocDbId and type idType doesn't exist
      */
     public void deleteRegistrarScopeId(long digDocDbId, RegistrarScopeIdType idType) throws DatabaseException, RecordNotFoundException;
 

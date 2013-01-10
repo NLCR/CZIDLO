@@ -6,20 +6,20 @@ package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarScopeIdentifierDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalInstanceDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalLibraryDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntEntIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.IntelectualEntityDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.OriginatorDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PublicationDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarScopeIdentifierDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnReservedDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnReservedDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UserDaoPostgres;
 import java.util.logging.Logger;
 
@@ -34,7 +34,7 @@ public class DAOFactory {
     //DAO instances
     private ArchiverDAO archiverDao;
     private CatalogDAO catalogDao;
-    private RegistrarScopeIdentifierDAO digRepId;
+    private RegistrarScopeIdentifierDAO registrarScopeId;
     private DigitalInstanceDAO digInst;
     private DigitalLibraryDAO libraryDao;
     private DigitalDocumentDAO representationDao;
@@ -168,13 +168,13 @@ public class DAOFactory {
     }
 
     public RegistrarScopeIdentifierDAO digDocIdDao() {
-        if (digRepId == null) {
+        if (registrarScopeId == null) {
             if (postgresImplemantation) {
-                digRepId = new RegistrarScopeIdentifierDaoPostgres(connector);
+                registrarScopeId = new RegistrarScopeIdentifierDaoPostgres(connector);
             } else if (oracleImplementation) {
             }
         }
-        return digRepId;
+        return registrarScopeId;
     }
 
     public DigitalInstanceDAO digInstDao() {
