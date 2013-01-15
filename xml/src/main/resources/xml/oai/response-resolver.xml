@@ -21,9 +21,9 @@
         <otherId>ffdaf</otherId>
         <documentType>kniha</documentType>
         <digitalBorn>true</digitalBorn>
-        <otherOriginator>Adolf Kašpar d</otherOriginator>
+        <otherOriginator>Adolf Kašpar</otherOriginator>
         <publication>
-            <publisher>Československý spisovatelf</publisher>
+            <publisher>Československý spisovatel</publisher>
             <place>V Praze</place>
         </publication>
     </intelectualEntity>

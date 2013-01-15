@@ -16,9 +16,12 @@
                 exclude-result-prefixes="resolver"
 >
     <xsl:output encoding="UTF-8" method="xml" indent="yes" />
-
+    <!--remove content of elements containing only white spaces-->
+    <xsl:strip-space elements="*" />
+    
     <xsl:template match="//resolver:digitalDocument">
         <oai_dc:dc xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+            <!--<oai_dc:dc>-->
             <xsl:variable name="entityType" select="//resolver:intelectualEntity/@type"/>
             <xsl:choose>
                 <xsl:when test="$entityType='MONOGRAPH'">
@@ -46,90 +49,53 @@
                     <xsl:call-template name="otherEntity"/>
                 </xsl:when>
             </xsl:choose>
-        </oai_dc:dc>monograph
+        </oai_dc:dc>
     </xsl:template>
     
-    <xsl:template name="monograph">monograph
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle">
-                (<xsl:value-of select="."/>)
-            </xsl:for-each>
-        </dc:title>
+    <xsl:template name="monograph">
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle"> (<xsl:value-of select="."/>)</xsl:for-each></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="monographVolume">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:monographTitle"/>,
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle"/>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:monographTitle"/>, <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle"/></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="periodical">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle">
-                (<xsl:value-of select="."/>)
-            </xsl:for-each>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle"> (<xsl:value-of select="."/>)</xsl:for-each></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="periodicalVolume">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:periodicalTitle"/>,
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle"/>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:periodicalTitle"/>, <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle"/></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="periodicalIssue">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:periodicalTitle"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle">,
-                <xsl:value-of select="."/>
-            </xsl:for-each>,
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:issueTitle"/>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:periodicalTitle"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:volumeTitle">, <xsl:value-of select="."/></xsl:for-each>, <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:issueTitle"/></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="thesis">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle">
-                (<xsl:value-of select="."/>)
-            </xsl:for-each>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle"> (<xsl:value-of select="."/>)</xsl:for-each></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="analytical">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle">
-                (<xsl:value-of select="."/>)
-            </xsl:for-each>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle"> (<xsl:value-of select="."/>)</xsl:for-each></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
     
     <xsl:template name="otherEntity">
-        <dc:title>
-            <xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/>
-            <xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle">
-                (<xsl:value-of select="."/>)
-            </xsl:for-each>
-        </dc:title>
+        <dc:title><xsl:value-of select="//resolver:intelectualEntity/resolver:titleInfo/resolver:title"/><xsl:for-each select="//resolver:intelectualEntity/resolver:titleInfo/resolver:subTitle"> (<xsl:value-of select="."/>)</xsl:for-each></dc:title>
         <xsl:call-template name="entityData"/>
         <xsl:call-template name="technical"/>
     </xsl:template> 
@@ -195,24 +161,17 @@
                 <xsl:when test="resolver:publisher">
                     <xsl:choose>
                         <xsl:when test="resolver:place">
-                            <dc:publisher>
-                                <xsl:value-of select="resolver:place"/>:
-                                <xsl:value-of select="resolver:publisher"/>        
-                            </dc:publisher>                    
+                            <dc:publisher><xsl:value-of select="resolver:place"/>: <xsl:value-of select="resolver:publisher"/></dc:publisher>                    
                         </xsl:when>
                         <xsl:otherwise>
-                            <dc:publisher>
-                                <xsl:value-of select="resolver:publisher"/>        
-                            </dc:publisher>
+                            <dc:publisher><xsl:value-of select="resolver:publisher"/></dc:publisher>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:choose>
                         <xsl:when test="resolver:place">
-                            <dc:publisher>
-                                <xsl:value-of select="resolver:place"/>
-                            </dc:publisher>
+                            <dc:publisher><xsl:value-of select="resolver:place"/></dc:publisher>
                         </xsl:when>
                         <xsl:otherwise>
                             <!--no place no publisher-->
@@ -221,9 +180,7 @@
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:if test="resolver:year">
-                <dc:date>
-                    <xsl:value-of select="resolver:year"/>
-                </dc:date>
+                <dc:date><xsl:value-of select="resolver:year"/></dc:date>
             </xsl:if>
         </xsl:for-each>
     </xsl:template>
@@ -242,36 +199,20 @@
                         <xsl:when test="resolver:volumeTitle">
                             <xsl:choose>
                                 <xsl:when test="resolver:issueTitle">
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:title"/>,        
-                                        <xsl:value-of select="resolver:volumeTitle"/>,
-                                        <xsl:value-of select="resolver:issueTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:title"/>, <xsl:value-of select="resolver:volumeTitle"/>, <xsl:value-of select="resolver:issueTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:title"/>,        
-                                        <xsl:value-of select="resolver:volumeTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:title"/>, <xsl:value-of select="resolver:volumeTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="resolver:issueTitle">
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:title"/>,        
-                                        <xsl:value-of select="resolver:issueTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:title"/>, <xsl:value-of select="resolver:issueTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:title"/>
-                                        <xsl:call-template name="subtitle"/>                                    
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:title"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -282,27 +223,17 @@
                         <xsl:when test="resolver:volumeTitle">
                             <xsl:choose>
                                 <xsl:when test="resolver:issueTitle">
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:volumeTitle"/>,
-                                        <xsl:value-of select="resolver:issueTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:volumeTitle"/>, <xsl:value-of select="resolver:issueTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:volumeTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:volumeTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:choose>
                                 <xsl:when test="resolver:issueTitle">
-                                    <dc:source>
-                                        <xsl:value-of select="resolver:issueTitle"/>
-                                        <xsl:call-template name="subtitle"/>                            
-                                    </dc:source>
+                                    <dc:source><xsl:value-of select="resolver:issueTitle"/> <xsl:call-template name="subtitle"/></dc:source>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <!--empty titleInfo-->
@@ -316,9 +247,7 @@
     </xsl:template>
     
     <xsl:template name="subtitle">
-        <xsl:if test="resolver:subtitle">
-            (<xsl:value-of select="resolver:subitle"/>)
-        </xsl:if>
+        <xsl:if test="resolver:subtitle">(<xsl:value-of select="resolver:subitle"/>)</xsl:if>
     </xsl:template>
     
     <xsl:template name="technical">
@@ -344,15 +273,13 @@
     
     <xsl:template name="resolution">
         <xsl:for-each select="resolver:resolution">
-            <dc:description><xsl:value-of select="resolver:horizontal"/>x<xsl:value-of select="resolver:vertical"/>
-            </dc:description>
+            <dc:description><xsl:value-of select="resolver:horizontal"/>x<xsl:value-of select="resolver:vertical"/></dc:description>
         </xsl:for-each>
     </xsl:template>
     
     <xsl:template name="pictureSize">
         <xsl:for-each select="resolver:pictureSize">
-            <dc:description><xsl:value-of select="resolver:width"/>x<xsl:value-of select="resolver:height"/> px
-            </dc:description>
+            <dc:description><xsl:value-of select="resolver:width"/>x<xsl:value-of select="resolver:height"/> px</dc:description>
         </xsl:for-each>
     </xsl:template>
     

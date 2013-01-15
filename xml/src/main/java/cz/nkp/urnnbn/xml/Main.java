@@ -242,7 +242,8 @@ public class Main {
     static void transformationTest() {
         try {
             File inFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/oai/response-resolver.xml");
-            File xsltFile = new File("/home/martin/NetBeansProjects/OaiPmhProvider/src/main/resources/resolverToOaiDc.xsd");
+            //File xsltFile = new File("/home/martin/NetBeansProjects/OaiPmhProvider/src/main/resources/resolverToOaiDc.xsd");
+            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/oai/resolverToOaiDc.xsl");
             Document srcDoc = XOMUtils.loadDocumentWithoutValidation(inFile);
             Document xslt = XOMUtils.loadDocumentWithoutValidation(xsltFile);
             XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
