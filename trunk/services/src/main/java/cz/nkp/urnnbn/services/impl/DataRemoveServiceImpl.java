@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -166,6 +167,17 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigInstException(instanceId);
+        }
+    }
+
+    @Override
+    public void deactivateUrnNbn(UrnNbn urn, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
+        try {
+            long registrarId = registrarOfDigDoc(urn.getDigDocId());
+            authorization.checkAccessRights(registrarId, login);
+            factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }
