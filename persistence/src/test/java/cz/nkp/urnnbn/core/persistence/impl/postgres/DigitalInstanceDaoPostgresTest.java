@@ -165,16 +165,16 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         DigitalInstance beforeDeactivation = digInstDao.getDigInstanceById(inserted.getId());
         assertTrue(beforeDeactivation.isActive());
         assertNotNull(beforeDeactivation.getCreated());
-        assertNotNull(beforeDeactivation.getModified());
+        assertNull(beforeDeactivation.getDeactivated());
         
         //deactivate
         digInstDao.deactivateDigInstance(inserted.getId());
         DigitalInstance deactivated = digInstDao.getDigInstanceById(inserted.getId());
         assertFalse(deactivated.isActive());
         assertNotNull(deactivated.getCreated());
-        assertNotNull(deactivated.getModified());
+        assertNotNull(deactivated.getDeactivated());
         
         //timestamps
-        assertTrue(beforeDeactivation.getModified().isBefore(deactivated.getModified()));
+        assertTrue(beforeDeactivation.getCreated().isBefore(deactivated.getDeactivated()));
     }
 }

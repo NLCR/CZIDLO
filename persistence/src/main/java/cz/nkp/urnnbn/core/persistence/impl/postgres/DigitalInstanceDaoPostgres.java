@@ -101,7 +101,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     //TODO: test
     public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
+            StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_DEACTIVATED, from, until);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalInstanceRT());
             return (List<DigitalInstance>) runInTransaction(operation);
         } catch (PersistenceException ex) {
