@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.api.v3;
+package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.exceptions.DigitalInstanceAlreadyDeactivatedException;
 import cz.nkp.urnnbn.api.exceptions.InternalException;
