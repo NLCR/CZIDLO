@@ -1,5 +1,5 @@
 #!/bin/bash
-source inc.sh
+source ../inc.sh
 
 init_tmp_files
 define_creditentials /home/martin/secret/resolver/nkpAdmin

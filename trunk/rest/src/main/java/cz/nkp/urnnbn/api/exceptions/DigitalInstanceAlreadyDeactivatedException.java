@@ -16,6 +16,6 @@ public class DigitalInstanceAlreadyDeactivatedException extends ApiException {
     public DigitalInstanceAlreadyDeactivatedException(DigitalInstance instance) {
         super(Response.Status.FORBIDDEN, "ALREADY_DEACTIVATED",
                 "Digital instance with id " + instance.getId()
-                + " has already been deactivated (" + instance.getModified().toString() + ")");
+                + " has already been deactivated (" + instance.getDeactivated().toString() + ")");
     }
 }

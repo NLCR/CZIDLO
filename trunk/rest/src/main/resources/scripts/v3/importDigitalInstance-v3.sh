@@ -1,17 +1,17 @@
 #!/bin/bash
-source inc.sh
+source ../inc.sh
 
 init_tmp_files
 define_creditentials /home/martin/secret/resolver/nkpAdmin
 
-URN_NBN=urn:nbn:cz:tst02-000062
-URL=https://${HOST}/api/v2/resolver/${URN_NBN}/digitalInstances
+URN_NBN=urn:nbn:cz:tst02-000001
+URL=https://${HOST}/api/v3/resolver/${URN_NBN}/digitalInstances
 
 METHOD=POST
-INPUT_FILE=data/importDitalInstance_minimal-v2.xml
+INPUT_FILE=data/importDitalInstance_complete-v3.xml
 
 echo 
-echo "Registrace digitálního dokumentu (mód BY_REGISTRAR - urn je přítomno ve vstupním xml) - API V2"
+echo "Registrace digitálního dokumentu (mód BY_REGISTRAR - urn je přítomno ve vstupním xml) - API V3"
 echo "=============================================================================================="
 echo "$METHOD $URL"
 echo

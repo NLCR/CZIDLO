@@ -46,13 +46,13 @@ public class DigitalInstanceResource extends Resource {
     @GET
     @Produces("application/xml")
     public String getDigitalInstance() {
-        return xmlBuilder(instance).buildDocumentWithResponseHeader().toXML();
+        return xmlBuilder(instance, true, true).buildDocumentWithResponseHeader().toXML();
     }
 
-    private DigitalInstanceBuilder xmlBuilder(DigitalInstance instance) {
+    private DigitalInstanceBuilder xmlBuilder(DigitalInstance instance, boolean withDigDoc, boolean withDigLib) {
         try {
-            DigitalDocumentBuilder digDocBuilder = digDocBuilder(instance.getDigDocId());
-            DigitalLibraryBuilder libBuilder = digLibBuilder(instance.getLibraryId());
+            DigitalDocumentBuilder digDocBuilder = withDigDoc ? digDocBuilder(instance.getDigDocId()) : null;
+            DigitalLibraryBuilder libBuilder = withDigLib ? digLibBuilder(instance.getLibraryId()) : null;
             return new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
@@ -88,7 +88,7 @@ public class DigitalInstanceResource extends Resource {
                 } else {
                     dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
                     DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
-                    return xmlBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
+                    return xmlBuilder(deactivated, false, false).buildDocumentWithResponseHeader().toXML();
                 }
             } catch (UnknownUserException ex) {
                 throw new NotAuthorizedException(ex.getMessage());
