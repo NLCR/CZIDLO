@@ -77,7 +77,7 @@ public class PresentRecordBuilder {
     private void updateTimestampFromDigInstances(Long digDocId) throws DatabaseException {
         List<DigitalInstance> digInstances = backend.dataAccessService().digInstancesByDigDocId(digDocId);
         for (DigitalInstance digInst : digInstances) {
-            updateLastDateStamp(digInst.getModified());
+            updateLastDateStamp(digInst.getDeactivated());
         }
     }
 
