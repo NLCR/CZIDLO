@@ -109,7 +109,7 @@ public class Main {
         validate(rootDir + "getUrnNbn/active-formalyReserved.xml", xsd);
         validate(rootDir + "getUrnNbn/deactivated.xml", xsd);
         validate(rootDir + "getUrnNbn/deactivated-formalyReserved.xml", xsd);
-        
+
         //get all digital instances
         validate(rootDir + "getAllDigitalInstances.xml", xsd);
         //get digital instance
