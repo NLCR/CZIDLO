@@ -14,14 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.api.v2;
+package cz.nkp.urnnbn.api.v3;
 
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 /**
  *
  * @author Martin Řehánek
  */
-@Path("/urnnbn")
-public class UrnNbnResource extends cz.nkp.urnnbn.api.v3.UrnNbnResource {
+@Path("/response.xsd")
+public class XsdResource {
+
+    @GET
+    @Produces("application/xml")
+    public String getResponseXsd() {
+        return ApiModuleConfiguration.instanceOf().getResponseV3Xsd().toXML();
+    }
 }

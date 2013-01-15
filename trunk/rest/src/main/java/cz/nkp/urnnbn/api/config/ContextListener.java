@@ -26,12 +26,14 @@ public class ContextListener implements ServletContextListener {
     private static final String IMPORT_DI_XSD_V2 = "v2/importDigitalInstance.xsd";
     private static final String IMPORT_DI_V2_TO_V3_XSLT = "v2/digInstImportV2ToV3.xsl";
     private static final String IMPORT_DI_XSD_V3 = "v3/importDigitalInstance.xsd";
+    private static final String API_RESPONSE_V3 = "v3/response.xsd";
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         loadPropertiesFile();
         loadDigDocRegistrationResources();
         loadDigInstImportResources();
+        loadResponseXsd();
     }
 
     private void loadPropertiesFile() {
@@ -89,6 +91,15 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initDigInstImportXsdV3(in);
             }
         }.run(IMPORT_DI_XSD_V3);
+    }
+
+    private void loadResponseXsd() {
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initResponseV3Xsd(in);
+            }
+        }.run(API_RESPONSE_V3);
     }
 
     @Override

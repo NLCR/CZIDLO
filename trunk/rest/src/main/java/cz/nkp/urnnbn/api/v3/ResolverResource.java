@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
+import cz.nkp.urnnbn.api.AbstractResolverResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.exceptions.InternalException;
@@ -25,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
  * @author Martin Řehánek
  */
 @Path("/resolver")
-public class ResolverResource extends Resource {
+public class ResolverResource extends AbstractResolverResource {
 
     @Context
     private UriInfo context;

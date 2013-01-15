@@ -140,8 +140,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- url -->
     <xs:simpleType name="url">
         <xs:restriction base="xs:string">
-            <!--starts with http:// or https:// (case insensitive)-->
-            <xs:pattern value="[hH][tT]{2}[pP][sS]{0,1}://.*"/>
+            <!--starts with http:// or https:// (case insensitive) with total length at most 2008 characters-->
+            <xs:pattern value="[hH][tT]{2}[pP][sS]{0,1}://.{1,200}"/>
         </xs:restriction>
     </xs:simpleType>
     

@@ -58,17 +58,8 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
             String login = req.getRemoteUser();
-            //TODO: validace podle schema pro v2
-            System.err.println("BEFORE V2 VALIDATION");
-            //Document v2Doc = validDocumentFromString(content, ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV2());
             Document v2Doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV2().loadDocument(content);
-
-            System.err.println("V2 VALIDATION OK");
             Document transformed = ApiModuleConfiguration.instanceOf().getDigDocRegistrationV2ToV3DataTransformer().transform(v2Doc);
-            System.err.println("V2-V3 TRANSFORMATION OK");
-
-            //TODO: transformace do formy pro v3
-            //String transformed = content;
             return registerDigitalDocumentByApiV3(transformed, login);
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);

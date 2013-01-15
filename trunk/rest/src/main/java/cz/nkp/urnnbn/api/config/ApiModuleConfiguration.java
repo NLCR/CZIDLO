@@ -36,6 +36,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV2;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV3;
     private XsltXmlTransformer digInstImportV2ToV3DataTransformer;
+    private Document responseV3Xsd;
 
     static public ApiModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -84,6 +85,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         this.digInstImportV2ToV3DataTransformer = new XsltXmlTransformer(xslt);
     }
 
+    void initResponseV3Xsd(InputStream in) throws ParsingException, IOException, XSLException {
+        this.responseV3Xsd = XOMUtils.loadDocumentWithoutValidation(in);
+    }
+
     public Integer getMaxReservedSizeToPrint() {
         return maxReservedSizeToPrint;
     }
@@ -118,5 +123,9 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
 
     public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV3() {
         return digInstImportDataValidatingLoaderV3;
+    }
+
+    public Document getResponseV3Xsd() {
+        return responseV3Xsd;
     }
 }

@@ -10,7 +10,6 @@ import cz.nkp.urnnbn.api.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.api.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.api.exceptions.InvalidRegistrarCodeException;
 import cz.nkp.urnnbn.api.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.api.v3.ResponseFormat;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -116,11 +115,8 @@ public class Parser {
         }
     }
 
-    public static URL parseUrl(String string, int maxUrlLength) throws InvalidDataException {
+    public static URL parseUrl(String string) throws InvalidDataException {
         try {
-            if (string != null && string.length() > maxUrlLength) {
-                throw new InvalidDataException("url '" + string + "' too long. Maximal length is " + maxUrlLength);
-            }
             URL result = new URL(string);
             String protocol = result.getProtocol();
             if (!("http".equals(protocol) || "https".equals(protocol))) {
