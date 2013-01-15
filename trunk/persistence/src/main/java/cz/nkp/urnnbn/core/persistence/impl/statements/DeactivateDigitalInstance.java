@@ -27,7 +27,7 @@ public class DeactivateDigitalInstance implements StatementWrapper {
         return "UPDATE " + DigitalInstanceDAO.TABLE_NAME
                 + " SET "
                 + DigitalInstanceDAO.ATTR_ACTIVE + "=?,"
-                + DigitalInstanceDAO.ATTR_UPDATED + "=?"
+                + DigitalInstanceDAO.ATTR_DEACTIVATED + "=?"
                 + " WHERE " + DigitalInstanceDAO.ATTR_ID + "=?";
     }
 
