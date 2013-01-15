@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
@@ -70,4 +71,8 @@ public interface DataRemoveService {
     public void deactivateDigitalInstance(long instanceId, String login) throws
             UnknownUserException, AccessException,
             UnknownDigInstException;
+
+    public void deactivateUrnNbn(UrnNbn urn, String login) throws
+            UnknownUserException, AccessException,
+            UnknownDigDocException;
 }
