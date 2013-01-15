@@ -10,13 +10,13 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstance implements IdentifiableWithDatestamps {
+public class DigitalInstance {
 
     private Long id;
     private Long digDocId;
     private Long libraryId;
     private DateTime created;
-    private DateTime modified;
+    private DateTime deactivated;
     private Boolean active;
     private String url;
     private String format;
@@ -30,12 +30,10 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
         this.digDocId = digDocId;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -72,7 +70,6 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
         this.accessibility = accessibility;
     }
 
-    @Override
     public DateTime getCreated() {
         return created;
     }
@@ -81,13 +78,12 @@ public class DigitalInstance implements IdentifiableWithDatestamps {
         this.created = created;
     }
 
-    @Override
-    public DateTime getModified() {
-        return modified;
+    public DateTime getDeactivated() {
+        return deactivated;
     }
 
-    public void setModified(DateTime modified) {
-        this.modified = modified;
+    public void setDeactivated(DateTime modified) {
+        this.deactivated = modified;
     }
 
     public Boolean isActive() {
