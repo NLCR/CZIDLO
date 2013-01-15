@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<!--TODO: make entity id's optional-->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
@@ -47,7 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="digitalDocument" type="r:digitalDocument"/>
                 <xs:element name="registrarScopeIdentifiers" type="r:registrarScopeIdentifiers"/>
                 <xs:element name="id" type="r:registrarScopeIdentifier"/>
-                <!--TODO: rozmyslet, jestli nejsou jeste nejake nepodchycene responses-->
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -239,7 +237,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="publication" type="r:publication" minOccurs="0"/>
             <xs:element name="sourceDocument" type="r:sourceDocument" minOccurs="0"/>
             <xs:element name="degreeAwardingInstitution" type="xs:string" minOccurs="0"/>
-            <!--TODO: dodelat veci pro dalsi typy IE-->
         </xs:sequence>
         <xs:attribute name="type" use="required" type="r:ieType"/>
     </xs:complexType>
