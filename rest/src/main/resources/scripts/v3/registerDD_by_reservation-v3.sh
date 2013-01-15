@@ -1,15 +1,15 @@
 #!/bin/bash
-source inc.sh
+source ../inc.sh
 
 init_tmp_files
 define_creditentials /home/martin/secret/resolver/nkpAdmin
 
-URL="https://${HOST}/api/v2/registrars/${REGISTRAR_CODE}/digitalDocuments"
+URL="https://${HOST}/api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments"
 METHOD=POST
-INPUT_FILE=data/registerDD-by_reservation-v2.xml
+INPUT_FILE=data/registerDD-by_reservation-v3.xml
 
 echo 
-echo "Registrace digitálního dokumentu (mód BY_RESERVATION - dříve rezervované urn:nbn ve vstupních datech) - API V2"
+echo "Registrace digitálního dokumentu (mód BY_RESERVATION - dříve rezervované urn:nbn ve vstupních datech) - API V3"
 echo "=============================================================================================================="
 echo "$METHOD $URL"
 echo

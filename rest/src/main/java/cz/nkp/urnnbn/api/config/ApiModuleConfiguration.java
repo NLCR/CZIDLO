@@ -31,10 +31,14 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV2;
+    private Document digDocRegistrationXsdV2;
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV3;
+    private Document digDocRegistrationXsdV3;
     private XsltXmlTransformer digDocRegistrationV2ToV3DataTransformer;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV2;
+    private Document digInstImportXsdV2;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV3;
+    private Document digInstImportXsdV3;
     private XsltXmlTransformer digInstImportV2ToV3DataTransformer;
     private Document responseV3Xsd;
 
@@ -60,11 +64,13 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     }
 
     void initDigDocRegistrationXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
-        digDocRegistrationDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(in);
+        digDocRegistrationXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
+        digDocRegistrationDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV2.toXML());
     }
 
     void initDigDocRegistrationXsdV3(InputStream in) throws ParsingException, ValidityException, IOException {
-        digDocRegistrationDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(in);
+        digDocRegistrationXsdV3 = XOMUtils.loadDocumentWithoutValidation(in);
+        digDocRegistrationDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV3.toXML());
     }
 
     void initDigDocRegistrationV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
@@ -73,11 +79,13 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     }
 
     void initDigInstImportXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
-        digInstImportDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(in);
+        digInstImportXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
+        digInstImportDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV2.toXML());
     }
 
     void initDigInstImportXsdV3(InputStream in) throws ParsingException, ValidityException, IOException {
-        digInstImportDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(in);
+        digInstImportXsdV3 = XOMUtils.loadDocumentWithoutValidation(in);
+        digInstImportDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV3.toXML());
     }
 
     void initDigInstImportV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
@@ -127,5 +135,21 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
 
     public Document getResponseV3Xsd() {
         return responseV3Xsd;
+    }
+
+    public Document getDigDocRegistrationXsdV2() {
+        return digDocRegistrationXsdV2;
+    }
+
+    public Document getDigDocRegistrationXsdV3() {
+        return digDocRegistrationXsdV3;
+    }
+
+    public Document getDigInstImportXsdV2() {
+        return digInstImportXsdV2;
+    }
+
+    public Document getDigInstImportXsdV3() {
+        return digInstImportXsdV3;
     }
 }

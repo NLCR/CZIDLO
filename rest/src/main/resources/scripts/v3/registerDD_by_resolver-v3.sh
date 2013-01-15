@@ -1,12 +1,12 @@
 #!/bin/bash
-source inc.sh
+source ../inc.sh
 
 init_tmp_files
 define_creditentials /home/martin/secret/resolver/nkpAdmin
 
 URL="https://${HOST}/api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments"
 METHOD=POST
-INPUT_FILE=data/registerDD-by_resolver-v3_with_predecessors.xml
+INPUT_FILE=data/registerDD-by_resolver-v3.xml
 
 echo 
 echo "Registrace digitálního dokumentu (mód BY_RESOLVER - urn:nbn přiřadí Resolver a vrátí v odpovědi) - API V3"

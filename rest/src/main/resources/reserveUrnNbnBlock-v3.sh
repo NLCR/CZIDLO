@@ -1,11 +1,8 @@
 #!/bin/bash
-HEADERS_TMP=/tmp/headers
-BODY_TMP=/tmp/body
+source inc.sh
 
-#localhost
-HOST=localhost
-LOGIN=test
-PASSWORD=ffAab6a
+init_tmp_files
+define_creditentials /home/martin/secret/resolver/nkpAdmin
 
 REGISTRAR_CODE=tst02
 SIZE=10
@@ -14,8 +11,8 @@ URL="https://$HOST/api/v3/registrars/$REGISTRAR_CODE/urnNbnReservations?size=$SI
 METHOD=POST
 
 echo
-echo "Rezervace balíku ${SIZE} URN:NBN pro registrátora ${REGISTRAR_CODE}"
-echo "==================================================================="
+echo "Rezervace balíku ${SIZE} URN:NBN pro registrátora ${REGISTRAR_CODE} - API V3"
+echo "============================================================================"
 echo
 echo "${METHOD} ${URL}"
 curl --insecure --basic --user $LOGIN:$PASSWORD -D $HEADERS_TMP $URL -X $METHOD >$BODY_TMP
