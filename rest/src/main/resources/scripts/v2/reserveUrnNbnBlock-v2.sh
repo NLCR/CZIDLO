@@ -11,7 +11,7 @@ URL="https://$HOST/api/v2/registrars/$REGISTRAR_CODE/urnNbnReservations?size=$SI
 METHOD=POST
 
 echo
-echo "Rezervace balíku ${SIZE} URN:NBN pro registrátora ${REGISTRAR_CODE} - API V2"
+echo "Rezervace balíku ${SIZE} URN:NBN pro registrátora ${REGISTRAR_CODE} - API v2"
 echo "============================================================================"
 echo
 echo "${METHOD} ${URL}"
