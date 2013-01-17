@@ -43,7 +43,8 @@ Oproti V2 došlo k následujícím změnám:
  * změna jmeného prostoru nejen výstupních xml, ale i vstupních. Namísto _http://resolver.nkp.cz/v2/_ nově _http://resolver.nkp.cz/v3/_.
  * změna url pro rezolvování podle registrar-scope identifikátoru (řetězec "id" nahrazen řetězcem "registrarScopeIdentifier")
  * změna url pro operace vložení/změnu hodnoty, zobrazení hodnoty, odstranění registrar-scope identifikátoru digitálního dokumentu a zobrazení, odstranění všech registrar-scope identifkátorů digitálního dokumentu (řetězec "identifiers" nahrazen řetězcem "registrarScopeIdentifiers")
- * sjednocení pořadí elementů s časovými známkami (created, modified, registered, deactivated) různých typů objektů.
+ * sjednocení pořadí elementů s časovými známkami (created, modified, registered, deactivated) různých typů objektů (xml generováno Resolverem a vraceno v odpovědi).
+ * záznam digitální instance vždy obsahuje buď záznam digitální knihovny, nebo alespoň id digitální knihovny. Pro některé případy užití API tak jedna operace nahradí dvě i více operací. Např. zobrazení všech digitálních instancí digitálního dokumentu + zobrazení záznamu digitální instance (pro všechny instance) pro zjištění, jestli pro má digitální dokument instanci ve vybrané digitální knihovně(OAI Adapter).
  * registrace digitálního dokumentu
    * musí být validní podle http://resolver.nkp.cz/api/v3/digDocRegistration.xsd 
    * operace se chová defenzivněji a preferuje realizaci operace před zamítnutím kvůli nedostatkům v datech. Konkrétně to znamená, že nevalidní obsahy elementů issn, isbn, ččnb nebudou použity, obsahy elementů přesahující určený limit budou zkráceny. V předchozí verzi by v obou případech došlo k zamítnutí operace z důvodu nevalidního vstupního dokumentu.
