@@ -6,7 +6,7 @@ define_creditentials /home/martin/secret/resolver/nkpAdmin
 
 URN_NBN=urn:nbn:cz:tst02-000001
 ID_TYPE=signatura
-URL="https://${HOST}/api/v3/resolver/${URN_NBN}/identifiers/${ID_TYPE}"
+URL="https://${HOST}/api/v3/resolver/${URN_NBN}/registrarScopeIdentifiers/${ID_TYPE}"
 METHOD=DELETE
 
 echo

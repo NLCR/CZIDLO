@@ -7,7 +7,7 @@ define_creditentials /home/martin/secret/resolver/nkpAdmin
 URNNBN=urn:nbn:cz:tst02-000001
 ID_TYPE=someIdType2
 ID_VALUE=newNewValue
-URL="https://${HOST}/api/v3/resolver/${URNNBN}/identifiers/$ID_TYPE"
+URL="https://${HOST}/api/v3/resolver/${URNNBN}/registrarScopeIdentifiers/$ID_TYPE"
 METHOD=PUT
 
 echo
