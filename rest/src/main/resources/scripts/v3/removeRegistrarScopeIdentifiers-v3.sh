@@ -5,8 +5,7 @@ init_tmp_files
 define_creditentials /home/martin/secret/resolver/nkpAdmin
 
 URN_NBN=urn:nbn:cz:tst02-000003
-ID_TYPE=signatura
-URL="https://${HOST}/api/v3/resolver/${URN_NBN}/identifiers/"
+URL="https://${HOST}/api/v3/resolver/${URN_NBN}/registrarScopeIdentifiers/"
 METHOD=DELETE
 
 echo 
