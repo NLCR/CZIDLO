@@ -25,7 +25,6 @@ xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nk
         <registrarCode>tst02</registrarCode>
         <documentCode>00001f</documentCode>
         <reserved>2012-11-20T02:12:07.123+01:00</reserved>
-        <registered>2012-11-25T02:09:02.297+01:00</registered>
     </urnNbn>
 </response>
 

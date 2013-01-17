@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:urnNbn xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:status>FREE</v2:status>
+    <v2:registrarCode>tst02</v2:registrarCode>
+    <v2:value>urn:nbn:cz:tst02-00002j</v2:value>
+</v2:urnNbn>

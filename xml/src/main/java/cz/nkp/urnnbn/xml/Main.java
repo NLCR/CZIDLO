@@ -24,6 +24,7 @@ public class Main {
         //xsltTest();
         validateXmlExamples();
         //transformationTest();
+        testApiV2Responses();
     }
 
     private static void validateXmlExamples() {
@@ -66,7 +67,8 @@ public class Main {
         //some error
         validate(rootDir + "error.xml", xsd);
         //import digital instance
-        validate(rootDir + "addDigitalInstance.xml", xsd);
+        validate(rootDir + "importDigitalInstance.xml", xsd);
+        validate(rootDir + "importDigitalInstance-minimal.xml", xsd);
         //reserve 
         validate(rootDir + "reserveUrnNbns.xml", xsd);
         //get reservations
@@ -100,7 +102,7 @@ public class Main {
         validate(rootDir + "postRegistrarScopeIdentifier-insert.xml", xsd);
         validate(rootDir + "postRegistrarScopeIdentifier-update.xml", xsd);
         //delete registrar-scope identifier
-        validate(rootDir + "deleteRegistrarScopeIdenfier.xml", xsd);
+        validate(rootDir + "deleteRegistrarScopeIdentifier.xml", xsd);
 
         //get urn:nbn
         validate(rootDir + "getUrnNbn/free.xml", xsd);
@@ -117,6 +119,7 @@ public class Main {
         validate(rootDir + "getDigitalInstanceById-deactivated.xml", xsd);
         //deactivate digital instance
         validate(rootDir + "deactivateDigitalInstance.xml", xsd);
+        validate(rootDir + "deactivateDigitalInstance-minimal.xml", xsd);
 
         //response to registerDD
         validate(rootDir + "registerDigitalDocument/byResolver.xml", xsd);
@@ -163,7 +166,7 @@ public class Main {
     private static void transformDigDocRegistrationV2ToV3WithValidation() {
         try {
             String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/apiV2/";
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/digDocRegistrationV2ToV3.xsl");
+            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v2ToV3Request/digDocRegistrationV2ToV3.xsl");
             Document xsltDoc = XOMUtils.loadDocumentWithoutValidation(xsltFile);
 
             File digDocRegistrationV3Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
@@ -189,7 +192,7 @@ public class Main {
     private static void transformDigInstImportV2ToV3WithValidation() {
         try {
             String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/apiV2/";
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/digInstImportV2ToV3.xsl");
+            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v2ToV3Request/digInstImportV2ToV3.xsl");
             Document xsltDoc = XOMUtils.loadDocumentWithoutValidation(xsltFile);
 
             File digInstImportV3Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
@@ -219,12 +222,26 @@ public class Main {
         }
     }
 
+    private static File transform(String inDocFilename, String xsltFilename, String suffix) throws ParsingException, IOException {
+        System.err.println("xslt: " + xsltFilename);
+        System.err.println("doc: " + inDocFilename);
+        Document xsltDoc = XOMUtils.loadDocumentWithoutValidation(new File(xsltFilename));
+        return transform(inDocFilename, xsltDoc, suffix);
+    }
+
     private static File transform(String inDocFilename, Document xslt) {
+        return transform(inDocFilename, xslt, null);
+    }
+
+    private static File transform(String inDocFilename, Document xslt, String suffix) {
         try {
+            if (suffix == null) {
+                suffix = "transformed";
+            }
             File inFile = new File(inDocFilename);
             Document inDoc = XOMUtils.loadDocumentWithoutValidation(inFile);
             Document transformedDoc = XOMUtils.transformDocument(inDoc, xslt);
-            File transformedFile = new File(inDocFilename + "-transformed.xml");
+            File transformedFile = new File(removeXmlSuffix(inDocFilename) + '-' + suffix + ".xml");
             XOMUtils.saveDocumentToFile(transformedDoc, transformedFile);
             return transformedFile;
         } catch (XSLException ex) {
@@ -256,6 +273,56 @@ public class Main {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void testApiV2Responses() {
+        try {
+            String xmlRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
+            String xsltRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v3ToV2Response/";
+
+            transform(xmlRootDir + "getRegistrars.xml", xsltRootDir + "getRegistars.xsl", "v2");
+            transform(xmlRootDir + "getRegistrar.xml", xsltRootDir + "getRegistrar.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbnReservations.xml", xsltRootDir + "getUrnNbnReservations.xsl", "v2");
+            transform(xmlRootDir + "reserveUrnNbns.xml", xsltRootDir + "reserveUrnNbnBlock.xsl", "v2");
+            transform(xmlRootDir + "getDigitalDocuments.xml", xsltRootDir + "getDigitalDocuments.xsl", "v2");
+            transform(xmlRootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifiers.xsl", "v2");
+            transform(xmlRootDir + "deleteRegistrarScopeIdentifier.xml", xsltRootDir + "deleteRegistrarScopeIdentifier.xsl", "v2");
+            transform(xmlRootDir + "deleteRegistrarScopeIdentifiersOfDigDoc.xml", xsltRootDir + "deleteRegistrarScopeIdentifiers.xsl", "v2");
+            transform(xmlRootDir + "postRegistrarScopeIdentifier-insert.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
+            transform(xmlRootDir + "postRegistrarScopeIdentifier-update.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
+            transform(xmlRootDir + "getDigitalInstancesOfDigDoc.xml", xsltRootDir + "getDigitalInstances.xsl", "v2");
+            transform(xmlRootDir + "getDigitalInstanceById.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "getDigitalInstanceById-deactivated.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "importDigitalInstance.xml", xsltRootDir + "importDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "importDigitalInstance-minimal.xml", xsltRootDir + "importDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "deactivateDigitalInstance.xml", xsltRootDir + "deactivateDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "deactivateDigitalInstance-minimal.xml", xsltRootDir + "deactivateDigitalInstance.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/active.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/active-formalyReserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/deactivated.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/deactivated-formalyReserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/free.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+            transform(xmlRootDir + "getUrnNbn/reserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
+
+
+
+            //            transform(xmlRootDir + ".xml", xsltRootDir + ".xsl", "v2");
+            //            transform(xmlRootDir + ".xml", xsltRootDir + ".xsl", "v2");
+            //            transform(xmlRootDir + ".xml", xsltRootDir + ".xsl", "v2");
+
+        } catch (ParsingException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static String removeXmlSuffix(String inDocFilename) {
+        if (inDocFilename.toLowerCase().endsWith(".xml")) {
+            return inDocFilename.substring(0, inDocFilename.length() - ".xml".length());
+        } else {
+            return inDocFilename;
         }
     }
 }

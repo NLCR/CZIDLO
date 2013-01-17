@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:digitalInstance active="true" xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:id type="INTERNAL">26</v2:id>
+    <v2:created>2012-09-03T00:13:01.430+02:00</v2:created>
+    <v2:modified>2012-09-03T00:13:01.430+02:00</v2:modified>
+    <v2:url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</v2:url>
+    <v2:format>jpg;pdf</v2:format>
+    <v2:accessibility>volně přístupné</v2:accessibility>
+    <v2:digitalLibrary>
+        <v2:name>Kramerius 3</v2:name>
+        <v2:id type="INTERNAL">39</v2:id>
+        <v2:description>testovací knihovna</v2:description>
+        <v2:url>http://kramerius3.mzk.cz</v2:url>
+        <v2:created>2012-04-18T23:19:19.605+02:00</v2:created>
+        <v2:registrar code="tst02">
+            <v2:created>2012-04-18T23:19:17.727+02:00</v2:created>
+            <v2:modified>2012-10-29T10:39:30.882+01:00</v2:modified>
+            <v2:name>Moravská zemská knihovna - test</v2:name>
+            <v2:description>testovací registrátor</v2:description>
+        </v2:registrar>
+    </v2:digitalLibrary>
+    <v2:digitalDocument>
+        <v2:created>2012-04-18T23:21:56.517+02:00</v2:created>
+        <v2:urnNbn>urn:nbn:cz:tst02-000004</v2:urnNbn>
+        <v2:financed>norské fondy</v2:financed>
+        <v2:contractNumber>123</v2:contractNumber>
+        <v2:technicalMetadata>
+            <v2:format>jpeg</v2:format>
+            <v2:extent>12 x jpeg2000;12 x mods-alto;1 x
+                mods</v2:extent>
+            <v2:resolution>
+                <v2:horizontal>1280</v2:horizontal>
+                <v2:vertical>1024</v2:vertical>
+            </v2:resolution>
+            <v2:extent ratio="0.3">LZW</v2:extent>
+            <v2:color>
+                <v2:model>RGB</v2:model>
+                <v2:depth>24</v2:depth>
+            </v2:color>
+            <v2:iccProfile>some ICC profile</v2:iccProfile>
+            <v2:pictureSize>
+                <v2:width>600</v2:width>
+                <v2:height>1000</v2:height>
+            </v2:pictureSize>
+        </v2:technicalMetadata>
+        <v2:registrarScopeIdentifiers>
+            <v2:id type="OAI_harvester">1236</v2:id>
+            <v2:id type="K4_uuid">38bfc69d-1d10-4822-b7a4-c7531bb4aedi</v2:id>
+        </v2:registrarScopeIdentifiers>
+    </v2:digitalDocument>
+</v2:digitalInstance>

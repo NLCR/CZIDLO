@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:urnNbnRerservation xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:urnNbn>urn:nbn:cz:boa001-000006</v2:urnNbn>
+    <v2:urnNbn>urn:nbn:cz:boa001-000007</v2:urnNbn>
+    <v2:urnNbn>urn:nbn:cz:boa001-000008</v2:urnNbn>
+    <v2:urnNbn>urn:nbn:cz:boa001-000009</v2:urnNbn>
+    <v2:urnNbn>urn:nbn:cz:boa001-00000a</v2:urnNbn>
+</v2:urnNbnRerservation>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:digitalInstances xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:digitalInstance active="true">
+        <v2:id type="INTERNAL">33</v2:id>
+        <v2:created>2012-09-03T00:44:34.603+02:00</v2:created>
+        <v2:url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</v2:url>
+    </v2:digitalInstance>
+    <v2:digitalInstance active="true">
+        <v2:id type="INTERNAL">34</v2:id>
+        <v2:created>2012-09-19T00:37:25.362+02:00</v2:created>
+        <v2:url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</v2:url>
+        <v2:format>jpg;pdf</v2:format>
+        <v2:accessibility>volně přístupné</v2:accessibility>
+    </v2:digitalInstance>
+    <v2:digitalInstance active="false">
+        <v2:id type="INTERNAL">35</v2:id>
+        <v2:created>2012-09-19T00:39:41.117+02:00</v2:created>
+        <v2:modified>2012-09-19T00:42:30.334+02:00</v2:modified>
+        <v2:url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</v2:url>
+        <v2:format>jpg;pdf</v2:format>
+        <v2:accessibility>volně přístupné</v2:accessibility>
+    </v2:digitalInstance>
+</v2:digitalInstances>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2012 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,4 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<id xmlns="http://resolver.nkp.cz/v2/">1234g</id>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalInstance id="54" active="false">
+        <url>http://kramerius.nkp.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+        <digitalLibraryId>39</digitalLibraryId>
+        <created>2013-01-17T02:16:10.379+01:00</created>
+        <deactivated>2013-01-17T02:16:55.581+01:00</deactivated>
+    </digitalInstance>
+</response>
+

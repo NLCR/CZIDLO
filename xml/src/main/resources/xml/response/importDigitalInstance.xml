@@ -15,12 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<response xmlns="http://resolver.nkp.cz/v3/">
-    <digitalInstance id="5" active="true">
-        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalInstance id="52" active="true">
+        <url>http://kramerius.nkp.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
         <format>jpg;pdf</format>
         <accessibility>volně přístupné</accessibility>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <digitalLibraryId>123</digitalLibraryId>
+        <digitalLibraryId>38</digitalLibraryId>
+        <created>2013-01-17T02:09:50.349+01:00</created>
     </digitalInstance>
 </response>

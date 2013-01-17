@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:registrars xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:registrar code="aba007">
+        <v2:created>2012-04-18T23:19:15.988+02:00</v2:created>
+        <v2:modified>2012-10-29T10:49:19.593+01:00</v2:modified>
+        <v2:name>neco</v2:name>
+        <v2:description>ok</v2:description>
+    </v2:registrar>
+    <v2:registrar code="mod000">
+        <v2:created>2012-11-09T11:18:59.661+01:00</v2:created>
+        <v2:name>reg_mod_vsechny</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="mod001">
+        <v2:created>2012-11-09T11:22:08.556+01:00</v2:created>
+        <v2:name>reg_mod_resolverem</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="mod002">
+        <v2:created>2012-11-09T11:22:28.794+01:00</v2:created>
+        <v2:name>reg_mod_rezervaci</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="mod003">
+        <v2:created>2012-11-09T11:23:04.718+01:00</v2:created>
+        <v2:name>reg_mod_registratorem</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="tst02">
+        <v2:created>2012-04-18T23:19:17.727+02:00</v2:created>
+        <v2:modified>2012-10-29T10:39:30.882+01:00</v2:modified>
+        <v2:name>Moravská zemská knihovna - test</v2:name>
+        <v2:description>testovací registrátor</v2:description>
+    </v2:registrar>
+    <v2:registrar code="aba008">
+        <v2:created>2012-04-18T23:19:16.043+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="aba010">
+        <v2:created>2012-04-18T23:19:16.088+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="abe045">
+        <v2:created>2012-04-18T23:19:16.143+02:00</v2:created>
+        <v2:name>Vojenský historický ústav – knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="abc135">
+        <v2:created>2012-04-18T23:19:16.198+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="abe190">
+        <v2:created>2012-04-18T23:19:16.255+02:00</v2:created>
+        <v2:name>Gender Studies, o.p.s. – knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="abe310">
+        <v2:created>2012-04-18T23:19:16.310+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="abe323">
+        <v2:created>2012-04-18T23:19:16.390+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="abe336">
+        <v2:created>2012-04-18T23:19:16.442+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="abe343">
+        <v2:created>2012-04-18T23:19:16.499+02:00</v2:created>
+        <v2:name>Národní archiv v Praze – knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="boa001">
+        <v2:created>2012-04-18T23:19:16.551+02:00</v2:created>
+        <v2:name>Moravská zemská knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="bve301">
+        <v2:created>2012-04-18T23:19:16.630+02:00</v2:created>
+        <v2:name>Regionální muzeum v Mikulově</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="bve302">
+        <v2:created>2012-04-18T23:19:16.687+02:00</v2:created>
+        <v2:name>Regionální muzeum v Mikulově</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="cbe301">
+        <v2:created>2012-04-18T23:19:16.744+02:00</v2:created>
+        <v2:name>Jihočeské muzeum v Českých Budějovicích
+            - knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="ghe302">
+        <v2:created>2012-04-18T23:19:16.799+02:00</v2:created>
+        <v2:name>Krajské muzeum Karlovarského kraje, příspěvková
+            organizace, MUZEUM CHEB</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="hka001">
+        <v2:created>2012-04-18T23:19:16.843+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="hke302">
+        <v2:created>2012-04-18T23:19:16.900+02:00</v2:created>
+        <v2:name>Muzeum východních Čech v Hradci Králové
+            - společenskovědní knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="jhe301">
+        <v2:created>2012-04-18T23:19:16.942+02:00</v2:created>
+        <v2:name>Muzeum Jindřichohradecka – odborná knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="kmg001">
+        <v2:created>2012-04-18T23:19:16.999+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="ktg503">
+        <v2:created>2012-04-18T23:19:17.040+02:00</v2:created>
+        <v2:name>Městská knihovna Horažďovice</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="kve303">
+        <v2:created>2012-04-18T23:19:17.076+02:00</v2:created>
+        <v2:name>Krajské muzeum Karlovarského kraje,p.o.,Muzeum
+            Karlovy Vary - Muzejní knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="kvg001">
+        <v2:created>2012-04-18T23:19:17.132+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="lia001">
+        <v2:created>2012-04-18T23:19:17.185+02:00</v2:created>
+        <v2:name>Krajská vědecká knihovna v Liberci</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="lid001">
+        <v2:created>2012-04-18T23:19:17.229+02:00</v2:created>
+        <v2:name>Technická univerzita v Liberci - Univerzitní
+            knihovna</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="ola001">
+        <v2:created>2012-04-18T23:19:17.273+02:00</v2:created>
+        <v2:name>Vědecká knihovna v Olomouci</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="osa001">
+        <v2:created>2012-04-18T23:19:17.331+02:00</v2:created>
+        <v2:name>název chybí</v2:name>
+        <v2:description>TODO:doplnit název</v2:description>
+    </v2:registrar>
+    <v2:registrar code="pae302">
+        <v2:created>2012-04-18T23:19:17.387+02:00</v2:created>
+        <v2:name>Státní okresní archiv Pardubice</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="pna001">
+        <v2:created>2012-04-18T23:19:17.442+02:00</v2:created>
+        <v2:name>Studijní a vědecká knihovna Plzeňského
+            kraje</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="roe301">
+        <v2:created>2012-04-18T23:19:17.499+02:00</v2:created>
+        <v2:name>Muzeum Dr.Bohuslava Horáka v Rokycanech</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="ulg001">
+        <v2:created>2012-04-18T23:19:17.555+02:00</v2:created>
+        <v2:name>Severočeská vědecká knihovna v Ústí nad
+            Labem</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="zlg001">
+        <v2:created>2012-04-18T23:19:17.609+02:00</v2:created>
+        <v2:name>Krajská knihovna Františka Bartoše, příspěvková
+            organizace</v2:name>
+        <v2:description/>
+    </v2:registrar>
+    <v2:registrar code="tst01">
+        <v2:created>2012-04-18T23:19:17.665+02:00</v2:created>
+        <v2:name>Národní knihovna České republiky - test</v2:name>
+        <v2:description>testovací registrátor</v2:description>
+    </v2:registrar>
+    <v2:registrar code="tst03">
+        <v2:created>2012-04-18T23:19:17.762+02:00</v2:created>
+        <v2:name>Testovací registrátor</v2:name>
+        <v2:description/>
+    </v2:registrar>
+</v2:registrars>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:urnNbnRerservations xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:maxReservationSize>100</v2:maxReservationSize>
+    <v2:defaultReservationSize>10</v2:defaultReservationSize>
+    <v2:reserved size="8">
+        <v2:urnNbn created="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:tst02-00000c</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:tst02-00000d</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:tst02-00000e</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:tst02-00000f</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:tst02-00000g</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:tst02-00000h</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:tst02-00000i</v2:urnNbn>
+        <v2:urnNbn created="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:tst02-00000j</v2:urnNbn>
+    </v2:reserved>
+</v2:urnNbnRerservations>

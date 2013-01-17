@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
+
 Copyright (C) 2012 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
