@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v3:import xmlns:v3="http://resolver.nkp.cz/v3/">
+    <v3:otherEntity>
+        <v3:titleInfo>
+            <v3:title>Perličky</v3:title>
+            <v3:subTitle>úryvky ze známých melodií pro
+                malé a větší klavíristy</v3:subTitle>
+        </v3:titleInfo>
+        <v3:ccnb>cnb002266563</v3:ccnb>
+        <v3:otherId>ISMN:979-0-66056-072-3</v3:otherId>
+        <v3:documentType>hudebnina</v3:documentType>
+        <v3:digitalBorn>false</v3:digitalBorn>
+        <v3:otherOriginator>Borová, Milada</v3:otherOriginator>
+    </v3:otherEntity>
+    <v3:digitalDocument>
+        <v3:archiverId>3</v3:archiverId>
+        <v3:registrarScopeIdentifiers>
+            <v3:id type="aleph_id">mzk03:000056568</v3:id>
+            <v3:id type="signatura">Moll-0005.102</v3:id>
+            <v3:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,2</v3:id>
+            <v3:id type="mapy_mzk_cz_id">mzk03_000_056_568_2619321907</v3:id>
+        </v3:registrarScopeIdentifiers>
+        <v3:financed>norské fondy</v3:financed>
+        <v3:contractNumber>123</v3:contractNumber>
+        <v3:technicalMetadata>
+            <v3:format version="1.0">jpeg</v3:format>
+            <v3:extent>5 x jpeg2000;5 x mods-alto;1 x mods</v3:extent>
+            <v3:resolution>
+                <v3:horizontal>1280</v3:horizontal>
+                <v3:vertical>1024</v3:vertical>
+            </v3:resolution>
+            <v3:compression ratio="0.3">LZW</v3:compression>
+            <v3:color>
+                <v3:model>RGB</v3:model>
+                <v3:depth>24</v3:depth>
+            </v3:color>
+            <v3:iccProfile>some ICC profile</v3:iccProfile>
+            <v3:pictureSize>
+                <v3:width>600</v3:width>
+                <v3:height>1000</v3:height>
+            </v3:pictureSize>
+        </v3:technicalMetadata>
+    </v3:digitalDocument>
+</v3:import>

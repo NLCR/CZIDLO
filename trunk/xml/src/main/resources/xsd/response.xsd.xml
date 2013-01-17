@@ -55,9 +55,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="url" type="r:url"/>
             <xs:element name="format" type="xs:string" minOccurs="0"/>
             <xs:element name="accessibility" type="xs:string" minOccurs="0"/>
+            <xs:element name="digitalLibraryId" type="xs:int" minOccurs="0"/>
             <xs:element name="created" type="xs:dateTime"/>
             <xs:element name="deactivated" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="digitalLibraryId" type="xs:int" minOccurs="0"/>
             <xs:element name="digitalLibrary" type="r:digitalLibrary" minOccurs="0"/>
             <xs:element name="digitalDocument" type="r:digitalDocument" minOccurs="0"/>
         </xs:sequence>
