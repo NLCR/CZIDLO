@@ -76,7 +76,7 @@ public class DigitalInstanceResource extends Resource {
 
     @DELETE
     @Produces("application/xml")
-    public String removeDigitalInstance(@Context HttpServletRequest req) {
+    public String deactivateDigitalInstance(@Context HttpServletRequest req) {
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException();
         } else {
@@ -88,7 +88,8 @@ public class DigitalInstanceResource extends Resource {
                 } else {
                     dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
                     DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
-                    return xmlBuilder(deactivated, false, false).buildDocumentWithResponseHeader().toXML();
+                    DigitalInstanceBuilder builder = new DigitalInstanceBuilder(deactivated, deactivated.getLibraryId());
+                    return builder.buildDocumentWithResponseHeader().toXML();
                 }
             } catch (UnknownUserException ex) {
                 throw new NotAuthorizedException(ex.getMessage());

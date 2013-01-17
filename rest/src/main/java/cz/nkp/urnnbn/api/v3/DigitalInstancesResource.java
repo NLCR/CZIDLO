@@ -66,7 +66,7 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
             }
             String login = req.getRemoteUser();
             Document xmlDocument = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV3().loadDocument(content);
-            DigitalInstance digitalInstance = digitalInstanceFromDocument(xmlDocument);
+            DigitalInstance digitalInstance = digitalInstanceFromApiV3Document(xmlDocument);
             return super.addNewDigitalInstance(digitalInstance, login);
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);

@@ -66,7 +66,7 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     /**
      * Sub-resource locator method for {id}
      */
-    @Path("id/{idType}/{idValue}")
+    @Path("registrarScopeIdentifier/{idType}/{idValue}")
     @Override
     public DigitalDocumentResource getDigitalDocumentResource(
             @PathParam("idType") String idTypeStr,
