@@ -20,11 +20,14 @@ public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
-    private static final String REGISTER_DD_XSD_V2 = "v2/registerDigitalDocument.xsd";
-    private static final String REGISTER_DD_V2_TO_V3_XSLT = "v2/digDocRegistrationV2ToV3.xsl";
+    //API v2
+    private static final String REGISTER_DD_XSD_V2 = "v2/request/registerDigitalDocument.xsd";
+    private static final String REGISTER_DD_V2_TO_V3_XSLT = "v2/request/digDocRegistrationV2ToV3.xsl";
+    private static final String IMPORT_DI_XSD_V2 = "v2/request/importDigitalInstance.xsd";
+    private static final String IMPORT_DI_V2_TO_V3_XSLT = "v2/request/digInstImportV2ToV3.xsl";
+       
+    //API v3
     private static final String REGISTER_DD_XSD_V3 = "v3/registerDigitalDocument.xsd";
-    private static final String IMPORT_DI_XSD_V2 = "v2/importDigitalInstance.xsd";
-    private static final String IMPORT_DI_V2_TO_V3_XSLT = "v2/digInstImportV2ToV3.xsl";
     private static final String IMPORT_DI_XSD_V3 = "v3/importDigitalInstance.xsd";
     private static final String API_RESPONSE_V3 = "v3/response.xsd";
 

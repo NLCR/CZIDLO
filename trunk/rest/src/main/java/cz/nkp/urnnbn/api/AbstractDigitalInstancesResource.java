@@ -34,6 +34,7 @@ import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import nu.xom.Document;
 
@@ -72,14 +73,13 @@ public class AbstractDigitalInstancesResource extends Resource {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
-            //todo: i knihovny atd.
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);
+            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, instance.getLibraryId());
             result.add(builder);
         }
         return result;
     }
 
-    protected DigitalInstance digitalInstanceFromDocument(Document xmlDocument) {
+    protected DigitalInstance digitalInstanceFromApiV3Document(Document xmlDocument) {
         DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(xmlDocument);
         DigitalInstance result = unmarshaller.getDigitalInstance();
         result.setDigDocId(digDoc.getId());
@@ -123,6 +123,8 @@ public class AbstractDigitalInstancesResource extends Resource {
                 throw new UnknownDigitalInstanceException(digitalInstanceId);
             }
             return new DigitalInstanceResource(instance);
+        } catch (WebApplicationException e) {
+            throw e;
         } catch (RuntimeException ex) {
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());

@@ -67,8 +67,9 @@ public class RegistrarsResource extends AbstractRegistrarsResource {
         try {
             Registrar registrar = registrarFromRegistarCode(registrarCodeStr);
             return new cz.nkp.urnnbn.api.v3.RegistrarResource(registrar);
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
+        }catch (WebApplicationException ex){
+            throw ex;
+        }catch (RuntimeException ex) {
             throw new InternalException(ex.getMessage());
         }
     }

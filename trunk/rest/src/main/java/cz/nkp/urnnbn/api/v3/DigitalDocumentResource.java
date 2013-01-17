@@ -4,11 +4,11 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.AbstractDigitalDocumentResource;
 import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
 import cz.nkp.urnnbn.api.Action;
 import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.exceptions.InternalException;
 import cz.nkp.urnnbn.api.exceptions.UrnNbnDeactivated;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -69,7 +69,7 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    @Path("/identifiers")
+    @Path("/registrarScopeIdentifiers")
     public DigitalDocumentIdentifiersResource getIdentifiersResource() {
         return new DigitalDocumentIdentifiersResource(doc);
     }
