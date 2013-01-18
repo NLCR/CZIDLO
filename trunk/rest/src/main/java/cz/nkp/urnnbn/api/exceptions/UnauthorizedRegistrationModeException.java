@@ -16,6 +16,9 @@
  */
 package cz.nkp.urnnbn.api.exceptions;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import javax.ws.rs.core.Response.Status;
 
 /**
@@ -24,7 +27,18 @@ import javax.ws.rs.core.Response.Status;
  */
 public class UnauthorizedRegistrationModeException extends ApiException {
 
-    public UnauthorizedRegistrationModeException(String errorMessage) {
-        super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage);
+    public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
+        super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
+    }
+
+    private static String errorMessage(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
+        StringBuilder result = new StringBuilder();
+        result.append("cannot register digital document ");
+        if (urn != null) {
+            result.append("with ").append(urn.toString()).append(' ');
+        }
+        result.append("- registration mode ").append(mode.toString()).append(' ');
+        result.append("not allowed for registrar ").append(registrar.getCode()).append(" (").append(registrar.getName()).append(")") ;
+        return result.toString();
     }
 }
