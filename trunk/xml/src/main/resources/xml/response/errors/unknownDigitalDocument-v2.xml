@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:code>UNKNOWN_DIGITAL_DOCUMENT</v2:code>
+    <v2:message>Registrar with code tst02 doesn't register
+        digital document with identifier of type 'OAI_harvester'
+        and value '1238'</v2:message>
+</v2:error>

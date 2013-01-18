@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2012 Martin Řehánek
+Copyright (C) 2013 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,13 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
-    <urnNbn>
-        <status>ACTIVE</status>
-        <value>urn:nbn:cz:tst02-000094</value>
-        <countryCode>cz</countryCode>
-        <registrarCode>tst02</registrarCode>
-        <documentCode>000094</documentCode>
-        <digitalDocumentId>200</digitalDocumentId>
-        <registered>2013-01-18T00:27:06.424+01:00</registered>
-    </urnNbn>
+    <error>
+        <code>INVALID_URN_NBN</code>
+        <message>urn:nbn:cz:tst01-000001: registrar code should be 'tst02'</message>
+    </error>
 </response>
+

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:code>INVALID_REGISTRAR_SCOPE_IDENTIFIER</v2:code>
+    <v2:message>digital document with registrar-scope identifier
+        of type 'OAI_harvester' and value '1234' already
+        registered by registrar with code tst02</v2:message>
+</v2:error>
