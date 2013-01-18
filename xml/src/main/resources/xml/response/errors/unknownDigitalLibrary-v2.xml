@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:code>UNKNOWN_DIGITAL_LIBRARY</v2:code>
+    <v2:message>unknown digital library with id: 338</v2:message>
+</v2:error>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<v2:urnNbn xmlns:v2="http://resolver.nkp.cz/v2/">
+    <v2:created>2013-01-18T00:27:06.424+01:00</v2:created>
+    <v2:status>ACTIVE</v2:status>
+    <v2:registrarCode>tst02</v2:registrarCode>
+    <v2:value>urn:nbn:cz:tst02-000094</v2:value>
+    <v2:digitalDocumentId>200</v2:digitalDocumentId>
+</v2:urnNbn>
