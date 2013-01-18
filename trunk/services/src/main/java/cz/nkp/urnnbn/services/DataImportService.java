@@ -19,6 +19,7 @@ import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
@@ -49,17 +50,20 @@ public interface DataImportService extends BusinessService {
      * @throws UrnUsedException If this urn:nbn is allready being used
      * @throws UnknownRegistrarException if no such registrar with code obtained
      * from importData object exists
-     * @throws RegistarScopeIdentifierCollisionException if registrar
-     * scope identifier with same type and value as one of those present in
-     * importData already exists (for given registrar)
+     * @throws RegistarScopeIdentifierCollisionException if registrar scope
+     * identifier with same type and value as one of those present in importData
+     * already exists (for given registrar)
      * @throws UnknownArchiverException if no such archiver (with id obtained
      * from importData) existes
      * @throws UnknownUserException if no such user with this login exists
      */
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws
-            AccessException, UrnNotFromRegistrarException,
-            UrnUsedException, UnknownRegistrarException,
-            RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException;
+            AccessException, UnknownUserException,
+            UnknownRegistrarException, UnknownArchiverException,
+            UrnNotFromRegistrarException,
+            RegistrationModeNotAllowedException,
+            UrnUsedException,
+            RegistarScopeIdentifierCollisionException;
 
     /**
      * Creates new digital instance for existing digital document.
