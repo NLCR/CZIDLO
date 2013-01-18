@@ -34,6 +34,7 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -90,6 +91,8 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
             UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocumentWithResponseHeader().toXML();
+        } catch (IncorrectPredecessorStatus ex) {
+            throw new IncorrectPredecessorException(ex.getPredecessor());
         } catch (RegistrationModeNotAllowedException ex) {
             throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
