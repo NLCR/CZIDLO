@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -66,7 +67,7 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, RegistrationModeNotAllowedException, UnknownRegistrarException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, RegistrationModeNotAllowedException, UnknownRegistrarException, IncorrectPredecessorStatus {
         synchronized (DigitalDocumentRegistrar.class) {
             checkPredecessorsFromSameRegistrar();
             RollbackRecord transactionLog = new RollbackRecord();
@@ -203,9 +204,9 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digRepId) throws RegistarScopeIdentifierCollisionException {
+    private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digDocId) throws RegistarScopeIdentifierCollisionException {
         try {
-            List<RegistrarScopeIdentifier> ids = persistDigDocIdentifiers(digRepId);
+            List<RegistrarScopeIdentifier> ids = persistDigDocIdentifiers(digDocId);
             logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
         } catch (RegistarScopeIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
@@ -220,9 +221,9 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private void persistUrnNbnWithRollback(UrnNbn urn, RollbackRecord transactionLog, long digRepId) {
+    private void persistUrnNbnWithRollback(UrnNbn urn, RollbackRecord transactionLog, long digDocId) {
         try {
-            persistUrnNbn(urn, digRepId);
+            persistUrnNbn(urn, digDocId);
             logger.log(Level.INFO, "{0} was inserted", urn);
         } catch (Throwable ex) {
             logger.log(Level.INFO, "failed to insert {0}, rolling back", urn);
@@ -231,11 +232,15 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private void persistUrnNbnPredecessorsWithRollback(UrnNbn urn, RollbackRecord transactionLog) {
+    private void persistUrnNbnPredecessorsWithRollback(UrnNbn urn, RollbackRecord transactionLog) throws IncorrectPredecessorStatus {
         deactivateActivePredecessors(urn, transactionLog);
         try {
             persistPredecessors(data.getPredecessors(), urn);
             logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[]{data.getPredecessors().size(), urn.toString()});
+        } catch (IncorrectPredecessorStatus ex) {
+            logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back", new Object[]{data.getPredecessors().size(), urn.toString()});
+            rollbackTransaction(transactionLog);
+            throw ex;
         } catch (Throwable ex) {
             logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back", new Object[]{data.getPredecessors().size(), urn.toString()});
             rollbackTransaction(transactionLog);
@@ -304,10 +309,14 @@ public class DigitalDocumentRegistrar {
         factory.urnDao().insertUrnNbn(withDigDocId);
     }
 
-    private void persistPredecessors(List<UrnNbnWithStatus> predecessors, UrnNbn successor) throws DatabaseException {
+    private void persistPredecessors(List<UrnNbnWithStatus> predecessors, UrnNbn successor) throws DatabaseException, IncorrectPredecessorStatus {
         for (UrnNbnWithStatus predecessor : predecessors) {
             try {
+                checkPredecessorNotFreeOrReserved(predecessor);
                 factory.urnDao().insertUrnNbnPredecessor(predecessor.getUrn(), successor, predecessor.getNote());
+            } catch (IncorrectPredecessorStatus e) {
+                logger.log(Level.INFO, "predecessor {0} of {1} has incorrect status ({2}", new Object[]{predecessor, successor, e.getPredecessor().getStatus()});
+                throw e;
             } catch (RecordNotFoundException e) {
                 logger.log(Level.WARNING, "{0} or {1} doesn't exist", new Object[]{predecessor.getUrn().toString(), successor.toString()});
             } catch (AlreadyPresentException e) {
@@ -466,6 +475,19 @@ public class DigitalDocumentRegistrar {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(data.getRegistrarCode());
+        }
+    }
+
+    private void checkPredecessorNotFreeOrReserved(UrnNbnWithStatus withNote) throws IncorrectPredecessorStatus, DatabaseException {
+        UrnNbn urn = withNote.getUrn();
+        UrnNbn reserved = urnNbnReserved(urn);
+        if (reserved != null) {//URN:NBN is reserved
+            throw new IncorrectPredecessorStatus(new UrnNbnWithStatus(urn, Status.RESERVED, null));
+        }
+        try {
+            factory.urnDao().getUrnNbnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode());
+        } catch (RecordNotFoundException ex) {//URN:NBN is free
+            throw new IncorrectPredecessorStatus(new UrnNbnWithStatus(urn, Status.FREE, null));
         }
     }
 }
