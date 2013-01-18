@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -25,6 +26,7 @@ import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
@@ -64,7 +66,7 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeIdentifierCollisionException, UnknownArchiverException {
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, RegistrationModeNotAllowedException, UnknownRegistrarException {
         synchronized (DigitalDocumentRegistrar.class) {
             checkPredecessorsFromSameRegistrar();
             RollbackRecord transactionLog = new RollbackRecord();
@@ -84,8 +86,9 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private UrnNbn urnToBeUsed(RollbackRecord rollback) throws UrnNotFromRegistrarException, UrnUsedException {
+    private UrnNbn urnToBeUsed(RollbackRecord rollback) throws UrnNotFromRegistrarException, UrnUsedException, RegistrationModeNotAllowedException, UnknownRegistrarException {
         UrnNbn urnInInputData = data.getUrn();
+        checkCorrectRegistrationMode(urnInInputData);
         if (urnInInputData != null) {
             logger.log(Level.INFO, "{0} found in import data", urnInInputData);
             //selected by registrar
@@ -426,7 +429,7 @@ public class DigitalDocumentRegistrar {
                 } catch (DatabaseException ex) {
                     logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
                 }
-            }else{
+            } else {
                 logger.log(Level.INFO, "predecessor {0} of {1} already deactivated", new Object[]{predecessor, urn});
             }
         }
@@ -437,6 +440,32 @@ public class DigitalDocumentRegistrar {
         List<UrnNbnWithStatus> predecessors = data.getPredecessors();
         for (UrnNbnWithStatus predecessor : predecessors) {
             checkUrnBelongsToRegistrar(predecessor.getUrn());
+        }
+    }
+
+    private void checkCorrectRegistrationMode(UrnNbn urnInInputData) throws RegistrationModeNotAllowedException, UnknownRegistrarException {
+        try {
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
+            if (urnInInputData == null) {//URN:NBN is not in registration data
+                if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
+                    throw new RegistrationModeNotAllowedException(UrnNbnRegistrationMode.BY_RESOLVER, null);
+                }
+            } else {
+                UrnNbn urnNbnReserved = urnNbnReserved(urnInInputData);
+                if (urnNbnReserved != null) { //URN:NBN is reserved
+                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
+                        throw new RegistrationModeNotAllowedException(UrnNbnRegistrationMode.BY_RESERVATION, urnNbnReserved);
+                    }
+                } else {//URN:NBN is free
+                    if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
+                        throw new RegistrationModeNotAllowedException(UrnNbnRegistrationMode.BY_RESERVATION, urnInInputData);
+                    }
+                }
+            }
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownRegistrarException(data.getRegistrarCode());
         }
     }
 }
