@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.api.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.api.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.api.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v3.DigitalDocumentResource;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
@@ -34,6 +35,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -76,7 +78,7 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
         }
     }
 
-    protected String registerDigitalDocumentByApiV3(String content, String login) throws ValidityException, IOException, ParsingException  {
+    protected String registerDigitalDocumentByApiV3(String content, String login) throws ValidityException, IOException, ParsingException {
         Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV3().loadDocument(content);
         return registerDigitalDocumentByApiV3(doc, login);
     }
@@ -88,6 +90,8 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
             UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocumentWithResponseHeader().toXML();
+        } catch (RegistrationModeNotAllowedException ex) {
+            throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
@@ -212,7 +216,7 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
 
     private List<UrnNbnWithStatus> appendStatuses(List<UrnNbnWithStatus> predecessors) {
         List<UrnNbnWithStatus> result = new ArrayList<UrnNbnWithStatus>(predecessors.size());
-        for(UrnNbnWithStatus urn : predecessors){
+        for (UrnNbnWithStatus urn : predecessors) {
             UrnNbnWithStatus withCorrectStatus = urnWithStatus(urn.getUrn(), false);
             result.add(new UrnNbnWithStatus(withCorrectStatus.getUrn(), withCorrectStatus.getStatus(), urn.getNote()));
         }
