@@ -14,6 +14,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
@@ -63,6 +64,7 @@ public interface DataImportService extends BusinessService {
             UrnNotFromRegistrarException,
             RegistrationModeNotAllowedException,
             UrnUsedException,
+            IncorrectPredecessorStatus,
             RegistarScopeIdentifierCollisionException;
 
     /**

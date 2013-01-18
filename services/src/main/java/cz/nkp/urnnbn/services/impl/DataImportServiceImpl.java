@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
@@ -49,7 +50,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException, RegistrationModeNotAllowedException {
+    public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException, RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
         return new DigitalDocumentRegistrar(factory, importData).run();
     }
