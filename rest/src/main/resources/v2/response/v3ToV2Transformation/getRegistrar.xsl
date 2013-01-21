@@ -33,13 +33,16 @@
             <xsl:call-template name="description">
                 <xsl:with-param name="root" select="v3:registrar"/>
             </xsl:call-template>
-            <xsl:call-template name="digitalLibraries">
-                <xsl:with-param name="registrar" select="v3:registrar"/>
-            </xsl:call-template>
-            <xsl:call-template name="catalogs">
-                <xsl:with-param name="registrar" select="v3:registrar"/>
-            </xsl:call-template>
-            
+            <xsl:if test="v3:registrar/v3:digitalLibraries">
+                <xsl:call-template name="digitalLibraries">
+                    <xsl:with-param name="registrar" select="v3:registrar"/>
+                </xsl:call-template>
+            </xsl:if>
+            <xsl:if test="v3:registrar/v3:catalogs">
+                <xsl:call-template name="catalogs">
+                    <xsl:with-param name="registrar" select="v3:registrar"/>
+                </xsl:call-template>
+            </xsl:if>
         </v2:registrar>
     </xsl:template>
          
@@ -98,7 +101,7 @@
     </xsl:template>
     
     <xsl:template name="digitalLibrary">
-        <v2:catalog>
+        <v2:digitalLibrary>
             <xsl:call-template name="name">
                 <xsl:with-param name="root" select="."/>
             </xsl:call-template>    
@@ -118,7 +121,7 @@
             <xsl:call-template name="modified">
                 <xsl:with-param name="root" select="."/>
             </xsl:call-template>
-        </v2:catalog>
+        </v2:digitalLibrary>
     </xsl:template>
     
     <xsl:template name="url">

@@ -17,15 +17,14 @@
 package cz.nkp.urnnbn.api;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.exceptions.IncorrectPredecessorException;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.InvalidArchiverIdException;
-import cz.nkp.urnnbn.api.exceptions.InvalidRegistrarScopeIdentifier;
-import cz.nkp.urnnbn.api.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.api.exceptions.NotAuthorizedException;
-import cz.nkp.urnnbn.api.exceptions.UnauthorizedRegistrationModeException;
-import cz.nkp.urnnbn.api.exceptions.UnknownDigitalDocumentException;
-import cz.nkp.urnnbn.api.v3.DigitalDocumentResource;
+import cz.nkp.urnnbn.api.v3.exceptions.IncorrectPredecessorException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidArchiverIdException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarScopeIdentifier;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidUrnException;
+import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnauthorizedRegistrationModeException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -49,7 +48,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.WebApplicationException;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -66,17 +64,12 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
         this.registrar = registrar;
     }
 
-    public String getDigitalDocuments() {
-        try {
-            int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
-            DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
-            return builder.buildDocumentWithResponseHeader().toXML();
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        }
+    public abstract String getDigitalDocumentsXmlRecord();
+
+    public final String getDigitalDocumentsApiV3XmlRecord() {
+        int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
+        DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
+        return builder.buildDocumentWithResponseHeader().toXML();
     }
 
     protected String registerDigitalDocumentByApiV3(String content, String login) throws ValidityException, IOException, ParsingException {
@@ -110,11 +103,6 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
             throw new InternalException(ex);
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
         }
     }
 
@@ -150,59 +138,22 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
         return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
     }
 
-    public DigitalDocumentResource getDigitalDocumentResource(String idTypeStr, String idValue) {
-        try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
-            RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
-            RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
-            id.setRegistrarId(registrar.getId());
-            id.setType(type);
-            id.setValue(idValue);
-            DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
-            if (digDoc == null) {
-                throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
-            }
-            return new DigitalDocumentResource(digDoc, null);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+    public abstract AbstractDigitalDocumentResource getDigitalDocumentResource(String idTypeStr, String idValue);
+
+    protected final DigitalDocument getDigitalDocument(String idTypeStr, String idValue) {
+        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
+        RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
+        id.setRegistrarId(registrar.getId());
+        id.setType(type);
+        id.setValue(idValue);
+        DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
+        if (digDoc == null) {
+            throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
+        } else {
+            return digDoc;
         }
     }
 
-    //    private UrnNbn urnNbnFromParam(String urnParam) throws InvalidUrnException, UnauthorizedRegistrationModeException {
-//        //System.err.println("urnNbnFromParam");
-//        if (urnParam == null || urnParam.isEmpty()) {
-//            if (!registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER)) {
-//                throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESOLVER + " not allowed for registrar " + registrar);
-//            } else {
-//                return null;
-//            }
-//        }
-//
-//        //this is duplicated - same functionality in RecordImporter
-//        //also method isReserved
-//        //requires refactoring
-//        UrnNbn urnNbn = UrnNbn.valueOf(urnParam);
-//        if (!urnNbn.getRegistrarCode().equals(registrar.getCode())) {
-//            throw new InvalidUrnException(urnNbn.toString(), "doesn't match registrar code " + registrar.getCode().toString());
-//        }
-//        Status status = urnWithStatus(urnNbn, false).getStatus();
-//        if (status == Status.ACTIVE) {
-//            throw new InvalidUrnException(urnNbn.toString(), " already active");
-//        }
-//        if (status == Status.DEACTIVATED) {
-//            throw new InvalidUrnException(urnNbn.toString(), " has been deactivated");
-//        }
-//        if (status == Status.RESERVED && !registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION)) {
-//            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_RESERVATION + " not allowed for registrar " + registrar);
-//        }
-//        if (status == Status.FREE && !registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR)) {
-//            throw new UnauthorizedRegistrationModeException("Mode " + UrnNbnRegistrationMode.BY_REGISTRAR + " not allowed for registrar " + registrar);
-//        }
-//        return urnNbn;
-//    }
     public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {
         List<UrnNbnWithStatus> predecessorList = new ArrayList<UrnNbnWithStatus>(predecessorParams.size());
         for (String predecessor : predecessorParams) {

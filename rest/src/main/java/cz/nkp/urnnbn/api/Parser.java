@@ -4,12 +4,12 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.api.exceptions.InvalidDigDocIdType;
-import cz.nkp.urnnbn.api.exceptions.InvalidDigInstanceIdException;
-import cz.nkp.urnnbn.api.exceptions.InvalidQueryParamValueException;
-import cz.nkp.urnnbn.api.exceptions.InvalidRegistrarCodeException;
-import cz.nkp.urnnbn.api.exceptions.InvalidUrnException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigDocIdType;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigInstanceIdException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarCodeException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.dto.UrnNbn;

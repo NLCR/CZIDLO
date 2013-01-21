@@ -4,9 +4,11 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -40,8 +42,15 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @GET
     @Produces("application/xml")
     @Override
-    public String getDigitalDocuments() {
-        return super.getDigitalDocuments();
+    public String getDigitalDocumentsXmlRecord() {
+        try {
+            return super.getDigitalDocumentsApiV3XmlRecord();
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
     }
 
     @POST
@@ -49,6 +58,7 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @Produces("application/xml")
     public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
+            checkServerNotReadOnly();
             String login = req.getRemoteUser();
             return registerDigitalDocumentByApiV3(content, login);
         } catch (ValidityException ex) {
@@ -57,9 +67,9 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
             throw new InvalidDataException(ex);
         } catch (WebApplicationException e) {
             throw e;
-        } catch (Throwable ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex);
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
         }
     }
 
@@ -71,6 +81,16 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     public DigitalDocumentResource getDigitalDocumentResource(
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
-        return super.getDigitalDocumentResource(idTypeStr, idValue);
+        try {
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
+            DigitalDocument digitalDocument = super.getDigitalDocument(idTypeStr, idValue);
+            UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+            return new DigitalDocumentResource(digitalDocument, urn);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
     }
 }

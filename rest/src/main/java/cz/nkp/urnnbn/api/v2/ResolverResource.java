@@ -7,9 +7,9 @@ package cz.nkp.urnnbn.api.v2;
 import cz.nkp.urnnbn.api.AbstractResolverResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.Resource;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.UnknownDigitalDocumentException;
-import cz.nkp.urnnbn.api.exceptions.UnknownUrnException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalDocumentException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownUrnException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -17,8 +17,6 @@ import java.util.logging.Level;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * REST Web Service
@@ -27,9 +25,6 @@ import javax.ws.rs.core.UriInfo;
  */
 @Path("/resolver")
 public class ResolverResource extends AbstractResolverResource {
-
-    @Context
-    private UriInfo context;
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
@@ -54,9 +49,9 @@ public class ResolverResource extends AbstractResolverResource {
             }
         } catch (WebApplicationException e) {
             throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
         }
     }
 }
