@@ -17,7 +17,7 @@ import javax.servlet.ServletContextListener;
  * @author Martin Řehánek
  */
 public class ContextListener implements ServletContextListener {
-    
+
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
     //API v3
@@ -35,8 +35,7 @@ public class ContextListener implements ServletContextListener {
     private static final String DEACTIVATE_DIG_INST_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/deactivateDigitalInstance.xsl";
     private static final String DELETE_REG_SCOPE_ID_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/deleteRegistrarScopeIdentifier.xsl";
     private static final String DELETE_REG_SCOPE_IDS_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/deleteRegistrarScopeIdentifiers.xsl";
-    //TODO
-    //private static final String GET_DIG_DOC_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/.xsl";
+    private static final String GET_DIG_DOC_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/getDigitalDocument.xsl";
     private static final String GET_DIG_DOCS_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/getDigitalDocuments.xsl";
     private static final String GET_DIG_INST_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/getDigitalInstance.xsl";
     private static final String GET_DIG_INSTS_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/getDigitalInstances.xsl";
@@ -59,7 +58,7 @@ public class ContextListener implements ServletContextListener {
         loadApiV2RequestsToApiV3RequestTransformers();
         loadApiV3ResponsesToApiV2ResponsesTransformers();
     }
-    
+
     private void loadPropertiesFile() {
         new ResourceUtilizer(logger) {
             @Override
@@ -70,7 +69,7 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(PROPERTIES_FILE);
     }
-    
+
     private void loadApiV3Resources() {
         new ResourceUtilizer(logger) {
             @Override
@@ -78,14 +77,14 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initDigDocRegistrationXsdV3(in);
             }
         }.run(REGISTER_DD_XSD_V3);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initDigInstImportXsdV3(in);
             }
         }.run(IMPORT_DI_XSD_V3);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
@@ -93,7 +92,7 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(API_RESPONSE_V3);
     }
-    
+
     private void loadApiV2Resources() {
         new ResourceUtilizer(logger) {
             @Override
@@ -101,7 +100,7 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initDigDocRegistrationXsdV2(in);
             }
         }.run(REGISTER_DD_XSD_V2);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
@@ -109,7 +108,7 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(IMPORT_DI_XSD_V2);
     }
-    
+
     private void loadApiV2RequestsToApiV3RequestTransformers() {
         new ResourceUtilizer(logger) {
             @Override
@@ -117,7 +116,7 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initDigDocRegistrationV2ToV3DataTransformer(in);
             }
         }.run(REGISTER_DIG_DOC_V2_TO_V3_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
@@ -125,7 +124,7 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(IMPORT_DI_V2_TO_V3_XSLT);
     }
-    
+
     private void loadApiV3ResponsesToApiV2ResponsesTransformers() {
         new ResourceUtilizer(logger) {
             @Override
@@ -133,21 +132,21 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initErrorResponseV3ToV2Transformer(in);
             }
         }.run(ERROR_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initDeactivateDigInstResponseV3ToV2Transformer(in);
             }
         }.run(DEACTIVATE_DIG_INST_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initDeleteRegScopeIdResponseV3ToV2Transformer(in);
             }
         }.run(DELETE_REG_SCOPE_ID_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
@@ -155,12 +154,12 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(DELETE_REG_SCOPE_IDS_V3_TO_V2_XSLT);
 
-//        new ResourceUtilizer(logger) {
-//            @Override
-//            public void processResource(InputStream in) throws Exception {
-//                ApiModuleConfiguration.instanceOf().initGetDigDocResponseV3ToV2Transformer(in);
-//            }
-//        }.run(GET_DIG_DOC_V3_TO_V2_XSLT);
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initGetDigDocResponseV3ToV2Transformer(in);
+            }
+        }.run(GET_DIG_DOC_V3_TO_V2_XSLT);
 
         new ResourceUtilizer(logger) {
             @Override
@@ -168,84 +167,84 @@ public class ContextListener implements ServletContextListener {
                 ApiModuleConfiguration.instanceOf().initGetDigDocsResponseV3ToV2Transformer(in);
             }
         }.run(GET_DIG_DOCS_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetDigInstResponseV3ToV2Transformer(in);
             }
         }.run(GET_DIG_INST_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetDigInstsResponseV3ToV2Transformer(in);
             }
         }.run(GET_DIG_INSTS_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetRegistrarResponseV3ToV2Transformer(in);
             }
         }.run(GET_REGISTRAR_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetRegistrarsResponseV3ToV2Transformer(in);
             }
         }.run(GET_REGISTRARS_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetRegScopeIdResponseV3ToV2Transformer(in);
             }
         }.run(GET_REG_SCOPE_ID_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetRegScopeIdsResponseV3ToV2Transformer(in);
             }
         }.run(GET_REG_SCOPE_IDS_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetUrnNbnResponseV3ToV2Transformer(in);
             }
         }.run(GET_URN_NBN_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initGetUrnNbnReservationsResponseV3ToV2Transformer(in);
             }
         }.run(GET_URN_NBN_RESERVATIONS_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initRegisterDigDocResponseV3ToV2Transformer(in);
             }
         }.run(REGISTER_DIG_DOC_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initImportDigitalInstanceResponseV3ToV2Transformer(in);
             }
         }.run(IMPORT_DI_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
                 ApiModuleConfiguration.instanceOf().initReserveUrnNbnResponseV3ToV2Transformer(in);
             }
         }.run(RESERVE_URN_NBN_V3_TO_V2_XSLT);
-        
+
         new ResourceUtilizer(logger) {
             @Override
             public void processResource(InputStream in) throws Exception {
@@ -253,7 +252,7 @@ public class ContextListener implements ServletContextListener {
             }
         }.run(SET_OR_UPDATE_REG_SCOPE_ID_V3_TO_V2_XSLT);
     }
-    
+
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         //nothing
