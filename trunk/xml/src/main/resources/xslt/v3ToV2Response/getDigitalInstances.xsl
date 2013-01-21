@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Document   : deleteRegistrarScopeIdentifier.xsl
+    Document   : getDigitalInstances.xsl
     Created on : 16. leden 2013, 1:08
     Author     : martin
     Description:
@@ -18,6 +18,11 @@
     
     <xsl:template match="/v3:response">
         <v2:digitalInstances>
+            <xsl:if test="v3:digitalInstances/@count">
+                <xsl:attribute name="count">
+                    <xsl:value-of select="v3:digitalInstances/@count"/>
+                </xsl:attribute>
+            </xsl:if>
             <xsl:for-each select="v3:digitalInstances/v3:digitalInstance">
                 <xsl:call-template name="digitalInstance"/>
             </xsl:for-each>

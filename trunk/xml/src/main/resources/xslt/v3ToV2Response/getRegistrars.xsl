@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Document   : getRegistrar.xsl
-    Created on : 15. leden 2013, 21:10
+Copyright (C) 2012 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Document   : digInstImportV2ToV3.xsl
+    Created on : 3. leden 2013, 1:31
     Author     : martin
     Description:
         Purpose of transformation follows.
@@ -16,79 +33,63 @@
 >
     <xsl:output method="xml" indent="no"/>
     
-    <xsl:template match="/v3:response">
+    <xsl:template match="/"> 
+        <v2:registrars>
+            <xsl:apply-templates/>
+        </v2:registrars>
+    </xsl:template>
+    
+    <xsl:template match="v3:registrar">
         <v2:registrar>
             <xsl:attribute name="code">
-                <xsl:value-of select="v3:registrar/@code"/>
+                <xsl:value-of select="@code"/>
             </xsl:attribute>
-            <xsl:call-template name="created">
-                <xsl:with-param name="root" select="v3:registrar"/>
-            </xsl:call-template>
-            <xsl:call-template name="modified">
-                <xsl:with-param name="root" select="v3:registrar"/>
-            </xsl:call-template>
-            <xsl:call-template name="name">
-                <xsl:with-param name="root" select="v3:registrar"/>
-            </xsl:call-template>
-            <xsl:call-template name="description">
-                <xsl:with-param name="root" select="v3:registrar"/>
-            </xsl:call-template>
-            <xsl:if test="v3:registrar/v3:digitalLibraries">
+            <xsl:call-template name="created"/>
+            <xsl:call-template name="modified"/>
+            <xsl:call-template name="name"/>
+            <xsl:call-template name="description"/>
+            <xsl:if test="v3:digitalLibraries">
                 <xsl:call-template name="digitalLibraries">
-                    <xsl:with-param name="registrar" select="v3:registrar"/>
+                    <xsl:with-param name="registrar" select="."/>
                 </xsl:call-template>
             </xsl:if>
-            <xsl:if test="v3:registrar/v3:catalogs">
+            <xsl:if test="v3:catalogs">
                 <xsl:call-template name="catalogs">
-                    <xsl:with-param name="registrar" select="v3:registrar"/>
+                    <xsl:with-param name="registrar" select="."/>
                 </xsl:call-template>
             </xsl:if>
         </v2:registrar>
+        
     </xsl:template>
          
     <xsl:template name="created">
-        <xsl:param name="root"/>
-        <xsl:if test="$root/v3:created">
+        <xsl:if test="v3:created">
             <v2:created>
-                <xsl:value-of select="$root/v3:created" />
+                <xsl:value-of select="v3:created" />
             </v2:created>
         </xsl:if>
     </xsl:template>
     
     <xsl:template name="modified">
-        <xsl:param name="root"/>
-        <xsl:if test="$root/v3:modified">
+        <xsl:if test="v3:modified">
             <v2:modified>
-                <xsl:value-of select="$root/v3:modified" />
+                <xsl:value-of select="v3:modified" />
             </v2:modified>
         </xsl:if>
     </xsl:template>
     
     <xsl:template name="name">
-        <xsl:param name="root"/>
-        <xsl:if test="$root/v3:name">
+        <xsl:if test="v3:name">
             <v2:name>
-                <xsl:value-of select="$root/v3:name" />
+                <xsl:value-of select="v3:name" />
             </v2:name>
         </xsl:if>
     </xsl:template>
     
-    <xsl:template name="urlPrefix">
-        <xsl:param name="root"/>
-        <xsl:if test="$root/v3:urlPrefix">
-            <v2:urlPrefix>
-                <xsl:value-of select="$root/v3:urlPrefix" />
-            </v2:urlPrefix>
-        </xsl:if>
-    </xsl:template>
-    
     <xsl:template name="description">
-        <xsl:param name="root"/>
-        <xsl:if test="$root/v3:description">
-            <v2:description>
-                <xsl:value-of select="$root/v3:description" />
-            </v2:description>
-        </xsl:if>
+        <v2:description>
+            <xsl:value-of select="v3:description" />
+        </v2:description>
     </xsl:template>
     
     <xsl:template name="digitalLibraries">
@@ -124,24 +125,13 @@
         </v2:digitalLibrary>
     </xsl:template>
     
-    <xsl:template name="url">
+    <xsl:template name="urlPrefix">
         <xsl:param name="root"/>
-        <xsl:if test="$root/v3:url">
-            <v2:url>
-                <xsl:value-of select="$root/v3:url" />
-            </v2:url>
+        <xsl:if test="$root/v3:urlPrefix">
+            <v2:urlPrefix>
+                <xsl:value-of select="$root/v3:urlPrefix" />
+            </v2:urlPrefix>
         </xsl:if>
-    </xsl:template>
-    
-    <xsl:template name="id">
-        <xsl:param name="type"/>
-        <xsl:param name="value"/>
-        <v2:id>
-            <xsl:attribute name="type">
-                <xsl:value-of select="$type"/>
-            </xsl:attribute>
-            <xsl:value-of select="$value" />
-        </v2:id>
     </xsl:template>
     
     <xsl:template name="catalogs">
@@ -171,6 +161,26 @@
                 <xsl:with-param name="root" select="."/>
             </xsl:call-template>
         </v2:catalog>
+    </xsl:template>
+    
+    <xsl:template name="url">
+        <xsl:param name="root"/>
+        <xsl:if test="$root/v3:url">
+            <v2:url>
+                <xsl:value-of select="$root/v3:url" />
+            </v2:url>
+        </xsl:if>
+    </xsl:template>
+    
+    <xsl:template name="id">
+        <xsl:param name="type"/>
+        <xsl:param name="value"/>
+        <v2:id>
+            <xsl:attribute name="type">
+                <xsl:value-of select="$type"/>
+            </xsl:attribute>
+            <xsl:value-of select="$value" />
+        </v2:id>
     </xsl:template>
 
 </xsl:stylesheet>

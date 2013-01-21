@@ -4,28 +4,4 @@
     <v2:modified>2012-10-29T10:39:30.882+01:00</v2:modified>
     <v2:name>Moravská zemská knihovna - test</v2:name>
     <v2:description>testovací registrátor</v2:description>
-    <v2:digitalLibraries>
-        <v2:catalog>
-            <v2:name>Kramerius 4</v2:name>
-            <v2:id type="INTERNAL">38</v2:id>
-            <v2:description>testovací knihovna</v2:description>
-            <v2:url>http://kramerius4.mzk.cz</v2:url>
-            <v2:created>2012-04-18T23:19:19.574+02:00</v2:created>
-        </v2:catalog>
-        <v2:catalog>
-            <v2:name>Kramerius 3</v2:name>
-            <v2:id type="INTERNAL">39</v2:id>
-            <v2:description>testovací knihovna</v2:description>
-            <v2:url>http://kramerius3.mzk.cz</v2:url>
-            <v2:created>2012-04-18T23:19:19.605+02:00</v2:created>
-            <v2:modified>2012-06-12T22:09:03.123+02:00</v2:modified>
-        </v2:catalog>
-    </v2:digitalLibraries>
-    <v2:catalogs>
-        <v2:catalog>
-            <v2:created>2012-04-18T23:19:19.622+02:00</v2:created>
-            <v2:name>Aleph mzk</v2:name>
-            <v2:urlPrefix>http://iris.mzk.cz</v2:urlPrefix>
-        </v2:catalog>
-    </v2:catalogs>
 </v2:registrar>

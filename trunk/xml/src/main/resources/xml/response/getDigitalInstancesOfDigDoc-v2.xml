@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<v2:digitalInstances xmlns:v2="http://resolver.nkp.cz/v2/">
+<v2:digitalInstances count="3" xmlns:v2="http://resolver.nkp.cz/v2/">
     <v2:digitalInstance active="true">
         <v2:id type="INTERNAL">33</v2:id>
         <v2:created>2012-09-03T00:44:34.603+02:00</v2:created>

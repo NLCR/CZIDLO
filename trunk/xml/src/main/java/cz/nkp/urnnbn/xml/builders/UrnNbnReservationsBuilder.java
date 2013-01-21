@@ -71,7 +71,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
             }
             Element element = new Element("urnNbn", RESOLVER_NS);
             element.appendChild(urnNbn.toString());
-            Attribute reserved = new Attribute("created", urnNbn.getReserved().toString());
+            Attribute reserved = new Attribute("reserved", urnNbn.getReserved().toString());
             element.addAttribute(reserved);
             root.appendChild(element);
         }
