@@ -31,9 +31,9 @@ public class ErrorResponseBuilder extends XmlBuilder {
         if (errorCode == null) {
             throw new NullPointerException("errorCode");
         }
-        if (errorMessage == null) {
-            throw new NullPointerException("errorMessage");
-        }
+//        if (errorMessage == null) {
+//            throw new NullPointerException("errorMessage");
+//        }
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }

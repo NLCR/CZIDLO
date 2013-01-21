@@ -305,17 +305,20 @@ public class Main {
         try {
             String xmlRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
             String xsltRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v3ToV2Response/";
-
-            transform(xmlRootDir + "getRegistrars.xml", xsltRootDir + "getRegistars.xsl", "v2");
             transform(xmlRootDir + "getRegistrar.xml", xsltRootDir + "getRegistrar.xsl", "v2");
+            transform(xmlRootDir + "getRegistrarWithLibrariesAndCatalogs.xml", xsltRootDir + "getRegistrar.xsl", "v2");
+            transform(xmlRootDir + "getRegistrars.xml", xsltRootDir + "getRegistrars.xsl", "v2");
+            transform(xmlRootDir + "getRegistrarsWithLibrariesAndCatalogs.xml", xsltRootDir + "getRegistrars.xsl", "v2");
             transform(xmlRootDir + "getUrnNbnReservations.xml", xsltRootDir + "getUrnNbnReservations.xsl", "v2");
             transform(xmlRootDir + "reserveUrnNbns.xml", xsltRootDir + "reserveUrnNbnBlock.xsl", "v2");
             transform(xmlRootDir + "getDigitalDocuments.xml", xsltRootDir + "getDigitalDocuments.xsl", "v2");
             transform(xmlRootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifiers.xsl", "v2");
+            transform(xmlRootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifierValue.xsl", "v2");
             transform(xmlRootDir + "deleteRegistrarScopeIdentifier.xml", xsltRootDir + "deleteRegistrarScopeIdentifier.xsl", "v2");
             transform(xmlRootDir + "deleteRegistrarScopeIdentifiersOfDigDoc.xml", xsltRootDir + "deleteRegistrarScopeIdentifiers.xsl", "v2");
             transform(xmlRootDir + "postRegistrarScopeIdentifier-insert.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
             transform(xmlRootDir + "postRegistrarScopeIdentifier-update.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
+            transform(xmlRootDir + "getDigitalInstances-global.xml", xsltRootDir + "getDigitalInstances.xsl", "v2");
             transform(xmlRootDir + "getDigitalInstancesOfDigDoc.xml", xsltRootDir + "getDigitalInstances.xsl", "v2");
             transform(xmlRootDir + "getDigitalInstanceById.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");
             transform(xmlRootDir + "getDigitalInstanceById-deactivated.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");

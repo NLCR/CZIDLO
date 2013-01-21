@@ -1,6 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2013 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,15 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
-    <registrar code="tst02" id="38">
-        <name>Moravská zemská knihovna - test</name>
-        <description>testovací registrátor</description>
-        <created>2012-04-18T23:19:17.727+02:00</created>
-        <modified>2012-10-29T10:39:30.882+01:00</modified>
-        <registrationModes>
-            <mode name="BY_RESOLVER" enabled="true" />
-            <mode name="BY_REGISTRAR" enabled="true" />
-            <mode name="BY_RESERVATION" enabled="true" />
-        </registrationModes>
-    </registrar>
+    <digitalInstances count="53" />
 </response>
+
