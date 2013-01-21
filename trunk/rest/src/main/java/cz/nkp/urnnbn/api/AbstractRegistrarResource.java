@@ -16,12 +16,9 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import java.util.logging.Level;
-import javax.ws.rs.WebApplicationException;
 
 /**
  *
@@ -35,19 +32,12 @@ public abstract class AbstractRegistrarResource extends Resource {
         this.registrar = registrar;
     }
 
-    protected String getRegistrarXml(boolean addDigitalLibraries, boolean addCatalogs) {
-        try {
-            RegistrarBuilder builder = registrarBuilder(registrar, addDigitalLibraries, addCatalogs);
-            return builder.buildDocumentWithResponseHeader().toXML();
-        } catch (DatabaseException ex) {
-            //TODO: rid of DatabaseException here
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        }
+    protected String getRegistrarApiV3XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+        RegistrarBuilder builder = registrarBuilder(registrar, addDigitalLibraries, addCatalogs);
+        return builder.buildDocumentWithResponseHeader().toXML();
     }
+
+    public abstract AbstractDigitalDocumentsResource getDigitalDocuments();
+
+    public abstract AbstractUrnNbnReservationsResource getUrnNbnReservations();
 }

@@ -16,7 +16,7 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 public abstract class AbstractRegistrarsResource extends Resource {
 
-    public String getRegistrarsXml(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+    public String getRegistrarsApiV3XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
         RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
         return builder.buildDocumentWithResponseHeader().toXML();

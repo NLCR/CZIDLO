@@ -9,11 +9,12 @@ import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
 import cz.nkp.urnnbn.api.Action;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.ResponseFormat;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.UrnNbnDeactivated;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -31,6 +32,7 @@ import javax.ws.rs.core.Response;
  */
 public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
 
+    private static final Logger logger = Logger.getLogger(cz.nkp.urnnbn.api.v2.DigitalDocumentResource.class.getName());
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_WITH_DIG_INST = "digitalInstances";
 
@@ -52,29 +54,30 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
             if (withDigitalInstancesStr != null) {
                 withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             }
-            loadUrn();
-            if (!urn.isActive()) {
-                if (action == Action.REDIRECT) {
-                    throw new UrnNbnDeactivated(urn);
-                } else { //action = SHOW or DECIDE or UNDEFINED
-                    action = Action.SHOW;
-                }
-            }
             return resolve(action, format, request, withDigitalInstances);
         } catch (WebApplicationException e) {
             throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
         }
     }
 
+    @Override
+    protected Response recordXmlResponse(boolean withDigitalInstances) {
+        DigitalDocumentBuilder builder = digitalDocumentBuilder(withDigitalInstances);
+        String xml = builder.buildDocumentWithResponseHeader().toXML();
+        return Response.ok().entity(xml).build();
+    }
+
     @Path("/registrarScopeIdentifiers")
-    public DigitalDocumentIdentifiersResource getIdentifiersResource() {
-        return new DigitalDocumentIdentifiersResource(doc);
+    @Override
+    public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource() {
+        return new RegistrarScopeIdentifiersResource(doc);
     }
 
     @Path("/digitalInstances")
+    @Override
     public AbstractDigitalInstancesResource getDigitalInstancesResource() {
         return new DigitalInstancesResource(doc);
     }

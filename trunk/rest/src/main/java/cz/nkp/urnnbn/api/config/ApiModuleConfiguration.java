@@ -30,17 +30,39 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationDefaultSize;
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
-    private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV2;
-    private Document digDocRegistrationXsdV2;
+    //API V3
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV3;
     private Document digDocRegistrationXsdV3;
-    private XsltXmlTransformer digDocRegistrationV2ToV3DataTransformer;
-    private ValidatingXmlLoader digInstImportDataValidatingLoaderV2;
-    private Document digInstImportXsdV2;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV3;
     private Document digInstImportXsdV3;
-    private XsltXmlTransformer digInstImportV2ToV3DataTransformer;
     private Document responseV3Xsd;
+    //API V2
+    private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV2;
+    private Document digDocRegistrationXsdV2;
+    private ValidatingXmlLoader digInstImportDataValidatingLoaderV2;
+    private Document digInstImportXsdV2;
+    //API V2 requests -> API V3 requests transformations
+    private XsltXmlTransformer digInstImportV2ToV3DataTransformer;
+    private XsltXmlTransformer digDocRegistrationV2ToV3DataTransformer;
+    //API V3 responses -> API V2 responses transformations
+    private XsltXmlTransformer errorResponseV3ToV2Transformer;
+    private XsltXmlTransformer deactivateDigInstResponseV3ToV2Transformer;
+    private XsltXmlTransformer deleteRegScopeIdResponseV3ToV2Transformer;
+    private XsltXmlTransformer deleteRegScopeIdsResponseV3ToV2Transformer;
+    private XsltXmlTransformer getDigDocResponseV3ToV2Transformer;
+    private XsltXmlTransformer getDigDocsResponseV3ToV2Transformer;
+    private XsltXmlTransformer getDigInstResponseV3ToV2Transformer;
+    private XsltXmlTransformer getDigInstsResponseV3ToV2Transformer;
+    private XsltXmlTransformer getRegistrarResponseV3ToV2Transformer;
+    private XsltXmlTransformer getRegistrarsResponseV3ToV2Transformer;
+    private XsltXmlTransformer getRegScopeIdResponseV3ToV2Transformer;
+    private XsltXmlTransformer getRegScopeIdsResponseV3ToV2Transformer;
+    private XsltXmlTransformer getUrnNbnResponseV3ToV2Transformer;
+    private XsltXmlTransformer getUrnNbnReservationsResponseV3ToV2Transformer;
+    private XsltXmlTransformer importDigitalInstanceResponseV3ToV2Transformer;
+    private XsltXmlTransformer registerDigDocResponseV3ToV2Transformer;
+    private XsltXmlTransformer reserveUrnNbnResponseV3ToV2Transformer;
+    private XsltXmlTransformer setOrUpdateRegScopeIdResponseV3ToV2Transformer;
 
     static public ApiModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -63,24 +85,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
     }
 
-    void initDigDocRegistrationXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
-        digDocRegistrationXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
-        digDocRegistrationDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV2.toXML());
-    }
-
+    //API V3
     void initDigDocRegistrationXsdV3(InputStream in) throws ParsingException, ValidityException, IOException {
         digDocRegistrationXsdV3 = XOMUtils.loadDocumentWithoutValidation(in);
         digDocRegistrationDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV3.toXML());
-    }
-
-    void initDigDocRegistrationV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
-        Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
-        this.digDocRegistrationV2ToV3DataTransformer = new XsltXmlTransformer(xslt);
-    }
-
-    void initDigInstImportXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
-        digInstImportXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
-        digInstImportDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV2.toXML());
     }
 
     void initDigInstImportXsdV3(InputStream in) throws ParsingException, ValidityException, IOException {
@@ -88,13 +96,106 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         digInstImportDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV3.toXML());
     }
 
-    void initDigInstImportV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
-        Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
-        this.digInstImportV2ToV3DataTransformer = new XsltXmlTransformer(xslt);
-    }
-
     void initResponseV3Xsd(InputStream in) throws ParsingException, IOException, XSLException {
         this.responseV3Xsd = XOMUtils.loadDocumentWithoutValidation(in);
+    }
+
+    //API V2
+    void initDigDocRegistrationXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
+        digDocRegistrationXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
+        digDocRegistrationDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV2.toXML());
+    }
+
+    void initDigInstImportXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
+        digInstImportXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
+        digInstImportDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV2.toXML());
+    }
+
+    //API V2 requests -> API V3 requests transformations
+    void initDigDocRegistrationV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.digDocRegistrationV2ToV3DataTransformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initDigInstImportV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.digInstImportV2ToV3DataTransformer = transformerFromXmlFromInputStream(in);
+    }
+
+    //API V3 responses -> API V2 responses transformations
+    void initErrorResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.errorResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initDeactivateDigInstResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.deactivateDigInstResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initDeleteRegScopeIdResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.deleteRegScopeIdResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initDeleteRegScopeIdsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.deleteRegScopeIdsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetDigDocResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getDigDocResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetDigDocsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getDigDocsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetDigInstResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getDigInstResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetDigInstsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getDigInstsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetRegistrarResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getRegistrarResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetRegistrarsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getRegistrarsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetRegScopeIdResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getRegScopeIdResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetRegScopeIdsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getRegScopeIdsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetUrnNbnResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getUrnNbnResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initGetUrnNbnReservationsResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.getUrnNbnReservationsResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initRegisterDigDocResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.registerDigDocResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initImportDigitalInstanceResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.importDigitalInstanceResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initReserveUrnNbnResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.reserveUrnNbnResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    void initSetOrUpdateRegScopeIdResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
+        this.setOrUpdateRegScopeIdResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
+    }
+
+    private XsltXmlTransformer transformerFromXmlFromInputStream(InputStream in) throws ParsingException, IOException, XSLException {
+        Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
+        return new XsltXmlTransformer(xslt);
     }
 
     public Integer getMaxReservedSizeToPrint() {
@@ -151,5 +252,77 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
 
     public Document getDigInstImportXsdV3() {
         return digInstImportXsdV3;
+    }
+
+    public XsltXmlTransformer getErrorResponseV3ToV2Transformer() {
+        return errorResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getDeactivateDigInstResponseV3ToV2Transformer() {
+        return deactivateDigInstResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getDeleteRegScopeIdResponseV3ToV2Transformer() {
+        return deleteRegScopeIdResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getDeleteRegScopeIdsResponseV3ToV2Transformer() {
+        return deleteRegScopeIdsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetDigDocResponseV3ToV2Transformer() {
+        return getDigDocResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetDigDocsResponseV3ToV2Transformer() {
+        return getDigDocsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetDigInstResponseV3ToV2Transformer() {
+        return getDigInstResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetDigInstsResponseV3ToV2Transformer() {
+        return getDigInstsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetRegistrarResponseV3ToV2Transformer() {
+        return getRegistrarResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetRegistrarsResponseV3ToV2Transformer() {
+        return getRegistrarsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetRegScopeIdResponseV3ToV2Transformer() {
+        return getRegScopeIdResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetRegScopeIdsResponseV3ToV2Transformer() {
+        return getRegScopeIdsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetUrnNbnResponseV3ToV2Transformer() {
+        return getUrnNbnResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getGetUrnNbnReservationsResponseV3ToV2Transformer() {
+        return getUrnNbnReservationsResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getRegisterDigDocResponseV3ToV2Transformer() {
+        return registerDigDocResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getImportDigitalInstanceResponseV3ToV2Transformer() {
+        return importDigitalInstanceResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getReserveUrnNbnResponseV3ToV2Transformer() {
+        return reserveUrnNbnResponseV3ToV2Transformer;
+    }
+
+    public XsltXmlTransformer getSetOrUpdateRegScopeIdResponseV3ToV2Transformer() {
+        return setOrUpdateRegScopeIdResponseV3ToV2Transformer;
     }
 }

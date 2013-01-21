@@ -5,13 +5,13 @@
 package cz.nkp.urnnbn.api.v3;
 
 import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
-import cz.nkp.urnnbn.api.DigitalInstanceResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import java.util.logging.Level;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -45,14 +45,30 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
     @GET
     @Produces("application/xml")
     @Override
-    public String getDigitalInstances() {
-        return super.getDigitalInstances();
+    public String getDigitalInstancesXmlRecord() {
+        try {
+            return super.getDigitalInstancesApiV3XmlRecord();
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
     }
 
     @Path("id/{digInstId}")
-    public DigitalInstanceResource getDigitalInstanceRestource(@PathParam("digInstId") String digInstIdStr) {
-        long id = Parser.parseDigInstId(digInstIdStr);
-        return getDetdigitalInstanceResource(id);
+    @Override
+    public DigitalInstanceResource getDigitalInstanceResource(@PathParam("digInstId") String digInstIdStr) {
+        try {
+            long id = Parser.parseDigInstId(digInstIdStr);
+            DigitalInstance digitalInstance = getDigitalInstance(id);
+            return new DigitalInstanceResource(digitalInstance);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
     }
 
     @POST
@@ -61,13 +77,15 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
     public Response addNewDigitalInstance(
             @Context HttpServletRequest req, String content) {
         try {
+            checkServerNotReadOnly();
             if (digDoc == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
             String login = req.getRemoteUser();
-            Document xmlDocument = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV3().loadDocument(content);
-            DigitalInstance digitalInstance = digitalInstanceFromApiV3Document(xmlDocument);
-            return super.addNewDigitalInstance(digitalInstance, login);
+            Document requestXmlData = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV3().loadDocument(content);
+            DigitalInstance digitalInstance = digitalInstanceFromApiV3Document(requestXmlData);
+            String response=  super.addNewDigitalInstanceWithApiV3Response(digitalInstance, login);
+            return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);
         } catch (ParsingException ex) {
@@ -75,6 +93,7 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
             throw new InternalException(e);
         }
     }

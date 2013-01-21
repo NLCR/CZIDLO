@@ -16,10 +16,10 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.InvalidQueryParamValueException;
-import cz.nkp.urnnbn.api.exceptions.UnknownDigitalInstanceException;
-import cz.nkp.urnnbn.api.v3.DigitalDocumentResource;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalInstanceException;
+import cz.nkp.urnnbn.api.v3.exceptions.UrnNbnDeactivated;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -37,7 +37,6 @@ import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
 import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -51,20 +50,33 @@ import javax.ws.rs.core.Response;
  *
  * @author Martin Řehánek
  */
-public class AbstractDigitalDocumentResource extends Resource {
+public abstract class AbstractDigitalDocumentResource extends Resource {
 
+    private static final Logger logger = Logger.getLogger(AbstractDigitalDocumentResource.class.getName());
     protected static final String PARAM_FORMAT = "format";
     private static final String WEB_MODULE_CONTEXT = "web";
     private static final String HEADER_REFERER = "referer";
     protected final DigitalDocument doc;
-    protected UrnNbn urn;
+    private final UrnNbn urn;
 
     public AbstractDigitalDocumentResource(DigitalDocument doc, UrnNbn urn) {
         this.doc = doc;
         this.urn = urn;
     }
 
+    public abstract AbstractRegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource();
+
+    public abstract AbstractDigitalInstancesResource getDigitalInstancesResource();
+
     public Response resolve(Action action, ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
+        // for deactivated URN:NBNs the redirection is impossible
+        if (!urn.isActive()) { //error if force to redirect
+            if (action == Action.REDIRECT) {
+                throw new UrnNbnDeactivated(urn);
+            } else if (action == Action.DECIDE) { //otherwise it is decided to show the recored
+                action = Action.SHOW;
+            }
+        }
         switch (action) {
             case DECIDE:
                 //pokud se najde vhodna digitalni instance, je presmerovano
@@ -75,7 +87,7 @@ public class AbstractDigitalDocumentResource extends Resource {
                 if (digitalInstance != null) {
                     return redirectResponse(digitalInstance);
                 } else {
-                    return recordResponse(format, request, withDigitalInstances);
+                    return showRecordResponse(format, request, withDigitalInstances);
                 }
             case REDIRECT:
                 URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
@@ -90,7 +102,7 @@ public class AbstractDigitalDocumentResource extends Resource {
                     }
                 }
             case SHOW:
-                return recordResponse(format, request, withDigitalInstances);
+                return showRecordResponse(format, request, withDigitalInstances);
             default:
                 return recordXmlResponse(withDigitalInstances);
         }
@@ -115,13 +127,13 @@ public class AbstractDigitalDocumentResource extends Resource {
             } else { //return any uri
                 for (DigitalInstance instance : allDigitalInstanceds) {
                     if (instance.isActive()) {
-                        toUri(instance.getUrl());
+                        return toUri(instance.getUrl());
                     }
                 }
             }
             return null;
         } catch (DatabaseException ex) {
-            Logger.getLogger(DigitalDocumentResource.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -175,7 +187,7 @@ public class AbstractDigitalDocumentResource extends Resource {
         }
     }
 
-    private Response recordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
+    private Response showRecordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         switch (format) {
             case HTML:
                 return redirectResponse(webModuleUri(request));
@@ -200,25 +212,18 @@ public class AbstractDigitalDocumentResource extends Resource {
         }
     }
 
-    private Response recordXmlResponse(boolean withDigitalInstances) {
-        try {
-            RegistrarScopeIdentifiersBuilder digRepIdentifiersBuilder = registrarScopeIdentifiersBuilder(doc.getId());
-            DigitalInstancesBuilder instancesBuilder = withDigitalInstances
-                    ? instancesBuilder(doc) : null;
-            RegistrarBuilder regBuilder = new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);
-            ArchiverBuilder archBuilder = (doc.getRegistrarId() == doc.getArchiverId())
-                    ? null : new ArchiverBuilder(dataAccessService().archiverById(doc.getArchiverId()));
-            IntelectualEntityBuilder entityBuilder = entityBuilder(doc.getIntEntId());
-            DigitalDocumentBuilder builder = new DigitalDocumentBuilder(doc, urn, digRepIdentifiersBuilder, instancesBuilder, regBuilder, archBuilder, entityBuilder);
-            String xml = builder.buildDocumentWithResponseHeader().toXML();
-            return Response.ok().entity(xml).build();
-        } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        }
+    protected abstract Response recordXmlResponse(boolean withDigitalInstances);
+
+    protected final DigitalDocumentBuilder digitalDocumentBuilder(boolean withDigitalInstances) {
+        return new DigitalDocumentBuilder(doc, urn,
+                registrarScopeIdentifiersBuilder(doc.getId()),
+                withDigitalInstances ? instancesBuilder() : null,
+                registrarBuilder(),
+                archiverBuilder(),
+                entityBuilder());
     }
 
-    private DigitalInstancesBuilder instancesBuilder(DigitalDocument doc) throws DatabaseException {
+    private DigitalInstancesBuilder instancesBuilder() {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
@@ -228,18 +233,25 @@ public class AbstractDigitalDocumentResource extends Resource {
         return new DigitalInstancesBuilder(result);
     }
 
-    private IntelectualEntityBuilder entityBuilder(long intEntId) throws DatabaseException {
+    private RegistrarBuilder registrarBuilder() {
+        return new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);
+    }
+
+    private ArchiverBuilder archiverBuilder() {
+        if (doc.getRegistrarId() == doc.getArchiverId()) {
+            return null;
+        } else {
+            return new ArchiverBuilder(dataAccessService().archiverById(doc.getArchiverId()));
+        }
+    }
+
+    private IntelectualEntityBuilder entityBuilder() {
+        long intEntId = doc.getIntEntId();
         IntelectualEntity entity = dataAccessService().entityById(intEntId);
         List<IntEntIdentifier> ieIdentfiers = dataAccessService().intEntIdentifiersByIntEntId(intEntId);
         Publication pub = dataAccessService().publicationByIntEntId(intEntId);
         Originator originator = dataAccessService().originatorByIntEntId(intEntId);
         SourceDocument srcDoc = dataAccessService().sourceDocumentByIntEntId(intEntId);
         return IntelectualEntityBuilder.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
-    }
-
-    protected void loadUrn() {
-        if (urn == null) {
-            urn = dataAccessService().urnByDigDocId(doc.getId(), true);
-        }
     }
 }

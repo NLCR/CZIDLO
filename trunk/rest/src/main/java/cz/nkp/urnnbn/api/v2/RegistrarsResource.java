@@ -18,9 +18,11 @@ package cz.nkp.urnnbn.api.v2;
 
 import cz.nkp.urnnbn.api.AbstractRegistrarsResource;
 import cz.nkp.urnnbn.api.Parser;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 import java.util.logging.Level;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,8 +30,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 /**
  * The functionality is very same as in API v3
@@ -41,33 +41,33 @@ public class RegistrarsResource extends AbstractRegistrarsResource {
 
     private static final String PARAM_DIGITAL_LIBRARIES = "digitalLibraries";
     private static final String PARAM_CATALOGS = "catalogs";
-    @Context
-    private UriInfo context;
 
     @GET
     @Produces("application/xml")
-    public String getRegistrars(
+    public String getRegistrarsXmlRecord(
             @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
             @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         try {
-            boolean addDigitalLibraries = false;
-            if (addDigLibsStr != null) {
-                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+            try {
+                boolean addDigitalLibraries = false;
+                if (addDigLibsStr != null) {
+                    addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+                }
+                boolean addCatalogs = false;
+                if (addCatalogsStr != null) {
+                    addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+                }
+                String apiV3Result = getRegistrarsApiV3XmlRecord(addDigitalLibraries, addCatalogs);
+                XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getGetRegistrarsResponseV3ToV2Transformer();
+                return transformApiV3ToApiV2ResponseAsString(transformer, apiV3Result);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
             }
-            boolean addCatalogs = false;
-            if (addCatalogsStr != null) {
-                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
-            }
-            return super.getRegistrarsXml(addDigitalLibraries, addCatalogs);
-        } catch (DatabaseException ex) {
-            //TODO: rid of this exception
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+        } catch (ApiV3Exception e) {
+            throw new ApiV2Exception(e);
         }
     }
 
@@ -75,13 +75,19 @@ public class RegistrarsResource extends AbstractRegistrarsResource {
      * Sub-resource locator method for {sigla}
      */
     @Path("{registrarCode}")
-    public cz.nkp.urnnbn.api.v2.RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
+    public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
         try {
-            Registrar registrar = registrarFromRegistarCode(registrarCodeStr);
-            return new cz.nkp.urnnbn.api.v2.RegistrarResource(registrar);
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+            try {
+                Registrar registrar = registrarFromRegistarCode(registrarCodeStr);
+                return new RegistrarResource(registrar);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
+            }
+        } catch (ApiV3Exception e) {
+            throw new ApiV2Exception(e);
         }
     }
 }

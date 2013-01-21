@@ -16,14 +16,13 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.exceptions.DigitalInstanceAlreadyPresentException;
-import cz.nkp.urnnbn.api.exceptions.InternalException;
-import cz.nkp.urnnbn.api.exceptions.NotAuthorizedException;
-import cz.nkp.urnnbn.api.exceptions.UnknownDigitalInstanceException;
-import cz.nkp.urnnbn.api.exceptions.UnknownDigitalLibraryException;
+import cz.nkp.urnnbn.api.v3.exceptions.DigitalInstanceAlreadyPresentException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalInstanceException;
+import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalLibraryException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
@@ -34,7 +33,6 @@ import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import nu.xom.Document;
 
@@ -42,7 +40,7 @@ import nu.xom.Document;
  *
  * @author Martin Řehánek
  */
-public class AbstractDigitalInstancesResource extends Resource {
+public abstract class AbstractDigitalInstancesResource extends Resource {
 
     protected final DigitalDocument digDoc;
 
@@ -50,17 +48,14 @@ public class AbstractDigitalInstancesResource extends Resource {
         this.digDoc = digDoc;
     }
 
-    public String getDigitalInstances() {
-        try {
-            DigitalInstancesBuilder builder = instancesBuilder();
-            return builder.buildDocumentWithResponseHeader().toXML();
-        } catch (DatabaseException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
-        }
+    public abstract String getDigitalInstancesXmlRecord();
+
+    protected final String getDigitalInstancesApiV3XmlRecord() {
+        DigitalInstancesBuilder builder = instancesBuilder();
+        return builder.buildDocumentWithResponseHeader().toXML();
     }
 
-    private DigitalInstancesBuilder instancesBuilder() throws DatabaseException {
+    private DigitalInstancesBuilder instancesBuilder() {
         if (digDoc == null) {
             return new DigitalInstancesBuilder(dataAccessService().digitalInstancesCount());
         } else {
@@ -69,7 +64,7 @@ public class AbstractDigitalInstancesResource extends Resource {
         }
     }
 
-    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument doc) throws DatabaseException {
+    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument doc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {
@@ -79,21 +74,22 @@ public class AbstractDigitalInstancesResource extends Resource {
         return result;
     }
 
-    protected DigitalInstance digitalInstanceFromApiV3Document(Document xmlDocument) {
+    protected final DigitalInstance digitalInstanceFromApiV3Document(Document xmlDocument) {
         DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(xmlDocument);
         DigitalInstance result = unmarshaller.getDigitalInstance();
         result.setDigDocId(digDoc.getId());
         return result;
     }
 
-    public Response addNewDigitalInstance(DigitalInstance digitalInstance, String login) {
+    protected final String addNewDigitalInstanceWithApiV3Response(DigitalInstance digitalInstance, String login) {
         try {
             Parser.parseUrl(digitalInstance.getUrl());
             checkNoOtherDigInstInSameLibraryPresent(digitalInstance);
             DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digitalInstance, login);
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digitalInstance.getLibraryId());
-            String responseXml = builder.buildDocumentWithResponseHeader().toXML();
-            return Response.created(null).entity(responseXml).build();
+            return builder.buildDocumentWithResponseHeader().toXML();
+//            String responseXml = builder.buildDocumentWithResponseHeader().toXML();
+//            return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (AccessException ex) {
@@ -116,18 +112,14 @@ public class AbstractDigitalInstancesResource extends Resource {
         }
     }
 
-    protected DigitalInstanceResource getDetdigitalInstanceResource(long digitalInstanceId) {
-        try {
-            DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
-            if (instance == null) {
-                throw new UnknownDigitalInstanceException(digitalInstanceId);
-            }
-            return new DigitalInstanceResource(instance);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (RuntimeException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+    public abstract AbstractDigitalInstanceResource getDigitalInstanceResource(String digitalInstanceIdStr);
+
+    protected final DigitalInstance getDigitalInstance(long digitalInstanceId) {
+        DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
+        if (instance == null) {
+            throw new UnknownDigitalInstanceException(digitalInstanceId);
+        } else {
+            return instance;
         }
     }
 }
