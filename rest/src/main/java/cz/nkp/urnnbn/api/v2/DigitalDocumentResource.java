@@ -8,11 +8,13 @@ import cz.nkp.urnnbn.api.AbstractDigitalDocumentResource;
 import cz.nkp.urnnbn.api.Action;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.ResponseFormat;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
+import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +56,6 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
             if (withDigitalInstancesStr != null) {
                 withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             }
-            //TODO: dig doc xml v3 -> v2 transformation
             return resolve(action, format, request, withDigitalInstances);
         } catch (ApiV3Exception e) {
             throw new ApiV2Exception(e);
@@ -70,9 +71,8 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
     protected Response recordXmlResponse(boolean withDigitalInstances) {
         DigitalDocumentBuilder builder = digitalDocumentBuilder(withDigitalInstances);
         String apiV3Response = builder.buildDocumentWithResponseHeader().toXML();
-        //XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().
-        //TODO: transforamtion to V3
-        String transformed = apiV3Response;
+        XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getGetDigDocResponseV3ToV2Transformer();
+        String transformed = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
         return Response.ok().entity(transformed).build();
     }
 
