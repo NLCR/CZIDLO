@@ -99,49 +99,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:11:53.361+02:00</created>
-                <deactivated>2012-09-02T14:11:53.361+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="20" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:11:56.752+02:00</created>
-                <deactivated>2012-09-02T14:11:56.752+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="21" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:11:57.775+02:00</created>
-                <deactivated>2012-09-02T14:11:57.775+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="22" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:19:37.359+02:00</created>
-                <deactivated>2012-09-02T14:19:37.359+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="23" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:19:38.881+02:00</created>
-                <deactivated>2012-09-02T14:19:38.881+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="24" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:19:39.779+02:00</created>
-                <deactivated>2012-09-02T14:19:39.779+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="25" active="true">
                 <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-02T14:19:40.541+02:00</created>
-                <deactivated>2012-09-02T14:19:40.541+02:00</deactivated>
             </digitalInstance>
         </digitalInstances>
     </digitalDocument>

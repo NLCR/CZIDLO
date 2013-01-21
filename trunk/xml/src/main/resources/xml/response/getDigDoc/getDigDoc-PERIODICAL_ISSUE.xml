@@ -103,21 +103,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-03T00:43:12.078+02:00</created>
-                <deactivated>2012-09-03T00:43:12.078+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="31" active="true">
                 <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-03T00:43:14.424+02:00</created>
-                <deactivated>2012-09-03T00:43:14.424+02:00</deactivated>
             </digitalInstance>
             <digitalInstance id="32" active="true">
                 <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
                 <created>2012-09-03T00:43:15.849+02:00</created>
-                <deactivated>2012-09-03T00:43:15.849+02:00</deactivated>
             </digitalInstance>
         </digitalInstances>
     </digitalDocument>

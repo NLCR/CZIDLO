@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         //xpathTest();
         //xsltTest();
-        validateXmlExamples();
+        //validateXmlExamples();
         //transformationTest();
         testApiV2Responses();
         testApiV2ErrorResponses();
@@ -82,14 +82,14 @@ public class Main {
         //get digital documents
         validate(rootDir + "getDigitalDocuments.xml", xsd);
         //get digital document
-        validate(rootDir + "getDigDoc-MONOGRAPH.xml", xsd);
-        validate(rootDir + "getDigDoc-MONOGRAPH_VOLUME.xml", xsd);
-        validate(rootDir + "getDigDoc-PERIODICAL.xml", xsd);
-        validate(rootDir + "getDigDoc-PERIODICAL_VOLUME.xml", xsd);
-        validate(rootDir + "getDigDoc-PERIODICAL_ISSUE.xml", xsd);
-        validate(rootDir + "getDigDoc-ANALYTICAL.xml", xsd);
-        validate(rootDir + "getDigDoc-THESIS.xml", xsd);
-        validate(rootDir + "getDigDoc-OTHER.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-MONOGRAPH.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-MONOGRAPH_VOLUME.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-PERIODICAL.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-PERIODICAL_VOLUME.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-PERIODICAL_ISSUE.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-ANALYTICAL.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-THESIS.xml", xsd);
+        validate(rootDir + "getDigDoc/getDigDoc-OTHER.xml", xsd);
         //get digital instances of digital document
         validate(rootDir + "getDigitalInstancesOfDigDoc.xml", xsd);
         //get registrar scope identifiers of digital document
@@ -312,6 +312,16 @@ public class Main {
             transform(xmlRootDir + "getUrnNbnReservations.xml", xsltRootDir + "getUrnNbnReservations.xsl", "v2");
             transform(xmlRootDir + "reserveUrnNbns.xml", xsltRootDir + "reserveUrnNbnBlock.xsl", "v2");
             transform(xmlRootDir + "getDigitalDocuments.xml", xsltRootDir + "getDigitalDocuments.xsl", "v2");
+            
+            transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH_VOLUME.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL_VOLUME.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL_ISSUE.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-ANALYTICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-THESIS.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            transform(xmlRootDir + "getDigDoc/getDigDoc-OTHER.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
+            
             transform(xmlRootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifiers.xsl", "v2");
             transform(xmlRootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifierValue.xsl", "v2");
             transform(xmlRootDir + "deleteRegistrarScopeIdentifier.xml", xsltRootDir + "deleteRegistrarScopeIdentifier.xsl", "v2");

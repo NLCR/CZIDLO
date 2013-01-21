@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2012 Martin Řehánek
+Copyright (C) 2011, 2012 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,36 +17,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
-    <digitalDocument id="9">
+    <digitalDocument id="11">
         <urnNbn>
             <value>urn:nbn:cz:tst02-000005</value>
-            <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce"/>
         </urnNbn>
         <financed>norské fondy</financed>
         <contractNumber>123</contractNumber>
-        <created>2012-04-18T23:21:56.517+02:00</created>
-        <intelectualEntity type="PERIODICAL_VOLUME">
-            <created>2012-04-18T23:21:56.426+02:00</created>
+        <created>2012-04-18T23:21:57.250+02:00</created>
+        <intelectualEntity type="ANALYTICAL">
+            <created>2012-04-18T23:21:56.938+02:00</created>
+            <modified>2012-04-23T18:51:58.796+02:00</modified>
             <titleInfo>
-                <periodicalTitle>Rudé právo</periodicalTitle>
-                <volumeTitle>ročník 1945</volumeTitle>
+                <title>O slavných hudebnících</title>
+                <subTitle>Mozart v ústním podání; Mozart, W. A.</subTitle>
             </titleInfo>
-            <ccnb>cnb000431774</ccnb>
-            <issn>0032-6569</issn>
-            <otherId>SICI:TODO</otherId>
-            <documentType>ročník novin</documentType>
-            <digitalBorn>false</digitalBorn>
-            <primaryOriginator type="CORPORATION">Komunistická strana Československa</primaryOriginator>
+            <otherId>EAN:9770862592005</otherId>
+            <documentType>novinový článek</documentType>
             <otherOriginator>Jan Ilustrator</otherOriginator>
-            <publication>
-                <publisher>Ústřední výbor KSČ</publisher>
-                <place>Praha</place>
-                <year>1945</year>
-            </publication>
+            <sourceDocument>
+                <titleInfo>
+                    <title>Lidové noviny</title>
+                    <volumeTitle>ročník 1949</volumeTitle>
+                    <issueTitle>číslo 123</issueTitle>
+                </titleInfo>
+                <otherId>ISBN2:0862-5921</otherId>
+                <publication>
+                    <publisher>Pavel Váša a František Šelepa</publisher>
+                    <place>Brno</place>
+                    <year>1941</year>
+                </publication>
+            </sourceDocument>
         </intelectualEntity>
         <technicalMetadata>
             <format version="1.0">jpeg</format>
-            <extent>12 x jpeg2000;12 x mods-alto;1 x mods</extent>
+            <extent>1 x jpeg2000</extent>
             <resolution>
                 <horizontal>1280</horizontal>
                 <vertical>1024</vertical>
@@ -63,8 +67,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </pictureSize>
         </technicalMetadata>
         <registrarScopeIdentifiers>
-            <id type="OAI_harvester">1236</id>
-            <id type="K4_uuid">38bfc69d-1d10-4822-b7a4-c7531bb4aedi</id>
+            <id type="OAI_harvester">1238</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
         </registrarScopeIdentifiers>
         <registrar code="tst02" id="38">
             <name>Moravská zemská knihovna - test</name>
@@ -82,20 +86,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <description>Mala knihovna 3</description>
             <created>2012-04-18T23:19:15.842+02:00</created>
         </archiver>
-        <digitalInstances count="2">
-            <digitalInstance id="26" active="true">
-                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+        <digitalInstances count="3">
+            <digitalInstance id="33" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
-                <created>2012-09-03T00:13:01.430+02:00</created>
-                <deactivated>2012-09-03T00:13:01.430+02:00</deactivated>
+                <created>2012-09-03T00:44:34.603+02:00</created>
+                <deactivated>2012-09-19T00:37:10.920+02:00</deactivated>
             </digitalInstance>
-            <digitalInstance id="27" active="true">
-                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+            <digitalInstance id="34" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
                 <format>jpg;pdf</format>
                 <accessibility>volně přístupné</accessibility>
-                <created>2012-09-03T00:13:22.246+02:00</created>
-                <deactivated>2012-09-03T00:13:22.246+02:00</deactivated>
+                <created>2012-09-19T00:37:25.362+02:00</created>
+                <deactivated>2012-09-19T00:37:58.322+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="35" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-19T00:39:41.117+02:00</created>
             </digitalInstance>
         </digitalInstances>
     </digitalDocument>
