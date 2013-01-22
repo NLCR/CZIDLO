@@ -8,7 +8,6 @@ import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
 import cz.nkp.urnnbn.oaipmhprovider.OaiException;
 import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
 import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
-import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Repository;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.CompleteList;

@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
-import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ListRequestType;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ResumptionTokenManager;
@@ -36,9 +35,4 @@ public class ListIdentifiers extends AbstractListResponse {
     ResumptionTokenManager getResultPartsManager() {
         return partsManager;
     }
-
-//    @Override
-//    void appendDataToRoot(Identifier itemId) throws IOException {
-//        ElementAppender.appendHeaderType(rootEl, null);fdsafa
-//    }
 }
