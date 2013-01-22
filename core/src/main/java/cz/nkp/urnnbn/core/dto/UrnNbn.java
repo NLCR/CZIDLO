@@ -26,6 +26,7 @@ public class UrnNbn {
     private final DateTime reserved;
     private final DateTime registered;
     private final DateTime deactivated;
+    private final String deactivationNote;
     private final Boolean active;
     List<UrnNbnWithStatus> predecessors;
     List<UrnNbnWithStatus> successors;
@@ -44,6 +45,7 @@ public class UrnNbn {
         this.reserved = reserved;
         this.registered = null;
         this.deactivated = null;
+        this.deactivationNote = null;
         this.active = null;
     }
 
@@ -63,8 +65,11 @@ public class UrnNbn {
      * @param digDocId
      * @param created
      * @param deactivated
+     * @param deactivationNote
+     * @param active
+     * @param deactivationNote 
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated, boolean active) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated, boolean active, String deactivationNote) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
@@ -72,6 +77,7 @@ public class UrnNbn {
         this.registered = registered;
         this.deactivated = deactivated;
         this.active = active;
+        this.deactivationNote = deactivationNote;
     }
 
     public String getDocumentCode() {
@@ -96,6 +102,10 @@ public class UrnNbn {
 
     public DateTime getDeactivated() {
         return deactivated;
+    }
+
+    public String getDeactivationNote() {
+        return deactivationNote;
     }
 
     public Boolean isActive() {
