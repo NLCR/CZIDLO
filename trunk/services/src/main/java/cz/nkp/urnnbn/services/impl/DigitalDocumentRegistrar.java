@@ -433,7 +433,7 @@ public class DigitalDocumentRegistrar {
                 try {
                     UrnNbn urnDeactivated = predecessor.getUrn();
                     logger.log(Level.INFO, "deactivating {0} (predecessor of {1})", new Object[]{urnDeactivated, urn});
-                    factory.urnDao().deactivateUrnNbn(urnDeactivated.getRegistrarCode(), urnDeactivated.getDocumentCode());
+                    factory.urnDao().deactivateUrnNbn(urnDeactivated.getRegistrarCode(), urnDeactivated.getDocumentCode(), null);
                     predecessorsDeactivated.add(urnDeactivated);
                 } catch (DatabaseException ex) {
                     logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});

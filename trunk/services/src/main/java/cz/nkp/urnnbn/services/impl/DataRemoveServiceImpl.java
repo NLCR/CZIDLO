@@ -171,11 +171,11 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void deactivateUrnNbn(UrnNbn urn, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
+    public void deactivateUrnNbn(UrnNbn urn, String login, String note) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
             authorization.checkAccessRights(registrarId, login);
-            factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
+            factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), note);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

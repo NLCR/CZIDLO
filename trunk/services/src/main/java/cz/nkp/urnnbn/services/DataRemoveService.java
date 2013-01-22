@@ -72,7 +72,18 @@ public interface DataRemoveService {
             UnknownUserException, AccessException,
             UnknownDigInstException;
 
-    public void deactivateUrnNbn(UrnNbn urn, String login) throws
+    /**
+     * Deactivates URN:NBN. Record of deactivated URN:NBN will be still present
+     * but resolvation algorithm never redirect to any digital instance of deactivated URN:NBN.
+     *
+     * @param urn
+     * @param login login of user performing this operation
+     * @param note note describing reasons for deactivation
+     * @throws UnknownUserException
+     * @throws AccessException
+     * @throws UnknownDigDocException
+     */
+    public void deactivateUrnNbn(UrnNbn urn, String login, String note) throws
             UnknownUserException, AccessException,
             UnknownDigDocException;
 }
