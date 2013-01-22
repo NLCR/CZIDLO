@@ -402,6 +402,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
+            <xs:element name="deactivationNote" type="xs:string" minOccurs="0"/> 
             <xs:element name="value" type="r:urnNbnType"/> 
             <xs:element name="countryCode" type="r:countryCode" minOccurs="0"/> 
             <xs:element name="registrarCode" type="r:registrarCode" minOccurs="0"/> 
