@@ -77,8 +77,10 @@ public class RepositoryImpl implements Repository {
         UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
         switch (fetechedUrn.getStatus()) {
             case DEACTIVATED:
+                //TODO: before implementng deletedRecord will even deactivated dig docs available
                 //TODO: potentially return another implementation subclass of Record like DeletedRecord
-                return null;
+                //return null;
+                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
             case ACTIVE:
                 return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
             case FREE:
