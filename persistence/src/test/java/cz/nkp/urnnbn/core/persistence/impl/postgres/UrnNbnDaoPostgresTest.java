@@ -214,6 +214,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
     
     public void testGetUrnNbnDeactivated() throws Exception {
         String documentCode = "123456";
+        String deactivationNote="fadfadfadf";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
@@ -221,7 +222,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         Timestamp reservedTs = DateTimeUtils.datetimeToTimestamp(reserved);
         UrnNbn inserted = new UrnNbn(registrar.getCode(), documentCode, doc.getId(), reserved);
         urnDao.insertUrnNbn(inserted);
-        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), documentCode);
+        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), documentCode, deactivationNote);
 
         UrnNbn fetchedByRegistrarCodeDocumentCode = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), documentCode);
         assertNotNull(fetchedByRegistrarCodeDocumentCode);
@@ -234,6 +235,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getRegistered());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDeactivated());
         assertEquals(inserted, fetchedByRegistrarCodeDocumentCode);
+        assertEquals(deactivationNote, fetchedByRegistrarCodeDocumentCode.getDeactivationNote());
         
         UrnNbn fetchedByDigDocId = urnDao.getUrnNbnByDigDocId(doc.getId());
         assertNotNull(fetchedByDigDocId);
@@ -246,6 +248,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByDigDocId.getRegistered());
         assertNotNull(fetchedByDigDocId.getDeactivated());
         assertEquals(inserted, fetchedByDigDocId);
+        assertEquals(deactivationNote, fetchedByDigDocId.getDeactivationNote());
     }
     
 
@@ -389,12 +392,14 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(fetched.isActive());
         //deactivation
-        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        String deactivationNote = "fasdfasdfasdfa";
+        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode(), deactivationNote);
         UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivated.isActive());
         //another deactivation
         UrnNbn deactivatedAgain = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivatedAgain.isActive());
+        assertEquals(deactivationNote, deactivatedAgain.getDeactivationNote());
     }
 
     public void testReactivateUrnNbn() throws Exception {
@@ -405,13 +410,14 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(fetched.isActive());
         //deactivation
-        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode());
+        urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode(), "deactivated because of something");
         UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivated.isActive());
         //reactivation
         urnDao.reactivateUrnNbn(deactivated.getRegistrarCode(), deactivated.getDocumentCode());
         UrnNbn reactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(reactivated.isActive());
+        assertNull(reactivated.getDeactivationNote());
     }
 
     public void testDeleteUrnNbn() throws Exception {
