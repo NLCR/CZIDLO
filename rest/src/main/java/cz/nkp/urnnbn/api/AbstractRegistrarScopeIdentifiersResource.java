@@ -131,7 +131,7 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         try {
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
             RegistrarScopeIdentifier identifier = dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
-            dataRemoveService().removeDigitalDocumentId(doc.getId(), idType, login);
+            dataRemoveService().removeRegistrarScopeIdentifier(doc.getId(), idType, login);
             RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(identifier);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
@@ -150,7 +150,7 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
     protected final String deleteAllRegistrarScopeIdentifiersWithApiV3Response(String login) {
         try {
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
-            dataRemoveService().removeDigitalDocumentIdentifiers(doc.getId(), login);
+            dataRemoveService().removeRegistrarScopeIdentifiers(doc.getId(), login);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
