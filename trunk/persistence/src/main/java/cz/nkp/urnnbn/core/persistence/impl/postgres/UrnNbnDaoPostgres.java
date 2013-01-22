@@ -236,8 +236,8 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
-    public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException {
-        DaoOperation operation = new NoResultOperation(new DeactivateUrnNbn(registrarCode, documentCode));
+    public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode, String note) throws DatabaseException {
+        DaoOperation operation = new NoResultOperation(new DeactivateUrnNbn(registrarCode, documentCode, note));
         try {
             runInTransaction(operation);
         } catch (PersistenceException e) {

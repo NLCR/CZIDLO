@@ -40,7 +40,8 @@ public class ReactivateUrnNbn implements StatementWrapper {
     public String preparedStatement() {
         return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET "
                 + UrnNbnDAO.ATTR_DEACTIVATED + "=?,"
-                + UrnNbnDAO.ATTR_ACTIVE + "=?"
+                + UrnNbnDAO.ATTR_ACTIVE + "=?,"
+                + UrnNbnDAO.ATTR_DEACTIVATION_NOTE + "=?"
                 + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE + "=?";
     }
 
@@ -48,8 +49,9 @@ public class ReactivateUrnNbn implements StatementWrapper {
         try {
             st.setTimestamp(1, null);
             st.setBoolean(2, true);
-            st.setString(3, registrarCode.toString());
-            st.setString(4, documentCode);
+            st.setString(3, null);
+            st.setString(4, registrarCode.toString());
+            st.setString(5, documentCode);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

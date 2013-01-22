@@ -26,22 +26,25 @@ import java.sql.SQLException;
 
 /**
  *
- * @author Martin Řehánek
+ * @author Martin ŘehánekF
  */
 public class DeactivateUrnNbn implements StatementWrapper {
 
     private final RegistrarCode registrarCode;
     private final String documentCode;
+    private final String deactivationNote;
 
-    public DeactivateUrnNbn(RegistrarCode registrarCode, String documentCode) {
+    public DeactivateUrnNbn(RegistrarCode registrarCode, String documentCode, String deactivationNote) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode;
+        this.deactivationNote = deactivationNote;
     }
 
     public String preparedStatement() {
         return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET "
                 + UrnNbnDAO.ATTR_DEACTIVATED + "=?,"
-                + UrnNbnDAO.ATTR_ACTIVE + "=?"
+                + UrnNbnDAO.ATTR_ACTIVE + "=?,"
+                + UrnNbnDAO.ATTR_DEACTIVATION_NOTE + "=?"
                 + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE + "=?";
     }
 
@@ -49,8 +52,9 @@ public class DeactivateUrnNbn implements StatementWrapper {
         try {
             st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setBoolean(2, false);
-            st.setString(3, registrarCode.toString());
-            st.setString(4, documentCode);
+            st.setString(3, deactivationNote);
+            st.setString(4, registrarCode.toString());
+            st.setString(5, documentCode);
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

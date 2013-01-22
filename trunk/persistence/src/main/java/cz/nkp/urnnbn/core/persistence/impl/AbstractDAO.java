@@ -25,12 +25,12 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAndStri
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteRecordsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByLong;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByStringLong;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByStringString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRecordTimestamp;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
@@ -259,7 +259,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, dto.getId()});
             if ("23503".equals(ex.getSQLState())) {
@@ -293,7 +292,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, idAttrValue});
             if ("23503".equals(ex.getSQLState())) {
@@ -358,7 +356,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete from {0} where {1}={2}", new Object[]{tableName, idAttrName, idValue});
             if ("23503".equals(ex.getSQLState())) {
@@ -388,7 +385,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete from {0} where "
                     + "{1}={2} and {3}={4}",
@@ -417,7 +413,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete from {0} where "
                     + "{1}={2} and {3}={4}",
@@ -446,7 +441,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete from {0} "
                     + "where {1}={2} and {3}={4}",
@@ -469,7 +463,6 @@ public abstract class AbstractDAO {
         } catch (PersistenceException ex) {
             //cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return;
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete all records from {0}", tableName);
             if ("23503".equals(ex.getSQLState())) {

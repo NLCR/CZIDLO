@@ -23,6 +23,6 @@ public class UrnNbnReservedRT implements ResultsetTransformer {
         RegistrarCode registrarCode = RegistrarCode.valueOf(resultSet.getString(UrnNbnReservedDAO.ATTR_REGISTRAR_CODE));
         String documentCode = resultSet.getString(UrnNbnReservedDAO.ATTR_DOCUMENT_CODE);
         DateTime reserved = DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(UrnNbnReservedDAO.ATTR_CREATED));
-        return new UrnNbn(registrarCode, documentCode, null, reserved, null, null, false);
+        return new UrnNbn(registrarCode, documentCode, null, reserved, null, null, false, null);
     }
 }

@@ -27,6 +27,7 @@ public interface UrnNbnDAO {
     public String ATTR_REGISTRAR_CODE = "registrarCode";
     public String ATTR_DOCUMENT_CODE = "documentCode";
     public String ATTR_ACTIVE = "active";
+    public String ATTR_DEACTIVATION_NOTE = "deactivationNote";
     //predecessor/successor
     public String SUCCESSOR_TABLE_NAME = "UrnNbnSuccessors";
     public String ATTR_PRECESSOR_REGISTRAR_CODE = "predecessorRegCode";
@@ -66,7 +67,7 @@ public interface UrnNbnDAO {
     //only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
-    public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
+    public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode, String note) throws DatabaseException;
 
     //only for tests, rollbacks
     public void deleteUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
