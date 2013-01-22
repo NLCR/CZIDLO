@@ -38,7 +38,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeDigitalDocumentIdentifiers(long digDocId, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
+    public void removeRegistrarScopeIdentifiers(long digDocId, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(digDocId);
             authorization.checkAccessRights(registrarId, login);
@@ -52,7 +52,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     }
 
     @Override
-    public void removeDigitalDocumentId(long digDocId, RegistrarScopeIdType type, String login) throws UnknownUserException, AccessException, UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException {
+    public void removeRegistrarScopeIdentifier(long digDocId, RegistrarScopeIdType type, String login) throws UnknownUserException, AccessException, UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException {
         try {
             long registrarId = registrarOfDigDoc(digDocId);
             authorization.checkAccessRights(registrarId, login);
