@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>DEACTIVATED</status>
+        <deactivationNote>poznamka</deactivationNote>
         <value>urn:nbn:cz:tst02-00001o</value>
         <countryCode>cz</countryCode>
         <registrarCode>tst02</registrarCode>

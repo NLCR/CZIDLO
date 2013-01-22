@@ -40,6 +40,7 @@ public class UrnNbnBuilder extends XmlBuilder {
         Element root = new Element("urnNbn", RESOLVER_NS);
         UrnNbn urn = urnWithStatus.getUrn();
         appendElementWithContentIfNotNull(root, urnWithStatus.getStatus().name(), "status");
+        appendElementWithContentIfNotNull(root, urn.getDeactivationNote(), "deactivationNote");
         appendElementWithContentIfNotNull(root, urn.toString(), "value");
         appendElementWithContentIfNotNull(root, CountryCode.getCode(), "countryCode");
         appendElementWithContentIfNotNull(root, urn.getRegistrarCode(), "registrarCode");

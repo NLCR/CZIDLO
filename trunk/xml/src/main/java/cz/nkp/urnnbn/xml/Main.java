@@ -22,8 +22,9 @@ public class Main {
     public static void main(String[] args) {
         //xpathTest();
         //xsltTest();
-        //validateXmlExamples();
         //transformationTest();
+        
+        validateXmlExamples();
         testApiV2Responses();
         testApiV2ErrorResponses();
     }
