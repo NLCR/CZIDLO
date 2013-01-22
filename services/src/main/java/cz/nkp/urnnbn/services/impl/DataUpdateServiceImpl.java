@@ -67,7 +67,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateDigitalDocument(DigitalDocument doc, String login) throws AccessException, UnknownUserException, UnknownDigDocException {
         try {
-            authorization.checkAccessRights(doc.getRegistrarId(), login);
+            authorization.checkAccessRightsOrAdmin(doc.getRegistrarId(), login);
             factory.documentDao().updateDocument(doc);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

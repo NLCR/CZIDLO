@@ -24,11 +24,11 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
  */
 public interface DataRemoveService {
 
-    public void removeDigitalDocumentIdentifiers(long digDocId, String login) throws
+    public void removeRegistrarScopeIdentifiers(long digDocId, String login) throws
             UnknownUserException, AccessException,
             UnknownDigDocException;
 
-    public void removeDigitalDocumentId(long digDocId, RegistrarScopeIdType type, String login) throws
+    public void removeRegistrarScopeIdentifier(long digDocId, RegistrarScopeIdType type, String login) throws
             UnknownUserException, AccessException,
             UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException;
 
