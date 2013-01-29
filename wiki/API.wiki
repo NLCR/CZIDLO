@@ -59,7 +59,7 @@ Oproti V2 došlo k následujícím změnám:
       * číslice
       * písmena anglické abecedy (velké, malé)
       * následující znaky: *{{{- _ . ~}}}*
-    * přibyly tedy tyto znaky: *{{{? [ ] ; & = / #}}}*
+    * celkově nebyl žádný povolený znak zakázán, naopak přibyly tyto nově povolené znaky: *{{{? [ ] ; & = / #}}}*
  * import digitální instance
    * vstupní data musí být validní podle http://resolver.nkp.cz/api/v3/digInstImport.xsd 
 
