@@ -27,7 +27,7 @@ Za první verzi API je považováno API předchozí implementace Resolveru, viz 
  * První verze aktuální implementace. Ukázky vstupních a výstupních dat jsou dostupné [http://code.google.com/p/urnnbn-resolver-v2/wiki/apiV2 zde]. 
  * Tato verze API je stále funkční, je ale doporučeno přejít na V3 (v2 deprecated). 
  * Vstupní data ve formátu API v2 jsou transformována na data ve formátu API v3 a poté volány operace API v3.
- * Odpovědi jsou již ve formátu API v3. Jmený prostor pro vstupní xml data operací _registrace digitálního dokumentu_ a _import digitální instance_ jsou ve jmenném prostoru _http://resolver.nkp.cz/v2/_.
+ * Odpovědi jsou ve formátu API v2. 
 
 Vstupní data musí být validní:
  * podle http://resolver.nkp.cz/api/v2/digDocRegistration.xsd pro registraci digitálního dokumentu
