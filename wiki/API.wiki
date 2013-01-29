@@ -55,7 +55,7 @@ Oproti V2 došlo k následujícím změnám:
     * rezervované:
       * *{{{! * ' ( ) ; : @ & = + $ , / ? # [ ]}}}*
       * tyto znaky musí být url-encoded    
-    * nerervované:
+    * nezervované:
       * číslice
       * písmena anglické abecedy (velké, malé)
       * následující znaky: *{{{- _ . ~}}}*
