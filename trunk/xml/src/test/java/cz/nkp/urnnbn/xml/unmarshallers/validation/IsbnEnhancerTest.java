@@ -46,43 +46,184 @@ public class IsbnEnhancerTest extends TestCase {
 
     public void testEnhance() {
         ElementContentEnhancer enhancer = new IsbnEnhancer();
-        assertEquals("8090119964", enhancer.toEnhancedValueOrNull("8090119964"));
+        assertEquals("9788090119963", enhancer.toEnhancedValueOrNull("8090119964"));
         assertEquals("9788090119963", enhancer.toEnhancedValueOrNull("9788090119963"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("807178463x"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("807178463X"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978807178463x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978807178463X"));
+        assertEquals("9788071784630", enhancer.toEnhancedValueOrNull("807178463X"));
+        assertEquals("9788071784630", enhancer.toEnhancedValueOrNull("807178463x"));
+        assertEquals("9781402894626", enhancer.toEnhancedValueOrNull("1-4028-9462-7"));
     }
 
     public void testEnhancePreficies() {
         ElementContentEnhancer enhancer = new IsbnEnhancer();
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("ISBN 978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("isbn 978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("ISBN: 978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("isbn: 978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("ISBN:978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("isbn:978-80-7178-463-x"));
+
+        //ISBN
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 9783770547395"));
+
+        //ISBN:
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:9783770547395"));
+
+        //ISBN:_
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 9783770547395"));
+
+        //isbn
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 9783770547395"));
+
+        //isbn:
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:9783770547395"));
+
+        //isbn:_
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 377054739X"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn: 9783770547395"));
     }
 
     public void testEnhanceSeparators() {
         ElementContentEnhancer enhancer = new IsbnEnhancer();
-        assertEquals("8090119964", enhancer.toEnhancedValueOrNull("8090119964"));
-        assertEquals("8090119964", enhancer.toEnhancedValueOrNull("80 9 01199 64"));
-        assertEquals("9788090119963", enhancer.toEnhancedValueOrNull("978 80 901199 6 3"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("80 7178 463 x"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("80 7178 463 X"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978 80 7178 463 x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978 80 7178 463 X"));
 
-        assertEquals("8090119964", enhancer.toEnhancedValueOrNull("80-9-01199-64"));
-        assertEquals("9788090119963", enhancer.toEnhancedValueOrNull("978-80-901199-6-3"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("80-7178-463-x"));
-        assertEquals("807178463X", enhancer.toEnhancedValueOrNull("80-7178-463-X"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978-80-7178-463-x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978-80-7178-463-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3 7705 4739 X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("377054739X"));
 
-        assertEquals("9788090119963", enhancer.toEnhancedValueOrNull("978-8090119963"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978-807178463x"));
-        assertEquals("978807178463X", enhancer.toEnhancedValueOrNull("978-807178463X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3 7705 4739 x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("377054739x"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("978 3 7705 4739 5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("9783770547395"));
+    }
+
+    public void testEnhanceOther() {
+        ElementContentEnhancer enhancer = new IsbnEnhancer();
+        assertEquals("9788020009807", enhancer.toEnhancedValueOrNull("8020009809"));
+        assertEquals("9788020009807", enhancer.toEnhancedValueOrNull("80-200-0980-9"));
+
+        assertEquals("9780199283408", enhancer.toEnhancedValueOrNull("978-0-19-928340-8"));
+        assertEquals("9780199283408", enhancer.toEnhancedValueOrNull("0-19-928340-0"));
+        assertEquals("9780199283408", enhancer.toEnhancedValueOrNull("0199283400"));
+
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("978-0-8132-1545-7"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("9780813215457"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("0-8132-1545-5"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("0813215455"));
+
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("978-0-8132-1545-7"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("9780813215457"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("0-8132-1545-5"));
+        assertEquals("9780813215457", enhancer.toEnhancedValueOrNull("0813215455"));
+
+        assertEquals("9789004177864", enhancer.toEnhancedValueOrNull("90-04-17786-8"));
+        assertEquals("9789004177864", enhancer.toEnhancedValueOrNull("9004177868"));
+        assertEquals("9789004177864", enhancer.toEnhancedValueOrNull("978-90-04-17786-4"));
+        assertEquals("9789004177864", enhancer.toEnhancedValueOrNull("9789004177864"));
+
+        assertEquals("9783895349577", enhancer.toEnhancedValueOrNull("3-89534-957-7"));
+        assertEquals("9783895349577", enhancer.toEnhancedValueOrNull("3895349577"));
+        assertEquals("9783895349577", enhancer.toEnhancedValueOrNull("978-3-89534-957-7"));
+        assertEquals("9783895349577", enhancer.toEnhancedValueOrNull("9783895349577"));
+
+        assertEquals("9783937233260", enhancer.toEnhancedValueOrNull("3-937233-26-1"));
+        assertEquals("9783937233260", enhancer.toEnhancedValueOrNull("3937233261"));
+        assertEquals("9783937233260", enhancer.toEnhancedValueOrNull("978-3-937233-26-0"));
+        assertEquals("9783937233260", enhancer.toEnhancedValueOrNull("9783937233260"));
+
+        assertEquals("9780631181859", enhancer.toEnhancedValueOrNull("0-631-18185-7"));
+        assertEquals("9780631181859", enhancer.toEnhancedValueOrNull("0631181857"));
+        assertEquals("9780631181859", enhancer.toEnhancedValueOrNull("978-0-631-18185-9"));
+        assertEquals("9780631181859", enhancer.toEnhancedValueOrNull("9780631181859"));
+
+        assertEquals("9788371773952", enhancer.toEnhancedValueOrNull("83-7177-395-1"));
+        assertEquals("9788371773952", enhancer.toEnhancedValueOrNull("8371773951"));
+        assertEquals("9788371773952", enhancer.toEnhancedValueOrNull("978-83-7177-395-2"));
+        assertEquals("9788371773952", enhancer.toEnhancedValueOrNull("9788371773952"));
+
+        assertEquals("9780007126644", enhancer.toEnhancedValueOrNull("0-00-712664-6"));
+        assertEquals("9780007126644", enhancer.toEnhancedValueOrNull("0007126646"));
+        assertEquals("9780007126644", enhancer.toEnhancedValueOrNull("978-0-00-712664-4"));
+        assertEquals("9780007126644", enhancer.toEnhancedValueOrNull("9780007126644"));
+
+        assertEquals("9780316015042", enhancer.toEnhancedValueOrNull("0-316-01504-0"));
+        assertEquals("9780316015042", enhancer.toEnhancedValueOrNull("0316015040"));
+        assertEquals("9780316015042", enhancer.toEnhancedValueOrNull("978-0-316-01504-2"));
+        assertEquals("9780316015042", enhancer.toEnhancedValueOrNull("9780316015042"));
+
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3-7705-4739-X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("3-7705-4739-x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("377054739X"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("377054739x"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("978-3-7705-4739-5"));
+        assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("9783770547395"));
+    }
+
+    /**
+     * Examples from http://andrewu.co.uk/tools/isbn/.
+     */
+    public void testEnhanceMoreExamples() {
+        ElementContentEnhancer enhancer = new IsbnEnhancer();
+        assertNotNull(enhancer.toEnhancedValueOrNull("123456789X"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("ISBN 978-0-306-40615-7"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("0123-4567-89"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("ISBN 184353066X"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("978-0-356-42615-0"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("ISBN 0 571 08989 5"));
+        assertNotNull(enhancer.toEnhancedValueOrNull("isbn 0-671657-15-1"));
     }
 }
