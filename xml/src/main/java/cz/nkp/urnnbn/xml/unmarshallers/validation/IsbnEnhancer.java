@@ -16,9 +16,9 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers.validation;
 
+import org.apache.commons.validator.routines.ISBNValidator;
+
 /**
- * TODO: transformations from isbn-10 to ISBN-13 so that everything is stored
- * http://andrewu.co.uk/tools/isbn/
  *
  * @author Martin Řehánek
  */
@@ -26,20 +26,15 @@ public class IsbnEnhancer implements ElementContentEnhancer {
 
     private static final char[] SEPARATORS = {'-', ' '};
     private static final String[] PREFICIES = {"ISBN ", "ISBN: ", "ISBN:"};
-    private static final String STANDARD_PREFIX = "ISBN ";
-    private static final String REGEXP = "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]";
+    ISBNValidator validator = new ISBNValidator(true);
 
     @Override
     public String toEnhancedValueOrNull(String originalContent) {
         if (originalContent == null || originalContent.isEmpty()) {
             return null;
-        }
-        String isbn = removeSeparators(removePrefix(originalContent.toUpperCase()));
-        if (matchesRegexp(isbn) && hasCorrectChecksum(isbn)) {
-            //return STANDARD_PREFIX + isbn;
-            return isbn;
         } else {
-            return null;
+            String withoutPrefixAndSepatators = removeSeparators(removePrefix(originalContent.toUpperCase()));
+            return validator.validate(withoutPrefixAndSepatators);
         }
     }
 
@@ -70,14 +65,5 @@ public class IsbnEnhancer implements ElementContentEnhancer {
             }
         }
         return false;
-    }
-
-    private boolean matchesRegexp(String original) {
-        return original.matches(REGEXP);
-    }
-
-    private boolean hasCorrectChecksum(String original) {
-        //TODO: implement
-        return true;
     }
 }
