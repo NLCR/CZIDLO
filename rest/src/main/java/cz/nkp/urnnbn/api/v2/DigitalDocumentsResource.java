@@ -54,16 +54,18 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
     @Override
     public String getDigitalDocumentsXmlRecord() {
         try {
-            String apiV3Response = getDigitalDocumentsApiV3XmlRecord();
-            XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getGetDigDocsResponseV3ToV2Transformer();
-            return transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
+            try {
+                String apiV3Response = getDigitalDocumentsApiV3XmlRecord();
+                XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getGetDigDocsResponseV3ToV2Transformer();
+                return transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
+            }
         } catch (ApiV3Exception e) {
             throw new ApiV2Exception(e);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
         }
     }
 
@@ -104,17 +106,19 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
             @PathParam("idType") String idTypeStr,
             @PathParam("idValue") String idValue) {
         try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
-            DigitalDocument digitalDocument = getDigitalDocument(idTypeStr, idValue);
-            UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
-            return new DigitalDocumentResource(digitalDocument, urn);
+            try {
+                logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
+                DigitalDocument digitalDocument = getDigitalDocument(idTypeStr, idValue);
+                UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+                return new DigitalDocumentResource(digitalDocument, urn);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
+            }
         } catch (ApiV3Exception e) {
             throw new ApiV2Exception(e);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
         }
     }
 }
