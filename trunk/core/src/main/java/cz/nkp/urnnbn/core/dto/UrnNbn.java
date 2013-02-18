@@ -39,13 +39,25 @@ public class UrnNbn {
      * @param digDocId
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved) {
+        this(registrarCode, documentCode, digDocId, reserved, null);
+    }
+
+    /**
+     * This constructor should be used when urn:nbn is being assigned or parsed
+     *
+     * @param registrarCode
+     * @param documentCode
+     * @param digDocId
+     * @param deactivationNote 
+     */
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, String deactivationNote) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
         this.reserved = reserved;
         this.registered = null;
         this.deactivated = null;
-        this.deactivationNote = null;
+        this.deactivationNote = deactivationNote;
         this.active = null;
     }
 
@@ -67,7 +79,7 @@ public class UrnNbn {
      * @param deactivated
      * @param deactivationNote
      * @param active
-     * @param deactivationNote 
+     * @param deactivationNote
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated, boolean active, String deactivationNote) {
         this.registrarCode = registrarCode;
