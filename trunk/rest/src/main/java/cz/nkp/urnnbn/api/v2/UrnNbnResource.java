@@ -30,16 +30,18 @@ public class UrnNbnResource extends AbstractUrnNbnResource {
     @Override
     public String getUrnNbnXmlRecord(@PathParam("urn") String urnNbnString) {
         try {
-            UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
-            String apiV3XmlRecord = new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
-            return ApiModuleConfiguration.instanceOf().getGetUrnNbnResponseV3ToV2Transformer().transform(apiV3XmlRecord).toXML();
+            try {
+                UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
+                String apiV3XmlRecord = new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
+                return ApiModuleConfiguration.instanceOf().getGetUrnNbnResponseV3ToV2Transformer().transform(apiV3XmlRecord).toXML();
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
+            }
         } catch (ApiV3Exception e) {
             throw new ApiV2Exception(e);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
         }
     }
 }

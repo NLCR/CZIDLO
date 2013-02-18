@@ -50,20 +50,22 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr,
             @Context HttpServletRequest request) {
         try {
-            Action action = Parser.parseAction(actionStr, PARAM_ACTION);
-            ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
-            boolean withDigitalInstances = true;
-            if (withDigitalInstancesStr != null) {
-                withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+            try {
+                Action action = Parser.parseAction(actionStr, PARAM_ACTION);
+                ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
+                boolean withDigitalInstances = true;
+                if (withDigitalInstancesStr != null) {
+                    withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+                }
+                return resolve(action, format, request, withDigitalInstances);
+            } catch (WebApplicationException e) {
+                throw e;
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, e.getMessage());
+                throw new InternalException(e);
             }
-            return resolve(action, format, request, withDigitalInstances);
         } catch (ApiV3Exception e) {
             throw new ApiV2Exception(e);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
         }
     }
 
