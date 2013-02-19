@@ -202,11 +202,18 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
         return Response.seeOther(uri).build();
     }
 
+    /**
+     * Redirects to web interface. It is allways redirected to
+     * http://SERVER_NAME/WEB_MODULE_CONTEXT?q=URN where SERVER_NAME is same as
+     * the one in request, WEB_MODULE_CONTEXT is "web" in default. Web server
+     * should perform redirection to HTTPS if desirable.
+     *
+     * @param request
+     * @return
+     */
     private URI webModuleUri(HttpServletRequest request) {
-        String serverName = request.getServerName();
-        int port = request.getServerPort();
         try {
-            return new URI("http://" + serverName + ":" + port + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
+            return new URI("http://" + request.getServerName() + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
         } catch (URISyntaxException ex) {
             throw new InternalException(ex);
         }
