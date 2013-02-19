@@ -1,5 +1,5 @@
 
-/* SQL script to initialize of database for Resolver in version 3 */
+/* SQL script to initialize of database for Resolver in version 2.3 */
   
 /* Drop Indexes */
 
