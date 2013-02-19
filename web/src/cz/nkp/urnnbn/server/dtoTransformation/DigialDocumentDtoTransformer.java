@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.server.dtoTransformation;
 
 import java.util.ArrayList;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -49,12 +50,13 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 		return result;
 	}
 
-	private UrnNbnDTO urnNbnTransformed(){
-		if (urn == null){
+	private UrnNbnDTO urnNbnTransformed() {
+		if (urn == null) {
 			System.err.println("no urn:nbn for digital document" + doc.getId());
 			return null;
-		}else{
-			return new UrnNbnToDtoTransformer(urn).transform();
+		} else {
+			// TODO: proverit
+			return new UrnNbnToDtoTransformer(new UrnNbnWithStatus(urn, null, null)).transform();
 		}
 	}
 

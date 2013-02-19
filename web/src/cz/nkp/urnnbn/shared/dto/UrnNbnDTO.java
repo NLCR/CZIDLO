@@ -12,24 +12,30 @@ public class UrnNbnDTO implements Serializable {
 	private String documentCode;
 	private Long digdocId;
 	private boolean active;
-	private String created;
-	private String lastModified;
+	private String reserved;
+	private String registered;
+	private String deactivated;
+	private String deactivationNote;
 	private List<UrnNbnDTO> predecessors;
 	private List<UrnNbnDTO> successors;
+	private String note;
 
 	public UrnNbnDTO() {}
 
-	public UrnNbnDTO(String countryCode, String registrarCode, String documentCode, Long digdocId, boolean active, String created,
-			String lastModified, List<UrnNbnDTO> predecessors, List<UrnNbnDTO> successors) {
+	public UrnNbnDTO(String countryCode, String registrarCode, String documentCode, Long digdocId, boolean active, String reserved,
+			String registered, String deactivated, List<UrnNbnDTO> predecessors, List<UrnNbnDTO> successors, String note, String deactivationNote) {
 		this.countryCode = countryCode;
 		this.registrarCode = registrarCode;
 		this.documentCode = documentCode;
 		this.digdocId = digdocId;
 		this.active = active;
-		this.created = created;
-		this.lastModified = lastModified;
+		this.reserved = reserved;
+		this.registered = registered;
+		this.deactivated = deactivated;
 		this.predecessors = predecessors;
 		this.successors = successors;
+		this.note = note;
+		this.deactivationNote = deactivationNote;
 	}
 
 	public String getCountryCode() {
@@ -72,20 +78,28 @@ public class UrnNbnDTO implements Serializable {
 		this.active = active;
 	}
 
-	public String getCreated() {
-		return created;
+	public String getReserved() {
+		return reserved;
 	}
 
-	public void setCreated(String created) {
-		this.created = created;
+	public void setReserved(String reserved) {
+		this.reserved = reserved;
 	}
 
-	public String getLastModified() {
-		return lastModified;
+	public String getRegistered() {
+		return registered;
 	}
 
-	public void setLastModified(String lastModified) {
-		this.lastModified = lastModified;
+	public void setRegistered(String registered) {
+		this.registered = registered;
+	}
+
+	public String getDeactivated() {
+		return deactivated;
+	}
+
+	public void setDeactivated(String deactivated) {
+		this.deactivated = deactivated;
 	}
 
 	public List<UrnNbnDTO> getPredecessors() {
@@ -102,6 +116,22 @@ public class UrnNbnDTO implements Serializable {
 
 	public void setSuccessors(List<UrnNbnDTO> successors) {
 		this.successors = successors;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+	
+	public String getDeactivationNote() {
+		return deactivationNote;
+	}
+
+	public void setDeactivationNote(String deactivationNote) {
+		this.deactivationNote = deactivationNote;
 	}
 
 	public String toString() {

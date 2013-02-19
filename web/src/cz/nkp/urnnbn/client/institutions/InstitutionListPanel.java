@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.institutions;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,7 +49,7 @@ public class InstitutionListPanel extends VerticalPanel {
 	void loadRegistrars() {
 		institutionsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 			public void onSuccess(ArrayList<RegistrarDTO> result) {
-				registrars = result;
+				registrars = sortByLastModificationDateDownwards(result);
 				reload();
 			}
 
@@ -55,6 +57,19 @@ public class InstitutionListPanel extends VerticalPanel {
 				Window.alert(constants.serverError() + ": " + caught.getMessage());
 			}
 		});
+	}
+
+	private ArrayList<RegistrarDTO> sortByLastModificationDateDownwards(ArrayList<RegistrarDTO> result) {
+		Collections.sort(result, new Comparator<RegistrarDTO>() {
+
+			@Override
+			public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+				Long first = o1.getModifiedMillis() != null ? o1.getModifiedMillis() : o1.getCreatedMillis();
+				Long second = o2.getModifiedMillis() != null ? o2.getModifiedMillis() : o2.getCreatedMillis();
+				return first.compareTo(second) * (-1);
+			}
+		});
+		return result;
 	}
 
 	void loadArchivers() {

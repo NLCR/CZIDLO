@@ -16,7 +16,9 @@ public class ArchiverDtoTransformer extends DtoTransformer {
 		ArchiverDTO result = new ArchiverDTO();
 		result.setId(original.getId());
 		result.setCreated(dateTimeToStringOrNull(original.getCreated()));
+		result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
 		result.setModified(dateTimeToStringOrNull(original.getModified()));
+		result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
 		result.setName(original.getName());
 		result.setDescription(original.getDescription());
 		return result;

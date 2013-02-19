@@ -76,7 +76,7 @@ public class EditDigitalDocumentDialogBox extends DialogBox {
 	private Panel buttons() {
 		HorizontalPanel buttons = new HorizontalPanel();
 		buttons.add(saveButton());
-		buttons.add(closeButtion());
+		buttons.add(closeButton());
 		return buttons;
 	}
 
@@ -105,7 +105,7 @@ public class EditDigitalDocumentDialogBox extends DialogBox {
 		});
 	}
 
-	private Widget closeButtion() {
+	private Widget closeButton() {
 		return new Button(constants.close(), new ClickHandler() {
 
 			@Override

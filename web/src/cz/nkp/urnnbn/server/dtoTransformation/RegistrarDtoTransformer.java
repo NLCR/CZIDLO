@@ -16,7 +16,9 @@ public class RegistrarDtoTransformer extends DtoTransformer {
 		RegistrarDTO result = new RegistrarDTO();
 		result.setId(original.getId());
 		result.setCreated(dateTimeToStringOrNull(original.getCreated()));
+		result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
 		result.setModified(dateTimeToStringOrNull(original.getModified()));
+		result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
 		result.setCode(original.getCode().toString());
 		result.setName(original.getName());
 		result.setDescription(original.getDescription());

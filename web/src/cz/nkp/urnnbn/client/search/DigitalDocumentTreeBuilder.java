@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,8 +16,11 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TreeItem;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.institutions.ArchiverDetailsDialogBox;
 import cz.nkp.urnnbn.client.institutions.DigitalLibraryDetailsDialogBox;
+import cz.nkp.urnnbn.client.services.DataService;
+import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
@@ -32,6 +37,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private static boolean EXPAND_DIGITAL_INSTANCES = false;
 	private static String API_VERSION = "v3";
 
+	private final DataServiceAsync dataService = GWT.create(DataService.class);
+	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final DigitalDocumentDTO dto;
 
@@ -42,9 +49,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	public TreeItem getItem() {
 		TreeItem rootItem = new TreeItem(digitalDocumentItem(dto.getUrn().isActive(), dto.getUrn()));
-		addUrnNbn(rootItem);
-
-		// appendUrnNbn(rootItem, dto.getUrn());
+		addUrnNbnOfDigitalDocument(rootItem);
 		addRegistrar(rootItem);
 		addArchiver(rootItem);
 		addLabeledItemIfValueNotNull(rootItem, constants.financed(), dto.getFinanced());
@@ -62,20 +67,27 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		return rootItem;
 	}
 
-	private void addUrnNbn(TreeItem root) {
+	private void addUrnNbnOfDigitalDocument(TreeItem root) {
 		UrnNbnDTO urnNbn = dto.getUrn();
-		String urnNbnItemHtml = urnNbn.isActive() ? urnNbn.toString() : "<span style=\"color:grey;text-decoration:line-through;\">"
-				+ urnNbn.toString() + "</span>";
-		TreeItem urnNbnItem = root.addItem(urnNbnItemHtml);
-		addLabeledItemIfValueNotNull(urnNbnItem, constants.created(), urnNbn.getCreated());
-		addLabeledItemIfValueNotNull(urnNbnItem, constants.modified(), urnNbn.getLastModified());
+		addUrnNbn(root, urnNbn, false);
+	}
+
+	private void addUrnNbn(TreeItem root, UrnNbnDTO urnNbn, boolean linkToWebRecord) {
+		Panel urnNbnPanel = urnNbnItemHtlm(urnNbn, linkToWebRecord);
+		
+		TreeItem urnNbnItem = root.addItem(urnNbnPanel);
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.note(), urnNbn.getDeactivationNote());
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.note(), urnNbn.getNote());
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.timestampReserved(), urnNbn.getReserved());
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.timestampRegistered(), urnNbn.getRegistered());
+		addLabeledItemIfValueNotNull(urnNbnItem, constants.timestampDeactivated(), urnNbn.getDeactivated());
 
 		// predecessors
 		List<UrnNbnDTO> predecessors = urnNbn.getPredecessors();
 		if (predecessors != null && !predecessors.isEmpty()) {
 			TreeItem predecessorsItem = urnNbnItem.addItem("předchůdci");
 			for (UrnNbnDTO predecessor : predecessors) {
-				predecessorsItem.addItem(urnNbnItemHtlm(predecessor));
+				addUrnNbn(predecessorsItem, predecessor, true);
 			}
 			predecessorsItem.setState(true);
 		}
@@ -85,15 +97,35 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		if (successors != null && !successors.isEmpty()) {
 			TreeItem successorsItem = urnNbnItem.addItem("následovníci");
 			for (UrnNbnDTO successor : successors) {
-				successorsItem.addItem(urnNbnItemHtlm(successor));
+				addUrnNbn(successorsItem, successor, true);
 			}
 			successorsItem.setState(true);
 		}
 	}
 
-	private String urnNbnItemHtlm(UrnNbnDTO urnNbn) {
-		return urnNbn.toString() + "&nbsp&nbsp" + linkToDigDocHtmlByUrnNbn(urnNbn, constants.showRecord()) + "&nbsp&nbsp"
-				+ linkToDigDocXmlByUrnNbn(urnNbn, constants.showRecordInXml());
+	private Panel urnNbnItemHtlm(UrnNbnDTO urnNbn, boolean withLinkToWebRecord) {
+		HorizontalPanel panel = new HorizontalPanel();
+
+		if (urnNbn.isActive()) {
+			panel.add(new HTML(urnNbn.toString()));
+		} else {
+			panel.add(new HTML("<span style=\"color:grey;text-decoration:line-through;\">" + urnNbn.toString() + "</span>&nbsp&nbsp"));
+		}
+		// button to deactivate urn:nbn
+		if (urnNbn.isActive() && activeUserManagesRegistrar()) {
+			panel.add(new HTML("&nbsp&nbsp"));
+			panel.add(deactivateUrnNbnButton(urnNbn));
+		}
+
+		if (withLinkToWebRecord) {
+			panel.add(new HTML("&nbsp&nbsp"));
+			String url = urlToResolverByUrnNbn(urnNbn, "show", "html");
+			panel.add(openUrlButton(constants.showRecord(), url));
+		}
+		panel.add(new HTML("&nbsp&nbsp"));
+		String url = urlToResolverByUrnNbn(urnNbn, "show", "xml");
+		panel.add(openUrlButton(constants.showRecordInXml(), url));
+		return panel;
 	}
 
 	private String linkToDigDocXmlByUrnNbn(UrnNbnDTO urnNbn, String linkText) {
@@ -126,15 +158,23 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		return result.toString();
 	}
 
+	String urlToResolverByUrnNbn(UrnNbnDTO urn, String action, String format) {
+		StringBuilder result = new StringBuilder();
+		result.append("/api").append('/').append(API_VERSION).append('/').append("resolver").append('/');
+		result.append(urn.toString());
+		result.append("?action=").append(action);
+		if (!action.equals("decide")) {
+			result.append("&format=").append(format);
+		}
+		return result.toString();
+	}
+
 	private Panel digitalDocumentItem(boolean active, UrnNbnDTO urnNbn) {
 		HorizontalPanel result = new HorizontalPanel();
 		// label
 		if (active) {
 			result.add(new Label(constants.digitalDocument()));
 		} else {
-			// result.add(new
-			// HTML("<span style=\"text-decoration:line-through;\">" +
-			// constants.digitalDocument() + "</span>"
 			result.add(new HTML(constants.digitalDocument() + " <span style=\"color:grey\">(" + constants.inactiveDD() + ")</span>"));
 		}
 		// button to edit record
@@ -143,7 +183,9 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			result.add(editDocumentButton());
 		}
 		// link to record in xml
-		result.add(new HTML("&nbsp&nbsp" + linkToDigDocXmlByUrnNbn(urnNbn, constants.showRecordInXml())));
+		result.add(new HTML("&nbsp&nbsp"));
+		String url = urlToResolverByUrnNbn(urnNbn, "show", "xml");
+		result.add(openUrlButton(constants.showRecordInXml(), url));
 		return result;
 	}
 
@@ -152,7 +194,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	private Button editDocumentButton() {
-		return new Button(constants.edit(), new ClickHandler() {
+		Button result = new Button(constants.edit(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -162,6 +204,42 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 				dialog.show();
 			}
 		});
+		result.addStyleName(css.detailsButton());
+		return result;
+	}
+
+	private Button deactivateUrnNbnButton(final UrnNbnDTO urnNbn) {
+
+		Button result = new Button(constants.deactivate(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				DeactivateUrnNbnDialogBox dialog = new DeactivateUrnNbnDialogBox(superPanel, urnNbn);
+					dialog.center();
+					dialog.setPopupPosition(dialog.getPopupLeft(), 105);
+					dialog.show();
+				
+				
+//				dataService.deactivateUrnNbn(urnNbn, "TODO", new AsyncCallback<Void>() {
+//
+//					@Override
+//					public void onSuccess(Void result) {
+//						refreshSuperPanel();
+//					}
+//
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						Window.alert(messages.serverError(caught.getMessage()));
+//					}
+//				});
+			}
+		});
+		result.addStyleName(css.detailsButton());
+		return result;
+	}
+
+	private void refreshSuperPanel() {
+		superPanel.refresh();
 	}
 
 	private void addRegistrar(TreeItem rootItem) {
@@ -179,7 +257,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	private void addArchiver(TreeItem rootItem) {
-		if (dto.getArchiver() != null) {
+		if (dto.getArchiver() != null && (dto.getArchiver().getId() != dto.getRegistrar().getId())) {
 			Button button = new Button(constants.details());
 			button.addClickHandler(new ClickHandler() {
 
@@ -191,10 +269,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 				}
 			});
 
-			addLabeledItemAndButtonIfValueNotNull(rootItem, constants.archiver(), dto.getArchiver().getName(), button);
-		} else {
-			addLabeledItemIfValueNotNull(rootItem, constants.archiver(), dto.getRegistrar().getName());
-		}
+			addLabeledItemAndButtonIfValueNotNull(rootItem, constants.anotherArchiver(), dto.getArchiver().getName(), button);
+		} 
 	}
 
 	private void addLabeledItemAndButtonIfValueNotNull(TreeItem rootItem, String label, String text, Button button) {
@@ -310,13 +386,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		addLabeledItemIfValueNotNull(instanceItem, constants.accessibility(), instanceDTO.getAccessibility());
 		addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
 		addLabeledItemIfValueNotNull(instanceItem, constants.created(), instanceDTO.getCreated());
-		if (instanceDTO.getModified() != null && !instanceDTO.getModified().equals(instanceDTO.getCreated())) {
-			if (instanceDTO.isActive()) {
-				addLabeledItemIfValueNotNull(instanceItem, constants.modified(), instanceDTO.getModified());
-			} else {
-				addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getModified());
-			}
-		}
+		addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getDeactivated());
 		return instanceItem;
 	}
 

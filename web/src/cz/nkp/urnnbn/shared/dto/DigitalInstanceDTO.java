@@ -8,7 +8,7 @@ public class DigitalInstanceDTO implements Serializable {
 	private Long id;
 	private DigitalLibraryDTO library;
 	private String created;
-	private String modified;
+	private String deactivated;
 	private String url;
 	private String format;
 	private String accessibility;
@@ -46,12 +46,12 @@ public class DigitalInstanceDTO implements Serializable {
 		this.created = published;
 	}
 
-	public String getModified() {
-		return modified;
+	public String getDeactivated() {
+		return deactivated;
 	}
 
-	public void setModified(String modified) {
-		this.modified = modified;
+	public void setDeactivated(String modified) {
+		this.deactivated = modified;
 	}
 
 	public String getUrl() {

@@ -42,9 +42,9 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 			grid.setWidget(index, 0, new Label(constants.url() + ':'));
 			grid.setWidget(index++, 1, new HTML(buildUrlOrNull(library.getUrl())));
 		}
-		grid.setWidget(index, 0, new Label(constants.contains() + ':'));
 		// TODO: dodat opravdový počet dokumentů
-		grid.setWidget(index++, 1, new Label("0 dokumentů"));
+//		grid.setWidget(index, 0, new Label(constants.contains() + ':'));
+//		grid.setWidget(index++, 1, new Label("0 dokumentů"));
 		if (library.getCreated() != null) {
 			grid.setWidget(index, 0, new Label(constants.created() + ':'));
 			grid.setWidget(index++, 1, new Label(library.getCreated()));
@@ -67,7 +67,8 @@ public class DigitalLibraryDetailsDialogBox extends AbstractDialogBox {
 	}
 
 	private int determineRows() {
-		int result = 3;
+		//int result = 3;
+		int result = 2;
 		if (library.getUrl() != null) {
 			result++;
 		}

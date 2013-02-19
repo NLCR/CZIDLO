@@ -7,7 +7,10 @@ public class ArchiverDTO implements Serializable {
 	private static final long serialVersionUID = -1184131710944868612L;
 	private Long id;
 	private String created;
+	private Long createdMillis;
 	private String modified;
+	private Long modifiedMillis;
+
 	private String name;
 	private String description;
 
@@ -49,6 +52,22 @@ public class ArchiverDTO implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Long getCreatedMillis() {
+		return createdMillis;
+	}
+
+	public void setCreatedMillis(Long createdMillis) {
+		this.createdMillis = createdMillis;
+	}
+
+	public Long getModifiedMillis() {
+		return modifiedMillis;
+	}
+
+	public void setModifiedMillis(Long modifiedMillis) {
+		this.modifiedMillis = modifiedMillis;
 	}
 
 	@Override

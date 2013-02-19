@@ -18,7 +18,6 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
@@ -71,7 +70,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 				result.add(transformedEntity(entity));
 			}
 			return result;
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error searching for ie", e);
 			return EMPTY_IE_LIST;
 		}
@@ -119,7 +118,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private List<DigitalDocument> getDigitalDocuments(IntelectualEntity entity) {
 		try {
 			return readService.digDocsOfIntEnt(entity.getId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting digital documents for ie" + entity.getId());
 			return Collections.<DigitalDocument> emptyList();
 		}
@@ -128,7 +127,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private UrnNbn urnNbnOfDocument(DigitalDocument digitalDocument) {
 		try {
 			return readService.urnByDigDocId(digitalDocument.getId(), true);
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting urn:nbn for dd" + digitalDocument.getId());
 			return null;
 		}
@@ -137,7 +136,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private Registrar registrarOfDocument(DigitalDocument digitalDocument) {
 		try {
 			return readService.registrarById(digitalDocument.getRegistrarId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting registrar for dd" + digitalDocument.getId());
 			return null;
 		}
@@ -146,7 +145,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private Archiver archiverOfDocument(DigitalDocument digitalDocument) {
 		try {
 			return readService.archiverById(digitalDocument.getArchiverId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting archiver for dd" + digitalDocument.getId());
 			return null;
 		}
@@ -162,7 +161,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 				result.add(transformed);
 			}
 			return result;
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting digital instances for dd" + digitalDocument.getId());
 			return EMPTY_DI_LIST;
 		}
@@ -171,7 +170,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private DigitalLibrary libraryOfInstance(DigitalInstance instance) {
 		try {
 			return readService.libraryByInternalId(instance.getLibraryId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting digital library for di" + instance.getId());
 			return null;
 		}
@@ -180,7 +179,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private Originator getOriginator(IntelectualEntity entity) {
 		try {
 			return readService.originatorByIntEntId(entity.getId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting originator for ie" + entity.getId());
 			return null;
 		}
@@ -189,7 +188,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private List<IntEntIdentifier> getIntEntIdentifiers(IntelectualEntity entity) {
 		try {
 			return readService.intEntIdentifiersByIntEntId(entity.getId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting identifiers for ie" + entity.getId());
 			return Collections.<IntEntIdentifier> emptyList();
 		}
@@ -198,7 +197,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private Publication getPublication(IntelectualEntity entity) {
 		try {
 			return readService.publicationByIntEntId(entity.getId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting publication for ie" + entity.getId());
 			return null;
 		}
@@ -207,7 +206,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private SourceDocument getSourceDocument(IntelectualEntity entity) {
 		try {
 			return readService.sourceDocumentByIntEntId(entity.getId());
-		} catch (DatabaseException e) {
+		} catch (Throwable e) {
 			log("error getting source document for ie" + entity.getId());
 			return null;
 		}

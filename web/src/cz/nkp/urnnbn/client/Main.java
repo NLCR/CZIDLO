@@ -33,8 +33,9 @@ public class Main implements EntryPoint {
 		AuthServiceAsync service = GWT.create(AuthService.class);
 		service.getActiveUser(new AsyncCallback<UserDTO>() {
 			public void onFailure(Throwable caught) {
-				//Window.alert("Remote Procedure Call - Failure");
+				// Window.alert("Remote Procedure Call - Failure");
 			}
+
 			public void onSuccess(UserDTO user) {
 				// HEADER
 				HorizontalPanel headerPanel = headerPanel(user);
@@ -83,8 +84,11 @@ public class Main implements EntryPoint {
 		VerticalPanel headerTitlePanel = new VerticalPanel();
 		headerTitlePanel.addStyleName(resources.MainCss().headerTitlePanel());
 		// title
+		// Label headerTitle = new HTML(
+		// "<span style=\"color: black;\">URN</span><span style=\"color: red;\">:</span><span style=\"color: black;\">NBN Resolver</span></a>");
 		Label headerTitle = new HTML(
-				"<span style=\"color: black;\">URN</span><span style=\"color: red;\">:</span><span style=\"color: black;\">NBN Resolver</span></a>");
+		// "<a href=\"http://resolver.nkp.cz\"><span style=\"color: black;text-decoration:none;\">čIDLO</span></a>");
+				"<span style=\"color: black;text-decoration:none;\"><i>čIDLO</i></span>");
 		headerTitle.addStyleName(resources.MainCss().headerTitle());
 		headerTitlePanel.add(headerTitle);
 		// subtitle

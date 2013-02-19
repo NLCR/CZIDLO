@@ -7,10 +7,12 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import cz.nkp.urnnbn.client.services.DataService;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoToDigitalInstanceTransformer;
+import cz.nkp.urnnbn.server.dtoTransformation.DtoToUrnNbnTransformer;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
 import cz.nkp.urnnbn.server.dtoTransformation.DtosToDigitalDocumentTransformer;
 import cz.nkp.urnnbn.server.dtoTransformation.RecordImportTransformer;
@@ -37,7 +39,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		DigitalDocument transformed = new DtosToDigitalDocumentTransformer(doc, technical).transform();
 		try {
 			updateService.updateDigitalDocument(transformed, getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}
@@ -49,7 +51,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		try {
 			updateService.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(), transformer.getPublication(),
 					transformer.getSrcDoc(), transformer.getIdentifiers(), getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}
@@ -61,8 +63,8 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		try {
 			UrnNbn assigned = createService.registerDigitalDocument(new RecordImportTransformer(intEnt, digDoc, urnNbn,
 					registrarScopeIdentifiers).transform(), getUserLogin());
-			return DtoTransformer.transformUrnNbn(assigned);
-		} catch (Exception e) {
+			return DtoTransformer.transformUrnNbn(new UrnNbnWithStatus(assigned, null, null));
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}
@@ -76,7 +78,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
 			instance.setId(saved.getId());
 			instance.setCreated(dateTimeToStringOrNull(saved.getCreated()));
 			return instance;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}
@@ -96,7 +98,21 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	public void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException {
 		try {
 			deleteService.deactivateDigitalInstance(instance.getId(), getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void deactivateUrnNbn(UrnNbnDTO urnNbn) throws ServerException {
+		try{
+//			TODO: poresit, uz urnNbn.getDeactivationNote() je vzdy null
+			//System.err.println("first: " + urnNbn.getDeactivationNote());	
+			UrnNbn transformed = new DtoToUrnNbnTransformer(urnNbn).transform();
+			//System.err.println("second: " + transformed.getDeactivationNote());
+			deleteService.deactivateUrnNbn(transformed, getUserLogin(), urnNbn.getDeactivationNote());
+		} catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}

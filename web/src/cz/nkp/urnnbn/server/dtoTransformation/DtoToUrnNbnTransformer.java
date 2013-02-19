@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.server.dtoTransformation;
 
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
@@ -13,6 +15,11 @@ public class DtoToUrnNbnTransformer {
 	}
 
 	public UrnNbn transform() {
-		return new UrnNbn(RegistrarCode.valueOf(original.getRegistrarCode()), original.getDocumentCode(), original.getDigdocId());
+		return new UrnNbn(RegistrarCode.valueOf(original.getRegistrarCode()), original.getDocumentCode(), original.getDigdocId(),
+				toDateTimeOrNull(original.getReserved()), original.getDeactivationNote());
+	}
+
+	private DateTime toDateTimeOrNull(String datetimeString) {
+		return datetimeString == null? null :DateTime.parse(datetimeString);
 	}
 }

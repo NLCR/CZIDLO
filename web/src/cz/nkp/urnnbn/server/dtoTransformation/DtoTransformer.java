@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -44,6 +45,14 @@ public abstract class DtoTransformer {
 		return new DigialDocumentDtoTransformer(doc, urn, registrar, archiver, digitalInstances).transform();
 	}
 
+	public Long datetTimeToMillisOrNull(DateTime dateTime) {
+		if (dateTime != null) {
+			return dateTime.getMillis();
+		} else {
+			return null;
+		}
+	}
+
 	public String dateTimeToStringOrNull(DateTime dateTime) {
 		if (dateTime != null) {
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm:ss");
@@ -73,7 +82,7 @@ public abstract class DtoTransformer {
 		return new CatalogDtoTransformer(catalog).transform();
 	}
 
-	public static UrnNbnDTO transformUrnNbn(UrnNbn urnNbn) {
+	public static UrnNbnDTO transformUrnNbn(UrnNbnWithStatus urnNbn) {
 		return new UrnNbnToDtoTransformer(urnNbn).transform();
 	}
 }

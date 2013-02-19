@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client.search;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -22,8 +24,7 @@ public class TreeBuilder {
 		}
 	}
 
-	void addLabeledRowAndButtonIfValueNotNull(String label, Object value, TreeItem root, String spanClass, Button button,
-			String buttonStyle) {
+	void addLabeledRowAndButtonIfValueNotNull(String label, Object value, TreeItem root, String spanClass, Button button, String buttonStyle) {
 		if (value != null) {
 			HorizontalPanel panel = new HorizontalPanel();
 			HTML labelHtml = new HTML("<span><span class=\"" + spanClass + "\">" + label + ": </span>" + value.toString() + "&nbsp;</span>");
@@ -32,5 +33,17 @@ public class TreeBuilder {
 			button.addStyleName(buttonStyle);
 			root.addItem(panel);
 		}
+	}
+
+	Button openUrlButton(String label, final String url) {
+		Button result = new Button(label, new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				com.google.gwt.user.client.Window.open(url, "_blank", "");
+			}
+		});
+		result.addStyleName(css.detailsButton());
+		return result;
 	}
 }

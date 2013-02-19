@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.dto.DigDocIdentifier;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.server.dtoTransformation.entities.DtotoIntelectualEntityTransformer;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
@@ -49,7 +49,7 @@ public class RecordImportTransformer {
 		DtosToDigitalDocumentTransformer transformer = new DtosToDigitalDocumentTransformer(digDoc, digDoc.getTechnicalMetadata());
 		result.setDigitalDocument(transformer.transform());
 		// TODO: dig doc identifiers
-		result.setDigDocIdentifiers(Collections.<DigDocIdentifier> emptyList());
+		result.setDigDocIdentifiers(Collections.<RegistrarScopeIdentifier> emptyList());
 	}
 
 	private void transformUrn() {

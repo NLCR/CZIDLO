@@ -63,8 +63,10 @@ public class TabsPanel extends Composite {
 	private void initTabs() {
 		// mainResources.tabStyles().ensureInjected();
 		tabLayoutPanel = new TabLayoutPanel(1.5, Unit.EM);
-		tabLayoutPanel.setAnimationDuration(500);
-		tabLayoutPanel.setAnimationVertical(false);
+		//TODO: znovu povolit animaci, jakmile bude vyresen bug "kyvadlo"
+		//tabLayoutPanel.setAnimationDuration(500);
+		//tabLayoutPanel.setAnimationVertical(false);
+		
 		// test panel - comment before building
 		// tabLayoutPanel.add(new TestPanel(), "test", false);
 		// info panel

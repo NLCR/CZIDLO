@@ -262,4 +262,28 @@ public interface ConstantsImpl extends Constants {
 
 	String showRecordInXml();
 
+	String timestampReserved();
+
+	String timestampRegistered();
+
+	String timestampDeactivated();
+
+	String note();
+
+	String inPixels();
+
+	String inBits();
+	
+	String inDpi();
+
+	String picsHeight();
+
+	String picsWidth();
+
+	String verticalResolution();
+
+	String horizontalResolution();
+	
+	String anotherArchiver();
+
 }

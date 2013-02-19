@@ -32,32 +32,46 @@ public class TechnicalMetadataForm extends Form {
 		FormFields result = new FormFields();
 		Field format = new TextInputValueField(new LimitedLengthValidator(100), constants.format(), dto.getFormat(), false);
 		result.addField("format", format);
+
 		Field formatVersion = new TextInputValueField(new LimitedLengthValidator(100), constants.formatVersion(), dto.getFormatVersion(),
 				false);
 		result.addField("formatVersion", formatVersion);
+
 		Field extent = new TextInputValueField(new LimitedLengthValidator(100), constants.extent(), dto.getExtent(), false);
 		result.addField("extent", extent);
-		Field resHorizontal = new IntegerInputValueField(new PositiveIntegerValidator(), "horizontální rozlišení",
-				dto.getResolutionHorizontal(), false);
+
+		Field resHorizontal = new IntegerInputValueField(new PositiveIntegerValidator(),
+				constants.horizontalResolution() + " (" + constants.inDpi() + ")", dto.getResolutionHorizontal(), false);
 		result.addField("resHorizontal", resHorizontal);
-		Field resVertical = new IntegerInputValueField(new PositiveIntegerValidator(), "vertikální rozlišení", dto.getResolutionVertical(),
-				false);
+
+		Field resVertical = new IntegerInputValueField(new PositiveIntegerValidator(),
+				constants.verticalResolution() + " (" + constants.inDpi() + ")", dto.getResolutionVertical(),false);
 		result.addField("resVertical", resVertical);
+
 		Field compression = new TextInputValueField(new LimitedLengthValidator(100), constants.compressionAlgorithm(),
 				dto.getCompression(), false);
 		result.addField("compression", compression);
+
 		Field compressionRatio = new DoubleInputValueField(new PositiveRealNumberValidator(), constants.compressionRatio(),
 				dto.getCompressionRatio(), false);
 		result.addField("compressionRatio", compressionRatio);
+
 		Field colorModel = new TextInputValueField(new LimitedLengthValidator(100), constants.colorModel(), dto.getColorModel(), false);
 		result.addField("colorModel", colorModel);
-		Field colorDepth = new IntegerInputValueField(new PositiveIntegerValidator(), constants.colorDepth(), dto.getColorDepth(), false);
+
+		Field colorDepth = new IntegerInputValueField(new PositiveIntegerValidator(), constants.colorDepth() + " (" + constants.inBits()
+				+ ")", dto.getColorDepth(), false);
 		result.addField("colorDepth", colorDepth);
+
 		Field iccProfile = new TextInputValueField(new LimitedLengthValidator(100), constants.iccProfile(), dto.getIccProfile(), false);
 		result.addField("iccProfile", iccProfile);
-		Field pictureWidth = new IntegerInputValueField(new PositiveIntegerValidator(), "šířka obrázků", dto.getPictureWidth(), false);
+
+		Field pictureWidth = new IntegerInputValueField(new PositiveIntegerValidator(), constants.picsWidth() + " (" + constants.inPixels()
+				+ ")", dto.getPictureWidth(), false);
 		result.addField("picWidth", pictureWidth);
-		Field pictureHeight = new IntegerInputValueField(new PositiveIntegerValidator(), "výška obrázků", dto.getPicturHeight(), false);
+
+		Field pictureHeight = new IntegerInputValueField(new PositiveIntegerValidator(), constants.picsHeight() + " (" + constants.inPixels()
+				+ ")", dto.getPicturHeight(), false);
 		result.addField("picHeight", pictureHeight);
 		return result;
 	}
