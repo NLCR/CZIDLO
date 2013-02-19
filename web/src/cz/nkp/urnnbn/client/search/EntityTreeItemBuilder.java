@@ -191,14 +191,13 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	}
 
 	void appendAlephLinkIfEnabledAndCcnbPresent(String ccnb) {
-//		this feature was requested to be disabled
-//		ConfigurationData configuration = superPanel.getConfiguration();
-//		if (configuration.showAlephLinks() && (ccnb != null) && (ccnb.length() == 12)) {
-//			String docNumber = ccnb.substring(3);
-//			String url = configuration.getAlephUrl() + "/F/?func=direct&doc_number=" + docNumber + "&local_base="
-//					+ configuration.getAlephBase();
-//			TreeItem alephItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + constants.showInCatalog() + "</a>");
-//			result.addItem(alephItem);
-//		}
+		ConfigurationData configuration = superPanel.getConfiguration();
+		if (configuration.showAlephLinks() && (ccnb != null) && (ccnb.length() == 12)) {
+			String docNumber = ccnb.substring(3);
+			String url = configuration.getAlephUrl() + "/F/?func=direct&doc_number=" + docNumber + "&local_base="
+					+ configuration.getAlephBase();
+			TreeItem alephItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + constants.showInCatalog() + "</a>");
+			result.addItem(alephItem);
+		}
 	}
 }
