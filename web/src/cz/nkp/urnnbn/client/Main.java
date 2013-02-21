@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -52,7 +53,7 @@ public class Main implements EntryPoint {
 		RootLayoutPanel.get().add(mainPanel);
 		// FOOTER
 		HorizontalPanel footerPanel = footerPanel();
-		mainPanel.addSouth(footerPanel, 40);
+		mainPanel.addSouth(footerPanel, 50);
 	}
 
 	private HorizontalPanel headerPanel(UserDTO user) {
@@ -99,26 +100,36 @@ public class Main implements EntryPoint {
 	}
 
 	private HorizontalPanel footerPanel() {
-		// panel
 		HorizontalPanel footerPanel = new HorizontalPanel();
 		footerPanel.addStyleName(resources.MainCss().footerPanel());
 		footerPanel.setWidth("100%");
-		footerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-		Label footerStrut = new Label("");
-		footerPanel.add(footerStrut);
-		footerPanel.setCellWidth(footerStrut, "90%");
-		// space
-		Label footerStrutA = new Label("");
-		footerPanel.add(footerStrutA);
-		footerPanel.setCellWidth(footerStrutA, "1%");
-		// space
-		Label footerStrutB = new Label("");
-		footerPanel.add(footerStrutB);
-		footerPanel.setCellWidth(footerStrutB, "1%");
-		// logo nkp
-		Image logoNKP = new Image("img/logo_nkp.gif");
-		logoNKP.getElement().getStyle().setProperty("verticalAlign", "bottom");
+		footerPanel.setHeight("100%");
+		footerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		footerPanel.setBorderWidth(0);
+		
+		// logo NDK
+		Image logoNDK = new Image("img/logo_ndk.jpg");
+		footerPanel.add(logoNDK);
+		
+		// logo NKP
+		Image logoNKP = new Image("img/logo_nkp.jpg");
 		footerPanel.add(logoNKP);
+		
+		// logo MZK
+		Image logoMZK = new Image("img/logo_mzk.jpg");
+		footerPanel.add(logoMZK);
+		
+		// logo IOP
+		Image logoIOP = new Image("img/logo_iop.jpg");
+		footerPanel.add(logoIOP);
+
+		// logo MK
+		Image logoMK = new Image("img/logo_mk.jpg");
+		footerPanel.add(logoMK);
+		
+		Hyperlink link = new Hyperlink();
+		link.getElement().getFirstChild().appendChild(logoMK.getElement());
+				
 		return footerPanel;
 	}
 }
