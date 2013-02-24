@@ -32,21 +32,30 @@ public class ResolverConnector {
 
         FREE, RESERVED, ACTIVE, UNDEFINED
     }
-    public static final String IMPORT_TEMPLATE_URL = "http://urnnbn-resolver-v2.googlecode.com/svn/trunk/xml/src/main/resources/xsd/recordImport.xsd.xml";
-    public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://urnnbn-resolver-v2.googlecode.com/svn/trunk/xml/src/main/resources/xsd/digitalInstanceImport.xsd.xml";
+    public static final String IMPORT_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digDocRegistration.xsd";//"http://mapy.mzk.cz/tmp/rs.xsd";
+    //public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://urnnbn-resolver-v2.googlecode.com/svn/trunk/xml/src/main/resources/xsd/digitalInstanceImport.xsd.xml";
+
+//    public static final String IMPORT_TEMPLATE_URL = "https://urnnbn-resolver-v2.googlecode.com/svn/trunk/rest/src/main/resources/v3/registerDigitalDocument.xsd";
+    public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digInstImport.xsd";//"https://urnnbn-resolver-v2.googlecode.com/svn/trunk/rest/src/main/resources/v3/importDigitalInstance.xsd";    
+    
     public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
     public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
-    public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v2/";
-    public static final String RESOLVER_BASE_URL = "resolver-test.nkp.cz/";
-    public static final String RESOLVER_API_URL = RESOLVER_BASE_URL + "api/v2/";
+    public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v3/";
+    public static final String RESOLVER_BASE_URL = "resolver-test2.nkp.cz/";
+    public static final String RESOLVER_API_URL = RESOLVER_BASE_URL + "api/v3/";
     public static final XPathContext CONTEXT = new XPathContext("r", RESOLVER_NAMESPACE);
 
     private static String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
         String url = "http://" + RESOLVER_API_URL + "registrars/" + registrar
-                + "/digitalDocuments/id/" + registarScopeId + "/"
-                + identifier + "?format=xml";
+                + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId + "/"
+                + identifier + "?format=xml&action=show";
 
         return url;
+    }
+    
+    private static String getRegistrarUrl(String registrarCode) {
+        String url = "http://" + RESOLVER_API_URL + "registrars/" + registrarCode;
+        return url;            
     }
 
     private static String getImportDocumetUrl(String registrarCode) {
@@ -95,6 +104,7 @@ public class ResolverConnector {
 
     public static String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws ResolverConnectionException {
         String url = getDigitalDocumentUrl(registrar, registarScopeId, identifier);
+        //System.out.println(url);
         Document document;
         try {
             document = XmlTools.getDocument(url, true);
@@ -103,7 +113,7 @@ public class ResolverConnector {
         } catch (ParsingException ex) {
             throw new ResolverConnectionException("ParsingException occured while getting urnnbn by OAI_ADAPTER ID");
         }
-        Nodes nodes = document.query("/r:digitalDocument/r:urnNbn", CONTEXT);
+        Nodes nodes = document.query("//r:digitalDocument/r:urnNbn/r:value", CONTEXT);
         if (nodes.size() > 0) {
             return nodes.get(0).getValue();
         }
@@ -140,19 +150,41 @@ public class ResolverConnector {
     public static List<String> getDigitalInstancesIdList(String urnnbn) throws IOException, ParsingException {
         List<String> list = new ArrayList<String>();
         String url = getDigitalInsatancesUrl(urnnbn);
+        //System.out.println("getDigitalInstancesIdList " + url);
         Document document = XmlTools.getDocument(url, false);
         Element rootElement = document.getRootElement();
-        Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/r:id", CONTEXT);
+        Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/@id", CONTEXT);
         //Nodes idNodes = rootElement.query("//r:digitalInstance/r:id", CONTEXT);
         for (int i = 0; i < idNodes.size(); i++) {
             list.add(idNodes.get(i).getValue());
         }
         return list;
     }
+    
+    public static String getErrorMessage(Document document) throws IOException, ParsingException {
+        Element rootElement = document.getRootElement();
+        Nodes codeNodes = rootElement.query("//r:error/r:code", CONTEXT);        
+        String code = "";
+        if(codeNodes.size() == 1) {
+            code = codeNodes.get(0).getValue();
+        }
+        Nodes messageNodes = rootElement.query("//r:error/r:message", CONTEXT);        
+        String message = "";
+        if(messageNodes.size() == 1) {
+            message = messageNodes.get(0).getValue();
+        }
+        if(code.isEmpty() && message.isEmpty()) {
+             return null;
+        }
+        return code + ": " + message;
+        
+    }
+    
 
     public static Document getDigitailInstanceById(String id) throws IOException, ParsingException {
-        List<String> list = new ArrayList<String>();
+       // List<String> list = new ArrayList<String>();
         String url = getDigitalInstanceUrl(id);
+       // System.out.println("getDigitailInstanceById " + url);
         Document document = XmlTools.getDocument(url, false);
         return document;
     }
@@ -180,6 +212,37 @@ public class ResolverConnector {
         return ResolverConnector.UrnnbnStatus.UNDEFINED;
     }
 
+    
+    public static boolean checkRegistrarMode(String registrarCode, OaiAdapter.Mode mode) {
+        String url = getRegistrarUrl(registrarCode);        
+        Document document = null;
+        try {
+            document = XmlTools.getDocument(url, true);
+        } catch (Exception ex) {
+            return false;
+        }
+        Element rootElement = document.getRootElement();
+        String modeString = "";
+        switch(mode) {
+            case BY_REGISTRAR :
+                modeString = "BY_REGISTRAR";
+                break;
+            case BY_RESOLVER :
+                modeString = "BY_RESOLVER";
+                break;
+            case RESERVATION :
+                modeString = "BY_RESERVATION";
+                break;                
+        }
+        Nodes modeEnabledNode = rootElement.query("//r:registrationModes/r:mode[@name='" + modeString + "']/@enabled", CONTEXT);
+        if (modeEnabledNode.size() > 0) {
+            return "true".equals(modeEnabledNode.get(0).getValue());          
+        }
+        return false;
+    }
+    
+    
+    
     public static List<String> reserveUrnnbnBundle(String registarCode, int bundleSize, String login, String password) throws IOException, ResolverConnectionException, ParsingException {
         List<String> urnnbnList = new ArrayList<String>();
         String url = getUrnnbnReservationUrl(registarCode, bundleSize);
@@ -208,13 +271,14 @@ public class ResolverConnector {
         wr.flush();
         wr.close();
         int responseCode = connection.getResponseCode();
-        //Builder builder2 = new Builder();
-        //System.out.println(builder2.build(connection.getErrorStream()).toXML());
         if (responseCode != 200) { //TODO pokud ok, pak vzdy 200??            
-            throw new ResolverConnectionException("Importing record document: response code expected 200,  found " + responseCode);
+            Builder builder = new Builder();
+            String message = getErrorMessage(builder.build(connection.getErrorStream()));
+            if(message == null) {
+                message = "Importing record document: response code expected 200,  found " + responseCode;
+            }
+            throw new ResolverConnectionException(message);
         }
-        //System.out.println("import code" + connection.getResponseCode());
-
         InputStream is = connection.getInputStream();
         Builder builder = new Builder();
         Document responseDocument = builder.build(is);
@@ -294,8 +358,8 @@ public class ResolverConnector {
         List<String> idList = getDigitalInstancesIdList(urnnbn);
         for (String id : idList) {
             Document document = getDigitailInstanceById(id);            
-            DigitalInstance oldDi = ImportDocumentHandler.getDigitalLibraryIdFromDocument(document);
-            System.out.println("odi:" + oldDi);
+            DigitalInstance oldDi = ImportDocumentHandler.getDIFromResponseDocument(document);
+            //System.out.println("odi:" + oldDi);
             if (oldDi.getDigitalLibraryId().equals(newDi.getDigitalLibraryId())) {
                     return oldDi;
             }

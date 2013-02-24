@@ -126,10 +126,6 @@ public class OaiAdapter {
         this.reportLogger = new ReportLogger(os);
     }
 
-    private boolean containsUrnnbn(Document document) {
-        return ImportDocumentHandler.getUrnnbnFromDocument(document) != null;
-    }
-
     private Document getImportTemplateDocument() throws TemplateException {
         try {
             return XmlTools.getTemplateDocumentFromString(getMetadataToImportTemplate());
@@ -160,43 +156,10 @@ public class OaiAdapter {
         }
     }
 
-//    private boolean isDocumentAlreadyImported(String identifier) throws OaiAdapterException {
-//        try {
-//            if (ResolverConnector.isDocumentAlreadyImported(getRegistrarCode(), identifier, OaiAdapter.REGISTAR_SCOPE_ID)) {
-//                logger.log(Level.INFO, "Document already imported, registrar code: {0}, registrar scope id: {1}, identifier: {2}",
-//                        new Object[]{getRegistrarCode(), OaiAdapter.REGISTAR_SCOPE_ID, identifier});
-//                report("- already imported - skip.");
-//                return true;
-//            }
-//            report("- not imported yet - continue.");
-//            return false;
-//        } catch (IOException ex) {
-//            throw new OaiAdapterException("IOException occurred when testing if document is already imported. "
-//                    + "identifier: " + identifier
-//                    + ", ex: " + ex.getMessage());
-//        } catch (ParsingException ex) {
-//            throw new OaiAdapterException("ParsingException occurred when testing if document is already imported. "
-//                    + "identifier: " + identifier
-//                    + ", ex: " + ex.getMessage());
-//        }
-//    }
-    public void processSingleDocument(String oaiIdentifier, Document digitalDocument, Document digitalInstance) throws OaiAdapterException, ResolverConnectionException {
+    public boolean processSingleDocument(String oaiIdentifier, Document digitalDocument, Document digitalInstance) throws OaiAdapterException, ResolverConnectionException {
         Refiner.refineDocument(digitalDocument);
         ImportDocumentHandler.putRegistrarScopeIdentifier(digitalDocument, oaiIdentifier);
-        try {
-            XmlTools.validateImport(digitalDocument);
-            System.out.println("- import validation successful - continue.");
-        } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("- import invalid - skip \nMessage: " + ex.getMessage());
-        }
-        try {
-            XmlTools.validateDigitalIntance(digitalInstance);
-            System.out.println("- digital instance validation successful - continue.");
-        } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
-        }
         String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digitalDocument);
-        System.out.println("urnnbn in doc: " + urnnbn);
         if (urnnbn == null) {
             if (getMode() == Mode.BY_RESOLVER) {
                 urnnbn = ResolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
@@ -204,18 +167,23 @@ public class OaiAdapter {
                     urnnbn = importDigitalDocument(digitalDocument, oaiIdentifier);
                 }
             } else {
-                throw new OaiAdapterException("Document doesn't contain urnnbn and mode is not BY_RESOLVER");
+                throw new OaiAdapterException("Incorrect mode - document doesn't contain urnnbn and mode is not BY_RESOLVER");
             }
         } else {
+            if (getMode() == Mode.BY_RESOLVER) {
+                throw new OaiAdapterException("Incorrect mode - document contains urnnbn and mode is BY_RESOLVER");
+            }
             ResolverConnector.UrnnbnStatus urnnbnStatus = ResolverConnector.getUrnnbnStatus(urnnbn);
+            report("- urnnbn Status: " + urnnbnStatus);
+
             if (urnnbnStatus == ResolverConnector.UrnnbnStatus.UNDEFINED) {
                 throw new OaiAdapterException("Checking urnbn status failed");
             }
             if (urnnbnStatus == ResolverConnector.UrnnbnStatus.RESERVED && getMode() != Mode.RESERVATION) {
-                throw new OaiAdapterException("Urnnbn has status RESERVED and mode is not RESERVATION");
+                throw new OaiAdapterException("Incorrect mode - Urnnbn has status RESERVED and mode is not RESERVATION");
             }
             if (urnnbnStatus == ResolverConnector.UrnnbnStatus.FREE && getMode() != Mode.BY_REGISTRAR) {
-                throw new OaiAdapterException("Urnnbn has status FREE and mode is not BY_REGISTRAR");
+                throw new OaiAdapterException("Incorrect mode - Urnnbn has status FREE and mode is not BY_REGISTRAR");
             }
 
             if (urnnbnStatus == ResolverConnector.UrnnbnStatus.ACTIVE) {
@@ -226,12 +194,8 @@ public class OaiAdapter {
             } else {
                 importDigitalDocument(digitalDocument, oaiIdentifier);
             }
-        }
-        System.out.println("URNNBN: " + urnnbn);
-        //From this point on the process id equils from all modes and statuses. ([check digital instances]
-
-        DigitalInstance newDi = ImportDocumentHandler.getDigitalLibraryIdFromDocument(digitalInstance);
-        System.out.println(newDi);
+        }        
+        DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digitalInstance);
         DigitalInstance oldDi = null;
         try {
             oldDi = ResolverConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
@@ -244,9 +208,9 @@ public class OaiAdapter {
             //di doesnt exist yet            
             // IMPORT            
             importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
-            System.out.println("DI doesn't exists ..importing DI");
+            report("- DI doesn't exists ...importing DI");
+            return true;
         } else {
-            System.out.println(oldDi);
             //di already exist
             if(newDi.isChanged(oldDi)) {
                 //di has been changed
@@ -254,10 +218,12 @@ public class OaiAdapter {
                 ResolverConnector.removeDigitalInstance(oldDi.getId(), login, password);
                 // IMPORT
                 importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
-                System.out.println("DI already exists and is modified ...removing old one and imporing new DI");
+                report("- DI already exists and is modified ...removing old one and imporing new DI");               
+                return true;
             } else {
                 // no change ..do nothing
-                System.out.println("DI already exists and is not modified ...doing nothing");
+                report("- DI already exists and is not modified ...doing nothing.");
+                return false;
             }
         }                
     }
@@ -265,7 +231,7 @@ public class OaiAdapter {
     private void importDigitalInstance(Document digitalInstance, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
         try {
             ResolverConnector.importDigitalInstance(digitalInstance, urnnbn, login, password);
-            System.out.println("- digital instance successfully added to resolver - continue.");
+            report("- digital instance successfully added to resolver - continue.");
         } catch (IOException ex) {
             throw new OaiAdapterException("IOException occurred when importing digital instance. "
                     + "identifier: " + oaiIdentifier
@@ -285,7 +251,8 @@ public class OaiAdapter {
     private String importDigitalDocument(Document digitalDocument, String oaiIdentifier) throws OaiAdapterException {
         try {
             String urnnbn = ResolverConnector.importDocument(digitalDocument, registrarCode, login, password);
-            System.out.println("import successfully added to resolver - continue.");
+            report("- import successfully added to resolver - continue.");
+            report("- URNNBN: " + urnnbn);
             return urnnbn;
         } catch (IOException ex) {
             throw new OaiAdapterException("IOException occurred when importing document. "
@@ -301,16 +268,16 @@ public class OaiAdapter {
                     + ", ex: " + ex.getMessage());
         }
     }
-
+    
+    
+    
+    
     private boolean importDocument(Record record, Document importTemplate, Document digitalInstanceTemplate)
             throws OaiAdapterException {
 
         report("------------------------------------------------------");
         report("Importing document - identifier: " + record.getIdentifier());
 
-//        if (isDocumentAlreadyImported(record.getIdentifier())) {
-//            return false;
-//        }
         String identifier = record.getIdentifier();
         Document importDocument = null;
         Document digitalInstanceDocument = null;
@@ -322,7 +289,6 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-        Refiner.refineDocument(importDocument);
         try {
             XmlTools.validateImport(importDocument);
             report("- import validation successful - continue.");
@@ -338,69 +304,27 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-
+ 
         try {
             XmlTools.validateDigitalIntance(digitalInstanceDocument);
             report("- digital instance validation successful - continue.");
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
         }
-        System.out.println(importDocument.toXML());
-        if (!containsUrnnbn(importDocument)) {
-            System.out.println("doesnt contain urnnbn");
-            return false;
-        }
-        String urnnbn = null;
+       
         try {
-            urnnbn = ResolverConnector.importDocument(importDocument, registrarCode, login, password);
-            report("- import successfully added to resolver - continue.");
-            report("- URNNBN: " + urnnbn);
-        } catch (IOException ex) {
-            throw new OaiAdapterException("IOException occurred when importing document. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        } catch (ParsingException ex) {
-            throw new OaiAdapterException("ParsingException occurred when importing document. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
+            return processSingleDocument(identifier, importDocument, digitalInstanceDocument);
         } catch (ResolverConnectionException ex) {
-            throw new OaiAdapterException("ResolverConnectionException occurred when importing document. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
+            throw new OaiAdapterException(ex.getMessage());
         }
-
-        try {
-            ResolverConnector.putRegistrarScopeIdentifier(urnnbn, identifier, OaiAdapter.REGISTAR_SCOPE_ID, login, password);
-            report("- registrar scope id successfully added - continue.");
-        } catch (IOException ex) {
-            throw new OaiAdapterException("IOException occurred when putting reg scope for urnnbn. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        } catch (ResolverConnectionException ex) {
-            throw new OaiAdapterException("ResolverConnectionException occurred when putting reg scope for urnnbn. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        }
-
-        try {
-            ResolverConnector.importDigitalInstance(digitalInstanceDocument, urnnbn, login, password);
-            report("- digital instance successfully added to resolver - continue.");
-        } catch (IOException ex) {
-            throw new OaiAdapterException("IOException occurred when importing digital instance. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        } catch (ParsingException ex) {
-            throw new OaiAdapterException("ParsingException occurred when importing digital instance. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        } catch (ResolverConnectionException ex) {
-            throw new OaiAdapterException("ResolverConnectionException occurred when importing digital instance. "
-                    + "identifier: " + identifier
-                    + ", ex: " + ex.getMessage());
-        }
-        return true;
+        
     }
-
+    
+    
+    
+    
+    
+    
     public void run() {
         try {
             Document importTemplate = getImportTemplateDocument();
@@ -411,8 +335,14 @@ public class OaiAdapter {
             report(" OAI base url: " + getOaiBaseUrl());
             report(" Metadata prefix: " + getMetadataPrefix());
             report(" Set: " + (setSpec == null ? "not set" : setSpec));
+            report(" Mode: " + getMode());
             report("-----------------------------------------------------");
 
+            if(!ResolverConnector.checkRegistrarMode(getRegistrarCode(), getMode())) {
+                report(" Mode " + getMode() + " is not enabled for registrar " + getRegistrarCode());
+                logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getMode(), getRegistrarCode()});
+                return;                
+            }
             OaiHarvester harvester = null;
             try {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
@@ -455,8 +385,8 @@ public class OaiAdapter {
             }
             report("-----------------------------------------------------");
             report("ALL RECORDS: " + all);
-            report("SUCCESSFUL RECORDS (NEW): " + success);
-            report("SUCCESSFUL RECORDS:(ALREADY IMPORTED): " + alreadyImported);
+            report("SUCCESSFUL RECORDS (NEW/MODIFIED): " + success);
+            report("SUCCESSFUL RECORDS:(ALREADY IMPORTED AND NOT MODIFIED): " + alreadyImported);
             report("NOT SUCCESSFUL: " + (all - (success + alreadyImported)));
 
             if (reportLogger != null) {

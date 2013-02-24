@@ -3,7 +3,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
                 xmlns:marc="http://www.loc.gov/MARC21/slim"
-                xmlns:r="http://resolver.nkp.cz/v2/"
+                xmlns:r="http://resolver.nkp.cz/v3/"
                 exclude-result-prefixes="marc">
 
     <xsl:output method="xml"
@@ -16,7 +16,7 @@
 
 
     <xsl:template match="/">                
-        <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">        
+        <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v3/">        
             <xsl:call-template name="url"/>
             <xsl:call-template name="digitalLibraryId"/>                
             <xsl:call-template name="format"/>   
@@ -37,7 +37,7 @@
     </xsl:template>    
 
     <xsl:template name="digitalLibraryId">                       
-        <r:digitalLibraryId>43</r:digitalLibraryId>      
+        <r:digitalLibraryId>44</r:digitalLibraryId>      
     </xsl:template>    
 
     <xsl:template name="format">                              

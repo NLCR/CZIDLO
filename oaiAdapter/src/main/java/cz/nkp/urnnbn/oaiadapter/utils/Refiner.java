@@ -101,10 +101,18 @@ public class Refiner {
         Refiner.parseAndMatch(publicationElement, "year", "\\d{1,4}");        
     }
     
+    private static void parseUrnNbnElement(Element urnNbnElement) {
+        Refiner.parseAndMatch(urnNbnElement, "value", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
+    }
 
     private static void parseDigitalDocumentElement(Element digitalDocumentElement) {
         Refiner.parseAndMatch(digitalDocumentElement, "archiverId", "\\d*");
-        Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
+        
+        Element urnNbnElement = digitalDocumentElement.getFirstChildElement("urnNbn", ResolverConnector.RESOLVER_NAMESPACE);
+        if(urnNbnElement != null) {
+            Refiner.parseUrnNbnElement(urnNbnElement);
+        }                    
+        //Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
         //TODO: registrarScopeIdentifiers
         Refiner.parseAndCut(digitalDocumentElement, "financed", 100, 1);          
         Element technicalMetadataElement = digitalDocumentElement.getFirstChildElement("technicalMetadata", ResolverConnector.RESOLVER_NAMESPACE);

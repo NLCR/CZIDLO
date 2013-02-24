@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"                
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:r="http://resolver.nkp.cz/v2/"
+                xmlns:r="http://resolver.nkp.cz/v3/"
                 exclude-result-prefixes="dc">                    
 
     <xsl:output method="xml"
@@ -14,7 +14,7 @@
             />                        
             
     <xsl:template match="/">
-        <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
+        <r:import xmlns:r="http://resolver.nkp.cz/v3/">            
             <r:analytical> 
                 <xsl:call-template name="titleInfo"/>
                 <xsl:call-template name="documentType"/>   
@@ -52,9 +52,9 @@
     </xsl:template>
 
     <xsl:template name="creator">                       
-        <xsl:if test="//dc:author">
+        <xsl:if test="//dc:creator">
             <r:primaryOriginator type="AUTHOR">
-                <xsl:value-of select="//dc:author"/>
+                <xsl:value-of select="//dc:creator"/>
             </r:primaryOriginator>
         </xsl:if>
     </xsl:template>
@@ -64,7 +64,7 @@
             <r:titleInfo>
                 <r:title>Duha</r:title>
             </r:titleInfo>
-            <r:issn>1804-4255</r:issn>
+            <r:issn>ISSN:1804-4255</r:issn>
             <r:publication>
                 <r:publisher>Moravská zemská knihovna</r:publisher>
                 <r:place>Brno</r:place>
@@ -74,6 +74,9 @@
     
     <xsl:template name="digitalDocument">           
         <r:digitalDocument>
+            <r:urnNbn>
+                <r:value><xsl:value-of select='//dc:identifier[starts-with(.,"urn")]'/></r:value>
+            </r:urnNbn>
             <r:technicalMetadata>
                 <r:format>html</r:format>
             </r:technicalMetadata>
