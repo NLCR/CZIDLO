@@ -53,24 +53,48 @@ public class ImportDocumentHandler {
         return document;
     }
 
-    public static String getUrnnbnFromDocument(Document document) {
-        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn", ResolverConnector.CONTEXT);
+    public static String getUrnnbnFromDocument(Document document) {        
+        //Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn", ResolverConnector.CONTEXT);
+        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn/r:value", ResolverConnector.CONTEXT);               
+        //System.out.println(document.toXML().toString());               
+        //System.out.println(nodes.size());
+        //System.out.println(ResolverConnector.CONTEXT);
         if (nodes.size() == 1) {
             return nodes.get(0).getValue();
         }
         return null;
     }
 
-    public static DigitalInstance getDigitalLibraryIdFromDocument(Document document) {
+    public static DigitalInstance getDIFromResponseDocument(Document document) {
+        DigitalInstance di = new DigitalInstance();
+        Nodes libraryIdNodes = document.query("//r:digitalInstance/r:digitalLibrary/@id", ResolverConnector.CONTEXT);
+        if (libraryIdNodes.size() == 1) {
+            di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
+        } 
+        Nodes urlNodes = document.query("//r:digitalInstance/r:url", ResolverConnector.CONTEXT);
+        if (urlNodes.size() == 1) {
+            di.setUrl(urlNodes.get(0).getValue());
+        }
+        Nodes formatNodes = document.query("//r:digitalInstance/r:format", ResolverConnector.CONTEXT);
+        if (formatNodes.size() == 1) {
+            di.setFormat(formatNodes.get(0).getValue());
+        }
+        Nodes accessibilityNodes = document.query("//r:digitalInstance/r:accessibility", ResolverConnector.CONTEXT);
+        if (accessibilityNodes.size() == 1) {
+            di.setAccessibility(accessibilityNodes.get(0).getValue());
+        }
+        Nodes idNodes = document.query("//r:digitalInstance/@id", ResolverConnector.CONTEXT);
+        if (idNodes.size() == 1) {
+            di.setId(idNodes.get(0).getValue());
+        }
+        return di;
+    }
+
+    public static DigitalInstance getDIFromSourceDocument(Document document) {
         DigitalInstance di = new DigitalInstance();
         Nodes libraryIdNodes = document.query("/r:digitalInstance/r:digitalLibraryId", ResolverConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
             di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
-        } else {
-            libraryIdNodes = document.query("/r:digitalInstance/r:digitalLibrary/r:id", ResolverConnector.CONTEXT);
-            if (libraryIdNodes.size() == 1) {
-                di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
-            }
         }
         Nodes urlNodes = document.query("/r:digitalInstance/r:url", ResolverConnector.CONTEXT);
         if (urlNodes.size() == 1) {
@@ -84,16 +108,13 @@ public class ImportDocumentHandler {
         if (accessibilityNodes.size() == 1) {
             di.setAccessibility(accessibilityNodes.get(0).getValue());
         }
-        Nodes idNodes = document.query("/r:digitalInstance/r:id", ResolverConnector.CONTEXT);
-        if (idNodes.size() == 1) {
-            di.setId(idNodes.get(0).getValue());
-        }
         return di;
     }
-
+    
+    
     public static void main(String[] args) {
         //File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
-        File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument.xml");
+        File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument2.xml");
         //File file = new File("/home/hanis/prace/resolver/oai/parser-test/monograph.xml");
 
         Builder builder = new Builder();
@@ -109,6 +130,6 @@ public class ImportDocumentHandler {
         ImportDocumentHandler.putRegistrarScopeIdentifier(doc, "oai:blablabla");
         //String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(doc);
         //System.out.println(urnnbn);
-        System.out.println(doc.toXML());
+        //System.out.println(doc.toXML());
     }
 }
