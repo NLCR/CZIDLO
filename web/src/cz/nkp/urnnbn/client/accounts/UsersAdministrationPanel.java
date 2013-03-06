@@ -14,8 +14,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
-import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
@@ -24,8 +22,6 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class UsersAdministrationPanel extends SingleTabContentPanel {
 
-	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
 	private ArrayList<UserDTO> users = new ArrayList<UserDTO>();
 
@@ -33,6 +29,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 		super(superPanel);
 	}
 
+	@Override
 	public void onLoad() {
 		loadUsers();
 		reload();
@@ -166,6 +163,17 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 				new AddUserAccountDialogBox(UsersAdministrationPanel.this).show();
 			}
 		});
+	}
+
+	@Override
+	public void onSelection() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onDeselectionSelection() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

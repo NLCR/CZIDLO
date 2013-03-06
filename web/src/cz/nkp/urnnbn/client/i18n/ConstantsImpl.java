@@ -27,6 +27,8 @@ public interface ConstantsImpl extends Constants {
 	String tabOaiAdapterLabel();
 
 	String tabHelpLabel();
+	
+	String tabProcessesLabel();
 
 	// presunout
 
@@ -285,5 +287,9 @@ public interface ConstantsImpl extends Constants {
 	String horizontalResolution();
 	
 	String anotherArchiver();
+	
+	String processList();
+	
+	String planNewProcess();
 
 }

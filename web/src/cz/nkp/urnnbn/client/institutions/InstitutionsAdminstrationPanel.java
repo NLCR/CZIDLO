@@ -42,4 +42,15 @@ public class InstitutionsAdminstrationPanel extends SingleTabContentPanel {
 		}
 		clear();
 	}
+
+	@Override
+	public void onSelection() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onDeselectionSelection() {
+		// TODO Auto-generated method stub
+		
+	}
 }

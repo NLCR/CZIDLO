@@ -13,12 +13,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.accounts.UsersAdministrationPanel;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.insertRecord.DataInputPanel;
 import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationPanel;
+import cz.nkp.urnnbn.client.processes.ProcessAdministrationPanel;
 import cz.nkp.urnnbn.client.search.SearchPanel;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
@@ -63,37 +63,108 @@ public class TabsPanel extends Composite {
 	private void initTabs() {
 		// mainResources.tabStyles().ensureInjected();
 		tabLayoutPanel = new TabLayoutPanel(1.5, Unit.EM);
-		//TODO: znovu povolit animaci, jakmile bude vyresen bug "kyvadlo"
-		//tabLayoutPanel.setAnimationDuration(500);
-		//tabLayoutPanel.setAnimationVertical(false);
-		
-		// test panel - comment before building
-		// tabLayoutPanel.add(new TestPanel(), "test", false);
+		// TODO: znovu povolit animaci, jakmile bude vyresen bug "kyvadlo"
+		// tabLayoutPanel.setAnimationDuration(500);
+		// tabLayoutPanel.setAnimationVertical(false);
+
+		// // info panel
+		// tabLayoutPanel.add(new InfoPanel(this), constants.tabInfoLabel(),
+		// false);
+		// // search panel
+		// String query =
+		// com.google.gwt.user.client.Window.Location.getParameter("q");
+		// if (query == null || query.isEmpty()) {
+		// tabLayoutPanel.add(new SearchPanel(this, null),
+		// constants.tabSearchLabel(), false);
+		// } else {
+		// tabLayoutPanel.add(new SearchPanel(this, query),
+		// constants.tabSearchLabel(), false);
+		// activatePanel(1);
+		// }
+		// // institutions panel
+		// tabLayoutPanel.add(new InstitutionsAdminstrationPanel(this),
+		// constants.tabInstitutionsLabel(), false);
+		// // insert record panel
+		// if (activeUser.isLoggedUser()) {
+		// tabLayoutPanel.add(new DataInputPanel(this),
+		// constants.tabDataInputLabel(), false);
+		// }
+		// // user accounts panel
+		// if (activeUser.isSuperAdmin()) {
+		// tabLayoutPanel.add(new UsersAdministrationPanel(this),
+		// constants.tabAccountManagementLabel(), false);
+		// }
+		// // TODO: povolit jen prihlasenym uzivatelum
+		// // if (activeUser.isLoggedUser()) {
+		// tabLayoutPanel.add(new ProcessAdministrationPanel(this),
+		// constants.tabProcessesLabel(), false);
+		// // }
+
+		PanelsBuilder builder = new PanelsBuilder(tabLayoutPanel);
+
 		// info panel
-		tabLayoutPanel.add(new InfoPanel(this), constants.tabInfoLabel(), false);
+		builder.appendPanel(new InfoPanel(this), constants.tabInfoLabel());
+
 		// search panel
 		String query = com.google.gwt.user.client.Window.Location.getParameter("q");
 		if (query == null || query.isEmpty()) {
-			tabLayoutPanel.add(new SearchPanel(this, null), constants.tabSearchLabel(), false);
+			builder.appendPanel(new SearchPanel(this, null), constants.tabSearchLabel());
 		} else {
-			tabLayoutPanel.add(new SearchPanel(this, query), constants.tabSearchLabel(), false);
+			builder.appendPanel(new SearchPanel(this, query), constants.tabSearchLabel());
 			activatePanel(1);
 		}
+
 		// institutions panel
-		tabLayoutPanel.add(new InstitutionsAdminstrationPanel(this), constants.tabInstitutionsLabel(), false);
+		builder.appendPanel(new InstitutionsAdminstrationPanel(this), constants.tabInstitutionsLabel());
+
 		// insert record panel
 		if (activeUser.isLoggedUser()) {
-			tabLayoutPanel.add(new DataInputPanel(this), constants.tabDataInputLabel(), false);
+			builder.appendPanel(new DataInputPanel(this), constants.tabDataInputLabel());
 		}
+
 		// user accounts panel
 		if (activeUser.isSuperAdmin()) {
-			tabLayoutPanel.add(new UsersAdministrationPanel(this), constants.tabAccountManagementLabel(), false);
+			builder.appendPanel(new UsersAdministrationPanel(this), constants.tabAccountManagementLabel());
 		}
-		// TODO: help panel
-		// VerticalPanel help = new VerticalPanel();
-		// tabLayoutPanel.add(help, constants.tabHelpLabel(), false);
+
+		// process administration panel
+		// TODO: povolit jen prihlasenym uzivatelum
+		//if (activeUser.isLoggedUser()) {
+		//	builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
+		//}
+
 		initHistory(tabLayoutPanel);
 		initWidget(tabLayoutPanel);
+		builder.appendSelectionHandler();
+	}
+
+	class PanelsBuilder {
+
+		private TabLayoutPanel rootPanel;
+		private ArrayList<SingleTabContentPanel> panels = new ArrayList<SingleTabContentPanel>();
+
+		public PanelsBuilder(TabLayoutPanel rootPanel) {
+			this.rootPanel = rootPanel;
+		}
+
+		void appendPanel(SingleTabContentPanel panel, String label) {
+			rootPanel.add(panel, label, false);
+			panels.add(panel);
+		}
+
+		void appendSelectionHandler() {
+			rootPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+				@Override
+				public void onSelection(SelectionEvent<Integer> event) {
+					int selected = event.getSelectedItem();
+					if (selected < panels.size()) {
+						SingleTabContentPanel selectedPanel = panels.get(selected);
+						selectedPanel.onSelection();
+					}
+				}
+			});
+		}
 	}
 
 	private void initHistory(TabLayoutPanel tabPanel) {

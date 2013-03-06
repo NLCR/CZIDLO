@@ -41,4 +41,15 @@ public class InfoPanel extends SingleTabContentPanel {
 						+ "<p><h3>správa serveru</h3> Leoš Junek <br/>Leos.Junek@nkp.cz</p>");
 		add(content);
 	}
+
+	@Override
+	public void onSelection() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onDeselectionSelection() {
+		// TODO Auto-generated method stub
+		
+	}
 }

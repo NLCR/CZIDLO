@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+.processListHeading {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 5px;
+}
+
+.planProcessHeading {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 5px;
+}

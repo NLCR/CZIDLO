@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.server.dtoTransformation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -44,12 +45,21 @@ public abstract class DtoTransformer {
 			ArrayList<DigitalInstanceDTO> digitalInstances) {
 		return new DigialDocumentDtoTransformer(doc, urn, registrar, archiver, digitalInstances).transform();
 	}
-
+	
+	
 	public Long datetTimeToMillisOrNull(DateTime dateTime) {
 		if (dateTime != null) {
 			return dateTime.getMillis();
 		} else {
 			return null;
+		}
+	}
+	
+	public String dateToStringOrNull(Date date){
+		if(date == null){
+			return null;
+		}else{
+			return dateTimeToStringOrNull(new DateTime(date.getTime()));
 		}
 	}
 

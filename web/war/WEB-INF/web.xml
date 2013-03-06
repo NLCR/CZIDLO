@@ -102,6 +102,16 @@
 		<url-pattern>/web/conf</url-pattern>
 	</servlet-mapping>
 	
+		<servlet>
+		<servlet-name>processService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.ProcessServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>processService</servlet-name>
+		<url-pattern>/web/process</url-pattern>
+	</servlet-mapping>
+	
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

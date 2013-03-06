@@ -29,4 +29,15 @@ public class DataInputPanel extends SingleTabContentPanel {
 		clear();
 		add(actualPanel);
 	}
+
+	@Override
+	public void onSelection() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onDeselectionSelection() {
+		// TODO Auto-generated method stub
+		
+	}
 }

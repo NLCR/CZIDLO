@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.client.services.ConfigurationService;
 import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.client.services.SearchServiceAsync;
+import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
@@ -34,7 +35,8 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
-public class SearchPanel extends DockLayoutPanel {
+public class SearchPanel extends SingleTabContentPanel {
+	// public class SearchPanel extends DockLayoutPanel {
 
 	private static final int MAX_ENTITIES_TO_EXPAND = 3;
 	private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
@@ -43,10 +45,11 @@ public class SearchPanel extends DockLayoutPanel {
 	private final SearchPanelCss css = SearchPanelResources.css();
 	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
 	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
-	private final ScrollPanel searchResultsPanel = new ScrollPanel();
+	// private final ScrollPanel searchResultsPanel = new ScrollPanel();
+	private final ScrollPanel searchResultsPanel;
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
-    private ConfigurationData configuration;
+	private ConfigurationData configuration;
 
 	private Tree searchResultTree;
 
@@ -65,10 +68,24 @@ public class SearchPanel extends DockLayoutPanel {
 	}
 
 	public SearchPanel(TabsPanel superPanel, String searchString) {
-		super(Unit.PX);
+		super(superPanel);
+		// super(Unit.PX);
 		this.superPanel = superPanel;
-		addNorth(searchRequestPanel(), 45);
-		add(searchResultsPanel);
+		// addNorth(searchRequestPanel(), 45);
+		// add(searchResultsPanel);
+		// TODO: opravit, jen jeden panel
+
+		DockLayoutPanel contentPanel = new DockLayoutPanel(Unit.PX);
+		// contentPanel.setSize("450", "350");
+		// contentPanel.setSize("450", "1000");
+		contentPanel.addNorth(searchRequestPanel(), 40);
+		searchResultsPanel = new ScrollPanel();
+		contentPanel.add(searchResultsPanel);
+		//contentPanel.addSouth(searchRequestPanel(), 50);
+
+		add(contentPanel);
+
+		// add(searchResultsPanel);
 		if (searchString != null) {
 			searchBox.setText(searchString);
 			search(searchString);
@@ -181,5 +198,17 @@ public class SearchPanel extends DockLayoutPanel {
 
 	public ConfigurationData getConfiguration() {
 		return configuration;
+	}
+
+	@Override
+	public void onSelection() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDeselectionSelection() {
+		// TODO Auto-generated method stub
+
 	}
 }

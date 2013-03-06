@@ -20,6 +20,9 @@ public interface Resources extends ClientBundle {
 
 	@Source("InsertRecordPanel.css")
 	public InsertRecordPanelCss InsertRecordPanelCss();
+	
+	@Source("ProcessAdministration.css")
+	public ProcessAdministrationCss ProcessAdministrationCss(); 
 
 	// @Source("config.xml")
 	// public TextResource initialConfiguration();
