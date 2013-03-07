@@ -3,7 +3,6 @@ package cz.nkp.urnnbn.client.search;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -12,13 +11,14 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -45,8 +45,7 @@ public class SearchPanel extends SingleTabContentPanel {
 	private final SearchPanelCss css = SearchPanelResources.css();
 	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
 	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
-	// private final ScrollPanel searchResultsPanel = new ScrollPanel();
-	private final ScrollPanel searchResultsPanel;
+	private final ScrollPanel searchResultsPanel = new ScrollPanel();
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
 	private ConfigurationData configuration;
@@ -69,28 +68,22 @@ public class SearchPanel extends SingleTabContentPanel {
 
 	public SearchPanel(TabsPanel superPanel, String searchString) {
 		super(superPanel);
-		// super(Unit.PX);
 		this.superPanel = superPanel;
-		// addNorth(searchRequestPanel(), 45);
-		// add(searchResultsPanel);
-		// TODO: opravit, jen jeden panel
-
-		DockLayoutPanel contentPanel = new DockLayoutPanel(Unit.PX);
-		// contentPanel.setSize("450", "350");
-		// contentPanel.setSize("450", "1000");
-		contentPanel.addNorth(searchRequestPanel(), 40);
-		searchResultsPanel = new ScrollPanel();
-		contentPanel.add(searchResultsPanel);
-		//contentPanel.addSouth(searchRequestPanel(), 50);
-
-		add(contentPanel);
-
-		// add(searchResultsPanel);
+		add(contentPanel());
 		if (searchString != null) {
 			searchBox.setText(searchString);
 			search(searchString);
 		}
 		loadConfigurationFromServer();
+	}
+	
+	private Panel contentPanel(){
+		VerticalPanel contentPanel = new VerticalPanel();
+		contentPanel.setWidth("100%");
+		contentPanel.setHeight("100%");
+		contentPanel.add(searchRequestPanel());
+		contentPanel.add(searchResultsPanel);
+		return contentPanel;
 	}
 
 	private void loadConfigurationFromServer() {
