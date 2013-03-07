@@ -307,7 +307,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			}
 			addLabeledItemIfValueNotNull(metadataItem, constants.colorModel(), metadata.getColorModel());
 			if (metadata.getColorDepth() != null) {
-				String colorDepth = metadata.getColorDepth() + ' ' + constants.bits();
+				String colorDepth = metadata.getColorDepth().toString() + ' ' + constants.bits();
 				addLabeledItemIfValueNotNull(metadataItem, constants.colorDepth(), colorDepth);
 			}
 			addLabeledItemIfValueNotNull(metadataItem, constants.iccProfile(), metadata.getIccProfile());
