@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
+import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +24,7 @@ public class App {
     public static void main(String[] args) {
         try {
             //for testing - comment when commiting changes
-            //args = new String[]{"/home/rehan/tmp/oaiAdapter/oaiAdapter.properties"};
+            //args = new String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
             if (args.length != 1) {
                 System.err.println(USAGE);
                 return;
@@ -38,13 +39,15 @@ public class App {
 
     private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
         OaiAdapter adapter = new OaiAdapter();
-        adapter.setLogin(properties.loadString(DefinedProperties.LOGIN));
-        adapter.setPassword(properties.loadString(DefinedProperties.PASSWORD));
-        adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.BASE_URL));
-        adapter.setMetadataPrefix(properties.loadString(DefinedProperties.METADATA_PREFIX));
-        adapter.setSetSpec(properties.loadString(DefinedProperties.SET));
-        adapter.setRegistrarCode(properties.loadString(DefinedProperties.REGISTRAR_CODE));
-
+        adapter.setResolverConnector(new ResolverConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL)));
+        adapter.setLogin(properties.loadString(DefinedProperties.RESOLVER_LOGIN));
+        adapter.setPassword(properties.loadString(DefinedProperties.RESOLVER_PASSWORD));
+        adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));
+        adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));
+        adapter.setSetSpec(properties.loadStringOrNull(DefinedProperties.OAI_SET));
+        adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
+        adapter.setMode(OaiAdapter.Mode.BY_REGISTRAR);
+        
         adapter.setMetadataToImportTemplate(loadStylesheet(properties.loadString(DefinedProperties.DD_STYLESHEET)));
         adapter.setMetadataToDigitalInstanceTemplate(loadStylesheet(properties.loadString(DefinedProperties.DI_STYLESHEET)));
         initReportStream(adapter, properties);

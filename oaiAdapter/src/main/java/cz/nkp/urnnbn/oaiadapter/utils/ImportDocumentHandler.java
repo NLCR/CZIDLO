@@ -6,7 +6,7 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -53,9 +53,9 @@ public class ImportDocumentHandler {
         return document;
     }
 
-    public static String getUrnnbnFromDocument(Document document) {        
+    public static String getUrnnbnFromDocument(Document document) {
         //Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn", ResolverConnector.CONTEXT);
-        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn/r:value", ResolverConnector.CONTEXT);               
+        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn/r:value", ResolverConnector.CONTEXT);
         //System.out.println(document.toXML().toString());               
         //System.out.println(nodes.size());
         //System.out.println(ResolverConnector.CONTEXT);
@@ -70,7 +70,7 @@ public class ImportDocumentHandler {
         Nodes libraryIdNodes = document.query("//r:digitalInstance/r:digitalLibrary/@id", ResolverConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
             di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
-        } 
+        }
         Nodes urlNodes = document.query("//r:digitalInstance/r:url", ResolverConnector.CONTEXT);
         if (urlNodes.size() == 1) {
             di.setUrl(urlNodes.get(0).getValue());
@@ -110,8 +110,7 @@ public class ImportDocumentHandler {
         }
         return di;
     }
-    
-    
+
     public static void main(String[] args) {
         //File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
         File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument2.xml");
