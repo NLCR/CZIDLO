@@ -22,11 +22,11 @@ import nu.xom.ParsingException;
  */
 public class Test {
     
-    private ResolverConnector resolverConnector = new ResolverConnector("resolver-test2.nkp.cz/api");
+    private ResolverConnector resolverConnector = new ResolverConnector("resolver-test2.nkp.cz/api","someLogin","somePassword");
 
     public void makeReservation() {
         try {
-            List<String> reserveUrnnbnBundle = resolverConnector.reserveUrnnbnBundle("rych01", 5, Credentials.LOGIN, Credentials.PASSWORD);
+            List<String> reserveUrnnbnBundle = resolverConnector.reserveUrnnbnBundle("rych01", 5);
             for (String string : reserveUrnnbnBundle) {
                 System.out.println(string);
             }
@@ -48,7 +48,7 @@ public class Test {
             String registrator = "tsh03";
             Builder builder = new Builder();
             Document digitalInstance = builder.build(new File(di));
-            resolverConnector.importDigitalInstance(digitalInstance, urn, Credentials.LOGIN, Credentials.PASSWORD);
+            resolverConnector.importDigitalInstance(digitalInstance, urn);
         } catch (IOException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
@@ -70,12 +70,12 @@ public class Test {
             Document digitalInstance = builder.build(new File(di));
 
             OaiAdapter oaiAdapter = new OaiAdapter();
-            oaiAdapter.setLogin(Credentials.LOGIN);
-            oaiAdapter.setPassword(Credentials.PASSWORD);
+//            oaiAdapter.setLogin(Credentials.LOGIN);
+//            oaiAdapter.setPassword(Credentials.PASSWORD);
             oaiAdapter.setRegistrarCode(registrator);
-            //oaiAdapter.setMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
-            oaiAdapter.setMode(RegistrationMode.BY_RESERVATION);
-            //oaiAdapter.setMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
+            //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
+            oaiAdapter.setRegistrationMode(RegistrationMode.BY_RESERVATION);
+            //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
 
             oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
         } catch (ResolverConnectionException ex) {

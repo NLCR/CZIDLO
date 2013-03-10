@@ -33,8 +33,6 @@ public class OaiAdapter {
     private String metadataToImportTemplate;
     private String metadataToDigitalInstanceTemplate;
     private String registrarCode;
-    private String login;
-    private String password;
     private RegistrationMode registrationMode;
     private int limit = -1;
     private ReportLogger reportLogger;
@@ -43,11 +41,11 @@ public class OaiAdapter {
     public OaiAdapter() {
     }
 
-    public RegistrationMode getMode() {
+    public RegistrationMode getRegistrationMode() {
         return registrationMode;
     }
 
-    public void setMode(RegistrationMode mode) {
+    public void setRegistrationMode(RegistrationMode mode) {
         this.registrationMode = mode;
     }
 
@@ -97,22 +95,6 @@ public class OaiAdapter {
 
     public void setRegistrarCode(String registrarCode) {
         this.registrarCode = registrarCode;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public int getLimit() {
@@ -170,7 +152,7 @@ public class OaiAdapter {
         ImportDocumentHandler.putRegistrarScopeIdentifier(digitalDocument, oaiIdentifier);
         String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digitalDocument);
         if (urnnbn == null) {
-            if (getMode() == RegistrationMode.BY_RESOLVER) {
+            if (getRegistrationMode() == RegistrationMode.BY_RESOLVER) {
                 urnnbn = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
                 if (urnnbn == null) {
                     urnnbn = importDigitalDocument(digitalDocument, oaiIdentifier);
@@ -179,7 +161,7 @@ public class OaiAdapter {
                 throw new OaiAdapterException("Incorrect mode - document doesn't contain urnnbn and mode is not BY_RESOLVER");
             }
         } else {
-            if (getMode() == RegistrationMode.BY_RESOLVER) {
+            if (getRegistrationMode() == RegistrationMode.BY_RESOLVER) {
                 throw new OaiAdapterException("Incorrect mode - document contains urnnbn and mode is BY_RESOLVER");
             }
             UrnnbnStatus urnnbnStatus = resolverConnector.getUrnnbnStatus(urnnbn);
@@ -188,10 +170,10 @@ public class OaiAdapter {
             if (urnnbnStatus == UrnnbnStatus.UNDEFINED) {
                 throw new OaiAdapterException("Checking urnbn status failed");
             }
-            if (urnnbnStatus == UrnnbnStatus.RESERVED && getMode() != RegistrationMode.BY_RESERVATION) {
+            if (urnnbnStatus == UrnnbnStatus.RESERVED && getRegistrationMode() != RegistrationMode.BY_RESERVATION) {
                 throw new OaiAdapterException("Incorrect mode - Urnnbn has status RESERVED and mode is not RESERVATION");
             }
-            if (urnnbnStatus == UrnnbnStatus.FREE && getMode() != RegistrationMode.BY_REGISTRAR) {
+            if (urnnbnStatus == UrnnbnStatus.FREE && getRegistrationMode() != RegistrationMode.BY_REGISTRAR) {
                 throw new OaiAdapterException("Incorrect mode - Urnnbn has status FREE and mode is not BY_REGISTRAR");
             }
 
@@ -224,7 +206,7 @@ public class OaiAdapter {
             if (newDi.isChanged(oldDi)) {
                 //di has been changed
                 // REMOVE
-                resolverConnector.removeDigitalInstance(oldDi.getId(), login, password);
+                resolverConnector.removeDigitalInstance(oldDi.getId());
                 // IMPORT
                 importDigitalInstance(digitalInstance, urnnbn, oaiIdentifier);
                 report("- DI already exists and is modified ...removing old one and imporing new DI");
@@ -239,7 +221,7 @@ public class OaiAdapter {
 
     private void importDigitalInstance(Document digitalInstance, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
         try {
-            resolverConnector.importDigitalInstance(digitalInstance, urnnbn, login, password);
+            resolverConnector.importDigitalInstance(digitalInstance, urnnbn);
             report("- digital instance successfully added to resolver - continue.");
         } catch (IOException ex) {
             throw new OaiAdapterException("IOException occurred when importing digital instance. "
@@ -259,7 +241,7 @@ public class OaiAdapter {
 
     private String importDigitalDocument(Document digitalDocument, String oaiIdentifier) throws OaiAdapterException {
         try {
-            String urnnbn = resolverConnector.importDocument(digitalDocument, registrarCode, login, password);
+            String urnnbn = resolverConnector.importDocument(digitalDocument, registrarCode);
             report("- import successfully added to resolver - continue.");
             report("- URNNBN: " + urnnbn);
             return urnnbn;
@@ -341,12 +323,12 @@ public class OaiAdapter {
             report(" OAI base url: " + getOaiBaseUrl());
             report(" Metadata prefix: " + getMetadataPrefix());
             report(" Set: " + (setSpec == null ? "not defined" : setSpec));
-            report(" Mode: " + getMode());
+            report(" Mode: " + getRegistrationMode());
             report("-----------------------------------------------------");
 
-            if (!resolverConnector.checkRegistrarMode(getRegistrarCode(), getMode())) {
-                report(" Mode " + getMode() + " is not enabled for registrar " + getRegistrarCode());
-                logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getMode(), getRegistrarCode()});
+            if (!resolverConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
+                report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode());
+                logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getRegistrationMode(), getRegistrarCode()});
                 return;
             }
             OaiHarvester harvester = null;

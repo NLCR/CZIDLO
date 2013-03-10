@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,13 +19,13 @@ public class App {
     public static void main(String[] args) {
 
         OaiAdapter adapter = new OaiAdapter();
-        adapter.setLogin(Credentials.LOGIN);
-        adapter.setPassword(Credentials.PASSWORD);//http://duha.mzk.cz/
+        //adapter.setLogin(Credentials.LOGIN);
+        //adapter.setPassword(Credentials.PASSWORD);//http://duha.mzk.cz/
 //        adapter.setOaiBaseUrl("http://oai.mzk.cz/MoZaKi/");
 //        adapter.setMetadataPrefix("marc21");
 //        adapter.setSetSpec("collection:oldMaps");
         adapter.setRegistrarCode("duha");    
-        adapter.setMode(RegistrationMode.BY_REGISTRAR);
+        //adapter.setRegistrationMode(RegistrationMode.BY_REGISTRAR, Credentials.LOGIN, Credentials.PASSWORD);
 
                 //adapter.setLimit(1);
 //        adapter.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");
