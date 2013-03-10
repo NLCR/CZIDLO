@@ -206,4 +206,16 @@ public class XmlTools {
 //            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
+    
+    public static String loadXmlFromFile(String xsltFile) throws Exception {
+        try {
+            Builder builder = new Builder();
+            Document importStylesheet = builder.build(xsltFile);
+            return importStylesheet.toXML();
+        } catch (ParsingException ex) {
+            throw new Exception("error parsing " + xsltFile, ex);
+        } catch (IOException ex) {
+            throw new Exception("error loading " + xsltFile, ex);
+        }
+    }
 }

@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter.resolver;
 
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
@@ -37,9 +36,13 @@ public class ResolverConnector {
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v3/";
     public static final XPathContext CONTEXT = new XPathContext("r", RESOLVER_NAMESPACE);
     public final String resolverApiUrl;
+    public final String login;
+    public final String password;
 
-    public ResolverConnector(String resolverApiUrl) {
+    public ResolverConnector(String resolverApiUrl, String login, String password) {
         this.resolverApiUrl = resolverApiUrl + "/v3/";
+        this.login = login;
+        this.password = password;
     }
 
     private String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
@@ -228,11 +231,6 @@ public class ResolverConnector {
                 modeString = "BY_RESERVATION";
                 break;
         }
-//        try {
-//            XmlTools.saveDocumentToFile(document, "/home/martin/tmp/oaiAdapter/registrar.xml");
-//        } catch (IOException ex) {
-//            Logger.getLogger(ResolverConnector.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         Nodes modeEnabledNode = rootElement.query("//r:registrationModes/r:mode[@name='" + modeString + "']/@enabled", CONTEXT);
         if (modeEnabledNode.size() > 0) {
             return "true".equals(modeEnabledNode.get(0).getValue());
@@ -240,7 +238,7 @@ public class ResolverConnector {
         return false;
     }
 
-    public List<String> reserveUrnnbnBundle(String registarCode, int bundleSize, String login, String password) throws IOException, ResolverConnectionException, ParsingException {
+    public List<String> reserveUrnnbnBundle(String registarCode, int bundleSize) throws IOException, ResolverConnectionException, ParsingException {
         List<String> urnnbnList = new ArrayList<String>();
         String url = getUrnnbnReservationUrl(registarCode, bundleSize);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
@@ -260,7 +258,7 @@ public class ResolverConnector {
 
     }
 
-    public String importDocument(Document document, String registarCode, String login, String password) throws IOException, ParsingException, ResolverConnectionException {
+    public String importDocument(Document document, String registarCode) throws IOException, ParsingException, ResolverConnectionException {
         String url = getImportDocumetUrl(registarCode);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
         OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
@@ -283,7 +281,7 @@ public class ResolverConnector {
         return urnnbn;
     }
 
-    public void importDigitalInstance(Document document, String urnnbn, String login, String password)
+    public void importDigitalInstance(Document document, String urnnbn)
             throws IOException, ParsingException, ResolverConnectionException {
         String url = getImportDigitalInstanceUrl(urnnbn);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
@@ -298,7 +296,7 @@ public class ResolverConnector {
 
     }
 
-    public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId, String login, String password)
+    public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId)
             throws IOException, ResolverConnectionException {
         String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
         HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
@@ -313,7 +311,7 @@ public class ResolverConnector {
 
     }
 
-    public void removeDigitalInstance(String id, String login, String password)
+    public void removeDigitalInstance(String id)
             throws ResolverConnectionException {
         try {
             String url = getRemoveDigitalInstanceUrl(id);
