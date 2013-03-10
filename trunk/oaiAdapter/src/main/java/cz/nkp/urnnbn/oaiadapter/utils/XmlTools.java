@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
-import cz.nkp.urnnbn.oaiadapter.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class XmlTools {
         if (status404Allowed && con.getResponseCode() == 404) {
             is = con.getErrorStream();
             if (is == null) {
-                throw new IOException("status 404 and server send no useful data");
+                throw new IOException("status 404 and server sent no useful data");
             }
         } else {
             is = con.getInputStream();

@@ -11,14 +11,15 @@ package cz.nkp.urnnbn.oaiadapter.cli;
 public class DefinedProperties {
 
     static String REPORT_FILE = "oaiProvider.reportFile";
-    static String DD_STYLESHEET = "oaiProvider.digitalDocumentStylesheet";
-    static String DI_STYLESHEET = "oaiProvider.digitalInstanceStylesheet";
+    static String DD_STYLESHEET = "oaiProvider.digDocRegistrationXsl";
+    static String DI_STYLESHEET = "oaiProvider.digInstImportXsl";
     //oai provider
-    static String BASE_URL = "oaiProvider.oai.baseUrl";
-    static String SET = "oaiProvider.oai.setSpec";
-    static String METADATA_PREFIX = "oaiProvider.oai.metadataPrefix";
+    static String OAI_BASE_URL = "oaiProvider.oai.baseUrl";
+    static String OAI_SET = "oaiProvider.oai.setSpec";
+    static String OAI_METADATA_PREFIX = "oaiProvider.oai.metadataPrefix";
     //resolver
-    static String LOGIN = "oaiProvider.resolver.login";
-    static String PASSWORD = "oaiProvider.resolver.password";
-    static String REGISTRAR_CODE = "oaiProvider.resolver.registrarCode";
+    static String RESOLVER_API_URL = "oaiProvider.resolver.apiUrl";
+    static String RESOLVER_LOGIN = "oaiProvider.resolver.login";
+    static String RESOLVER_PASSWORD = "oaiProvider.resolver.password";
+    static String RESOLVER_REGISTRAR_CODE = "oaiProvider.resolver.registrarCode";
 }
