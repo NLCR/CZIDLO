@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class App {
 //        adapter.setMetadataPrefix("marc21");
 //        adapter.setSetSpec("collection:oldMaps");
         adapter.setRegistrarCode("duha");    
-        adapter.setMode(OaiAdapter.Mode.BY_REGISTRAR);
+        adapter.setMode(RegistrationMode.BY_REGISTRAR);
 
                 //adapter.setLimit(1);
 //        adapter.setOaiBaseUrl("http://kramerius.mzk.cz/oaiprovider/");

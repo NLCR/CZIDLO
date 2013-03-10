@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.oaiadapter.resolver.UrnnbnStatus;
@@ -24,10 +25,6 @@ import nu.xom.xslt.XSLException;
  */
 public class OaiAdapter {
 
-    public enum Mode {
-
-        BY_RESERVATION, BY_RESOLVER, BY_REGISTRAR
-    }
     private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
     public static final String REGISTAR_SCOPE_ID = "OAI_Adapter";
     private String oaiBaseUrl;
@@ -38,7 +35,7 @@ public class OaiAdapter {
     private String registrarCode;
     private String login;
     private String password;
-    private Mode mode;
+    private RegistrationMode registrationMode;
     private int limit = -1;
     private ReportLogger reportLogger;
     private ResolverConnector resolverConnector;
@@ -46,12 +43,12 @@ public class OaiAdapter {
     public OaiAdapter() {
     }
 
-    public Mode getMode() {
-        return mode;
+    public RegistrationMode getMode() {
+        return registrationMode;
     }
 
-    public void setMode(Mode mode) {
-        this.mode = mode;
+    public void setMode(RegistrationMode mode) {
+        this.registrationMode = mode;
     }
 
     public String getOaiBaseUrl() {
@@ -173,7 +170,7 @@ public class OaiAdapter {
         ImportDocumentHandler.putRegistrarScopeIdentifier(digitalDocument, oaiIdentifier);
         String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digitalDocument);
         if (urnnbn == null) {
-            if (getMode() == Mode.BY_RESOLVER) {
+            if (getMode() == RegistrationMode.BY_RESOLVER) {
                 urnnbn = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
                 if (urnnbn == null) {
                     urnnbn = importDigitalDocument(digitalDocument, oaiIdentifier);
@@ -182,7 +179,7 @@ public class OaiAdapter {
                 throw new OaiAdapterException("Incorrect mode - document doesn't contain urnnbn and mode is not BY_RESOLVER");
             }
         } else {
-            if (getMode() == Mode.BY_RESOLVER) {
+            if (getMode() == RegistrationMode.BY_RESOLVER) {
                 throw new OaiAdapterException("Incorrect mode - document contains urnnbn and mode is BY_RESOLVER");
             }
             UrnnbnStatus urnnbnStatus = resolverConnector.getUrnnbnStatus(urnnbn);
@@ -191,10 +188,10 @@ public class OaiAdapter {
             if (urnnbnStatus == UrnnbnStatus.UNDEFINED) {
                 throw new OaiAdapterException("Checking urnbn status failed");
             }
-            if (urnnbnStatus == UrnnbnStatus.RESERVED && getMode() != Mode.BY_RESERVATION) {
+            if (urnnbnStatus == UrnnbnStatus.RESERVED && getMode() != RegistrationMode.BY_RESERVATION) {
                 throw new OaiAdapterException("Incorrect mode - Urnnbn has status RESERVED and mode is not RESERVATION");
             }
-            if (urnnbnStatus == UrnnbnStatus.FREE && getMode() != Mode.BY_REGISTRAR) {
+            if (urnnbnStatus == UrnnbnStatus.FREE && getMode() != RegistrationMode.BY_REGISTRAR) {
                 throw new OaiAdapterException("Incorrect mode - Urnnbn has status FREE and mode is not BY_REGISTRAR");
             }
 
