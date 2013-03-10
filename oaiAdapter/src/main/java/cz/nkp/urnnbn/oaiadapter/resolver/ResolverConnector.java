@@ -206,7 +206,7 @@ public class ResolverConnector {
         return UrnnbnStatus.UNDEFINED;
     }
 
-    public boolean checkRegistrarMode(String registrarCode, OaiAdapter.Mode mode) {
+    public boolean checkRegistrarMode(String registrarCode, RegistrationMode mode) {
         String url = getRegistrarUrl(registrarCode);
         Document document = null;
         try {

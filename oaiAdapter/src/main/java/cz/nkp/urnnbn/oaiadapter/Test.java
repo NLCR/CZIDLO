@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import java.io.File;
@@ -72,9 +73,9 @@ public class Test {
             oaiAdapter.setLogin(Credentials.LOGIN);
             oaiAdapter.setPassword(Credentials.PASSWORD);
             oaiAdapter.setRegistrarCode(registrator);
-            //oaiAdapter.setMode(OaiAdapter.Mode.BY_REGISTRAR);
-            oaiAdapter.setMode(OaiAdapter.Mode.BY_RESERVATION);
-            //oaiAdapter.setMode(OaiAdapter.Mode.BY_RESERVATION);
+            //oaiAdapter.setMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
+            oaiAdapter.setMode(RegistrationMode.BY_RESERVATION);
+            //oaiAdapter.setMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
 
             oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
         } catch (ResolverConnectionException ex) {
@@ -107,9 +108,9 @@ public class Test {
         // test.importDDwithDI();
 
 //            String rc = "roe301";
-//            System.out.println("BY_REGISTRAR: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.Mode.BY_REGISTRAR));
-//            System.out.println("BY_RESOLVER: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.Mode.BY_RESOLVER));
-//            System.out.println("RESERVATION: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.Mode.BY_RESERVATION));
+//            System.out.println("BY_REGISTRAR: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_REGISTRAR));
+//            System.out.println("BY_RESOLVER: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_RESOLVER));
+//            System.out.println("RESERVATION: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_RESERVATION));
 
         /// System.out.println(ResolverConnector.getDigitailInstanceById("35747").toXML());
 

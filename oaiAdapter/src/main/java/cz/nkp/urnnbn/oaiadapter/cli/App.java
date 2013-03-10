@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
+import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.File;
@@ -39,14 +40,14 @@ public class App {
 
     private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
         OaiAdapter adapter = new OaiAdapter();
+        adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
         adapter.setResolverConnector(new ResolverConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL)));
         adapter.setLogin(properties.loadString(DefinedProperties.RESOLVER_LOGIN));
         adapter.setPassword(properties.loadString(DefinedProperties.RESOLVER_PASSWORD));
         adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));
         adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));
         adapter.setSetSpec(properties.loadStringOrNull(DefinedProperties.OAI_SET));
-        adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
-        adapter.setMode(OaiAdapter.Mode.BY_REGISTRAR);
+        adapter.setMode(RegistrationMode.BY_REGISTRAR);
         
         adapter.setMetadataToImportTemplate(loadStylesheet(properties.loadString(DefinedProperties.DD_STYLESHEET)));
         adapter.setMetadataToDigitalInstanceTemplate(loadStylesheet(properties.loadString(DefinedProperties.DI_STYLESHEET)));
