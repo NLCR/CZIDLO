@@ -271,7 +271,7 @@ public class OaiAdapter {
         Document digitalInstanceDocument = null;
         try {
             importDocument = XmlTools.getTransformedDocument(record.getDocument(), importTemplate);
-            report("- import tranformation successful - continue.");
+            report("- import transformation successful - continue.");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming import document. "
                     + "identifier: " + identifier
