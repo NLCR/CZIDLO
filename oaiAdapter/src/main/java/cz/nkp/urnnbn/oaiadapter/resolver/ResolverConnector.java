@@ -29,8 +29,8 @@ import nu.xom.XPathContext;
  */
 public class ResolverConnector {
 
-    public static final String IMPORT_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digDocRegistration.xsd";//"http://mapy.mzk.cz/tmp/rs.xsd";
-    public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digInstImport.xsd";//"https://urnnbn-resolver-v2.googlecode.com/svn/trunk/rest/src/main/resources/v3/importDigitalInstance.xsd";    
+    public static final String IMPORT_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digDocRegistration.xsd";
+    public static final String DIGITAL_INSTANCE_TEMPLATE_URL = "http://resolver.nkp.cz/api/v3/digInstImport.xsd";
     public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
     public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
     public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v3/";

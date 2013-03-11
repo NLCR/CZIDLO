@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,10 +23,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.validation.SchemaFactory;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Nodes;
@@ -33,8 +30,6 @@ import nu.xom.ParsingException;
 import nu.xom.Serializer;
 import nu.xom.xslt.XSLException;
 import nu.xom.xslt.XSLTransform;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 /**
  *
@@ -99,7 +94,6 @@ public class XmlTools {
         HttpsURLConnection connection = null;
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
@@ -114,7 +108,6 @@ public class XmlTools {
         }};
             SSLContext sc = SSLContext.getInstance("SSL");
             HostnameVerifier hv = new HostnameVerifier() {
-
                 public boolean verify(String urlHostName, SSLSession session) {
                     return true;
                 }
@@ -144,7 +137,8 @@ public class XmlTools {
 
     public static void validateImport(Document document) throws DocumentOperationException {
         try {
-            XmlTools.validateDocument(document, ResolverConnector.IMPORT_TEMPLATE_URL);
+            //TODO: xsd should be cached
+            XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), new URL(ResolverConnector.IMPORT_TEMPLATE_URL));
         } catch (Exception ex) {
             throw new DocumentOperationException(ex.getMessage());
         }
@@ -152,24 +146,10 @@ public class XmlTools {
 
     public static void validateDigitalIntance(Document document) throws DocumentOperationException {
         try {
-            XmlTools.validateDocument(document, ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL);
+            XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), new URL(ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL));
         } catch (Exception ex) {
             throw new DocumentOperationException(ex.getMessage());
         }
-    }
-
-    private static void validateDocument(Document document, String templateUrl) throws SAXException, ParserConfigurationException, ParsingException, IOException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setValidating(false);
-        factory.setNamespaceAware(true);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        factory.setSchema(schemaFactory.newSchema(new URL(templateUrl)));
-        SAXParser parser = factory.newSAXParser();
-        XMLReader reader = parser.getXMLReader();
-        reader.setErrorHandler(new ImportErrorHandler());
-
-        Builder builder = new Builder(reader);
-        builder.build(document.toXML(), null);
     }
 
     public static void main(String[] args) {
@@ -206,7 +186,7 @@ public class XmlTools {
 //            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
-    
+
     public static String loadXmlFromFile(String xsltFile) throws Exception {
         try {
             Builder builder = new Builder();
