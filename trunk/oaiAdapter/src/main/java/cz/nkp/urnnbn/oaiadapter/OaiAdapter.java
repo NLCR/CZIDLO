@@ -277,6 +277,7 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
+        //System.err.println(importDocument.toXML());
         try {
             XmlTools.validateImport(importDocument);
             report("- import validation successful - continue.");
@@ -292,7 +293,7 @@ public class OaiAdapter {
                     + "identifier: " + identifier
                     + ", ex: " + ex.getMessage());
         }
-
+        //System.err.println(digitalInstanceDocument.toXML());
         try {
             XmlTools.validateDigitalIntance(digitalInstanceDocument);
             report("- digital instance validation successful - continue.");
