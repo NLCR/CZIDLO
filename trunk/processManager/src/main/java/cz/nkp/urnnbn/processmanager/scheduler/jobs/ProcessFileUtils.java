@@ -101,6 +101,8 @@ public class ProcessFileUtils {
      * @return File failed to delete
      */
     public static File deleteProcessDir(Long processId) {
-        return deleteFileRecursive(buildProcessDir(processId));
+        File processDir = buildProcessDir(processId);
+       // System.err.println("deleting " + processDir.getAbsolutePath());
+        return deleteFileRecursive(processDir);
     }
 }

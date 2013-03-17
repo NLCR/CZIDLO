@@ -108,6 +108,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             int total = urnNbnList.size();
             for (UrnNbn urn : urnNbnList) {
                 if (interrupted) {
+                    csvWriter.flush();
                     break;
                 }
                 logger.info("exporting " + urn + " (" + ++counter + "/" + total + ")");
