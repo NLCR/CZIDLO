@@ -1,0 +1,144 @@
+package cz.nkp.urnnbn.processmanager;
+
+import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
+import cz.nkp.urnnbn.processmanager.conf.Configuration;
+import cz.nkp.urnnbn.processmanager.control.AccessRightException;
+import cz.nkp.urnnbn.processmanager.control.InvalidStateException;
+import cz.nkp.urnnbn.processmanager.control.ProcessManager;
+import cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl;
+import cz.nkp.urnnbn.processmanager.core.Process;
+import cz.nkp.urnnbn.processmanager.core.ProcessState;
+import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.processmanager.persistence.ProcessDAO;
+import cz.nkp.urnnbn.processmanager.persistence.ProcessDAOImpl;
+import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.quartz.SchedulerException;
+
+/**
+ * Hello world!
+ *
+ */
+public class App {
+
+    public static void main(String[] args) throws IOException, SchedulerException {
+//        SessionFactory factory = Tests.initFactory();
+//        Tests.createSomeObjects(factory);
+//        Tests.createAndUpdateObject(factory);
+//        Tests.createAndDeleteObject(factory);
+        //test();
+        Configuration.init(new File("/home/martin/NetBeansProjects/processManager/src/main/resources/scheduler.properties"));
+        //testNew();
+//        createSomeScheduled();
+//        justStartProcessManager();
+        scheduleWaitKill();
+        //sleep();
+    }
+
+    private static Process scheduledTestProcess(String login) {
+        Process process = new Process();
+        process.setOwnerLogin(login);
+        process.setType(ProcessType.TEST);
+        process.setParams(new String[]{});
+        process.setState(ProcessState.SCHEDULED);
+        return process;
+    }
+
+    private static Process scheduledUrnNbnCsvExportProcess(String login) {
+        Process process = new Process();
+        process.setOwnerLogin(login);
+        process.setType(ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
+        process.setParams(new String[]{"tst02"});
+        process.setState(ProcessState.SCHEDULED);
+        return process;
+    }
+
+    private static void sleep(int i) {
+        try {
+            System.err.println("SLEEPING " + i + " ms");
+            Thread.sleep(i);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void setStartedIfNull(Process process) {
+        //pokud se nepodarilo zastihnout proces v bezicim stavu, nastavi se started na finished, resp. mirne driv
+        if (process.getStarted() == null) {
+            process.setStarted(new Date());
+        }
+    }
+
+    private static void createSomeScheduled() {
+
+        //            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+        ProcessDAO processDao = ProcessDAOImpl.instanceOf();
+        Process process = new Process();
+        process.setOwnerLogin("nkpAdmin");
+        process.setType(ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
+        process.setParams(new String[]{"tst01"});
+        process.setState(ProcessState.SCHEDULED);
+        process.setScheduled(new Date());
+        processDao.saveProcess(process);
+    }
+
+    private static void testNew() throws SchedulerException {
+        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        int procesess = 5;
+//        for (int i = 0; i < procesess; i++) {
+//            //manager.scheduleNewProcess("Martin", ProcessType.TEST, new String[]{});
+//            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+//            manager.scheduleNewProcess("superAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst02"});
+//        }
+        //  manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+        manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[]{
+                    "resolver-test2.nkp.cz/api",
+                    "oaiAdapter-rehan-test",
+                    "dlhIob5z",
+                    RegistrationMode.BY_RESOLVER.toString(),
+                    "duha",
+                    "http://duha-devel.mzk.cz/oai",
+                    "oai_dc",
+                    null,
+                    "/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl",
+                    "/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl",
+                    "/home/martin/tmp/oaiAdapter/report.txt"
+                });
+        //int checks = 100;
+        int checks = 3;
+//        for (int i = 0; i < checks; i++) {
+//            manager.runScheduledProcessIfPossible();
+//            sleep(10);
+//        }
+
+        //po chvili zavrit
+        sleep(10000);
+        manager.shutdown(true);
+    }
+
+    private static void justStartProcessManager() {
+        ProcessManager manager = ProcessManagerImpl.instanceOf();
+    }
+
+    private static void scheduleWaitKill() {
+        try {
+            ProcessManager manager = ProcessManagerImpl.instanceOf();
+            Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+            sleep(7000);
+            boolean killed = manager.killProcess("nkpAdmin", process.getId());
+            System.err.println("killed: " + killed);
+            sleep(5000);
+            manager.shutdown(true);
+        } catch (UnknownRecordException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (AccessRightException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidStateException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+}
