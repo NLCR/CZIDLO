@@ -80,7 +80,8 @@ public interface ProcessManager {
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException If user is not admin nor creator of the
      * process
-     * @throws InvalidStateException If process is SCHEDULED
+     * @throws InvalidStateException If process is in SCHEDULED or CANCELED
+     * state
      */
     public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
@@ -94,7 +95,7 @@ public interface ProcessManager {
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException If user is not admin nor creator of the
      * process
-     * @throws InvalidStateException If process is not FINISHED
+     * @throws InvalidStateException If process is not in FINISHED state
      */
     public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
@@ -107,9 +108,20 @@ public interface ProcessManager {
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException If user is not admin nor creator of the
      * process
-     * @throws InvalidStateException If process is not RUNNING.
+     * @throws InvalidStateException If process is not in RUNNING state
      */
-    public boolean killProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+
+    /**
+     *
+     * @param login
+     * @param processId
+     * @return
+     * @throws UnknownRecordException
+     * @throws AccessRightException
+     * @throws InvalidStateException If proces is not in SCHEDULED state
+     */
+    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
     /**
      * Deletes process record from database.
@@ -119,7 +131,7 @@ public interface ProcessManager {
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException If user is not admin nor creator of the
      * process
-     * @throws InvalidStateException If process is RUNNING or SCHEDULED.
+     * @throws InvalidStateException If process is in RUNNING or SCHEDULED state
      */
     public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 }

@@ -35,7 +35,6 @@ public class ProcesStateUpdater {
         this.processId = processId;
     }
 
-    
     public void updateProcessStateToKilled() {
         updateProcessStatToFinished(ProcessState.KILLED);
     }
@@ -70,6 +69,18 @@ public class ProcesStateUpdater {
         } catch (UnknownRecordException ex) {
             //TODO:logovat, ale stejne, jako u ostatnich procesu
             System.err.println("cannot set process state  to " + ProcessState.RUNNING + "process not found " + processId);
+            Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void upadateProcessStateToCanceled() {
+        try {
+            cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
+            process.setState(ProcessState.CANCELED);
+            ProcessDAOImpl.instanceOf().updateProcess(process);
+        } catch (UnknownRecordException ex) {
+            //TODO:logovat, ale stejne, jako u ostatnich procesu
+            System.err.println("cannot set process state  to " + ProcessState.CANCELED + "process not found " + processId);
             Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

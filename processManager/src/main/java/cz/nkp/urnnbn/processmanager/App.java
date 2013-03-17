@@ -33,10 +33,12 @@ public class App {
         //test();
         Configuration.init(new File("/home/martin/NetBeansProjects/processManager/src/main/resources/scheduler.properties"));
         //testNew();
-//        createSomeScheduled();
-//        justStartProcessManager();
-        scheduleWaitKill();
-        //sleep();
+        createSomeScheduled();
+        justStartProcessManager();
+        scheduleAndCancel();
+        //scheduleWaitKill();
+        sleep(25000);
+        shutdownProcessManager(true);
     }
 
     private static Process scheduledTestProcess(String login) {
@@ -76,14 +78,19 @@ public class App {
     private static void createSomeScheduled() {
 
         //            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
-        ProcessDAO processDao = ProcessDAOImpl.instanceOf();
-        Process process = new Process();
-        process.setOwnerLogin("nkpAdmin");
-        process.setType(ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
-        process.setParams(new String[]{"tst01"});
-        process.setState(ProcessState.SCHEDULED);
-        process.setScheduled(new Date());
-        processDao.saveProcess(process);
+//        ProcessDAO processDao = ProcessDAOImpl.instanceOf();
+//        Process process = new Process();
+//        process.setOwnerLogin("nkpAdmin");
+//        process.setType(ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
+//        process.setParams(new String[]{"tst01"});
+//        process.setState(ProcessState.SCHEDULED);
+//        process.setScheduled(new Date());
+//        processDao.saveProcess(process);
+
+        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        for (int i = 0; i < 4; i++) {
+            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+        }
     }
 
     private static void testNew() throws SchedulerException {
@@ -124,21 +131,45 @@ public class App {
         ProcessManager manager = ProcessManagerImpl.instanceOf();
     }
 
-    private static void scheduleWaitKill() {
+    private static void shutdownProcessManager(boolean wait) {
+        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        manager.shutdown(true);
+    }
+
+    private static void scheduleAndCancel() {
+        ProcessManager manager = ProcessManagerImpl.instanceOf();
+        Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
         try {
-            ProcessManager manager = ProcessManagerImpl.instanceOf();
-            Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
-            sleep(7000);
-            boolean killed = manager.killProcess("nkpAdmin", process.getId());
-            System.err.println("killed: " + killed);
-            sleep(5000);
-            manager.shutdown(true);
+            manager.cancelScheduledProcess("nkpAdmin", process.getId());
         } catch (UnknownRecordException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (AccessRightException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidStateException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private static void scheduleWaitKill() {
+        try {
+            ProcessManager manager = ProcessManagerImpl.instanceOf();
+            Process process = manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+            sleep(7000);
+            boolean killed = manager.killRunningProcess("nkpAdmin", process.getId());
+            System.err.println("killed: " + killed);
+            sleep(5000);
+            manager.shutdown(true);
+
+
+        } catch (UnknownRecordException ex) {
+            Logger.getLogger(App.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (AccessRightException ex) {
+            Logger.getLogger(App.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidStateException ex) {
+            Logger.getLogger(App.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

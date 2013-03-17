@@ -25,6 +25,8 @@ import org.quartz.JobExecutionException;
  * @author Martin Řehánek
  */
 public class JobCheckerJob implements Job {
+    
+    public static final String JOB_NAME = "job-checker";
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         ProcessManagerImpl.instanceOf().runScheduledProcessIfPossible();

@@ -62,18 +62,19 @@ import static org.quartz.impl.matchers.GroupMatcher.*;
 public class ProcessManagerImpl implements ProcessManager {
 
     private static final Logger logger = Logger.getLogger(ProcessManagerImpl.class.getName());
-    private static final String GROUP_ADMIN = "admin";
-    private static final String GROUP_USER = "user";
+    private static final String PROCESS_GROUP_JOBS = "process";
+    private static final String PROCESS_GROUP_SYSTEM = "system";
     private static ProcessManagerImpl instance;
     private final int maxAdminJobsRunning;
     private final int maxUserJobsRunning;
+    private static final String ADMIN_PROCESS_QUEUE_NAME = "admin-job-queue";
+    private static final String USER_PROCESS_QUEUE_NAME = "user-job-queue";
     private final Queue<Process> adminProcessQueue = new LinkedBlockingQueue<Process>();
     private final Queue<Process> userProcessQueue = new LinkedBlockingQueue<Process>();
     private final ProcessDAO processDao = ProcessDAOImpl.instanceOf();
-    private final Scheduler scheduler;
-    public static final String PROCESS_JOBS_GROUPNAME = "process";
+    private Scheduler scheduler;
 
-    public static ProcessManagerImpl instanceOf() {
+    public static synchronized ProcessManagerImpl instanceOf() {
         try {
             if (instance == null) {
                 instance = new ProcessManagerImpl();
@@ -86,44 +87,57 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private ProcessManagerImpl() throws SchedulerException {
         logger.info("initializing Process manager");
+        //this.maxAdminJobsRunning = Integer.valueOf(1);
         this.maxAdminJobsRunning = Configuration.getMaxRunningAdminProcesses();
         logger.log(Level.INFO, "max number of adming jobs running: {0}", this.maxAdminJobsRunning);
+        //this.maxUserJobsRunning = Integer.valueOf(1);
         this.maxUserJobsRunning = Configuration.getMaxRunningUserProcesses();
         logger.log(Level.INFO, "max number of user jobs running: {0}", this.maxUserJobsRunning);
-        this.scheduler = initScheduler();
+        initScheduler();
         runJobChecker();
         killRunningProcessesFromDatabase();
         enqueueScheduledProcessesFromDatabase();
     }
 
-    private Scheduler initScheduler() throws SchedulerException {
-        SchedulerFactory sf = new StdSchedulerFactory();
-        //System.err.println("schedule factory intitialized");
-        Scheduler result = sf.getScheduler();
-        result.start();
-        //System.err.println("Scheduler started: " + result.isStarted());
-        //result.getListenerManager().addJobListener(new JobListenerImpl(), or(jobGroupEquals(GROUP_ADMIN), jobGroupEquals(GROUP_USER)));
-        //result.getListenerManager().addJobListener(new JobListenerImpl());
-        result.getListenerManager().addJobListener(new JobListenerImpl(), jobGroupEquals(PROCESS_JOBS_GROUPNAME));
-        return result;
+    private void initScheduler() throws SchedulerException {
+        if (scheduler == null) {
+            logger.info("initializing scheduler");
+            SchedulerFactory sf = new StdSchedulerFactory();
+            //System.err.println("schedule factory intitialized");
+            scheduler = sf.getScheduler();
+            scheduler.start();
+            //System.err.println("Scheduler started: " + result.isStarted());
+            //result.getListenerManager().addJobListener(new JobListenerImpl(), or(jobGroupEquals(GROUP_ADMIN), jobGroupEquals(GROUP_USER)));
+            //result.getListenerManager().addJobListener(new JobListenerImpl());
+            scheduler.getListenerManager().addJobListener(new JobListenerImpl(), jobGroupEquals(PROCESS_GROUP_JOBS));
+        } else {
+            logger.info("scheduler already initialized");
+        }
     }
 
     private void runJobChecker() throws SchedulerException {
-        JobDetail job = newJob(JobCheckerJob.class)
-                .withIdentity("job-jobChecker")
-                .build();
+        JobKey key = new JobKey(JobCheckerJob.JOB_NAME, PROCESS_GROUP_SYSTEM);
+        if (!scheduler.checkExists(key)) {
+            logger.log(Level.INFO, "scheduling {0}", JobCheckerJob.class.getSimpleName());
+            JobDetail job = newJob(JobCheckerJob.class)
+                    .withIdentity(
+                    "job-jobChecker")
+                    .build();
 
-        Random rand = new Random();
-        Date soon = new Date(new Date().getTime() + 1000 + rand.nextInt(2000));
-        Trigger trigger = newTrigger()
-                .startAt(soon) //.startNow()
-                .withSchedule(simpleSchedule()
-                .withIntervalInMilliseconds(500)
-                .repeatForever())
-                .withIdentity("trigger-jobChecker", "group1")
-                //.startNow()
-                .build();
-        scheduler.scheduleJob(job, trigger);
+            Random rand = new Random();
+            Date soon = new Date(new Date().getTime() + 1000 + rand.nextInt(2000));
+            Trigger trigger = newTrigger()
+                    .startAt(soon) //.startNow()
+                    .withSchedule(simpleSchedule()
+                    .withIntervalInMilliseconds(500)
+                    .repeatForever())
+                    .withIdentity("trigger-jobChecker", "group1")
+                    //.startNow()
+                    .build();
+            scheduler.scheduleJob(job, trigger);
+        } else {
+            logger.log(Level.INFO, "{0} already scheduled", JobCheckerJob.class.getSimpleName());
+        }
     }
 
     private void enqueueScheduledProcessesFromDatabase() {
@@ -148,12 +162,17 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private void enqueueScheduledProcess(Process process) {
         if (isAdmin(process.getOwnerLogin())) {
-            logger.log(Level.INFO, "scheduling admin process (id={0}, type={1}, ownerLogin={2})", new Object[]{process.getId(), process.getType(), process.getOwnerLogin()});
-            adminProcessQueue.add(process);
+            enqueueScheduledProcess(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
         } else {
-            logger.log(Level.INFO, "scheduling user process (id={0}, type={1}, ownerLogin={2})", new Object[]{process.getId(), process.getType(), process.getOwnerLogin()});
-            userProcessQueue.add(process);
+            enqueueScheduledProcess(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
         }
+    }
+
+    private void enqueueScheduledProcess(Queue<Process> queue, Process process, String queueName) {
+        synchronized (queue) {
+            queue.add(process);
+        }
+        logger.log(Level.INFO, "adding process (id={0}, type={1}, ownerLogin={2}) to queue {3}", new Object[]{process.getId(), process.getType(), process.getOwnerLogin(), queueName});
     }
 
     private boolean isAdmin(String userLogin) {
@@ -166,23 +185,30 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     void runScheduledProcessIfPossible() {
-        runScheduledProcessIfPossible(userProcessQueue, maxUserJobsRunning, numberOfRunningUserProcesses(), GROUP_USER);
-        runScheduledProcessIfPossible(adminProcessQueue, maxAdminJobsRunning, numberOfRunningAdminProcesses(), GROUP_ADMIN);
+        runScheduledProcessIfPossible(userProcessQueue, maxUserJobsRunning, numberOfRunningUserProcesses(), USER_PROCESS_QUEUE_NAME);
+        runScheduledProcessIfPossible(adminProcessQueue, maxAdminJobsRunning, numberOfRunningAdminProcesses(), ADMIN_PROCESS_QUEUE_NAME);
     }
 
-    public synchronized void runScheduledProcessIfPossible(Queue<Process> queue, int maxSize, int actualSize, String prefix) {
-        if (queue.peek() != null) {
-            if (actualSize < maxSize) {
-                Process process = queue.poll();
-                if (process != null) {
-                    runProcess(process, true);
+    private void runScheduledProcessIfPossible(Queue<Process> queue, int maxSize, int actualSize, String queueName) {
+        Process process = dequeueProcessOrNull(queue, maxSize, actualSize, queueName);
+        if (process != null) {
+            runProcess(process);
+        }
+    }
+
+    private Process dequeueProcessOrNull(Queue<Process> queue, int maxSize, int actualSize, String queueName) {
+        synchronized (queue) {
+            if (queue.peek() != null) {
+                if (actualSize < maxSize) {
+                    return queue.poll();
+                } else {
+                    logger.log(Level.FINE, "{0}: There is process to be run but too many running already", queueName);
+                    return null;
                 }
             } else {
-                logger.log(Level.FINE, "{0}: There is process to be run but too many running already", prefix);
+                logger.log(Level.FINE, "{0}: There is no scheduled process to be run", queueName);
+                return null;
             }
-
-        } else {
-            logger.log(Level.FINE, "{0}: There is no scheduled process to be run", prefix);
         }
     }
 
@@ -218,10 +244,10 @@ public class ProcessManagerImpl implements ProcessManager {
         return result;
     }
 
-    private void runProcess(Process process, boolean asAdmin) {
+    private void runProcess(Process process) {
         try {
             logger.log(Level.INFO, "running process {0} ({1})", new Object[]{process.getId(), process.getType().toString()});
-            JobDetail job = buildJobDetail(process, asAdmin);
+            JobDetail job = buildJobDetail(process);
             //System.err.println("jobdetail ready");
             Trigger trigger = trigger(process.getId());
             //System.err.println("trigger ready");
@@ -231,15 +257,14 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
-    private JobDetail buildJobDetail(Process process, boolean asAdmin) {
+    private JobDetail buildJobDetail(Process process) {
         String id = process.getId().toString();
-        //String group = asAdmin ? GROUP_ADMIN : GROUP_USER;
         switch (process.getType()) {
             case REGISTRARS_URN_NBN_CSV_EXPORT:
                 return newJob(UrnNbnCsvExportJob.class)
                         //.withIdentity(process.getId().toString(), (asAdmin ? GROUP_ADMIN : GROUP_USER) + process.getId().toString())
                         //.withIdentity(id, group)
-                        .withIdentity(new JobKey(id, PROCESS_JOBS_GROUPNAME))
+                        .withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
                         .usingJobData(UrnNbnCsvExportJob.PARAM_REG_CODE_KEY, process.getParams()[0])
                         //resolver db connection
@@ -264,7 +289,7 @@ public class ProcessManagerImpl implements ProcessManager {
                 return newJob(OaiAdapterJob.class)
                         //.withIdentity(new JobKey(oaiSet, group))
                         //.withIdentity(id, group)
-                        .withIdentity(new JobKey(id, PROCESS_JOBS_GROUPNAME))
+                        .withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_API_URL, resolverApiUrl)
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_LOGIN, resolverLogin)
@@ -321,14 +346,14 @@ public class ProcessManagerImpl implements ProcessManager {
         return processDao.getProcessesOfUserScheduledAfter(ownerLogin, date);
     }
 
-    public boolean killProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = getProcess(login, processId);
         if (process.getState() != ProcessState.RUNNING) {
             throw new InvalidStateException(processId, process.getState());
         }
 
         try {
-            JobKey jobKey = new JobKey(processId.toString(), ProcessManagerImpl.PROCESS_JOBS_GROUPNAME);
+            JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
             if (scheduler.checkExists(jobKey)) {
                 //System.err.println("OK, running");
                 if (!isAdminOrOwner(login, process)) {
@@ -347,6 +372,31 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
+    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+        Process process = processDao.getProcess(processId);
+        //remove from queue
+        boolean removedFromQueue = false;
+        if (isAdmin(process.getOwnerLogin())) {
+            synchronizedRemoveFromQueue(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
+        } else {
+            synchronizedRemoveFromQueue(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
+        }
+        //change process state in db
+        new ProcesStateUpdater(processId).upadateProcessStateToCanceled();
+        return removedFromQueue;
+    }
+
+    public boolean synchronizedRemoveFromQueue(Queue<Process> queue, Process processToBeRemoved, String queueName) {
+        boolean removed = false;
+        synchronized (queue) {
+            removed = queue.remove(processToBeRemoved);
+        }
+        if (removed) {
+            logger.log(Level.INFO, "process {0} removed from {1} queue", new Object[]{processToBeRemoved, queueName});
+        }
+        return removed;
+    }
+
     public void shutdown(boolean waitForJobsToFinish) {
         try {
             if (!waitForJobsToFinish) {
@@ -360,7 +410,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private void killAllRunningJobs() {
         try {
-            Set<JobKey> jobKeys = scheduler.getJobKeys(jobGroupEquals(PROCESS_JOBS_GROUPNAME));
+            Set<JobKey> jobKeys = scheduler.getJobKeys(jobGroupEquals(PROCESS_GROUP_JOBS));
             for (JobKey key : jobKeys) {
                 scheduler.interrupt(key);
             }
@@ -371,7 +421,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = getProcess(login, processId);
-        if (process.getState() == ProcessState.SCHEDULED) {
+        if (process.getState() == ProcessState.SCHEDULED || process.getState() == ProcessState.CANCELED) {
             throw new InvalidStateException(processId, process.getState());
         }
         return ProcessFileUtils.buildLogFile(processId);
@@ -395,14 +445,15 @@ public class ProcessManagerImpl implements ProcessManager {
 
     public void deleteProcess(String userLogin, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = getProcess(userLogin, processId);
-        if (process.getState() == ProcessState.RUNNING
-                || process.getState() == ProcessState.SCHEDULED) {
+        if (process.getState() == ProcessState.RUNNING || process.getState() == ProcessState.SCHEDULED) {
             throw new InvalidStateException(processId, process.getState());
         } else {
             processDao.deleteProcess(process);
             File failedToDelete = ProcessFileUtils.deleteProcessDir(processId);
             if (failedToDelete != null) {
                 logger.log(Level.WARNING, "Cannot delete file {0}", failedToDelete.getAbsolutePath());
+            } else {
+                logger.log(Level.INFO, "Deleted data of process {0}", processId);
             }
         }
     }
