@@ -22,10 +22,7 @@ package cz.nkp.urnnbn.processmanager.conf;
  */
 public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
 
-    public static final String JOBSSCHEDULER_SCRIPT_DIR = "job.scheduler.scriptDir";
-    public static final String JOBS_CONFIG = "job.scheduler.jobs.config";
-    public static final String JOBS_JAR = "job.scheduler.jobs.jar";
-    public static final String JOBS_DATA_DIR = "job.scheduler.jobs.dataDir";
+    public static final String JOBS_DATA_DIR = "process.scheduler.jobsDataDir";
     public static final String MAX_ADMIN_JOBS = "process.scheduler.maxRunning.admin";
     public static final String MAX_USER_JOBS = "process.scheduler.maxRunning.user";
 }
