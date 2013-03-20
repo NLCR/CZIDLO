@@ -16,13 +16,12 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
-import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
-import cz.nkp.urnnbn.processmanager.persistence.ProcessDAO;
-import cz.nkp.urnnbn.processmanager.persistence.ProcessDAOImpl;
+import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAOImpl;
+import cz.nkp.urnnbn.processmanager.persistence.AuthrozingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import cz.nkp.urnnbn.processmanager.scheduler.JobListenerImpl;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
@@ -30,8 +29,6 @@ import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcesStateUpdater;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcessFileUtils;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
-import cz.nkp.urnnbn.services.Services;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,7 +68,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private static final String USER_PROCESS_QUEUE_NAME = "user-job-queue";
     private final Queue<Process> adminProcessQueue = new LinkedBlockingQueue<Process>();
     private final Queue<Process> userProcessQueue = new LinkedBlockingQueue<Process>();
-    private final ProcessDAO processDao = ProcessDAOImpl.instanceOf();
+    private final AuthrozingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
     private Scheduler scheduler;
 
     public static synchronized ProcessManagerImpl instanceOf() {
@@ -87,15 +84,13 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private ProcessManagerImpl() throws SchedulerException {
         logger.info("initializing Process manager");
-        //this.maxAdminJobsRunning = Integer.valueOf(1);
         this.maxAdminJobsRunning = Configuration.getMaxRunningAdminProcesses();
         logger.log(Level.INFO, "max number of adming jobs running: {0}", this.maxAdminJobsRunning);
-        //this.maxUserJobsRunning = Integer.valueOf(1);
         this.maxUserJobsRunning = Configuration.getMaxRunningUserProcesses();
         logger.log(Level.INFO, "max number of user jobs running: {0}", this.maxUserJobsRunning);
         initScheduler();
         runJobChecker();
-        killRunningProcessesFromDatabase();
+        setRunningProcessesFromDatabaseStateToFailed();
         enqueueScheduledProcessesFromDatabase();
     }
 
@@ -107,8 +102,6 @@ public class ProcessManagerImpl implements ProcessManager {
             scheduler = sf.getScheduler();
             scheduler.start();
             //System.err.println("Scheduler started: " + result.isStarted());
-            //result.getListenerManager().addJobListener(new JobListenerImpl(), or(jobGroupEquals(GROUP_ADMIN), jobGroupEquals(GROUP_USER)));
-            //result.getListenerManager().addJobListener(new JobListenerImpl());
             scheduler.getListenerManager().addJobListener(new JobListenerImpl(), jobGroupEquals(PROCESS_GROUP_JOBS));
         } else {
             logger.info("scheduler already initialized");
@@ -147,10 +140,10 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
-    private void killRunningProcessesFromDatabase() {
+    private void setRunningProcessesFromDatabaseStateToFailed() {
         List<Process> runningFromDatabase = processDao.getProcessesByState(ProcessState.RUNNING);
         for (Process process : runningFromDatabase) {
-            new ProcesStateUpdater(process.getId()).updateProcessStateToKilled();
+            new ProcesStateUpdater(process.getId()).updateProcessStateToFailed();
         }
     }
 
@@ -161,7 +154,7 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     private void enqueueScheduledProcess(Process process) {
-        if (isAdmin(process.getOwnerLogin())) {
+        if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
             enqueueScheduledProcess(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
         } else {
             enqueueScheduledProcess(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
@@ -173,15 +166,6 @@ public class ProcessManagerImpl implements ProcessManager {
             queue.add(process);
         }
         logger.log(Level.INFO, "adding process (id={0}, type={1}, ownerLogin={2}) to queue {3}", new Object[]{process.getId(), process.getType(), process.getOwnerLogin(), queueName});
-    }
-
-    private boolean isAdmin(String userLogin) {
-        try {
-            User user = Services.instanceOf().dataAccessService().userByLogin(userLogin, false);
-            return user.isAdmin();
-        } catch (UnknownUserException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     void runScheduledProcessIfPossible() {
@@ -221,7 +205,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private List<Process> filterOnlyRunByAdmins(List<Process> runningProcesses) {
         List<Process> result = new ArrayList<Process>();
         for (Process process : runningProcesses) {
-            if (isAdmin(process.getOwnerLogin())) {
+            if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
                 result.add(process);
             }
         }
@@ -237,7 +221,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private List<Process> filterOnlyRunByUsers(List<Process> runningProcesses) {
         List<Process> result = new ArrayList<Process>();
         for (Process process : runningProcesses) {
-            if (!isAdmin(process.getOwnerLogin())) {
+            if (!AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
                 result.add(process);
             }
         }
@@ -319,11 +303,7 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException {
-        Process process = getProcess(processId);
-        if (!isAdminOrOwner(login, process)) {
-            throw new AccessRightException(login, process);
-        }
-        return process;
+        return processDao.getProcess(login, processId);
     }
 
     public Process getProcess(Long processId) throws UnknownRecordException {
@@ -360,7 +340,7 @@ public class ProcessManagerImpl implements ProcessManager {
             JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
             if (scheduler.checkExists(jobKey)) {
                 //System.err.println("OK, running");
-                if (!isAdminOrOwner(login, process)) {
+                if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
                     throw new AccessRightException(login, processId);
                 }
                 scheduler.interrupt(jobKey);
@@ -380,7 +360,7 @@ public class ProcessManagerImpl implements ProcessManager {
         Process process = processDao.getProcess(processId);
         //remove from queue
         boolean removedFromQueue = false;
-        if (isAdmin(process.getOwnerLogin())) {
+        if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
             synchronizedRemoveFromQueue(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
         } else {
             synchronizedRemoveFromQueue(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
@@ -421,46 +401,6 @@ public class ProcessManagerImpl implements ProcessManager {
         } catch (SchedulerException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-    }
-
-    public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        Process process = getProcess(login, processId);
-        if (process.getState() == ProcessState.SCHEDULED || process.getState() == ProcessState.CANCELED) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-        return ProcessFileUtils.buildLogFile(processId);
-    }
-
-    public File getProcessLogFile(Long processId) throws UnknownRecordException, InvalidStateException {
-        Process process = getProcess(processId);
-        if (process.getState() == ProcessState.SCHEDULED || process.getState() == ProcessState.CANCELED) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-        return ProcessFileUtils.buildLogFile(processId);
-    }
-
-    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        Process process = getProcess(login, processId);
-        if (process.getState() != ProcessState.FINISHED) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-        return ProcessFileUtils.buildProcessFile(processId, filename);
-    }
-
-    public File getProcessOutputFile(Long processId, String filename) throws UnknownRecordException, InvalidStateException {
-        Process process = getProcess(processId);
-        if (process.getState() != ProcessState.FINISHED) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-        return ProcessFileUtils.buildProcessFile(processId, filename);
-    }
-
-    private boolean isAdminOrOwner(String userLogin, Process process) {
-        return isAdmin(userLogin) || process.getOwnerLogin().equals(userLogin);
-    }
-
-    private boolean isAdminOrOwner(String userLogin, Long processId) throws UnknownRecordException {
-        return isAdmin(userLogin) || processDao.getProcess(processId).getOwnerLogin().equals(userLogin);
     }
 
     public void deleteProcess(String userLogin, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
