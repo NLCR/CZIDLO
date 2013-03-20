@@ -17,8 +17,8 @@
 package cz.nkp.urnnbn.processmanager.control;
 
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
+import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAOImpl;
-import cz.nkp.urnnbn.processmanager.persistence.AuthrozingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcessFileUtils;
 import java.io.File;
@@ -30,7 +30,7 @@ import java.io.File;
 public class ProcessResultManagerImpl implements ProcessResultManager {
 
     private static ProcessResultManager instance;
-    private final AuthrozingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
+    private final AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
 
     public static ProcessResultManager instanceOf() {
         if (instance == null) {

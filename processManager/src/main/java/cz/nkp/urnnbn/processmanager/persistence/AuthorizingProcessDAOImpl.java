@@ -26,12 +26,12 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class AuthorizingProcessDAOImpl extends ProcessDAOImpl implements AuthrozingProcessDAO {
+public class AuthorizingProcessDAOImpl extends ProcessDAOImpl implements AuthorizingProcessDAO {
 
     private static final Logger logger = Logger.getLogger(AuthorizingProcessDAOImpl.class.getName());
     private static AuthorizingProcessDAOImpl instance = null;
 
-    public static AuthrozingProcessDAO instanceOf() {
+    public static AuthorizingProcessDAO instanceOf() {
         if (instance == null) {
             logger.log(Level.INFO, "instantiating {0}", ProcessDAOImpl.class.getName());
             instance = new AuthorizingProcessDAOImpl();
