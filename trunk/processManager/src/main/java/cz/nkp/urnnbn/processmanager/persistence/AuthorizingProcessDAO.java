@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.processmanager.core.Process;
  *
  * @author Martin Řehánek
  */
-public interface AuthrozingProcessDAO extends ProcessDAO {
+public interface AuthorizingProcessDAO extends ProcessDAO {
 
     /**
      * Returns process.

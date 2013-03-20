@@ -20,8 +20,8 @@ import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAOImpl;
-import cz.nkp.urnnbn.processmanager.persistence.AuthrozingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import cz.nkp.urnnbn.processmanager.scheduler.JobListenerImpl;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
@@ -68,7 +68,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private static final String USER_PROCESS_QUEUE_NAME = "user-job-queue";
     private final Queue<Process> adminProcessQueue = new LinkedBlockingQueue<Process>();
     private final Queue<Process> userProcessQueue = new LinkedBlockingQueue<Process>();
-    private final AuthrozingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
+    private final AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
     private Scheduler scheduler;
 
     public static synchronized ProcessManagerImpl instanceOf() {
