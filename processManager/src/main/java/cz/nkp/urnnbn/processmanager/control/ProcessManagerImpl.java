@@ -319,11 +319,15 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException {
-        Process process = processDao.getProcess(processId);
+        Process process = getProcess(processId);
         if (!isAdminOrOwner(login, process)) {
             throw new AccessRightException(login, process);
         }
         return process;
+    }
+
+    public Process getProcess(Long processId) throws UnknownRecordException {
+        return processDao.getProcess(processId);
     }
 
     public List<Process> getProcesses() {
@@ -427,8 +431,24 @@ public class ProcessManagerImpl implements ProcessManager {
         return ProcessFileUtils.buildLogFile(processId);
     }
 
+    public File getProcessLogFile(Long processId) throws UnknownRecordException, InvalidStateException {
+        Process process = getProcess(processId);
+        if (process.getState() == ProcessState.SCHEDULED || process.getState() == ProcessState.CANCELED) {
+            throw new InvalidStateException(processId, process.getState());
+        }
+        return ProcessFileUtils.buildLogFile(processId);
+    }
+
     public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = getProcess(login, processId);
+        if (process.getState() != ProcessState.FINISHED) {
+            throw new InvalidStateException(processId, process.getState());
+        }
+        return ProcessFileUtils.buildProcessFile(processId, filename);
+    }
+
+    public File getProcessOutputFile(Long processId, String filename) throws UnknownRecordException, InvalidStateException {
+        Process process = getProcess(processId);
         if (process.getState() != ProcessState.FINISHED) {
             throw new InvalidStateException(processId, process.getState());
         }
