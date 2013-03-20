@@ -20,7 +20,6 @@ import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -79,56 +78,6 @@ public interface ProcessManager {
     public List<Process> getProcessesByOwner(String ownerLogin);
 
     public List<Process> getProcessesByOwnerScheduledAfter(String ownerLogin, Date date);
-
-    /**
-     * Returns process log file.
-     *
-     * @param login
-     * @param processId
-     * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is in SCHEDULED or CANCELED
-     * state
-     */
-    public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
-
-    /**
-     * Returns process log file.
-     *
-     * @param processId
-     * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws InvalidStateException If process is in SCHEDULED or CANCELED
-     * state
-     */
-    public File getProcessLogFile(Long processId) throws UnknownRecordException, InvalidStateException;
-
-    /**
-     * Returns output process output file.
-     *
-     * @param login
-     * @param processId
-     * @param filename
-     * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is not in FINISHED state
-     */
-    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException;
-
-    /**
-     * Returns output process output file.
-     *
-     * @param processId
-     * @param filename
-     * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws InvalidStateException If process is not in FINISHED state
-     */
-    public File getProcessOutputFile(Long processId, String filename) throws UnknownRecordException, InvalidStateException;
 
     /**
      * Kills running process.

@@ -36,9 +36,8 @@ public class ProcessDAOImpl implements ProcessDAO {
 
     private static final Logger logger = Logger.getLogger(ProcessDAOImpl.class.getName());
     private static ProcessDAOImpl instance = null;
-    private SessionFactory factory = initFactory();
+    protected SessionFactory factory = initFactory();
 
-    //TODO: ensure to be caled soon enough when webapp is initialized
     public static ProcessDAO instanceOf() {
         if (instance == null) {
             logger.log(Level.INFO, "instantiating {0}", ProcessDAOImpl.class.getName());
@@ -48,7 +47,6 @@ public class ProcessDAOImpl implements ProcessDAO {
     }
 
     private SessionFactory initFactory() {
-        //return new AnnotationConfiguration().configure().buildSessionFactory();
         //return new Configuration().configure().buildSessionFactory();
         return new AnnotationConfiguration().configure().buildSessionFactory();
     }

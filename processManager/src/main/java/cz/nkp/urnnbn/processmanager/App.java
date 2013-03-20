@@ -9,8 +9,6 @@ import cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
-import cz.nkp.urnnbn.processmanager.persistence.ProcessDAO;
-import cz.nkp.urnnbn.processmanager.persistence.ProcessDAOImpl;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import java.io.File;
 import java.io.IOException;
