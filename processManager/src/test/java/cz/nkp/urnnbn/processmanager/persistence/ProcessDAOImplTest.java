@@ -172,7 +172,6 @@ public class ProcessDAOImplTest extends TestCase {
         } catch (UnknownRecordException ex) {
             fail();
         }
-
     }
 
     public void testGetDeletedProcess() {
@@ -208,11 +207,11 @@ public class ProcessDAOImplTest extends TestCase {
         Process second = dao.saveProcess(buildProcess());
         Process third = dao.saveProcess(buildProcess());
         //fetch
-        List<Process> processesOfUser = dao.getProcesses();
-        assertEquals(3, processesOfUser.size());
-        assertTrue(processesOfUser.contains(first));
-        assertTrue(processesOfUser.contains(second));
-        assertTrue(processesOfUser.contains(third));
+        List<Process> allProcesses = dao.getProcesses();
+        assertEquals(3, allProcesses.size());
+        assertTrue(allProcesses.contains(first));
+        assertTrue(allProcesses.contains(second));
+        assertTrue(allProcesses.contains(third));
     }
 
     public void testGetProcessesByState() {

@@ -24,19 +24,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.StaleStateException;
-import org.hibernate.cfg.AnnotationConfiguration;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class ProcessDAOImpl implements ProcessDAO {
+public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
 
     private static final Logger logger = Logger.getLogger(ProcessDAOImpl.class.getName());
     private static ProcessDAOImpl instance = null;
-    protected SessionFactory factory = initFactory();
 
     public static ProcessDAO instanceOf() {
         if (instance == null) {
@@ -44,11 +41,6 @@ public class ProcessDAOImpl implements ProcessDAO {
             instance = new ProcessDAOImpl();
         }
         return instance;
-    }
-
-    private SessionFactory initFactory() {
-        //return new Configuration().configure().buildSessionFactory();
-        return new AnnotationConfiguration().configure().buildSessionFactory();
     }
 
     public Process saveProcess(Process newProcess) {

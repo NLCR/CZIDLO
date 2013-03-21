@@ -16,5 +16,6 @@
 <!--        <property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property>-->
         <!-- Persistent classes -->
         <mapping class="cz.nkp.urnnbn.processmanager.core.Process"/>
+        <mapping class="cz.nkp.urnnbn.processmanager.core.XmlTransformation"/>
     </session-factory>
 </hibernate-configuration>
