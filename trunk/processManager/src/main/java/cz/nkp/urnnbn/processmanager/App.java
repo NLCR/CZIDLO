@@ -31,12 +31,12 @@ public class App {
         //test();
         Configuration.init(new File("/home/martin/NetBeansProjects/processManager/src/main/resources/scheduler.properties"));
         //testNew();
-        createSomeScheduled();
-        justStartProcessManager();
-        scheduleAndCancel();
+        scheduleCvsExportProcesses(1,"tst02");
+        //justStartProcessManager();
+        //scheduleAndCancel();
         //scheduleWaitKill();
-        sleep(25000);
-        shutdownProcessManager(true);
+        //sleep(25000);
+        //shutdownProcessManager(true);
     }
 
     private static Process scheduledTestProcess(String login) {
@@ -73,7 +73,7 @@ public class App {
         }
     }
 
-    private static void createSomeScheduled() {
+    private static void scheduleCvsExportProcesses(int count, String registrarCode) {
 
         //            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
 //        ProcessDAO processDao = ProcessDAOImpl.instanceOf();
@@ -86,8 +86,8 @@ public class App {
 //        processDao.saveProcess(process);
 
         ProcessManager manager = ProcessManagerImpl.instanceOf();
-        for (int i = 0; i < 4; i++) {
-            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
+        for (int i = 0; i < count; i++) {
+            manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{registrarCode});
         }
     }
 
