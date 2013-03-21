@@ -58,6 +58,8 @@ public interface UrnNbnDAO {
 
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException;
 
+    public List<UrnNbn> getUrnNbnsByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException;
+
     public List<UrnNbnWithStatus> getPredecessors(UrnNbn urn) throws DatabaseException;
 
     public List<UrnNbnWithStatus> getSuccessors(UrnNbn urn) throws DatabaseException;
