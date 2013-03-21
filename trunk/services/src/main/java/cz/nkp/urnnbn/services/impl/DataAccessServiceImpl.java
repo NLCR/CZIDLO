@@ -437,6 +437,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registrarCode) {
+        try {
+            return factory.urnDao().getUrnNbnsByRegistrarCode(registrarCode);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until) {
         try {
             Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();

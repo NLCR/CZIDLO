@@ -128,4 +128,6 @@ public interface DataAccessService extends BusinessService {
     public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until);
 
     public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until);
+
+    public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
 }
