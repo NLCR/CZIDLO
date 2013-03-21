@@ -29,6 +29,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
 import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select3StringsBy2Strings;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
@@ -120,6 +121,20 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (RecordNotFoundException e) {
             logger.log(Level.INFO, "No such urn:nbn with registrar code {0} and document code {1}", new Object[]{registrarCode, documentCode});
             throw (RecordNotFoundException) e;
+        } catch (PersistenceException e) {
+            //should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", e);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    public List<UrnNbn> getUrnNbnsByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_REGISTRAR_CODE, registrarCode.toString());
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnRT());
+        try {
+            return (List<UrnNbn>) runInTransaction(operation);
         } catch (PersistenceException e) {
             //should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
