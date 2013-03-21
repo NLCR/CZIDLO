@@ -22,7 +22,6 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -36,7 +35,6 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -101,8 +99,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         //TODO: kod az na zaklade konfigurace
         CountryCode.initialize("cz");
         try {
-            Registrar registrar = services.dataAccessService().registrarByCode(RegistrarCode.valueOf(registrarCode));
-            Set<UrnNbn> urnNbnList = services.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(registrar, null, null);
+            List<UrnNbn> urnNbnList = services.dataAccessService().urnNbnsOfRegistrar(RegistrarCode.valueOf(registrarCode));
             csvWriter.println(buildHeaderLine());
             int counter = 0;
             int total = urnNbnList.size();
