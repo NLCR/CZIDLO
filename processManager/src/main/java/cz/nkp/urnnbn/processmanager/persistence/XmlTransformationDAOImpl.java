@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.processmanager.persistence;
 
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,10 +30,10 @@ import org.hibernate.StaleStateException;
  * @author Martin Řehánek
  */
 public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransformationDAO {
-
+    
     private static final Logger logger = Logger.getLogger(XmlTransformationDAOImpl.class.getName());
     private static XmlTransformationDAOImpl instance = null;
-
+    
     public static XmlTransformationDAOImpl instanceOf() {
         if (instance == null) {
             logger.log(Level.INFO, "instantiating {0}", XmlTransformationDAOImpl.class.getName());
@@ -40,8 +41,9 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         }
         return instance;
     }
-
+    
     public XmlTransformation saveTransformation(XmlTransformation newTransformation) {
+        newTransformation.setCreated(new Date());
         Session session = factory.openSession();
         session.beginTransaction();
         session.save(newTransformation);
@@ -50,7 +52,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         //logger.log(Level.INFO, "saved {0}", newProcess);
         return newTransformation;
     }
-
+    
     public XmlTransformation getTransformation(Long transformationId) throws UnknownRecordException {
         Session session = factory.openSession();
         session.beginTransaction();
@@ -64,7 +66,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
             throw new UnknownRecordException(XmlTransformation.class.getName() + " with id " + transformationId);
         }
     }
-
+    
     public List<XmlTransformation> getTransformations() {
         Session session = factory.openSession();
         session.beginTransaction();
@@ -74,7 +76,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         session.close();
         return results;
     }
-
+    
     public List<XmlTransformation> getTransformationsOfUser(String userLogin) {
         Session session = factory.openSession();
         session.beginTransaction();
@@ -86,7 +88,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         session.close();
         return results;
     }
-
+    
     public void deleteTransformation(XmlTransformation transformation) throws UnknownRecordException {
         Session session = factory.openSession();
         try {
