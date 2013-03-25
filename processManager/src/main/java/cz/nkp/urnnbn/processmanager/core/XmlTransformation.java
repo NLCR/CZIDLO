@@ -49,7 +49,7 @@ public class XmlTransformation implements Serializable {
     private XmlTransformationType type;
     
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @Column(name = "created", nullable = true)
+    @Column(name = "created", nullable = false)
     private Date created;
     
     @Column(name = "xslt", nullable = false)
