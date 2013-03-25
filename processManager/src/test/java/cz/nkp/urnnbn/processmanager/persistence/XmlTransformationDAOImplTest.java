@@ -60,6 +60,7 @@ public class XmlTransformationDAOImplTest extends TestCase {
         XmlTransformation transformation = new XmlTransformation();
         transformation.setCreated(new Date());
         transformation.setOwnerLogin(user);
+        transformation.setName("testovaci sablona");
         transformation.setType(XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
         transformation.setXslt("TODO");
         return transformation;
@@ -82,6 +83,18 @@ public class XmlTransformationDAOImplTest extends TestCase {
         } catch (PropertyValueException e) {
             assertEquals(XmlTransformation.class.getName(), e.getEntityName());
             assertEquals("ownerLogin", e.getPropertyName());
+        }
+    }
+    
+    public void testSaveTransformationEmptyName() {
+        XmlTransformation saved = dao.saveTransformation(buildTransformation());
+        saved.setName(null);
+        try {
+            dao.saveTransformation(saved);
+            fail();
+        } catch (PropertyValueException e) {
+            assertEquals(XmlTransformation.class.getName(), e.getEntityName());
+            assertEquals("name", e.getPropertyName());
         }
     }
 
