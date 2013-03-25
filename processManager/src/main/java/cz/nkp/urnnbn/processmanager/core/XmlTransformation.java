@@ -36,15 +36,25 @@ import javax.persistence.Temporal;
 @Table(name = "XMLTRANSFORMATION")
 public class XmlTransformation implements Serializable {
 
-    private Long id;
-    private String ownerLogin;
-    private XmlTransformationType type;
-    private Date created;
-    private String xslt;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    private Long id;
+    
+    @Column(name = "owner", nullable = false)
+    private String ownerLogin;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private XmlTransformationType type;
+    
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    @Column(name = "created", nullable = true)
+    private Date created;
+    
+    @Column(name = "xslt", nullable = false)
+    private String xslt;
+
     public Long getId() {
         return id;
     }
@@ -53,7 +63,6 @@ public class XmlTransformation implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "owner", nullable = false)
     public String getOwnerLogin() {
         return ownerLogin;
     }
@@ -62,8 +71,6 @@ public class XmlTransformation implements Serializable {
         this.ownerLogin = ownerLogin;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "transformationType", nullable = false)
     public XmlTransformationType getType() {
         return type;
     }
@@ -72,8 +79,6 @@ public class XmlTransformation implements Serializable {
         this.type = type;
     }
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @Column(name = "CREATED", nullable = true)
     public Date getCreated() {
         return created;
     }
@@ -82,7 +87,6 @@ public class XmlTransformation implements Serializable {
         this.created = created;
     }
 
-    @Column(nullable = false)
     public String getXslt() {
         return xslt;
     }
