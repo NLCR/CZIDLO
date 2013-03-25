@@ -85,7 +85,7 @@ public class XmlTransformationDAOImplTest extends TestCase {
             assertEquals("ownerLogin", e.getPropertyName());
         }
     }
-    
+
     public void testSaveTransformationEmptyName() {
         XmlTransformation saved = dao.saveTransformation(buildTransformation());
         saved.setName(null);
@@ -174,6 +174,24 @@ public class XmlTransformationDAOImplTest extends TestCase {
         assertEquals(2, transformationsOfUser.size());
         assertTrue(transformationsOfUser.contains(first));
         assertTrue(transformationsOfUser.contains(second));
+        assertFalse(transformationsOfUser.contains(ofOtherUser));
+    }
+
+    public void testGetTransformationsOfUserAndByType() {
+        String user = loginGenerator.getUniqueLogin();
+        //insert
+        XmlTransformation shouldBeReturned = buildTransformation(user);
+        shouldBeReturned.setType(XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
+        dao.saveTransformation(shouldBeReturned);
+        XmlTransformation differentType = buildTransformation(user);
+        differentType.setType(XmlTransformationType.DIGITAL_INSTANCE_IMPORT);
+        dao.saveTransformation(differentType);
+        XmlTransformation ofOtherUser = dao.saveTransformation(buildTransformation());
+        //fetch
+        List<XmlTransformation> transformationsOfUser = dao.getTransformationsOfUserAndByType(user, XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
+        assertEquals(1, transformationsOfUser.size());
+        assertTrue(transformationsOfUser.contains(shouldBeReturned));
+        assertFalse(transformationsOfUser.contains(differentType));
         assertFalse(transformationsOfUser.contains(ofOtherUser));
     }
 

@@ -17,6 +17,7 @@
 package cz.nkp.urnnbn.processmanager.persistence;
 
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
+import cz.nkp.urnnbn.processmanager.core.XmlTransformationType;
 import java.util.List;
 
 /**
@@ -32,6 +33,8 @@ public interface XmlTransformationDAO {
     public List<XmlTransformation> getTransformations();
 
     public List<XmlTransformation> getTransformationsOfUser(String userLogin);
+
+    public List<XmlTransformation> getTransformationsOfUserAndByType(String userLogin, XmlTransformationType type);
 
     public void deleteTransformation(XmlTransformation transformation) throws UnknownRecordException;
 }
