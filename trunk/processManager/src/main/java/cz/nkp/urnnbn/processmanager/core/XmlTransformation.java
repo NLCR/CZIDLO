@@ -42,6 +42,12 @@ public class XmlTransformation implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
     
+    @Column(name = "name", nullable = false)
+    private String name;
+    
+    @Column(name = "description", nullable = true)
+    private String description;
+    
     @Column(name = "owner", nullable = false)
     private String ownerLogin;
     
@@ -65,6 +71,22 @@ public class XmlTransformation implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     public String getOwnerLogin() {
         return ownerLogin;
     }
