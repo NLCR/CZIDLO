@@ -213,6 +213,20 @@ public class XmlTransformationDAOImplTest extends TestCase {
         }
     }
 
+    public void testDeleteTransformationById() {
+        //insert
+        XmlTransformation transformation = dao.saveTransformation(buildTransformation());
+        //delete
+        dao.deleteTransformation(transformation.getId());
+        //fetch
+        try {
+            dao.getTransformation(transformation.getId());
+            fail();
+        } catch (UnknownRecordException ex) {
+            //ok
+        }
+    }
+
     public void testDeleteDeletedTransformation() {
         //insert
         XmlTransformation transformations = dao.saveTransformation(buildTransformation());

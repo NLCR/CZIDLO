@@ -116,4 +116,14 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
             session.close();
         }
     }
+
+    public void deleteTransformation(Long transformationId) {
+        Session session = factory.openSession();
+        session.beginTransaction();
+        Query query = session.createQuery("delete from XmlTransformation where id = :id ");
+        query.setLong("id", transformationId);
+        query.executeUpdate();
+        session.getTransaction().commit();
+        session.close();
+    }
 }
