@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
+import cz.nkp.urnnbn.oaiadapter.XsdProvider;
 import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
@@ -22,7 +23,7 @@ public class App {
     public static void main(String[] args) {
         try {
             //for testing - comment when commiting changes
-            //args = new String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
+//            args = new String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
             if (args.length != 1) {
                 System.err.println(USAGE);
                 return;
@@ -51,6 +52,11 @@ public class App {
         //xsl
         adapter.setMetadataToImportTemplate(XmlTools.loadXmlFromFile(properties.loadString(DefinedProperties.DD_STYLESHEET)));
         adapter.setMetadataToDigitalInstanceTemplate(XmlTools.loadXmlFromFile(properties.loadString(DefinedProperties.DI_STYLESHEET)));
+        //xsd for transformation results
+        String importXsdUrl = properties.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
+        String digitalInstanceXsdUrl = properties.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
+        adapter.setXsdProvider(new XsdProvider(importXsdUrl, digitalInstanceXsdUrl));
+        //report
         initReportStream(adapter, properties);
         return adapter;
     }

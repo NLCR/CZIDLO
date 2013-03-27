@@ -111,24 +111,24 @@ public class ImportDocumentHandler {
         return di;
     }
 
-    public static void main(String[] args) {
-        //File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
-        File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument2.xml");
-        //File file = new File("/home/hanis/prace/resolver/oai/parser-test/monograph.xml");
-
-        Builder builder = new Builder();
-        Document doc = null;
-        try {
-            doc = builder.build(file);
-        } catch (ParsingException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-        Refiner.refineDocument(doc);
-        ImportDocumentHandler.putRegistrarScopeIdentifier(doc, "oai:blablabla");
-        //String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(doc);
-        //System.out.println(urnnbn);
-        //System.out.println(doc.toXML());
-    }
+//    public static void main(String[] args) {
+//        //File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
+//        File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument2.xml");
+//        //File file = new File("/home/hanis/prace/resolver/oai/parser-test/monograph.xml");
+//
+//        Builder builder = new Builder();
+//        Document doc = null;
+//        try {
+//            doc = builder.build(file);
+//        } catch (ParsingException ex) {
+//            logger.log(Level.SEVERE, null, ex);
+//        } catch (IOException ex) {
+//            logger.log(Level.SEVERE, null, ex);
+//        }
+//        Refiner.refineDocument(doc);
+//        ImportDocumentHandler.putRegistrarScopeIdentifier(doc, "oai:blablabla");
+//        //String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(doc);
+//        //System.out.println(urnnbn);
+//        //System.out.println(doc.toXML());
+//    }
 }

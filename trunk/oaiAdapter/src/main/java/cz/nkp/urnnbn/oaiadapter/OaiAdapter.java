@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.oaiadapter.resolver.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
 import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
@@ -27,16 +28,22 @@ public class OaiAdapter {
 
     private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
     public static final String REGISTAR_SCOPE_ID = "OAI_Adapter";
+    //OAI
     private String oaiBaseUrl;
     private String metadataPrefix;
     private String setSpec;
-    private String metadataToImportTemplate;
-    private String metadataToDigitalInstanceTemplate;
+    //RESOLVER
     private String registrarCode;
     private RegistrationMode registrationMode;
+    private ResolverConnector resolverConnector;
+    //XSLT
+    private String metadataToImportTemplate;
+    private String metadataToDigitalInstanceTemplate;
+    //XSD
+    private XsdProvider xsdProvider;
+    //OTHER
     private int limit = -1;
     private ReportLogger reportLogger;
-    private ResolverConnector resolverConnector;
 
     public OaiAdapter() {
     }
@@ -117,6 +124,14 @@ public class OaiAdapter {
         this.resolverConnector = resolverConnector;
     }
 
+    public XsdProvider getXsdProvider() {
+        return xsdProvider;
+    }
+
+    public void setXsdProvider(XsdProvider xsdProvider) {
+        this.xsdProvider = xsdProvider;
+    }
+
     private Document getImportTemplateDocument() throws TemplateException {
         try {
             return XmlTools.getTemplateDocumentFromString(getMetadataToImportTemplate());
@@ -148,7 +163,7 @@ public class OaiAdapter {
     }
 
     public Object[] processSingleDocument(String oaiIdentifier, Document digitalDocument, Document digitalInstance) throws OaiAdapterException, ResolverConnectionException {
-        Refiner.refineDocument(digitalDocument);
+        Refiner.refineDocument(digitalDocument, xsdProvider.getImportXsd());
         ImportDocumentHandler.putRegistrarScopeIdentifier(digitalDocument, oaiIdentifier);
         String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digitalDocument);
         if (urnnbn == null) {
@@ -272,6 +287,7 @@ public class OaiAdapter {
         try {
             importDocument = XmlTools.getTransformedDocument(record.getDocument(), importTemplate);
             report("- import transformation successful - continue.");
+            //saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming import document. "
                     + "identifier: " + identifier
@@ -279,15 +295,17 @@ public class OaiAdapter {
         }
         //System.err.println(importDocument.toXML());
         try {
-            XmlTools.validateImport(importDocument);
+            XmlTools.validateByXsdAsString(importDocument, xsdProvider.getImportXsd());
             report("- import validation successful - continue.");
         } catch (DocumentOperationException ex) {
+            //saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
             throw new OaiAdapterException("- import invalid - skip \nMessage: " + ex.getMessage());
         }
 
         try {
             digitalInstanceDocument = XmlTools.getTransformedDocument(record.getDocument(), digitalInstanceTemplate);
             report("- digital instance transformation successful - continue.");
+            //saveToTempFile(digitalInstanceDocument, "digitalInstance-" + record.getIdentifier(), ".xml");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming digital instance document. "
                     + "identifier: " + identifier
@@ -295,8 +313,9 @@ public class OaiAdapter {
         }
         //System.err.println(digitalInstanceDocument.toXML());
         try {
-            XmlTools.validateDigitalIntance(digitalInstanceDocument);
+            XmlTools.validateByXsdAsString(digitalInstanceDocument, xsdProvider.getDigitalInstanceXsd());
             report("- digital instance validation successful - continue.");
+            //saveToTempFile(digitalInstanceDocument, "digitalInstance-" + record.getIdentifier(), ".xml");
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("- digital instance invalid - skip \nMessage: " + ex.getMessage());
         }
@@ -387,6 +406,12 @@ public class OaiAdapter {
 
     }
 
-    public static void main(String[] args) {
+    private void saveToTempFile(Document document, String prefix, String suffix) {
+        try {
+            File tmpFile = File.createTempFile(prefix, suffix);
+            XmlTools.saveDocumentToFile(document, tmpFile.getAbsolutePath());
+        } catch (IOException ex1) {
+            logger.severe(ex1.getMessage());
+        }
     }
 }
