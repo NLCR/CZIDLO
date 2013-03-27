@@ -269,6 +269,8 @@ public class ProcessManagerImpl implements ProcessManager {
                 String oaiSet = process.getParams()[7];
                 String ddXslFile = process.getParams()[8];
                 String diXslFile = process.getParams()[9];
+                String ddRegistrationXsdUrl = Configuration.getDigDocRegistrationXsdUrl();
+                String diImportXsdUrl = Configuration.getDigInstImportXsdUrl();
 
                 return newJob(OaiAdapterJob.class)
                         //.withIdentity(new JobKey(oaiSet, group))
@@ -285,6 +287,8 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(OaiAdapterJob.PARAM_OAI_SET, oaiSet)
                         .usingJobData(OaiAdapterJob.PARAM_DD_XSL_FILE, ddXslFile)
                         .usingJobData(OaiAdapterJob.PARAM_DI_XSL_FILE, diXslFile)
+                        .usingJobData(OaiAdapterJob.PARAM_DD_XSD_URL, ddRegistrationXsdUrl)
+                        .usingJobData(OaiAdapterJob.PARAM_DI_XSD_URL, diImportXsdUrl)
                         .build();
             case TEST:
             default:

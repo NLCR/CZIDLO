@@ -30,8 +30,8 @@ public class App {
 //        Tests.createAndDeleteObject(factory);
         //test();
         Configuration.init(new File("/home/martin/NetBeansProjects/processManager/src/main/resources/scheduler.properties"));
-        //testNew();
-        scheduleCvsExportProcesses(1,"tst02");
+        scheduleOaiAdapter();
+        //scheduleCvsExportProcesses(1,"tst02");
         //justStartProcessManager();
         //scheduleAndCancel();
         //scheduleWaitKill();
@@ -91,7 +91,7 @@ public class App {
         }
     }
 
-    private static void testNew() throws SchedulerException {
+    private static void scheduleOaiAdapter() throws SchedulerException {
         ProcessManager manager = ProcessManagerImpl.instanceOf();
         int procesess = 5;
 //        for (int i = 0; i < procesess; i++) {
@@ -104,7 +104,7 @@ public class App {
                     "resolver-test2.nkp.cz/api",
                     "oaiAdapter-rehan-test",
                     "dlhIob5z",
-                    RegistrationMode.BY_RESOLVER.toString(),
+                    RegistrationMode.BY_REGISTRAR.toString(),
                     "duha",
                     "http://duha-devel.mzk.cz/oai",
                     "oai_dc",
@@ -114,7 +114,7 @@ public class App {
                     "/home/martin/tmp/oaiAdapter/report.txt"
                 });
         //int checks = 100;
-        int checks = 3;
+        //int checks = 3;
 //        for (int i = 0; i < checks; i++) {
 //            manager.runScheduledProcessIfPossible();
 //            sleep(10);
