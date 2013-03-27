@@ -259,22 +259,20 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_RESOLVER_DB_PASSWORD_KEY, Configuration.getResolverDbCreditentials().getPassword())
                         .build();
             case OAI_ADAPTER:
-                String resolverApiUrl = process.getParams()[0];
-                String resolverLogin = process.getParams()[1];
-                String resolverPass = process.getParams()[2];
-                String registrationMode = process.getParams()[3];
-                String registrarCode = process.getParams()[4];
-                String oaiBaseUrl = process.getParams()[5];
-                String metadataPrefix = process.getParams()[6];
-                String oaiSet = process.getParams()[7];
-                String ddXslFile = process.getParams()[8];
-                String diXslFile = process.getParams()[9];
+                String resolverApiUrl = Configuration.getResolverApiUrl();
+                String resolverLogin = process.getParams()[0];
+                String resolverPass = process.getParams()[1];
+                String registrationMode = process.getParams()[2];
+                String registrarCode = process.getParams()[3];
+                String oaiBaseUrl = process.getParams()[4];
+                String metadataPrefix = process.getParams()[5];
+                String oaiSet = process.getParams()[6];
+                String ddXslFile = process.getParams()[7];
+                String diXslFile = process.getParams()[8];
                 String ddRegistrationXsdUrl = Configuration.getDigDocRegistrationXsdUrl();
                 String diImportXsdUrl = Configuration.getDigInstImportXsdUrl();
 
                 return newJob(OaiAdapterJob.class)
-                        //.withIdentity(new JobKey(oaiSet, group))
-                        //.withIdentity(id, group)
                         .withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_API_URL, resolverApiUrl)

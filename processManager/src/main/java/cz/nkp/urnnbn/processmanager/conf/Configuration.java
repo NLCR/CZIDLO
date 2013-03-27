@@ -35,6 +35,7 @@ public class Configuration {
     private static ResolverDatabaseCreditentials resolverDbCreditentials;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
+    private static String resolverApiUrl;
     //configuration for processes
     private static String digDocRegistrationXsdUrl;
     private static String digInstImportXsdUrl;
@@ -58,8 +59,10 @@ public class Configuration {
                 loader.loadString(PropertyKeys.DB_LOGIN),
                 loader.loadString(PropertyKeys.DB_PASSWORD));
         Services.init(initDatabaseConnector());
+        //oai adapter
         digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
         digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
+        resolverApiUrl = loader.loadString(DefinedProperties.RESOLVER_API_URL);
     }
 
     private static DatabaseConnector initDatabaseConnector() {
@@ -93,5 +96,9 @@ public class Configuration {
 
     public static String getDigInstImportXsdUrl() {
         return digInstImportXsdUrl;
+    }
+
+    public static String getResolverApiUrl() {
+        return resolverApiUrl;
     }
 }
