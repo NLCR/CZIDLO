@@ -101,7 +101,6 @@ public class App {
 //        }
         //  manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
         manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[]{
-                    "resolver-test2.nkp.cz/api",
                     "oaiAdapter-rehan-test",
                     "dlhIob5z",
                     RegistrationMode.BY_REGISTRAR.toString(),
