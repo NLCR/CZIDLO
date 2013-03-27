@@ -16,7 +16,7 @@ public class DefinedProperties {
     static String OAI_SET = "oaiAdapter.oai.setSpec";
     static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
     //resolver
-    static String RESOLVER_API_URL = "oaiAdapter.resolver.apiUrl";
+    public static String RESOLVER_API_URL = "oaiAdapter.resolver.apiUrl";
     static String RESOLVER_LOGIN = "oaiAdapter.resolver.login";
     static String RESOLVER_PASSWORD = "oaiAdapter.resolver.password";
     static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.resolver.registrarCode";
