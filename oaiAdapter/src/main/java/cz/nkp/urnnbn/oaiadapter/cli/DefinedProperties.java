@@ -10,16 +10,20 @@ package cz.nkp.urnnbn.oaiadapter.cli;
  */
 public class DefinedProperties {
 
-    static String REPORT_FILE = "oaiProvider.reportFile";
-    static String DD_STYLESHEET = "oaiProvider.digDocRegistrationXsl";
-    static String DI_STYLESHEET = "oaiProvider.digInstImportXsl";
+    static String REPORT_FILE = "oaiAdapter.reportFile";
     //oai provider
-    static String OAI_BASE_URL = "oaiProvider.oai.baseUrl";
-    static String OAI_SET = "oaiProvider.oai.setSpec";
-    static String OAI_METADATA_PREFIX = "oaiProvider.oai.metadataPrefix";
+    static String OAI_BASE_URL = "oaiAdapter.oai.baseUrl";
+    static String OAI_SET = "oaiAdapter.oai.setSpec";
+    static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
     //resolver
-    static String RESOLVER_API_URL = "oaiProvider.resolver.apiUrl";
-    static String RESOLVER_LOGIN = "oaiProvider.resolver.login";
-    static String RESOLVER_PASSWORD = "oaiProvider.resolver.password";
-    static String RESOLVER_REGISTRAR_CODE = "oaiProvider.resolver.registrarCode";
+    static String RESOLVER_API_URL = "oaiAdapter.resolver.apiUrl";
+    static String RESOLVER_LOGIN = "oaiAdapter.resolver.login";
+    static String RESOLVER_PASSWORD = "oaiAdapter.resolver.password";
+    static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.resolver.registrarCode";
+    //xsl transformations
+    static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
+    static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
+    //xsd for transformation results
+    public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
+    public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
 }

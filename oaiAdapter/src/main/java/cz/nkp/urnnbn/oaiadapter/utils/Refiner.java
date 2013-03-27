@@ -21,13 +21,13 @@ public class Refiner {
     private Refiner() {
     }
 
-    public static Document refineDocument(Document document) {
+    public static Document refineDocument(Document document, String xsd) {
         Element root = document.getRootElement();
         if ("import".equals(root.getLocalName())) {
             Refiner.parseImportElement(root);
         }
         try {
-            XmlTools.validateImport(document);
+            XmlTools.validateByXsdAsString(document, xsd);
         } catch (DocumentOperationException ex) {
             Logger.getLogger(Refiner.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +51,6 @@ public class XmlTools {
     public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException, XSLException {
         Builder builder = new Builder();
         Document document = builder.build(template, null);
-        XSLTransform transform = new XSLTransform(document);
         return document;
     }
 
@@ -135,56 +133,12 @@ public class XmlTools {
         return connection;
     }
 
-    public static void validateImport(Document document) throws DocumentOperationException {
+    public static void validateByXsdAsString(Document document, String xsd) throws DocumentOperationException {
         try {
-            //TODO: xsd should be cached
-            XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), new URL(ResolverConnector.IMPORT_TEMPLATE_URL));
+            XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), xsd);
         } catch (Exception ex) {
             throw new DocumentOperationException(ex.getMessage());
         }
-    }
-
-    public static void validateDigitalIntance(Document document) throws DocumentOperationException {
-        try {
-            XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), new URL(ResolverConnector.DIGITAL_INSTANCE_TEMPLATE_URL));
-        } catch (Exception ex) {
-            throw new DocumentOperationException(ex.getMessage());
-        }
-    }
-
-    public static void main(String[] args) {
-//        
-//        String url = "https://resolver-test.nkp.cz/api/v2/resolver/urn:nbn:cz:tsh01-00000e/identifiers/OAI_Adapter";
-//        String id = "uuid:039764f8-d6db-11e0-b2cd-0050569d679d";
-//        
-//        String login =  Credentials.LOGIN;        
-//        String pass = Credentials.PASSWORD;
-//        try {
-//            HttpsURLConnection connection = new XmlTools().getAuthConnection(login, pass, url, "PUT", true);
-//            
-//                                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-//                    wr.write(id);
-//                    wr.flush();
-//                    wr.close();
-//
-//            //System.out.println(connection.getResponseCode());
-//            InputStream is = connection.getInputStream();
-//            Builder builder = new Builder();
-//            Document responseDocument = builder.build(is);
-//            //System.out.println(responseDocument.toXML());
-//            
-//
-//        } catch (ParsingException ex) {
-//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (NoSuchAlgorithmException ex) {
-//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (KeyManagementException ex) {
-//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (MalformedURLException ex) {
-//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 
     public static String loadXmlFromFile(String xsltFile) throws Exception {
