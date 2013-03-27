@@ -23,6 +23,8 @@ import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAOImpl;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
@@ -36,6 +38,7 @@ import javax.ws.rs.core.Response;
 @Path("/processes")
 public class ProcessesResource {
 
+    private static final Logger logger = Logger.getLogger(ProcessResource.class.getName());
     private AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
 
     /**
@@ -43,7 +46,7 @@ public class ProcessesResource {
      */
     @Path("{id}")
     public ProcessResource getProcessResource(@PathParam("id") String id) {
-        //return new ProcessResource(testProcess());
+        logger.log(Level.INFO, "loading process {0}", id);
         return new ProcessResource(getProcessById(id));
     }
 
@@ -52,9 +55,11 @@ public class ProcessesResource {
             Long id = Long.valueOf(idStr);
             return processDao.getProcess(id);
         } catch (UnknownRecordException ex) {
+            logger.log(Level.INFO, "Unknown process with id{0}", idStr);
             Response response = Response.status(Response.Status.NOT_FOUND).build();
             throw new WebApplicationException(response);
         } catch (NumberFormatException e) {
+            logger.log(Level.INFO, "Illegal process id {0}", idStr);
             Response response = Response.status(Response.Status.BAD_REQUEST).build();
             throw new WebApplicationException(response);
         }
