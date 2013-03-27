@@ -18,6 +18,7 @@ package cz.nkp.urnnbn.processmanager.conf;
 
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
+import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.File;
@@ -34,6 +35,9 @@ public class Configuration {
     private static ResolverDatabaseCreditentials resolverDbCreditentials;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
+    //configuration for processes
+    private static String digDocRegistrationXsdUrl;
+    private static String digInstImportXsdUrl;
 
     public static void init(InputStream in) throws IOException {
         init(new PropertyLoader(in));
@@ -54,6 +58,8 @@ public class Configuration {
                 loader.loadString(PropertyKeys.DB_LOGIN),
                 loader.loadString(PropertyKeys.DB_PASSWORD));
         Services.init(initDatabaseConnector());
+        digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
+        digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
     }
 
     private static DatabaseConnector initDatabaseConnector() {
@@ -79,5 +85,13 @@ public class Configuration {
 
     public static Integer getMaxRunningUserProcesses() {
         return maxRunningUserProcesses;
+    }
+
+    public static String getDigDocRegistrationXsdUrl() {
+        return digDocRegistrationXsdUrl;
+    }
+
+    public static String getDigInstImportXsdUrl() {
+        return digInstImportXsdUrl;
     }
 }
