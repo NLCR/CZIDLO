@@ -346,11 +346,13 @@ public class OaiAdapter {
             report(" Mode: " + getRegistrationMode());
             report("-----------------------------------------------------");
 
+            //TODO: nedostupnost api by se mela resit jinak a oddelit od chyby "spatny mod" a asi ne jenom tady
             if (!resolverConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
-                report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode());
-                logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getRegistrationMode(), getRegistrarCode()});
+                report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode() + " or Resolver API not available");
+                logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1} or Resolver API not available", new Object[]{getRegistrationMode(), getRegistrarCode()});
                 return;
             }
+            
             OaiHarvester harvester = null;
             try {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
