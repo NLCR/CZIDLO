@@ -34,7 +34,11 @@ public class IsbnEnhancer implements ElementContentEnhancer {
             return null;
         } else {
             String withoutPrefixAndSepatators = removeSeparators(removePrefix(originalContent.toUpperCase()));
-            return validator.validate(withoutPrefixAndSepatators);
+            if (validator.isValid(withoutPrefixAndSepatators)){
+                return withoutPrefixAndSepatators;
+            }else{
+                return null;
+            }
         }
     }
 
