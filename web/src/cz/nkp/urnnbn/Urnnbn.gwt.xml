@@ -22,33 +22,40 @@
 	<extend-property name="locale" values="en" />
 	<set-property-fallback name="locale" value="cs" />
 
+    <!--  FILE UPLOAD -->
+	<!-- Include GWTUpload library -->
+	<inherits name="gwtupload.GWTUpload" />
+	<!-- Load dinamically predefined styles in the library when the application starts -->
+	<stylesheet src="Upload.css" />
+
+
 	<!-- Specify the paths for translatable code -->
 	<source path='client' />
 	<source path='client/resources' />
 	<source path='shared' />
 	<entry-point class="cz.nkp.urnnbn.client.Main" />
-<!-- 		<public path='client'> -->
-<!-- 			<include name='logo_books.png' /> -->
-<!-- 		</public> -->
+	<!-- <public path='client'> -->
+	<!-- <include name='logo_books.png' /> -->
+	<!-- </public> -->
 	<servlet class="cz.nkp.urnnbn.server.services.SearchServiceImpl"
-	 path="/search"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.AuthServiceImpl"
-	 path="/auth"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.InstitutionsServiceImpl"
-	 path="/institutions"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.DataServiceImpl"
-	 path="/data"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.UserAccountServiceImpl"
-	 path="/users"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.ConfigurationServiceImpl"
-	 path="/conf"/>
-	 
-	 <servlet class="cz.nkp.urnnbn.server.services.ProcessServiceImpl"
-	 path="/process"/>
-	 
+		path="/search" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.AuthServiceImpl"
+		path="/auth" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.InstitutionsServiceImpl"
+		path="/institutions" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.DataServiceImpl"
+		path="/data" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.UserAccountServiceImpl"
+		path="/users" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.ConfigurationServiceImpl"
+		path="/conf" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.ProcessServiceImpl"
+		path="/process" />
+
 </module>

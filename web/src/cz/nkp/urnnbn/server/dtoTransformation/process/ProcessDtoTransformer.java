@@ -17,7 +17,7 @@ public class ProcessDtoTransformer extends DtoTransformer {
 			return null;
 		} else {
 			ProcessDTO result = new ProcessDTO();
-			result.setId(original.getPersistentId());
+			result.setId(original.getId());
 			result.setOwnerLogin(original.getOwnerLogin());
 			result.setParams(original.getParams());
 			result.setScheduled(dateToStringOrNull(original.getScheduled()));

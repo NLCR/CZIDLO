@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.client.forms.institutions;
 
-import cz.nkp.urnnbn.client.forms.Field;
 import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
@@ -26,11 +25,10 @@ public class ArchiverForm extends Form {
 	@Override
 	public FormFields buildFields() {
 		FormFields result = new FormFields();
-		Field name = new TextInputValueField(new LimitedLengthValidator(100), constants.title(), originalArchiver.getName(), true);
-		result.addField("name", name);
-		Field description = new TextInputValueField(new LimitedLengthValidator(100), constants.description(),
-				originalArchiver.getDescription(), false);
-		result.addField("description", description);
+		result.addField("name", new TextInputValueField(new LimitedLengthValidator(100), constants.title(), originalArchiver.getName(),
+				true));
+		result.addField("description",
+				new TextInputValueField(new LimitedLengthValidator(100), constants.description(), originalArchiver.getDescription(), false));
 		return result;
 	}
 

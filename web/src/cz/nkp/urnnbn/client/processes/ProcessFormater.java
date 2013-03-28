@@ -21,6 +21,8 @@ public class ProcessFormater {
 		switch (process.getState()) {
 		case SCHEDULED:
 			return new HTML("<div style=\"color:blue\">SCHEDULED</style>");
+		case CANCELED:
+			return new HTML("<div style=\"color:red\">CANCELED</style>");
 		case RUNNING:
 			return new HTML("<div style=\"color:green\">RUNNING</style>");
 		case FINISHED:
@@ -37,8 +39,6 @@ public class ProcessFormater {
 	public Widget getProcessType() {
 		switch (process.getType()) {
 		case OAI_ADAPTER:
-			// return "OAI Adapter";
-			// return new HTML("<div style=\"color:red\">OAI Adapter</style>");
 			return new HTML("OAI Adapter");
 		case REGISTRARS_URN_NBN_CSV_EXPORT:
 			return new HTML("Export URN:NBN");

@@ -62,8 +62,6 @@ public abstract class AbstractService extends RemoteServiceServlet {
 			}
 		}
 	}
-	
-	
 
 	private UserDTO notAuthenticated() {
 		UserDTO result = new UserDTO();

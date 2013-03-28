@@ -128,10 +128,12 @@ public class TabsPanel extends Composite {
 		}
 
 		// process administration panel
-		// TODO: povolit jen prihlasenym uzivatelum
-		//if (activeUser.isLoggedUser()) {
-		//	builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
-		//}
+		if (activeUser.isLoggedUser()) {
+			builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
+		}
+
+		// TODO:odstranit
+		//builder.appendPanel(new TestTab(this), "TEST");
 
 		initHistory(tabLayoutPanel);
 		initWidget(tabLayoutPanel);

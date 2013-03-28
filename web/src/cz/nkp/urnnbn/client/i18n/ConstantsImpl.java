@@ -27,7 +27,7 @@ public interface ConstantsImpl extends Constants {
 	String tabOaiAdapterLabel();
 
 	String tabHelpLabel();
-	
+
 	String tabProcessesLabel();
 
 	// presunout
@@ -275,7 +275,7 @@ public interface ConstantsImpl extends Constants {
 	String inPixels();
 
 	String inBits();
-	
+
 	String inDpi();
 
 	String picsHeight();
@@ -285,11 +285,83 @@ public interface ConstantsImpl extends Constants {
 	String verticalResolution();
 
 	String horizontalResolution();
-	
+
 	String anotherArchiver();
-	
+
 	String processList();
-	
-	String planNewProcess();
+
+	// String planNewProcess();
+
+	String processPlanning();
+
+	String REGISTRARS_URN_NBN_CSV_EXPORT();
+
+	String OAI_ADAPTER();
+
+	String scheduleProcess();
+
+	String xsltFile();
+
+	String uploadXslTemplate();
+
+	String upload();
+
+	String DIGITAL_DOCUMENT_REGISTRATION();
+
+	String DIGITAL_INSTANCE_IMPORT();
+
+	String processId();
+
+	String processType();
+
+	String processStatus();
+
+	String processPlanned();
+
+	String processStarted();
+
+	String processFinished();
+
+	String processDownloadOutput();
+
+	String processShowLog();
+
+	String processCancel();
+
+	String processStop();
+
+	String processDelete();
+
+	String processUrnNbnExportRegistrar();
+
+	String processOaiAdapterRegistrar();
+
+	String processOaiAdapterRegistrationMode();
+
+	String processOaiAdapterOaiBaseUrl();
+
+	String processOaiAdapterOaiMetadataPrefix();
+
+	String processOaiAdapterOaiSet();
+
+	String processOaiAdapterDdRegistrationTransformation();
+
+	String processOaiAdapterDiImportTransformation();
+
+	String processOaiAdapterTransformationsDDRegistrationTitle();
+
+	String processOaiAdapterTransformationsDIImportTitle();
+
+	String processOaiAdapterTransformationList();
+
+	String processOaiAdapterTransformationUpload();
+
+	String processOaiAdapterTransformationTitle();
+
+	String processOaiAdapterTransformationDescription();
+
+	String processOaiAdapterTransformationCreated();
+
+	String processOaiAdapterTransformationXslt();
 
 }

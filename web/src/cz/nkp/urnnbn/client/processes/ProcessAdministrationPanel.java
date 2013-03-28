@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.client.processes;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -32,14 +31,9 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 	private final ProcessAdministrationCss css = initCss();
 	private final Timer processesRefreshTimer = initProcessRefreshTimer();
 	private static final int TIMER_INTERVAL = 1000;
-	// private final SearchServiceAsync searchService =
-	// GWT.create(SearchService.class);
 	private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
 	private List<ProcessDTO> processes;
-
-	// tmp
-	private boolean panelActive = true;
-	private Date timeSinceActivation;
+	private final XmlTransformationsPanel xmlTransformationsPanel;
 
 	private ProcessAdministrationCss initCss() {
 		Resources resources = GWT.create(Resources.class);
@@ -53,17 +47,14 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 			@Override
 			public void run() {
-				// TODO: stahnout aktualni seznam procesu (asi ne cely) a
-				// prekreslit
 				loadProcesses();
-				// reload();
 			}
 		};
-
 	}
 
 	public ProcessAdministrationPanel(TabsPanel superPanel) {
 		super(superPanel);
+		xmlTransformationsPanel = new XmlTransformationsPanel(this);
 	}
 
 	@Override
@@ -74,8 +65,10 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 	}
 
 	private void loadProcesses() {
-		// TODO
-		processService.getAllProcesses(new AsyncCallback<List<ProcessDTO>>() {
+		// TODO: pro admina procesy vsech s moznosti omezit jen na sve procesy 
+		// processService.getAllProcesses(new AsyncCallback<List<ProcessDTO>>()
+		// {
+		processService.getUsersProcesses(new AsyncCallback<List<ProcessDTO>>() {
 
 			@Override
 			public void onSuccess(List<ProcessDTO> result) {
@@ -92,22 +85,33 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 	}
 
 	private void reload() {
-		// TODO: měl by se volat v nějakém timeru
+		// if (this.processListScrollPanel != null) {
+		// System.err.println("reading position: " +
+		// this.processListScrollPanel.getScrollPosition());
+		// this.scrollbarPosition =
+		// this.processListScrollPanel.getScrollPosition();
+		// }
 		clear();
 		add(contentPanel());
 	}
 
 	private Panel contentPanel() {
 		VerticalPanel result = new VerticalPanel();
+		// process list
 		result.add(processListHeading());
 		result.add(processListPanel());
-		// TODO:panel se seznamem procesů
+		// planning processes
 		result.add(planProcessHeading());
-		// TODO:panel pro spuštění procesu
-		// TODO: odstranit test label
-		// result.add(testWidget());
-		result.add(testButton());
+		result.add(planProcessPanel());
+		result.add(new HTML("<br>"));
+		result.add(xmlTransformationsPanel);
 		return result;
+	}
+
+	private Label processListHeading() {
+		Label label = new Label(constants.processList());
+		label.addStyleName(css.processListHeading());
+		return label;
 	}
 
 	private Widget processListPanel() {
@@ -115,21 +119,24 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		// TODO: nasledujici panel jen adminovi, userovi vzdy filtrovat
 		// panel.add(limitListPanel());
 		panel.add(processListScrollPanelHeader());
+		// this.processListScrollPanel = processListScrollPanel();
+		// panel.add(this.processListScrollPanel);
 		panel.add(processListScrollPanel());
 		return panel;
 	}
 
 	private Widget processListScrollPanelHeader() {
 		HorizontalPanel panel = new HorizontalPanel();
+
 		panel.setWidth("1000px");
 		// id
-		Widget idLabel = headerFormated("id");
+		Widget idLabel = headerFormated(constants.processId());
 		panel.add(idLabel);
 		// panel.setCellWidth(idLabel, "40px");
 		panel.setCellWidth(idLabel, "2%");
 
 		// typ procesu
-		Widget typeLabel = headerFormated("typ procesu");
+		Widget typeLabel = headerFormated(constants.processType());
 		panel.add(typeLabel);
 		panel.setCellWidth(typeLabel, "13%");
 
@@ -139,22 +146,22 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		// panel.setCellWidth(paramLabel, "5%");
 
 		// stav procesu
-		Widget stateLabel = headerFormated("stav");
+		Widget stateLabel = headerFormated(constants.processStatus());
 		panel.add(stateLabel);
 		panel.setCellWidth(stateLabel, "8%");
 
 		// cas naplanovani
-		Widget scheduledLabel = headerFormated("naplánován");
+		Widget scheduledLabel = headerFormated(constants.processPlanned());
 		panel.add(scheduledLabel);
 		panel.setCellWidth(scheduledLabel, "10%");
 
 		// cas spusteni
-		Widget startedLabel = headerFormated("spuštěn");
+		Widget startedLabel = headerFormated(constants.processStarted());
 		panel.add(startedLabel);
 		panel.setCellWidth(startedLabel, "10%");
 
 		// cas ukonceni
-		Widget finishedLabel = headerFormated("ukončen");
+		Widget finishedLabel = headerFormated(constants.processFinished());
 		panel.add(finishedLabel);
 		panel.setCellWidth(finishedLabel, "10%");
 
@@ -180,7 +187,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		return new HTML("<div style=\"color:grey\">" + string + "</style>");
 	}
 
-	private Panel processListScrollPanel() {
+	private ScrollPanel processListScrollPanel() {
 		ScrollPanel root = new ScrollPanel();
 		root.setWidth("1300px");
 		root.setHeight("200px");
@@ -188,6 +195,9 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		for (ProcessDTO process : processes) {
 			content.add(processWidget(process));
 		}
+		// if (scrollbarPosition != null) {
+		// root.setScrollPosition(scrollbarPosition);
+		// }
 		root.add(content);
 		return root;
 	}
@@ -236,7 +246,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		panel.setCellWidth(finishedLabel, "10%");
 
 		// tlacitko na zastaveni procesu
-		Widget stopProcess = stopProcessWidget(process);
+		Widget stopProcess = deletOrKillProcessWidget(process);
 		panel.add(stopProcess);
 		panel.setCellWidth(stopProcess, "8%");
 
@@ -257,13 +267,12 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 	private Widget downloadOutputWidget(final ProcessDTO process) {
 		if (process.getState() == ProcessDTOState.FINISHED) {
-			return new Button("stáhnout výstup", new ClickHandler() {
+			return new Button(constants.processDownloadOutput(), new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					String url = "http://localhost/processFileServer/FileServlet?processId=" + process.getId() + "&fileId=export.csv";
+					String url = "/processDataServer/processes/" + process.getId() + "/output";
 					Window.open(url, "_self", "enabled");
-
 				}
 			});
 		} else {
@@ -272,15 +281,13 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 	}
 
 	private Widget downloadLogWidget(final ProcessDTO process) {
-		if (process.getState() == ProcessDTOState.FINISHED || process.getState() == ProcessDTOState.KILLED
-				|| process.getState() == ProcessDTOState.FAILED) {
-			return new Button("stáhnout log", new ClickHandler() {
+		if (process.getState() != ProcessDTOState.SCHEDULED && process.getState() != ProcessDTOState.CANCELED){
+			return new Button(constants.processShowLog(), new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					String url = "http://localhost/processFileServer/FileServlet?processId=" + process.getId() + "&fileId=process.log";
-					Window.open(url, "_self", "enabled");
-
+					String url = "/processDataServer/processes/" + process.getId() + "/log";
+					Window.open(url, "_blank", "enabled");
 				}
 			});
 		} else {
@@ -288,32 +295,98 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		}
 	}
 
-	private Widget stopProcessWidget(final ProcessDTO process) {
-		if (process.getState() == ProcessDTOState.RUNNING || process.getState() == ProcessDTOState.SCHEDULED) {
-			return new Button("zrušit");
-		} else {
-			return new Button("smazat", new ClickHandler() {
-				
+	private Widget deletOrKillProcessWidget(final ProcessDTO process) {
+		if (process.getState() == ProcessDTOState.SCHEDULED) {
+			return new Button(constants.processCancel(), new ClickHandler() {
+
 				@Override
 				public void onClick(ClickEvent event) {
-					processService.deleteFinishedProcess(process.getId(),new AsyncCallback<Void>() {
-						
+					processService.cancelScheduledProcess(process.getId(), new AsyncCallback<Boolean>() {
+
 						@Override
-						public void onSuccess(Void result) {
-							//reload();
-							//nic, procesy se stejne nacitaji kazdou vterinu a volat to tu znovu snad asi nema smysl
-							
+						public void onSuccess(Boolean result) {
+							//nothing, process list will be updated in at most on second anyway
 						}
-						
+
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+							Window.alert("cancel scheduled process failure: " + caught.getMessage());
 						}
 					});
-					
+				}
+			});
+
+		} else if (process.getState() == ProcessDTOState.RUNNING) {
+			return new Button(constants.processStop(), new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					processService.killRunningProcess(process.getId(), new AsyncCallback<Boolean>() {
+
+						@Override
+						public void onSuccess(Boolean result) {
+							//nothing, process list will be updated in at most on second anyway
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("cancel running process failure: " + caught.getMessage());
+						}
+					});
+
+				}
+			});
+		} else {
+			return new Button(constants.processDelete(), new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					processService.deleteFinishedProcess(process.getId(), new AsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							//nothing, process list will be updated in at most on second anyway
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							Window.alert("delete finished process failure: " + caught.getMessage());
+						}
+					});
 				}
 			});
 		}
+	}
+
+	private Label planProcessHeading() {
+		Label label = new Label(constants.processPlanning());
+		label.addStyleName(css.planProcessHeading());
+		return label;
+	}
+
+	private Widget planProcessPanel() {
+		HorizontalPanel result = new HorizontalPanel();
+		result.setSpacing(10);
+		
+		//EXPORT URN:NBN LIST OF REGISTRAR
+		result.add(new Button(constants.REGISTRARS_URN_NBN_CSV_EXPORT(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				new ExportUrnNbnListProcessDialogBox(getActiveUser());
+			}
+		}));
+		
+		//OAI Adapter
+		result.add(new Button(constants.OAI_ADAPTER(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				new OaiAdapterDialogBox(getActiveUser(), xmlTransformationsPanel.getDdRegistrationTransformations(),
+						xmlTransformationsPanel.getDiImportTransformations());
+			}
+		}));
+		return result;
 	}
 
 	private Panel limitListPanel() {
@@ -322,54 +395,13 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 		return panel;
 	}
 
-	private Widget testWidget() {
-		Date now = new Date();
-		long diff = now.getTime() - timeSinceActivation.getTime();
-		// DateTimeFormat dtf =
-		// DateTimeFormat.getFormat("dd. MM. yyyy HH:mm:ss");
-		// return new Label(dtf.format(now));
-		return new Label("Tab je aktivní " + Long.valueOf(diff).toString() + " milisekund");
-	}
-
-	private Button testButton() {
-		return new Button("zastavit", new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if (panelActive) {
-					panelActive = false;
-					processesRefreshTimer.cancel();
-				} else {
-					panelActive = true;
-					processesRefreshTimer.scheduleRepeating(1000);
-				}
-			}
-		});
-	}
-
-	private Label processListHeading() {
-		Label label = new Label(constants.processList());
-		label.addStyleName(css.processListHeading());
-		return label;
-	}
-
-	private Label planProcessHeading() {
-		Label label = new Label(constants.planNewProcess());
-		label.addStyleName(css.planProcessHeading());
-		return label;
-	}
-
 	@Override
 	public void onSelection() {
-		// Window.alert("aktivni");
-		timeSinceActivation = new Date();
-		panelActive = true;
 		processesRefreshTimer.scheduleRepeating(1000);
 	}
 
 	@Override
 	public void onDeselectionSelection() {
-		panelActive = false;
 		processesRefreshTimer.cancel();
 	}
 

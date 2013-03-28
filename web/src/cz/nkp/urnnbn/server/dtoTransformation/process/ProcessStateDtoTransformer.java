@@ -20,6 +20,8 @@ public class ProcessStateDtoTransformer extends DtoTransformer {
 			switch (original) {
 			case SCHEDULED:
 				return ProcessDTOState.SCHEDULED;
+			case CANCELED:
+				return ProcessDTOState.CANCELED;
 			case RUNNING:
 				return ProcessDTOState.RUNNING;
 			case FINISHED:

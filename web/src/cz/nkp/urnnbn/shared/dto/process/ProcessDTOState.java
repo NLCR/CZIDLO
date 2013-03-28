@@ -1,5 +1,5 @@
 package cz.nkp.urnnbn.shared.dto.process;
 
 public enum ProcessDTOState {
-	SCHEDULED, RUNNING, FINISHED, FAILED, KILLED
+	SCHEDULED, CANCELED, RUNNING, FINISHED, FAILED, KILLED
 }

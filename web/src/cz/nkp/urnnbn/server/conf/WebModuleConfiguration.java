@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.server.conf;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
@@ -18,7 +19,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
-	
+
 	static public WebModuleConfiguration instanceOf() {
 		if (instance == null) {
 			instance = new WebModuleConfiguration();
@@ -33,6 +34,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		showAlephLinks = loader.loadBooleanFalseIfNullOrEmpty(PropertyKeys.SHOW_ALEPH_LINKS);
 		alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
 		alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
+		Configuration.init(loader);
 	}
 
 	public static Logger getLogger() {
@@ -50,8 +52,8 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	public String getAlephBase() {
 		return alephBase;
 	}
-	
-		public ConfigurationData toConfigurationData() {
+
+	public ConfigurationData toConfigurationData() {
 		ConfigurationData result = new ConfigurationData();
 		result.setShowAlephLinks(showAlephLinks);
 		result.setAlephBase(alephBase);

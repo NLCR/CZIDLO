@@ -52,16 +52,15 @@ public class AddRightDialogBox extends AbstractDialogBox {
 		return result;
 	}
 
+	private Label heading() {
+		return new Label(constants.selectRegistrarCode());
+	}
+
 	private Panel registrarRightPanel() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(registrarList());
 		result.add(addRightButton());
 		return result;
-	}
-
-	private Label heading() {
-		// TODO: style
-		return new Label(constants.selectRegistrarCode());
 	}
 
 	private ListBox registrarList() {
