@@ -89,11 +89,11 @@ public class Main implements EntryPoint {
 		// "<span style=\"color: black;\">URN</span><span style=\"color: red;\">:</span><span style=\"color: black;\">NBN Resolver</span></a>");
 		Label headerTitle = new HTML(
 		// "<a href=\"http://resolver.nkp.cz\"><span style=\"color: black;text-decoration:none;\">čIDLO</span></a>");
-				"<span style=\"color: black;text-decoration:none;\"><i>čIDLO</i></span>");
+				"<span style=\"color: black;text-decoration:none;\"><i>CZIDLO</i></span>");
 		headerTitle.addStyleName(resources.MainCss().headerTitle());
 		headerTitlePanel.add(headerTitle);
 		// subtitle
-		Label headerSubtitle = new Label(constants.headerSubtitle());
+		Label headerSubtitle = new Label('(' + constants.headerSubtitle() + ')');
 		headerSubtitle.addStyleName(resources.MainCss().headerSubtitle());
 		headerTitlePanel.add(headerSubtitle);
 		return headerTitlePanel;

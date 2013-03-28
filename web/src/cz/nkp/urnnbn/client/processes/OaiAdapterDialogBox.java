@@ -118,9 +118,10 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
 	private ListBox registrationModeListBox() {
 		final ListBox result = new ListBox();
-		result.addItem("BY_RESOLVER");
-		result.addItem("BY_REGISTRAR");
-		result.addItem("BY_RESERVATION");
+		
+		result.addItem(constants.modeByResolver());
+		result.addItem(constants.modeByRegistrar());
+		result.addItem(constants.modeByReservation());
 
 		result.addChangeHandler(new ChangeHandler() {
 
