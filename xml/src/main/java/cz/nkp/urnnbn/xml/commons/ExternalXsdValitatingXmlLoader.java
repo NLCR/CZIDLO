@@ -48,14 +48,17 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
     public ExternalXsdValitatingXmlLoader(InputStream xsdStream) throws ValidityException {
         super(readerValidatingByXsdFromInputStream(xsdStream));
     }
-    
+
     public ExternalXsdValitatingXmlLoader(String xsdDoc) throws ValidityException {
         super(readerValidatingByXsdFromString(xsdDoc));
     }
 
     private static XMLReader readerValidatingByXsdFromFile(File schema) throws ValidityException {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
+            //SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParserFactory factory = SAXParserFactory.newInstance(
+                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+                    Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
@@ -81,7 +84,10 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
 
     private static XMLReader readerValidatingByXsdFromInputStream(InputStream in) throws ValidityException {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
+            //SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParserFactory factory = SAXParserFactory.newInstance(
+                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+                    Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
@@ -104,10 +110,13 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
             }
         }
     }
-    
+
     private static XMLReader readerValidatingByXsdFromString(String schema) throws ValidityException {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
+            //SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParserFactory factory = SAXParserFactory.newInstance(
+                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+                    Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
