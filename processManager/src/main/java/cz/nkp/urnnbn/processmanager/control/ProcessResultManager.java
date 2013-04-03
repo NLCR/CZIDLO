@@ -37,6 +37,7 @@ public interface ProcessResultManager {
      * @throws InvalidStateException If process is in SCHEDULED or CANCELED
      * state
      */
+    @Deprecated
     public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
     /**

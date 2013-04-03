@@ -25,6 +25,9 @@ import org.hibernate.cfg.AnnotationConfiguration;
  */
 public class AbstractDAO {
 
+    /**
+     * SessionFactory is immutable and therefor thread-safe
+     */
     protected SessionFactory factory = initFactory();
 
     private SessionFactory initFactory() {
