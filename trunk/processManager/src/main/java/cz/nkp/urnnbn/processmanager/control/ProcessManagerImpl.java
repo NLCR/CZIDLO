@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
+import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
@@ -61,7 +62,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private static final Logger logger = Logger.getLogger(ProcessManagerImpl.class.getName());
     private static final String PROCESS_GROUP_JOBS = "process";
     private static final String PROCESS_GROUP_SYSTEM = "system";
-    private static ProcessManagerImpl instance;
+    private static volatile ProcessManagerImpl instance;
     private final int maxAdminJobsRunning;
     private final int maxUserJobsRunning;
     private static final String ADMIN_PROCESS_QUEUE_NAME = "admin-job-queue";
@@ -70,7 +71,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private final Queue<Process> userProcessQueue = new LinkedBlockingQueue<Process>();
     private final AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
     private Scheduler scheduler;
-
+    
     public static synchronized ProcessManagerImpl instanceOf() {
         try {
             if (instance == null) {
@@ -90,13 +91,16 @@ public class ProcessManagerImpl implements ProcessManager {
         logger.log(Level.INFO, "max number of user jobs running: {0}", this.maxUserJobsRunning);
         initScheduler();
         runJobChecker();
+        //delat _nejak_ pri inicializaci. No jenze pokud se inicializuje vic vlaken, tak jsem stejne v prdeli
+        //mozna tohle proste ignorovat alespon prozatim a mazat procesy, ktere evidentne nejedou zpetne rovnou v databazi
         setRunningProcessesFromDatabaseStateToFailed();
+        //napodobne
         enqueueScheduledProcessesFromDatabase();
     }
 
     private void initScheduler() throws SchedulerException {
         if (scheduler == null) {
-            logger.info("initializing scheduler");
+            logger.log(Level.INFO, "initializing scheduler (by thread {0})", Thread.currentThread().getName());
             SchedulerFactory sf = new StdSchedulerFactory();
             //System.err.println("schedule factory intitialized");
             scheduler = sf.getScheduler();
@@ -113,8 +117,7 @@ public class ProcessManagerImpl implements ProcessManager {
         if (!scheduler.checkExists(key)) {
             logger.log(Level.INFO, "scheduling {0}", JobCheckerJob.class.getSimpleName());
             JobDetail job = newJob(JobCheckerJob.class)
-                    .withIdentity(
-                    "job-jobChecker")
+                    .withIdentity(key)
                     .build();
 
             Random rand = new Random();
@@ -147,21 +150,23 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
-    public Process scheduleNewProcess(String userLogin, ProcessType type, String[] processParams) {
+    public synchronized Process scheduleNewProcess(String userLogin, ProcessType type, String[] processParams) {
         Process process = processDao.saveProcess(Process.buildScheduledProcess(userLogin, type, processParams));
+        AdminLogger.getLogger().info("process " + type.toString() + " of user '" + process.getOwnerLogin()
+                + "' has been scheduled ");
         enqueueScheduledProcess(process);
         return process;
     }
 
     private void enqueueScheduledProcess(Process process) {
         if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
-            enqueueScheduledProcess(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
+            enqueueScheduledProcessSynchronized(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
         } else {
-            enqueueScheduledProcess(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
+            enqueueScheduledProcessSynchronized(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
         }
     }
 
-    private void enqueueScheduledProcess(Queue<Process> queue, Process process, String queueName) {
+    private void enqueueScheduledProcessSynchronized(Queue<Process> queue, Process process, String queueName) {
         synchronized (queue) {
             queue.add(process);
         }
@@ -174,13 +179,13 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     private void runScheduledProcessIfPossible(Queue<Process> queue, int maxSize, int actualSize, String queueName) {
-        Process process = dequeueProcessOrNull(queue, maxSize, actualSize, queueName);
+        Process process = dequeueProcessOrNullSynchronized(queue, maxSize, actualSize, queueName);
         if (process != null) {
             runProcess(process);
         }
     }
 
-    private Process dequeueProcessOrNull(Queue<Process> queue, int maxSize, int actualSize, String queueName) {
+    private Process dequeueProcessOrNullSynchronized(Queue<Process> queue, int maxSize, int actualSize, String queueName) {
         synchronized (queue) {
             if (queue.peek() != null) {
                 if (actualSize < maxSize) {
@@ -250,6 +255,8 @@ public class ProcessManagerImpl implements ProcessManager {
                         //.withIdentity(id, group)
                         .withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())
                         .usingJobData(UrnNbnCsvExportJob.PARAM_REG_CODE_KEY, process.getParams()[0])
                         //resolver db connection
                         .usingJobData(AbstractJob.PARAM_RESOLVER_DB_HOST_KEY, Configuration.getResolverDbCreditentials().getHost())
@@ -275,6 +282,8 @@ public class ProcessManagerImpl implements ProcessManager {
                 return newJob(OaiAdapterJob.class)
                         .withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_API_URL, resolverApiUrl)
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_LOGIN, resolverLogin)
                         .usingJobData(OaiAdapterJob.PARAM_RESOLVER_PASS, resolverPass)
@@ -332,7 +341,7 @@ public class ProcessManagerImpl implements ProcessManager {
         return processDao.getProcessesOfUserScheduledAfter(ownerLogin, date);
     }
 
-    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public synchronized boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = getProcess(login, processId);
         if (process.getState() != ProcessState.RUNNING) {
             throw new InvalidStateException(processId, process.getState());
@@ -350,7 +359,6 @@ public class ProcessManagerImpl implements ProcessManager {
             } else {
                 throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
                 //System.err.println("NOT RUNNING");
-                //return false;
             }
         } catch (SchedulerException ex) {
             logger.log(Level.SEVERE, null, ex);
@@ -358,21 +366,23 @@ public class ProcessManagerImpl implements ProcessManager {
         }
     }
 
-    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = processDao.getProcess(processId);
         //remove from queue
         boolean removedFromQueue = false;
         if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
-            synchronizedRemoveFromQueue(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
+            removeFromQueueSynchronized(adminProcessQueue, process, ADMIN_PROCESS_QUEUE_NAME);
         } else {
-            synchronizedRemoveFromQueue(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
+            removeFromQueueSynchronized(userProcessQueue, process, USER_PROCESS_QUEUE_NAME);
         }
         //change process state in db
         new ProcesStateUpdater(processId).upadateProcessStateToCanceled();
+        AdminLogger.getLogger().info("process " + process.getType().toString() + " of user '" + process.getOwnerLogin()
+                + "' has been canceled ");
         return removedFromQueue;
     }
 
-    public boolean synchronizedRemoveFromQueue(Queue<Process> queue, Process processToBeRemoved, String queueName) {
+    public boolean removeFromQueueSynchronized(Queue<Process> queue, Process processToBeRemoved, String queueName) {
         boolean removed = false;
         synchronized (queue) {
             removed = queue.remove(processToBeRemoved);

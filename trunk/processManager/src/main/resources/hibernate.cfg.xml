@@ -10,10 +10,10 @@
         <property name="hibernate.connection.pool_size">10</property>
         <!--don't use hibernate.hbm2ddl.auto in production-->
         <!--<property name="hibernate.hbm2ddl.auto">create-drop</property>-->
-        <!--<property name="hibernate.hbm2ddl.auto">create</property>-->
+        <!--<property name="hibernate.hbm2ddl.auto">update</property>-->
 
-<!--        <property type="org.joda.time.contrib.hibernate.PersistentDateTime" name="dateTime"/>-->
-<!--        <property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property>-->
+        <!--<property type="org.joda.time.contrib.hibernate.PersistentDateTime" name="dateTime"/>-->
+        <!--<property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property>-->
         <!-- Persistent classes -->
         <mapping class="cz.nkp.urnnbn.processmanager.core.Process"/>
         <mapping class="cz.nkp.urnnbn.processmanager.core.XmlTransformation"/>

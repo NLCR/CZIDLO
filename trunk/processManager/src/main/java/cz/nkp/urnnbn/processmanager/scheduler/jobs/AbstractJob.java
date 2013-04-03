@@ -36,6 +36,8 @@ import org.quartz.UnableToInterruptJobException;
 public abstract class AbstractJob implements InterruptableJob {
 
     public static String PARAM_PROCESS_ID_KEY = "processId";
+    public static String PARAM_PROCESS_TYPE = "processType";
+    public static String PARAM_OWNER_LOGIN = "processOwner";
     public static String PARAM_RESOLVER_DB_HOST_KEY = "resolverDbHost";
     public static String PARAM_RESOLVER_DB_PORT_KEY = "resolverDbPort";
     public static String PARAM_RESOLVER_DB_DATABASE_KEY = "resolverDbDatabase";
