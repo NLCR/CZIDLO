@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.processdataserver.conf;
 
+import cz.nkp.urnnbn.config.PropertyKeys;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import java.io.IOException;
@@ -30,12 +31,14 @@ public class ProcessDataServerConfiguration extends ApplicationConfiguration {
 
     private static final Logger logger = Logger.getLogger(ProcessDataServerConfiguration.class.getName());
     private static ProcessDataServerConfiguration instance;
+    private String adminLogFile;
 
     @Override
-    public void initialize(cz.nkp.urnnbn.utils.PropertyLoader loader) throws IOException {
-        //super.initialize(loader);
+    public void initialize(String appName, cz.nkp.urnnbn.utils.PropertyLoader loader) throws IOException {
+        //super.initialize(appName, loader);
         logger.log(Level.INFO, "Initializing {0}", ProcessDataServerConfiguration.class.getName());
         Configuration.init(loader);
+        adminLogFile = loader.loadString(PropertyKeys.ADMIN_LOG_FILE);
     }
 
     public static ProcessDataServerConfiguration instanceOf() {
@@ -43,5 +46,9 @@ public class ProcessDataServerConfiguration extends ApplicationConfiguration {
             instance = new ProcessDataServerConfiguration();
         }
         return instance;
+    }
+
+    public String getAdminLogFile() {
+        return adminLogFile;
     }
 }

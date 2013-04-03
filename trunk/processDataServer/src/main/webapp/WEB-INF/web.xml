@@ -15,9 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    
     <listener>
         <listener-class>cz.nkp.urnnbn.processdataserver.conf.ContextListener</listener-class>
     </listener>
@@ -44,4 +42,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </session-timeout>
     </session-config>
 </web-app>
-
