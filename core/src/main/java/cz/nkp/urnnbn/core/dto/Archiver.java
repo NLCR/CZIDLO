@@ -92,4 +92,9 @@ public class Archiver implements IdentifiableWithDatestamps {
         hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "Archiver{" + "id=" + id + ", created=" + created + ", modified=" + modified + ", name=" + name + ", description=" + description + '}';
+    }
 }

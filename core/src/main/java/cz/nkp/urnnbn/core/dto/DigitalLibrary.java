@@ -112,4 +112,9 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
         hash = 17 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "DigitalLibrary{" + "id=" + id + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", name=" + name + ", description=" + description + ", url=" + url + '}';
+    }
 }

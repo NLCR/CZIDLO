@@ -49,7 +49,7 @@ public final class Registrar extends Archiver {
 
     @Override
     public String toString() {
-        return "Registrar{" + "code=" + code + '}';
+        return "Registrar{" + "code=" + code + ", name=" + getName() + ", description=" + getDescription() + ", modesAllowed=" + modesToString() + '}';
     }
 
     public void loadDataFromArchiver(Archiver archiver) {
@@ -58,5 +58,20 @@ public final class Registrar extends Archiver {
         setDescription(archiver.getDescription());
         setCreated(archiver.getCreated());
         setModified(archiver.getModified());
+    }
+
+    private String modesToString() {
+        StringBuilder result = new StringBuilder();
+        result.append("modes allowed: [");
+        int counter = 0;
+        for (UrnNbnRegistrationMode mode : modesAllowed.keySet()) {
+            result.append(mode.toString()).append(modesAllowed.get(mode).toString());
+            if (counter < modesAllowed.size()) {
+                result.append(", ");
+            }
+            counter++;
+        }
+        result.append("]");
+        return result.toString();
     }
 }

@@ -107,4 +107,9 @@ public class RegistrarScopeIdentifier {
         hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "RegistrarScopeIdentifier{" + "digDocId=" + digDocId + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", type=" + type + ", value=" + value + '}';
+    }
 }
