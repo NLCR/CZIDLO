@@ -17,7 +17,6 @@
 package cz.nkp.urnnbn.xml.config;
 
 import cz.nkp.urnnbn.utils.PropertyLoader;
-import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Martin Řehánek
  */
-public class XmlModuleConfiguration extends ApplicationConfiguration {
+public class XmlModuleConfiguration {
 
     private static final Logger logger = Logger.getLogger(XmlModuleConfiguration.class.getName());
     private static XmlModuleConfiguration instance = null;
@@ -44,9 +43,7 @@ public class XmlModuleConfiguration extends ApplicationConfiguration {
      * @param properties InputStream containing properties
      * @throws IOException
      */
-    @Override
     public void initialize(PropertyLoader loader) throws IOException {
-        super.initialize(loader);
         logger.log(Level.INFO, "Initializing {0}", XmlModuleConfiguration.class.getName());
         responseXsdLocation = loader.loadString(PropertyKeys.RESPONSE_XSD_LOCATION);
     }
