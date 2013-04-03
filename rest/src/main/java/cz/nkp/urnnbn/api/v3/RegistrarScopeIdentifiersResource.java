@@ -90,7 +90,7 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
                 return Response.created(null).entity(responseXml).build();
             } else { //update value
-                RegistrarScopeIdentifier newId = updateIdentifier(idType, value);
+                RegistrarScopeIdentifier newId = updateIdentifier(login, idType, value);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                 return Response.ok().entity(responseXml).build();
             }

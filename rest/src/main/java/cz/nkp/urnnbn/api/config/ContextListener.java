@@ -18,6 +18,7 @@ import javax.servlet.ServletContextListener;
  */
 public class ContextListener implements ServletContextListener {
 
+    private static final String WEB_APP_NAME = "API";
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
     //API v3
@@ -64,7 +65,7 @@ public class ContextListener implements ServletContextListener {
             @Override
             public void processResource(InputStream in) throws Exception {
                 PropertyLoader loader = new PropertyLoader(in);
-                ApiModuleConfiguration.instanceOf().initialize(loader);
+                ApiModuleConfiguration.instanceOf().initialize(WEB_APP_NAME, loader);
                 XmlModuleConfiguration.instanceOf().initialize(loader);
             }
         }.run(PROPERTIES_FILE);

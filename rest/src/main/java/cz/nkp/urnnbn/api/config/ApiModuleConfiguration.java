@@ -77,8 +77,8 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
      * @throws IOException
      */
     @Override
-    public void initialize(PropertyLoader loader) throws IOException {
-        super.initialize(loader);
+    public void initialize(String appName, PropertyLoader loader) throws IOException {
+        super.initialize(appName, loader);
         logger.log(Level.INFO, "Initializing {0}", ApiModuleConfiguration.class.getName());
         urnReservationDefaultSize = loader.loadInt(PropertyKeys.URN_RESERVATION_DEFAULT_SIZE);
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
