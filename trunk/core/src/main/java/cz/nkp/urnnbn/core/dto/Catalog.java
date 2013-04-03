@@ -112,4 +112,9 @@ public class Catalog implements IdentifiableWithDatestamps {
         hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "Catalog{" + "id=" + id + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", name=" + name + ", description=" + description + ", urlPrefix=" + urlPrefix + '}';
+    }
 }

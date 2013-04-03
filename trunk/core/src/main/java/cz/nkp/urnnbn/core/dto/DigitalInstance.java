@@ -115,4 +115,9 @@ public class DigitalInstance {
         hash = 83 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        return "DigitalInstance{" + "id=" + id + ", digDocId=" + digDocId + ", libraryId=" + libraryId + ", created=" + created + ", deactivated=" + deactivated + ", active=" + active + ", url=" + url + ", format=" + format + ", accessibility=" + accessibility + '}';
+    }
 }

@@ -104,6 +104,6 @@ public class User implements IdentifiableWithDatestamps {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", login=" + login + ", admin=" + admin + ", email=" + email + '}';
+        return "User{" + "id=" + id + ", created=" + created + ", modified=" + modified + ", login=" + login + ", admin=" + admin + ", email=" + email + '}';
     }
 }
