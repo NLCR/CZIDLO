@@ -146,7 +146,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             authorization.checkAdminRights(login);
             factory.userDao().updateUser(user);
-            AdminLogger.getLogger().info("admin '" + login + "' updated '" +  user + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" +  user + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
