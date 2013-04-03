@@ -5,11 +5,13 @@
 package cz.nkp.urnnbn.webcommon.config;
 
 import cz.nkp.urnnbn.config.PropertyKeys;
+import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -25,13 +27,16 @@ public abstract class ApplicationConfiguration {
     private String adminName;
     private String adminEmail;
 
-    public void initialize(PropertyLoader loader) throws IOException {
+    public void initialize(String webAppName, PropertyLoader loader) throws IOException {
         appLogger.fine("Loading configuration");
         serverReadOnly = loader.loadBoolean(PropertyKeys.SERVER_READ_ONLY);
         develMode = loader.loadBoolean(PropertyKeys.DEVEL);
         languageCode = loader.loadString(PropertyKeys.LANGUAGE_CODE);
         adminName = loader.loadStringOrNull(PropertyKeys.ADMIN_NAME);
         adminEmail = loader.loadStringOrNull(PropertyKeys.ADMIN_EMAIL);
+        String adminLogFile = loader.loadString(PropertyKeys.ADMIN_LOG_FILE);
+        appLogger.log(Level.INFO, "initializing admin logger to file {0}", adminLogFile);
+        AdminLogger.initializeLogger(webAppName, adminLogFile);
         CountryCode.initialize(languageCode);
         if (develMode) {
             Services.init(DatabaseConnectorFactory.getDevelConnector());
