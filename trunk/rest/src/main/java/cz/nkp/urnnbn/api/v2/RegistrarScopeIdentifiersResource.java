@@ -108,7 +108,7 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
                     String transformedResponse = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
                     return Response.created(null).entity(transformedResponse).build();
                 } else { //update value
-                    RegistrarScopeIdentifier newId = updateIdentifier(idType, value);
+                    RegistrarScopeIdentifier newId = updateIdentifier(login, idType, value);
                     String apiV3Response = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                     XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getSetOrUpdateRegScopeIdResponseV3ToV2Transformer();
                     String transformedResponse = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);

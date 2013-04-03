@@ -98,11 +98,15 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         }
     }
 
-    protected final RegistrarScopeIdentifier updateIdentifier(RegistrarScopeIdType idType, String value) {
+    protected final RegistrarScopeIdentifier updateIdentifier(String login, RegistrarScopeIdType idType, String value) {
         try {
             RegistrarScopeIdentifier id = identifierInstance(idType, value);
-            dataUpdateService().updateDigDocIdentifier(id);
+            dataUpdateService().updateRegistrarScopeIdentifier(login, id);
             return id;
+        } catch (UnknownUserException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
+        } catch (AccessException ex) {
+            throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             //should never happen here
             logger.log(Level.SEVERE, null, ex);
