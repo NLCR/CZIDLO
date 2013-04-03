@@ -34,4 +34,5 @@ public class PropertyKeys {
     public static final String DB_DATABASE = "resolver.db.database";
     public static final String DB_LOGIN = "resolver.db.login";
     public static final String DB_PASSWORD = "resolver.db.password";
+    public static final String ADMIN_LOG_FILE = "resolver.admin.logFile";
 }
