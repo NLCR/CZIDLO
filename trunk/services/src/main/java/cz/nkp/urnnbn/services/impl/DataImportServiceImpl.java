@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -51,8 +52,11 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     @Override
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException, UrnUsedException, UnknownRegistrarException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException, RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
+        System.err.println("here");
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
-        return new DigitalDocumentRegistrar(factory, importData).run();
+        UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData).run();
+        AdminLogger.getLogger().info("user '" + login + "' registered digital document to " + urnNbn);
+        return urnNbn;
     }
 
     @Override
@@ -60,7 +64,9 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         try {
             long registrarId = registrarOfDigLibrary(instance.getLibraryId());
             authorization.checkAccessRights(registrarId, login);
-            return new DigitalInstanceAdder(factory, instance).run();
+            DigitalInstance digitalInstance = new DigitalInstanceAdder(factory, instance).run();
+            AdminLogger.getLogger().info("user '" + login + "' imported " + digitalInstance);
+            return digitalInstance;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -92,6 +98,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAdminRights(login);
             Long id = factory.archiverDao().insertArchiver(archiver);
             archiver.setId(id);
+            AdminLogger.getLogger().info("user '" + login + "' inserted " + archiver);
             return archiver;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -104,6 +111,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAdminRights(login);
             Long id = factory.registrarDao().insertRegistrar(registrar);
             registrar.setId(id);
+            AdminLogger.getLogger().info("user '" + login + "' inserted " + registrar);
             return registrar;
         } catch (AlreadyPresentException ex) {
             throw new RegistrarCollisionException(registrar.getCode().toString());
@@ -118,6 +126,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAccessRightsOrAdmin(registrarId, login);
             Long id = factory.diglLibDao().insertLibrary(library);
             library.setId(id);
+            AdminLogger.getLogger().info("user '" + login + "' inserted " + library);
             return library;
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(registrarId);
@@ -132,6 +141,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAccessRightsOrAdmin(registrarId, login);
             Long id = factory.catalogDao().insertCatalog(catalog);
             catalog.setId(id);
+            AdminLogger.getLogger().info("user '" + login + "' inserted " + catalog);
             return catalog;
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(registrarId);
@@ -146,6 +156,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAdminRights(login);
             Long id = factory.userDao().insertUser(user);
             user.setId(id);
+            AdminLogger.getLogger().info("admin '" + login + "' created " + user);
             return user;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -159,6 +170,9 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         try {
             authorization.checkAdminRights(login);
             factory.userDao().insertAdministrationRight(registrarId, userId);
+            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
+            User user = factory.userDao().getUserById(userId, false);
+            AdminLogger.getLogger().info("admin '" + login + "' added access right for registrar '" + registrar.getCode() + "' to user '" + user.getLogin() + "'" );
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {

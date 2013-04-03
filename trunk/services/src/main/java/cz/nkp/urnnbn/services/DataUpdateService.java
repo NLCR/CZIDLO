@@ -34,8 +34,8 @@ import java.util.Collection;
  */
 public interface DataUpdateService extends BusinessService {
 
-    //TODO: access rights
-    public void updateDigDocIdentifier(RegistrarScopeIdentifier id) throws
+    public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws
+            UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
     public void updateDigitalDocument(DigitalDocument doc, String login) throws
@@ -61,7 +61,7 @@ public interface DataUpdateService extends BusinessService {
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, String login) throws
             UnknownUserException, NotAdminException,
             UnknownIntelectualEntity, IdentifierConflictException;
-    
+
     public void updateUser(User user, String login) throws
             UnknownUserException, NotAdminException;
 }

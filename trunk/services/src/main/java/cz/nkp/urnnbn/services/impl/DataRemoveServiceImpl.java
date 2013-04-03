@@ -4,8 +4,15 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.dto.Archiver;
+import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
@@ -44,6 +51,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             authorization.checkAccessRights(registrarId, login);
             factory.digDocIdDao().deleteRegistrarScopeIds(digDocId);
             factory.documentDao().updateDocumentDatestamp(digDocId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifiers of digital document with id'" + digDocId + "'");
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigDocException(digDocId);
         } catch (DatabaseException ex) {
@@ -58,6 +66,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             authorization.checkAccessRights(registrarId, login);
             factory.digDocIdDao().deleteRegistrarScopeId(digDocId, type);
             factory.documentDao().updateDocumentDatestamp(digDocId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifier (type=" + type + ") of digital document with id'" + digDocId + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -75,7 +84,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeArchiver(long archiverId, String login) throws UnknownArchiverException, CannotBeRemovedException, NotAdminException, UnknownUserException {
         try {
             authorization.checkAdminRights(login);
+            Archiver archiver = factory.archiverDao().getArchiverById(archiverId);
             factory.archiverDao().deleteArchiver(archiverId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted " + archiver + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -89,7 +100,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeRegistrar(long registrarId, String login) throws UnknownRegistrarException, CannotBeRemovedException, NotAdminException, UnknownUserException {
         try {
             authorization.checkAdminRights(login);
+            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             factory.registrarDao().deleteRegistrar(registrarId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted " + registrar + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -104,7 +117,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         try {
             long registrarId = registrarOfDigLibrary(libraryId);
             authorization.checkAccessRightsOrAdmin(registrarId, login);
+            DigitalLibrary library = factory.diglLibDao().getLibraryById(libraryId);
             factory.diglLibDao().deleteLibrary(libraryId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted " + library + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -119,7 +134,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         try {
             long registrarId = registrarOfCatalog(catalogId);
             authorization.checkAccessRightsOrAdmin(registrarId, login);
+            Catalog catalog = factory.catalogDao().getCatalogById(catalogId);
             factory.catalogDao().deleteCatalog(catalogId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted " + catalog + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -131,7 +148,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeUser(long userId, String login) throws UnknownUserException, NotAdminException, UnknownUserException {
         try {
             authorization.checkAdminRights(login);
+            User user = factory.userDao().getUserById(userId, false);
             factory.userDao().deleteUser(userId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted " + user + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -143,7 +162,10 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException, UnknownRegistrarException {
         try {
             authorization.checkAdminRights(login);
+            User user = factory.userDao().getUserById(userId, false);
+            Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             factory.userDao().deleteAdministrationRight(registrarId, userId);
+            AdminLogger.getLogger().info("user '" + login + "' deleted access right for registrar '" + registrar.getCode() + "' to user '" + user.getLogin() + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -162,7 +184,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         try {
             long registrarId = registrarOfDigInstance(instanceId);
             authorization.checkAccessRights(registrarId, login);
+            DigitalInstance digInstance = factory.digInstDao().getDigInstanceById(instanceId);
             factory.digInstDao().deactivateDigInstance(instanceId);
+            AdminLogger.getLogger().info("user '" + login + "' deactivated " + digInstance + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -176,6 +200,11 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
             authorization.checkAccessRights(registrarId, login);
             factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), note);
+            if (note != null) {
+                AdminLogger.getLogger().info("user '" + login + "' deactivated " + urn + "' with note: \"" + note + "\"");
+            } else {
+                AdminLogger.getLogger().info("user '" + login + "' deactivated " + urn + "'");
+            }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
