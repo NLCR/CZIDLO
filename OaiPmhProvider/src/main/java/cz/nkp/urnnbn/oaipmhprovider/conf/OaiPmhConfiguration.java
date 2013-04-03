@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.oaipmhprovider.conf;
 
 import cz.nkp.urnnbn.oaipmhprovider.repository.Repository;
 import cz.nkp.urnnbn.oaipmhprovider.repository.impl.RepositoryImpl;
+import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
@@ -42,8 +43,8 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
      * @throws IOException
      */
     @Override
-    public void initialize(cz.nkp.urnnbn.utils.PropertyLoader loader) throws IOException {
-        super.initialize(loader);
+    public void initialize(String appName, PropertyLoader loader) throws IOException {
+        super.initialize(appName, loader);
         logger.log(Level.INFO, "Initializing {0}", OaiPmhConfiguration.class.getName());
         repository = RepositoryImpl.instanceOf();
         repositoryName = loader.loadString(PropertyKeys.REPOSITORY_NAME);

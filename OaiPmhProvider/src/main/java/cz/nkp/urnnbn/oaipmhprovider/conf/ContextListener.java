@@ -18,6 +18,7 @@ import javax.servlet.ServletContextListener;
  */
 public class ContextListener implements ServletContextListener {
 
+    private static final String WEB_APP_NAME = "OaiPmhProvider";
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
     private static final String PROPERTIES_FILE = "provider.properties";
     private static final String RESOLVER_TO_OAIDC_XSLT = "resolverToOaiDc.xsl";
@@ -30,11 +31,10 @@ public class ContextListener implements ServletContextListener {
 
     private void loadPropertiesFile() {
         new ResourceUtilizer(logger) {
-
             @Override
             public void processResource(InputStream in) throws Exception {
                 PropertyLoader loader = new PropertyLoader(in);
-                OaiPmhConfiguration.instanceOf().initialize(loader);
+                OaiPmhConfiguration.instanceOf().initialize(WEB_APP_NAME, loader);
                 XmlModuleConfiguration.instanceOf().initialize(loader);
             }
         }.run(PROPERTIES_FILE);
@@ -42,7 +42,6 @@ public class ContextListener implements ServletContextListener {
 
     private void loadResolverToOaidcXslt() {
         new ResourceUtilizer(logger) {
-
             @Override
             public void processResource(InputStream in) throws Exception {
                 OaiPmhConfiguration.instanceOf().initResolverToOaidcTemplate(in);
