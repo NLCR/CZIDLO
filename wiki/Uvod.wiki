@@ -1,4 +1,4 @@
-= CZIDLO (Czech URN:NBN Resolver) =
+= CZIDLO (CZech IDentification and LOcalization Tool) =
 Systém CZIDLO je nástroj pro správu identifikátorů [http://www.ietf.org/rfc/rfc3188.txt URN:NBN] v národním prostředí. CZIDLO by tedy měly provozovat národní knihovny, jakožto autority pro určený národní prostor (např. urn:nbn:cz pro Českou republiku). 
 
 = Vývoj =
