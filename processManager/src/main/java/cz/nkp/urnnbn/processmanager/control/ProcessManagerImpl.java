@@ -378,11 +378,11 @@ public class ProcessManagerImpl implements ProcessManager {
         //change process state in db
         new ProcesStateUpdater(processId).upadateProcessStateToCanceled();
         AdminLogger.getLogger().info("process " + process.getType().toString() + " of user '" + process.getOwnerLogin()
-                + "' has been canceled ");
+                + "' has been canceled by user '" + login + "'");
         return removedFromQueue;
     }
 
-    public boolean removeFromQueueSynchronized(Queue<Process> queue, Process processToBeRemoved, String queueName) {
+    private boolean removeFromQueueSynchronized(Queue<Process> queue, Process processToBeRemoved, String queueName) {
         boolean removed = false;
         synchronized (queue) {
             removed = queue.remove(processToBeRemoved);
@@ -427,6 +427,8 @@ public class ProcessManagerImpl implements ProcessManager {
             } else {
                 logger.log(Level.INFO, "Deleted data of process {0}", processId);
             }
+            AdminLogger.getLogger().info("process " + process.getType().toString() + " of user '" + process.getOwnerLogin()
+                + "' was deleted by user '" + userLogin + "'");
         }
     }
 }
