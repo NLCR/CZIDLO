@@ -43,7 +43,7 @@ public class JobListenerImpl implements JobListener {
         Long jobId = getJobId(context);
         JobDataMap processData = context.getMergedJobDataMap();
         ProcessType type = getProcessType(processData);
-        AdminLogger.getLogger().info("procesq " + type + " of user '" + getProcessOwner(processData)
+        AdminLogger.getLogger().info("process " + type + " of user '" + getProcessOwner(processData)
                 + "' with parameters " + getProcessParams(processData, type)
                 + " will start now");
         new ProcesStateUpdater(jobId).updateProcessStateToRunning();
