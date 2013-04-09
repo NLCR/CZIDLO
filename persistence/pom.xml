@@ -6,7 +6,7 @@
     <artifactId>persistence</artifactId>
     <name>persistence</name>
     <packaging>jar</packaging>
-    <version>2.4</version>
+    <version>3.0</version>
     <url>http://maven.apache.org</url>
     <build>
         <plugins>
