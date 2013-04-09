@@ -115,6 +115,28 @@ public class DigitalLibrary implements IdentifiableWithDatestamps {
 
     @Override
     public String toString() {
-        return "DigitalLibrary{" + "id=" + id + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", name=" + name + ", description=" + description + ", url=" + url + '}';
+        StringBuilder result = new StringBuilder();
+        result.append("DigitalLibrary{");
+        result.append("id=").append(id);
+        result.append(", ");
+        result.append("registrarId=").append(registrarId);
+        result.append(", ");
+        if (created != null) {
+            result.append("created=").append(created);
+            result.append(", ");
+        }
+        if (modified != null) {
+            result.append("modified=").append(created);
+            result.append(", ");
+        }
+        result.append("name=").append(name);
+        result.append(", ");
+        if (description != null) {
+            result.append("description=").append(description);
+            result.append(", ");
+        }
+        result.append("url=").append(url);
+        result.append("}");
+        return result.toString();
     }
 }
