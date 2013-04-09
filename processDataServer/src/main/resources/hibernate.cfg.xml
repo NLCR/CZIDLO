@@ -7,7 +7,7 @@
         <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/resolverprocess</property>
         <property name="hibernate.connection.username">testuser</property>
         <property name="hibernate.connection.password">testpass</property>
-        <property name="hibernate.connection.pool_size">10</property>
+        <property name="hibernate.connection.pool_size">5</property>
         <!--don't use hibernate.hbm2ddl.auto in production-->
         <!--<property name="hibernate.hbm2ddl.auto">create-drop</property>-->
         <!--<property name="hibernate.hbm2ddl.auto">create</property>-->
