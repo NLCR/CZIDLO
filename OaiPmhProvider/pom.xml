@@ -5,7 +5,7 @@
 
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>OaiPmhProvider</artifactId>
-    <version>2.4</version>
+    <version>3.0</version>
     <packaging>war</packaging>
 
     <name>OaiPmhProvider</name>
