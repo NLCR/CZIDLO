@@ -47,11 +47,6 @@ public final class Registrar extends Archiver {
         modesAllowed.put(mode, allowed);
     }
 
-    @Override
-    public String toString() {
-        return "Registrar{" + "code=" + code + ", name=" + getName() + ", description=" + getDescription() + ", modesAllowed=" + modesToString() + '}';
-    }
-
     public void loadDataFromArchiver(Archiver archiver) {
         setId(archiver.getId());
         setName(archiver.getName());
@@ -60,13 +55,30 @@ public final class Registrar extends Archiver {
         setModified(archiver.getModified());
     }
 
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("Registrar{");
+        result.append("code=").append(code);
+        result.append(", ");
+        result.append("name=").append(getName());
+        result.append(", ");
+        if (getDescription() != null) {
+            result.append("description=").append(getDescription());
+            result.append(", ");
+        }
+        result.append("modesAllowed=").append(modesToString());
+        result.append("}");
+        return result.toString();
+    }
+
     private String modesToString() {
         StringBuilder result = new StringBuilder();
-        result.append("modes allowed: [");
+        result.append("[");
         int counter = 0;
         for (UrnNbnRegistrationMode mode : modesAllowed.keySet()) {
-            result.append(mode.toString()).append(modesAllowed.get(mode).toString());
-            if (counter < modesAllowed.size()) {
+            result.append(mode.toString()).append("=").append(modesAllowed.get(mode).toString());
+            if (counter < modesAllowed.size() - 1) {
                 result.append(", ");
             }
             counter++;
