@@ -4,7 +4,7 @@
 
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>oaiAdapter</artifactId>
-    <version>2.4</version>
+    <version>3.0</version>
     <packaging>jar</packaging>
 
     <name>oaiAdapter</name>
