@@ -5,7 +5,7 @@
 
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>xml</artifactId>
-    <version>2.4</version>
+    <version>3.0</version>
     <packaging>jar</packaging>
     <name>xml</name>
     <url>http://maven.apache.org</url>
