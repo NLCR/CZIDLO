@@ -15,7 +15,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <title>OAI-PMH data provider of URN:NBN Resolver</title>
+        <title>CZIDLO: OAI-PMH data provider</title>
         <style type="text/css" media="Screen">
             table {
                 width: auto;
@@ -72,8 +72,8 @@
         <h1 align="center">OAI-PMH data provider</h1>
         <p class="descriptionText">
             <h3>General information</h3>
-            Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider module of
-            <a href="http://code.google.com/p/urnnbn-resolver-v2/">URN:NBN Resolver</a>.
+            Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider of
+            <a href="http://code.google.com/p/urnnbn-resolver-v2/">CZIDLO (version 3.0)</a>.
             This particular instance,
             which is deployed at <b><%=request.getHeader("host")%></b>,
             handles language code <b><%=conf.getLanguageCode()%></b>.
