@@ -49,7 +49,7 @@ public class LimitedLengthEnhancer implements ElementContentEnhancer {
 
     @Override
     public String toEnhancedValueOrNull(String original) {
-        if (original == null || original.isEmpty()) {
+        if (original == null || original.isEmpty() || containsOnlyWhiteSpaces(original)) {
             return null;
         }
         if (original.length() < minLength) {
@@ -59,6 +59,15 @@ public class LimitedLengthEnhancer implements ElementContentEnhancer {
         } else { //length OK
             return original;
         }
+    }
+
+    private boolean containsOnlyWhiteSpaces(String original) {
+        for (int i = 0; i < original.length(); i++) {
+            if (!Character.isWhitespace(original.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String shorten(String original) {
