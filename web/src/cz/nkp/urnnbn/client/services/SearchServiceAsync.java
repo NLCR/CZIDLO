@@ -8,6 +8,5 @@ import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public interface SearchServiceAsync {
 
-	void getSearchResults(String request,
-			AsyncCallback<ArrayList<IntelectualEntityDTO>> callback);
+	void getSearchResults(String request, AsyncCallback<ArrayList<IntelectualEntityDTO>> callback);
 }

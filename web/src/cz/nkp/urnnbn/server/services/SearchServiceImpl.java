@@ -3,6 +3,9 @@ package cz.nkp.urnnbn.server.services;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import com.google.gwt.dev.util.collect.HashSet;
 
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
@@ -35,44 +38,44 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		if (request == null || request.isEmpty() || request.length() > MAX_REQUEST_SIZE) {
 			return EMPTY_IE_LIST;
 		} else if (request.toLowerCase().startsWith("urn:nbn:cz:")) {
-			return searchByUrnNbn(request);
+			return new ArrayList<IntelectualEntityDTO>(searchByUrnNbn(request));
 		} else {
-			return searchByIdentifiers(request);
+			return new ArrayList<IntelectualEntityDTO>(searchByIdentifiers(request));
 		}
 	}
 
-	private ArrayList<IntelectualEntityDTO> searchByUrnNbn(String request) {
+	private Set<IntelectualEntityDTO> searchByUrnNbn(String request) {
 		try {
 			UrnNbn urnNbn = UrnNbn.valueOf(request);
-			UrnNbnWithStatus urnFetched = readService
-					.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+			UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
+					urnNbn.getDocumentCode(), true);
 			if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
 				DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
-				// List allways contains just single item
+				// Set allways contains just single item
 				IntelectualEntity entity = readService.entityById(digDoc.getIntEntId());
-				ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(1);
+				Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 				result.add(transformedEntity(entity));
 				return result;
 			} else {
-				return EMPTY_IE_LIST;
+				return Collections.<IntelectualEntityDTO> emptySet();
 			}
 		} catch (Throwable e) {
 			log(e.getMessage());
-			return EMPTY_IE_LIST;
+			return Collections.<IntelectualEntityDTO> emptySet();
 		}
 	}
 
-	private ArrayList<IntelectualEntityDTO> searchByIdentifiers(String request) {
+	private Set<IntelectualEntityDTO> searchByIdentifiers(String request) {
 		try {
 			List<IntelectualEntity> entities = readService.entitiesByIdValue(request);
-			ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(entities.size());
+			Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 			for (IntelectualEntity entity : entities) {
 				result.add(transformedEntity(entity));
 			}
 			return result;
 		} catch (Throwable e) {
 			log("error searching for ie", e);
-			return EMPTY_IE_LIST;
+			return Collections.<IntelectualEntityDTO> emptySet();
 		}
 	}
 

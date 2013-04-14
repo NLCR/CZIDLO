@@ -76,8 +76,8 @@ public class SearchPanel extends SingleTabContentPanel {
 		}
 		loadConfigurationFromServer();
 	}
-	
-	private Panel contentPanel(){
+
+	private Panel contentPanel() {
 		VerticalPanel contentPanel = new VerticalPanel();
 		contentPanel.setWidth("100%");
 		contentPanel.setHeight("100%");
