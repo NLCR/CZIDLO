@@ -60,7 +60,7 @@ public class AnalyticalDtoTransformer extends EntityDtoTransformer {
 		dto.setVolumeTitle(srcDoc.getVolumeTitle());
 		dto.setIssueTitle(srcDoc.getIssueTitle());
 		dto.setCcnb(srcDoc.getCcnb());
-		dto.setIsbn(srcDoc.getIssn());
+		dto.setIsbn(srcDoc.getIsbn());
 		dto.setIssn(srcDoc.getIssn());
 		dto.setOtherId(srcDoc.getOtherId());
 		dto.setPublication(transformPublication());
