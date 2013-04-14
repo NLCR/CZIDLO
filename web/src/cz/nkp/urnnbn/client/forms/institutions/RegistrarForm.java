@@ -16,6 +16,9 @@ public class RegistrarForm extends Form {
 
 	public RegistrarForm() {
 		this.originalRegistrar = new RegistrarDTO();
+		originalRegistrar.setRegModeByResolverAllowed(true);
+		originalRegistrar.setRegModeByRegistrarAllowed(false);
+		originalRegistrar.setRegModeByReservationAllowed(false);
 		this.registrarCodeEditable = true;
 		initForm();
 	}
