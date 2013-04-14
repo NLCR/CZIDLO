@@ -8,11 +8,10 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
@@ -62,7 +61,10 @@ public class Main implements EntryPoint {
 		headerPanel.addStyleName(resources.MainCss().headerPanel());
 		headerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		// title
-		headerPanel.add(headerTitlePanel());
+		// headerPanel.add(headerTitlePanel());
+		headerPanel.add(headerTitle());
+		headerPanel.add(headerSubtitle());
+
 		// space
 		Label emptyLabel1 = new Label("");
 		emptyLabel1.setWidth("100px");
@@ -81,22 +83,16 @@ public class Main implements EntryPoint {
 		return headerPanel;
 	}
 
-	private VerticalPanel headerTitlePanel() {
-		VerticalPanel headerTitlePanel = new VerticalPanel();
-		headerTitlePanel.addStyleName(resources.MainCss().headerTitlePanel());
-		// title
-		// Label headerTitle = new HTML(
-		// "<span style=\"color: black;\">URN</span><span style=\"color: red;\">:</span><span style=\"color: black;\">NBN Resolver</span></a>");
-		Label headerTitle = new HTML(
-		// "<a href=\"http://resolver.nkp.cz\"><span style=\"color: black;text-decoration:none;\">čIDLO</span></a>");
-				"<span style=\"color: black;text-decoration:none;\"><i>CZIDLO</i></span>");
-		headerTitle.addStyleName(resources.MainCss().headerTitle());
-		headerTitlePanel.add(headerTitle);
-		// subtitle
-		Label headerSubtitle = new Label('(' + constants.headerSubtitle() + ')');
+	private Widget headerTitle() {
+		Widget headerSubtitle = new HTML("CZIDLO");
+		headerSubtitle.addStyleName(resources.MainCss().headerTitle());
+		return headerSubtitle;
+	}
+
+	private Widget headerSubtitle() {
+		Widget headerSubtitle = new HTML("(CZech IDentification and LOcalization tool)");
 		headerSubtitle.addStyleName(resources.MainCss().headerSubtitle());
-		headerTitlePanel.add(headerSubtitle);
-		return headerTitlePanel;
+		return headerSubtitle;
 	}
 
 	private HorizontalPanel footerPanel() {
@@ -106,30 +102,30 @@ public class Main implements EntryPoint {
 		footerPanel.setHeight("100%");
 		footerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		footerPanel.setBorderWidth(0);
-		
-		// logo NDK
-		Image logoNDK = new Image("img/logo_ndk.jpg");
-		footerPanel.add(logoNDK);
-		
+
+		// // logo NDK
+		// Image logoNDK = new Image("img/logo_ndk.jpg");
+		// footerPanel.add(logoNDK);
+
 		// logo NKP
 		Image logoNKP = new Image("img/logo_nkp.jpg");
 		footerPanel.add(logoNKP);
-		
-		// logo MZK
-		Image logoMZK = new Image("img/logo_mzk.jpg");
-		footerPanel.add(logoMZK);
-		
-		// logo IOP
-		Image logoIOP = new Image("img/logo_iop.jpg");
-		footerPanel.add(logoIOP);
+
+		// // logo MZK
+		// Image logoMZK = new Image("img/logo_mzk.jpg");
+		// footerPanel.add(logoMZK);
+
+		// // logo IOP
+		// Image logoIOP = new Image("img/logo_iop.jpg");
+		// footerPanel.add(logoIOP);
 
 		// logo MK
 		Image logoMK = new Image("img/logo_mk.jpg");
 		footerPanel.add(logoMK);
-		
-		Hyperlink link = new Hyperlink();
-		link.getElement().getFirstChild().appendChild(logoMK.getElement());
-				
+
+		// Hyperlink link = new Hyperlink();
+		// link.getElement().getFirstChild().appendChild(logoMK.getElement());
+
 		return footerPanel;
 	}
 }

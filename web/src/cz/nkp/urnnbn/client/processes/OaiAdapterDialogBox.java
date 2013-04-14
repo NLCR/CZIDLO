@@ -60,8 +60,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
 	private void loadRegistrars() {
 
-		// TODO: pro admina bude seznam obsahovat vsechny registratory
-		accountsService.registrarsManagedByUser(new AsyncCallback<ArrayList<RegistrarDTO>>() {
+		accountsService.getRegistrarsManagedByUser(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
 			@Override
 			public void onSuccess(ArrayList<RegistrarDTO> result) {

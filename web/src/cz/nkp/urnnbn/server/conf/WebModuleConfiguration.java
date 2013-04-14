@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.server.conf;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -19,6 +20,8 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
+	private String rulesTabContent;
+	private String infoTabContent;
 
 	static public WebModuleConfiguration instanceOf() {
 		if (instance == null) {
@@ -28,13 +31,29 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	}
 
 	@Override
-	public void initialize(PropertyLoader loader) throws IOException {
-		super.initialize(loader);
-		logger.info("Loading configuration");
+	public void initialize(String appName, PropertyLoader loader) throws IOException {
+		logger.info("Loading configuration of module " + appName);
+		super.initialize(appName, loader);
 		showAlephLinks = loader.loadBooleanFalseIfNullOrEmpty(PropertyKeys.SHOW_ALEPH_LINKS);
 		alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
 		alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
 		Configuration.init(loader);
+	}
+
+	public void loadInfoTabContent(BufferedReader in) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		while (in.ready()) {
+			builder.append(in.readLine()).append('\n');
+		}
+		infoTabContent = builder.toString();
+	}
+
+	public void loadRulesTabContent(BufferedReader in) throws IOException {
+		StringBuilder builder = new StringBuilder();
+		while (in.ready()) {
+			builder.append(in.readLine()).append('\n');
+		}
+		rulesTabContent = builder.toString();
 	}
 
 	public static Logger getLogger() {
@@ -53,6 +72,14 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		return alephBase;
 	}
 
+	public String getInfoTabContent() {
+		return infoTabContent;
+	}
+
+	public String getRulesTabContent() {
+		return rulesTabContent;
+	}
+
 	public ConfigurationData toConfigurationData() {
 		ConfigurationData result = new ConfigurationData();
 		result.setShowAlephLinks(showAlephLinks);
@@ -61,4 +88,5 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		result.setCountryCode(getLanguageCode());
 		return result;
 	}
+
 }

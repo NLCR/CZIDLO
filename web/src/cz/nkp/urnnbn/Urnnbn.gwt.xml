@@ -22,7 +22,7 @@
 	<extend-property name="locale" values="en" />
 	<set-property-fallback name="locale" value="cs" />
 
-    <!--  FILE UPLOAD -->
+	<!-- FILE UPLOAD -->
 	<!-- Include GWTUpload library -->
 	<inherits name="gwtupload.GWTUpload" />
 	<!-- Load dinamically predefined styles in the library when the application starts -->
@@ -57,5 +57,12 @@
 
 	<servlet class="cz.nkp.urnnbn.server.services.ProcessServiceImpl"
 		path="/process" />
+
+	<servlet class="cz.nkp.urnnbn.server.services.logs.LogsServiceImpl"
+		path="/logs" />
+		
+	<servlet class="cz.nkp.urnnbn.server.services.StaticContentServiceImpl"
+		path="/staticContent" />
+			
 
 </module>

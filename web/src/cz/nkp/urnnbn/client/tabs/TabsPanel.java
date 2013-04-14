@@ -40,12 +40,12 @@ public class TabsPanel extends Composite {
 		loadRegistrarsManagedByUser();
 		initTabs();
 		// activatePanel(3);
-		activatePanel(1);
+		activatePanel(2);
 	}
 
 	private void loadRegistrarsManagedByUser() {
 		if (activeUser.isLoggedUser()) {
-			accountsService.registrarsManagedByUser(new AsyncCallback<ArrayList<RegistrarDTO>>() {
+			accountsService.getRegistrarsManagedByUser(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
 				@Override
 				public void onSuccess(ArrayList<RegistrarDTO> result) {
@@ -105,6 +105,9 @@ public class TabsPanel extends Composite {
 		// info panel
 		builder.appendPanel(new InfoPanel(this), constants.tabInfoLabel());
 
+		// rules panel
+		builder.appendPanel(new RulesPanel(this), constants.tabRulesLabel());
+
 		// search panel
 		String query = com.google.gwt.user.client.Window.Location.getParameter("q");
 		if (query == null || query.isEmpty()) {
@@ -132,8 +135,13 @@ public class TabsPanel extends Composite {
 			builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
 		}
 
-		// TODO:odstranit
-		//builder.appendPanel(new TestTab(this), "TEST");
+		// TODO: just for testing new features
+		// builder.appendPanel(new TestTab(this), "TEST");
+
+		// logs for admin
+		if (activeUser.isSuperAdmin()) {
+			builder.appendPanel(new LogsTab(this), constants.tabLogsLabel());
+		}
 
 		initHistory(tabLayoutPanel);
 		initWidget(tabLayoutPanel);

@@ -67,7 +67,17 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	}
 
 	@Override
-	public ArrayList<RegistrarDTO> registrarsManagedByUser(Long userId) throws ServerException {
+	public ArrayList<RegistrarDTO> getAllRegistrars() throws ServerException {
+		try {
+			List<Registrar> registrars = readService.registrars();
+			return transformRegistrars(registrars);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
+		}
+	}
+
+	@Override
+	public ArrayList<RegistrarDTO> getRegistrarsManagedByUser(Long userId) throws ServerException {
 		try {
 			List<Registrar> registrars = readService.registrarsManagedByUser(userId, getUserLogin());
 			return transformRegistrars(registrars);
@@ -75,9 +85,9 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
+
 	@Override
-	public ArrayList<RegistrarDTO> registrarsManagedByUser() throws ServerException {
+	public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() throws ServerException {
 		try {
 			User userByLogin = readService.userByLogin(getUserLogin(), false);
 			List<Registrar> registrars = readService.registrarsManagedByUser(userByLogin.getId(), getUserLogin());

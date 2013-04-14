@@ -7,11 +7,11 @@ import com.google.gwt.user.client.ui.HTML;
 import cz.nkp.urnnbn.client.services.StaticContentService;
 import cz.nkp.urnnbn.client.services.StaticContentServiceAsync;
 
-public class InfoPanel extends SingleTabContentPanel {
-	
+public class RulesPanel extends SingleTabContentPanel {
+
 	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
-	
-	public InfoPanel(TabsPanel tabsPanel) {
+
+	public RulesPanel(TabsPanel tabsPanel) {
 		super(tabsPanel);
 		reload("");
 	}
@@ -19,7 +19,7 @@ public class InfoPanel extends SingleTabContentPanel {
 	@Override
 	protected void onLoad() {
 		super.onLoad();
-		staticContentService.getTabInfoContent(new AsyncCallback<String>() {
+		staticContentService.getTabRulesContent(new AsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {

@@ -17,9 +17,11 @@ public interface UserAccountServiceAsync {
 
 	void updateUser(UserDTO user, AsyncCallback<Void> callback);
 
-	void registrarsManagedByUser(Long userId, AsyncCallback<ArrayList<RegistrarDTO>> callback);
+	void getAllRegistrars(AsyncCallback<ArrayList<RegistrarDTO>> callback);
 
-	void registrarsManagedByUser(AsyncCallback<ArrayList<RegistrarDTO>> callback);
+	void getRegistrarsManagedByUser(Long userId, AsyncCallback<ArrayList<RegistrarDTO>> callback);
+
+	void getRegistrarsManagedByUser(AsyncCallback<ArrayList<RegistrarDTO>> callback);
 
 	void deleteUser(Long userId, AsyncCallback<Void> callback);
 

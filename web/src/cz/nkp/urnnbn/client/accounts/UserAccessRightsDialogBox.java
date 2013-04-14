@@ -39,7 +39,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 	}
 
 	private void loadRegistrars() {
-		accountsService.registrarsManagedByUser(user.getId(), new AsyncCallback<ArrayList<RegistrarDTO>>() {
+		accountsService.getRegistrarsManagedByUser(user.getId(), new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
 			@Override
 			public void onSuccess(ArrayList<RegistrarDTO> result) {

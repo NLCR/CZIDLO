@@ -39,6 +39,14 @@ public abstract class AbstractService extends RemoteServiceServlet {
 		}
 		return user.getLogin();
 	}
+	
+	protected void checkUserIsAdmin() throws Exception{
+		UserDTO user = getActiveUser();
+		if (user.getRole() != ROLE.SUPER_ADMIN) {
+			// TODO: log as severe
+			throw new Exception("unauthrized operation attempt detected (allowed only for admins)");
+		}
+	}
 
 	UserDTO getActiveUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

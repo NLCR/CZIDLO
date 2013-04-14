@@ -7,9 +7,13 @@
 .headerTitlePanel {
 	padding-left: 17px;
 	padding-top: 22px;
+	white-space: nowrap;
+	vertical-align: middle;
 }
 
 .headerTitle {
+	padding:10px;  
+	padding-left: 17px;
 	color: black;
 	font-size: 32px;
 	font-weight: bold;
@@ -18,8 +22,10 @@
 
 .headerSubtitle {
 	color: #AAA;
-	font-size: 12px;
+	font-size: 15px;
 	white-space: nowrap;
+	text-align: center;
+	vertical-align: text-bottom;
 }
 
 .languageSwitch {

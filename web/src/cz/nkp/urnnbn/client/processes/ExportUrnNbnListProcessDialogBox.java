@@ -37,9 +37,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	}
 
 	private void loadRegistrars() {
-
-		// TODO: pro admina bude seznam obsahovat vsechny registratory
-		accountsService.registrarsManagedByUser(new AsyncCallback<ArrayList<RegistrarDTO>>() {
+		AsyncCallback<ArrayList<RegistrarDTO>> callback = new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
 			@Override
 			public void onSuccess(ArrayList<RegistrarDTO> result) {
@@ -54,7 +52,12 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 			public void onFailure(Throwable caught) {
 				Window.alert(constants.serverError() + ": " + caught.getMessage());
 			}
-		});
+		};
+		if (user.isSuperAdmin()) {
+			accountsService.getAllRegistrars(callback);
+		} else {
+			accountsService.getRegistrarsManagedByUser(callback);
+		}
 	}
 
 	void reload() {

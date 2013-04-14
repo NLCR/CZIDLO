@@ -18,10 +18,12 @@ public interface UserAccountService extends RemoteService {
 
 	ArrayList<UserDTO> getAllUsers() throws ServerException;
 
-	ArrayList<RegistrarDTO> registrarsManagedByUser(Long userId) throws ServerException;
+	ArrayList<RegistrarDTO> getRegistrarsManagedByUser(Long userId) throws ServerException;
 
-	ArrayList<RegistrarDTO> registrarsManagedByUser() throws ServerException;
-
+	ArrayList<RegistrarDTO> getRegistrarsManagedByUser() throws ServerException;
+	
+	ArrayList<RegistrarDTO> getAllRegistrars() throws ServerException;
+	
 	void updateUser(UserDTO user) throws ServerException;
 
 	void deleteUser(Long userId) throws ServerException;

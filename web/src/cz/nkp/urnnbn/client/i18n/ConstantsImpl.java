@@ -16,6 +16,8 @@ public interface ConstantsImpl extends Constants {
 
 	String tabInfoLabel();
 
+	String tabRulesLabel();
+	
 	String tabSearchLabel();
 
 	String tabDataInputLabel();
@@ -29,6 +31,8 @@ public interface ConstantsImpl extends Constants {
 	String tabHelpLabel();
 
 	String tabProcessesLabel();
+
+	String tabLogsLabel();
 
 	// presunout
 
@@ -290,7 +294,7 @@ public interface ConstantsImpl extends Constants {
 
 	String processList();
 
-	// String planNewProcess();
+	String processListShowMyOnlyButton();
 
 	String processPlanning();
 
@@ -363,5 +367,10 @@ public interface ConstantsImpl extends Constants {
 	String processOaiAdapterTransformationCreated();
 
 	String processOaiAdapterTransformationXslt();
+
+	// logs
+	String logsTabProcessListHeading();
+
+	String logsTabDownloadLogFile();
 
 }
