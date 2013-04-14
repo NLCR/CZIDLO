@@ -226,4 +226,13 @@ public class IsbnEnhancerTest extends TestCase {
         assertNotNull(enhancer.toEnhancedValueOrNull("ISBN 0 571 08989 5"));
         assertNotNull(enhancer.toEnhancedValueOrNull("isbn 0-671657-15-1"));
     }
+    
+    /**
+     * http://code.google.com/p/urnnbn-resolver-v2/issues/detail?id=57
+     */
+    public void testIssue57(){
+        ElementContentEnhancer enhancer = new IsbnEnhancer();
+        assertEquals("9780123747204", enhancer.toEnhancedValueOrNull("978-0-12-374720-4"));
+        assertEquals("0521472997", enhancer.toEnhancedValueOrNull("0 521 47299 7"));
+    }
 }
