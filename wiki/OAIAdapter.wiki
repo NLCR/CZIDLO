@@ -1,4 +1,4 @@
-#summary OAI Adapter is tool for registrars to keep their DI up-to-date.
+#summary OAI Adapter is tool for registrars to keep their digital instances up-to-date.
 
 = OAI Adapter =
 OAI Adapter je nástroj pro ulehčení vkládání a aktualizací digitálních instancí. Je určený pro ty digitální knihovny, které disponují OAI-PMH rozhraním. Skládá se z těchto komponent:
@@ -6,10 +6,8 @@ OAI Adapter je nástroj pro ulehčení vkládání a aktualizací digitálních 
  * Transformer - transformuje sklizené záznamy na data pro _CZIDLO API_. Tedy na vstup operace _registrace digitálního dokument_ a na vstup operace _import digitální instance_. Transformace jsou realizovány pomocí technologie XSLT. Jsou proto potřebné dva XSLT soubory. 
  * Resolver connector - modul přistupující k _CZIDLO API_. Provádí operace _registrace DD_, _import DI_ a některé další.
 
-
-
 = Průběh =
-Jedno spuštění OAI Adapteru probíhá zjednodušeně takto:
+OAI Adapter je možné chápat jako proces, jehož jedno spuštění probíhá zjednodušeně takto:
  * Během inicializace se načtou XSL transformace ze souborů, ověří se, zda je pro určeného registrátora povolen vybraný mód registrace, apod.
  * Harvester postupně sklízí záznamy z OAI providera digitální knihovny
  * pro každý záznam pak:
@@ -27,4 +25,67 @@ OAI Adapter tedy primárně zajišťuje aktuálnost DI. To je potřeba napříkl
  * registrátor nemá nástroje pro registraci DD. Pokud má jeho digitální knihovna OAI-PMH provider, může registrátor použít tento nástroj také k registraci DD, nejen k importu DI.
 
 OAI Adapter prochází všechny záznamy a aktualizuje jen ty, které se změnily.
+
+= Konfigurace =
+Konfigurace pro průběh OAI Adapteru se skládá z:
+ * konfigurace OAI: url, metadatový prefix, případně _OAI-PMH set_
+ * údaje pro CZIDLO API: url, login, heslo, kód registrátora
+ * určení XSL transformací _záznam z OAI -> vstup registrace DD_ a _záznam z OAI -> vstup import DI_
+
+= Šablony =
+TODO
+
+= Spuštění =
+OAI Adapter je možné spouštět dvěma způsoby:
+
+== na serveru (přes webové rozhraní) ==
+OAI Adapter je jedním z procesů, které je možné poustět na serveru. Spuštění probíhá přes webové rozhraní. Dialog pro spouštění procesu vyžaduje zadání parametrů, jako je url OAI-PMH provideru atd. Dále je zde nutné vybrat dvě XSL transformace. Webové rozhraní CZIDLO obsahuje jednoduchou správu XSL transformací. Takže je potřeba požadovanou transformaci nejprve na server nahrát a před spuštěním OAI Adapteru zvolit šablonu z dříve nahraných.
+
+== lokálně ==
+OAI Adapter je dostupný ve formě jar balíku, viz. sekce Download. Pro jeho spuštění je potřeba Java ve verzi alespoň 1.6. Jediným vstupním parametrem je soubor obsahující konfiguraci. 
+{{{
+java -jar oaiAdapter-3.0.jar /path/to/configuration.properties
+}}}
+resp.
+{{{
+java -jar oaiAdapter-3.0.jar C:\path\to\configuration.properties
+}}}
+Příklad konfiguračního souboru:
+{{{
+###################
+#  OAI PROVIDER   #
+###################
+oaiAdapter.oai.baseUrl=http://duha-devel.mzk.cz/oai
+oaiAdapter.oai.metadataPrefix=oai_dc
+#nepoviné 
+#oaiAdapter.oai.setSpec=collection:mollMaps
+
+###################
+#    RESOLVER     #
+###################
+oaiAdapter.resolver.apiUrl=resolver.nkp.cz/api
+oaiAdapter.resolver.login=martin
+oaiAdapter.resolver.password=*****
+oaiAdapter.resolver.registrarCode=duha
+
+##########################
+#  XSL TRANSFORMATIONS   #
+##########################
+oaiAdapter.digDocRegistrationXsl=/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl
+oaiAdapter.digInstImportXsl=/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl
+
+######################################
+#  XSD FOR RESOLVER OPERATION DATA   #
+######################################
+oaiAdapter.digDocRegistrationXsdUrl=http://resolver.nkp.cz/api/v3/digDocRegistration.xsd
+oaiAdapter.digInstImportXsdUrl=http://resolver.nkp.cz/api/v3/digInstImport.xsd
+
+###################
+#   REPORT FILE   #
+###################
+oaiAdapter.reportFile=/home/martin/tmp/oaiAdapter/report.txt
+
+}}}
+
+
  
