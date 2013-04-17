@@ -12,4 +12,6 @@
 
 * [OaiPmhDataProvider OAI-PMH data provider]
 
+* [OAIAdapter OAI Adapter]
+
 * [Instalace Instalace]
