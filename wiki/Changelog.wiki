@@ -3,7 +3,26 @@
 = Přehled změn =
 
 == 3.0 ==
- * r123
- * issue 5
+ * URN:NBN Resolver přejmenován na CZIDLO
+ * drobné změny v designu webového rozhraní
+  * odstranění obrázků
+  * animace průběhu vyhledávání
+ * nová správa procesů, implementovány dva procesy:
+  * Export seznamu URN:NBN vybraného registrátora
+  * OAI Adapter
+ * správa XSL transformací pro OAI Adapter
+ * log pro administrátora nově přístupný přes webové rozhraní
+ * nová záložka _rules_
+ * obsahy záložek _info_ a _rules_ je možné editovat (soubory info.html a rules.html)
+ * opravy chyb:
+  * issue 50
+  * issue 51
+  * issue 52
+  * issue 56
+  * issue 57
+  * issue 58
+  * issue 62
 
 == 2.4 ==
+ * API v3 (API v2 stále dostupné), více [http://code.google.com/p/urnnbn-resolver-v2/wiki/API#verze_3 zde]
+ * opravy chyb
