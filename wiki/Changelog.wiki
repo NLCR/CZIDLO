@@ -1,0 +1,9 @@
+#summary Přehled změn v jednotlivých verzích
+
+= Přehled změn =
+
+== 3.0 ==
+ * r123
+ * issue 5
+
+== 2.4 ==
