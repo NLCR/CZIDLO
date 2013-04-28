@@ -4,7 +4,7 @@ CZIDLO je nástroj pro správu identifikátorů [http://www.ietf.org/rfc/rfc3188
 = Vývoj =
 Software je licencován GNU GPL v3. 
 Vývoj probíhá pod záštitou [http://www.nkp.cz Národní knihovny České republiky] a je financován z programu *Koncepce rozvoje Národní knihovny České republiky jako výzkumné organizace na léta 2010-2015* Ministerstva kultury ČR. 
-Systém navazuje na starší [http://code.google.com/p/urnnbnresolver/ urnnbnresolver] a zachovává jeho původní funkčnost. Přidává však další prvky, zejména dvě nová aplikační rozhraní (*OAI-PMH Data provider* a *RESTful API*). Výrazně většími možnostmi disponuje také webová část, která kromě samotného vyhledávání řeší správu uživatelských účtů, registrátorů, digitálních knihoven, katalogu a umožňuje ruční vkládání a editaci záznamů.  
+Systém některými funkcemi navazuje na starší software [http://code.google.com/p/urnnbnresolver/ urnnbnresolver], jehož funkcionality zachovává. Současně však nabízí celou řadu nových funkčních prvků, zejména dvě nová aplikační rozhraní (*OAI-PMH Data provider* a *RESTful API*). Výrazně většími možnostmi disponuje také webová část, která kromě samotného vyhledávání řeší správu uživatelských účtů, registrátorů, digitálních knihoven, katalogu a umožňuje ruční vkládání a editaci záznamů.  
 
 Ač vypadají oba systémy vizuálně podobně a oba používají webový framework [https://developers.google.com/web-toolkit/ GWT], jedná se o zcela nový systém. Převzat byl pouze datový model, který byl ale výrazně pozměněn, aby reflektoval nové požadavky a zároveň bylo možné převzít data ze staršího systému, transformovat a vložit do systému nového.
 
