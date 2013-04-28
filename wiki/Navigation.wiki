@@ -15,3 +15,5 @@
 * [OAIAdapter OAI Adapter]
 
 * [Instalace Instalace]
+
+* [Changelog Přehled změn]
