@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -129,20 +130,33 @@ public class SearchPanel extends SingleTabContentPanel {
 	}
 
 	public void search(final String request) {
-		AsyncCallback<ArrayList<IntelectualEntityDTO>> callback = new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
+		showProcessingWheel();
+		searchService.getSearchResults(request, new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
 			public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
-				refreshResults(request, result);
+				showResults(request, result);
 			}
 
 			public void onFailure(Throwable caught) {
 				Window.alert(constants.serverError() + ": " + caught.getMessage());
 			}
 
-		};
-		searchService.getSearchResults(request, callback);
+		});
+	}
+	
+	private void showProcessingWheel(){
+		searchResultsPanel.clear();
+		searchResultsPanel.add(processingWheelPanel());
+	}
+	
+	private Panel processingWheelPanel() {
+		VerticalPanel result = new VerticalPanel();
+		result.setStyleName(css.processWheelPanel());
+		Image booksImg = new Image("img/ajax-loader.gif");
+		result.add(booksImg);
+		return result;
 	}
 
-	public void refreshResults(String request, ArrayList<IntelectualEntityDTO> results) {
+	public void showResults(String request, ArrayList<IntelectualEntityDTO> results) {
 		searchResultsPanel.clear();
 		searchResultTree = new Tree();
 		searchResultTree.setAnimationEnabled(true);

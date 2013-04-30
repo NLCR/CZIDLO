@@ -71,8 +71,8 @@ public class Main implements EntryPoint {
 		headerPanel.add(emptyLabel1);
 
 		// logo
-		Image booksImg = new Image("img/logo_books.png");
-		headerPanel.add(booksImg);
+//		Image booksImg = new Image("img/logo_books.png");
+//		headerPanel.add(booksImg);
 		// space
 		Label emptyLabel2 = new Label("");
 		headerPanel.add(emptyLabel2);

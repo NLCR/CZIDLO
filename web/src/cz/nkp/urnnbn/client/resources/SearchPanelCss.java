@@ -12,5 +12,7 @@ public interface SearchPanelCss extends CssResource {
 	public String attrLabel();
 	
 	public String detailsButton();
+	
+	public String processWheelPanel();
 
 }

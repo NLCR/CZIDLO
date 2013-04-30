@@ -2,10 +2,9 @@ package cz.nkp.urnnbn.server.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.google.gwt.dev.util.collect.HashSet;
 
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
@@ -31,16 +30,21 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private static ArrayList<IntelectualEntityDTO> EMPTY_IE_LIST = new ArrayList<IntelectualEntityDTO>(0);
 	private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
-	private static final int MAX_REQUEST_SIZE = 100;
+	private static final int MAX_REQUEST_SIZE = 200;
 
 	@Override
-	public ArrayList<IntelectualEntityDTO> getSearchResults(String request) {
-		if (request == null || request.isEmpty() || request.length() > MAX_REQUEST_SIZE) {
+	public ArrayList<IntelectualEntityDTO> getSearchResults(String searchRequest) {
+		if (searchRequest == null || searchRequest.isEmpty() || searchRequest.length() > MAX_REQUEST_SIZE) {
+			//System.err.println("found 0 records (empty or too long search request)");
 			return EMPTY_IE_LIST;
-		} else if (request.toLowerCase().startsWith("urn:nbn:cz:")) {
-			return new ArrayList<IntelectualEntityDTO>(searchByUrnNbn(request));
+		} else if (searchRequest.toLowerCase().startsWith("urn:nbn:cz:")) {
+			ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(searchByUrnNbn(searchRequest));
+			//System.err.println("found " + result.size() + " records by urn:nbn");
+			return result;
 		} else {
-			return new ArrayList<IntelectualEntityDTO>(searchByIdentifiers(request));
+			ArrayList<IntelectualEntityDTO> result =new ArrayList<IntelectualEntityDTO>(searchByIdentifiers(searchRequest)); 
+			//System.err.println("found " + result.size() + " records by identifiers");
+			return result;
 		}
 	}
 
