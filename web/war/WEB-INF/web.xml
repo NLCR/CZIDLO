@@ -42,6 +42,20 @@
 	</filter-mapping>
 	<!-- SPRING END -->
 
+	<!-- template upload servlet -->
+	<servlet>
+		<servlet-name>uploadServlet</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.TemplateUploadServlet</servlet-class>
+<!-- 		<servlet-class>gwtupload.server.UploadServlet</servlet-class> -->
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>uploadServlet</servlet-name>
+		<url-pattern>*.gupld</url-pattern>
+	</servlet-mapping>
+
+	<!-- SERVICES -->
+
 	<servlet>
 		<servlet-name>searchService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.SearchServiceImpl</servlet-class>
@@ -52,7 +66,7 @@
 		<url-pattern>/web/search</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
+	<servlet>
 		<servlet-name>authService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.AuthServiceImpl</servlet-class>
 	</servlet>
@@ -62,7 +76,7 @@
 		<url-pattern>/web/auth</url-pattern>
 	</servlet-mapping>
 
-    <servlet>
+	<servlet>
 		<servlet-name>institutionsService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.InstitutionsServiceImpl</servlet-class>
 	</servlet>
@@ -71,7 +85,7 @@
 		<servlet-name>institutionsService</servlet-name>
 		<url-pattern>/web/institutions</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>dataService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.DataServiceImpl</servlet-class>
@@ -81,7 +95,7 @@
 		<servlet-name>dataService</servlet-name>
 		<url-pattern>/web/data</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>userAccountService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.UserAccountServiceImpl</servlet-class>
@@ -91,7 +105,7 @@
 		<servlet-name>userAccountService</servlet-name>
 		<url-pattern>/web/users</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>configurationService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.ConfigurationServiceImpl</servlet-class>
@@ -101,8 +115,8 @@
 		<servlet-name>configurationService</servlet-name>
 		<url-pattern>/web/conf</url-pattern>
 	</servlet-mapping>
-	
-		<servlet>
+
+	<servlet>
 		<servlet-name>processService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.ProcessServiceImpl</servlet-class>
 	</servlet>
@@ -112,10 +126,50 @@
 		<url-pattern>/web/process</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>logsService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.logs.LogsServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>logsService</servlet-name>
+		<url-pattern>/web/logs</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>staticContent</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.StaticContentServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>staticContent</servlet-name>
+		<url-pattern>/web/staticContent</url-pattern>
+	</servlet-mapping>
+
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
 		<welcome-file>Urnnbn.html</welcome-file>
 	</welcome-file-list>
+
+
+	<!-- QUARTZ START -->
+	<context-param>
+		<param-name>config-file</param-name>
+		<param-value>quartz.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>shutdown-on-unload</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>start-scheduler-on-load</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+	</listener>
+	<!-- QUARTZ END -->
 
 </web-app>
