@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.core.persistence;
 
 import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.ContentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalInstanceDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalLibraryDaoPostgres;
@@ -48,6 +49,7 @@ public class DAOFactory {
     private UserDAO userDao;
     private UrnNbnGeneratorDAO urnSearchDao;
     private UrnNbnReservedDAO urnReservedDao;
+    private ContentDAO contentDao;
     //cache
     private final boolean postgresImplemantation;
     private final boolean oracleImplementation;
@@ -225,5 +227,15 @@ public class DAOFactory {
             }
         }
         return urnSearchDao;
+    }
+
+    public ContentDAO createContentDao() {
+        if (contentDao == null) {
+            if (postgresImplemantation) {
+                contentDao = new ContentDaoPostgres(connector);
+            } else if (oracleImplementation) {
+            }
+        }
+        return contentDao;
     }
 }
