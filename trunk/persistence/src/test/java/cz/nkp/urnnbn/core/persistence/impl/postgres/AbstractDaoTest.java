@@ -16,6 +16,7 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
+import cz.nkp.urnnbn.core.persistence.ContentDAO;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
@@ -65,6 +66,7 @@ public abstract class AbstractDaoTest extends TestCase {
     final UserDAO userDao;
     final UrnNbnReservedDAO urnReservedDao;
     final UrnNbnGeneratorDAO urnGeneratorDao;
+    final ContentDAO contentDao;
 
     public AbstractDaoTest(String testName) {
         super(testName);
@@ -93,6 +95,7 @@ public abstract class AbstractDaoTest extends TestCase {
         urnDao = daoFactory.urnDao();
         urnReservedDao = daoFactory.urnReservedDao();
         urnGeneratorDao = daoFactory.urnSearchDao();
+        contentDao = daoFactory.createContentDao();
     }
 
     @Override
