@@ -27,4 +27,6 @@ public interface ContentDAO {
     
     public Content getContentByNameAndLanguage(String name, String lang) throws DatabaseException, RecordNotFoundException;
     
+    public void deleteContent(long contentId) throws DatabaseException, RecordNotFoundException;
+    
 }

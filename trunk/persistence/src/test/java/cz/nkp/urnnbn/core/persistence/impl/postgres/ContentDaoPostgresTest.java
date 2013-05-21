@@ -34,5 +34,6 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
         contentDao.insertContent(content);
         Content foundContent = contentDao.getContentByNameAndLanguage(content.getName(), content.getLanguage());
         assertNotNull(foundContent);
+        contentDao.deleteContent(foundContent.getId());
     }
 }

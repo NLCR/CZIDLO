@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
@@ -46,6 +47,15 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
 
     public void updateContent(Content content) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(content, TABLE_NAME, ATTR_ID, new UpdateContent(content));
+    }
+    
+    public void deleteContent(long contentId) throws DatabaseException, RecordNotFoundException {
+        try {
+            deleteRecordsById(TABLE_NAME, ATTR_ID, contentId, true);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
+        }
     }
 
     public Content getContentByNameAndLanguage(String name, String lang) throws DatabaseException, RecordNotFoundException {
