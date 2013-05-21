@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>urnnbn-resolver-webapp</artifactId>
+    <groupId>urnbn-resolver</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>URNNBN Resolver Web Application</name>
+    <description>TODO</description>
+    <inceptionYear>2011</inceptionYear>
+    <url>https://resolver.nkp.cz/web/</url>
+    <organization>
+	<name>The National Library of the Czech Republic</name>
+	<url>http://www.nkp.cz</url>
+    </organization>
+
+    <properties>
+        <gwt.version>2.4.0</gwt.version>
+        <apache.commons-io.version>2.3</apache.commons-io.version>
+        <spring.version>3.2.2.RELEASE</spring.version>
+        <apache.commons-collections.version>3.2.1</apache.commons-collections.version>
+        <gwt-maven-plugin.version>2.4.0</gwt-maven-plugin.version>
+        <maven.jar.plugin.version>2.3.1</maven.jar.plugin.version>
+        <maven.war.plugin.version>2.2</maven.war.plugin.version>
+        <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
+        <vaadin-maven-plugin.version>1.0.2</vaadin-maven-plugin.version>
+        <gmaven-plugin.version>1.0</gmaven-plugin.version>
+        <jetty-maven-plugin.version>8.1.3.v20120416</jetty-maven-plugin.version>
+        <maven-compiler-plugin.version>2.4</maven-compiler-plugin.version>
+        <java.source.version>1.6</java.source.version>
+        <java.source.target.version>1.6</java.source.target.version>
+        <webapp.bin.dir>bin</webapp.bin.dir>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+  
+    <build>
+	<plugins>
+	    <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>${maven-compiler-plugin.version}</version>
+		<configuration>
+		    <source>${java.source.version}</source>
+		    <target>${java.source.target.version}</target>
+		</configuration>
+	    </plugin>
+	  
+	    <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-war-plugin</artifactId>
+		<version>${maven.war.plugin.version}</version>
+		<configuration>
+		    <archive>
+			<manifestEntries>
+			    <Class-Path>plugins/*</Class-Path>
+			</manifestEntries>
+		    </archive>
+		    <outputDirectory>${webapp.bin.dir}</outputDirectory>
+		    <warName>webapp</warName>
+                    <webXml>war/WEB-INF/web.xml</webXml> 
+		</configuration>
+	    </plugin>
+		
+            <!--Plugin to compile GWT widget set -->
+	    <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>gwt-maven-plugin</artifactId>
+		<version>${gwt-maven-plugin.version}</version>
+		<inherited>false</inherited>
+		<configuration>
+		    <webappDirectory>${project.build.directory}/${project.build.finalName}/gwt/widgetsets</webappDirectory>
+		    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+		    <runTarget>clean</runTarget>
+		    <hostedWebapp>${webapp.bin.dir}/webapp.war</hostedWebapp>
+		    <copyWebapp>true</copyWebapp>
+		    <noServer>true</noServer>
+		    <soyc>false</soyc>
+		</configuration>
+		<executions>
+		    <execution>
+			<goals>
+			    <goal>resources</goal>
+			    <goal>compile</goal>
+			</goals>
+		    </execution>
+		</executions>
+	    </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-maven-plugin.version}</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <stopPort>9966</stopPort>
+                    <stopKey>webapp</stopKey>
+                    <!-- Redeploy every x seconds if changes are detected, 0 for no automatic redeployment -->
+                    <scanIntervalSeconds>0</scanIntervalSeconds>
+                    <!-- make sure Jetty also finds the widgetset -->
+                    <war>${webapp.bin.dir}/webapp.war</war>
+                    <webAppConfig>
+                        <contextPath>/webapp</contextPath>
+                    </webAppConfig>
+                </configuration>
+            </plugin>
+
+	</plugins>
+	<pluginManagement>
+	    <plugins>
+    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+		<plugin>
+		    <groupId>org.eclipse.m2e</groupId>
+		    <artifactId>lifecycle-mapping</artifactId>
+		    <version>1.0.0</version>
+		    <configuration>
+			<lifecycleMappingMetadata>
+			    <pluginExecutions>
+				<pluginExecution>
+				    <pluginExecutionFilter>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>gwt-maven-plugin</artifactId>
+					<versionRange>[2.4.0,)</versionRange>
+					<goals>
+					    <goal>resources</goal>
+					</goals>
+				    </pluginExecutionFilter>
+				    <action>
+					<ignore></ignore>
+				    </action>
+				</pluginExecution>
+			    </pluginExecutions>
+			</lifecycleMappingMetadata>
+		    </configuration>
+		</plugin>
+	    </plugins>
+	</pluginManagement>
+    </build>
+
+    <repositories>
+	<repository>
+	    <id>apache-snapshots</id>
+	    <url>https://repository.apache.org/content/groups/snapshots/</url>
+	    <releases>
+		<enabled>false</enabled>
+	    </releases>
+	    <snapshots>
+		<enabled>true</enabled>
+	    </snapshots>
+	</repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codehaus-snapshots</id>
+            <url>http://nexus.codehaus.org/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+
+    <dependencies>
+
+        <!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
+	<dependency>
+	    <groupId>com.google.gwt</groupId>
+	    <artifactId>gwt-user</artifactId>
+	    <version>${gwt.version}</version>
+	    <scope>provided</scope>
+	</dependency>
+
+        <dependency>
+            <groupId>cz.nkp.urnnbn</groupId>
+            <artifactId>web-common</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cz.nkp.urnnbn</groupId>
+            <artifactId>processManager</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.gwtupload</groupId>
+            <artifactId>gwtupload</artifactId>
+            <version>0.6.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+       <dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>${apache.commons-io.version}</version>
+	</dependency>
+
+       <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${apache.commons-collections.version}</version>
+       </dependency>
+
+       <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.0.2</version>
+       </dependency>
+
+       <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+    </dependencies>
+</project>
