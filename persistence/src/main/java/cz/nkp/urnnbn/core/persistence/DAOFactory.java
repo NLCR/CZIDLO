@@ -229,7 +229,7 @@ public class DAOFactory {
         return urnSearchDao;
     }
 
-    public ContentDAO createContentDao() {
+    public ContentDAO contentDao() {
         if (contentDao == null) {
             if (postgresImplemantation) {
                 contentDao = new ContentDaoPostgres(connector);

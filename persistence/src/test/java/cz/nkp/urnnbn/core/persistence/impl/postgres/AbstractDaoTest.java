@@ -95,7 +95,7 @@ public abstract class AbstractDaoTest extends TestCase {
         urnDao = daoFactory.urnDao();
         urnReservedDao = daoFactory.urnReservedDao();
         urnGeneratorDao = daoFactory.urnSearchDao();
-        contentDao = daoFactory.createContentDao();
+        contentDao = daoFactory.contentDao();
     }
 
     @Override
