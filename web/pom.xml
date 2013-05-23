@@ -57,8 +57,8 @@
 			</manifestEntries>
 		    </archive>
 		    <outputDirectory>${webapp.bin.dir}</outputDirectory>
-		    <warName>webapp</warName>
-                    <webXml>war/WEB-INF/web.xml</webXml> 
+		    <warName>web</warName>
+            <webXml>src/main/webapp/WEB-INF/web.xml</webXml> 
 		</configuration>
 	    </plugin>
 		
@@ -72,7 +72,7 @@
 		    <webappDirectory>${project.build.directory}/${project.build.finalName}/gwt/widgetsets</webappDirectory>
 		    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
 		    <runTarget>clean</runTarget>
-		    <hostedWebapp>${webapp.bin.dir}/webapp.war</hostedWebapp>
+		    <hostedWebapp>${webapp.bin.dir}/web.war</hostedWebapp>
 		    <copyWebapp>true</copyWebapp>
 		    <noServer>true</noServer>
 		    <soyc>false</soyc>
@@ -98,7 +98,7 @@
                     <!-- Redeploy every x seconds if changes are detected, 0 for no automatic redeployment -->
                     <scanIntervalSeconds>0</scanIntervalSeconds>
                     <!-- make sure Jetty also finds the widgetset -->
-                    <war>${webapp.bin.dir}/webapp.war</war>
+                    <war>${webapp.bin.dir}/web.war</war>
                     <webAppConfig>
                         <contextPath>/webapp</contextPath>
                     </webAppConfig>
@@ -171,28 +171,24 @@
 	    <groupId>com.google.gwt</groupId>
 	    <artifactId>gwt-user</artifactId>
 	    <version>${gwt.version}</version>
-	    <scope>provided</scope>
 	</dependency>
 
         <dependency>
             <groupId>cz.nkp.urnnbn</groupId>
             <artifactId>web-common</artifactId>
             <version>3.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>cz.nkp.urnnbn</groupId>
             <artifactId>processManager</artifactId>
             <version>3.0</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.googlecode.gwtupload</groupId>
             <artifactId>gwtupload</artifactId>
             <version>0.6.4</version>
-            <scope>provided</scope>
         </dependency>
 
        <dependency>
@@ -224,6 +220,12 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
+
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+		</dependency>
 
     </dependencies>
 </project>
