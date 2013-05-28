@@ -9,12 +9,14 @@ public class StaticContentServiceImpl extends AbstractService implements StaticC
 
 	@Override
 	public String getTabRulesContent() {
-		return WebModuleConfiguration.instanceOf().getRulesTabContent();
+		return this.readService.getContentByNameAndLanguage("rules", "cz");
+		//return WebModuleConfiguration.instanceOf().getRulesTabContent();
 	}
 
 	@Override
 	public String getTabInfoContent() {
-		return WebModuleConfiguration.instanceOf().getInfoTabContent();
+		return this.readService.getContentByNameAndLanguage("info", "cz");
+		//return WebModuleConfiguration.instanceOf().getInfoTabContent();
 	}
 
 }

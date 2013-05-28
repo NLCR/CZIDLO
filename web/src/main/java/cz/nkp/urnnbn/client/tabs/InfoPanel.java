@@ -3,7 +3,6 @@ package cz.nkp.urnnbn.client.tabs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
-
 import cz.nkp.urnnbn.client.services.StaticContentService;
 import cz.nkp.urnnbn.client.services.StaticContentServiceAsync;
 

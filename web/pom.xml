@@ -22,7 +22,7 @@
         <apache.commons-collections.version>3.2.1</apache.commons-collections.version>
         <gwt-maven-plugin.version>2.4.0</gwt-maven-plugin.version>
         <maven.jar.plugin.version>2.3.1</maven.jar.plugin.version>
-        <maven.war.plugin.version>2.2</maven.war.plugin.version>
+        <maven.war.plugin.version>2.3</maven.war.plugin.version>
         <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
         <vaadin-maven-plugin.version>1.0.2</vaadin-maven-plugin.version>
         <gmaven-plugin.version>1.0</gmaven-plugin.version>
@@ -45,22 +45,27 @@
 		    <target>${java.source.target.version}</target>
 		</configuration>
 	    </plugin>
-	  
-	    <plugin>
+
+	<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
 		<artifactId>maven-war-plugin</artifactId>
 		<version>${maven.war.plugin.version}</version>
 		<configuration>
-		    <archive>
-			<manifestEntries>
-			    <Class-Path>plugins/*</Class-Path>
-			</manifestEntries>
-		    </archive>
-		    <outputDirectory>${webapp.bin.dir}</outputDirectory>
-		    <warName>web</warName>
-            <webXml>src/main/webapp/WEB-INF/web.xml</webXml> 
+			<archive>
+				<manifestEntries>
+					<Class-Path>plugins/*</Class-Path>
+				</manifestEntries>
+			</archive>
+			<webResources>
+				<resource>
+					<directory>target/urnnbn-resolver-webapp-1.0.0-SNAPSHOT/gwt/widgetsets/</directory>
+				</resource>
+			</webResources>
+			<outputDirectory>${webapp.bin.dir}</outputDirectory>
+			<warName>web</warName>
+			<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
 		</configuration>
-	    </plugin>
+	</plugin>
 		
             <!--Plugin to compile GWT widget set -->
 	    <plugin>
@@ -100,7 +105,7 @@
                     <!-- make sure Jetty also finds the widgetset -->
                     <war>${webapp.bin.dir}/web.war</war>
                     <webAppConfig>
-                        <contextPath>/webapp</contextPath>
+                        <contextPath>/web</contextPath>
                     </webAppConfig>
                 </configuration>
             </plugin>
