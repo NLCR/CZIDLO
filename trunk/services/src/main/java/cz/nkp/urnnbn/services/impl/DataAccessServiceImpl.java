@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -35,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.joda.time.DateTime;
 
 /**
@@ -462,6 +464,18 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             result.addAll(findChangedUrnNbns(from, until));
             return result;
         } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public String getContentByNameAndLanguage(String name, String language) {
+        try {
+            Content content = factory.contentDao().getContentByNameAndLanguage(name, language);
+            return content.getContent();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
             throw new RuntimeException(ex);
         }
     }
