@@ -1,2 +1,0 @@
-serviceClass: cz.nkp.urnnbn.client.services.UserAccountService
-path: 9A9CE59D3D31A2885B1B6F10E391EE1C.gwt.rpc

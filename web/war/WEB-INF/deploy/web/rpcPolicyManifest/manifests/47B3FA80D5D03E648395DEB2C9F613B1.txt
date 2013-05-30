@@ -1,2 +1,0 @@
-serviceClass: cz.nkp.urnnbn.client.services.AuthService
-path: EAAD08B10816B16EE034F55EAB9CEA1F.gwt.rpc

@@ -1,2 +1,0 @@
-serviceClass: cz.nkp.urnnbn.client.services.DataService
-path: 5F31FB19C5BAA2EE20D92467740CA6A4.gwt.rpc
