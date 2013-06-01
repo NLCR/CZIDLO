@@ -25,6 +25,13 @@
 		<apache.commons-collections.version>3.2.1</apache.commons-collections.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>plugins</id>
+			<url>http://gwtquery-plugins.googlecode.com/svn/mavenrepo</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -38,6 +45,12 @@
 			<version>${gwtVersion}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+            <groupId>com.googlecode.gwtquery.bundles</groupId>
+            <artifactId>gquery-dnd-bundle</artifactId>
+            <version>1.0.6</version>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

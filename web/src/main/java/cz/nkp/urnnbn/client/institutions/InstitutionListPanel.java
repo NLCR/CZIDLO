@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -15,6 +16,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtquery.plugins.draggable.client.gwt.DraggableWidget;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -204,8 +207,11 @@ public class InstitutionListPanel extends VerticalPanel {
 		Grid result = new Grid(archivers.size(), archiverGridColumns());
 		for (int i = 0; i < archivers.size(); i++) {
 			ArchiverDTO archiver = archivers.get(i);
-			Label name = new Label(archiver.getName());
-			result.setWidget(i, 0, name);
+			Label name = new Label(archiver.getName() + "test");
+			DraggableWidget<Label> draggableName = new DraggableWidget<Label>(name);
+			draggableName.setDraggingCursor(Cursor.MOVE);
+			draggableName.setDraggingOpacity((float)0.8);
+			result.setWidget(i, 0, draggableName);
 			Button detailsButton = archiverDetailsButton(archiver);
 			result.setWidget(i, 1, detailsButton);
 			if (user.isSuperAdmin()) {
