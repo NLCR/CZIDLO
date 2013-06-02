@@ -274,8 +274,8 @@ V těle http dotazu se nachází tento obsah:
         <status>ACTIVE</status>
         <value>urn:nbn:cz:boa001-00003b</value>
         <countryCode>cz</countryCode>
-        <registrarCode>tst02</registrarCode>
-        <documentCode>00000g</documentCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>00003b</documentCode>
         <digitalDocumentId>105</digitalDocumentId>
         <reserved>2012-11-20T02:12:07.123+01:00</reserved>
         <registered>2012-11-25T02:09:02.297+01:00</registered>
@@ -301,8 +301,8 @@ Tělo dotazu vypadá stejně, jako u módu BY_RESERVATION
         <status>ACTIVE</status>
         <value>urn:nbn:cz:boa001-00003b</value>
         <countryCode>cz</countryCode>
-        <registrarCode>tst02</registrarCode>
-        <documentCode>00000g</documentCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>00003b</documentCode>
         <digitalDocumentId>105</digitalDocumentId>
         <registered>2012-11-25T02:09:02.297+01:00</registered>
         <predecessor value="urn:nbn:cz:boa001-000030"/>
@@ -741,7 +741,7 @@ GET http://resolver.nkp.cz/api/v3/digitalInstances/id/26
             <description>testovací knihovna</description>
             <url>http://kramerius3.mzk.cz</url>
             <created>2012-04-18T23:19:19.605+02:00</created>
-            <registrar code="tst02" id="38">
+            <registrar code="boa001" id="38">
                 <name>Moravská zemská knihovna - test</name>
                 <description>testovací registrátor</description>
                 <created>2012-04-18T23:19:17.727+02:00</created>
@@ -755,7 +755,7 @@ GET http://resolver.nkp.cz/api/v3/digitalInstances/id/26
         </digitalLibrary>
         <digitalDocument id="9">
             <urnNbn>
-                <value>urn:nbn:cz:tst02-000004</value>
+                <value>urn:nbn:cz:boa001-00003b</value>
             </urnNbn>
             <financed>norské fondy</financed>
             <contractNumber>123</contractNumber>
