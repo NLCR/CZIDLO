@@ -3,8 +3,10 @@ package cz.nkp.urnnbn.client.forms.institutions;
 import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
+import cz.nkp.urnnbn.client.forms.BooleanValueField;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.shared.validation.PositiveIntegerValidator;
 
 public class ArchiverForm extends Form {
 
@@ -29,6 +31,8 @@ public class ArchiverForm extends Form {
 				true));
 		result.addField("description",
 				new TextInputValueField(new LimitedLengthValidator(100), constants.description(), originalArchiver.getDescription(), false));
+		result.addField("priority", new TextInputValueField(new PositiveIntegerValidator(), constants.priority(), 1, false));
+		result.addField("hidden", new BooleanValueField(constants.hidden(), false));
 		return result;
 	}
 

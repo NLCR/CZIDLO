@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.client.forms.LabelField;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.shared.validation.PositiveIntegerValidator;
 
 public class RegistrarForm extends Form {
 
@@ -49,6 +50,9 @@ public class RegistrarForm extends Form {
 				new BooleanValueField(constants.modeByReservation(), originalRegistrar.isRegModeByReservationAllowed()));
 		result.addField("modeByRegistrar",
 				new BooleanValueField(constants.modeByRegistrar(), originalRegistrar.isRegModeByRegistrarAllowed()));
+		// priority and visibility
+		result.addField("priority", new TextInputValueField(new PositiveIntegerValidator(), constants.priority(), 1, false));
+		result.addField("hidden", new BooleanValueField(constants.hidden(), false));
 		return result;
 	}
 

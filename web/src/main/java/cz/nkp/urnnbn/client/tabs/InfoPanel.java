@@ -14,6 +14,13 @@ import cz.nkp.urnnbn.client.services.StaticContentServiceAsync;
 
 public class InfoPanel extends SingleTabContentPanel {
 
+	private HTML contentView = null;
+	private TextArea contentEdit = null;
+	private Button saveButton = null;
+	
+	private String language = "cz";
+	private String name = "info";
+	
 	private final StaticContentServiceAsync staticContentService = GWT
 			.create(StaticContentService.class);
 
@@ -26,68 +33,84 @@ public class InfoPanel extends SingleTabContentPanel {
 	protected void onLoad() {
 		super.onLoad();
 		VerticalPanel contentPanel = new VerticalPanel();
-		final HTML contentView = new HTML("content");
+		contentView = new HTML("content");
 		contentPanel.add(contentView);
-		final TextArea contentEdit = new TextArea();
+		contentEdit = new TextArea();
 		contentEdit.setVisible(false);
-		contentEdit.setHeight("100%");
-		contentEdit.setWidth("100%");
+		contentEdit.setHeight("350px");
+		contentEdit.setWidth("700px");
 		contentPanel.add(contentEdit);
-		final Button button = new Button();
-		button.setText("edit");
-		button.addClickHandler(new ClickHandler() {
+		saveButton = new Button();
+		saveButton.setText("edit");
+		saveButton.setEnabled(false);
+		saveButton.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent arg0) {
 				if (contentView.isVisible()) {
 					contentView.setVisible(false);
 					contentEdit.setText(contentView.getHTML());
 					contentEdit.setVisible(true);
-					button.setText("save");
+					saveButton.setText("save");
 				} else {
+					contentEdit.setVisible(false);
 					contentView.setVisible(true);
 					contentView.setHTML(contentEdit.getText());
-					contentEdit.setVisible(false);
-					button.setText("edit");
+					saveButton.setText("edit");
+					saveContent();
 				}
 			}
 
 		});
 		if (getActiveUser().isSuperAdmin()) {
-			contentPanel.add(button);
+			contentPanel.add(saveButton);
 		}
-		contentPanel.add(button);
 		add(contentPanel);
-		// add(button);
-		/*
-		 * VerticalPanel contentPanel = new VerticalPanel();
-		 * contentPanel.add(new HTML("ahoj")); add(contentPanel);
-		 */
-		// add(new HTML("ahoj"));
-		/*
-		 * super.onLoad(); staticContentService.getTabInfoContent(new
-		 * AsyncCallback<String>() {
-		 * 
-		 * @Override public void onSuccess(String result) { reload(result); }
-		 * 
-		 * @Override public void onFailure(Throwable caught) { // TODO
-		 * Auto-generated method stub } });
-		 */
+		loadContent();
 	}
+	
+	public void loadContent() {
+		staticContentService.getContentByNameAndLanguage(language, name, new
+				 AsyncCallback<String>() {
 
-	private void reload(String content) {
-		clear();
-		content = "ahoj";
-		add(new HTML(content));
+					public void onFailure(Throwable error) {
+						saveButton.setEnabled(true);
+						error.printStackTrace();
+					}
+
+					public void onSuccess(String text) {
+						saveButton.setEnabled(true);
+						System.out.println("done");
+						contentView.setText("finished");		
+					}
+		});
+	}
+	
+	public void saveContent() {
+		String content = contentEdit.getText();
+		staticContentService.setContentByNameAndLanguage(language, name, content, new AsyncCallback<Void>() {
+			
+			public void onFailure(Throwable error) {
+				saveButton.setEnabled(true);
+				error.printStackTrace();
+			}
+
+			public void onSuccess(Void result) {
+				saveButton.setEnabled(true);
+				System.out.println("done");
+				contentView.setText("finished");		
+			}
+		});
 	}
 
 	@Override
 	public void onSelection() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void onDeselectionSelection() {
 		// TODO Auto-generated method stub
+		
 	}
 }

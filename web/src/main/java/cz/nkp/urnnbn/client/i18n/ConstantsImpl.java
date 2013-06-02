@@ -372,5 +372,9 @@ public interface ConstantsImpl extends Constants {
 	String logsTabProcessListHeading();
 
 	String logsTabDownloadLogFile();
+	
+	String priority();
+	
+	String hidden();
 
 }
