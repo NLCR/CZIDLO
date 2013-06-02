@@ -12,6 +12,7 @@ GET http://resolver.nkp.cz/api/v3/registrars
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <registrars>
         <registrar code="boa001" id="8">
@@ -46,6 +47,7 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <registrar code="boa001" id="16">
         <name>Moravská zemská knihovna - stará digitalizace</name>
@@ -89,6 +91,7 @@ POST http://resolver.nkp.cz/api/v3/registrars/boa001/urnNbnReservations?size=5
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbnReservation>
         <urnNbn>urn:nbn:cz:boa001-000006</urnNbn>
@@ -107,6 +110,7 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001/urnNbnReservations
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbnReservations>
         <maxReservationSize>100</maxReservationSize>
@@ -185,6 +189,7 @@ V těle http dotazu se nachází tento obsah:
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
@@ -206,6 +211,7 @@ POST http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <r:monograph>
         <r:titleInfo>
@@ -262,6 +268,7 @@ V těle http dotazu se nachází tento obsah:
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
@@ -288,6 +295,7 @@ POST http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
 Tělo dotazu vypadá stejně, jako u módu BY_RESERVATION
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <urnNbn>
         <status>ACTIVE</status>
@@ -416,6 +424,7 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments/id/K4_pid/u
 }}}
 === Response ===
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <digitalDocument id="11">
         <urnNbn>
@@ -515,12 +524,14 @@ Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
 === Response ===
 ==== Pokud digitální dokument identifikátor tohoto typu zatím neměl ====
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <id type="TEST2">1234</id>
 </response>
 }}}
 ==== Pokud identifikátor existoval, je jeho hodnota změněna ====
 {{{
+<?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <id type="TEST2" previousValue="12345">1234</id>
 </response>
@@ -558,77 +569,144 @@ Tělo dotazu pak obsahuje:
 == Seznam digitálních instancí digitálního dokumentu ==
 === Request ===
 {{{
-GET http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
+GET http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000001/digitalInstances
 }}}
 === Response ===
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<digitalInstances xmlns="http://resolver.nkp.cz/v2/">
-    <digitalInstance active="true">
-        <id type="INTERNAL">1</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <modified>2012-02-08T06:34:03.434+01:00</modified>
-        <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
-        <format>djvu</format>
-        <accessibility>veřejně přístupné</accessibility>
-    </digitalInstance>
-    <digitalInstance active="true">
-        <id type="INTERNAL">2</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <modified>2012-02-08T06:34:03.434+01:00</modified>
-      <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
-    </digitalInstance>
-    <digitalInstance active="true">
-        <id type="INTERNAL">3</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <modified>2012-02-08T06:34:03.434+01:00</modified>
-        <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
-    </digitalInstance>
-    <digitalInstance active="true">
-        <id type="INTERNAL">5</id>
-        <created>2012-02-08T06:34:03.434+01:00</created>
-        <modified>2012-02-08T06:34:03.434+01:00</modified>
-        <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
-    </digitalInstance>
-</digitalInstances>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalInstances count="3">
+        <digitalInstance id="33" active="true">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+            <digitalLibraryId>37</digitalLibraryId>
+            <created>2012-09-03T00:44:34.603+02:00</created>
+        </digitalInstance>
+        <digitalInstance id="34" active="true">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+            <format>jpg;pdf</format>
+            <accessibility>volně přístupné</accessibility>
+            <digitalLibraryId>38</digitalLibraryId>
+            <created>2012-09-19T00:37:25.362+02:00</created>
+        </digitalInstance>
+        <digitalInstance id="35" active="false">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+            <format>jpg;pdf</format>
+            <accessibility>volně přístupné</accessibility>
+            <digitalLibraryId>12</digitalLibraryId>
+            <created>2012-09-19T00:39:41.117+02:00</created>
+            <deactivated>2012-09-19T00:42:30.334+02:00</deactivated>
+        </digitalInstance>
+    </digitalInstances>
+</response>
 }}}
 -----
 == Zobrazení záznamu a stavu URN:NBN ==
 === Request ===
 {{{
-GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
+GET http://resolver.nkp.cz/api/v3/urnnbn/urn:nbn:cz:boa001-000056
 }}}
 === Response ===
-==== Pokud je urn:nbn používané ====
+==== aktivní URN:NBN ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<urnNbn xmlns="http://resolver.nkp.cz/v2/">
-    <status>ACTIVE</status>
-    <created>2012-02-08T06:34:03.272+01:00</created>
-    <registrarCode>boa001</registrarCode>
-    <value>urn:nbn:cz:boa001-000056</value>
-    <digitalDocumentId>1</digitalDocumentId>
-</urnNbn>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+        <digitalDocumentId>93</digitalDocumentId>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <predecessor value="urn:nbn:cz:boa001-000004" note="aktualizovana metadata"/>
+    </urnNbn>
+</response>
 }}}
-==== Pokud je URN:NBN rezervované ====
+==== aktivní URN:NBN, dříve rezervované ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<urnNbn xmlns="http://resolver.nkp.cz/v2/">
-    <status>RESERVED</status>
-    <created>2012-02-08T07:11:28.211+01:00</created>
-    <registrarCode>boa001</registrarCode>
-    <value>urn:nbn:cz:boa001-000056</value>
-</urnNbn>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+        <digitalDocumentId>93</digitalDocumentId>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <predecessor value="urn:nbn:cz:boa001-000004" note="aktualizovana metadata"/>
+    </urnNbn>
+</response>
 }}}
-==== A pokud je zatím volné ====
+==== rezervované URN:NBN ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<urnNbn xmlns="http://resolver.nkp.cz/v2/">
-    <status>FREE</status>
-    <registrarCode>boa001</registrarCode>
-    <value>urn:nbn:cz:boa001-000056</value>
-</urnNbn>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>RESERVED</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+    </urnNbn>
+</response>
 }}}
+==== deaktivované URN:NBN ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>DEACTIVATED</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+        <digitalDocumentId>89</digitalDocumentId>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <deactivated>2012-12-11T12:05:23.591+01:00</deactivated>
+        <predecessor value="urn:nbn:cz:boa001-000004" note="oprava metadat"/>
+        <successor value="urn:nbn:cz:boa001-000006" note="znovu oprava metadat"/>
+    </urnNbn>
+</response>
+}}}
+==== deaktivované URN:NBN, původně rezervováno ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>DEACTIVATED</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+        <digitalDocumentId>89</digitalDocumentId>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <deactivated>2012-12-11T12:05:23.591+01:00</deactivated>
+        <predecessor value="urn:nbn:cz:boa001-000004" note="oprava metadat"/>
+        <successor value="urn:nbn:cz:boa001-000006" note="znovu oprava metadat"/>
+    </urnNbn>
+</response>
+}}}
+==== volné URN:NBN ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>FREE</status>
+        <value>urn:nbn:cz:boa001-000056</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000056</documentCode>
+    </urnNbn>
+</response>
+}}}
+
 -----
 == Celkový počet digitálních instancí ==
 === Request ====
