@@ -1,6 +1,9 @@
 =Příklady operací pro API verze 2=
 
 Zde jsou uvedeny příklady použití některých operací API v2 s ukázkami vstupních a výstupních dat. Nejsou zde použity nepovinné parametry, jako je např. parmetr digitalInstances u operací zobrazujících záznam digitálního dokumentu.
+
+<wiki:toc max_depth="2" />
+
 -----
 == Záznam registrátorů ==
 === Request ===
