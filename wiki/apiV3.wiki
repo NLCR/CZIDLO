@@ -1,13 +1,689 @@
-#summary One-sentence summary of this page.
+=Příklady operací pro API verze 3=
 
-= Introduction =
+Zde jsou uvedeny příklady použití některých operací API v3 s ukázkami vstupních a výstupních dat. Nejsou zde použity nepovinné parametry, jako je např. parmetr digitalInstances u operací zobrazujících záznam digitálního dokumentu.
 
-Add your content here.
+<wiki:toc max_depth="2" />
 
+-----
+== Záznam registrátorů ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v3/registrars
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrars>
+        <registrar code="boa001" id="8">
+            <name>MZK</name>
+            <description>Moravská zemská knihovna</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="true" />
+            </registrationModes>
+        </registrar>
+        <registrar code="aba001" id="9">
+            <name>NKP</name>
+            <description>Národní knihovna Praha</description>
+            <created>2012-04-18T23:19:16.143+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+    </registrars>
+</response>
+}}}
+-----
+== Záznam registrátora ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v3/registrars/boa001
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrar code="boa001" id="16">
+        <name>Moravská zemská knihovna - stará digitalizace</name>
+        <description>Před rokem 2012.</description>
+        <created>2012-04-11T11:15:37.613+02:00</created>
+        <modified>2013-01-10T09:01:03.690+01:00</modified>
+        <registrationModes>
+            <mode name="BY_RESOLVER" enabled="true" />
+            <mode name="BY_REGISTRAR" enabled="true" />
+            <mode name="BY_RESERVATION" enabled="false" />
+        </registrationModes>
+        <digitalLibraries>
+            <digitalLibrary id="13">
+                <name>Kramerius 4</name>
+                <description>aktuální verze knihovny Kramerius</description>
+                <url>http://kramerius.mzk.cz</url>
+                <created>2012-04-11T11:15:37.638+02:00</created>
+            </digitalLibrary>
+            <digitalLibrary id="14">
+                <name>Kramerius 3</name>
+                <description>předchozí verze knihovny Kramerius</description>
+                <url>http://kramerius3.mzk.cz</url>
+                <created>2012-04-11T11:15:37.660+02:00</created>
+            </digitalLibrary>
+        </digitalLibraries>
+        <catalogs>
+            <catalog id="2">
+                <name>Aleph MZK</name>
+                <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+                <created>2012-04-11T11:15:38.525+02:00</created>
+            </catalog>
+        </catalogs>
+    </registrar>
+</response>
+}}}
+-----
+== Rezervace balíku URN:NBN ==
+=== Request ===
+{{{
+POST http://resolver.nkp.cz/api/v3/registrars/boa001/urnNbnReservations?size=5
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbnReservation>
+        <urnNbn>urn:nbn:cz:boa001-000006</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000007</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000008</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000009</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-00000a</urnNbn>
+    </urnNbnReservation>
+</response>
+}}}
+-----
+== Seznam rezervovaných URN:NBN ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v3/registrars/boa001/urnNbnReservations
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbnReservations>
+        <maxReservationSize>100</maxReservationSize>
+        <defaultReservationSize>10</defaultReservationSize>
+        <reserved totalSize="8">
+            <urnNbn reserved="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:boa001-00000c</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:boa001-00000d</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:boa001-00000e</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:boa001-00000f</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:boa001-00000g</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:boa001-00000h</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:boa001-00000i</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:boa001-00000j</urnNbn>
+        </reserved>
+    </urnNbnReservations>
+</response>
+}}}
+-----
+== Registrace DD - mód BY_RESOLVER ==
+CZIDLO přiřadí volné (nerezervované) URN:NBN.
+=== Request ===
+{{{
+POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
+}}}
+V těle http dotazu se nachází tento obsah:
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    <r:monograph>
+        <r:titleInfo>
+            <r:title>Babička</r:title>
+            <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        </r:titleInfo>
+        <r:ccnb>cnb002251177</r:ccnb>
+        <r:isbn>8090119964</r:isbn>
+        <r:otherId>DOI:TODO</r:otherId>
+        <r:documentType>kniha</r:documentType>
+        <r:digitalBorn>false</r:digitalBorn>
+        <r:primaryOriginator type="AUTHOR">Božena Němcová</r:primaryOriginator>
+        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
+        <r:publication>
+            <r:publisher>Československý spisovatel</r:publisher>
+            <r:place>V Praze</r:place>
+            <r:year>2011</r:year>
+        </r:publication>
+    </r:monograph>
+    <r:digitalDocument>
+        <r:archiverId>3</r:archiverId>
+        <r:registrarScopeIdentifiers>
+            <r:id type="OAI_harvester">1234</r:id>
+            <r:id type="signatura">PK-0123.999</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
+        </r:registrarScopeIdentifiers>
+        <r:financed>norské fondy</r:financed>
+        <r:contractNumber>123</r:contractNumber>
+        <r:technicalMetadata>
+            <r:format version="1.0">jpeg</r:format>
+            <r:extent>245 x jpeg2000;245 x mods-alto;1 x mods</r:extent>
+            <r:resolution>
+                <r:horizontal>1280</r:horizontal>
+                <r:vertical>1024</r:vertical>
+            </r:resolution>
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <r:model>RGB</r:model>
+                <r:depth>24</r:depth>
+            </r:color>
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:boa001-000094</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>boa001</registrarCode>
+        <documentCode>000094</documentCode>
+        <digitalDocumentId>200</digitalDocumentId>
+        <registered>2013-01-18T00:27:06.424+01:00</registered>
+    </urnNbn>
+</response>
+}}}
+-----
+== Registrace DD - mód BY_RESERVATION ==
+URN:NBN bylo dříve rezervováno, nyní je spojeno s digitálním dokumentem a aktivováno.
+=== Request ===
+{{{
+POST http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
+}}}
+V těle http dotazu se nachází tento obsah:
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    <r:monograph>
+        <r:titleInfo>
+            <r:title>Babička</r:title>
+            <r:subTitle>Obrazy z venkovského života</r:subTitle>
+        </r:titleInfo>
+        <r:ccnb>cnb002251177</r:ccnb>
+        <r:isbn>8090119964</r:isbn>
+        <r:otherId>DOI:TODO</r:otherId>
+        <r:documentType>kniha</r:documentType>
+        <r:digitalBorn>false</r:digitalBorn>
+        <r:primaryOriginator type="AUTHOR">Božena Němcová</r:primaryOriginator>
+        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
+        <r:publication>
+            <r:publisher>Československý spisovatel</r:publisher>
+            <r:place>V Praze</r:place>
+            <r:year>2011</r:year>
+        </r:publication>
+    </r:monograph>
+    <r:digitalDocument>
+        <r:archiverId>3</r:archiverId>
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:boa001-00003b</r:value>
+            <r:predecessor value="urn:nbn:cz:boa001-000030" note="spojeno v jeden dokument"/>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="spojeno v jeden dokument"/>
+        </r:urnNbn>
+        <r:registrarScopeIdentifiers>
+            <r:id type="OAI_harvester">3234</r:id>
+            <r:id type="signatura">PK-0123.666</r:id>
+            <r:id type="K4_pid">uuid:38bfc69d-1e10-4822-b7a4-c7531bb4aedg</r:id>
+        </r:registrarScopeIdentifiers>
+        <r:financed>norské fondy</r:financed>
+        <r:contractNumber>123</r:contractNumber>
+        <r:technicalMetadata>
+            <r:format version="1.0">jpeg</r:format>
+            <r:extent>245 x jpeg2000;245 x mods-alto;1 x mods</r:extent>
+            <r:resolution>
+                <r:horizontal>1280</r:horizontal>
+                <r:vertical>1024</r:vertical>
+            </r:resolution>
+            <r:compression ratio="0.3">LZW</r:compression>
+            <r:color>
+                <r:model>RGB</r:model>
+                <r:depth>24</r:depth>
+            </r:color>
+            <r:iccProfile>some ICC profile</r:iccProfile>
+            <r:pictureSize>
+                <r:width>600</r:width>
+                <r:height>1000</r:height>
+            </r:pictureSize>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:boa001-00003b</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>tst02</registrarCode>
+        <documentCode>00000g</documentCode>
+        <digitalDocumentId>105</digitalDocumentId>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <predecessor value="urn:nbn:cz:boa001-000030"/>
+        <predecessor value="urn:nbn:cz:boa001-00003a"/>
+    </urnNbn>
+</response>
+}}}
+-----
+== Registrace DD - mód BY_REGISTRAR ==
+URN:NBN zvoleno registrátorem, nyní 
+je spojeno s digitálním dokumentem a aktivováno.
+=== Request ===
+{{{
+POST http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
+}}}
+Tělo dotazu vypadá stejně, jako u módu BY_RESERVATION
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:boa001-00003b</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>tst02</registrarCode>
+        <documentCode>00000g</documentCode>
+        <digitalDocumentId>105</digitalDocumentId>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <predecessor value="urn:nbn:cz:boa001-000030"/>
+        <predecessor value="urn:nbn:cz:boa001-00003a"/>
+    </urnNbn>
+</response>
+}}}
+-----
+== Módy registrace ==
+Byly zde uvedeny příklady všech tří módů registrace digitálního dokumentu (_BY_RESOLVER_, _BY_RESERVATION_, _BY_REGISTRAR_). 
+Možnost použití jednotlivých módů nastavuje administrátor systému a to pro každého registrátora zvlášť. Standardně bývá povolen pouze mód BY_RESOLVER. Povolené módy je možné zobrazit přes API (operace _záznam registrátora/registrátorů_) anebo přes webové rozhraní, kde administrátor navíc může jednotlivé módy povolit/zakázat.
+-----
+== Předchůdci a následnící ==
+Pokud je potřeba přeregistrovat digitální dokument a přiřadit mu nové urn:nbn, spojit několik digitálních dokumentů v jeden anebo naopak rozdělit digitální dokument v několik nových, je vhodné použít systém následníků a předchůdců. 
+Pokud je digitální dokument v roli předchůdce jednoho nebo více digitálních dokumentů, je předchůdce vždy deaktivován (resp. jeho URN:NBN). Následník je aktivní, pokud není zároveň předchůdcem jiného digitálního dokumentu.
+Vztah _předchůdce-následník_ má kardinalitu M:N, předchůdce tedy může mít jednoho a více následníků a následník může mít jednoho nebo více předchůdců. Definice této vazby je součástí operace _registrace DD_ a je realizována záznamem v metadatech nově registrovaného digitálního dokumentu. U všech příkladů se vyskytuje element urnNbn/value, jedná se tedy o mód _BY_REGISTRAR_ nebo _BY_RESERVATION_.
+=== Spojení dvou digitálních dokumentů v jeden ===
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    ...
+    <r:digitalDocument>
+       ...
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:boa001-00003b</r:value>
+            <r:predecessor value="urn:nbn:cz:boa001-000030" note="spojení dvou DD v jeden"/>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="spojení dvou DD v jeden"/>
+        </r:urnNbn>
+        ...
+    </r:digitalDocument>
+</r:import>
+}}}
+Vzniknou dvě vazby _předchůdce-následník_:
+ * urn:nbn:cz:boa001-000030 -> urn:nbn:cz:boa001-00003b
+ * urn:nbn:cz:boa001-00003a -> urn:nbn:cz:boa001-00003b
+Oba předchůdci (_urn:nbn:cz:boa001-000030_, _urn:nbn:cz:boa001-00003a_) jsou deaktivováni, pokud již deaktivováni nebyli. Deaktivované URN:NBN při rezolvování klientův webový prohlížeč nikdy nepřesměruje do digitální knihovny, ale vždy zobrazí záznam v CZIDLO, jehož součástí jsou URN:NBN následníků.
+=== Nahrazení digitálního dokumentu (např. změna v metadatech) ===
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    ...
+    <r:digitalDocument>
+       ...
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:boa001-00003b</r:value>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="zásadní chyby v metadatech"/>
+        </r:urnNbn>
+        ...
+    </r:digitalDocument>
+</r:import>
+}}}
+Vznikne jedna vazba _předchůdce-následník_, konkrétně urn:nbn:cz:boa001-000030 -> urn:nbn:cz:boa001-00003b, digitální dokument _urn:nbn:cz:boa001-000030_ je deaktivován.
+=== Rozdělení digitálního dokumentu ve dva ===
+První DD:
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    ...
+    <r:digitalDocument>
+       ...
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:boa001-00003b</r:value>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="rozdělení DD na dva"/>
+        </r:urnNbn>
+        ...
+    </r:digitalDocument>
+</r:import>
+}}}
+Druhý DD:
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    ...
+    <r:digitalDocument>
+       ...
+        <r:urnNbn>
+            <r:value>urn:nbn:cz:boa001-00003c</r:value>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="rozdělení DD na dva"/>
+        </r:urnNbn>
+        ...
+    </r:digitalDocument>
+</r:import>
+}}}
 
-= Details =
+Vzniknou dvě vazby _předchůdce-následník_:
+ * urn:nbn:cz:boa001-00003a -> urn:nbn:cz:boa001-00003b
+ * urn:nbn:cz:boa001-00003a -> urn:nbn:cz:boa001-00003c
+Digitální dokument _urn:nbn:cz:boa001-00003a_ je deaktivován.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+=== Módy registrace ===
+Předchůdce je možné definovat při kterémkoliv módu registrace. V předchozích příkladech byl zřejmě použit mód registrace _BY_REGISTRAR_ nebo _BY_RESERVATION_, protože byl vyplněn element urnNbn/value. Pro mód _BY_RESOLVER_ je možné vynechat celý element urnNbn, pokud je ale potřeba definovat předchůdce, je nutné urnNbn vyplnit, pouze s chybějícím elementem value, tedy např. takto:
+{{{
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    ...
+    <r:digitalDocument>
+       ...
+        <r:urnNbn>
+            <r:predecessor value="urn:nbn:cz:boa001-00003a" note="rozdělení DD na dva"/>
+        </r:urnNbn>
+        ...
+    </r:digitalDocument>
+</r:import>
+}}}
+Vazba _předchůdce-následník_ se vytvoří mezi _urn:nbn:cz:boa001-00003a_ a právě registrovaným DD, jehož URN:NBN je vráceno v odpovědi této operace. Digitální dokument _urn:nbn:cz:boa001-00003a_ je deaktivován.
+-----
+== Počet digitálních dokumentů daného registrátora ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
+}}}
+=== Response ===
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalDocuments count="62" />
+</response>
+}}}
+-----
+== Záznam digitálního dokumentu na základě registrar-scope identifikátoru ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments/id/K4_pid/uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk
+}}}
+=== Response ===
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalDocument id="11">
+        <urnNbn>
+            <value>urn:nbn:cz:boa001-000005</value>
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:21:57.250+02:00</created>
+        <intelectualEntity type="ANALYTICAL">
+            <created>2012-04-18T23:21:56.938+02:00</created>
+            <modified>2012-04-23T18:51:58.796+02:00</modified>
+            <titleInfo>
+                <title>O slavných hudebnících</title>
+                <subTitle>Mozart v ústním podání; Mozart, W. A.</subTitle>
+            </titleInfo>
+            <otherId>EAN:9770862592005</otherId>
+            <documentType>novinový článek</documentType>
+            <otherOriginator>Jan Ilustrator</otherOriginator>
+            <sourceDocument>
+                <titleInfo>
+                    <title>Lidové noviny</title>
+                    <volumeTitle>ročník 1949</volumeTitle>
+                    <issueTitle>číslo 123</issueTitle>
+                </titleInfo>
+                <otherId>ISBN2:0862-5921</otherId>
+                <publication>
+                    <publisher>Pavel Váša a František Šelepa</publisher>
+                    <place>Brno</place>
+                    <year>1941</year>
+                </publication>
+            </sourceDocument>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <extent>1 x jpeg2000</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1238</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
+        </registrarScopeIdentifiers>
+        <registrar code="boa001" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="3">
+            <name>MK3</name>
+            <description>Mala knihovna 3</description>
+            <created>2012-04-18T23:19:15.842+02:00</created>
+        </archiver>
+        <digitalInstances count="2">
+            <digitalInstance id="33" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:44:34.603+02:00</created>
+                <deactivated>2012-09-19T00:37:10.920+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="35" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-19T00:39:41.117+02:00</created>
+            </digitalInstance>
+        </digitalInstances>
+    </digitalDocument>
+</response>
+}}}
+-----
+== Vložení/aktualizace registrar-scope identifikátoru ==
+=== Request ===
+{{{
+PUT http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/identifiers/TEST2
+}}}
+Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
+1234
+=== Response ===
+==== Pokud digitální dokument identifikátor tohoto typu zatím neměl ====
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="TEST2">1234</id>
+</response>
+}}}
+==== Pokud identifikátor existoval, je jeho hodnota změněna ====
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="TEST2" previousValue="12345">1234</id>
+</response>
+}}}
+-----
+== Vložení digitální instance ==
+=== Request ===
+{{{
+POST http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000001/digitalInstances
+}}}
+Tělo dotazu pak obsahuje:
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<digitalInstance xmlns="http://resolver.nkp.cz/v3/">
+    <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+    <digitalLibraryId>4</digitalLibraryId>
+    <format>jpg;pdf</format>
+    <accessibility>volně přístupné</accessibility>
+</digitalInstance>
+}}}
+=== Response ===
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <digitalInstance id="52" active="true">
+        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <digitalLibraryId>4</digitalLibraryId>
+        <created>2013-01-17T02:09:50.349+01:00</created>
+    </digitalInstance>
+</response>
+}}}
+-----
+== Seznam digitálních instancí digitálního dokumentu ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v2/resolver/urn:nbn:cz:boa001-000001/digitalInstances
+}}}
+=== Response ===
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<digitalInstances xmlns="http://resolver.nkp.cz/v2/">
+    <digitalInstance active="true">
+        <id type="INTERNAL">1</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+        <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
+        <format>djvu</format>
+        <accessibility>veřejně přístupné</accessibility>
+    </digitalInstance>
+    <digitalInstance active="true">
+        <id type="INTERNAL">2</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+      <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+    </digitalInstance>
+    <digitalInstance active="true">
+        <id type="INTERNAL">3</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+        <url>http://kramerius.nkp.cz/search/handle/uuid:123</url>
+    </digitalInstance>
+    <digitalInstance active="true">
+        <id type="INTERNAL">5</id>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+        <url>http://kramerius.mzk.cz/search/handle/uuid:440a7579-9cb3-11e0-8637-0050569d679d</url>
+    </digitalInstance>
+</digitalInstances>
+}}}
+-----
+== Zobrazení záznamu a stavu URN:NBN ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v2/urnnbn/urn:nbn:cz:boa001-000056
+}}}
+=== Response ===
+==== Pokud je urn:nbn používané ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+    <status>ACTIVE</status>
+    <created>2012-02-08T06:34:03.272+01:00</created>
+    <registrarCode>boa001</registrarCode>
+    <value>urn:nbn:cz:boa001-000056</value>
+    <digitalDocumentId>1</digitalDocumentId>
+</urnNbn>
+}}}
+==== Pokud je URN:NBN rezervované ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+    <status>RESERVED</status>
+    <created>2012-02-08T07:11:28.211+01:00</created>
+    <registrarCode>boa001</registrarCode>
+    <value>urn:nbn:cz:boa001-000056</value>
+</urnNbn>
+}}}
+==== A pokud je zatím volné ====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<urnNbn xmlns="http://resolver.nkp.cz/v2/">
+    <status>FREE</status>
+    <registrarCode>boa001</registrarCode>
+    <value>urn:nbn:cz:boa001-000056</value>
+</urnNbn>
+}}}
+-----
+== Celkový počet digitálních instancí ==
+=== Request ====
+{{{
+GET http://resolver.nkp.cz/api/v2/digitalInstances
+}}}
+=== Response ===
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<r:digitalInstances xmlns:r="http://resolver.nkp.cz/v2/">
+    <r:totalCount>4</r:totalCount>
+</r:digitalInstances>
+}}}
+-----
+== Záznam digitální instance ==
+=== Request ===
+{{{
+GET http://resolver.nkp.cz/api/v2/digitalInstances/id/1
+}}}
+=== Response ===
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<digitalInstance xmlns="http://resolver.nkp.cz/v2/" active="true">
+    <id type="INTERNAL">1</id>
+    <created>2012-02-08T06:34:03.434+01:00</created>
+    <modified>2012-02-08T06:34:03.434+01:00</modified>
+    <url>http://kramerius.mzk.cz/search/handle/uuid:123</url>
+    <format>djvu</format>
+    <accessibility>veřejně přístupné</accessibility>
+    <digitalLibrary>
+        <name>K4</name>
+        <description>Kramerius4</description>
+        <registrar code="boa001">
+            <created>2012-02-08T06:34:03.434+01:00</created>
+            <modified>2012-02-08T06:34:03.434+01:00</modified>
+            <name>MZK</name>
+            <description>Moravská zemská knihovna</description>
+        </registrar>
+    </digitalLibrary>
+    <digitalDocument>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <modified>2012-02-08T06:34:03.434+01:00</modified>
+        <urnNbn>urn:nbn:cz:boa001-000001</urnNbn>
+        <registrarScopeIdentifiers>
+            <id type="K4_pid">uuid:123</id>
+            <id type="signatura">3-1275.138</id>
+            <id type="TEST2">1234g</id>
+        </registrarScopeIdentifiers>
+        <colorDepth>24b</colorDepth>
+        <created>2012-02-08T06:34:03.230+01:00</created>
+        <extent>223 stran</extent>
+        <financed>norské fondy</financed>
+        <modified>2012-02-08T06:34:03.230+01:00</modified>
+        <resolution>1280x1024</resolution>
+        <contractNumber>123</contractNumber>
+    </digitalDocument>
+</digitalInstance>
+}}}
