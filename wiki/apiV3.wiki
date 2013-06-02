@@ -133,7 +133,7 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001/urnNbnReservations
 CZIDLO přiřadí volné (nerezervované) URN:NBN.
 === Request ===
 {{{
-POST http://resolver.nkp.cz/api/v2/registrars/boa001/digitalDocuments
+POST http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
 }}}
 V těle http dotazu se nachází tento obsah:
 {{{
