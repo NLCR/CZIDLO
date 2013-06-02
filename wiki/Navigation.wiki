@@ -7,8 +7,8 @@
 * [AccessRights Role a práva]
 
 * [API Aplikační rozhraní]
- * [apiV2 API v2]
- * [apiV3 API v3]
+ * [apiV2 API V2 - příklady operací]
+ * [apiV3 API V3 - příklady operací]
 
 * [OaiPmhDataProvider OAI-PMH data provider]
 
