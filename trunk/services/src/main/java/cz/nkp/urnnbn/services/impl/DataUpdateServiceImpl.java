@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.services.impl;
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -35,6 +36,8 @@ import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -153,4 +156,17 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             throw new UnknownUserException(user.getId());
         }
     }
+
+    @Override
+    public void updateContent(Content content) {
+        try {
+            factory.contentDao().updateContent(content);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    
 }

@@ -29,7 +29,9 @@ public class UpdateArchiver implements StatementWrapper {
         return "UPDATE " + ArchiverDAO.TABLE_NAME + " SET "
                 + ArchiverDAO.ATTR_UPDATED + "=?,"
                 + ArchiverDAO.ATTR_NAME + "=?,"
-                + ArchiverDAO.ATTR_DESCRIPTION + "=?"
+                + ArchiverDAO.ATTR_DESCRIPTION + "=?,"
+                + ArchiverDAO.ATTR_ORDER + "=?,"
+                + ArchiverDAO.ATTR_HIDDEN + "=?"
                 + " WHERE " + ArchiverDAO.ATTR_ID + "=?";
     }
 
@@ -39,7 +41,9 @@ public class UpdateArchiver implements StatementWrapper {
             st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setString(2, archiver.getName());
             st.setString(3, archiver.getDescription());
-            st.setLong(4, archiver.getId());
+            st.setLong(4, archiver.getOrder());
+            st.setBoolean(5, archiver.isHidden());
+            st.setLong(6, archiver.getId());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

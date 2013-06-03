@@ -30,6 +30,8 @@ public class ArchiverRT implements ResultsetTransformer {
         archiver.setModified(DateTimeUtils.timestampToDatetime(updated));
         archiver.setName(resultSet.getString(ArchiverDAO.ATTR_NAME));
         archiver.setDescription(resultSet.getString(ArchiverDAO.ATTR_DESCRIPTION));
+        archiver.setOrder(resultSet.getLong(ArchiverDAO.ATTR_ORDER));
+        archiver.setHidden(resultSet.getBoolean(ArchiverDAO.ATTR_HIDDEN));
         return archiver;
     }
 }

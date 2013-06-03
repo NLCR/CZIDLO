@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -131,5 +132,6 @@ public interface DataAccessService extends BusinessService {
 
     public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
     
-    public String getContentByNameAndLanguage(String name, String language);
+    public Content getContentByNameAndLanguage(String name, String language);
+    
 }

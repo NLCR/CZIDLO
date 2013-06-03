@@ -469,10 +469,10 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public String getContentByNameAndLanguage(String name, String language) {
+    public Content getContentByNameAndLanguage(String name, String language) {
         try {
             Content content = factory.contentDao().getContentByNameAndLanguage(name, language);
-            return content.getContent();
+            return content;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
