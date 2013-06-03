@@ -31,7 +31,7 @@ public class ArchiverForm extends Form {
 				true));
 		result.addField("description",
 				new TextInputValueField(new LimitedLengthValidator(100), constants.description(), originalArchiver.getDescription(), false));
-		result.addField("priority", new TextInputValueField(new PositiveIntegerValidator(), constants.priority(), 1, false));
+		result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), 1, false));
 		result.addField("hidden", new BooleanValueField(constants.hidden(), false));
 		return result;
 	}

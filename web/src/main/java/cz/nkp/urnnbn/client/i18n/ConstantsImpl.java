@@ -373,7 +373,7 @@ public interface ConstantsImpl extends Constants {
 
 	String logsTabDownloadLogFile();
 	
-	String priority();
+	String order();
 	
 	String hidden();
 

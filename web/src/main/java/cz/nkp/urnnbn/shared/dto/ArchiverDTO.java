@@ -14,6 +14,9 @@ public class ArchiverDTO implements Serializable {
 	private String name;
 	private String description;
 
+	private Long order;
+	private boolean hidden;
+	
 	public Long getId() {
 		return id;
 	}
@@ -68,6 +71,22 @@ public class ArchiverDTO implements Serializable {
 
 	public void setModifiedMillis(Long modifiedMillis) {
 		this.modifiedMillis = modifiedMillis;
+	}
+
+	public Long getOrder() {
+		return order;
+	}
+
+	public void setOrder(Long order) {
+		this.order = order;
+	}
+
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@Override

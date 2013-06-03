@@ -51,7 +51,7 @@ public class RegistrarForm extends Form {
 		result.addField("modeByRegistrar",
 				new BooleanValueField(constants.modeByRegistrar(), originalRegistrar.isRegModeByRegistrarAllowed()));
 		// priority and visibility
-		result.addField("priority", new TextInputValueField(new PositiveIntegerValidator(), constants.priority(), 1, false));
+		result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), 1, false));
 		result.addField("hidden", new BooleanValueField(constants.hidden(), false));
 		return result;
 	}

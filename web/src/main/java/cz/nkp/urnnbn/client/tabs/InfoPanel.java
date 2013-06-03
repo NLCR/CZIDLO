@@ -11,9 +11,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.services.StaticContentService;
 import cz.nkp.urnnbn.client.services.StaticContentServiceAsync;
+import cz.nkp.urnnbn.shared.dto.ContentDTO;
 
 public class InfoPanel extends SingleTabContentPanel {
 
+	private ContentDTO content = null;
+	
 	private HTML contentView = null;
 	private TextArea contentEdit = null;
 	private Button saveButton = null;
@@ -21,19 +24,18 @@ public class InfoPanel extends SingleTabContentPanel {
 	private String language = "cz";
 	private String name = "info";
 	
-	private final StaticContentServiceAsync staticContentService = GWT
-			.create(StaticContentService.class);
+	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
 
 	public InfoPanel(TabsPanel tabsPanel) {
 		super(tabsPanel);
-		// reload("");
 	}
 
 	@Override
 	protected void onLoad() {
+		System.err.println("loading");
 		super.onLoad();
 		VerticalPanel contentPanel = new VerticalPanel();
-		contentView = new HTML("content");
+		contentView = new HTML("loading...");
 		contentPanel.add(contentView);
 		contentEdit = new TextArea();
 		contentEdit.setVisible(false);
@@ -66,28 +68,28 @@ public class InfoPanel extends SingleTabContentPanel {
 		}
 		add(contentPanel);
 		loadContent();
+		System.err.println("done");
 	}
 	
 	public void loadContent() {
 		staticContentService.getContentByNameAndLanguage(language, name, new
-				 AsyncCallback<String>() {
+				 AsyncCallback<ContentDTO>() {
 
 					public void onFailure(Throwable error) {
-						saveButton.setEnabled(true);
-						error.printStackTrace();
+						saveButton.setEnabled(false);
 					}
 
-					public void onSuccess(String text) {
+					public void onSuccess(ContentDTO result) {
+						content = result;
 						saveButton.setEnabled(true);
-						System.out.println("done");
-						contentView.setText("finished");		
+						contentView.setText(content.getContent());		
 					}
 		});
 	}
 	
 	public void saveContent() {
-		String content = contentEdit.getText();
-		staticContentService.setContentByNameAndLanguage(language, name, content, new AsyncCallback<Void>() {
+		content.setContent(contentEdit.getText());
+		staticContentService.update(content, new AsyncCallback<Void>() {
 			
 			public void onFailure(Throwable error) {
 				saveButton.setEnabled(true);
@@ -96,8 +98,7 @@ public class InfoPanel extends SingleTabContentPanel {
 
 			public void onSuccess(Void result) {
 				saveButton.setEnabled(true);
-				System.out.println("done");
-				contentView.setText("finished");		
+				contentView.setText(content.getContent());	
 			}
 		});
 	}
