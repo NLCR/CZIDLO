@@ -33,7 +33,9 @@ public class InsertArchiver implements StatementWrapper {
                 + "," + ArchiverDAO.ATTR_UPDATED
                 + "," + ArchiverDAO.ATTR_NAME
                 + "," + ArchiverDAO.ATTR_DESCRIPTION
-                + ") values(?,?,?,?,?)";
+                + "," + ArchiverDAO.ATTR_ORDER
+                + "," + ArchiverDAO.ATTR_HIDDEN
+                + ") values(?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -45,6 +47,8 @@ public class InsertArchiver implements StatementWrapper {
             st.setTimestamp(3, now);
             st.setString(4, archiver.getName());
             st.setString(5, archiver.getDescription());
+            st.setLong(6, archiver.getOrder());
+            st.setBoolean(7, archiver.isHidden());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
+import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -64,4 +65,6 @@ public interface DataUpdateService extends BusinessService {
 
     public void updateUser(User user, String login) throws
             UnknownUserException, NotAdminException;
+    
+    public void updateContent(Content content);
 }

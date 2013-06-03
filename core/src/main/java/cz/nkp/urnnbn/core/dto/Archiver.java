@@ -17,6 +17,8 @@ public class Archiver implements IdentifiableWithDatestamps {
     private DateTime modified;
     private String name;
     private String description;
+    private Long order = 0L;
+    private boolean hidden = false;
 
     public Archiver() {
     }
@@ -69,6 +71,22 @@ public class Archiver implements IdentifiableWithDatestamps {
 
     public void setModified(DateTime modified) {
         this.modified = modified;
+    }
+
+    public Long getOrder() {
+        return order;
+    }
+
+    public void setOrder(Long order) {
+        this.order = order;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override
