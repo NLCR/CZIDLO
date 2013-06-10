@@ -1,5 +1,7 @@
 #summary OAI Adapter is tool for registrars to keep their digital instances up-to-date.
 
+<wiki:toc max_depth="5" />
+
 = OAI Adapter =
 OAI Adapter je nástroj pro ulehčení vkládání a aktualizací digitálních instancí. Je určený pro ty digitální knihovny, které disponují OAI-PMH rozhraním. Skládá se z těchto komponent:
  * OAI Harvester - sklízí záznamy z OAI-PMH rozhraní digitální knihovny
