@@ -26,20 +26,26 @@ OAI Adapter tedy primárně zajišťuje aktuálnost DI. To je potřeba napříkl
 
 OAI Adapter prochází všechny záznamy a aktualizuje jen ty, které se změnily.
 
+== Digram průběhu pro jeden záznam ==
+_Diagram obsahuje starší terminologii - *import (digitálního dokumentu)* zde znamená *registraci digitálního dokumentu*_.
+https://dl.dropboxusercontent.com/u/7787647/resolver-wiki-images/oaiAdapter_single_record.jpg
+
 = Konfigurace =
 Konfigurace pro průběh OAI Adapteru se skládá z:
  * konfigurace OAI: url, metadatový prefix, případně _OAI-PMH set_
  * údaje pro CZIDLO API: url, login, heslo, kód registrátora
  * určení XSL transformací _záznam z OAI -> vstup registrace DD_ a _záznam z OAI -> vstup import DI_
 
-= Šablony =
-TODO
+= Transformace =
+Transformace realizované technologií XSLT jsou použity k výroby xml záznamu v původním formátu do záznamů pro operace _registrace DD_ a _import DI_. Jsou tedy potřeba dvě transformace. 
+== Příklady ==
+
 
 = Spuštění =
 OAI Adapter je možné spouštět dvěma způsoby:
 
 == na serveru (přes webové rozhraní) ==
-OAI Adapter je jedním z procesů, které je možné poustět na serveru. Spuštění probíhá přes webové rozhraní. Dialog pro spouštění procesu vyžaduje zadání parametrů, jako je url OAI-PMH provideru atd. Dále je zde nutné vybrat dvě XSL transformace. Webové rozhraní CZIDLO obsahuje jednoduchou správu XSL transformací. Takže je potřeba požadovanou transformaci nejprve na server nahrát a před spuštěním OAI Adapteru zvolit šablonu z dříve nahraných.
+OAI Adapter je jedním z procesů, které je možné poustět na serveru. Spuštění probíhá přes webové rozhraní. Dialog pro spouštění procesu vyžaduje zadání parametrů, jako je url OAI-PMH provideru atd. Dále je zde nutné vybrat dvě XSL transformace. Webové rozhraní CZIDLO obsahuje jednoduchou správu XSL transformací. Takže je potřeba požadovanou transformaci nejprve na server nahrát a před spuštěním OAI Adapteru zvolit transformaci z dříve nahraných.
 
 == lokálně ==
 OAI Adapter je dostupný ve formě jar balíku, viz. sekce Download. Pro jeho spuštění je potřeba Java ve verzi alespoň 1.6. Jediným vstupním parametrem je soubor obsahující konfiguraci. 
