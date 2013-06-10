@@ -37,12 +37,12 @@ Konfigurace pro průběh OAI Adapteru se skládá z:
  * určení XSL transformací _záznam z OAI -> vstup registrace DD_ a _záznam z OAI -> vstup import DI_
 
 = Transformace =
-Transformace realizované technologií XSLT jsou použity k výroby xml záznamu v původním formátu do záznamů pro operace _registrace DD_ a _import DI_. Jsou tedy potřeba dvě transformace. 
+Transformace realizované technologií XSLT jsou použity k výroby xml záznamu v původním formátu do záznamů pro operace registrace DD a import DI. Jsou tedy potřeba dvě transformace. 
 == Příklady ==
 === Časopis Duha Moravské zemské knihovny ===
- * [http://duha.mzk.cz/oai?verb=ListRecords&metadataPrefix=oai_dc Původní záznamy poskytnuté OAI Providerem webu Duha]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl Transformace do vstupu operace _Registrace DD_]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl Transformace do vstupu operace _Import DI_]
+ * [http://duha.mzk.cz/oai?verb=ListRecords&metadataPrefix=oai_dc Původní záznamy poskytnuté OAI Providerem webu Duha ve formátu oai_dc]
+ * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl Transformace do vstupu operace Registrace DD]
+ * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl Transformace do vstupu operace Import DI]
 
 
 
