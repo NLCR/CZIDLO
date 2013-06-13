@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -33,6 +34,8 @@ public interface InstitutionsService extends RemoteService {
 	void updateRegistrar(RegistrarDTO registrar) throws ServerException;
 
 	void updateArchiver(ArchiverDTO registrar) throws ServerException;
+	
+	void updateArchivers(List<ArchiverDTO> archivers) throws ServerException;
 
 	void updateDigitalLibrary(DigitalLibraryDTO dto) throws ServerException;
 

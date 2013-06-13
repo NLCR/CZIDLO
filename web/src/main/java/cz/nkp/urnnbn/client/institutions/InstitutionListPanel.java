@@ -3,22 +3,25 @@ package cz.nkp.urnnbn.client.institutions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import gwtquery.plugins.draggable.client.gwt.DraggableWidget;
-
+import cz.nkp.urnnbn.client.dnd.FlexTableRowDragController;
+import cz.nkp.urnnbn.client.dnd.FlexTableRowDropController;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InstitutionsPanelCss;
@@ -29,6 +32,7 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class InstitutionListPanel extends VerticalPanel {
+	
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
@@ -37,6 +41,25 @@ public class InstitutionListPanel extends VerticalPanel {
 	private final UserDTO user;
 	private ArrayList<RegistrarDTO> registrars = new ArrayList<RegistrarDTO>(0);
 	private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>(0);
+	
+	private static class CustomHTML<T> extends HTML {
+		
+		private T object;
+		
+		public CustomHTML(String html, T object) {
+			super(html);
+			this.object = object;
+		}
+
+		public T getObject() {
+			return object;
+		}
+
+		public void setObject(T object) {
+			this.object = object;
+		}
+		
+	}
 
 	public InstitutionListPanel(InstitutionsAdminstrationPanel superPanel, UserDTO user) {
 		this.superPanel = superPanel;
@@ -62,6 +85,7 @@ public class InstitutionListPanel extends VerticalPanel {
 		});
 	}
 
+	
 	private ArrayList<RegistrarDTO> sortByLastModificationDateDownwards(ArrayList<RegistrarDTO> result) {
 		Collections.sort(result, new Comparator<RegistrarDTO>() {
 
@@ -203,23 +227,59 @@ public class InstitutionListPanel extends VerticalPanel {
 		return label;
 	}
 
-	private Grid archiversGrid() {
-		Grid result = new Grid(archivers.size(), archiverGridColumns());
-		for (int i = 0; i < archivers.size(); i++) {
-			ArchiverDTO archiver = archivers.get(i);
-			Label name = new Label(archiver.getName() + "test");
-			DraggableWidget<Label> draggableName = new DraggableWidget<Label>(name);
-			draggableName.setDraggingCursor(Cursor.MOVE);
-			draggableName.setDraggingOpacity((float)0.8);
-			result.setWidget(i, 0, draggableName);
-			Button detailsButton = archiverDetailsButton(archiver);
-			result.setWidget(i, 1, detailsButton);
+	private AbsolutePanel archiversGrid() {
+		AbsolutePanel panel = new AbsolutePanel();
+		FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(panel);
+		final FlexTable table = new FlexTable();
+		for (int row = 0; row < archivers.size(); row++) {
+			ArchiverDTO archiver = archivers.get(row);
+			CustomHTML<ArchiverDTO> handle = new CustomHTML<ArchiverDTO>(archiver.getName(), archiver);
+			table.setWidget(row, 0, handle);
 			if (user.isSuperAdmin()) {
-				result.setWidget(i, 2, archiverEditButton(archiver));
-				result.setWidget(i, 3, archiverDeleteButton(archiver));
+				tableRowDragController.makeDraggable(handle);
+			}
+			Button detailsButton = archiverDetailsButton(archiver);
+			table.setWidget(row, 1, detailsButton);
+			if (user.isSuperAdmin()) {
+				table.setWidget(row, 2, archiverEditButton(archiver));
+				table.setWidget(row, 3, archiverDeleteButton(archiver));
 			}
 		}
-		return result;
+		panel.add(table);
+		if (user.isSuperAdmin()) {
+			final Button saveButton = new Button("save");
+			saveButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent arg0) {
+					List<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
+					for (int row = 0; row < table.getRowCount(); row++) {
+						CustomHTML<ArchiverDTO> widget = (CustomHTML<ArchiverDTO>) table
+								.getWidget(row, 0);
+						ArchiverDTO archiver = widget.getObject();
+						archiver.setOrder(Long.valueOf(row));
+						archivers.add(archiver);
+					}
+					saveButton.setText("saving");
+					institutionsService.updateArchivers(archivers,
+							new AsyncCallback<Void>() {
+
+								public void onFailure(Throwable caught) {
+									saveButton.setText("save");
+									Window.alert(constants.serverError() + ": "
+											+ caught.getMessage());
+								}
+
+								public void onSuccess(Void arg0) {
+									saveButton.setText("save");
+								}
+
+							});
+				}
+			});
+			panel.add(saveButton);
+			FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(table);
+			tableRowDragController.registerDropController(flexTableRowDropController);
+		}
+		return panel;
 	}
 
 	private Button archiverEditButton(final ArchiverDTO archiver) {

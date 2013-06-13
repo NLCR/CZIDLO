@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -30,6 +31,8 @@ public interface InstitutionsServiceAsync {
 	void updateRegistrar(RegistrarDTO registrar, AsyncCallback<Void> callback);
 
 	void updateArchiver(ArchiverDTO archiver, AsyncCallback<Void> callback);
+	
+	void updateArchivers(List<ArchiverDTO> archivers, AsyncCallback<Void> callback);
 
 	void updateDigitalLibrary(DigitalLibraryDTO dto, AsyncCallback<Void> asyncCallback);
 

@@ -13,6 +13,7 @@
 
 	<!-- Other module inherits -->
 	<inherits name='gwtquery.plugins.droppable.Droppable'/>
+	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
 
 	<!-- Specify the app entry point class. -->
 	<!-- <entry-point class='cz.nkp.urnnbn.client.Resolver'/> -->

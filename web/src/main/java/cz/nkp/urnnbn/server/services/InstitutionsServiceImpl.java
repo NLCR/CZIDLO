@@ -171,6 +171,19 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 			throw new ServerException(e.getMessage());
 		}
 	}
+	
+	public void updateArchivers(List<ArchiverDTO> archivers) throws ServerException {
+		try {
+			for (ArchiverDTO archiver : archivers) {
+				Archiver transformed = new DtoToArchiverTransformer(archiver)
+						.transform();
+				updateService.updateArchiver(transformed, getUserLogin());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void updateDigitalLibrary(DigitalLibraryDTO dto) throws ServerException {
