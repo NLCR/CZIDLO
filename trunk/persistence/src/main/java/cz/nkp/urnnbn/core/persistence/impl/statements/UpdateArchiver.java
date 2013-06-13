@@ -41,7 +41,11 @@ public class UpdateArchiver implements StatementWrapper {
             st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setString(2, archiver.getName());
             st.setString(3, archiver.getDescription());
-            st.setLong(4, archiver.getOrder());
+            if (archiver.getOrder() == null) {
+                st.setLong(4, Long.MAX_VALUE);
+            } else {
+                st.setLong(4, archiver.getOrder());
+            }
             st.setBoolean(5, archiver.isHidden());
             st.setLong(6, archiver.getId());
         } catch (SQLException e) {

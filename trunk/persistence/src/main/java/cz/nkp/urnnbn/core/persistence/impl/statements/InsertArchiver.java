@@ -47,7 +47,11 @@ public class InsertArchiver implements StatementWrapper {
             st.setTimestamp(3, now);
             st.setString(4, archiver.getName());
             st.setString(5, archiver.getDescription());
-            st.setLong(6, archiver.getOrder());
+            if (archiver.getOrder() == null) {
+                st.setLong(6, Long.MAX_VALUE);
+            } else {
+                st.setLong(6, archiver.getOrder());
+            }
             st.setBoolean(7, archiver.isHidden());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
