@@ -75,7 +75,11 @@ public class InstitutionListPanel extends VerticalPanel {
 	void loadRegistrars() {
 		institutionsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 			public void onSuccess(ArrayList<RegistrarDTO> result) {
-				registrars = sortByLastModificationDateDownwards(result);
+				result = sortByOrder(result);
+				if (!user.isSuperAdmin()) {
+					result = removeHidden(result);
+				}
+				registrars = result;
 				reload();
 			}
 
@@ -85,25 +89,36 @@ public class InstitutionListPanel extends VerticalPanel {
 		});
 	}
 
+	private <T extends ArchiverDTO> ArrayList<T> removeHidden(ArrayList<T> list) {
+		ArrayList<T> result = new ArrayList<T>();
+		for (T item : list) {
+			if (!item.isHidden()) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
 	
-	private ArrayList<RegistrarDTO> sortByLastModificationDateDownwards(ArrayList<RegistrarDTO> result) {
-		Collections.sort(result, new Comparator<RegistrarDTO>() {
-
-			@Override
-			public int compare(RegistrarDTO o1, RegistrarDTO o2) {
-				Long first = o1.getModifiedMillis() != null ? o1.getModifiedMillis() : o1.getCreatedMillis();
-				Long second = o2.getModifiedMillis() != null ? o2.getModifiedMillis() : o2.getCreatedMillis();
-				return first.compareTo(second) * (-1);
+	private <T extends ArchiverDTO> ArrayList<T> sortByOrder(ArrayList<T> result) {
+		Collections.sort(result, new Comparator<ArchiverDTO>() {
+			public int compare(ArchiverDTO o1, ArchiverDTO o2) {
+				Long first = o1.getOrder()!= null ? o1.getOrder() : 0;
+				Long second = o2.getOrder()!= null ? o2.getOrder() : 0;
+				return first.compareTo(second);
 			}
 		});
 		return result;
 	}
-
+	
 	void loadArchivers() {
 		institutionsService.getAllArchivers(new AsyncCallback<ArrayList<ArchiverDTO>>() {
 
 			@Override
 			public void onSuccess(ArrayList<ArchiverDTO> result) {
+				result = sortByOrder(result);
+				if (!user.isSuperAdmin()) {
+					result = removeHidden(result);
+				}
 				archivers = result;
 				reload();
 			}
@@ -148,22 +163,6 @@ public class InstitutionListPanel extends VerticalPanel {
 		Label label = new Label(constants.registrarList());
 		label.addStyleName(css.listHeading());
 		return label;
-	}
-
-	private Grid registrarsGrid() {
-		Grid result = new Grid(registrars.size(), registrarGridColumns());
-		for (int i = 0; i < registrars.size(); i++) {
-			RegistrarDTO registrar = registrars.get(i);
-			Label name = new Label(registrar.getName());
-			result.setWidget(i, 0, name);
-			Button detailsButton = registrarDetailsButton(registrar);
-			result.setWidget(i, 1, detailsButton);
-			if (user.isSuperAdmin()) {
-				Button deleteButton = registrarDeleteButton(registrar);
-				result.setWidget(i, 2, deleteButton);
-			}
-		}
-		return result;
 	}
 
 	private Button registrarDeleteButton(final RegistrarDTO registrar) {
@@ -226,23 +225,83 @@ public class InstitutionListPanel extends VerticalPanel {
 		label.addStyleName(css.listHeading());
 		return label;
 	}
+	
+	private interface GridHelper<T extends ArchiverDTO> {
+		
+		public Button createDetailsButton(T item);
+		public Button createEditButton(T item);
+		public Button createDeleteButton(T item);
+		public void update(List<T> items, AsyncCallback<Void> callBack);
+	}
+	
+	private class ArchiversGridHelper implements GridHelper<ArchiverDTO> {
+		
+		public Button createDetailsButton(ArchiverDTO item) {
+			return archiverDetailsButton(item);
+		}
+		
+		public Button createEditButton(ArchiverDTO item) {
+			return archiverEditButton(item);
+		}
+		
+		public Button createDeleteButton(ArchiverDTO item) {
+			return archiverDeleteButton(item);
+		}
+		
+		public void update(List<ArchiverDTO> items, AsyncCallback<Void> callBack) {
+			institutionsService.updateArchivers(items, callBack);
+		}
+	}
+	
+	private class RegistrarsGridHelper implements GridHelper<RegistrarDTO> {
 
-	private AbsolutePanel archiversGrid() {
-		AbsolutePanel panel = new AbsolutePanel();
-		FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(panel);
+		public Button createDetailsButton(RegistrarDTO item) {
+			return registrarDetailsButton(item);
+		}
+
+		public Button createEditButton(RegistrarDTO item) {
+			return null;
+		}
+
+		public Button createDeleteButton(RegistrarDTO item) {
+			return registrarDeleteButton(item);
+		}
+
+		public void update(List<RegistrarDTO> items,
+				AsyncCallback<Void> callBack) {
+			institutionsService.updateRegistrars(items, callBack);
+		}
+		
+	}
+	
+	private <T extends ArchiverDTO> AbsolutePanel getGrid(List<T> list,
+			final GridHelper<T> gridHelper) {
+		final AbsolutePanel panel = new AbsolutePanel();
+		final FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(
+				panel);
 		final FlexTable table = new FlexTable();
-		for (int row = 0; row < archivers.size(); row++) {
-			ArchiverDTO archiver = archivers.get(row);
-			CustomHTML<ArchiverDTO> handle = new CustomHTML<ArchiverDTO>(archiver.getName(), archiver);
+		for (int row = 0; row < list.size(); row++) {
+			T archiver = list.get(row);
+			CustomHTML<T> handle = new CustomHTML<T>(archiver.getName(),
+					archiver);
 			table.setWidget(row, 0, handle);
 			if (user.isSuperAdmin()) {
 				tableRowDragController.makeDraggable(handle);
 			}
-			Button detailsButton = archiverDetailsButton(archiver);
+			Button detailsButton = gridHelper.createDetailsButton(archiver);
 			table.setWidget(row, 1, detailsButton);
 			if (user.isSuperAdmin()) {
-				table.setWidget(row, 2, archiverEditButton(archiver));
-				table.setWidget(row, 3, archiverDeleteButton(archiver));
+				int pos = 2;
+				Button edit = gridHelper.createEditButton(archiver);
+				if (edit != null) {
+					table.setWidget(row, pos, edit);
+					pos++;
+				}
+				Button delete = gridHelper.createDeleteButton(archiver);
+				if (delete != null) {
+					table.setWidget(row, pos, delete);
+					pos++;
+				}
 			}
 		}
 		panel.add(table);
@@ -250,36 +309,45 @@ public class InstitutionListPanel extends VerticalPanel {
 			final Button saveButton = new Button("save");
 			saveButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent arg0) {
-					List<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
+					List<T> items = new ArrayList<T>();
 					for (int row = 0; row < table.getRowCount(); row++) {
-						CustomHTML<ArchiverDTO> widget = (CustomHTML<ArchiverDTO>) table
-								.getWidget(row, 0);
-						ArchiverDTO archiver = widget.getObject();
+						CustomHTML<T> widget = (CustomHTML<T>) table.getWidget(
+								row, 0);
+						T archiver = widget.getObject();
 						archiver.setOrder(Long.valueOf(row));
-						archivers.add(archiver);
+						items.add(archiver);
 					}
-					saveButton.setText("saving");
-					institutionsService.updateArchivers(archivers,
-							new AsyncCallback<Void>() {
+					AsyncCallback<Void> callBack = new AsyncCallback<Void>() {
 
-								public void onFailure(Throwable caught) {
-									saveButton.setText("save");
-									Window.alert(constants.serverError() + ": "
-											+ caught.getMessage());
-								}
+						public void onFailure(Throwable caught) {
+							saveButton.setText("save");
+							Window.alert(constants.serverError() + ": "
+									+ caught.getMessage());
+						}
 
-								public void onSuccess(Void arg0) {
-									saveButton.setText("save");
-								}
+						public void onSuccess(Void arg0) {
+							saveButton.setText("save");
+						}
 
-							});
+					};
+					gridHelper.update(items, callBack);
 				}
 			});
 			panel.add(saveButton);
-			FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(table);
-			tableRowDragController.registerDropController(flexTableRowDropController);
+			FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(
+					table);
+			tableRowDragController
+					.registerDropController(flexTableRowDropController);
 		}
 		return panel;
+	}
+
+	private AbsolutePanel archiversGrid() {
+		return getGrid(archivers, new ArchiversGridHelper());
+	}
+	
+	private AbsolutePanel registrarsGrid() {
+		return getGrid(registrars, new RegistrarsGridHelper());
 	}
 
 	private Button archiverEditButton(final ArchiverDTO archiver) {

@@ -155,8 +155,23 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 		try {
 			Registrar transformed = new DtoToRegistrarTransformer(registrar).transform();
 			updateService.updateRegistrar(transformed, getUserLogin());
+			updateService.updateArchiver(transformed, getUserLogin());
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
+	}
+	
+	public void updateRegistrars(List<RegistrarDTO> registrars)
+			throws ServerException {
+		try {
+			for (RegistrarDTO registrar : registrars) {
+				Registrar transformed = new DtoToRegistrarTransformer(registrar)
+						.transform();
+				updateService.updateRegistrar(transformed, getUserLogin());
+				updateService.updateArchiver(transformed, getUserLogin());
+			}
+		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -177,10 +192,10 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 			for (ArchiverDTO archiver : archivers) {
 				Archiver transformed = new DtoToArchiverTransformer(archiver)
 						.transform();
+				System.out.println("order should be:" + transformed.getOrder());
 				updateService.updateArchiver(transformed, getUserLogin());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ServerException(e.getMessage());
 		}
 	}

@@ -81,6 +81,7 @@ public abstract class DtoTransformer {
 	}
 
 	public static ArchiverDTO transformArchiver(Archiver archiver) {
+		System.out.println("archiver - order:"+archiver.getOrder());
 		return new ArchiverDtoTransformer(archiver).transform();
 	}
 

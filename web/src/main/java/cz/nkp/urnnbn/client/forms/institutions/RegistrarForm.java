@@ -51,8 +51,8 @@ public class RegistrarForm extends Form {
 		result.addField("modeByRegistrar",
 				new BooleanValueField(constants.modeByRegistrar(), originalRegistrar.isRegModeByRegistrarAllowed()));
 		// priority and visibility
-		result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), 1, false));
-		result.addField("hidden", new BooleanValueField(constants.hidden(), false));
+		result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), originalRegistrar.getOrder(), true));
+		result.addField("hidden", new BooleanValueField(constants.hidden(), originalRegistrar.isHidden()));
 		return result;
 	}
 
@@ -66,6 +66,8 @@ public class RegistrarForm extends Form {
 		result.setRegModeByResolverAllowed((Boolean)fields.getFieldByKey("modeByResolver").getInsertedValue());
 		result.setRegModeByReservationAllowed((Boolean)fields.getFieldByKey("modeByReservation").getInsertedValue());
 		result.setRegModeByRegistrarAllowed((Boolean)fields.getFieldByKey("modeByRegistrar").getInsertedValue());
+		result.setOrder(Long.valueOf((String) fields.getFieldByKey("order").getInsertedValue()));
+		result.setHidden((Boolean) fields.getFieldByKey("hidden").getInsertedValue());
 		return result;
 	}
 

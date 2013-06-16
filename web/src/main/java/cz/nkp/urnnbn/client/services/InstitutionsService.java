@@ -32,6 +32,8 @@ public interface InstitutionsService extends RemoteService {
 	ArrayList<CatalogDTO> getCatalogs(Long registrarId) throws ServerException;
 
 	void updateRegistrar(RegistrarDTO registrar) throws ServerException;
+	
+	void updateRegistrars(List<RegistrarDTO> archivers) throws ServerException;
 
 	void updateArchiver(ArchiverDTO registrar) throws ServerException;
 	

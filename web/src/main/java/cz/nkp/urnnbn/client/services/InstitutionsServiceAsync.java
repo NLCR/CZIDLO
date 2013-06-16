@@ -29,6 +29,8 @@ public interface InstitutionsServiceAsync {
 	void getCatalogs(Long registrarId, AsyncCallback<ArrayList<CatalogDTO>> callback);
 
 	void updateRegistrar(RegistrarDTO registrar, AsyncCallback<Void> callback);
+	
+	void updateRegistrars(List<RegistrarDTO> registrars, AsyncCallback<Void> callback);
 
 	void updateArchiver(ArchiverDTO archiver, AsyncCallback<Void> callback);
 	
