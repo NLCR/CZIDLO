@@ -21,7 +21,7 @@ V sekci [API Downloads] najdete vždy aktuální instalační balík *installati
 
 = Instalace =
 
-Nejprve je nutné stáhnout a rozbalit instalační balik.
+Nejprve je nutné stáhnout a rozbalit instalační balík.
 
 == Inicializace databáze ==
 Nejprve je potřeba vytvořit pro Resolver databázi pod některým databázovým uživatelem. Druhým krokem je vytvoření potřebných tabulek, sekvencí a indexů. K tomu slouží skript _initDatabase.sql_, který lze spustit např. programem psql.
