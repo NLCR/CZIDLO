@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cz.nkp.urnnbn</groupId>
+    <artifactId>urnnbn-resolver-v2</artifactId>
+    <version>3.0</version>
+    <packaging>pom</packaging>
+    <name>xml</name>
+    <url>http://maven.apache.org</url>
+    
+    <modules>
+        <module>core</module>
+        <module>gdrive</module>
+        <module>oaiAdapter</module>
+        <module>OaiPmhProvider</module>
+        <module>persistence</module>
+        <module>processManager</module>
+        <module>rest</module>
+        <module>services</module>
+        <module>web-common</module>
+        <module>xml</module>
+        <!-- <module>processDataServer</module> -->
+        <!-- <module>legacyRecordsImport</module> -->
+    </modules>
+  
+ </project>
