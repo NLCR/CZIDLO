@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+.headerPanel {
+	
+}
+
+.headerTitlePanel {
+	padding-left: 17px;
+	padding-top: 22px;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.headerTitle {
+	padding:10px;  
+	padding-left: 17px;
+	color: black;
+	font-size: 32px;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.headerSubtitle {
+	color: #AAA;
+	font-size: 15px;
+	white-space: nowrap;
+	text-align: center;
+	vertical-align: text-bottom;
+}
+
+.languageSwitch {
+	margin-bottom: 15px;
+	margin-right: 15px;
+	display: block;
+}
+
+.mainPanel {
+	color: #666;
+	font-size: 12px;
+	padding: 10px;
+}
+
+.footerPanel {
+	padding-right: 20px;
+	padding-left: 20px;
+}

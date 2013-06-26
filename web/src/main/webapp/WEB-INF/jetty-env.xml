@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+ 
+  <New id="posgres" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg></Arg>
+    <Arg>javax.sql.DataSource/postgres</Arg>
+    <Arg>
+      <New class="org.apache.commons.dbcp.BasicDataSource">
+        <Set name="driverClassName">org.postgresql.Driver</Set>
+        <Set name="url">jdbc:postgresql://localhost:5432/resolvertestpersistence</Set>
+        <Set name="username">testuser</Set>
+        <Set name="password">testpass</Set>
+      </New>
+    </Arg>
+  </New>
+  
+  <New id="default" class="org.eclipse.jetty.plus.jndi.Resource">
+    <Arg></Arg>
+    <Arg>javax.sql.DataSource/default</Arg>
+    <Arg>
+      <New class="org.apache.commons.dbcp.BasicDataSource">
+        <Set name="driverClassName">org.postgresql.Driver</Set>
+        <Set name="url">jdbc:postgresql://localhost:5432/resolvertestpersistence</Set>
+        <Set name="username">testuser</Set>
+        <Set name="password">testpass</Set>
+      </New>
+    </Arg>
+  </New>
+ 
+</Configure>

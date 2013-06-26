@@ -21,6 +21,7 @@
         <module>services</module>
         <module>web-common</module>
         <module>xml</module>
+        <module>web</module>
         <!-- <module>processDataServer</module> -->
         <!-- <module>legacyRecordsImport</module> -->
     </modules>
