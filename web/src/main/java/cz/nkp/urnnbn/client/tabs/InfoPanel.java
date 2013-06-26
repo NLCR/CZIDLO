@@ -72,7 +72,7 @@ public class InfoPanel extends SingleTabContentPanel {
 	}
 	
 	public void loadContent() {
-		staticContentService.getContentByNameAndLanguage(language, name, new
+		staticContentService.getContentByNameAndLanguage(name, language, new
 				 AsyncCallback<ContentDTO>() {
 
 					public void onFailure(Throwable error) {

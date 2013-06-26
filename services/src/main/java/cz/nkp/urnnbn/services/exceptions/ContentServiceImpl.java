@@ -36,9 +36,9 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public Content getContentByNameAndLanguage(String language, String name) throws ContentNotFoundException {
+    public Content getContentByNameAndLanguage(String name, String language) throws ContentNotFoundException {
         try {
-            return factory.contentDao().getContentByNameAndLanguage(language, name);
+            return factory.contentDao().getContentByNameAndLanguage(name, language);
         } catch (DatabaseException ex) {
             throw new RuntimeException("database error", ex);
         } catch (RecordNotFoundException ex) {
