@@ -8,7 +8,7 @@ import cz.nkp.urnnbn.shared.dto.ContentDTO;
 @RemoteServiceRelativePath("staticContent")
 public interface StaticContentService extends RemoteService {
 
-	public ContentDTO getContentByNameAndLanguage(String language, String name);
+	public ContentDTO getContentByNameAndLanguage(String name, String language);
 	
 	public void update(ContentDTO content);
 	

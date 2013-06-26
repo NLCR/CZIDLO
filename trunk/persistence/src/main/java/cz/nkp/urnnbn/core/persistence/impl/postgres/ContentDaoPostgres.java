@@ -65,7 +65,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
             return (Content) runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[] {name, lang});
+                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[] {lang, name});
                 throw (RecordNotFoundException) e;
             } else {
                 //should never happen
