@@ -1,0 +1,62 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                    http://www.springframework.org/schema/security
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<!-- <http use-expressions="true"> <intercept-url pattern="/**" access="permitAll" 
+		/> <form-login /> </http> -->
+
+	<!-- TODO: vsechny staticke a neutorizovane zdroje -->
+	<!-- <http pattern="**" security="none"/> -->
+	<!-- nahore docasne zakazna bezpecnost pro vsechno -->
+	<http pattern="/css/**" security="none" />
+	<http pattern="/test/test.jsp*" security="none" />
+	<!-- <http pattern="/test/login.jsp" security="none"/> 
+	<http pattern="/test/logout.jsp*" 
+		security="none"/> -->
+
+	<http>
+		<!-- <http-basic/> -->
+		<!-- <form-login login-page='/test/login.jsp'/> -->
+		<form-login />
+	   <form-login login-page="/web/login"/>
+		
+		<!-- <intercept-url pattern="/spring_security_login" access="IS_AUTHENTICATED_ANONYMOUSLY" 
+			requires-channel="https"/> -->
+		<!-- <intercept-url pattern="/spring_security_login" requires-channel="https"/> -->
+
+		<!--alternativa: sice nautentizovany, ale uplatnuji se security filter 
+			chains -->
+		<!-- <intercept-url pattern="/test/logout.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" 
+			/> -->
+		<!-- <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" 
+			requires-channel="https"/> -->
+		<!-- <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="POST" 
+			requires-channel="https"/> -->
+		<!-- <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" 
+			requires-channel="https"/> -->
+
+		<session-management>
+			<!--This will prevent a user from logging in multiple times - a second 
+				login will cause the first to be invalidated. -->
+			<!-- <concurrency-control max-sessions="1" /> -->
+			<!--here the second login will be rejected -->
+			<!-- <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" 
+				/> -->
+		</session-management>
+		<!-- <logout delete-cookies="JSESSIONID" logout-success-url="/test/logout.jsp" 
+			logout-url="/logout"/> -->
+		<logout delete-cookies="JSESSIONID" logout-url="/logout" />
+	</http>
+
+	<authentication-manager>
+		<authentication-provider ref='authenticationProvider' />
+	</authentication-manager>
+
+	<beans:bean id="authenticationProvider"
+		class="cz.nkp.urnnbn.webcommon.security.ResolverAuthenticationProvider" />
+	<beans:bean id="logListener"
+		class="cz.nkp.urnnbn.webcommon.security.SecurityListener" />
+</beans:beans>

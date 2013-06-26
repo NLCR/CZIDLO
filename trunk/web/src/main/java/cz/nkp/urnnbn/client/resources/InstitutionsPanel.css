@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+
+.listHeading {
+	font-weight: bold;
+	font-size: 20px;
+	margin: 5px;
+}
+
+.block {
+	margin: 2%;
+}
+
+.listHeadingLevel2{
+	font-weight: bold;
+	font-size: 15px;
+	margin: 2px;
+}

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
+
+	<resource-ref>
+		<description>Postgres Connection pool datasource</description>
+		<res-ref-name>jdbc/postgres</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+
+	<context-param>
+		<param-name>resolverConfig</param-name>
+		<param-value>
+         /web.properties
+        </param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>cz.nkp.urnnbn.server.conf.ContextListener</listener-class>
+	</listener>
+
+	<!-- SPRING START -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+         /WEB-INF/securityContext.xml
+        </param-value>
+	</context-param>
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- SPRING END -->
+
+	<!-- template upload servlet -->
+	<servlet>
+		<servlet-name>uploadServlet</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.TemplateUploadServlet</servlet-class>
+<!-- 		<servlet-class>gwtupload.server.UploadServlet</servlet-class> -->
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>uploadServlet</servlet-name>
+		<url-pattern>*.gupld</url-pattern>
+	</servlet-mapping>
+
+	<!-- SERVICES -->
+
+	<servlet>
+		<servlet-name>searchService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.SearchServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>searchService</servlet-name>
+		<url-pattern>/web/search</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>authService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.AuthServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>authService</servlet-name>
+		<url-pattern>/web/auth</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>institutionsService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.InstitutionsServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>institutionsService</servlet-name>
+		<url-pattern>/web/institutions</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>dataService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.DataServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>dataService</servlet-name>
+		<url-pattern>/web/data</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>userAccountService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.UserAccountServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>userAccountService</servlet-name>
+		<url-pattern>/web/users</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>configurationService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.ConfigurationServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>configurationService</servlet-name>
+		<url-pattern>/web/conf</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>processService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.ProcessServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>processService</servlet-name>
+		<url-pattern>/web/process</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>logsService</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.logs.LogsServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>logsService</servlet-name>
+		<url-pattern>/web/logs</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>staticContent</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.services.StaticContentServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>staticContent</servlet-name>
+		<url-pattern>/web/staticContent</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Urnnbn.html</welcome-file>
+	</welcome-file-list>
+
+
+	<!-- QUARTZ START -->
+	<context-param>
+		<param-name>config-file</param-name>
+		<param-value>quartz.properties</param-value>
+	</context-param>
+	<context-param>
+		<param-name>shutdown-on-unload</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>start-scheduler-on-load</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+	</listener>
+	<!-- QUARTZ END -->
+
+</web-app>

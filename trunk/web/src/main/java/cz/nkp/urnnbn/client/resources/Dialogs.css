@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+.formLabel {
+	text-align: center;
+	vertical-align: bottom;
+}
+
+.errorLabel {
+	color: red;
+	font-weight: bold;
+}
+
+.validTextBoxData {
+	background-color: white;
+}
+
+.invalidTextBoxData {
+	background-color: yellow;
+}
+
+.heading {
+	font-weight: bold;
+}
