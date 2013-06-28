@@ -63,4 +63,4 @@ Oproti V2 došlo k následujícím změnám:
  * import digitální instance
    * vstupní data musí být validní podle http://resolver.nkp.cz/api/v3/digInstImport.xsd 
 
-Podrobná specifikace API v2 je dostupná [https://docs.google.com/spreadsheet/ccc?key=0Ag5aMq4LaXVcdFZ3MjBOb2s2UlZtb0ZqbV93WWJ4ZGc zde].
+Podrobná specifikace API v3 je dostupná [https://docs.google.com/spreadsheet/ccc?key=0Ag5aMq4LaXVcdFZ3MjBOb2s2UlZtb0ZqbV93WWJ4ZGc zde].
