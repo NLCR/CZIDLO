@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<marc21:record xmlns:marc21="http://www.loc.gov/MARC21/slim" xmlns:xsi2="http://www.w3.org/2001/XMLSchema-instance" xsi2:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+    <marc21:leader>02755nem a22006732a 4500</marc21:leader>
+    <marc21:controlfield tag="001">001085607</marc21:controlfield>
+    <marc21:controlfield tag="003">CZ BrMZK</marc21:controlfield>
+    <marc21:controlfield tag="005">20110208094928.0</marc21:controlfield>
+    <marc21:controlfield tag="007">aj|ca|||</marc21:controlfield>
+    <marc21:controlfield tag="008">110126s1817    au |||||||a|||r|0|||gerod</marc21:controlfield>
+    <marc21:datafield tag="034" ind1="1" ind2=" ">
+        <marc21:subfield code="a">a</marc21:subfield>
+        <marc21:subfield code="b">2120000</marc21:subfield>
+        <marc21:subfield code="d">E0142808</marc21:subfield>
+        <marc21:subfield code="e">E0281504</marc21:subfield>
+        <marc21:subfield code="f">N0550453</marc21:subfield>
+        <marc21:subfield code="g">N0494029</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="040" ind1=" " ind2=" ">
+        <marc21:subfield code="a">BOA001</marc21:subfield>
+        <marc21:subfield code="b">cze</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="041" ind1="0" ind2=" ">
+        <marc21:subfield code="a">ger</marc21:subfield>
+        <marc21:subfield code="a">pol</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="043" ind1=" " ind2=" ">
+        <marc21:subfield code="a">e-pl---</marc21:subfield>
+        <marc21:subfield code="2">czenas</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="072" ind1=" " ind2="7">
+        <marc21:subfield code="a">912:904</marc21:subfield>
+        <marc21:subfield code="x">Staré mapy</marc21:subfield>
+        <marc21:subfield code="2">Konspekt</marc21:subfield>
+        <marc21:subfield code="9">7</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="080" ind1=" " ind2=" ">
+        <marc21:subfield code="a">(438)</marc21:subfield>
+        <marc21:subfield code="2">MRF</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="080" ind1=" " ind2=" ">
+        <marc21:subfield code="a">(084.3)</marc21:subfield>
+        <marc21:subfield code="2">MRF</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="100" ind1="1" ind2=" ">
+        <marc21:subfield code="a">Mollo, Tranquillo,</marc21:subfield>
+        <marc21:subfield code="d">1767-1837</marc21:subfield>
+        <marc21:subfield code="7">xx0085957</marc21:subfield>
+        <marc21:subfield code="4">aut</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="245" ind1="1" ind2="0">
+        <marc21:subfield code="a">Polen nach den Letzte Friedenschlüssen, nebst den angränzenden Laendern.</marc21:subfield>
+        <marc21:subfield code="n">44</marc21:subfield>
+        <marc21:subfield code="h">[kartografický dokument] /</marc21:subfield>
+        <marc21:subfield code="c">in Wien bey T. Mollo</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="246" ind1="3" ind2="3">
+        <marc21:subfield code="a">Lehrbuch der Geographie</marc21:subfield>
+        <marc21:subfield code="h">[kartografický dokument]</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="246" ind1="3" ind2="3">
+        <marc21:subfield code="a">Karta królestwa Polskiégo z przyległemi krayami, podług oslatniégo pokoyu w Wiu niu 1817 Roku</marc21:subfield>
+        <marc21:subfield code="h">[kartografický dokument]</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="255" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Měřítko [1:2 120 000]. 6,9 cm = 20 Deutsche, oder Geographische Meilen 15 auf 1 Grad. 7 cm = 30 Polnische Meilen 22 auf 1 Grad</marc21:subfield>
+        <marc21:subfield code="c">(014°28´08" v.d.--028°15´04" v.d./055°04´53" s.š.--049°40´29" s.š.)</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="260" ind1=" " ind2=" ">
+        <marc21:subfield code="a">in Wien :</marc21:subfield>
+        <marc21:subfield code="b">bey T. Mollo,</marc21:subfield>
+        <marc21:subfield code="c">[1817]</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="300" ind1=" " ind2=" ">
+        <marc21:subfield code="a">1 mapa :</marc21:subfield>
+        <marc21:subfield code="b">litografie, barev. ;</marc21:subfield>
+        <marc21:subfield code="c">33 x 45,5 cm na listu 40 x 49,5 cm</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="500" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Mapa součástí souboru: Lehrbuch der Geographie IIte Abthl. Seite 96</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="500" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Výzdoba: V levém horním rohu název, v levém dolním rohu legenda, v pravém dolním rohu měřítka a komentář, v mapovém rámci geografické souřadnice, souřadnicová síť</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="546" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Název německy a polsky</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="651" ind1=" " ind2="7">
+        <marc21:subfield code="a">Polsko</marc21:subfield>
+        <marc21:subfield code="7">ge130478</marc21:subfield>
+        <marc21:subfield code="2">czenas</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="655" ind1=" " ind2="7">
+        <marc21:subfield code="a">historické mapy</marc21:subfield>
+        <marc21:subfield code="7">fd186723</marc21:subfield>
+        <marc21:subfield code="2">czenas</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="910" ind1=" " ind2=" ">
+        <marc21:subfield code="b">STMpa-1257.669</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="978" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Mollo</marc21:subfield>
+        <marc21:subfield code="b">Tranquillo</marc21:subfield>
+        <marc21:subfield code="c">Wien</marc21:subfield>
+        <marc21:subfield code="f">1817</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="984" ind1=" " ind2=" ">
+        <marc21:subfield code="a">Vídeň</marc21:subfield>
+        <marc21:subfield code="b">Rakousko</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="985" ind1=" " ind2=" ">
+        <marc21:subfield code="a">1801-1850</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="990" ind1=" " ind2=" ">
+        <marc21:subfield code="a">001085607</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="996" ind1=" " ind2=" ">
+        <marc21:subfield code="a">P</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="998" ind1=" " ind2=" ">
+        <marc21:subfield code="a">MP</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="B26" ind1="0" ind2=" ">
+        <marc21:subfield code="b">bey T. Mollo,</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="a">HEILLU</marc21:subfield>
+        <marc21:subfield code="b">50</marc21:subfield>
+        <marc21:subfield code="c">20110126</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1010</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="a">HEILLU</marc21:subfield>
+        <marc21:subfield code="b">50</marc21:subfield>
+        <marc21:subfield code="c">20110208</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">0949</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110331</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1329</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110429</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1257</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110429</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1336</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110606</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1313</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110606</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1329</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20110607</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">0834</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20111101</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1230</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20111102</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1236</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20120117</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1247</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20120224</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1259</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="a">batch</marc21:subfield>
+        <marc21:subfield code="b">00</marc21:subfield>
+        <marc21:subfield code="c">20120505</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">2100</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20120910</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">0848</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="CAT" ind1=" " ind2=" ">
+        <marc21:subfield code="c">20121112</marc21:subfield>
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="h">1228</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="MZK" ind1=" " ind2=" ">
+        <marc21:subfield code="k">mzk</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="PRU" ind1=" " ind2=" ">
+        <marc21:subfield code="a">VZMP 110126 LH</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="SGG" ind1=" " ind2=" ">
+        <marc21:subfield code="a">1257.669</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="SKC" ind1=" " ind2=" ">
+        <marc21:subfield code="a">20111102</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="V04" ind1="3" ind2=" ">
+        <marc21:subfield code="a">e-pl---</marc21:subfield>
+    </marc21:datafield>
+    <marc21:datafield tag="Z30" ind1="1" ind2="1">
+        <marc21:subfield code="l">MZK03</marc21:subfield>
+        <marc21:subfield code="L">MZK03</marc21:subfield>
+        <marc21:subfield code="m">MP</marc21:subfield>
+        <marc21:subfield code="1">STT</marc21:subfield>
+        <marc21:subfield code="2">DEN</marc21:subfield>
+        <marc21:subfield code="B">Sklad / do 24 hodin</marc21:subfield>
+        <marc21:subfield code="3">STMpa-1257.669</marc21:subfield>
+        <marc21:subfield code="6">2610465057</marc21:subfield>
+        <marc21:subfield code="5">2610465057</marc21:subfield>
+        <marc21:subfield code="8">20110126</marc21:subfield>
+        <marc21:subfield code="f">96</marc21:subfield>
+        <marc21:subfield code="F">Jen do studovny ST</marc21:subfield>
+        <marc21:subfield code="t">00000000</marc21:subfield>
+        <marc21:subfield code="u">0000</marc21:subfield>
+    </marc21:datafield>
+</marc21:record>

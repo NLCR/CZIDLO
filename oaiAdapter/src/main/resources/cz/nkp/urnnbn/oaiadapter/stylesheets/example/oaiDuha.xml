@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oai_dc:dc  xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/  http://www.openarchives.org/OAI/2.0/oai_dc.xsd"> 
+    <dc:title>Úvodník</dc:title>
+    <dc:creator>Jana Nejezchlebová</dc:creator>
+    <dc:identifier>http://duha.mzk.cz/clanky/uvodnik</dc:identifier>
+    <dc:language>CZ</dc:language>
+    <dc:type>article</dc:type>
+    <dc:publisher>Moravská zemská knihovna</dc:publisher>
+    <dc:subject>Úvodník</dc:subject>
+    <dc:relation>ISSN:1804-4255</dc:relation>
+    <dc:relation>ročník 24</dc:relation>
+    <dc:relation>číslo 1</dc:relation>
+    <dc:date>2010</dc:date>
+</oai_dc:dc>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v3/" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <r:otherEntity>
+        <r:titleInfo>
+            <r:title>Polen nach den Letzte Friedenschlüssen, nebst den angränzenden Laendern.</r:title>
+            <r:subTitle/>
+        </r:titleInfo>
+        <r:documentType>mapa</r:documentType>
+        <r:digitalBorn>false</r:digitalBorn>
+        <r:primaryOriginator type="AUTHOR">Mollo, Tranquillo</r:primaryOriginator>
+        <r:publication>
+            <r:publisher>bey T. Mollo</r:publisher>
+            <r:place>in Wien</r:place>
+        </r:publication>
+    </r:otherEntity>
+    <r:digitalDocument>
+        <r:registrarScopeIdentifiers>
+            <r:id type="aleph_id">mzk03:001085607</r:id>
+        </r:registrarScopeIdentifiers>
+        <r:technicalMetadata>
+            <r:format>JPEG 2000</r:format>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>

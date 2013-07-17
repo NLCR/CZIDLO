@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+    <r:analytical>
+        <r:titleInfo>
+            <r:title>Úvodník</r:title>
+        </r:titleInfo>
+        <r:documentType>článek</r:documentType>
+        <r:primaryOriginator type="AUTHOR">Jana Nejezchlebová</r:primaryOriginator>
+        <r:sourceDocument>
+            <r:titleInfo>
+                <r:title>Duha</r:title>
+            </r:titleInfo>
+            <r:issn>ISSN:1804-4255</r:issn>
+            <r:publication>
+                <r:publisher>Moravská zemská knihovna</r:publisher>
+                <r:place>Brno</r:place>
+            </r:publication>
+        </r:sourceDocument>
+    </r:analytical>
+    <r:digitalDocument>
+        <r:urnNbn>
+            <r:value/>
+        </r:urnNbn>
+        <r:technicalMetadata>
+            <r:format>html</r:format>
+        </r:technicalMetadata>
+    </r:digitalDocument>
+</r:import>
