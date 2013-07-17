@@ -58,7 +58,7 @@ XSL transformace se používají k výrobě vstupů pro operace _registrace DD_ 
  * [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiOldMaps.xml Jeden záznam]
  * Vstup operace _Registrace DD_
   # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl XSL transformace]
-  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiOldMaps.xml transformovaný záznam]  
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/ddRegistrationOldMaps.xml transformovaný záznam]  
  * Vstup operace _Import DI_
   # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl XSL transformace]
   # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/diImportOldMaps.xml transformovaný záznam]
