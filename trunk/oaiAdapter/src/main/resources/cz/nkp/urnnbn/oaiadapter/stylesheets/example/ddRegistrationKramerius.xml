@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+    <r:periodical>
+        <r:titleInfo>
+            <r:title>Jurisprudence: specialista na komentování
+                judikatu</r:title>
+        </r:titleInfo>
+        <r:documentType>model:periodical</r:documentType>
+        <r:publication>
+            <r:publisher>EMP</r:publisher>
+        </r:publication>
+    </r:periodical>
+    <r:digitalDocument>
+        <r:registrarScopeIdentifiers>
+            <r:id type="K4_pid">uuid:01521227-f7b6-433d-9045-484a0fc49798</r:id>
+        </r:registrarScopeIdentifiers>
+        <r:technicalMetadata/>
+    </r:digitalDocument>
+</r:import>
