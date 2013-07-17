@@ -37,10 +37,12 @@ https://dl.dropboxusercontent.com/u/7787647/resolver-wiki-images/oaiAdapter_sing
 Konfigurace pro průběh OAI Adapteru se skládá z:
  * konfigurace OAI: url, metadatový prefix, případně _OAI-PMH set_
  * údaje pro CZIDLO API: url, login, heslo, kód registrátora
- * určení XSL transformací _záznam z OAI -> vstup registrace DD_ a _záznam z OAI -> vstup import DI_
+ * určení XSL transformací 
+  # záznam z OAI -> vstup pro registraci DD
+  # záznam z OAI -> vstup pro import DI
 
 = Transformace =
-Transformace realizované technologií XSLT jsou použity k transformaci xml záznamu v původním formátu do záznamů pro operace registrace DD a import DI. Jsou tedy potřeba dvě transformace. 
+XSL transformace se používají k výrobě vstupů pro operace _registrace DD_ a _import DI_ z původních xml dokumentů získaných z OAI repozitáře. Jsou tedy vždy potřeba právě dvě transformace. 
 == Příklady ==
 === Časopis Duha Moravské zemské knihovny ===
  * [http://duha.mzk.cz/oai?verb=ListRecords&metadataPrefix=oai_dc Původní záznamy poskytnuté OAI Providerem webu Duha ve formátu oai_dc]
@@ -59,7 +61,9 @@ Transformace realizované technologií XSLT jsou použity k transformaci xml zá
 OAI Adapter je možné spouštět dvěma způsoby:
 
 == na serveru (přes webové rozhraní) ==
-OAI Adapter je jedním z procesů, které je možné poustět na serveru. Spuštění probíhá přes webové rozhraní. Dialog pro spouštění procesu vyžaduje zadání parametrů, jako je url OAI-PMH provideru atd. Dále je zde nutné vybrat dvě XSL transformace. Webové rozhraní CZIDLO obsahuje jednoduchou správu XSL transformací. Takže je potřeba požadovanou transformaci nejprve na server nahrát a před spuštěním OAI Adapteru zvolit transformaci z dříve nahraných.
+OAI Adapter je jedním z procesů, které je možné spustit na serveru.
+Spuštění probíhá přes webové rozhraní CZIDLO a je povoleno jen přihlášeným uživatelům. 
+Dialog pro spouštění procesu vyžaduje zadání parametrů, jako je url OAI-PMH provideru atd. Dále je zde nutné vybrat dvě XSL transformace. Webové rozhraní CZIDLO obsahuje jednoduchou správu XSL transformací. Takže je nutné požadovanou transformaci nejprve na server nahrát a před spuštěním OAI Adapteru následně zvolit transformaci z dříve nahraných.
 
 == lokálně ==
 OAI Adapter je dostupný ve formě jar balíku, viz. sekce Download. Pro jeho spuštění je potřeba Java ve verzi alespoň 1.6. Jediným vstupním parametrem je soubor obsahující konfiguraci. 
