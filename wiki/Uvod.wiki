@@ -9,7 +9,7 @@ Softwarový systé, CZIDLO navazuje na starší software [http://code.google.com
 Ač vypadají oba systémy vizuálně podobně a oba používají webový framework [https://developers.google.com/web-toolkit/ GWT], jedná se o zcela nový systém. Převzat byl pouze datový model, který byl ale výrazně pozměněn, aby reflektoval nové požadavky a zároveň bylo možné převzít data ze staršího systému, transformovat je a vložit do systému nového.
 
 = Hlavní funkce =
-CZIDLO zejména udržuje seznam všech přiřazených urn:nbn, resp. informace o stavu všech urn:nbn v národním prostoru (_volné_, _rezervované_, _přiřazené_, _opuštěné_). Stav se může změnit vykonáním některých operací, z nichž nejdůležitější je *registrace digitálního dokumentu* (_volné_ -> _přiřazené_). Tato operace vrací přidělené urn:nbn digitálnímu dokumentu, jehož metadata byla vstupem operace.
+CZIDLO zejména udržuje seznam všech přiřazených urn:nbn, resp. informace o stavu všech urn:nbn v národním prostoru (_volné_, _rezervované_, _přiřazené_, _opuštěné_). Stav se může změnit vykonáním některých operací, z nichž nejdůležitější je *registrace digitálního dokumentu* (_volné_ -> _přiřazené_ nebo _rezervované_ -> _přiřazené_). Tato operace vrací přidělené urn:nbn digitálnímu dokumentu, jehož metadata byla vstupem operace.
 
 Dále spravuje mapování digitálních dokumentů (identifikovaných urn:nbn) na aktuální URL, na nichž jsou dokumenty dostupné v elektronické podobě. Za korektnost URL ale zodpovídají jednotlivé zapojené instituce (registrátoři).
 
