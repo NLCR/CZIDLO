@@ -4,28 +4,28 @@
 <wiki:toc max_depth="5" />
 
 = OAI Adapter =
-OAI Adapter je nástroj pro ulehčení vkládání a aktualizací digitálních instancí. Je určený pro ty digitální knihovny, které disponují OAI-PMH rozhraním. Skládá se z těchto komponent:
+OAI Adapter je nástroj pro ulehčení vkládání a aktualizací digitálních instancí, případně registraci digitálních dokumentů. Je určen pro ty digitální knihovny, které disponují OAI-PMH rozhraním. Skládá se z těchto komponent:
  * OAI Harvester - sklízí záznamy z OAI-PMH rozhraní digitální knihovny
- * Transformer - transformuje sklizené záznamy na data pro _CZIDLO API_. Tedy na vstup operace _registrace digitálního dokument_ a na vstup operace _import digitální instance_. Transformace jsou realizovány pomocí technologie XSLT (verze 1.0). Jsou proto potřebné dva XSLT soubory. 
+ * Transformer - transformuje sklizené záznamy na data pro _CZIDLO API_. Tedy na vstup operace _registrace digitálního dokumentu_ a na vstup operace _import digitální instance_. Transformace jsou realizovány pomocí technologie XSLT (verze 1.0). Jsou proto potřeba vždy dva XSLT soubory. 
  * Resolver connector - modul přistupující k _CZIDLO API_. Provádí operace _registrace DD_, _import DI_ a některé další.
 
 = Průběh =
 OAI Adapter je možné chápat jako proces, jehož jedno spuštění probíhá zjednodušeně takto:
- * Během inicializace se načtou XSL transformace ze souborů, ověří se, zda je pro určeného registrátora povolen vybraný mód registrace, apod.
+ * Během inicializace se načtou XSL transformace ze souborů, ověří se, zda je pro určeného registrátora povolen zvolený mód registrace, apod.
  * Harvester postupně sklízí záznamy z OAI providera digitální knihovny
- * pro každý záznam pak:
+ * Pro každý záznam pak:
   # Sklizený záznam se transformuje jednak na vstup operace _registrace DD_, jednak na vstup operace _import DI_
-  # pokud digitální dokument není v CZIDLO nalezen, je provedena  _registrace digitálního dokumentu_, vstupem je odvozený (transformovaný) ze záznamu z OAI.
-  # import digitální instance, deaktivace neaktuální DI
-   # pro kombinaci DD + registrátor + digitální knihovna je nalezena DI. Ta může existovat nejvýše jedna DI.
-   # pokud taková DI neexistuje, je importovaná nová DI odvozená z OAI záznamu (_připravená DI_)
-   # pokud DI existuje a neliší se od _připravené DI_, pokračuje se dalším záznamem
-   # pokud se DI liší (změna url, dostupnosti), je aktuální DI deaktivována a importována _připravená DI_. 
+  # Pokud digitální dokument není v CZIDLO nalezen, je provedena  _registrace digitálního dokumentu_, vstupem je xml dokument odvozený (transformovaný) ze záznamu z OAI.
+  # Import digitální instance, deaktivace neaktuální DI.
+   # Pro kombinaci DD + registrátor + digitální knihovna je nalezena DI. Ta může existovat nejvýše jedna.
+   # Pokud taková DI neexistuje, je importovaná nová DI odvozená z OAI záznamu (_připravená DI_).
+   # Pokud DI existuje a neliší se od _připravené DI_, pokračuje se dalším záznamem.
+   # Pokud se DI liší (změna url, případně dostupnosti), je aktuální DI deaktivována a importována _připravená DI_. 
 
-OAI Adapter tedy primárně zajišťuje aktuálnost DI. To je potřeba například v těchto situacích:
- * změní se url digitální knihovny a proto i url na jednotlivé tituly, které jsou součástí DI
- * změní se viditelnost některých záznamů. 
- * registrátor nemá nástroje pro registraci DD. Pokud má jeho digitální knihovna OAI-PMH provider, může registrátor použít tento nástroj také k registraci DD, nejen k importu DI.
+OAI Adapter tedy primárně zajišťuje aktuálnost DI. To je potřeba například v následujících situacích:
+ * Změní se url digitální knihovny a proto i url na jednotlivé tituly (url je hlavní částí DI).
+ * Změní se viditelnost některých záznamů. 
+ * Registrátor nemá nástroje pro registraci DD. Pokud má jeho digitální knihovna OAI-PMH provider, může registrátor použít tento nástroj také k registraci DD, nejen k importu DI.
 
 OAI Adapter prochází všechny záznamy a aktualizuje jen ty, které se změnily.
 
