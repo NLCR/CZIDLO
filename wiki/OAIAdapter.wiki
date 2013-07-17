@@ -46,16 +46,31 @@ XSL transformace se používají k výrobě vstupů pro operace _registrace DD_ 
 == Příklady ==
 === Časopis Duha Moravské zemské knihovny ===
  * [http://duha.mzk.cz/oai?verb=ListRecords&metadataPrefix=oai_dc Původní záznamy poskytnuté OAI Providerem webu Duha ve formátu oai_dc]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl Transformace do vstupu operace Registrace DD]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl Transformace do vstupu operace Import DI]
+ * [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiDuha.xml Jeden záznam]
+ * Vstup operace _Registrace DD_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/ddRegistrationDuha.xml transformovaný záznam]
+ * Vstup operace _Import DI_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/diImportDuha.xml transformovaný záznam]
 === Staré mapy MZK ===
  * [http://oai.mzk.cz/MoZaKi/?verb=ListRecords&metadataPrefix=marc21&set=collection:oldMaps Původní záznamy starých map ve formátu marc21 (resp. marcxml)]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl Transformace do vstupu operace Registrace DD]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl Transformace do vstupu operace Import DI]
+ * [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiOldMaps.xml Jeden záznam]
+ * Vstup operace _Registrace DD_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_import.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiOldMaps.xml transformovaný záznam]  
+ * Vstup operace _Import DI_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/marc21_stmpa_digital_instance.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/diImportOldMaps.xml transformovaný záznam]
 === Periodika z Krameria MZK ===
  * [http://kramerius.mzk.cz/oaiprovider/?verb=ListRecords&metadataPrefix=oai_dc&set=periodical Záznamy z OAI Provideru Krameria ve formátu oai_dc]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_import.xsl Transformace do vstupu operace Registrace DD]
- * [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_digital_instance.xsl Transformace do vstupu operace Import DI]
+ * [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/oaiKramerius.xml Jeden záznam]
+ * Vstup operace _Registrace DD_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_import.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/ddRegistrationKramerius.xml transformovaný záznam]
+ * Vstup operace _Import DI_
+  # [http://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_kramerius_periodical_digital_instance.xsl XSL transformace]
+  # [https://code.google.com/p/urnnbn-resolver-v2/source/browse/trunk/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/example/diImportKramerius.xml transformovaný záznam]
 
 = Spuštění =
 OAI Adapter je možné spouštět dvěma způsoby:
