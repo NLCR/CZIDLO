@@ -54,4 +54,6 @@ public interface MessagesImpl extends Messages {
 	public String serverError(String errorMessage);
 	
 	public String processPlaning(String processType);
+	
+	public String validationNotInteger();
 }

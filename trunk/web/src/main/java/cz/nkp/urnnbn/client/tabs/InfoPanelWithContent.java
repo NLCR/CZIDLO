@@ -9,16 +9,18 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.smartgwt.client.widgets.RichTextEditor;
+
 import cz.nkp.urnnbn.client.services.StaticContentService;
 import cz.nkp.urnnbn.client.services.StaticContentServiceAsync;
 import cz.nkp.urnnbn.shared.dto.ContentDTO;
 
-public class InfoPanel extends SingleTabContentPanel {
+public class InfoPanelWithContent extends SingleTabContentPanel {
 
 	private ContentDTO content = null;
 	
 	private HTML contentView = null;
-	private TextArea contentEdit = null;
+	private RichTextEditor contentEdit = null;
 	private Button saveButton = null;
 	
 	private String language = "cz";
@@ -26,18 +28,18 @@ public class InfoPanel extends SingleTabContentPanel {
 	
 	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
 
-	public InfoPanel(TabsPanel tabsPanel) {
+	public InfoPanelWithContent(TabsPanel tabsPanel, String name) {
 		super(tabsPanel);
+		this.name = name;
 	}
 
 	@Override
 	protected void onLoad() {
-		System.err.println("loading");
 		super.onLoad();
 		VerticalPanel contentPanel = new VerticalPanel();
 		contentView = new HTML("loading...");
 		contentPanel.add(contentView);
-		contentEdit = new TextArea();
+		contentEdit = new RichTextEditor();
 		contentEdit.setVisible(false);
 		contentEdit.setHeight("350px");
 		contentEdit.setWidth("700px");
@@ -50,13 +52,13 @@ public class InfoPanel extends SingleTabContentPanel {
 			public void onClick(ClickEvent arg0) {
 				if (contentView.isVisible()) {
 					contentView.setVisible(false);
-					contentEdit.setText(contentView.getHTML());
+					contentEdit.setValue(contentView.getHTML());
 					contentEdit.setVisible(true);
 					saveButton.setText("save");
 				} else {
 					contentEdit.setVisible(false);
 					contentView.setVisible(true);
-					contentView.setHTML(contentEdit.getText());
+					contentView.setHTML(contentEdit.getValue());
 					saveButton.setText("edit");
 					saveContent();
 				}
@@ -82,13 +84,14 @@ public class InfoPanel extends SingleTabContentPanel {
 					public void onSuccess(ContentDTO result) {
 						content = result;
 						saveButton.setEnabled(true);
-						contentView.setText(content.getContent());		
+						contentView.setHTML(content.getContent());
 					}
 		});
 	}
 	
 	public void saveContent() {
-		content.setContent(contentEdit.getText());
+		//content.setContent(contentEdit.getText());
+		content.setContent(contentEdit.getValue());
 		staticContentService.update(content, new AsyncCallback<Void>() {
 			
 			public void onFailure(Throwable error) {
@@ -98,7 +101,7 @@ public class InfoPanel extends SingleTabContentPanel {
 
 			public void onSuccess(Void result) {
 				saveButton.setEnabled(true);
-				contentView.setText(content.getContent());	
+				contentView.setHTML(content.getContent());	
 			}
 		});
 	}

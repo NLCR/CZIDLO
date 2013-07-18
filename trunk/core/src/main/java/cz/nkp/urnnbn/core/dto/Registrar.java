@@ -53,6 +53,8 @@ public final class Registrar extends Archiver {
         setDescription(archiver.getDescription());
         setCreated(archiver.getCreated());
         setModified(archiver.getModified());
+        setOrder(archiver.getOrder());
+        setHidden(archiver.isHidden());
     }
 
     @Override

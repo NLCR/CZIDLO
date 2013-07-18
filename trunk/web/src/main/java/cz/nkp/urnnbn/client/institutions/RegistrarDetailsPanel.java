@@ -158,6 +158,11 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		}
 		// registration modes
 		result.add(registrationModesPanel());
+		// visibility and order
+		if (user.isSuperAdmin()) {
+			result.add(orderAndVisibilityPanel());
+			result.add(editRegistrarVisiblityAndOrderButton());
+		}
 		// edit button 
 		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(editRegistrarButton());
@@ -176,6 +181,27 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		result.add(registrationModePanel(constants.modeByResolver(), registrar.isRegModeByResolverAllowed()));
 		result.add(registrationModePanel(constants.modeByReservation(), registrar.isRegModeByReservationAllowed()));
 		result.add(registrationModePanel(constants.modeByRegistrar(),registrar.isRegModeByRegistrarAllowed()));
+		return result;
+	}
+	
+	private VerticalPanel orderAndVisibilityPanel() {
+		VerticalPanel result = new VerticalPanel();
+		result.setStyleName(css.block());
+		//title
+		Label modesHeading = new Label(constants.OrderAndVisibility());
+		modesHeading.setStyleName(css.listHeadingLevel2());
+		result.add(modesHeading);
+		// order
+		HorizontalPanel orderPanel = new HorizontalPanel();
+		orderPanel.add(new Label(constants.order() + ":"));
+		orderPanel.add(new HTML("&nbsp"));
+		orderPanel.add(new Label(Long.toString(registrar.getOrder())));
+		result.add(orderPanel);
+		HorizontalPanel hiddenPanel = new HorizontalPanel();
+		hiddenPanel.add(new Label(constants.hidden() + ":"));
+		hiddenPanel.add(new HTML("&nbsp"));
+		hiddenPanel.add(new Label((registrar.isHidden())?constants.yes():constants.no()));
+		result.add(hiddenPanel);
 		return result;
 	}
 	
@@ -198,6 +224,18 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				EditRegistrarDialogBox dialogBox = new EditRegistrarDialogBox(RegistrarDetailsPanel.this, registrar);
+				dialogBox.center();
+				dialogBox.show();
+			}
+		});
+	}
+	
+	private Button editRegistrarVisiblityAndOrderButton() {
+		return new Button(constants.editOrderAndVisibility(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(RegistrarDetailsPanel.this, registrar);
 				dialogBox.center();
 				dialogBox.show();
 			}

@@ -80,6 +80,9 @@ public class InstitutionListPanel extends VerticalPanel {
 					result = removeHidden(result);
 				}
 				registrars = result;
+				for (RegistrarDTO reg : registrars) {
+					System.out.println("Order "+reg.getOrder());
+				}
 				reload();
 			}
 
