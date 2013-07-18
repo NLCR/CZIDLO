@@ -4,7 +4,7 @@ package cz.nkp.urnnbn.shared.validation;
 public class UrnNbnPartCValidator extends RegExpValidator {
 
 	public UrnNbnPartCValidator() {
-		super("\\w{6}", true);
+		super("^[0-9a-z]{2,6}$");
 	}
 
 	@Override

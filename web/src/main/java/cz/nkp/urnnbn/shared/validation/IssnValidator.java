@@ -3,7 +3,7 @@ package cz.nkp.urnnbn.shared.validation;
 public class IssnValidator extends RegExpValidator {
 
 	public IssnValidator() {
-		super("\\d{4}-\\d{3}[0-9Xx]{1}");
+		super("^\\d{4}-\\d{3}[0-9Xx]{1}$");
 	}
 
 	@Override
