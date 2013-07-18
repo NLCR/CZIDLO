@@ -214,7 +214,7 @@ public class SearchPanel extends SingleTabContentPanel {
 	}
 
 	@Override
-	public void onDeselectionSelection() {
+	public void onDeselection() {
 		// TODO Auto-generated method stub
 
 	}

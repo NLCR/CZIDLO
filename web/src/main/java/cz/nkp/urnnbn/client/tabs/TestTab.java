@@ -43,7 +43,7 @@ public class TestTab extends SingleTabContentPanel {
 	}
 
 	@Override
-	public void onDeselectionSelection() {
+	public void onDeselection() {
 		refreshTabTimer.cancel();
 	}
 

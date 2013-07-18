@@ -131,7 +131,7 @@ public class LogsTab extends SingleTabContentPanel {
 	}
 
 	@Override
-	public void onDeselectionSelection() {
+	public void onDeselection() {
 		refreshTabTimer.cancel();
 	}
 

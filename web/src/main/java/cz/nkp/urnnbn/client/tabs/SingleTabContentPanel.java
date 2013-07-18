@@ -35,6 +35,6 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
 	
 	public abstract void onSelection();
 	
-	public abstract void onDeselectionSelection();
+	public abstract void onDeselection();
 	
 }

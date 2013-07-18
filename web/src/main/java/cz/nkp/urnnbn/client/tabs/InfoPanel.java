@@ -110,7 +110,7 @@ public class InfoPanel extends SingleTabContentPanel {
 	}
 
 	@Override
-	public void onDeselectionSelection() {
+	public void onDeselection() {
 		// TODO Auto-generated method stub
 		
 	}

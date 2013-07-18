@@ -553,7 +553,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 	}
 
 	@Override
-	public void onDeselectionSelection() {
+	public void onDeselection() {
 		processesRefreshTimer.cancel();
 	}
 
