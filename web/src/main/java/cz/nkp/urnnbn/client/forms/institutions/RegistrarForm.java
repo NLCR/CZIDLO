@@ -7,8 +7,8 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.LabelField;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
+import cz.nkp.urnnbn.shared.validation.IntegerValidator;
 import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
-import cz.nkp.urnnbn.shared.validation.PositiveIntegerValidator;
 
 public class RegistrarForm extends Form {
 
@@ -21,6 +21,7 @@ public class RegistrarForm extends Form {
 		originalRegistrar.setRegModeByRegistrarAllowed(false);
 		originalRegistrar.setRegModeByReservationAllowed(false);
 		this.registrarCodeEditable = true;
+		originalRegistrar.setOrder(1L);
 		initForm();
 	}
 
@@ -50,9 +51,6 @@ public class RegistrarForm extends Form {
 				new BooleanValueField(constants.modeByReservation(), originalRegistrar.isRegModeByReservationAllowed()));
 		result.addField("modeByRegistrar",
 				new BooleanValueField(constants.modeByRegistrar(), originalRegistrar.isRegModeByRegistrarAllowed()));
-		// priority and visibility
-		result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), originalRegistrar.getOrder(), true));
-		result.addField("hidden", new BooleanValueField(constants.hidden(), originalRegistrar.isHidden()));
 		return result;
 	}
 
@@ -66,8 +64,10 @@ public class RegistrarForm extends Form {
 		result.setRegModeByResolverAllowed((Boolean)fields.getFieldByKey("modeByResolver").getInsertedValue());
 		result.setRegModeByReservationAllowed((Boolean)fields.getFieldByKey("modeByReservation").getInsertedValue());
 		result.setRegModeByRegistrarAllowed((Boolean)fields.getFieldByKey("modeByRegistrar").getInsertedValue());
-		result.setOrder(Long.valueOf((String) fields.getFieldByKey("order").getInsertedValue()));
-		result.setHidden((Boolean) fields.getFieldByKey("hidden").getInsertedValue());
+		if (originalRegistrar != null) {
+			result.setOrder(originalRegistrar.getOrder());
+			result.setHidden(originalRegistrar.isHidden());
+		}
 		return result;
 	}
 

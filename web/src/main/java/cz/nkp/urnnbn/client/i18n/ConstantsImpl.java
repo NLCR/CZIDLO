@@ -201,6 +201,8 @@ public interface ConstantsImpl extends Constants {
 	String save();
 
 	String edit();
+	
+	String editOrderAndVisibility();
 
 	String code();
 
@@ -249,6 +251,8 @@ public interface ConstantsImpl extends Constants {
 	String insertNewRecord();
 
 	String showInCatalog();
+	
+	String OrderAndVisibility();
 
 	// URN:NBN registration modes
 
