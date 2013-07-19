@@ -158,15 +158,15 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		}
 		// registration modes
 		result.add(registrationModesPanel());
+		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
+			result.add(editRegistrarButton());
+		}
 		// visibility and order
 		if (user.isSuperAdmin()) {
 			result.add(orderAndVisibilityPanel());
 			result.add(editRegistrarVisiblityAndOrderButton());
 		}
 		// edit button 
-		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
-			result.add(editRegistrarButton());
-		}
 		return result;
 	}
 	
