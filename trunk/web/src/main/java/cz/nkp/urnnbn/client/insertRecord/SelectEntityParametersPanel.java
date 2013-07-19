@@ -42,7 +42,7 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		// TODO: mozna implementovat jinak - zeptat se a pak se pravidelne ptat po intervalu,
 		// jestli registrarsManagedByUser nacetlo
 		// v super panelu
-		timer.schedule(300);
+		timer.scheduleRepeating(300);
 	}
 
 	private Timer waitForRegistrarsTimer() {
