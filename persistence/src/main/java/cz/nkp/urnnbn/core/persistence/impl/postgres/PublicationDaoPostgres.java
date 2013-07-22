@@ -37,7 +37,7 @@ public class PublicationDaoPostgres extends AbstractDAO implements PublicationDA
 
     @Override
     public Publication getPublicationById(long idValue) throws DatabaseException, RecordNotFoundException {
-        return (Publication) getRecordById(TABLE_NAME, ATTR_INT_ENT_ID, idValue, new PublicationRT());
+        return (Publication) getRecordById(TABLE_NAME, ATTR_INT_ENT_ID, idValue, new PublicationRT(), false);
     }
 
     @Override
