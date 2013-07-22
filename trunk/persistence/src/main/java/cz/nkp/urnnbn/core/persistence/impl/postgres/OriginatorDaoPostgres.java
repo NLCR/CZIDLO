@@ -37,7 +37,7 @@ public class OriginatorDaoPostgres extends AbstractDAO implements OriginatorDAO 
 
     @Override
     public Originator getOriginatorById(long id) throws DatabaseException, RecordNotFoundException {
-        return (Originator) getRecordById(TABLE_NAME, ATTR_INT_ENT_ID, id, new OriginatorRT());
+        return (Originator) getRecordById(TABLE_NAME, ATTR_INT_ENT_ID, id, new OriginatorRT(), false);
     }
 
     @Override

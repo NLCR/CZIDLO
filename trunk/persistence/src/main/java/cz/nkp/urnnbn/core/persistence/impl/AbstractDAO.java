@@ -181,13 +181,19 @@ public abstract class AbstractDAO {
     }
 
     public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer) throws DatabaseException, RecordNotFoundException {
+        return getRecordById(tableName, idAttrName, idValue, transformer, true);
+    }
+
+    public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer, boolean logMissing) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectAllAttrsByLongAttr(tableName, idAttrName, idValue);
         DaoOperation operation = new SingleResultOperation(statement, transformer);
         try {
             return runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.INFO, "No such " + tableName + " with id {0}", idValue);
+                if (logMissing) {
+                    logger.log(Level.INFO, "No such " + tableName + " with id {0}", idValue);
+                }
                 throw (RecordNotFoundException) e;
             } else {
                 //should never happen
@@ -389,7 +395,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Cannot delete from {0} where "
                     + "{1}={2} and {3}={4}",
                     new Object[]{tableName,
-                        longAttrName, longAttrValue, stringAttrName, stringAttrValue});
+                longAttrName, longAttrValue, stringAttrName, stringAttrValue});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -417,7 +423,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Cannot delete from {0} where "
                     + "{1}={2} and {3}={4}",
                     new Object[]{tableName,
-                        firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
+                firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -445,7 +451,7 @@ public abstract class AbstractDAO {
             logger.log(Level.SEVERE, "Cannot delete from {0} "
                     + "where {1}={2} and {3}={4}",
                     new Object[]{tableName,
-                        firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
+                firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
