@@ -39,7 +39,7 @@ public class AuthenticationServiceImpl extends BusinessServiceImpl implements Au
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, "No user with login '" + login + "' found", ex);
             return null;
         }
     }
