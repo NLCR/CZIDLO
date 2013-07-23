@@ -117,4 +117,16 @@ public class DataServiceImpl extends AbstractService implements DataService {
 			throw new ServerException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void updateDigitalInstance(UrnNbnDTO urnNbn, DigitalInstanceDTO instance) throws ServerException {
+		try {
+			DigitalInstance transformed = new DtoToDigitalInstanceTransformer(instance, urnNbn).transform();
+			updateService.updateDigitalInstance(transformed);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
+	}
+	
 }

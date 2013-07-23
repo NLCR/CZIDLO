@@ -28,5 +28,7 @@ public interface DataService extends RemoteService {
 	void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException;
 
 	void deactivateUrnNbn(UrnNbnDTO urnNbn) throws ServerException;
+	
+	void updateDigitalInstance(UrnNbnDTO urnNbn, DigitalInstanceDTO instance) throws ServerException;
 
 }

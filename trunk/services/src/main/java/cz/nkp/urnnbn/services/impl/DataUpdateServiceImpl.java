@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -167,6 +168,19 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             throw new RuntimeException(ex);
         }
     }
+
+	@Override
+	public void updateDigitalInstance(DigitalInstance instance)
+			throws UnknownUserException, AccessException,
+			UnknownDigDocException {
+		try {
+            factory.digInstDao().updateDigInstance(instance);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+	}
     
     
 }
