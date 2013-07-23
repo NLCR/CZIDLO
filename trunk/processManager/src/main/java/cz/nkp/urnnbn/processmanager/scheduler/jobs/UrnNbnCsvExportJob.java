@@ -25,7 +25,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
@@ -68,7 +68,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             }
         } catch (Throwable ex) {
             //throw new JobExecutionException(ex);
-            logger.error(ex.getMessage());
+            logger.error("urn:nbn export process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();
@@ -92,7 +92,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     }
 
     private DatabaseConnector initDatabaseConnector() {
-        return new PostgresSimpleConnector(resolverDbHost, resolverDbDatabase, resolverDbPort, resolverDbLogin, resolverDbPassword);
+        return new PostgresPooledConnector();
     }
 
     private void runProcess(String registrarCode) {

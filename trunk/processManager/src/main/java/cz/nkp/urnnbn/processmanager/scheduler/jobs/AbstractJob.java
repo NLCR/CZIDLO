@@ -45,11 +45,6 @@ public abstract class AbstractJob implements InterruptableJob {
     public static String PARAM_RESOLVER_DB_PASSWORD_KEY = "resolverDbPassword";
     protected Long processId;
     protected Logger logger;
-    protected String resolverDbHost;
-    protected Integer resolverDbPort;
-    protected String resolverDbDatabase;
-    protected String resolverDbLogin;
-    protected String resolverDbPassword;
     protected boolean interrupted = false;
 
     public void interrupt() throws UnableToInterruptJobException {
@@ -60,12 +55,6 @@ public abstract class AbstractJob implements InterruptableJob {
 
     protected void init(JobDataMap mergedJobDataMap, ProcessType processType) {
         this.processId = (Long) mergedJobDataMap.get(PARAM_PROCESS_ID_KEY);
-        this.resolverDbHost = (String) mergedJobDataMap.get(PARAM_RESOLVER_DB_HOST_KEY);
-        this.resolverDbPort = (Integer) mergedJobDataMap.get(PARAM_RESOLVER_DB_PORT_KEY);
-        this.resolverDbDatabase = (String) mergedJobDataMap.get(PARAM_RESOLVER_DB_DATABASE_KEY);
-        this.resolverDbLogin = (String) mergedJobDataMap.get(PARAM_RESOLVER_DB_LOGIN_KEY);
-        this.resolverDbPassword = (String) mergedJobDataMap.get(PARAM_RESOLVER_DB_PASSWORD_KEY);
-        //System.err.println("initializing");
         initLogger(processId, processType);
         ProcessFileUtils.initProcessDir(processId);
         initLogAppender();

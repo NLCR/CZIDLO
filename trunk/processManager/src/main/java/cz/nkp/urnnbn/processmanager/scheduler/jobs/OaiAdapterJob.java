@@ -106,7 +106,7 @@ public class OaiAdapterJob extends AbstractJob {
                 logger.info("oai adapter finished, see report");
             }
         } catch (Throwable ex) {
-            logger.error(ex.getMessage());
+            logger.error("OAI Adapter process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();
