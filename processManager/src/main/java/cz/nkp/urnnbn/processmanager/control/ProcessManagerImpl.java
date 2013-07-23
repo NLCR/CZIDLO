@@ -71,7 +71,7 @@ public class ProcessManagerImpl implements ProcessManager {
     private final Queue<Process> userProcessQueue = new LinkedBlockingQueue<Process>();
     private final AuthorizingProcessDAO processDao = AuthorizingProcessDAOImpl.instanceOf();
     private Scheduler scheduler;
-    
+
     public static synchronized ProcessManagerImpl instanceOf() {
         try {
             if (instance == null) {
@@ -258,12 +258,6 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())
                         .usingJobData(UrnNbnCsvExportJob.PARAM_REG_CODE_KEY, process.getParams()[0])
-                        //resolver db connection
-                        .usingJobData(AbstractJob.PARAM_RESOLVER_DB_HOST_KEY, Configuration.getResolverDbCreditentials().getHost())
-                        .usingJobData(AbstractJob.PARAM_RESOLVER_DB_PORT_KEY, Configuration.getResolverDbCreditentials().getPort())
-                        .usingJobData(AbstractJob.PARAM_RESOLVER_DB_DATABASE_KEY, Configuration.getResolverDbCreditentials().getDatabase())
-                        .usingJobData(AbstractJob.PARAM_RESOLVER_DB_LOGIN_KEY, Configuration.getResolverDbCreditentials().getLogin())
-                        .usingJobData(AbstractJob.PARAM_RESOLVER_DB_PASSWORD_KEY, Configuration.getResolverDbCreditentials().getPassword())
                         .build();
             case OAI_ADAPTER:
                 String resolverApiUrl = Configuration.getResolverApiUrl();
@@ -428,7 +422,7 @@ public class ProcessManagerImpl implements ProcessManager {
                 logger.log(Level.INFO, "Deleted data of process {0}", processId);
             }
             AdminLogger.getLogger().info("process " + process.getType().toString() + " of user '" + process.getOwnerLogin()
-                + "' was deleted by user '" + userLogin + "'");
+                    + "' was deleted by user '" + userLogin + "'");
         }
     }
 }

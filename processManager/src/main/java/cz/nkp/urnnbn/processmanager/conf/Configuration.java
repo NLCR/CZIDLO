@@ -16,8 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.conf;
 
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
@@ -32,7 +31,7 @@ import java.io.InputStream;
 public class Configuration {
 
     private static File jobsDir;
-    private static ResolverDatabaseCreditentials resolverDbCreditentials;
+    //private static ResolverDatabaseCreditentials resolverDbCreditentials;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
     private static String resolverApiUrl;
@@ -49,37 +48,18 @@ public class Configuration {
     }
 
     public static void init(PropertyLoader loader) throws IOException {
+        Services.init(new PostgresPooledConnector());
         jobsDir = loader.loadDir(PropertyKeys.JOBS_DATA_DIR);
         maxRunningAdminProcesses = loader.loadInt(PropertyKeys.MAX_ADMIN_JOBS);
         maxRunningUserProcesses = loader.loadInt(PropertyKeys.MAX_USER_JOBS);
-        resolverDbCreditentials = new ResolverDatabaseCreditentials(
-                loader.loadString(PropertyKeys.DB_HOST),
-                loader.loadInt(PropertyKeys.DB_PORT),
-                loader.loadString(PropertyKeys.DB_DATABASE),
-                loader.loadString(PropertyKeys.DB_LOGIN),
-                loader.loadString(PropertyKeys.DB_PASSWORD));
-        Services.init(initDatabaseConnector());
         //oai adapter
         digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
         digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
         resolverApiUrl = loader.loadString(DefinedProperties.RESOLVER_API_URL);
     }
 
-    private static DatabaseConnector initDatabaseConnector() {
-        return new PostgresSimpleConnector(
-                resolverDbCreditentials.getHost(),
-                resolverDbCreditentials.getDatabase(),
-                resolverDbCreditentials.getPort().intValue(),
-                resolverDbCreditentials.getLogin(),
-                resolverDbCreditentials.getPassword());
-    }
-
     public static File getJobsDir() {
         return jobsDir;
-    }
-
-    public static ResolverDatabaseCreditentials getResolverDbCreditentials() {
-        return resolverDbCreditentials;
     }
 
     public static Integer getMaxRunningAdminProcesses() {
