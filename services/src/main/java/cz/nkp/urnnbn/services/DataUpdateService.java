@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -27,6 +28,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+
 import java.util.Collection;
 
 /**
@@ -42,6 +44,10 @@ public interface DataUpdateService extends BusinessService {
     public void updateDigitalDocument(DigitalDocument doc, String login) throws
             UnknownUserException, AccessException,
             UnknownDigDocException;
+    
+    public void updateDigitalInstance(DigitalInstance instance) throws
+    		UnknownUserException, AccessException,
+    		UnknownDigDocException;
 
     public void updateRegistrar(Registrar registrar, String login) throws
             UnknownUserException, AccessException,

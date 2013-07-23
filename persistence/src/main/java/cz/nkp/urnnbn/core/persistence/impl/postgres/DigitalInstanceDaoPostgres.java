@@ -23,6 +23,8 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateDigitalInstance;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigInstance;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalInstance;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalInstanceRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -132,4 +134,9 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
             logger.log(Level.SEVERE, null, ex);
         }
     }
+
+	public void updateDigInstance(DigitalInstance instance)
+			throws DatabaseException, RecordNotFoundException {
+		updateRecordWithLongPK(instance, TABLE_NAME, ATTR_ID, new UpdateDigitalInstance(instance));
+	}
 }

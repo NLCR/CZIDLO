@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstance {
+public class DigitalInstance implements IdentifiableByLongAttribute {
 
     private Long id;
     private Long digDocId;

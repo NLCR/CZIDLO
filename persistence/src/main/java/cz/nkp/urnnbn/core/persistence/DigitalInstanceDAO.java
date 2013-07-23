@@ -37,6 +37,8 @@ public interface DigitalInstanceDAO {
      * @throws RecordNotFoundException if digital document or digital library was not found
      */
     public Long insertDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException;
+    
+    public void updateDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException;
 
     public DigitalInstance getDigInstanceById(long id) throws DatabaseException, RecordNotFoundException;
 
