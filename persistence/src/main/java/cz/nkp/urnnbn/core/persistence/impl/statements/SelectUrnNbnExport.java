@@ -20,7 +20,7 @@ public class SelectUrnNbnExport implements StatementWrapper {
 	
 	private List<String> registrars;
 	
-	private UrnNbnRegistrationMode registrationMode;
+	private String registrationMode;
 	
 	private String entityType;
 	
@@ -162,11 +162,11 @@ public class SelectUrnNbnExport implements StatementWrapper {
 		this.registrars = registrars;
 	}
 
-	public UrnNbnRegistrationMode getRegistrationMode() {
+	public String getRegistrationMode() {
 		return registrationMode;
 	}
 
-	public void setRegistrationMode(UrnNbnRegistrationMode registrationMode) {
+	public void setRegistrationMode(String registrationMode) {
 		this.registrationMode = registrationMode;
 	}
 
