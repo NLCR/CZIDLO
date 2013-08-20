@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -479,6 +480,18 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             throw new RuntimeException(ex);
         }
     }
+    
+    @Override
+	public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
+			List<String> registrars, String registrationMode,
+			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
+			Boolean isbnAssigned, Boolean active) {
+    	try {
+    		return factory.urnDao().selectByCriteria(begin, end, registrars, registrationMode, entityType, cnbAssigned, issnAsigned, isbnAssigned, active);
+    	} catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+	}
 
     private Collection<DigitalDocument> findDigDocsOfChangedIntEntities(DateTime from, DateTime until) throws DatabaseException {
         List<Long> entityDbList = factory.intelectualEntityDao().getEntitiesDbIdListByTimestamps(from, until);
@@ -557,4 +570,5 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     private List<UrnNbn> findChangedUrnNbns(Registrar registrar, DateTime from, DateTime until) throws DatabaseException {
         return factory.urnDao().getUrnNbnsByRegistrarCodeAndTimestamps(registrar.getCode(), from, until);
     }
+
 }
