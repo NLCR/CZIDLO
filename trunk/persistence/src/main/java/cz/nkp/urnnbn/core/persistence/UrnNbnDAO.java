@@ -69,7 +69,7 @@ public interface UrnNbnDAO {
 
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
     
-    public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end, List<String> registrars, UrnNbnRegistrationMode registrationMode, 
+    public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end, List<String> registrars, String registrationMode, 
     		String entityType, Boolean cnbAssigned, Boolean issnAsigned, Boolean isbnAssigned, Boolean active) throws DatabaseException;
 
     //only for tests, rollbacks

@@ -349,7 +349,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
 	public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
-			List<String> registrars, UrnNbnRegistrationMode registrationMode,
+			List<String> registrars, String registrationMode,
 			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
 			Boolean isbnAssigned, Boolean active) throws DatabaseException {
 		try {
