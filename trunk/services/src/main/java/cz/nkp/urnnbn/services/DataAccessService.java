@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
@@ -133,5 +134,10 @@ public interface DataAccessService extends BusinessService {
     public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
     
     public Content getContentByNameAndLanguage(String name, String language);
+    
+    public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
+			List<String> registrars, String registrationMode,
+			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
+			Boolean isbnAssigned, Boolean active);
     
 }
