@@ -47,7 +47,6 @@ public class ContextListener implements ServletContextListener {
 		}
 	}
 
-	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		loadWebProperties();
 		loadTabInfoContent();
@@ -85,7 +84,6 @@ public class ContextListener implements ServletContextListener {
 		}.run(TAB_RULES_CONTENT);
 	}
 
-	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		// nothing
 	}

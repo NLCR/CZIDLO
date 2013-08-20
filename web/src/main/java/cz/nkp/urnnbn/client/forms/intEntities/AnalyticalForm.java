@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client.forms.intEntities;
 
+import cz.nkp.urnnbn.client.forms.BooleanValueField;
 import cz.nkp.urnnbn.client.forms.Field;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
@@ -32,6 +33,8 @@ public class AnalyticalForm extends IntelectualEntityForm {
 		result.addField("otherId", otherId);
 		Field docType = new TextInputValueField(new LimitedLengthValidator(50), constants.documentType(), dto.getDocumentType(), false);
 		result.addField("docType", docType);
+		Field digitalBorn = new BooleanValueField(constants.digitalBorn(), dto.isDigitalBorn());
+		result.addField("digitalBorn", digitalBorn);
 		addPrimaryOriginatorToFormFields(result);
 		Field otherOriginator = new TextInputValueField(new LimitedLengthValidator(50), constants.otherOriginator(),
 				dto.getOtherOriginator(), false);
@@ -47,6 +50,7 @@ public class AnalyticalForm extends IntelectualEntityForm {
 		result.setSubTitle((String) fields.getFieldByKey("subTitle").getInsertedValue());
 		result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
 		result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
+		result.setDigitalBorn((Boolean) (fields.getFieldByKey("digitalBorn").getInsertedValue()));
 		result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
 		result.setDigitalBorn(Boolean.FALSE);
 		setPrimaryOriginatorFromFormFields(result);

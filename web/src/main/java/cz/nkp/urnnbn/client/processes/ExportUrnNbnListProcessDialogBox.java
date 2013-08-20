@@ -10,11 +10,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
@@ -69,9 +71,25 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private Panel contentPanel() {
 		VerticalPanel result = new VerticalPanel();
+		result.add(selectDateRangePanel());
 		result.add(selectRegistrarPanel());
+		result.add(selectModusOfRegistrationPanel());
+		result.add(selectTypeOfDocumentPanel());
+		result.add(selectAbsenceOfIdentifiers());
+		result.add(numberOfDigitalInstanceCheckbox());
+		result.add(selectActivationFlag());
 		result.add(buttonsPanel());
 		result.add(errorLabel);
+		return result;
+	}
+	
+	private Panel selectDateRangePanel() {
+		HorizontalPanel result = new HorizontalPanel();
+		result.setSpacing(5);
+		DatePicker begin = new DatePicker();
+		result.add(begin);
+		DatePicker end = new DatePicker();
+		result.add(end);
 		return result;
 	}
 
@@ -80,6 +98,58 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.setSpacing(5);
 		result.add(new Label(constants.processUrnNbnExportRegistrar() + SEPARATOR));
 		result.add(registrarList());
+		return result;
+	}
+	
+	private Panel selectModusOfRegistrationPanel() {
+		HorizontalPanel result = new HorizontalPanel();
+		final ListBox list = new ListBox(true);
+		list.addItem("BY_RESOLVER");
+		list.addItem("BY_REGISTRAR");
+		list.addItem("BY_RESERVATION");
+		result.add(list);
+		return result;
+	}
+	
+	private Panel selectTypeOfDocumentPanel() {
+		HorizontalPanel result = new HorizontalPanel();
+		final ListBox list = new ListBox(true);
+		list.addItem("monograph");
+		list.addItem("monographVolume");
+		list.addItem("periodical");
+		list.addItem("periodicalVolume");
+		list.addItem("periodicalIssue");
+		list.addItem("thesis");
+		list.addItem("analytical");
+		list.addItem("otherEntity");
+		result.add(list);
+		return result;
+	}
+	
+	private Panel selectAbsenceOfIdentifiers() {
+		HorizontalPanel result = new HorizontalPanel();
+		final ListBox list = new ListBox(true);
+		list.addItem("CNB");
+		list.addItem("ISSN");
+		list.addItem("ISBN");
+		result.add(list);
+		return result;
+	}
+	
+	private Panel numberOfDigitalInstanceCheckbox() {
+		HorizontalPanel result = new HorizontalPanel();
+		CheckBox checkBox = new CheckBox();
+		result.add(checkBox);
+		return result;
+	}
+	
+	private Panel selectActivationFlag() {
+		HorizontalPanel result = new HorizontalPanel();
+		final ListBox list = new ListBox(true);
+		list.addItem("ACTIVE");
+		list.addItem("INACTIVE");
+		list.addItem("ALL");
+		result.add(list);
 		return result;
 	}
 
@@ -92,7 +162,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	}
 
 	private ListBox registrarList() {
-		final ListBox result = new ListBox();
+		final ListBox result = new ListBox(true);
 		for (RegistrarDTO registrar : registrarsOfUser) {
 			result.addItem(registrar.getCode());
 		}
@@ -113,7 +183,26 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 			@Override
 			public void onClick(ClickEvent event) {
 				if (selectedRegistrar != null) {
-					String[] params = new String[] { selectedRegistrar.getCode() };
+					String begin = null;
+					String end = null;
+					String registrars = selectedRegistrar.getCode();
+					String regMode = null;
+					String entityType = null;
+					String cnbAssigned = null;
+		            String issnAsigned =  null;
+		            String isbnAssigned = null;
+		            String active = null;
+					String[] params = new String[] {
+							begin,
+							end,
+							registrars,
+							regMode,
+							entityType,
+							cnbAssigned,
+							issnAsigned,
+							isbnAssigned,
+							active
+					};
 					processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
 						@Override
