@@ -4,9 +4,12 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
+import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -65,6 +68,9 @@ public interface UrnNbnDAO {
     public List<UrnNbnWithStatus> getSuccessors(UrnNbn urn) throws DatabaseException;
 
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
+    
+    public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end, List<String> registrars, UrnNbnRegistrationMode registrationMode, 
+    		String entityType, Boolean cnbAssigned, Boolean issnAsigned, Boolean isbnAssigned, Boolean active) throws DatabaseException;
 
     //only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;

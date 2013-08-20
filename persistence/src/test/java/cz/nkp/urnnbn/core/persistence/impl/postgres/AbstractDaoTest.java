@@ -101,13 +101,13 @@ public abstract class AbstractDaoTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        clearDatabase();
+        //clearDatabase();
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        clearDatabase();
+        //clearDatabase();
     }
 
     public void clearDatabase() throws Exception {

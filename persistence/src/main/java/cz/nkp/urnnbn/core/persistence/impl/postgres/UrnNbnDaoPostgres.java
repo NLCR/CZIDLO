@@ -4,10 +4,13 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.UrnNbnDAO;
@@ -28,13 +31,16 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
 import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select3StringsBy2Strings;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ThreeStringsRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 import java.sql.SQLException;
@@ -341,4 +347,30 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
             logger.log(Level.SEVERE, null, ex);
         }
     }
+
+	public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
+			List<String> registrars, UrnNbnRegistrationMode registrationMode,
+			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
+			Boolean isbnAssigned, Boolean active) throws DatabaseException {
+		try {
+			SelectUrnNbnExport st = new SelectUrnNbnExport();
+            st.setBegin(begin);
+            st.setEnd(end);
+            st.setRegistrars(registrars);
+            st.setRegistrationMode(registrationMode);
+            st.setEntityType(entityType);
+            st.setCnbAssigned(cnbAssigned);
+            st.setIssnAsigned(issnAsigned);
+            st.setIsbnAssigned(isbnAssigned);
+            st.setActive(active);
+            DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnExportRT());
+            return (List<UrnNbnExport>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return Collections.<UrnNbnExport>emptyList();
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+	}
 }
