@@ -381,4 +381,10 @@ public interface ConstantsImpl extends Constants {
 	
 	String hidden();
 
+	String absenceOfIdentifiers();
+
+	String includeNumberOfDigitalInstances();
+
+	String activityFlag();
+
 }
