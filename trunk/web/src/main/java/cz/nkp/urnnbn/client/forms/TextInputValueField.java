@@ -55,7 +55,7 @@ public class TextInputValueField extends Field {
 	}
 
 	@Override
-	public Widget getContentWidget() {
+	public TextBox getContentWidget() {
 		return textBox;
 	}
 
