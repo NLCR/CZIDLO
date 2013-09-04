@@ -417,12 +417,134 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments
 </response>
 }}}
 -----
-== Záznam digitálního dokumentu na základě registrar-scope identifikátoru ==
-=== Request ===
+== Registrar-scope identifikátory ==
+-----
+=== Zobrazení seznamu identifikátorů ===
+==== Request ====
+{{{
+GET http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/registrarScopeIdentifiers
+}}}
+==== Response ====
+Odpověď obsahuje hodnoty všech identifikátorů dokumentu.
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+     <registrarScopeIdentifiers>
+          <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+          <id type="sysno">MZK01:000721328</id>
+     </registrarScopeIdentifiers>
+</response>
+}}}
+-----
+=== Zobrazení hodnoty konkrétního identifikátoru ===
+==== Request ====
+{{{
+GET http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/registrarScopeIdentifiers/uuid
+}}}
+==== Response ====
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+</response>
+}}}
+-----
+=== Vložení/aktualizace identifikátoru ===
+==== Request ====
+{{{
+PUT http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/registrarScopeIdentifiers/TEST2
+}}}
+Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
+1234
+==== Response ====
+===== Pokud digitální dokument identifikátor tohoto typu zatím neměl (vložení) =====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="TEST2">1234</id>
+</response>
+}}}
+===== Pokud identifikátor existoval, je jeho hodnota změněna (aktualizace) =====
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="TEST2" previousValue="12345">1234</id>
+</response>
+}}}
+-----
+=== Odstranění jednoho identifikátoru ===
+==== Původní stav ====
+Seznam registrar-scope identifikátorů dokumentu vypadá takto:
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+   <registrarScopeIdentifiers>
+     <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+     <id type="sysno">MZK01:000721328</id>
+   </registrarScopeIdentifiers>
+</response>
+}}}
+
+==== Request ====
+{{{
+DELETE http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/registrarScopeIdentifiers/uuid
+}}}
+==== Response ====
+V odpovědi je zaslána hodnota identifikátoru, který byl odebrán.
+{{{
+<?xml version="1.0" encoding="UTF-8"??>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+</response>
+}}}
+==== Výsledek ====
+Registrar-scope identifikátor typu *uuid* byl odstraněn, seznam identifikátorů vypadá následovně:
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+   <registrarScopeIdentifiers>
+     <id type="sysno">MZK01:000721328</id>
+   </registrarScopeIdentifiers>
+</response>
+}}}
+-----
+=== Odstranění všech identifikátorů dokumentu ===
+==== Původní stav ====
+Seznam registrar-scope identifikátorů dokumentu vypadá takto:
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+   <registrarScopeIdentifiers>
+     <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+     <id type="sysno">MZK01:000721328</id>
+   </registrarScopeIdentifiers>
+</response>
+}}}
+
+==== Request ====
+{{{
+DELETE http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/registrarScopeIdentifiers
+}}}
+==== Response ====
+V odpovědi je zaslána hodnota všech odstraněných identifikátorů.
+{{{
+<?xml version="1.0" encoding="UTF-8"??>
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+    <registrarScopeIdentifiers>
+        <id type="sysno">MZK01:000721328</id>
+        <id type="uuid">0c6f5a60-db01-11e1-b015-00505682629d</id>
+    </registrarScopeIdentifiers>
+</response>
+}}}
+==== Výsledek ====
+Všechny registrar-scope identifikátory dokumentu byly odstraněny, jejich prázdný záznam vypadá takto:
+{{{
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
+   <registrarScopeIdentifiers/>
+</response>
+}}}
+-----
+=== Záznam digitálního dokumentu na základě registrar-scope identifikátoru ===
+==== Request ====
 {{{
 GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments/id/K4_pid/uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk
 }}}
-=== Response ===
+==== Response ====
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
@@ -511,29 +633,6 @@ GET http://resolver.nkp.cz/api/v3/registrars/boa001/digitalDocuments/id/K4_pid/u
             </digitalInstance>
         </digitalInstances>
     </digitalDocument>
-</response>
-}}}
------
-== Vložení/aktualizace registrar-scope identifikátoru ==
-=== Request ===
-{{{
-PUT http://resolver.nkp.cz/api/v3/resolver/urn:nbn:cz:boa001-000005/identifiers/TEST2
-}}}
-Tělo dotazu pak obsahuje novou hodnotu identifikátoru, zde:
-1234
-=== Response ===
-==== Pokud digitální dokument identifikátor tohoto typu zatím neměl ====
-{{{
-<?xml version="1.0" encoding="UTF-8"?>
-<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
-    <id type="TEST2">1234</id>
-</response>
-}}}
-==== Pokud identifikátor existoval, je jeho hodnota změněna ====
-{{{
-<?xml version="1.0" encoding="UTF-8"?>
-<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
-    <id type="TEST2" previousValue="12345">1234</id>
 </response>
 }}}
 -----
