@@ -257,7 +257,16 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_REG_CODE_KEY, process.getParams()[0])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_BEGIN_CODE_KEY, process.getParams()[0])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_END_CODE_KEY, process.getParams()[1])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_REGISTRARS_CODE_KEY, process.getParams()[2])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_REG_MODE_CODE_KEY, process.getParams()[3])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_ENT_TYPE_CODE_KEY, process.getParams()[4])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_HAS_CNB_CODE_KEY, process.getParams()[5])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_HAS_ISSN_CODE_KEY, process.getParams()[6])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_HAS_ISBN_CODE_KEY, process.getParams()[7])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_IS_ACTIVE_CODE_KEY, process.getParams()[8])
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, process.getParams()[9])
                         .build();
             case OAI_ADAPTER:
                 String resolverApiUrl = Configuration.getResolverApiUrl();

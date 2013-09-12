@@ -17,7 +17,7 @@ public class ArchiverForm extends Form {
 	public ArchiverForm(ArchiverDTO originalArchiver) {
 		if (originalArchiver == null) {
 			originalArchiver = new ArchiverDTO();
-			originalArchiver.setOrder(1L);
+			originalArchiver.setOrder(0L);
 		}
 		this.originalArchiver = originalArchiver;
 		initForm();

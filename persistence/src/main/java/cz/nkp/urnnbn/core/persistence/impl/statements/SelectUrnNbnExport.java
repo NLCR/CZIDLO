@@ -12,6 +12,8 @@ import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
+
+//FIXME: move filter fields to separate class
 public class SelectUrnNbnExport implements StatementWrapper {
 	
 	private DateTime begin;
@@ -22,7 +24,7 @@ public class SelectUrnNbnExport implements StatementWrapper {
 	
 	private String registrationMode;
 	
-	private String entityType;
+	private List<String> entityTypes;
 	
 	private Boolean cnbAssigned = null;
 	
@@ -76,8 +78,14 @@ public class SelectUrnNbnExport implements StatementWrapper {
 			}
 			sb.append(String.format("row.registrar in (%s) AND ", inBody.toString()));
 		}
-		if (entityType != null) {
-			sb.append("row.entitytype = ? AND ");
+		if (entityTypes != null) {
+			StringBuilder inBody = new StringBuilder("?");
+			if (entityTypes.size() > 1) {
+				for (int i = 1; i != entityTypes.size(); i++) {
+					inBody.append(", ?");
+				}
+			}
+			sb.append(String.format("row.entitytype in (%s) AND ", inBody.toString()));
 		}
 		if (cnbAssigned != null) {
 			sb.append("row.cnb = ? AND ");
@@ -113,9 +121,11 @@ public class SelectUrnNbnExport implements StatementWrapper {
 					index++;
 				}
 			}
-			if (entityType != null) {
-				st.setString(index,  entityType);
-				index++;
+			if (entityTypes != null) {
+				for (String type : entityTypes) {
+					st.setString(index, type);
+					index++;
+				}
 			}
 			if (cnbAssigned != null) {
 				st.setBoolean(index, cnbAssigned);
@@ -170,12 +180,12 @@ public class SelectUrnNbnExport implements StatementWrapper {
 		this.registrationMode = registrationMode;
 	}
 
-	public String getEntityType() {
-		return entityType;
+	public List<String> getEntityTypes() {
+		return entityTypes;
 	}
 
-	public void setEntityType(String entityType) {
-		this.entityType = entityType;
+	public void setEntityTypes(List<String> entityTypes) {
+		this.entityTypes = entityTypes;
 	}
 
 	public Boolean getCnbAssigned() {

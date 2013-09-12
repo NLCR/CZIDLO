@@ -484,10 +484,10 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
 	public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
 			List<String> registrars, String registrationMode,
-			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
+			List<String> entityTypes, Boolean cnbAssigned, Boolean issnAsigned,
 			Boolean isbnAssigned, Boolean active) {
     	try {
-    		return factory.urnDao().selectByCriteria(begin, end, registrars, registrationMode, entityType, cnbAssigned, issnAsigned, isbnAssigned, active);
+    		return factory.urnDao().selectByCriteria(begin, end, registrars, registrationMode, entityTypes, cnbAssigned, issnAsigned, isbnAssigned, active);
     	} catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

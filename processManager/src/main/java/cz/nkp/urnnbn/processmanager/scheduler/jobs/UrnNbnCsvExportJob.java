@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
@@ -32,9 +33,14 @@ import cz.nkp.urnnbn.services.Services;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -44,10 +50,34 @@ import org.quartz.JobExecutionException;
  */
 public class UrnNbnCsvExportJob extends AbstractJob {
 
+	private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
+	private final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+	
     public static final String CSV_EXPORT_FILE_NAME = "export.csv";
-    public static final String PARAM_REG_CODE_KEY = "registrarCode";
+    
+    public static final String PARAM_BEGIN_CODE_KEY = "begin";
+    public static final String PARAM_END_CODE_KEY = "end";
+    public static final String PARAM_REGISTRARS_CODE_KEY = "registrars";
+    public static final String PARAM_REG_MODE_CODE_KEY = "registrationMode";
+    public static final String PARAM_ENT_TYPE_CODE_KEY = "entityType";
+    public static final String PARAM_HAS_CNB_CODE_KEY = "cnb";
+    public static final String PARAM_HAS_ISSN_CODE_KEY = "issn";
+    public static final String PARAM_HAS_ISBN_CODE_KEY = "isbn";
+    public static final String PARAM_IS_ACTIVE_CODE_KEY = "active";
+    public static final String PARAM_EXPORT_NUM_OF_DIG_INSTANCES = "exportNumOfDigInstances";
+    
     private static final String HEADER_TITLE = "Název titulu";
     private static final String HEADER_URN_NBN = "URN:NBN";
+	private static final String HEADER_RESERVED = "Rezervováno";
+	private static final String HEADER_MODIFIED = "Modifikováno";
+	private static final String HEADER_REG_MODE = "Mod registrace";
+	private static final String HEADER_ENT_TYPE = "Typ dokumentu";
+	private static final String HEADER_HAS_CNB = "Má ČNB";
+	private static final String HEADER_HAS_ISSN = "Má ISSN";
+	private static final String HEADER_HAS_ISBN = "Má ISBN";
+	private static final String HEADER_UNR_ACTIVE = "Stav";
+	private static final String HEADER_NUM_OF_DIG_INSTANCES = "";
+	
     private PrintWriter csvWriter;
     private Services services;
 
@@ -58,9 +88,49 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             csvWriter = openCsvWriter(createWriteableProcessFile(CSV_EXPORT_FILE_NAME));
             this.services = initServices();
             logger.info("services initialized");
-            String registrarCode = (String) context.getMergedJobDataMap().get(PARAM_REG_CODE_KEY);
-            logger.info("registrar code: " + registrarCode);
-            runProcess(registrarCode);
+            DateTime begin = null;
+            if (context.getMergedJobDataMap().containsKey(PARAM_BEGIN_CODE_KEY)) {
+            	String val = context.getMergedJobDataMap().getString(PARAM_BEGIN_CODE_KEY);
+            	if (val != null) {
+            		begin = new DateTime(dateFormat.parse(val));
+            	}
+            }
+            DateTime end = null;
+            if (context.getMergedJobDataMap().containsKey(PARAM_END_CODE_KEY)) {
+            	String val = context.getMergedJobDataMap().getString(PARAM_END_CODE_KEY);
+            	if (val != null) {
+            		end = new DateTime(dateFormat.parse(val));
+            	}
+            }
+            List<String> registrars = null;
+            if (context.getMergedJobDataMap().get(PARAM_REGISTRARS_CODE_KEY) != null) {
+            	registrars = Arrays.asList(((String) context.getMergedJobDataMap().get(PARAM_REGISTRARS_CODE_KEY)).split(","));
+            }
+            String registrationMode = context.getMergedJobDataMap().getString(PARAM_REG_MODE_CODE_KEY);
+            List<String> entityTypes = null;
+            if (context.getMergedJobDataMap().get(PARAM_ENT_TYPE_CODE_KEY) != null) {
+            	entityTypes = Arrays.asList(((String) context.getMergedJobDataMap().get(PARAM_ENT_TYPE_CODE_KEY)).split(","));
+            }
+            //context.getMergedJobDataMap().getString(PARAM_ENT_TYPE_CODE_KEY);
+            Boolean cnbAssigned = null;
+            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_HAS_CNB_CODE_KEY))) {
+            	cnbAssigned = context.getMergedJobDataMap().getBoolean(PARAM_HAS_CNB_CODE_KEY);
+            }
+            Boolean issnAsigned = null;
+            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_HAS_ISSN_CODE_KEY))) {
+            	issnAsigned =  context.getMergedJobDataMap().getBoolean(PARAM_HAS_ISSN_CODE_KEY);
+            }
+            Boolean isbnAssigned = null;
+            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_HAS_CNB_CODE_KEY))) {
+            	isbnAssigned = context.getMergedJobDataMap().getBoolean(PARAM_HAS_CNB_CODE_KEY);
+            }
+            Boolean active = null;
+            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_HAS_CNB_CODE_KEY))) {
+            	active = context.getMergedJobDataMap().getBoolean(PARAM_IS_ACTIVE_CODE_KEY);
+            }
+            Boolean exportNumOfDigInstances = context.getMergedJobDataMap().getBoolean(PARAM_EXPORT_NUM_OF_DIG_INSTANCES);
+            logger.info("registrar code: " + registrars);
+            this.runProcess(begin, end, registrars, registrationMode, entityTypes, cnbAssigned, issnAsigned, isbnAssigned, active, exportNumOfDigInstances);
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
             } else {
@@ -95,40 +165,97 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         return new PostgresPooledConnector();
     }
 
-    private void runProcess(String registrarCode) {
+    private void runProcess(DateTime begin, DateTime end, List<String> registrars, String registrationMode, 
+    		List<String> entityTypes,  Boolean cnbAssigned, Boolean issnAsigned,  Boolean isbnAssigned, Boolean active, Boolean exportNumOfDigInstances) {
+    	System.out.println(String.format("%s-%s", begin, end));
+    	if (registrars != null) {
+    		for (String reg : registrars) {
+    			System.out.println(reg);
+    		}
+    	}
+    	if (entityTypes != null) {
+    		for (String entityType : entityTypes) {
+    			System.out.println(entityType);
+    		}
+    	}
+    	System.out.println(String.format("cnb: %s, issn: %s, isbn: %s, active: %s, digInstances: %s", cnbAssigned, issnAsigned, isbnAssigned, active, exportNumOfDigInstances));
         //TODO: kod az na zaklade konfigurace
         CountryCode.initialize("cz");
         try {
-            List<UrnNbn> urnNbnList = services.dataAccessService().urnNbnsOfRegistrar(RegistrarCode.valueOf(registrarCode));
-            csvWriter.println(buildHeaderLine());
+            List<UrnNbnExport> urnNbnList = services.dataAccessService().selectByCriteria(
+            		begin,
+            		end,
+            		registrars,
+            		registrationMode,
+            		entityTypes,
+            		cnbAssigned,
+            		issnAsigned,
+            		isbnAssigned,
+            		active
+            );
+            //.urnNbnsOfRegistrar(RegistrarCode.valueOf(registrarCode));
+            csvWriter.println(buildHeaderLine(exportNumOfDigInstances));
             int counter = 0;
             int total = urnNbnList.size();
-            for (UrnNbn urn : urnNbnList) {
+            for (UrnNbnExport urn : urnNbnList) {
                 if (interrupted) {
                     csvWriter.flush();
                     break;
                 }
+                String line = toCsvLine(urn, exportNumOfDigInstances);
+                csvWriter.println(line);
+                /*
                 logger.info("exporting " + urn + " (" + ++counter + "/" + total + ")");
                 DigitalDocument digDoc = services.dataAccessService().digDocByInternalId(urn.getDigDocId());
                 IntelectualEntity intEntity = services.dataAccessService().entityById(digDoc.getIntEntId());
                 String line = toCsvLine(urn, intEntity);
                 csvWriter.println(line);
+                */
             }
-        } catch (DatabaseException ex) {
+        } /*catch (DatabaseException ex) {
             throw new RuntimeException(ex);
-        } finally {
+        }*/ finally {
             csvWriter.close();
         }
     }
 
-    private String buildHeaderLine() {
+    private String buildHeaderLine(Boolean exportNumOfDigInstances) {
         StringBuilder result = new StringBuilder();
+        result.append('\"').append(HEADER_URN_NBN).append("\",");
+        result.append('\"').append(HEADER_RESERVED).append("\",");
+        result.append('\"').append(HEADER_MODIFIED).append("\",");
+        result.append('\"').append(HEADER_REG_MODE).append("\",");
+        result.append('\"').append(HEADER_ENT_TYPE).append("\",");
+        result.append('\"').append(HEADER_HAS_CNB).append("\",");
+        result.append('\"').append(HEADER_HAS_ISSN).append("\",");
+        result.append('\"').append(HEADER_HAS_ISBN).append("\",");
         result.append('\"').append(HEADER_TITLE).append('\"');
-        result.append(',');
-        result.append('\"').append(HEADER_URN_NBN).append('\"');
+        result.append('\"').append(HEADER_UNR_ACTIVE);
+        if (exportNumOfDigInstances) {
+        	result.append(",\"").append(HEADER_NUM_OF_DIG_INSTANCES).append("\",");
+        }
+        return result.toString();
+    }
+    
+    private String toCsvLine(UrnNbnExport item, Boolean exportNumOfDigInstances) {
+    	StringBuilder result = new StringBuilder();
+        result.append('\"').append(item.getUrn()).append("\",");
+        result.append('\"').append(item.getReserved()).append("\",");
+        result.append('\"').append(item.getModified()).append("\",");
+        result.append('\"').append(item.getRegistrationMode()).append("\",");
+        result.append('\"').append(item.getEntityType()).append("\",");
+        result.append('\"').append(item.isCnbAssigned()).append("\",");
+        result.append('\"').append(item.isIssnAssigned()).append("\",");
+        result.append('\"').append(item.isIsbnAssigned()).append("\",");
+        result.append('\"').append(item.getTitle()).append("\",");
+        result.append('\"').append(item.isActive());
+        if (exportNumOfDigInstances) {
+        	result.append(",\"").append(item.getNumberOfDigitalInstances()).append("\",");
+        }
         return result.toString();
     }
 
+    /*
     private String toCsvLine(UrnNbn urn, IntelectualEntity intEntity) throws DatabaseException {
         StringBuilder result = new StringBuilder();
         String aggregateTitle = toAggregateTitle(intEntity);
@@ -137,6 +264,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         result.append('\"').append(urn.toString()).append('\"');
         return result.toString();
     }
+    */
 
     private String toAggregateTitle(IntelectualEntity intEntity) throws DatabaseException {
         Map<IntEntIdType, String> identifierMap = intEntIdentifierMap(intEntity);

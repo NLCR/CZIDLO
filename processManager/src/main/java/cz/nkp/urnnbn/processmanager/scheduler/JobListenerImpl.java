@@ -113,7 +113,7 @@ public class JobListenerImpl implements JobListener {
     private String registrarsUrnNbnExportParams(JobDataMap processData) {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        appendKeyValue(processData, builder, "registrar_code", UrnNbnCsvExportJob.PARAM_REG_CODE_KEY);
+        appendKeyValue(processData, builder, "registrar_code", UrnNbnCsvExportJob.PARAM_REGISTRARS_CODE_KEY);
         builder.append("]");
         return builder.toString();
     }

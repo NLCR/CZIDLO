@@ -24,7 +24,8 @@ public class UrnNbnExportTest extends AbstractDaoTest {
     }
     
     public void testSelectAll() throws Exception {
-    	List<UrnNbnExport> result = super.urnDao.selectByCriteria(DateTime.now().minusDays(30), DateTime.now(), Arrays.asList("mzk", "nkp"), null, "MONOGRAPH", true, true, true, true);
+    	List<String> types = Arrays.asList("MONOGRAPH", "SERIAL");
+    	List<UrnNbnExport> result = super.urnDao.selectByCriteria(DateTime.now().minusDays(30), DateTime.now(), Arrays.asList("mzk", "nkp"), null, types, null, null, null, null);
     }
     
     private void dump(List<UrnNbnExport> results) {
