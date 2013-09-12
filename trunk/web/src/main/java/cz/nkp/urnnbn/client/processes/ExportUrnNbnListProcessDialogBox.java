@@ -43,6 +43,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	private TextInputValueField beginDate;
 	private TextInputValueField endDate;
 	private ListBox activationFlag;
+	private CheckBox numberOfDigitalInstances;
 
 	public ExportUrnNbnListProcessDialogBox(UserDTO user) {
 		super(user);
@@ -102,7 +103,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(selectModusOfRegistrationPanel());
 		result.add(selectTypeOfDocumentPanel());
 		result.add(selectAbsenceOfIdentifiers());
-		result.add(numberOfDigitalInstanceCheckbox());
+		result.add(numberOfDigitalInstancesCheckbox());
 		result.add(selectActivationFlag());
 		result.add(buttonsPanel());
 		result.add(errorLabel);
@@ -148,14 +149,14 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.documentType()));
 		documentTypeListBox = new MultiSelectListBox();
-		documentTypeListBox.addItem("monograph");
-		documentTypeListBox.addItem("monographVolume");
-		documentTypeListBox.addItem("periodical");
-		documentTypeListBox.addItem("periodicalVolume");
-		documentTypeListBox.addItem("periodicalIssue");
-		documentTypeListBox.addItem("thesis");
-		documentTypeListBox.addItem("analytical");
-		documentTypeListBox.addItem("otherEntity");
+		documentTypeListBox.addItem("MONOGRAPH");
+		documentTypeListBox.addItem("MONOGRAPH_VOLUME");
+		documentTypeListBox.addItem("PERIODICAL");
+		documentTypeListBox.addItem("PERIODICAL_VOLUME");
+		documentTypeListBox.addItem("PERIODICAL_ISSUE");
+		documentTypeListBox.addItem("THESIS");
+		documentTypeListBox.addItem("ANALYTICAL");
+		documentTypeListBox.addItem("OTHER");
 		result.add(documentTypeListBox);
 		return result;
 	}
@@ -171,11 +172,11 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		return result;
 	}
 	
-	private Panel numberOfDigitalInstanceCheckbox() {
+	private Panel numberOfDigitalInstancesCheckbox() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.includeNumberOfDigitalInstances()));
-		CheckBox checkBox = new CheckBox();
-		result.add(checkBox);
+		numberOfDigitalInstances = new CheckBox();
+		result.add(numberOfDigitalInstances);
 		return result;
 	}
 	
@@ -235,17 +236,17 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 					}
 					registrars = regs.toString();
 				}
-				String entityType = null;
-				List<String> selectedTypes = documentTypeListBox.getSelectedItems();
-				if (selectedTypes.size() > 0) {
+				String entityTypes = null;
+				List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
+				if (selectedEntityTypes.size() > 0) {
 					StringBuilder types = new StringBuilder();
 					String sep = "";
-					for (String code : selectedTypes) {
+					for (String code : selectedEntityTypes) {
 						types.append(sep);
 						types.append(code);
 						sep = ",";
 					}
-					entityType = types.toString();
+					entityTypes = types.toString();
 				}
 				String begin = (String) beginDate.getInsertedValue();
 				String end = (String) endDate.getInsertedValue();
@@ -259,6 +260,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 				} else if (selectedActivationFlag.equals("INACTIVE")) {
 					active = "false";
 				}
+				Boolean exportNumberOfDigitalInstances = numberOfDigitalInstances.getValue();
 				if (true) {
 					String regMode = null;
 					String[] params = new String[] {
@@ -266,11 +268,12 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 							end,
 							registrars,
 							regMode,
-							entityType,
+							entityTypes,
 							cnbAssigned,
 							issnAssigned,
 							isbnAssigned,
-							active
+							active,
+							exportNumberOfDigitalInstances.toString()
 					};
 					processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 

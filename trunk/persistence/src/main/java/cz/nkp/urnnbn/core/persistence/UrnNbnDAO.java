@@ -69,8 +69,9 @@ public interface UrnNbnDAO {
 
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
     
+    //FIXME: move filter fields to separate class
     public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end, List<String> registrars, String registrationMode, 
-    		String entityType, Boolean cnbAssigned, Boolean issnAsigned, Boolean isbnAssigned, Boolean active) throws DatabaseException;
+    		List<String> entityTypes, Boolean cnbAssigned, Boolean issnAsigned, Boolean isbnAssigned, Boolean active) throws DatabaseException;
 
     //only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;

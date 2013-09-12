@@ -135,9 +135,10 @@ public interface DataAccessService extends BusinessService {
     
     public Content getContentByNameAndLanguage(String name, String language);
     
+    //FIXME: move filter fields to separate class
     public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
 			List<String> registrars, String registrationMode,
-			String entityType, Boolean cnbAssigned, Boolean issnAsigned,
+			List<String> entityTypes, Boolean cnbAssigned, Boolean issnAsigned,
 			Boolean isbnAssigned, Boolean active);
     
 }
