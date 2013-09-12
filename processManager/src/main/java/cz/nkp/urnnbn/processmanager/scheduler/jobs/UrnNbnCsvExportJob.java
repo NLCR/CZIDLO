@@ -229,10 +229,10 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         result.append('\"').append(HEADER_HAS_CNB).append("\",");
         result.append('\"').append(HEADER_HAS_ISSN).append("\",");
         result.append('\"').append(HEADER_HAS_ISBN).append("\",");
-        result.append('\"').append(HEADER_TITLE).append('\"');
+        result.append('\"').append(HEADER_TITLE).append("\",");
         result.append('\"').append(HEADER_UNR_ACTIVE);
         if (exportNumOfDigInstances) {
-        	result.append(",\"").append(HEADER_NUM_OF_DIG_INSTANCES).append("\",");
+        	result.append(",\"").append(HEADER_NUM_OF_DIG_INSTANCES).append("\"");
         }
         return result.toString();
     }
@@ -250,7 +250,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         result.append('\"').append(item.getTitle()).append("\",");
         result.append('\"').append(item.isActive());
         if (exportNumOfDigInstances) {
-        	result.append(",\"").append(item.getNumberOfDigitalInstances()).append("\",");
+        	result.append(",\"").append(item.getNumberOfDigitalInstances()).append("\"");
         }
         return result.toString();
     }
