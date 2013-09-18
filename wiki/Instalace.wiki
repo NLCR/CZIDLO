@@ -23,7 +23,7 @@ V sekci [API Downloads] najdete vždy aktuální instalační balík *installati
 
 Nejprve je nutné stáhnout a rozbalit instalační balík.
 
-== Inicializace databáze ==
+== Inicializace databáze PostgreSQL ==
 Nejprve je potřeba vytvořit pro Resolver databázi pod některým databázovým uživatelem. Druhým krokem je vytvoření potřebných tabulek, sekvencí a indexů. K tomu slouží skript _initDatabase.sql_, který lze spustit např. programem psql.
 
 Skript také vytvoří prvotního uživatele, který disponuje administrátorskými právy. Jeho přihlašovací údaje jsou: 
