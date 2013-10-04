@@ -30,10 +30,12 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
         this.digDocId = digDocId;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
