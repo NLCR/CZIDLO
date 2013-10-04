@@ -109,7 +109,7 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
 
     /**
      *
-     * @return list of digital document identifiers, never null
+     * @return list of registrar-scope identifiers, never null
      */
     List<RegistrarScopeIdentifier> getRegistrarScopeIdentifiers() {
         Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digDocEl);

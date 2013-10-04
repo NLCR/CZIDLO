@@ -126,7 +126,7 @@ public class RecordImportUnmarshaller extends Unmarshaller {
 
     /**
      *
-     * @return list of digital document identifiers, never null
+     * @return list of registrar-scope identifiers, never null
      */
     public List<RegistrarScopeIdentifier> getRegistrarScopeIdentifiers() {
         return digDocUnmarshaller.getRegistrarScopeIdentifiers();
