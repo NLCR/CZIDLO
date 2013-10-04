@@ -236,7 +236,11 @@ public class DigitalDocumentRegistrar {
         deactivateActivePredecessors(urn, transactionLog);
         try {
             persistPredecessors(data.getPredecessors(), urn);
-            logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[]{data.getPredecessors().size(), urn.toString()});
+            if (!data.getPredecessors().isEmpty()) {
+                logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[]{data.getPredecessors().size(), urn.toString()});
+            } else {
+                logger.log(Level.INFO, "no predecessors for {0}", urn.toString());
+            }
         } catch (IncorrectPredecessorStatus ex) {
             logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back", new Object[]{data.getPredecessors().size(), urn.toString()});
             rollbackTransaction(transactionLog);
