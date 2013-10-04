@@ -15,10 +15,12 @@ public class Content implements IdentifiableByLongAttribute {
     private String name;
     private String content;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
