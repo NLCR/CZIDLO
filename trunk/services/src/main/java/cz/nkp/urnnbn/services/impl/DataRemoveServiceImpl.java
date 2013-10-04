@@ -51,7 +51,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             authorization.checkAccessRights(registrarId, login);
             factory.digDocIdDao().deleteRegistrarScopeIds(digDocId);
             factory.documentDao().updateDocumentDatestamp(digDocId);
-            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifiers of digital document with id'" + digDocId + "'");
+            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifiers of digital document with id '" + digDocId + "'");
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigDocException(digDocId);
         } catch (DatabaseException ex) {
@@ -66,7 +66,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             authorization.checkAccessRights(registrarId, login);
             factory.digDocIdDao().deleteRegistrarScopeId(digDocId, type);
             factory.documentDao().updateDocumentDatestamp(digDocId);
-            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifier (type=" + type + ") of digital document with id'" + digDocId + "'");
+            AdminLogger.getLogger().info("user '" + login + "' deleted registrar-scope identifier (type=" + type + ") of digital document with id '" + digDocId + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
