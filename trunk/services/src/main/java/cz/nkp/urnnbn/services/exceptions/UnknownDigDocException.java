@@ -10,7 +10,7 @@ package cz.nkp.urnnbn.services.exceptions;
  */
 public class UnknownDigDocException extends Exception {
 
-    public UnknownDigDocException(long digRepId) {
-        super("unknown digital document with id: " + digRepId);
+    public UnknownDigDocException(long digDocId) {
+        super("unknown digital document with internal id: " + digDocId);
     }
 }

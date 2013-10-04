@@ -38,8 +38,8 @@ public class DigDocRegistrationData {
         return registrarScopeIdentifiers;
     }
 
-    public void setDigDocIdentifiers(List<RegistrarScopeIdentifier> digDocIdentifiers) {
-        this.registrarScopeIdentifiers = digDocIdentifiers;
+    public void setDigDocIdentifiers(List<RegistrarScopeIdentifier> registrarScopeIdentifiers) {
+        this.registrarScopeIdentifiers = registrarScopeIdentifiers;
     }
 
     public IntelectualEntity getEntity() {
