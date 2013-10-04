@@ -26,8 +26,8 @@ public class RollbackRecord {
         return digDocId;
     }
 
-    public void setDigDocId(Long digRepId) {
-        this.digDocId = digRepId;
+    public void setDigDocId(Long digDocId) {
+        this.digDocId = digDocId;
     }
 
     public UrnNbn getUrnAssignedByResolverOrRegistrar() {

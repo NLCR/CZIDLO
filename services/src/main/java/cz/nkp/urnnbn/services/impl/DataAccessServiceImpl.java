@@ -96,9 +96,9 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public DigitalDocument digDocByInternalId(long digRepId) {
+    public DigitalDocument digDocByInternalId(long digDocId) {
         try {
-            return factory.documentDao().getDocumentByDbId(digRepId);
+            return factory.documentDao().getDocumentByDbId(digDocId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
             return null;

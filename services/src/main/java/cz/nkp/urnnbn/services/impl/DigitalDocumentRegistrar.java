@@ -189,10 +189,10 @@ public class DigitalDocumentRegistrar {
 
     private long persistDigDocWithRollback(RollbackRecord transactionLog, long ieId) throws UnknownArchiverException {
         try {
-            Long digRepId = persistDigitalDocument(ieId);
-            logger.log(Level.INFO, "digital document was imported with id {0}", digRepId);
-            transactionLog.setDigDocId(digRepId);
-            return digRepId;
+            Long digDocId = persistDigitalDocument(ieId);
+            logger.log(Level.INFO, "digital document was imported with id {0}", digDocId);
+            transactionLog.setDigDocId(digDocId);
+            return digDocId;
         } catch (UnknownArchiverException ex) {
             logger.log(Level.INFO, "failed to import digital document, rolling back");
             rollbackTransaction(transactionLog);
@@ -206,16 +206,16 @@ public class DigitalDocumentRegistrar {
 
     private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digDocId) throws RegistarScopeIdentifierCollisionException {
         try {
-            List<RegistrarScopeIdentifier> ids = persistDigDocIdentifiers(digDocId);
-            logger.log(Level.INFO, "digital document identifiers inserted: {0}", digRepIdListToString(ids));
+            List<RegistrarScopeIdentifier> ids = persistRegistrarScopeIdentifiers(digDocId);
+            logger.log(Level.INFO, "registrar-scope identifiers inserted: {0}", registrarScopeIdListToString(ids));
         } catch (RegistarScopeIdentifierCollisionException ex) {
             //no need to specifically remove identifiers so far imported 
             //because it will be removed together with registrar in cascade
-            logger.info("failed to import digital document identifiers, rolling back");
+            logger.info("failed to import registrar-scope identifiers, rolling back");
             rollbackTransaction(transactionLog);
             throw ex;
         } catch (Throwable ex) {
-            logger.info("failed to import digital document identifiers, rolling back");
+            logger.info("failed to import registrar-scope identifiers, rolling back");
             rollbackTransaction(transactionLog);
             throw new RuntimeException(ex);
         }
@@ -287,11 +287,11 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private List<RegistrarScopeIdentifier> persistDigDocIdentifiers(long digRepId) throws RegistarScopeIdentifierCollisionException, DatabaseException, RecordNotFoundException {
+    private List<RegistrarScopeIdentifier> persistRegistrarScopeIdentifiers(long digDocInternalId) throws RegistarScopeIdentifierCollisionException, DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
         List<RegistrarScopeIdentifier> result = new ArrayList<RegistrarScopeIdentifier>();
         for (RegistrarScopeIdentifier id : data.getDigDogIdentifiers()) {
-            id.setDigDocId(digRepId);
+            id.setDigDocId(digDocInternalId);
             id.setRegistrarId(registrar.getId());
             try {
                 factory.digDocIdDao().insertRegistrarScopeId(id);
@@ -304,8 +304,8 @@ public class DigitalDocumentRegistrar {
         return result;
     }
 
-    private void persistUrnNbn(UrnNbn urn, long digDocId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
-        UrnNbn withDigDocId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digDocId, urn.getReserved());
+    private void persistUrnNbn(UrnNbn urn, long digDocInternalId) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+        UrnNbn withDigDocId = new UrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), digDocInternalId, urn.getReserved());
         factory.urnDao().insertUrnNbn(withDigDocId);
     }
 
@@ -377,11 +377,11 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private void removeInsertedDigitalDocument(Long digRepId) {
+    private void removeInsertedDigitalDocument(Long digDocId) {
         try {
-            factory.documentDao().deleteDocument(digRepId);
+            factory.documentDao().deleteDocument(digDocId);
         } catch (Throwable ex) {
-            logger.log(Level.SEVERE, "rollback: Failed to remove digital document with id " + digRepId, ex);
+            logger.log(Level.SEVERE, "rollback: Failed to remove digital document with id " + digDocId, ex);
         }
     }
 
@@ -393,7 +393,7 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private String digRepIdListToString(List<RegistrarScopeIdentifier> ids) {
+    private String registrarScopeIdListToString(List<RegistrarScopeIdentifier> ids) {
         StringBuilder builder = new StringBuilder();
         builder.append('{');
         for (int i = 0; i < ids.size(); i++) {
