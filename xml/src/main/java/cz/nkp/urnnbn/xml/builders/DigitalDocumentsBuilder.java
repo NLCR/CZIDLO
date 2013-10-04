@@ -27,8 +27,8 @@ public class DigitalDocumentsBuilder extends XmlBuilder {
 
     private final int digDocCount;
 
-    public DigitalDocumentsBuilder(int digRepCount) {
-        this.digDocCount = digRepCount;
+    public DigitalDocumentsBuilder(int digDocCount) {
+        this.digDocCount = digDocCount;
     }
 
     @Override
