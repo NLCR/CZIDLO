@@ -12,6 +12,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,6 +21,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
  */
 class DigitalInstanceAdder extends BusinessServiceImpl {
 
+    private static final Logger logger = Logger.getLogger(DigitalInstanceAdder.class.getName());
     private final DigitalInstance instance;
 
     DigitalInstanceAdder(DAOFactory factory, DigitalInstance instance) {
@@ -29,7 +32,9 @@ class DigitalInstanceAdder extends BusinessServiceImpl {
     DigitalInstance run() throws DatabaseException, UnknownDigLibException, UnknownDigDocException {
         try {
             Long instanceId = factory.digInstDao().insertDigInstance(instance);
-            return factory.digInstDao().getDigInstanceById(instanceId);
+            DigitalInstance result = factory.digInstDao().getDigInstanceById(instanceId);
+            logger.log(Level.INFO, "{0} was inserted", result);
+            return result;
         } catch (RecordNotFoundException ex) {
             if (DigitalLibraryDAO.TABLE_NAME.equals(ex.getTableName())) {
                 throw new UnknownDigLibException(instance.getLibraryId());
