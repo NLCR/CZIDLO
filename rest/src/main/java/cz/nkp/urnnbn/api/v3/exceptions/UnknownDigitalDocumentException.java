@@ -22,9 +22,9 @@ public class UnknownDigitalDocumentException extends ApiV3Exception {
                 "There is no digital document with urn '" + urn + "'");
     }
 
-    public UnknownDigitalDocumentException(long digRepId) {
+    public UnknownDigitalDocumentException(long digDocId) {
         super(Status.NOT_FOUND, errorCode,
-                "There is no digital document with id '" + digRepId + "'");
+                "There is no digital document with internal id '" + digDocId + "'");
     }
 
     public UnknownDigitalDocumentException(RegistrarCode code, RegistrarScopeIdType idType, String idValue) {
