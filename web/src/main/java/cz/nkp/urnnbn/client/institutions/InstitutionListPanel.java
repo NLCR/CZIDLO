@@ -317,7 +317,7 @@ public class InstitutionListPanel extends VerticalPanel {
 						CustomHTML<T> widget = (CustomHTML<T>) table.getWidget(
 								row, 0);
 						T archiver = widget.getObject();
-						archiver.setOrder(Long.valueOf(row));
+						archiver.setOrder(Long.valueOf(row + 1));
 						items.add(archiver);
 					}
 					AsyncCallback<Void> callBack = new AsyncCallback<Void>() {
