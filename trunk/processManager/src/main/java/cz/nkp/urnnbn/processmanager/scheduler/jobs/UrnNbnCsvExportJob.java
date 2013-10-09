@@ -125,7 +125,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             	isbnAssigned = context.getMergedJobDataMap().getBoolean(PARAM_HAS_CNB_CODE_KEY);
             }
             Boolean active = null;
-            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_HAS_CNB_CODE_KEY))) {
+            if (!"null".equals(context.getMergedJobDataMap().getString(PARAM_IS_ACTIVE_CODE_KEY))) {
             	active = context.getMergedJobDataMap().getBoolean(PARAM_IS_ACTIVE_CODE_KEY);
             }
             Boolean exportNumOfDigInstances = context.getMergedJobDataMap().getBoolean(PARAM_EXPORT_NUM_OF_DIG_INSTANCES);
