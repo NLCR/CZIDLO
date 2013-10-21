@@ -1,22 +1,8 @@
-= CZIDLO (CZech IDentification and LOcalization Tool) =
-CZIDLO je nástroj pro správu identifikátorů [http://www.ietf.org/rfc/rfc3188.txt URN:NBN] v národním prostředí. CZIDLO by tedy měly provozovat národní knihovny, jakožto autority pro určený národní prostor (např. urn:nbn:cz pro Českou republiku). 
+= URN:NBN Resolver / CZIDLO =
+Projekt byl kvůli změně názvu přesunut na http://code.google.com/p/czidlo/.
+Zdejší verze webové dokumentace (wiki) nebude již nadále udržována, stejně tak issue tracker. Sekce _Downloads_ se pro nové projekty v google code již nevytváří, soubory ke stažení tak budou dostupné přes odkaz *Installation files* v sekci _External links_ na hlavní stránce nového projektu http://code.google.com/p/czidlo/.
 
-= Vývoj =
-Software je licencován GNU GPL v3. 
-Vývoj probíhá pod záštitou [http://www.nkp.cz Národní knihovny České republiky] a je financován z programu *Koncepce rozvoje Národní knihovny České republiky jako výzkumné organizace na léta 2010-2015* Ministerstva kultury ČR. 
-Softwarový systé, CZIDLO navazuje na starší software [http://code.google.com/p/urnnbnresolver/ urnnbnresolver], jehož funkcionality zachovává. Současně však nabízí celou řadu nových funkčních prvků, zejména dvě nová aplikační rozhraní (*OAI-PMH Data provider* a *RESTful API*). Výrazně většími možnostmi disponuje také webová část, která kromě samotného vyhledávání řeší správu uživatelských účtů, registrátorů, digitálních knihoven, katalogu a umožňuje ruční vkládání a editaci záznamů.  
-
-Ač vypadají oba systémy vizuálně podobně a oba používají webový framework [https://developers.google.com/web-toolkit/ GWT], jedná se o zcela nový systém. Převzat byl pouze datový model, který byl ale výrazně pozměněn, aby reflektoval nové požadavky a zároveň bylo možné převzít data ze staršího systému, transformovat je a vložit do systému nového.
-
-= Hlavní funkce =
-CZIDLO zejména udržuje seznam všech přiřazených urn:nbn, resp. informace o stavu všech urn:nbn v národním prostoru (_volné_, _rezervované_, _přiřazené_, _opuštěné_). Stav se může změnit vykonáním některých operací, z nichž nejdůležitější je *registrace digitálního dokumentu* (_volné_ -> _přiřazené_ nebo _rezervované_ -> _přiřazené_). Tato operace vrací přidělené urn:nbn digitálnímu dokumentu, jehož metadata byla vstupem operace.
-
-Dále spravuje mapování digitálních dokumentů (identifikovaných urn:nbn) na aktuální URL, na nichž jsou dokumenty dostupné v elektronické podobě. Za korektnost URL ale zodpovídají jednotlivé zapojené instituce (registrátoři).
-
-Mezi další významné funkce systému patří:
- * Rezolvování urn:nbn v rámci národního prostoru. Tedy přesměrování do digitálních knihoven, případně zobrazení metadatového záznamu digitálního dokumentu v xml nebo uživatelsky přívětivé podobě webové aplikace.
- * Přiřazování URN:NBN ručně pomomcí webového rozhraní, nebo automatizovaně pomocí [API RESTful API].
- * Zodpovědnost za podprostory (např. urn:nbn:cz:aba001) jsou delegovány zapojeným institucím. Ty pak musí zajistit mimojiné aktuálnost dodaných URL.
- * Správa uživatelských účtů a přiřazení práv k registrátorům.
- * OAI-PMH Provider pro hromadné sklízení záznamů z CZIDLO externími systémy.
- * Ruční opravy zázamů prostřednictvím webového rozhraní.
+Nadále se obracejte zde:
+ * http://code.google.com/p/czidlo/issues/list
+ * http://code.google.com/p/czidlo/wiki/Introduction
+ * https://drive.google.com/folderview?id=0Bw5aMq4LaXVcMEY5b0J3YWNyM1k&usp=sharing
