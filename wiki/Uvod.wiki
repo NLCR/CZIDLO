@@ -1,8 +1,16 @@
 = URN:NBN Resolver / CZIDLO =
 Projekt byl kvůli změně názvu přesunut na http://code.google.com/p/czidlo/.
-Zdejší verze webové dokumentace (wiki) nebude již nadále udržována, stejně tak issue tracker. Sekce _Downloads_ se pro nové projekty v google code již nevytváří, soubory ke stažení tak budou dostupné přes odkaz *Installation files* v sekci _External links_ na hlavní stránce nového projektu http://code.google.com/p/czidlo/.
+Zdejší verze webové dokumentace (wiki) nebude již nadále udržována, stejně tak issue tracker. Sekce _Downloads_ se pro nové projekty v google code již nevytváří, instalační a jiné soubory ke stažení tak budou dostupné přes odkaz *Installation files* v sekci _External links_ na hlavní stránce nového projektu http://code.google.com/p/czidlo/.
 
 Nadále se obracejte zde:
+ * http://code.google.com/p/czidlo/issues/list
+ * http://code.google.com/p/czidlo/wiki/Introduction
+ * https://drive.google.com/folderview?id=0Bw5aMq4LaXVcMEY5b0J3YWNyM1k&usp=sharing
+
+
+Since this project had been renamed, it has been moved to http://code.google.com/p/czidlo/. Web documentation here (wiki) will no longer be updated, same holds for issue tracker. Section _Download_ is not being created anymore for new projects on google code (http://code.google.com/p/support/wiki/DownloadsFAQ), so installation and other files will be available through *Instalation files* link in section _External links_ on the new project's mainpage http://code.google.com/p/czidlo/.
+
+From now on refer to:
  * http://code.google.com/p/czidlo/issues/list
  * http://code.google.com/p/czidlo/wiki/Introduction
  * https://drive.google.com/folderview?id=0Bw5aMq4LaXVcMEY5b0J3YWNyM1k&usp=sharing
