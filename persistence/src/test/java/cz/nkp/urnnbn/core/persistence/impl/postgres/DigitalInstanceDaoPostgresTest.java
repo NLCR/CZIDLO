@@ -48,9 +48,9 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
 
     public void testInsertDigInstance_unknownLibrary() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(registrarPersisted().getId(), entity.getId());
+        DigitalDocument doc = documentPersisted(registrarPersisted().getId(), entity.getId());
         DigitalInstance instance = new DigitalInstance();
-        instance.setDigDocId(rep.getId());
+        instance.setDigDocId(doc.getId());
         instance.setLibraryId(ILLEGAL_ID);
         instance.setUrl("http://something");
         instance.setActive(Boolean.TRUE);
@@ -107,10 +107,10 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testGetDigInstanceById() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument doc = documentPersisted(lib.getRegistrarId(), entity.getId());
         //insert
         DigitalInstance inserted = new DigitalInstance();
-        inserted.setDigDocId(rep.getId());
+        inserted.setDigDocId(doc.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
         inserted.setActive(Boolean.TRUE);
@@ -153,10 +153,10 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
     public void testDeactivateDigitalInstance() throws Exception {
         DigitalLibrary lib = libraryPersisted();
         IntelectualEntity entity = entityPersisted();
-        DigitalDocument rep = documentPersisted(lib.getRegistrarId(), entity.getId());
+        DigitalDocument doc = documentPersisted(lib.getRegistrarId(), entity.getId());
         //insert
         DigitalInstance inserted = new DigitalInstance();
-        inserted.setDigDocId(rep.getId());
+        inserted.setDigDocId(doc.getId());
         inserted.setLibraryId(lib.getId());
         inserted.setUrl("http://something");
         inserted.setActive(Boolean.TRUE);
@@ -166,14 +166,14 @@ public class DigitalInstanceDaoPostgresTest extends AbstractDaoTest {
         assertTrue(beforeDeactivation.isActive());
         assertNotNull(beforeDeactivation.getCreated());
         assertNull(beforeDeactivation.getDeactivated());
-        
+
         //deactivate
         digInstDao.deactivateDigInstance(inserted.getId());
         DigitalInstance deactivated = digInstDao.getDigInstanceById(inserted.getId());
         assertFalse(deactivated.isActive());
         assertNotNull(deactivated.getCreated());
         assertNotNull(deactivated.getDeactivated());
-        
+
         //timestamps
         assertTrue(beforeDeactivation.getCreated().isBefore(deactivated.getDeactivated()));
     }
