@@ -110,6 +110,11 @@ public abstract class AbstractDaoTest extends TestCase {
         clearDatabase();
     }
 
+    /**
+     * Removes every row from each database table
+     *
+     * @throws Exception
+     */
     public void clearDatabase() throws Exception {
         urnDao.deleteAllUrnNbns();
         urnDao.deleteAllPredecessors();
@@ -118,6 +123,7 @@ public abstract class AbstractDaoTest extends TestCase {
         //kaskadove by se mely pomazat identifikatory intelektualnich entit
         archiverDao.deleteAllArchivers();
         userDao.deleteAllUsers();
+        contentDao.deleteAllContent();
     }
 
     public Archiver archiverPersisted() throws Exception {
