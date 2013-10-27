@@ -11,12 +11,13 @@ import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
  *
  * @author xrosecky
  */
-public interface ContentService {
-    
+public interface ContentService extends BusinessService {
+
     public void init();
-    
+
+    @Deprecated
     public Content getContentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
-    
+
+    @Deprecated
     public void updateContent(Content content);
-    
 }
