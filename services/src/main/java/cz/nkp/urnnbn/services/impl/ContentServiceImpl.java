@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.services.exceptions;
+package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.ContentService;
-import java.util.logging.Level;
+import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import java.util.logging.Logger;
 
 /**

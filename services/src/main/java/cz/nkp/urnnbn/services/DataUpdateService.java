@@ -44,10 +44,10 @@ public interface DataUpdateService extends BusinessService {
     public void updateDigitalDocument(DigitalDocument doc, String login) throws
             UnknownUserException, AccessException,
             UnknownDigDocException;
-    
+
     public void updateDigitalInstance(DigitalInstance instance) throws
-    		UnknownUserException, AccessException,
-    		UnknownDigDocException;
+            UnknownUserException, AccessException,
+            UnknownDigDocException;
 
     public void updateRegistrar(Registrar registrar, String login) throws
             UnknownUserException, AccessException,
@@ -71,6 +71,11 @@ public interface DataUpdateService extends BusinessService {
 
     public void updateUser(User user, String login) throws
             UnknownUserException, NotAdminException;
-    
+
+    /**
+     * TODO: doesn't declare authentication exceptions, should be fixed
+     *
+     * @param content
+     */
     public void updateContent(Content content);
 }
