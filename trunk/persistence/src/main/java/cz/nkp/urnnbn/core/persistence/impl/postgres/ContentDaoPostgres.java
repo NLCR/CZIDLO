@@ -48,7 +48,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
     public void updateContent(Content content) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(content, TABLE_NAME, ATTR_ID, new UpdateContent(content));
     }
-    
+
     public void deleteContent(long contentId) throws DatabaseException, RecordNotFoundException {
         try {
             deleteRecordsById(TABLE_NAME, ATTR_ID, contentId, true);
@@ -65,7 +65,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
             return (Content) runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[] {lang, name});
+                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[]{lang, name});
                 throw (RecordNotFoundException) e;
             } else {
                 //should never happen
@@ -74,6 +74,15 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
             }
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
+        }
+    }
+
+    public void deleteAllContent() throws DatabaseException {
+        try {
+            deleteAllRecords(TABLE_NAME);
+        } catch (RecordReferencedException ex) {
+            //should never happen
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -149,7 +149,6 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         id = registrarDao.insertRegistrar(third);
         third.setId(id);
         List<Registrar> registrars = registrarDao.getAllRegistrars();
-        System.err.println("REGISTARS:" + registrars.size());
         assertTrue(registrars.contains(first));
         assertTrue(registrars.contains(second));
         assertTrue(registrars.contains(third));
