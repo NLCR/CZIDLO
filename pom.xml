@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>cz.nkp.urnnbn</groupId>
-    <artifactId>urnnbn-resolver-v2</artifactId>
+    <artifactId>czidlo</artifactId>
     <version>3.0</version>
     <packaging>pom</packaging>
-    <name>xml</name>
-    <url>http://maven.apache.org</url>
+    <name>CZIDLO</name>
+    <description>Application for administration of national librarian URN:NBN registry</description>
+    <url>http://code.google.com/p/czidlo</url>
+    <inceptionYear>2011</inceptionYear>
+    <organization>
+        <name>National Library of the Czech Republic</name>
+        <url>http://www.nkp.cz</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>GNU GPL v3</name>
+            <url>http://www.gnu.org/licenses/gpl.html</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Martin Řehánek</name>
+        </developer>
+        <developer>
+            <name>Jan Rychtář</name>
+        </developer>
+        <developer>
+            <name>Václav Rosecký</name>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Ladislav Cubr</name>
+        </contributor>
+    </contributors>
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/czidlo/issues/</url>
+    </issueManagement>
     
     <modules>
         <module>core</module>
@@ -22,8 +53,8 @@
         <module>web-common</module>
         <module>xml</module>
         <module>web</module>
-        <!-- <module>processDataServer</module> -->
+        <module>processDataServer</module> 
         <!-- <module>legacyRecordsImport</module> -->
     </modules>
   
- </project>
+</project>
