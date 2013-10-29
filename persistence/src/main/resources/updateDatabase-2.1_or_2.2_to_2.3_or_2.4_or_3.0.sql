@@ -1,4 +1,4 @@
-/* SQL script for updating database of Resolver from versions 2.1 and 2.2 to version 2.3 */
+/* SQL script for updating database of Czidlo from versions 2.1 and 2.2 to version 2.3, 2.4 or 3.0 */
 
 /* rename attribute for consistency (mode BY_REGISTRAR) */
 ALTER TABLE REGISTRAR RENAME COLUMN ALLOWEDTOREGISTERFREEURNNBN TO ALLOWEDREGISTRATIONMODEBYREGISTRAR;
@@ -26,7 +26,6 @@ UPDATE URNNBN SET ACTIVE = 'true';
 ALTER TABLE URNNBN  ALTER COLUMN ACTIVE SET NOT NULL;
 
 /* new table for predecessor - successor relationship */
-/* don't forget to set correct owner for this new table */
 CREATE TABLE URNNBNSUCCESSORS
 (
 	PREDECESSORREGCODE VARCHAR NOT NULL,
@@ -56,9 +55,3 @@ UPDATE DIGITALINSTANCE SET DEACTIVATED=null WHERE ACTIVE='true';
 
 /* note for deactivation */
 ALTER TABLE URNNBN ADD COLUMN DEACTIVATIONNOTE VARCHAR;
-
-ALTER TABLE URNNBNSUCCESSORS ADD COLUMN NOTE VARCHAR;
-
-/* order and visibility */
-ALTER TABLE ARCHIVER ADD COLUMN ITEM_ORDER NUMERIC DEFAULT 0;
-ALTER TABLE ARCHIVER ADD COLUMN HIDDEN BOOLEAN DEFAULT false;
