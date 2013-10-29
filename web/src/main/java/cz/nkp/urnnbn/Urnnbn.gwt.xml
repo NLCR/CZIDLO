@@ -1,73 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module rename-to='web'>
-	<inherits name='com.google.gwt.user.User' />
+    <inherits name='com.google.gwt.user.User' />
 
 
-	<!-- Inherit the default GWT style sheet. You can change -->
-	<!-- the theme of your GWT application by uncommenting -->
-	<!-- any one of the following lines. -->
-	<!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/> -->
-	<inherits name='com.google.gwt.user.theme.standard.Standard' />
-	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
-	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
+    <!-- Inherit the default GWT style sheet. You can change -->
+    <!-- the theme of your GWT application by uncommenting -->
+    <!-- any one of the following lines. -->
+    <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/> -->
+    <inherits name='com.google.gwt.user.theme.standard.Standard' />
+    <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+    <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
-	<!-- Other module inherits -->
-	<inherits name='gwtquery.plugins.droppable.Droppable'/>
-	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
-	<inherits name='com.smartgwt.SmartGwt'/>
+    <!-- Other module inherits -->
+    <inherits name='gwtquery.plugins.droppable.Droppable'/>
+    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+    <inherits name='com.smartgwt.SmartGwt'/>
 
-	<!-- Specify the app entry point class. -->
-	<!-- <entry-point class='cz.nkp.urnnbn.client.Resolver'/> -->
+    <!-- Specify the app entry point class. -->
+    <!-- <entry-point class='cz.nkp.urnnbn.client.Resolver'/> -->
 
-	<!-- INTERNALIZATION -->
-	<inherits name="com.google.gwt.i18n.I18N" />
-	<extend-property name="locale" values="cs" />
-	<extend-property name="locale" values="en" />
-	<set-property-fallback name="locale" value="cs" />
-	
-	<set-property name="user.agent" value="gecko1_8"/>
+    <!-- INTERNALIZATION -->
+    <inherits name="com.google.gwt.i18n.I18N" />
+    <extend-property name="locale" values="cs" />
+    <extend-property name="locale" values="en" />
+    <set-property-fallback name="locale" value="cs" />
 
-	<!-- FILE UPLOAD -->
-	<!-- Include GWTUpload library -->
-	<inherits name="gwtupload.GWTUpload" />
-	<!-- Load dinamically predefined styles in the library when the application starts -->
-	<stylesheet src="Upload.css" />
+    <!--         just for compilation speedup when testing on single browser	 -->
+    <!--<set-property name="user.agent" value="safari"/>--> 
+    <set-property name="user.agent" values="ie6,ie8,gecko,gecko1_8,safari,opera"/> 
 
 
-	<!-- Specify the paths for translatable code -->
-	<source path='client' />
-	<source path='client/resources' />
-	<source path='shared' />
-	<entry-point class="cz.nkp.urnnbn.client.Main" />
-	<!-- <public path='client'> -->
-	<!-- <include name='logo_books.png' /> -->
-	<!-- </public> -->
-	<servlet class="cz.nkp.urnnbn.server.services.SearchServiceImpl"
-		path="/search" />
+    <!-- FILE UPLOAD -->
+    <!-- Include GWTUpload library -->
+    <inherits name="gwtupload.GWTUpload" />
+    <!-- Load dinamically predefined styles in the library when the application starts -->
+    <stylesheet src="Upload.css" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.AuthServiceImpl"
-		path="/auth" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.InstitutionsServiceImpl"
-		path="/institutions" />
+    <!-- Specify the paths for translatable code -->
+    <source path='client' />
+    <source path='client/resources' />
+    <source path='shared' />
+    <entry-point class="cz.nkp.urnnbn.client.Main" />
+    <!-- <public path='client'> -->
+    <!-- <include name='logo_books.png' /> -->
+    <!-- </public> -->
+    <servlet class="cz.nkp.urnnbn.server.services.SearchServiceImpl"
+                 path="/search" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.DataServiceImpl"
-		path="/data" />
+    <servlet class="cz.nkp.urnnbn.server.services.AuthServiceImpl"
+                 path="/auth" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.UserAccountServiceImpl"
-		path="/users" />
+    <servlet class="cz.nkp.urnnbn.server.services.InstitutionsServiceImpl"
+                 path="/institutions" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.ConfigurationServiceImpl"
-		path="/conf" />
+    <servlet class="cz.nkp.urnnbn.server.services.DataServiceImpl"
+                 path="/data" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.ProcessServiceImpl"
-		path="/process" />
+    <servlet class="cz.nkp.urnnbn.server.services.UserAccountServiceImpl"
+                 path="/users" />
 
-	<servlet class="cz.nkp.urnnbn.server.services.logs.LogsServiceImpl"
-		path="/logs" />
+    <servlet class="cz.nkp.urnnbn.server.services.ConfigurationServiceImpl"
+                 path="/conf" />
+
+    <servlet class="cz.nkp.urnnbn.server.services.ProcessServiceImpl"
+                 path="/process" />
+
+    <servlet class="cz.nkp.urnnbn.server.services.logs.LogsServiceImpl"
+                 path="/logs" />
 		
-	<servlet class="cz.nkp.urnnbn.server.services.StaticContentServiceImpl"
-		path="/staticContent" />
+    <servlet class="cz.nkp.urnnbn.server.services.StaticContentServiceImpl"
+                 path="/staticContent" />
 			
 
 </module>
