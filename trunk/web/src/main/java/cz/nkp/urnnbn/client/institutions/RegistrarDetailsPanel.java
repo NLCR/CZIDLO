@@ -188,7 +188,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		VerticalPanel result = new VerticalPanel();
 		result.setStyleName(css.block());
 		//title
-		Label modesHeading = new Label(constants.OrderAndVisibility());
+		Label modesHeading = new Label(constants.orderAndVisibility());
 		modesHeading.setStyleName(css.listHeadingLevel2());
 		result.add(modesHeading);
 		// order

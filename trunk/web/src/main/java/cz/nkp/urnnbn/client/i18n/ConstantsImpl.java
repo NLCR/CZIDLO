@@ -252,7 +252,7 @@ public interface ConstantsImpl extends Constants {
 
 	String showInCatalog();
 	
-	String OrderAndVisibility();
+	String orderAndVisibility();
 
 	// URN:NBN registration modes
 

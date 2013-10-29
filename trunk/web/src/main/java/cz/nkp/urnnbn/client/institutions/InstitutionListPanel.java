@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -32,7 +31,7 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class InstitutionListPanel extends VerticalPanel {
-	
+
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
@@ -41,11 +40,11 @@ public class InstitutionListPanel extends VerticalPanel {
 	private final UserDTO user;
 	private ArrayList<RegistrarDTO> registrars = new ArrayList<RegistrarDTO>(0);
 	private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>(0);
-	
+
 	private static class CustomHTML<T> extends HTML {
-		
+
 		private T object;
-		
+
 		public CustomHTML(String html, T object) {
 			super(html);
 			this.object = object;
@@ -58,7 +57,7 @@ public class InstitutionListPanel extends VerticalPanel {
 		public void setObject(T object) {
 			this.object = object;
 		}
-		
+
 	}
 
 	public InstitutionListPanel(InstitutionsAdminstrationPanel superPanel, UserDTO user) {
@@ -81,7 +80,7 @@ public class InstitutionListPanel extends VerticalPanel {
 				}
 				registrars = result;
 				for (RegistrarDTO reg : registrars) {
-					System.out.println("Order "+reg.getOrder());
+					System.out.println("Order " + reg.getOrder());
 				}
 				reload();
 			}
@@ -101,18 +100,18 @@ public class InstitutionListPanel extends VerticalPanel {
 		}
 		return result;
 	}
-	
+
 	private <T extends ArchiverDTO> ArrayList<T> sortByOrder(ArrayList<T> result) {
 		Collections.sort(result, new Comparator<ArchiverDTO>() {
 			public int compare(ArchiverDTO o1, ArchiverDTO o2) {
-				Long first = o1.getOrder()!= null ? o1.getOrder() : 0;
-				Long second = o2.getOrder()!= null ? o2.getOrder() : 0;
+				Long first = o1.getOrder() != null ? o1.getOrder() : 0;
+				Long second = o2.getOrder() != null ? o2.getOrder() : 0;
 				return first.compareTo(second);
 			}
 		});
 		return result;
 	}
-	
+
 	void loadArchivers() {
 		institutionsService.getAllArchivers(new AsyncCallback<ArrayList<ArchiverDTO>>() {
 
@@ -184,7 +183,8 @@ public class InstitutionListPanel extends VerticalPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(messages.registrarCannotBeDeleted(registrar.getName()) + ": " + caught.getMessage());
+							Window.alert(messages.registrarCannotBeDeleted(registrar.getName()) + ": "
+									+ caught.getMessage());
 						}
 					});
 				}
@@ -228,34 +228,37 @@ public class InstitutionListPanel extends VerticalPanel {
 		label.addStyleName(css.listHeading());
 		return label;
 	}
-	
+
 	private interface GridHelper<T extends ArchiverDTO> {
-		
+
 		public Button createDetailsButton(T item);
+
 		public Button createEditButton(T item);
+
 		public Button createDeleteButton(T item);
+
 		public void update(List<T> items, AsyncCallback<Void> callBack);
 	}
-	
+
 	private class ArchiversGridHelper implements GridHelper<ArchiverDTO> {
-		
+
 		public Button createDetailsButton(ArchiverDTO item) {
 			return archiverDetailsButton(item);
 		}
-		
+
 		public Button createEditButton(ArchiverDTO item) {
 			return archiverEditButton(item);
 		}
-		
+
 		public Button createDeleteButton(ArchiverDTO item) {
 			return archiverDeleteButton(item);
 		}
-		
+
 		public void update(List<ArchiverDTO> items, AsyncCallback<Void> callBack) {
 			institutionsService.updateArchivers(items, callBack);
 		}
 	}
-	
+
 	private class RegistrarsGridHelper implements GridHelper<RegistrarDTO> {
 
 		public Button createDetailsButton(RegistrarDTO item) {
@@ -270,23 +273,19 @@ public class InstitutionListPanel extends VerticalPanel {
 			return registrarDeleteButton(item);
 		}
 
-		public void update(List<RegistrarDTO> items,
-				AsyncCallback<Void> callBack) {
+		public void update(List<RegistrarDTO> items, AsyncCallback<Void> callBack) {
 			institutionsService.updateRegistrars(items, callBack);
 		}
-		
+
 	}
-	
-	private <T extends ArchiverDTO> AbsolutePanel getGrid(List<T> list,
-			final GridHelper<T> gridHelper) {
+
+	private <T extends ArchiverDTO> AbsolutePanel getGrid(List<T> list, final GridHelper<T> gridHelper) {
 		final AbsolutePanel panel = new AbsolutePanel();
-		final FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(
-				panel);
+		final FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(panel);
 		final FlexTable table = new FlexTable();
 		for (int row = 0; row < list.size(); row++) {
 			T archiver = list.get(row);
-			CustomHTML<T> handle = new CustomHTML<T>(archiver.getName(),
-					archiver);
+			CustomHTML<T> handle = new CustomHTML<T>(archiver.getName(), archiver);
 			table.setWidget(row, 0, handle);
 			if (user.isSuperAdmin()) {
 				tableRowDragController.makeDraggable(handle);
@@ -314,8 +313,7 @@ public class InstitutionListPanel extends VerticalPanel {
 				public void onClick(ClickEvent arg0) {
 					List<T> items = new ArrayList<T>();
 					for (int row = 0; row < table.getRowCount(); row++) {
-						CustomHTML<T> widget = (CustomHTML<T>) table.getWidget(
-								row, 0);
+						CustomHTML<T> widget = (CustomHTML<T>) table.getWidget(row, 0);
 						T archiver = widget.getObject();
 						archiver.setOrder(Long.valueOf(row + 1));
 						items.add(archiver);
@@ -324,8 +322,7 @@ public class InstitutionListPanel extends VerticalPanel {
 
 						public void onFailure(Throwable caught) {
 							saveButton.setText("save");
-							Window.alert(constants.serverError() + ": "
-									+ caught.getMessage());
+							Window.alert(constants.serverError() + ": " + caught.getMessage());
 						}
 
 						public void onSuccess(Void arg0) {
@@ -337,10 +334,8 @@ public class InstitutionListPanel extends VerticalPanel {
 				}
 			});
 			panel.add(saveButton);
-			FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(
-					table);
-			tableRowDragController
-					.registerDropController(flexTableRowDropController);
+			FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(table);
+			tableRowDragController.registerDropController(flexTableRowDropController);
 		}
 		return panel;
 	}
@@ -348,7 +343,7 @@ public class InstitutionListPanel extends VerticalPanel {
 	private AbsolutePanel archiversGrid() {
 		return getGrid(archivers, new ArchiversGridHelper());
 	}
-	
+
 	private AbsolutePanel registrarsGrid() {
 		return getGrid(registrars, new RegistrarsGridHelper());
 	}
@@ -380,7 +375,8 @@ public class InstitutionListPanel extends VerticalPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(messages.archiverCannotBeDeleted(archiver.getName()) + ": " + caught.getMessage());
+							Window.alert(messages.archiverCannotBeDeleted(archiver.getName()) + ": "
+									+ caught.getMessage());
 						}
 					});
 				}
