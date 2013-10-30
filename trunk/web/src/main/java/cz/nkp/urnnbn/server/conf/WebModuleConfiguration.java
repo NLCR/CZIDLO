@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.server.conf;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -20,8 +19,6 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
-	private String rulesTabContent;
-	private String infoTabContent;
 
 	static public WebModuleConfiguration instanceOf() {
 		if (instance == null) {
@@ -40,22 +37,6 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		Configuration.init(loader);
 	}
 
-	public void loadInfoTabContent(BufferedReader in) throws IOException {
-		StringBuilder builder = new StringBuilder();
-		while (in.ready()) {
-			builder.append(in.readLine()).append('\n');
-		}
-		infoTabContent = builder.toString();
-	}
-
-	public void loadRulesTabContent(BufferedReader in) throws IOException {
-		StringBuilder builder = new StringBuilder();
-		while (in.ready()) {
-			builder.append(in.readLine()).append('\n');
-		}
-		rulesTabContent = builder.toString();
-	}
-
 	public static Logger getLogger() {
 		return logger;
 	}
@@ -70,14 +51,6 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 
 	public String getAlephBase() {
 		return alephBase;
-	}
-
-	public String getInfoTabContent() {
-		return infoTabContent;
-	}
-
-	public String getRulesTabContent() {
-		return rulesTabContent;
 	}
 
 	public ConfigurationData toConfigurationData() {
