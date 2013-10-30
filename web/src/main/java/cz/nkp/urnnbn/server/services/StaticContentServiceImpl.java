@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.server.services;
 import cz.nkp.urnnbn.client.services.StaticContentService;
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.shared.dto.ContentDTO;
+import cz.nkp.urnnbn.shared.exceptions.ServerException;
 import cz.nkp.urnnbn.server.dtoTransformation.ContentDtoTransformer;
 
 public class StaticContentServiceImpl extends AbstractService implements StaticContentService {
@@ -10,32 +11,30 @@ public class StaticContentServiceImpl extends AbstractService implements StaticC
 	private static final long serialVersionUID = -507074829836983767L;
 
 	@Override
-	public ContentDTO getContentByNameAndLanguage(String name, String language) {
-		Content content = this.readService.getContentByNameAndLanguage(name, language);
-		ContentDtoTransformer transformer = new ContentDtoTransformer(content);
-		return transformer.transform();
-	}
-	
-	@Override
-	public void update(ContentDTO content) {
-		Content result = new Content();
-		result.setId(content.getId());
-		result.setLanguage(content.getLanguage());
-		result.setName(content.getName());
-		result.setContent(content.getContent());
-		this.updateService.updateContent(result);
-	}
-	
-	@Override
-	public String getTabRulesContent() {
-		return this.readService.getContentByNameAndLanguage("rules", "cz").getContent();
-		//return WebModuleConfiguration.instanceOf().getRulesTabContent();
+	public ContentDTO getContentByNameAndLanguage(String name, String language) throws ServerException {
+		try {
+			Content content = this.readService.contentByNameAndLanguage(name, language);
+			ContentDtoTransformer transformer = new ContentDtoTransformer(content);
+			return transformer.transform();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
 	}
 
 	@Override
-	public String getTabInfoContent() {
-		return this.readService.getContentByNameAndLanguage("info", "cz").getContent();
-		//return WebModuleConfiguration.instanceOf().getInfoTabContent();
+	public void update(ContentDTO content) throws ServerException {
+		try {
+			Content result = new Content();
+			result.setId(content.getId());
+			result.setLanguage(content.getLanguage());
+			result.setName(content.getName());
+			result.setContent(content.getContent());
+			this.updateService.updateContent(result, getUserLogin());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ServerException(e.getMessage());
+		}
 	}
 
 }
