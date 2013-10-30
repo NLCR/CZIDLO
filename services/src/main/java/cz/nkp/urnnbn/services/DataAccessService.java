@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -133,7 +134,7 @@ public interface DataAccessService extends BusinessService {
 
     public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
     
-    public Content getContentByNameAndLanguage(String name, String language);
+    public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
     
     //FIXME: move filter fields to separate class
     public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,

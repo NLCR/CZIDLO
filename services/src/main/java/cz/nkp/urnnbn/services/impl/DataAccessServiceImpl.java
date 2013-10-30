@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataAccessService;
+import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
@@ -37,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.joda.time.DateTime;
 
 /**
@@ -470,14 +470,14 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public Content getContentByNameAndLanguage(String name, String language) {
+    public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException{
         try {
             Content content = factory.contentDao().getContentByNameAndLanguage(name, language);
             return content;
         } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException("database error", ex);
         } catch (RecordNotFoundException ex) {
-            throw new RuntimeException(ex);
+            throw new ContentNotFoundException(language,name, ex);
         }
     }
     
