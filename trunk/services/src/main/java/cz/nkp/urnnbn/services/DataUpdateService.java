@@ -19,6 +19,7 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -72,10 +73,8 @@ public interface DataUpdateService extends BusinessService {
     public void updateUser(User user, String login) throws
             UnknownUserException, NotAdminException;
 
-    /**
-     * TODO: doesn't declare authentication exceptions, should be fixed
-     *
-     * @param content
-     */
-    public void updateContent(Content content);
+    public void updateContent(Content content, String login) throws
+            UnknownUserException, NotAdminException,
+            ContentNotFoundException;
+
 }

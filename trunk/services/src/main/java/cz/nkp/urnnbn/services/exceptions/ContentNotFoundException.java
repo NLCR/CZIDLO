@@ -4,14 +4,16 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+
 /**
- *
+ * 
  * @author xrosecky
  */
 public class ContentNotFoundException extends Exception {
 
-    public ContentNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-    
+	public ContentNotFoundException(String language, String name, RecordNotFoundException ex) {
+		super(String.format("Content with language='%s' and name='%s' not found", language, name), ex);
+	}
+
 }

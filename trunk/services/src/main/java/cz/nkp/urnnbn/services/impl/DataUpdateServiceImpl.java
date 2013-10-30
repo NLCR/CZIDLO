@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
@@ -37,8 +38,6 @@ import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -76,7 +75,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             authorization.checkAccessRightsOrAdmin(doc.getRegistrarId(), login);
             factory.documentDao().updateDocument(doc);
-            AdminLogger.getLogger().info("user '" + login + "' updated digital document with id '" +  doc.getId() + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated digital document with id '" + doc.getId() + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -89,7 +88,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             authorization.checkAccessRightsOrAdmin(registrar.getId(), login);
             factory.registrarDao().updateRegistrar(registrar);
-            AdminLogger.getLogger().info("user '" + login + "' updated '" +  registrar + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" + registrar + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -102,7 +101,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             authorization.checkAdminRights(login);
             factory.archiverDao().updateArchiver(archiver);
-            AdminLogger.getLogger().info("user '" + login + "' updated '" +  archiver + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" + archiver + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -116,7 +115,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             long registrarId = registrarOfDigLibrary(library.getId());
             authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.diglLibDao().updateLibrary(library);
-            AdminLogger.getLogger().info("user '" + login + "' updated '" +  library + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" + library + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -130,7 +129,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             long registrarId = registrarOfCatalog(catalog.getId());
             authorization.checkAccessRightsOrAdmin(registrarId, login);
             factory.catalogDao().updateCatalog(catalog);
-            AdminLogger.getLogger().info("user '" + login + "' updated '" +  catalog + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" + catalog + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -142,7 +141,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity, IdentifierConflictException {
         authorization.checkAdminRights(login);
         new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
-        AdminLogger.getLogger().info("user '" + login + "' updated intelectual entity with id '" +  entity.getId() + "'");
+        AdminLogger.getLogger().info("user '" + login + "' updated intelectual entity with id '" + entity.getId() + "'");
     }
 
     @Override
@@ -150,7 +149,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         try {
             authorization.checkAdminRights(login);
             factory.userDao().updateUser(user);
-            AdminLogger.getLogger().info("user '" + login + "' updated '" +  user + "'");
+            AdminLogger.getLogger().info("user '" + login + "' updated '" + user + "'");
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -159,9 +158,23 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void updateContent(Content content) {
+    public void updateContent(Content content, String login) throws UnknownUserException, NotAdminException, ContentNotFoundException {
         try {
+            authorization.checkAdminRights(login);
             factory.contentDao().updateContent(content);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new ContentNotFoundException(content.getLanguage(), content.getName(), ex);
+        }
+    }
+
+    @Override
+    public void updateDigitalInstance(DigitalInstance instance)
+            throws UnknownUserException, AccessException,
+            UnknownDigDocException {
+        try {
+            factory.digInstDao().updateDigInstance(instance);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -169,18 +182,4 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         }
     }
 
-	@Override
-	public void updateDigitalInstance(DigitalInstance instance)
-			throws UnknownUserException, AccessException,
-			UnknownDigDocException {
-		try {
-            factory.digInstDao().updateDigInstance(instance);
-        } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
-        } catch (RecordNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
-	}
-    
-    
 }
