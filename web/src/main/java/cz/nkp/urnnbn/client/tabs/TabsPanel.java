@@ -103,10 +103,10 @@ public class TabsPanel extends Composite {
 		PanelsBuilder builder = new PanelsBuilder(tabLayoutPanel);
 
 		// info panel
-		builder.appendPanel(new InfoPanelWithContent(this, "info"), constants.tabInfoLabel());
+		builder.appendPanel(new EditableContentPanel(this, "info"), constants.tabInfoLabel());
 
 		// rules panel
-		builder.appendPanel(new InfoPanelWithContent(this, "rules"), constants.tabRulesLabel());
+		builder.appendPanel(new EditableContentPanel(this, "rules"), constants.tabRulesLabel());
 
 		// search panel
 		String query = com.google.gwt.user.client.Window.Location.getParameter("q");

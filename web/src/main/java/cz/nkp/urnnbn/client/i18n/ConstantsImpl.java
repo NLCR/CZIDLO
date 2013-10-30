@@ -17,7 +17,7 @@ public interface ConstantsImpl extends Constants {
 	String tabInfoLabel();
 
 	String tabRulesLabel();
-	
+
 	String tabSearchLabel();
 
 	String tabDataInputLabel();
@@ -201,7 +201,7 @@ public interface ConstantsImpl extends Constants {
 	String save();
 
 	String edit();
-	
+
 	String editOrderAndVisibility();
 
 	String code();
@@ -251,7 +251,7 @@ public interface ConstantsImpl extends Constants {
 	String insertNewRecord();
 
 	String showInCatalog();
-	
+
 	String orderAndVisibility();
 
 	// URN:NBN registration modes
@@ -376,9 +376,9 @@ public interface ConstantsImpl extends Constants {
 	String logsTabProcessListHeading();
 
 	String logsTabDownloadLogFile();
-	
+
 	String order();
-	
+
 	String hidden();
 
 	String absenceOfIdentifiers();
@@ -386,5 +386,11 @@ public interface ConstantsImpl extends Constants {
 	String includeNumberOfDigitalInstances();
 
 	String activityFlag();
+
+	// editable-content panels
+
+	String loading();
+
+	String cancel();
 
 }
