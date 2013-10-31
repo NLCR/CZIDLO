@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
@@ -33,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -113,6 +115,20 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
                     IntEntIdentifierDAO.ATTR_VALUE,
                     idValue,
                     IntEntIdentifierDAO.ATTR_IE_ID);
+            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            return (List<Long>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            //cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+    
+    public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, int offset, int limit) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch(query, offset, limit);
             DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
