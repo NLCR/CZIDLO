@@ -50,6 +50,8 @@ public interface IntelectualEntityDAO {
      * @throws DatabaseException 
      */
     public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException;
+    
+    public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, int offset, int limit) throws DatabaseException;
 
     public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
