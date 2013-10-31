@@ -182,6 +182,23 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             throw new RuntimeException(ex);
         }
     }
+    
+    @Override
+    public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value) {
+        try {
+            List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, 10);
+            List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
+            for (long id : idList) {
+                IntelectualEntity entity = entityById(id);
+                if (entity != null) {
+                    result.add(entity);
+                }
+            }
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     @Override
     public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId) {
