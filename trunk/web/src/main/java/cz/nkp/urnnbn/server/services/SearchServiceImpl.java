@@ -71,7 +71,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private Set<IntelectualEntityDTO> searchByIdentifiers(String request) {
 		try {
-			List<IntelectualEntity> entities = readService.entitiesByIdValue(request);
+			List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(request);
 			Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 			for (IntelectualEntity entity : entities) {
 				result.add(transformedEntity(entity));
