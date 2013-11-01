@@ -79,9 +79,6 @@ public class InstitutionListPanel extends VerticalPanel {
 					result = removeHidden(result);
 				}
 				registrars = result;
-				for (RegistrarDTO reg : registrars) {
-					System.out.println("Order " + reg.getOrder());
-				}
 				reload();
 			}
 
@@ -308,7 +305,7 @@ public class InstitutionListPanel extends VerticalPanel {
 		}
 		panel.add(table);
 		if (user.isSuperAdmin()) {
-			final Button saveButton = new Button("save");
+			final Button saveButton = new Button(constants.save());
 			saveButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent arg0) {
 					List<T> items = new ArrayList<T>();
@@ -318,19 +315,18 @@ public class InstitutionListPanel extends VerticalPanel {
 						archiver.setOrder(Long.valueOf(row + 1));
 						items.add(archiver);
 					}
-					AsyncCallback<Void> callBack = new AsyncCallback<Void>() {
+
+					gridHelper.update(items, new AsyncCallback<Void>() {
 
 						public void onFailure(Throwable caught) {
-							saveButton.setText("save");
 							Window.alert(constants.serverError() + ": " + caught.getMessage());
 						}
 
 						public void onSuccess(Void arg0) {
-							saveButton.setText("save");
+							//nothing
 						}
 
-					};
-					gridHelper.update(items, callBack);
+					});
 				}
 			});
 			panel.add(saveButton);
