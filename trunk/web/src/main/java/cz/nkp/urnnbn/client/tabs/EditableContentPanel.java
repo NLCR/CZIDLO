@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client.tabs;
 
+import java.util.logging.Logger;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -24,14 +26,15 @@ import cz.nkp.urnnbn.shared.dto.ContentDTO;
 
 public class EditableContentPanel extends SingleTabContentPanel {
 
+	private static final Logger logger = Logger.getLogger(EditableContentPanel.class.getName());
+	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
+
 	private final String name;
 	private ContentDTO content = null;
 	private VerticalPanel contentPanel = null;
 	private RichTextEditor editor = null;
 	private Button editButton = null;
 	private HorizontalPanel saveAndCancelButtonsPanel;
-
-	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
 
 	public EditableContentPanel(TabsPanel tabsPanel, String name) {
 		super(tabsPanel);
@@ -130,7 +133,8 @@ public class EditableContentPanel extends SingleTabContentPanel {
 		staticContentService.getContentByNameAndLanguage(name, languageCode, new AsyncCallback<ContentDTO>() {
 
 			public void onFailure(Throwable error) {
-				Window.alert(constants.serverError() + ": " + error.getMessage());
+				logger.severe(error.getMessage());
+				contentPanel.clear();
 			}
 
 			public void onSuccess(ContentDTO result) {
