@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,6 +33,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class InstitutionListPanel extends VerticalPanel {
 
+	private static final Logger logger = Logger.getLogger(InstitutionListPanel.class.getName());
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
@@ -83,7 +85,7 @@ public class InstitutionListPanel extends VerticalPanel {
 			}
 
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe(caught.getMessage());
 			}
 		});
 	}
@@ -124,8 +126,7 @@ public class InstitutionListPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
-
+				logger.severe(caught.getMessage());
 			}
 		});
 	}
@@ -319,11 +320,11 @@ public class InstitutionListPanel extends VerticalPanel {
 					gridHelper.update(items, new AsyncCallback<Void>() {
 
 						public void onFailure(Throwable caught) {
-							Window.alert(constants.serverError() + ": " + caught.getMessage());
+							logger.severe(caught.getMessage());
 						}
 
 						public void onSuccess(Void arg0) {
-							//nothing
+							// nothing
 						}
 
 					});
