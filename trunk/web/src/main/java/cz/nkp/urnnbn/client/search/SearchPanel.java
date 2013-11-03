@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.search;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,8 +38,8 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public class SearchPanel extends SingleTabContentPanel {
-	// public class SearchPanel extends DockLayoutPanel {
 
+	private static final Logger logger = Logger.getLogger(SearchPanel.class.getName());
 	private static final int MAX_ENTITIES_TO_EXPAND = 3;
 	private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -94,7 +95,7 @@ public class SearchPanel extends SingleTabContentPanel {
 			}
 
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe("Error loading configuration: " + caught.getMessage());
 			}
 
 		};
@@ -138,16 +139,20 @@ public class SearchPanel extends SingleTabContentPanel {
 
 			public void onFailure(Throwable caught) {
 				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				hideProcessingSearchAnimation();
 			}
-
 		});
 	}
-	
-	private void showProcessingWheel(){
+
+	private void hideProcessingSearchAnimation() {
+		searchResultsPanel.clear();
+	}
+
+	private void showProcessingWheel() {
 		searchResultsPanel.clear();
 		searchResultsPanel.add(processingWheelPanel());
 	}
-	
+
 	private Panel processingWheelPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.setStyleName(css.processWheelPanel());

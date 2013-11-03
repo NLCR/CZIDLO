@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.processes;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,6 +29,8 @@ import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
 
 public class ProcessAdministrationPanel extends SingleTabContentPanel {
+
+	private static final Logger logger = Logger.getLogger(ProcessAdministrationPanel.class.getName());
 
 	private final ProcessAdministrationCss css = initCss();
 	private final Timer processesRefreshTimer = initProcessRefreshTimer();
@@ -83,7 +86,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe("Error loading processes: " + caught.getMessage());
 			}
 		};
 		if (showProcessesOfAllUsers()) {
@@ -466,7 +469,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert("cancel scheduled process failure: " + caught.getMessage());
+							Window.alert(constants.serverError() + ": " + caught.getMessage());
 						}
 					});
 				}
@@ -487,7 +490,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert("cancel running process failure: " + caught.getMessage());
+							Window.alert(constants.serverError() + ": " + caught.getMessage());
 						}
 					});
 
@@ -508,7 +511,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert("delete finished process failure: " + caught.getMessage());
+							Window.alert(constants.serverError() + ": " + caught.getMessage());
 						}
 					});
 				}

@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client;
 
+import java.util.logging.Logger;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -13,7 +15,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
@@ -25,7 +26,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
  */
 public class Main implements EntryPoint {
 
-	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private static final Logger logger = Logger.getLogger(Main.class.getName());
 	private Resources resources = GWT.create(Resources.class);
 	private DockLayoutPanel mainPanel;
 
@@ -33,7 +34,7 @@ public class Main implements EntryPoint {
 		AuthServiceAsync service = GWT.create(AuthService.class);
 		service.getActiveUser(new AsyncCallback<UserDTO>() {
 			public void onFailure(Throwable caught) {
-				// Window.alert("Remote Procedure Call - Failure");
+				logger.severe("Error obtaining user credentials: " + caught.getMessage());
 			}
 
 			public void onSuccess(UserDTO user) {
@@ -71,8 +72,8 @@ public class Main implements EntryPoint {
 		headerPanel.add(emptyLabel1);
 
 		// logo
-//		Image booksImg = new Image("img/logo_books.png");
-//		headerPanel.add(booksImg);
+		// Image booksImg = new Image("img/logo_books.png");
+		// headerPanel.add(booksImg);
 		// space
 		Label emptyLabel2 = new Label("");
 		headerPanel.add(emptyLabel2);

@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -43,6 +44,8 @@ import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public class RecordDataPanel extends VerticalPanel {
+
+	private static final Logger logger = Logger.getLogger(RecordDataPanel.class.getName());
 	// services
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
@@ -104,13 +107,13 @@ public class RecordDataPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(messages.serverError(caught.getMessage()));
+				logger.severe("Error loading digital libraries of registrar: " + caught.getMessage());
 			}
 		});
 	}
 
-	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode, IntelectualEntityForm entityForm,
-			String typeName) {
+	public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
+			IntelectualEntityForm entityForm, String typeName) {
 		this(superPanel, registrar, registrationMode, entityForm, null, typeName);
 	}
 
@@ -125,7 +128,7 @@ public class RecordDataPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("error: " + caught.getMessage());
+				logger.severe("Error loading registrars: " + caught.getMessage());
 			}
 		});
 	}
@@ -332,18 +335,19 @@ public class RecordDataPanel extends VerticalPanel {
 				initUrnNbnFormIfNecessary();
 			}
 
-						public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+			public void onFailure(Throwable caught) {
+				logger.info("Error loading configuration: " + caught.getMessage());
 			}
 
 		};
 		configurationService.getConfiguration(callback);
 	}
-	
+
 	private void initUrnNbnFormIfNecessary() {
-		if (registrationMode == UrnNbnRegistrationMode.BY_REGISTRAR || registrationMode == UrnNbnRegistrationMode.BY_RESERVATION){
+		if (registrationMode == UrnNbnRegistrationMode.BY_REGISTRAR
+				|| registrationMode == UrnNbnRegistrationMode.BY_RESERVATION) {
 			this.urnNbnForm = new UrnNbnForm(registrar, configuration.getCountryCode());
-		}else {
+		} else {
 			this.urnNbnForm = null;
 		}
 	}

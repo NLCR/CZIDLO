@@ -52,8 +52,8 @@ public interface MessagesImpl extends Messages {
 	public String registrarsAccessRigths(String userName);
 
 	public String serverError(String errorMessage);
-	
+
 	public String processPlaning(String processType);
-	
+
 	public String validationNotInteger();
 }

@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.AbstractDialogBox;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalInstanceForm;
-import cz.nkp.urnnbn.client.insertRecord.InsertDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.search.SearchPanel;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
