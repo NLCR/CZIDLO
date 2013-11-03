@@ -2,45 +2,69 @@ package cz.nkp.urnnbn.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.resources.Resources;
+import cz.nkp.urnnbn.client.services.ConfigurationService;
+import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
+import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class UserPanel extends Composite {
 
-	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	private AbsolutePanel absolutePanel = new AbsolutePanel();
+	private static final String DEFAULT_LOGIN_PAGE = "spring_security_login";
+	private static final String LOGOUT_PAGE = "logout";
+	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
 	private final UserDTO user;
+	private Resources resources = GWT.create(Resources.class);
+	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private VerticalPanel panel = new VerticalPanel();
 
 	public UserPanel(UserDTO user) {
 		this.user = user;
-		initWidget(absolutePanel);
+		initWidget(panel);
 	}
 
 	@Override
 	protected void onLoad() {
-		absolutePanel.clear();
-		absolutePanel.setSize("221px", "128px");
-		Anchor lang = langAnchor(); 
-		absolutePanel.add(lang, 145, 20);
+		configurationService.getConfiguration(new AsyncCallback<ConfigurationData>() {
+			public void onSuccess(ConfigurationData data) {
+				initPanel(data);
+			}
 
+			public void onFailure(Throwable caught) {
+				Window.alert(constants.serverError() + ": " + caught.getMessage());
+			}
+		});
+	}
+
+	private void initPanel(ConfigurationData configuration) {
+		panel.addStyleName(resources.MainCss().userPanel());
+		Anchor language = langAnchor();
+		language.addStyleName(resources.MainCss().userPanelContent());
+		panel.add(language);
 		if (user.getLogin() == null) {
-			Anchor login = new Anchor(constants.loginButton(), "spring_security_login");
-			absolutePanel.add(login, 145, 45);
+			String loginUrl = configuration.getLoginPage() == null ? DEFAULT_LOGIN_PAGE : configuration.getLoginPage();
+			panel.add(buildLink(loginUrl, constants.loginButton()));
 		} else {
-			Label userNameLbl = new Label(user.getLogin());
-			// userNameLbl.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			// absolutePanel.add(userNameLbl, 20, 65);
-			// absolutePanel.add(userNameLbl, 110, 45);
-			absolutePanel.add(userNameLbl, 145, 45);
-			// userNameLbl.setSize("135px", "17px");
-			Anchor logout = new Anchor(constants.logoutButton(), "logout");
-			absolutePanel.add(logout, 145, 65);
+			Label userName = new Label(user.getLogin());
+			userName.addStyleName(resources.MainCss().userPanelContent());
+			panel.add(userName);
+			panel.add(buildLink(LOGOUT_PAGE, constants.logoutButton()));
 		}
+	}
+
+	private HTML buildLink(String url, String text) {
+		HTML result = new HTML("<a href='" + url + "'>" + text + "</a>");
+		result.addStyleName(resources.MainCss().userPanelContent());
+		return result;
 	}
 
 	private Anchor langAnchor() {

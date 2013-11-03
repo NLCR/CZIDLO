@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -30,6 +31,7 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class SelectEntityParametersPanel extends VerticalPanel {
 
+	private static final Logger logger = Logger.getLogger(SelectEntityParametersPanel.class.getName());
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final DataInputPanel superPanel;
 	private final ListBox entityTypeListBox = entityTypeListBox();
@@ -100,8 +102,6 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		add(continueButton());
 	}
 
-	
-
 	private ListBox entityTypeListBox() {
 		final ListBox result = new ListBox();
 		result.addItem(constants.monograph());
@@ -121,7 +121,7 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		result.add(registrars);
 		return result;
 	}
-	
+
 	private Panel selectRegistrationModePanel() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.urnNbnRegistrationMode() + ": "));
@@ -151,22 +151,28 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		RegistrarDTO registrar = selectedRegistrar();
 		switch (entityTypeListBox.getSelectedIndex()) {
 		case 0:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographForm(), constants.monograph());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographForm(),
+					constants.monograph());
 		case 1:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographVolumeForm(), constants.monographVolume());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new MonographVolumeForm(),
+					constants.monographVolume());
 		case 2:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalForm(), constants.periodical());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalForm(),
+					constants.periodical());
 		case 3:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalVolumeForm(), constants.periodicalVolume());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalVolumeForm(),
+					constants.periodicalVolume());
 		case 4:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalIssueForm(), constants.periodicalIssue());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new PeriodicalIssueForm(),
+					constants.periodicalIssue());
 		case 5:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new AnalyticalForm(), new SourceDocumentForm(),
-					constants.analytical());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new AnalyticalForm(),
+					new SourceDocumentForm(), constants.analytical());
 		case 6:
 			return new RecordDataPanel(superPanel, registrar, registrationMode, new ThesisForm(), constants.thesis());
 		case 7:
-			return new RecordDataPanel(superPanel, registrar, registrationMode, new OtherEntityForm(), constants.otherEntity());
+			return new RecordDataPanel(superPanel, registrar, registrationMode, new OtherEntityForm(),
+					constants.otherEntity());
 		default:
 			return null;
 		}
@@ -186,7 +192,7 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 		} else if (constants.modeByReservation().equals(text)) {
 			return UrnNbnRegistrationMode.BY_RESERVATION;
 		} else {
-			System.err.println("Unknown urn:nbn registration mode \"" + text + "\"");
+			logger.severe("Unknown urn:nbn registration mode \"" + text + "\"");
 			return null;
 		}
 	}

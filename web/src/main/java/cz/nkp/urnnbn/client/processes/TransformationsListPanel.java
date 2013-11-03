@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -25,7 +26,7 @@ public class TransformationsListPanel extends ScrollPanel {
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final List<XmlTransformationDTO> transformations;
 	private final XmlTransformationsPanel superPanel;
-	
+
 	public TransformationsListPanel(XmlTransformationsPanel superPanel, List<XmlTransformationDTO> transformations) {
 		super();
 		this.superPanel = superPanel;
@@ -47,17 +48,17 @@ public class TransformationsListPanel extends ScrollPanel {
 	private Widget transformationsListHeader() {
 		HorizontalPanel panel = new HorizontalPanel();
 		panel.setWidth("500px");
-				
+
 		// title
 		Widget titelLabel = headerFormated(constants.processOaiAdapterTransformationTitle());
 		panel.add(titelLabel);
 		panel.setCellWidth(titelLabel, "20%");
-		
+
 		// description
 		Widget descriptionLabel = headerFormated(constants.processOaiAdapterTransformationDescription());
 		panel.add(descriptionLabel);
 		panel.setCellWidth(descriptionLabel, "35%");
-		
+
 		// created
 		Widget createdLabel = headerFormated(constants.processOaiAdapterTransformationCreated());
 		panel.add(createdLabel);
@@ -67,10 +68,10 @@ public class TransformationsListPanel extends ScrollPanel {
 		Widget deleteButtonLabel = headerFormated("");
 		panel.add(deleteButtonLabel);
 		panel.setCellWidth(deleteButtonLabel, "15%");
-		
+
 		return panel;
 	}
-	
+
 	private Widget headerFormated(String string) {
 		return new HTML("<div style=\"color:grey\">" + string + "</style>");
 	}
@@ -136,7 +137,7 @@ public class TransformationsListPanel extends ScrollPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// Window.alert(caught.getMessage());
+						Window.alert(constants.serverError() + ": " + caught.getMessage());
 					}
 				});
 			}

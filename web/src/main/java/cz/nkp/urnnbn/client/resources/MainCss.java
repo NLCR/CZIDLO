@@ -13,6 +13,10 @@ public interface MainCss extends CssResource {
 	public String headerTitlePanel();
 
 	public String languageSwitch();
+	
+	public String userPanel();
+	
+	public String userPanelContent();
 
 	public String mainPanel();
 

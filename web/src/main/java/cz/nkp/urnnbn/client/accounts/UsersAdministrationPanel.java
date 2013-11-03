@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.accounts;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,6 +23,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class UsersAdministrationPanel extends SingleTabContentPanel {
 
+	private static final Logger logger = Logger.getLogger(UsersAdministrationPanel.class.getName());
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
 	private ArrayList<UserDTO> users = new ArrayList<UserDTO>();
 
@@ -46,7 +48,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe("Error loading users: " + caught.getMessage());
 			}
 		});
 	}
@@ -173,7 +175,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 	@Override
 	public void onDeselectionSelection() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

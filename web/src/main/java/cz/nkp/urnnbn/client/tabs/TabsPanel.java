@@ -30,8 +30,6 @@ public class TabsPanel extends Composite {
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
 	private TabLayoutPanel tabLayoutPanel;
-	// private ArrayList<RegistrarDTO> registrarsManagedByUser = new
-	// ArrayList<RegistrarDTO>(0);
 	private ArrayList<RegistrarDTO> registrarsManagedByUser = null;
 	private final UserDTO activeUser;
 

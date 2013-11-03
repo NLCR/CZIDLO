@@ -72,14 +72,14 @@ public class LogsTab extends SingleTabContentPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						logger.severe(caught.getMessage());
+						logger.severe("Error loading admin logs: " + caught.getMessage());
 					}
 				});
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe(caught.getMessage());
+				logger.severe("Error loading admin logs last update time: " + caught.getMessage());
 			}
 		});
 	}

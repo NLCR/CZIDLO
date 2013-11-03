@@ -12,7 +12,7 @@
 }
 
 .headerTitle {
-	padding:10px;  
+	padding: 10px;
 	padding-left: 17px;
 	color: black;
 	font-size: 32px;
@@ -26,6 +26,17 @@
 	white-space: nowrap;
 	text-align: center;
 	vertical-align: text-bottom;
+}
+
+.userPanel {
+	padding: 5px;
+	margin-top: 10px;
+	margin-right: 20px;
+}
+
+.userPanelContent {
+	margin-top: 10px;
+	white-space: nowrap;
 }
 
 .languageSwitch {
