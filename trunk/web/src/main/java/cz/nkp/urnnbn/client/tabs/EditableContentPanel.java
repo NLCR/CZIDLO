@@ -88,9 +88,7 @@ public class EditableContentPanel extends SingleTabContentPanel {
 		staticContentService.update(content, new AsyncCallback<Void>() {
 
 			public void onFailure(Throwable error) {
-				Window.alert(error.getMessage());
-				// TODO: poresit logovani poradne
-				error.printStackTrace();
+				Window.alert(constants.serverError() + ": " + error.getMessage());
 			}
 
 			public void onSuccess(Void result) {
@@ -132,8 +130,7 @@ public class EditableContentPanel extends SingleTabContentPanel {
 		staticContentService.getContentByNameAndLanguage(name, languageCode, new AsyncCallback<ContentDTO>() {
 
 			public void onFailure(Throwable error) {
-				// TODO: jeste zalogovat
-				Window.alert(error.getMessage());
+				Window.alert(constants.serverError() + ": " + error.getMessage());
 			}
 
 			public void onSuccess(ContentDTO result) {

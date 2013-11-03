@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.client.tabs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,7 +22,9 @@ import cz.nkp.urnnbn.client.services.LogsServiceAsync;
 
 public class LogsTab extends SingleTabContentPanel {
 
+	private static final Logger logger = Logger.getLogger(LogsTab.class.getName());
 	private static final int TIMER_INTERVAL = 1000;
+	private static final String ADMIN_LOG_URL = "/processDataServer/adminLog";
 	private final LogsServiceAsync logsService = GWT.create(LogsService.class);
 	private final LogsPanelCss css = initCss();
 	private final Timer refreshTabTimer = initTimer();
@@ -69,14 +72,14 @@ public class LogsTab extends SingleTabContentPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(constants.serverError() + ": " + caught.getMessage());
+						logger.severe(caught.getMessage());
 					}
 				});
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe(caught.getMessage());
 			}
 		});
 	}
@@ -98,8 +101,7 @@ public class LogsTab extends SingleTabContentPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				String url = "/processDataServer/adminLog";
-				Window.open(url, "_self", "enabled");
+				Window.open(ADMIN_LOG_URL, "_self", "enabled");
 			}
 		});
 	}
