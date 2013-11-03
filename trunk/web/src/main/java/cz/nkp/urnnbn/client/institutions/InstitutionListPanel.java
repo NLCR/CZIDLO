@@ -85,7 +85,7 @@ public class InstitutionListPanel extends VerticalPanel {
 			}
 
 			public void onFailure(Throwable caught) {
-				logger.severe(caught.getMessage());
+				logger.severe("Error loading registrars: " + caught.getMessage());
 			}
 		});
 	}
@@ -126,7 +126,7 @@ public class InstitutionListPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe(caught.getMessage());
+				logger.severe("Error loading archivers: " + caught.getMessage());
 			}
 		});
 	}

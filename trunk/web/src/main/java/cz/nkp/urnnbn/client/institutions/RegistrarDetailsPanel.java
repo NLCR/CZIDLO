@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.institutions;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -27,6 +28,8 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class RegistrarDetailsPanel extends VerticalPanel {
+
+	private static final Logger logger = Logger.getLogger(RegistrarDetailsPanel.class.getName());
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
@@ -109,7 +112,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe("Error loading digital libraries: " + caught.getMessage());
 			}
 		});
 	}
@@ -125,7 +128,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				logger.severe("Error loading catalogs: " + caught.getMessage());
 			}
 		});
 	}
@@ -166,28 +169,28 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			result.add(orderAndVisibilityPanel());
 			result.add(editRegistrarVisiblityAndOrderButton());
 		}
-		// edit button 
+		// edit button
 		return result;
 	}
-	
-	private VerticalPanel registrationModesPanel(){
+
+	private VerticalPanel registrationModesPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.setStyleName(css.block());
-		//title
+		// title
 		Label modesHeading = new Label(constants.allowedRegistrationModes());
 		modesHeading.setStyleName(css.listHeadingLevel2());
 		result.add(modesHeading);
-		//modes
+		// modes
 		result.add(registrationModePanel(constants.modeByResolver(), registrar.isRegModeByResolverAllowed()));
 		result.add(registrationModePanel(constants.modeByReservation(), registrar.isRegModeByReservationAllowed()));
-		result.add(registrationModePanel(constants.modeByRegistrar(),registrar.isRegModeByRegistrarAllowed()));
+		result.add(registrationModePanel(constants.modeByRegistrar(), registrar.isRegModeByRegistrarAllowed()));
 		return result;
 	}
-	
+
 	private VerticalPanel orderAndVisibilityPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.setStyleName(css.block());
-		//title
+		// title
 		Label modesHeading = new Label(constants.orderAndVisibility());
 		modesHeading.setStyleName(css.listHeadingLevel2());
 		result.add(modesHeading);
@@ -200,12 +203,12 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		HorizontalPanel hiddenPanel = new HorizontalPanel();
 		hiddenPanel.add(new Label(constants.hidden() + ":"));
 		hiddenPanel.add(new HTML("&nbsp"));
-		hiddenPanel.add(new Label((registrar.isHidden())?constants.yes():constants.no()));
+		hiddenPanel.add(new Label((registrar.isHidden()) ? constants.yes() : constants.no()));
 		result.add(hiddenPanel);
 		return result;
 	}
-	
-	private HorizontalPanel registrationModePanel(String label, boolean checked){
+
+	private HorizontalPanel registrationModePanel(String label, boolean checked) {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(label));
 		result.add(new HTML("&nbsp"));
@@ -215,8 +218,6 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		result.add(checkBox);
 		return result;
 	}
-	
-	
 
 	private Button editRegistrarButton() {
 		return new Button(constants.edit(), new ClickHandler() {
@@ -229,13 +230,14 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			}
 		});
 	}
-	
+
 	private Button editRegistrarVisiblityAndOrderButton() {
 		return new Button(constants.editOrderAndVisibility(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(RegistrarDetailsPanel.this, registrar);
+				EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(
+						RegistrarDetailsPanel.this, registrar);
 				dialogBox.center();
 				dialogBox.show();
 			}
@@ -299,7 +301,8 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(messages.digitalLibraryCannotBeDeleted(lib.getName()) + ": " + caught.getMessage());
+							Window.alert(messages.digitalLibraryCannotBeDeleted(lib.getName()) + ": "
+									+ caught.getMessage());
 						}
 					});
 				}
