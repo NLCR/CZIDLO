@@ -5,7 +5,7 @@ public class IntegerValidator extends Validator {
 	@Override
 	public boolean isValid(String value) {
 		try {
-			Integer intValue = Integer.valueOf(value);
+			Integer.valueOf(value);
 			return true;
 		} catch (NumberFormatException e) {
 			return false;
@@ -16,5 +16,5 @@ public class IntegerValidator extends Validator {
 	public String localizedErrorMessage(String value) {
 		return messages.validationNotInteger();
 	}
-	
+
 }
