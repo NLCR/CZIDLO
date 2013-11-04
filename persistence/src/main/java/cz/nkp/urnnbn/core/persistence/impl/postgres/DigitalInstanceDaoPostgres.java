@@ -136,6 +136,8 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 	}
 
 	public void updateDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException {
+		checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, instance.getDigDocId());
+		checkRecordExists(DigitalLibraryDAO.TABLE_NAME, DigitalLibraryDAO.ATTR_ID, instance.getLibraryId());
 		updateRecordWithLongPK(instance, TABLE_NAME, ATTR_ID, new UpdateDigitalInstance(instance));
 	}
 }
