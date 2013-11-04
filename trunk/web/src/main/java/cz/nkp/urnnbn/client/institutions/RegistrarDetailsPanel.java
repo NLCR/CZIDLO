@@ -161,6 +161,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		}
 		// registration modes
 		result.add(registrationModesPanel());
+		// edit button
 		if (user.isSuperAdmin() || userManagesRegistrar(registrar)) {
 			result.add(editRegistrarButton());
 		}
@@ -169,7 +170,6 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 			result.add(orderAndVisibilityPanel());
 			result.add(editRegistrarVisiblityAndOrderButton());
 		}
-		// edit button
 		return result;
 	}
 
