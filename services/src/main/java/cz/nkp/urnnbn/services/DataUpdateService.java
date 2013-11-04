@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -46,9 +47,9 @@ public interface DataUpdateService extends BusinessService {
             UnknownUserException, AccessException,
             UnknownDigDocException;
 
-    public void updateDigitalInstance(DigitalInstance instance) throws
+    public void updateDigitalInstance(DigitalInstance instance, String login) throws
             UnknownUserException, AccessException,
-            UnknownDigDocException;
+            UnknownDigInstException;
 
     public void updateRegistrar(Registrar registrar, String login) throws
             UnknownUserException, AccessException,
