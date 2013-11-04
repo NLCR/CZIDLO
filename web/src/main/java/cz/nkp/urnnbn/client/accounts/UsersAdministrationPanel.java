@@ -149,7 +149,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(constants.serverError() + ": " + caught.getMessage());
+							Window.alert(messages.serverError(caught.getMessage()));
 						}
 					});
 				}

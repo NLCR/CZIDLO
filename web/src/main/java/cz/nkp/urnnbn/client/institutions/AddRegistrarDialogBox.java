@@ -62,7 +62,7 @@ public class AddRegistrarDialogBox extends AbstractDialogBox {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							errorLabel.setText(constants.serverError() + ": " + caught.getMessage());
+							errorLabel.setText(messages.serverError(caught.getMessage()));
 						}
 					});
 				}

@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import cz.nkp.urnnbn.client.accounts.UsersAdministrationPanel;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.insertRecord.DataInputPanel;
 import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationPanel;
 import cz.nkp.urnnbn.client.processes.ProcessAdministrationPanel;
@@ -27,11 +28,12 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class TabsPanel extends Composite {
 
-	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
+	private final UserDTO activeUser;
 	private TabLayoutPanel tabLayoutPanel;
 	private ArrayList<RegistrarDTO> registrarsManagedByUser = null;
-	private final UserDTO activeUser;
 
 	public TabsPanel(UserDTO activeUser) {
 		this.activeUser = activeUser;
@@ -52,7 +54,7 @@ public class TabsPanel extends Composite {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert(constants.serverError() + ": " + caught.getMessage());
+					Window.alert(messages.serverError(caught.getMessage()));
 				}
 			});
 		}

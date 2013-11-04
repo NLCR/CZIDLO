@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ConfigurationService;
 import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
@@ -22,6 +23,7 @@ public class UserPanel extends Composite {
 	private static final String DEFAULT_LOGIN_PAGE = "spring_security_login";
 	private static final String LOGOUT_PAGE = "logout";
 	private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
+	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final UserDTO user;
 	private Resources resources = GWT.create(Resources.class);
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -40,7 +42,7 @@ public class UserPanel extends Composite {
 			}
 
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				Window.alert(messages.serverError(caught.getMessage()));
 			}
 		});
 	}

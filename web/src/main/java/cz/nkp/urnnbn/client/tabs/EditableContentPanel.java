@@ -90,8 +90,8 @@ public class EditableContentPanel extends SingleTabContentPanel {
 	public void saveContent() {
 		staticContentService.update(content, new AsyncCallback<Void>() {
 
-			public void onFailure(Throwable error) {
-				Window.alert(constants.serverError() + ": " + error.getMessage());
+			public void onFailure(Throwable caught) {
+				Window.alert(messages.serverError(caught.getMessage()));
 			}
 
 			public void onSuccess(Void result) {
