@@ -50,7 +50,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				Window.alert(messages.serverError(caught.getMessage()));
 			}
 		});
 	}
@@ -62,7 +62,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 			}
 
 			public void onFailure(Throwable caught) {
-				Window.alert(constants.serverError() + ": " + caught.getMessage());
+				Window.alert(messages.serverError(caught.getMessage()));
 			}
 		});
 	}
@@ -134,7 +134,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							errorLabel.setText(constants.serverError() + ": " + caught.getMessage());
+							errorLabel.setText(messages.serverError(caught.getMessage()));
 						}
 					});
 				}

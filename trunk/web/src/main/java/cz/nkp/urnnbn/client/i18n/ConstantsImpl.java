@@ -206,8 +206,6 @@ public interface ConstantsImpl extends Constants {
 
 	String code();
 
-	String serverError();
-
 	String urlPrefix();
 
 	String catalog();
@@ -249,7 +247,7 @@ public interface ConstantsImpl extends Constants {
 	String digitalInstances();
 
 	String insertNewRecord();
-	
+
 	String insertDigitalInstance();
 
 	String showInCatalog();

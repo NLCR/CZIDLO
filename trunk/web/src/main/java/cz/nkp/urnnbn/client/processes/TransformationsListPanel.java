@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
@@ -24,6 +25,7 @@ public class TransformationsListPanel extends ScrollPanel {
 
 	private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final List<XmlTransformationDTO> transformations;
 	private final XmlTransformationsPanel superPanel;
 
@@ -117,12 +119,6 @@ public class TransformationsListPanel extends ScrollPanel {
 		return panel;
 	}
 
-	// private Widget downloadTemplateButton(XmlTransformationDTO
-	// transformation) {
-	// // TODO Auto-generated method stub
-	// return null;
-	// }
-
 	private Widget removeButton(final XmlTransformationDTO transformation) {
 		return new Button(constants.delete(), new ClickHandler() {
 
@@ -137,7 +133,7 @@ public class TransformationsListPanel extends ScrollPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						Window.alert(constants.serverError() + ": " + caught.getMessage());
+						Window.alert(messages.serverError(caught.getMessage()));
 					}
 				});
 			}
