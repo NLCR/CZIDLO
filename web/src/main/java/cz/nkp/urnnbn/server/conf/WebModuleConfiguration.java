@@ -19,6 +19,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 	private boolean showAlephLinks;
 	private String alephUrl;
 	private String alephBase;
+	private String loginPage;
 
 	static public WebModuleConfiguration instanceOf() {
 		if (instance == null) {
@@ -34,6 +35,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		showAlephLinks = loader.loadBooleanFalseIfNullOrEmpty(PropertyKeys.SHOW_ALEPH_LINKS);
 		alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
 		alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
+		loginPage = loader.loadStringOrNull(PropertyKeys.LOGIN_PAGE);
 		Configuration.init(loader);
 	}
 
@@ -53,13 +55,17 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 		return alephBase;
 	}
 
+	public String getLoginPage() {
+		return loginPage;
+	}
+
 	public ConfigurationData toConfigurationData() {
 		ConfigurationData result = new ConfigurationData();
 		result.setShowAlephLinks(showAlephLinks);
 		result.setAlephBase(alephBase);
 		result.setAlephUrl(alephUrl);
 		result.setCountryCode(getLanguageCode());
+		result.setLoginPage(getLoginPage());
 		return result;
 	}
-
 }

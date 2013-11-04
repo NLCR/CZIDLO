@@ -2,6 +2,8 @@ package cz.nkp.urnnbn.server.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -16,14 +18,15 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 public class UserAccountServiceImpl extends AbstractService implements UserAccountService {
 
 	private static final long serialVersionUID = 7347325403481758583L;
+	private static final Logger logger = Logger.getLogger(UserAccountServiceImpl.class.getName());
 
 	@Override
 	public ArrayList<UserDTO> getAllUsers() throws ServerException {
 		try {
 			List<User> users = readService.users(getUserLogin(), false);
 			return convertUsers(users);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -39,10 +42,12 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	@Override
 	public UserDTO insertUser(UserDTO user) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			User transformed = new DtoToUserTransformer(user).transform();
 			User inserted = createService.addNewUser(transformed, getUserLogin());
 			return new UserDtoTransformer(inserted).transform();
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -50,8 +55,10 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	@Override
 	public void deleteUser(Long userId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeUser(userId, getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -59,9 +66,11 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	@Override
 	public void updateUser(UserDTO user) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			User transformed = new DtoToUserTransformer(user).transform();
 			updateService.updateUser(transformed, getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -71,7 +80,8 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 		try {
 			List<Registrar> registrars = readService.registrars();
 			return transformRegistrars(registrars);
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -81,7 +91,8 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 		try {
 			List<Registrar> registrars = readService.registrarsManagedByUser(userId, getUserLogin());
 			return transformRegistrars(registrars);
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -92,7 +103,8 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 			User userByLogin = readService.userByLogin(getUserLogin(), false);
 			List<Registrar> registrars = readService.registrarsManagedByUser(userByLogin.getId(), getUserLogin());
 			return transformRegistrars(registrars);
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -109,8 +121,10 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	@Override
 	public void insertRegistrarRight(long userId, long registrarId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			createService.addRegistrarRight(userId, registrarId, getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -118,8 +132,10 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
 	@Override
 	public void deleteRegistrarRight(long userId, long registrarId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeRegistrarRight(userId, registrarId, getUserLogin());
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
