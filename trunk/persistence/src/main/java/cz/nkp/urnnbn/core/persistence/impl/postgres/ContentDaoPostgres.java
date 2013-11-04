@@ -35,6 +35,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         super(connector);
     }
 
+    @Override
     public Long insertContent(final Content content) throws DatabaseException {
         try {
             return insertRecordWithIdFromSequence(content, TABLE_NAME, SEQ_NAME, new InsertContent(content));
@@ -45,10 +46,12 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         }
     }
 
+    @Override
     public void updateContent(Content content) throws DatabaseException, RecordNotFoundException {
         updateRecordWithLongPK(content, TABLE_NAME, ATTR_ID, new UpdateContent(content));
     }
 
+    @Override
     public void deleteContent(long contentId) throws DatabaseException, RecordNotFoundException {
         try {
             deleteRecordsById(TABLE_NAME, ATTR_ID, contentId, true);
@@ -58,6 +61,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         }
     }
 
+    @Override
     public Content getContentByNameAndLanguage(String name, String lang) throws DatabaseException, RecordNotFoundException {
         StatementWrapper wrapper = new SelectContentByLangAndName(lang, name);
         DaoOperation operation = new SingleResultOperation(wrapper, new ContentRT());
@@ -77,6 +81,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         }
     }
 
+    @Override
     public void deleteAllContent() throws DatabaseException {
         try {
             deleteAllRecords(TABLE_NAME);

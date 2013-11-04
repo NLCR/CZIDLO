@@ -190,7 +190,7 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
             checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registarId);
             deleteRecordsByLongAndLong(TABLE_USER_REGISTRAR_NAME,
                     USER_REGISTRAR_ATTR_REGISTRAR_ID, registarId,
-                    USER_REGISTRAR_ATTR_USER_ID, registarId);
+                    USER_REGISTRAR_ATTR_USER_ID, userId);
         } catch (RecordReferencedException ex) {
             //cannot happen 
             logger.log(Level.SEVERE, null, ex);
