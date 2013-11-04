@@ -39,11 +39,11 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
 			public void onUpdate(DigitalInstanceDTO instance) {
 				superPanel.addDigitalInstance(instance);
 			}
-			
+
 		};
 		init();
 	}
-	
+
 	public InsertDigitalInstanceDialogBox(final SearchPanel superPanel, UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries) {
 		this.urnNbn = urnNbn;
 		this.form = new DigitalInstanceForm(libraries);
@@ -52,18 +52,17 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
 			public void onUpdate(DigitalInstanceDTO instance) {
 				superPanel.refresh();
 			}
-			
+
 		};
 		init();
 	}
-	
+
 	private void init() {
 		setText(constants.digitalInstance() + " - " + constants.recordInsertion());
 		setAnimationEnabled(true);
 		setWidget(contentPanel());
 		center();
 	}
-	
 
 	private Widget contentPanel() {
 		VerticalPanel result = new VerticalPanel();

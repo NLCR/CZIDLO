@@ -54,10 +54,8 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		DtotoIntelectualEntityTransformer transformer = new DtotoIntelectualEntityTransformer(entity);
 		try {
 			checkNotReadOnlyMode();
-			updateService
-					.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(),
-							transformer.getPublication(), transformer.getSrcDoc(), transformer.getIdentifiers(),
-							getUserLogin());
+			updateService.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(), transformer.getPublication(),
+					transformer.getSrcDoc(), transformer.getIdentifiers(), getUserLogin());
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
@@ -134,7 +132,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		try {
 			checkNotReadOnlyMode();
 			DigitalInstance transformed = new DtoToDigitalInstanceTransformer(instance, urnNbn).transform();
-			updateService.updateDigitalInstance(transformed);
+			updateService.updateDigitalInstance(transformed, getUserLogin());
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());

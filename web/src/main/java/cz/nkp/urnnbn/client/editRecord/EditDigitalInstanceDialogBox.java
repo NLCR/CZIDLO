@@ -23,14 +23,15 @@ import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
 public class EditDigitalInstanceDialogBox extends AbstractDialogBox {
-	
+
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
 	private final SearchPanel superPanel;
 	private final DigitalInstanceForm form;
 	private final Label errorLabel = errorLabel(320);
 	private final UrnNbnDTO urn;
-	
-	public EditDigitalInstanceDialogBox(SearchPanel superPanel, UrnNbnDTO urn, DigitalInstanceDTO originalDto, ArrayList<DigitalLibraryDTO> libraries) {
+
+	public EditDigitalInstanceDialogBox(SearchPanel superPanel, UrnNbnDTO urn, DigitalInstanceDTO originalDto,
+			ArrayList<DigitalLibraryDTO> libraries) {
 		super();
 		this.superPanel = superPanel;
 		this.form = new DigitalInstanceForm(originalDto, libraries);
@@ -40,7 +41,7 @@ public class EditDigitalInstanceDialogBox extends AbstractDialogBox {
 		setWidget(contentPanel());
 		center();
 	}
-	
+
 	private Widget contentPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.add(form);

@@ -79,7 +79,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private void addUrnNbn(TreeItem root, UrnNbnDTO urnNbn, boolean linkToWebRecord) {
 		Panel urnNbnPanel = urnNbnItemHtlm(urnNbn, linkToWebRecord);
-		
+
 		TreeItem urnNbnItem = root.addItem(urnNbnPanel);
 		addLabeledItemIfValueNotNull(urnNbnItem, constants.note(), urnNbn.getDeactivationNote());
 		addLabeledItemIfValueNotNull(urnNbnItem, constants.note(), urnNbn.getNote());
@@ -120,6 +120,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		if (urnNbn.isActive() && activeUserManagesRegistrar()) {
 			panel.add(new HTML("&nbsp&nbsp"));
 			panel.add(deactivateUrnNbnButton(urnNbn));
+			panel.add(new HTML("&nbsp&nbsp"));
 			panel.add(addDigitalInstanceButton(urnNbn));
 		}
 
@@ -221,46 +222,32 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			@Override
 			public void onClick(ClickEvent event) {
 				DeactivateUrnNbnDialogBox dialog = new DeactivateUrnNbnDialogBox(superPanel, urnNbn);
-					dialog.center();
-					dialog.setPopupPosition(dialog.getPopupLeft(), 105);
-					dialog.show();
-				
-				
-//				dataService.deactivateUrnNbn(urnNbn, "TODO", new AsyncCallback<Void>() {
-//
-//					@Override
-//					public void onSuccess(Void result) {
-//						refreshSuperPanel();
-//					}
-//
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						Window.alert(messages.serverError(caught.getMessage()));
-//					}
-//				});
+				dialog.center();
+				dialog.setPopupPosition(dialog.getPopupLeft(), 105);
+				dialog.show();
 			}
 		});
 		result.addStyleName(css.detailsButton());
 		return result;
 	}
-	
+
 	private Button addDigitalInstanceButton(final UrnNbnDTO urn) {
-		Button result = new Button(constants.insert(), new ClickHandler() {
+		Button result = new Button(constants.insertDigitalInstance(), new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				institutionsService.getLibraries(dto.getRegistrar().getId(), new AsyncCallback<ArrayList<DigitalLibraryDTO>>() {
 
 					public void onFailure(Throwable caught) {
-						//FIXME
+						Window.alert(messages.serverError(caught.getMessage()));
 					}
 
 					public void onSuccess(ArrayList<DigitalLibraryDTO> libraries) {
 						InsertDigitalInstanceDialogBox dialog = new InsertDigitalInstanceDialogBox(superPanel, urn, libraries);
 						dialog.show();
 					}
-					
+
 				});
-				
+
 			}
 		});
 		result.addStyleName(css.detailsButton());
@@ -299,7 +286,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 			});
 
 			addLabeledItemAndButtonIfValueNotNull(rootItem, constants.anotherArchiver(), dto.getArchiver().getName(), button);
-		} 
+		}
 	}
 
 	private void addLabeledItemAndButtonIfValueNotNull(TreeItem rootItem, String label, String text, Button button) {
@@ -402,7 +389,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		return result;
 	}
 
-	private TreeItem digitalInstanceItem(TreeItem rootItem, UrnNbnDTO urn,  DigitalInstanceDTO instanceDTO) {
+	private TreeItem digitalInstanceItem(TreeItem rootItem, UrnNbnDTO urn, DigitalInstanceDTO instanceDTO) {
 		String url = instanceDTO.getUrl();
 		TreeItem instanceItem = null;
 		if (instanceDTO.isActive()) {
@@ -439,7 +426,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		}
 
 	}
-	
+
 	private Button editDigitalInstanceButton(final UrnNbnDTO urn, final DigitalInstanceDTO instance) {
 		Button result = new Button(constants.edit(), new ClickHandler() {
 
