@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import cz.nkp.urnnbn.server.conf.WebModuleConfiguration;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DataRemoveService;
@@ -19,28 +20,27 @@ import cz.nkp.urnnbn.shared.dto.UserDTO.ROLE;
 public abstract class AbstractService extends RemoteServiceServlet {
 
 	private static final long serialVersionUID = -428423808207398637L;
-	final DataAccessService readService;
-	final DataRemoveService deleteService;
 	final DataImportService createService;
+	final DataAccessService readService;
 	final DataUpdateService updateService;
+	final DataRemoveService deleteService;
 
 	public AbstractService() {
-		readService = Services.instanceOf().dataAccessService();
-		deleteService = Services.instanceOf().dataRemoveService();
 		createService = Services.instanceOf().dataImportService();
+		readService = Services.instanceOf().dataAccessService();
 		updateService = Services.instanceOf().dataUpdateService();
+		deleteService = Services.instanceOf().dataRemoveService();
 	}
 
-	String getUserLogin() {
+	protected String getUserLogin() {
 		UserDTO user = getActiveUser();
 		if (user.getRole() == ROLE.USER) {
-			// TODO: log as severe
 			throw new RuntimeException("unauthrized operation attempt detected");
 		}
 		return user.getLogin();
 	}
-	
-	protected void checkUserIsAdmin() throws Exception{
+
+	protected void checkUserIsAdmin() throws Exception {
 		UserDTO user = getActiveUser();
 		if (user.getRole() != ROLE.SUPER_ADMIN) {
 			// TODO: log as severe
@@ -48,7 +48,7 @@ public abstract class AbstractService extends RemoteServiceServlet {
 		}
 	}
 
-	UserDTO getActiveUser() {
+	protected UserDTO getActiveUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication == null) {
 			return notAuthenticated();
@@ -98,6 +98,12 @@ public abstract class AbstractService extends RemoteServiceServlet {
 			return ROLE.ADMIN;
 		} else {
 			return ROLE.USER;
+		}
+	}
+
+	public void checkNotReadOnlyMode() {
+		if (WebModuleConfiguration.instanceOf().isServerReadOnly()) {
+			throw new RuntimeException("Not allowed in read-only mode");
 		}
 	}
 

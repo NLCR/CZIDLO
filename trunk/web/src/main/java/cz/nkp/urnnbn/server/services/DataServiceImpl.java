@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.server.services;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -28,6 +30,7 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 public class DataServiceImpl extends AbstractService implements DataService {
 
 	private static final long serialVersionUID = 3849934849184219566L;
+	private static final Logger logger = Logger.getLogger(DataServiceImpl.class.getName());
 
 	@Override
 	public void updateDigitalDocument(DigitalDocumentDTO doc, TechnicalMetadataDTO technical) throws ServerException {
@@ -38,9 +41,10 @@ public class DataServiceImpl extends AbstractService implements DataService {
 		// string)
 		DigitalDocument transformed = new DtosToDigitalDocumentTransformer(doc, technical).transform();
 		try {
+			checkNotReadOnlyMode();
 			updateService.updateDigitalDocument(transformed, getUserLogin());
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -49,10 +53,13 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	public void updateIntelectualEntity(IntelectualEntityDTO entity) throws ServerException {
 		DtotoIntelectualEntityTransformer transformer = new DtotoIntelectualEntityTransformer(entity);
 		try {
-			updateService.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(), transformer.getPublication(),
-					transformer.getSrcDoc(), transformer.getIdentifiers(), getUserLogin());
+			checkNotReadOnlyMode();
+			updateService
+					.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(),
+							transformer.getPublication(), transformer.getSrcDoc(), transformer.getIdentifiers(),
+							getUserLogin());
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -61,11 +68,12 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	public UrnNbnDTO saveRecord(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
 			ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			UrnNbn assigned = createService.registerDigitalDocument(new RecordImportTransformer(intEnt, digDoc, urnNbn,
 					registrarScopeIdentifiers).transform(), getUserLogin());
 			return DtoTransformer.transformUrnNbn(new UrnNbnWithStatus(assigned, null, null));
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -73,13 +81,14 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	@Override
 	public DigitalInstanceDTO saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			DigitalInstance transformed = new DtoToDigitalInstanceTransformer(instance, urn).transform();
 			DigitalInstance saved = createService.addDigitalInstance(transformed, getUserLogin());
 			instance.setId(saved.getId());
 			instance.setCreated(dateTimeToStringOrNull(saved.getCreated()));
 			return instance;
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -97,36 +106,39 @@ public class DataServiceImpl extends AbstractService implements DataService {
 	@Override
 	public void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.deactivateDigitalInstance(instance.getId(), getUserLogin());
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
 
 	@Override
 	public void deactivateUrnNbn(UrnNbnDTO urnNbn) throws ServerException {
-		try{
-//			TODO: poresit, uz urnNbn.getDeactivationNote() je vzdy null
-			//System.err.println("first: " + urnNbn.getDeactivationNote());	
+		try {
+			checkNotReadOnlyMode();
+			// TODO: poresit, uz urnNbn.getDeactivationNote() je vzdy null
+			// System.err.println("first: " + urnNbn.getDeactivationNote());
 			UrnNbn transformed = new DtoToUrnNbnTransformer(urnNbn).transform();
-			//System.err.println("second: " + transformed.getDeactivationNote());
+			// System.err.println("second: " + transformed.getDeactivationNote());
 			deleteService.deactivateUrnNbn(transformed, getUserLogin(), urnNbn.getDeactivationNote());
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public void updateDigitalInstance(UrnNbnDTO urnNbn, DigitalInstanceDTO instance) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			DigitalInstance transformed = new DtoToDigitalInstanceTransformer(instance, urnNbn).transform();
 			updateService.updateDigitalInstance(transformed);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
+
 }

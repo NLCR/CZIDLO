@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.server.services.logs;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
@@ -13,6 +15,7 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 public class LogsServiceImpl extends AbstractService implements LogsService {
 
 	private static final long serialVersionUID = -4193116571783640059L;
+	private static final Logger logger = Logger.getLogger(LogsServiceImpl.class.getName());
 	private static final int ADMIN_LOGS_QUEUE_SIZE = 30;
 	private volatile AdminLogsQueue queu;
 
@@ -39,7 +42,8 @@ public class LogsServiceImpl extends AbstractService implements LogsService {
 		try {
 			checkUserIsAdmin();
 			return queu.getLastChanged().getTime();
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -49,7 +53,8 @@ public class LogsServiceImpl extends AbstractService implements LogsService {
 		try {
 			checkUserIsAdmin();
 			return queu.getQueueContentInverted();
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}

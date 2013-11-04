@@ -2,6 +2,8 @@ package cz.nkp.urnnbn.server.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.core.dto.Archiver;
@@ -22,14 +24,17 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 public class InstitutionsServiceImpl extends AbstractService implements InstitutionsService {
 
 	private static final long serialVersionUID = 1860087889450503955L;
+	private static final Logger logger = Logger.getLogger(InstitutionsServiceImpl.class.getName());
 
 	@Override
 	public ArchiverDTO saveArchiver(ArchiverDTO archiver) throws ServerException {
 		try {
-			Archiver created = createService.insertNewArchiver(new DtoToArchiverTransformer(archiver).transform(), getUserLogin());
+			checkNotReadOnlyMode();
+			Archiver created = createService.insertNewArchiver(new DtoToArchiverTransformer(archiver).transform(),
+					getUserLogin());
 			return DtoTransformer.transformArchiver(created);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -37,10 +42,12 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public RegistrarDTO saveRegistrar(RegistrarDTO registrar) throws ServerException {
 		try {
-			Registrar created = createService.insertNewRegistrar(new DtoToRegistrarTransformer(registrar).transform(), getUserLogin());
+			checkNotReadOnlyMode();
+			Registrar created = createService.insertNewRegistrar(new DtoToRegistrarTransformer(registrar).transform(),
+					getUserLogin());
 			return DtoTransformer.transformRegistrar(created);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -48,11 +55,13 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public DigitalLibraryDTO saveDigitalLibrary(DigitalLibraryDTO dto) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			DigitalLibrary transformed = new DtoToDigitalLibraryTransformer(dto).transform();
-			DigitalLibrary created = createService.insertNewDigitalLibrary(transformed, dto.getRegistrarId(), getUserLogin());
+			DigitalLibrary created = createService.insertNewDigitalLibrary(transformed, dto.getRegistrarId(),
+					getUserLogin());
 			return DtoTransformer.transformDigitalLibrary(created);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -60,14 +69,15 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public CatalogDTO saveCatalog(CatalogDTO dto) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			if (dto.getRegistrarId() == null) {
 				throw new Exception("registrarId == null");
 			}
 			Catalog transformed = new DtoToCatalogTransformer(dto).transform();
 			Catalog created = createService.insertNewCatalog(transformed, dto.getRegistrarId(), getUserLogin());
 			return DtoTransformer.transformCatalog(created);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -77,8 +87,8 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 		try {
 			List<DigitalLibrary> libraries = readService.librariesByRegistrarId(registrarId);
 			return transformLibraries(libraries);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -97,7 +107,7 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 			List<Catalog> catalogs = readService.catalogsByRegistrarId(registrarId);
 			return transformCatalogs(catalogs);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 
@@ -116,8 +126,8 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 		try {
 			List<Registrar> registrars = readService.registrars();
 			return transformRegistrars(registrars);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -136,8 +146,8 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 		try {
 			List<Archiver> archivers = readService.archivers();
 			return transformArchivers(archivers);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -153,25 +163,26 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void updateRegistrar(RegistrarDTO registrar) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			Registrar transformed = new DtoToRegistrarTransformer(registrar).transform();
 			updateService.updateRegistrar(transformed, getUserLogin());
 			updateService.updateArchiver(transformed, getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
-	public void updateRegistrars(List<RegistrarDTO> registrars)
-			throws ServerException {
+
+	@Override
+	public void updateRegistrars(List<RegistrarDTO> registrars) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			for (RegistrarDTO registrar : registrars) {
-				Registrar transformed = new DtoToRegistrarTransformer(registrar)
-						.transform();
+				Registrar transformed = new DtoToRegistrarTransformer(registrar).transform();
 				updateService.updateRegistrar(transformed, getUserLogin());
 				updateService.updateArchiver(transformed, getUserLogin());
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -179,23 +190,25 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void updateArchiver(ArchiverDTO archiver) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			Archiver transformed = new DtoToArchiverTransformer(archiver).transform();
 			updateService.updateArchiver(transformed, getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
+
+	@Override
 	public void updateArchivers(List<ArchiverDTO> archivers) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			for (ArchiverDTO archiver : archivers) {
-				Archiver transformed = new DtoToArchiverTransformer(archiver)
-						.transform();
-				System.out.println("order should be:" + transformed.getOrder());
+				Archiver transformed = new DtoToArchiverTransformer(archiver).transform();
 				updateService.updateArchiver(transformed, getUserLogin());
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -203,10 +216,11 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void updateDigitalLibrary(DigitalLibraryDTO dto) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			DigitalLibrary transformed = new DtoToDigitalLibraryTransformer(dto).transform();
 			updateService.updateDigitalLibrary(transformed, getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -214,10 +228,11 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void updateCatalog(CatalogDTO dto) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			Catalog transformed = new DtoToCatalogTransformer(dto).transform();
 			updateService.updateCatalog(transformed, getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -225,9 +240,10 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void deleteArchiver(ArchiverDTO archiver) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeArchiver(archiver.getId(), getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -235,9 +251,10 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void deleteRegistrar(RegistrarDTO registrar) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeRegistrar(registrar.getId(), getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -245,9 +262,10 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void deleteDigitalLibrary(DigitalLibraryDTO lib) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeDigitalLibrary(lib.getId(), getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -255,9 +273,10 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	@Override
 	public void deleteCatalog(CatalogDTO cat) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			deleteService.removeCatalog(cat.getId(), getUserLogin());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}

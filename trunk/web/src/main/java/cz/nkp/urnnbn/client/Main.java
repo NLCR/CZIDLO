@@ -32,7 +32,7 @@ public class Main implements EntryPoint {
 
 	public void onModuleLoad() {
 		AuthServiceAsync service = GWT.create(AuthService.class);
-		service.getActiveUser(new AsyncCallback<UserDTO>() {
+		service.getLoggedUser(new AsyncCallback<UserDTO>() {
 			public void onFailure(Throwable caught) {
 				logger.severe("Error obtaining user credentials: " + caught.getMessage());
 			}

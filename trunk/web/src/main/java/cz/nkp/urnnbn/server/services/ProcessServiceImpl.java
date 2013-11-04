@@ -11,17 +11,16 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.client.services.ProcessService;
-import cz.nkp.urnnbn.processmanager.control.AccessRightException;
-import cz.nkp.urnnbn.processmanager.control.InvalidStateException;
 import cz.nkp.urnnbn.processmanager.control.ProcessManager;
 import cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformation;
 import cz.nkp.urnnbn.processmanager.core.XmlTransformationType;
-import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAO;
 import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAOImpl;
 import cz.nkp.urnnbn.server.dtoTransformation.process.ProcesDtoTypeTransformer;
@@ -35,6 +34,7 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 public class ProcessServiceImpl extends AbstractService implements ProcessService {
 
 	private static final long serialVersionUID = 5647859643995913008L;
+	private static final Logger logger = Logger.getLogger(ProcessServiceImpl.class.getName());
 
 	private ProcessManager processManager() {
 		return ProcessManagerImpl.instanceOf();
@@ -46,16 +46,23 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
 	@Override
 	public void scheduleProcess(ProcessDTOType type, String[] params) throws ServerException {
-		ProcessType processType = new ProcesDtoTypeTransformer(type).transform();
-		String login = getActiveUser().getLogin();
-		if (processType == ProcessType.OAI_ADAPTER) {
-			params = updateParamsForOai(params);
+		try {
+			checkNotReadOnlyMode();
+			ProcessType processType = new ProcesDtoTypeTransformer(type).transform();
+			String login = getActiveUser().getLogin();
+			if (processType == ProcessType.OAI_ADAPTER) {
+				params = updateParamsForOai(params);
+			}
+			processManager().scheduleNewProcess(login, processType, params);
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new ServerException(e.getMessage());
 		}
-		processManager().scheduleNewProcess(login, processType, params);
 	}
 
 	private String[] updateParamsForOai(String[] params) {
 		try {
+			checkNotReadOnlyMode();
 			String registrarCode = params[0];
 			String registrationMode = params[1];
 			String oaiBaseUrl = params[2];
@@ -95,7 +102,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 		try {
 			result = File.createTempFile(filename, ".xslt");
 			writeToFile(result, content);
-			//System.err.println("saving template to file " + result.getAbsolutePath());
+			// System.err.println("saving template to file " + result.getAbsolutePath());
 			return result;
 		} finally {
 			if (result != null) {
@@ -112,12 +119,21 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
 	@Override
 	public List<ProcessDTO> getAllProcesses() throws ServerException {
-		return transform(processManager().getProcesses());
+		try {
+			return transform(processManager().getProcesses());
+		} catch (Throwable e) {
+			throw new SecurityException(e.getMessage());
+		}
 	}
 
 	@Override
 	public List<ProcessDTO> getUsersProcesses() throws ServerException {
-		return transform(processManager().getProcessesByOwner(getUserLogin()));
+		try {
+			return transform(processManager().getProcessesByOwner(getUserLogin()));
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new SecurityException(e.getMessage());
+		}
 	}
 
 	private List<ProcessDTO> transform(List<Process> processes) {
@@ -131,12 +147,10 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	@Override
 	public void deleteFinishedProcess(Long processId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			processManager().deleteProcess(getUserLogin(), processId);
-		} catch (UnknownRecordException e) {
-			throw new ServerException(e.getMessage());
-		} catch (AccessRightException e) {
-			throw new ServerException(e.getMessage());
-		} catch (InvalidStateException e) {
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -144,15 +158,10 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	@Override
 	public boolean killRunningProcess(Long processId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			return processManager().killRunningProcess(getUserLogin(), processId);
-		} catch (UnknownRecordException e) {
-			e.printStackTrace();
-			throw new ServerException(e.getMessage());
-		} catch (AccessRightException e) {
-			e.printStackTrace();
-			throw new ServerException(e.getMessage());
-		} catch (InvalidStateException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -160,15 +169,10 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	@Override
 	public boolean cancelScheduledProcess(Long processId) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			return processManager().cancelScheduledProcess(getUserLogin(), processId);
-		} catch (UnknownRecordException e) {
-			e.printStackTrace();
-			throw new ServerException(e.getMessage());
-		} catch (AccessRightException e) {
-			e.printStackTrace();
-			throw new ServerException(e.getMessage());
-		} catch (InvalidStateException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -176,6 +180,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	@Override
 	public void createXmlTransformation(XmlTransformationDTO original) throws ServerException {
 		try {
+			checkNotReadOnlyMode();
 			XmlTransformation transformation = new XmlTransformation();
 			transformation.setName(original.getName());
 			transformation.setDescription(original.getDescription());
@@ -185,7 +190,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 			removeFile(original.getTemplateTemporaryFile());
 			xmlTransforamtionDao().saveTransformation(transformation);
 		} catch (Throwable e) {
-			// e.printStackTrace();
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -221,8 +226,13 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
 	@Override
 	public List<XmlTransformationDTO> getXmlTransformationsOfUser() throws ServerException {
-		List<XmlTransformation> original = xmlTransforamtionDao().getTransformationsOfUser(getUserLogin());
-		return transformTransformations(original);
+		try {
+			List<XmlTransformation> original = xmlTransforamtionDao().getTransformationsOfUser(getUserLogin());
+			return transformTransformations(original);
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new ServerException(e.getMessage());
+		}
 	}
 
 	private List<XmlTransformationDTO> transformTransformations(List<XmlTransformation> originalList) {
@@ -267,6 +277,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 		try {
 			xmlTransforamtionDao().deleteTransformation(transformation.getId());
 		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}
