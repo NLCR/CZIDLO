@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
@@ -33,11 +34,12 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
+import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
-public class SearchPanel extends SingleTabContentPanel {
+public class SearchPanel extends SingleTabContentPanel implements DigitalInstanceRefreshable {
 
 	private static final Logger logger = Logger.getLogger(SearchPanel.class.getName());
 	private static final int MAX_ENTITIES_TO_EXPAND = 3;
@@ -222,5 +224,10 @@ public class SearchPanel extends SingleTabContentPanel {
 	public void onDeselectionSelection() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void refresh(DigitalInstanceDTO di) {
+		refresh();
 	}
 }

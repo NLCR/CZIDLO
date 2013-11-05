@@ -201,7 +201,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	private Button editDocumentButton() {
-		Button result = new Button(constants.edit(), new ClickHandler() {
+		Button button = new Button(constants.edit(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -211,13 +211,13 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 				dialog.show();
 			}
 		});
-		result.addStyleName(css.detailsButton());
-		return result;
+		button.addStyleName(css.treeButton());
+		return button;
 	}
 
 	private Button deactivateUrnNbnButton(final UrnNbnDTO urnNbn) {
 
-		Button result = new Button(constants.deactivate(), new ClickHandler() {
+		Button button = new Button(constants.deactivate(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -227,12 +227,12 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 				dialog.show();
 			}
 		});
-		result.addStyleName(css.detailsButton());
-		return result;
+		button.addStyleName(css.treeButton());
+		return button;
 	}
 
 	private Button addDigitalInstanceButton(final UrnNbnDTO urn) {
-		Button result = new Button(constants.insertDigitalInstance(), new ClickHandler() {
+		Button button = new Button(constants.insertDigitalInstance(), new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				institutionsService.getLibraries(dto.getRegistrar().getId(), new AsyncCallback<ArrayList<DigitalLibraryDTO>>() {
@@ -250,8 +250,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 			}
 		});
-		result.addStyleName(css.detailsButton());
-		return result;
+		 button.addStyleName(css.treeButton());
+		return button;
 	}
 
 	private void refreshSuperPanel() {
@@ -291,7 +291,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	private void addLabeledItemAndButtonIfValueNotNull(TreeItem rootItem, String label, String text, Button button) {
 		String spanClass = css.attrLabel();
-		addLabeledRowAndButtonIfValueNotNull(label, text, rootItem, spanClass, button, css.detailsButton());
+		addLabeledRowAndButtonIfValueNotNull(label, text, rootItem, spanClass, button, css.treeButton());
 	}
 
 	private void addIdentifiers(TreeItem rootItem) {
@@ -390,12 +390,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	private TreeItem digitalInstanceItem(TreeItem rootItem, UrnNbnDTO urn, DigitalInstanceDTO instanceDTO) {
-		String url = instanceDTO.getUrl();
-		TreeItem instanceItem = null;
-		if (instanceDTO.isActive()) {
-			instanceItem = new TreeItem("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>");
-		} else {
-			instanceItem = new TreeItem(new HTML("<span style=\"color:grey\">" + constants.deactivatedDigitalInstance() + "</span>"));
+		TreeItem instanceItem = new TreeItem(digitalInstancePanel(instanceDTO, urn));
+		if (!instanceDTO.isActive()) {
 			addLabeledItemIfValueNotNull(instanceItem, constants.url(), instanceDTO.getUrl());
 		}
 		addLabeledItemIfValueNotNull(instanceItem, constants.format(), instanceDTO.getFormat());
@@ -403,10 +399,24 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
 		addLabeledItemIfValueNotNull(instanceItem, constants.created(), instanceDTO.getCreated());
 		addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getDeactivated());
-		if (instanceDTO.isActive() && activeUserManagesRegistrar()) {
-			instanceItem.addItem(editDigitalInstanceButton(urn, instanceDTO));
-		}
 		return instanceItem;
+	}
+
+	private HorizontalPanel digitalInstancePanel(DigitalInstanceDTO instanceDTO, UrnNbnDTO urn) {
+		HorizontalPanel panel = new HorizontalPanel();
+		if (instanceDTO.isActive()) {
+			String url = instanceDTO.getUrl();
+			panel.add(new HTML("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>"));
+			if (activeUserManagesRegistrar()) {
+				panel.add(new HTML("&nbsp&nbsp"));
+				panel.add(editDigitalInstanceButton(urn, instanceDTO));
+				panel.add(new HTML("&nbsp&nbsp"));
+				panel.add(deactivateDigitalInstanceButton(instanceDTO));
+			}
+		} else {
+			panel.add(new HTML("<span style=\"color:grey\">" + constants.deactivatedDigitalInstance() + "</span>"));
+		}
+		return panel;
 	}
 
 	private void addDigitalLibrary(TreeItem instanceItem, final DigitalLibraryDTO library) {
@@ -428,7 +438,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	}
 
 	private Button editDigitalInstanceButton(final UrnNbnDTO urn, final DigitalInstanceDTO instance) {
-		Button result = new Button(constants.edit(), new ClickHandler() {
+		Button button = new Button(constants.edit(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -438,7 +448,31 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 				dialog.show();
 			}
 		});
-		return result;
+		button.addStyleName(css.treeButton());
+		return button;
+	}
+
+	private Button deactivateDigitalInstanceButton(final DigitalInstanceDTO instance) {
+		Button button = new Button(constants.deactivate(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				dataService.deactivateDigitalInstance(instance, new AsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+						refreshSuperPanel();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						Window.alert(messages.serverError(caught.getMessage()));
+					}
+				});
+			}
+		});
+		button.addStyleName(css.treeButton());
+		return button;
 	}
 
 	private TreeItem addItemIfNotNull(TreeItem item, String text) {

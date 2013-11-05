@@ -17,6 +17,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
+import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalDocumentForm;
 import cz.nkp.urnnbn.client.forms.digitalDocument.TechnicalMetadataForm;
 import cz.nkp.urnnbn.client.forms.digitalDocument.UrnNbnForm;
@@ -43,7 +45,7 @@ import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
-public class RecordDataPanel extends VerticalPanel {
+public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRefreshable {
 
 	private static final Logger logger = Logger.getLogger(RecordDataPanel.class.getName());
 	// services
@@ -259,12 +261,13 @@ public class RecordDataPanel extends VerticalPanel {
 	private Panel digitalInstancesPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.add(digitalInstancesHeading());
-		Grid insstancesGrid = new Grid(digitalInstances.size(), 3);
+		Grid insstancesGrid = new Grid(digitalInstances.size(), 4);
 		for (int i = 0; i < digitalInstances.size(); i++) {
 			DigitalInstanceDTO instance = digitalInstances.get(i);
 			insstancesGrid.setWidget(i, 0, new Label(instance.getUrl()));
-			insstancesGrid.setWidget(i, 1, detailsButton(instance));
-			insstancesGrid.setWidget(i, 2, deleteButton(instance));
+			insstancesGrid.setWidget(i, 1, digitalInstanceDetailsButton(instance));
+			insstancesGrid.setWidget(i, 2, editDigitalInstanceButton(instance));
+			insstancesGrid.setWidget(i, 3, deactivateDigitalInstanceButton(instance));
 		}
 		result.add(insstancesGrid);
 		result.add(addDigitalInstanceButton());
@@ -277,7 +280,7 @@ public class RecordDataPanel extends VerticalPanel {
 		return result;
 	}
 
-	private Button detailsButton(final DigitalInstanceDTO instance) {
+	private Button digitalInstanceDetailsButton(final DigitalInstanceDTO instance) {
 		return new Button(constants.details(), new ClickHandler() {
 
 			@Override
@@ -287,7 +290,7 @@ public class RecordDataPanel extends VerticalPanel {
 		});
 	}
 
-	private Button deleteButton(final DigitalInstanceDTO instance) {
+	private Button deactivateDigitalInstanceButton(final DigitalInstanceDTO instance) {
 		return new Button(constants.deactivate(), new ClickHandler() {
 
 			@Override
@@ -304,6 +307,20 @@ public class RecordDataPanel extends VerticalPanel {
 						Window.alert(messages.serverError(caught.getMessage()));
 					}
 				});
+			}
+		});
+	}
+
+	private Button editDigitalInstanceButton(final DigitalInstanceDTO instance) {
+		return new Button(constants.edit(), new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				ArrayList<DigitalLibraryDTO> libraries = new ArrayList<DigitalLibraryDTO>();
+				libraries.add(instance.getLibrary());
+				EditDigitalInstanceDialogBox dialog = new EditDigitalInstanceDialogBox(RecordDataPanel.this, urnNbnAssigned, instance,
+						libraries);
+				dialog.show();
 			}
 		});
 	}
@@ -344,11 +361,16 @@ public class RecordDataPanel extends VerticalPanel {
 	}
 
 	private void initUrnNbnFormIfNecessary() {
-		if (registrationMode == UrnNbnRegistrationMode.BY_REGISTRAR
-				|| registrationMode == UrnNbnRegistrationMode.BY_RESERVATION) {
+		if (registrationMode == UrnNbnRegistrationMode.BY_REGISTRAR || registrationMode == UrnNbnRegistrationMode.BY_RESERVATION) {
 			this.urnNbnForm = new UrnNbnForm(registrar, configuration.getCountryCode());
 		} else {
 			this.urnNbnForm = null;
 		}
+	}
+
+	@Override
+	public void refresh(DigitalInstanceDTO di) {
+		removeDigitalInstance(di);
+		addDigitalInstance(di);
 	}
 }

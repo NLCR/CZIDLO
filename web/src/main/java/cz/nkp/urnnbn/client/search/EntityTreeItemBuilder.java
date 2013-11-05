@@ -32,7 +32,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	private final PrimaryOriginatorDTO primaryOriginator;
 	private final PublicationDTO publication;
 	private final SourceDocumentDTO srcDoc;
-	TreeItem result;
+	protected TreeItem result;
 
 	public EntityTreeItemBuilder(UserDTO user, SearchPanel superPanel, PrimaryOriginatorDTO primaryOriginator, PublicationDTO publication,
 			SourceDocumentDTO srcDoc) {
@@ -81,7 +81,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	}
 
 	private Button editEntityButton() {
-		return new Button(constants.edit(), new ClickHandler() {
+		Button button = new Button(constants.edit(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -90,6 +90,8 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 				new EditIntelectualEntityDialogBox(superPanel, entity, primaryOriginator, srcDocForm).show();
 			}
 		});
+		button.addStyleName(css.treeButton());
+		return button;
 	}
 
 	abstract IntelectualEntityDTO getDto();
@@ -109,7 +111,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 	}
 
 	void appendSourceDocumentIfNotNull() {
-		String title = buildTitle(srcDoc.getTitle(), srcDoc.getVolumeTitle(), srcDoc.getIssueTitle()); 
+		String title = buildTitle(srcDoc.getTitle(), srcDoc.getVolumeTitle(), srcDoc.getIssueTitle());
 		String itemLabel = "<span class=\"" + css.attrLabel() + "\">" + constants.sourceDoc() + ": </span>" + title;
 		TreeItem srcDocItem = new TreeItem(itemLabel);
 		if (srcDoc != null) {
