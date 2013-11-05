@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.AbstractDialogBox;
+import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalInstanceForm;
-import cz.nkp.urnnbn.client.search.SearchPanel;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
@@ -25,12 +25,12 @@ import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 public class EditDigitalInstanceDialogBox extends AbstractDialogBox {
 
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
-	private final SearchPanel superPanel;
+	private final DigitalInstanceRefreshable superPanel;
 	private final DigitalInstanceForm form;
 	private final Label errorLabel = errorLabel(320);
 	private final UrnNbnDTO urn;
 
-	public EditDigitalInstanceDialogBox(SearchPanel superPanel, UrnNbnDTO urn, DigitalInstanceDTO originalDto,
+	public EditDigitalInstanceDialogBox(DigitalInstanceRefreshable superPanel, UrnNbnDTO urn, DigitalInstanceDTO originalDto,
 			ArrayList<DigitalLibraryDTO> libraries) {
 		super();
 		this.superPanel = superPanel;
@@ -58,15 +58,16 @@ public class EditDigitalInstanceDialogBox extends AbstractDialogBox {
 	}
 
 	private Button saveButton() {
-		return new Button(constants.insert(), new ClickHandler() {
+		return new Button(constants.save(), new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
 				if (form.isFilledCorrectly()) {
-					dataService.updateDigitalInstance(urn, form.getDto(), new AsyncCallback<Void>() {
+					final DigitalInstanceDTO di = form.getDto();
+					dataService.updateDigitalInstance(urn, di, new AsyncCallback<Void>() {
 
 						public void onSuccess(Void result) {
 							EditDigitalInstanceDialogBox.this.hide();
-							superPanel.refresh();
+							superPanel.refresh(di);
 						}
 
 						public void onFailure(Throwable caught) {

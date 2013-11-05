@@ -43,7 +43,7 @@ public class TreeBuilder {
 				com.google.gwt.user.client.Window.open(url, "_blank", "");
 			}
 		});
-		result.addStyleName(css.detailsButton());
+		result.addStyleName(css.treeButton());
 		return result;
 	}
 }

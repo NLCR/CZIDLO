@@ -28,15 +28,14 @@ public class MonographBuilder extends EntityTreeItemBuilder {
 		appendPublicationIfNotNull();
 		addTimestamps(dto);
 	}
-	
 
 	@Override
 	String entityType() {
 		return constants.monograph();
 	}
-	
+
 	@Override
-	String getAggregateTitle(){
+	String getAggregateTitle() {
 		return dto.getTitle();
 	}
 
