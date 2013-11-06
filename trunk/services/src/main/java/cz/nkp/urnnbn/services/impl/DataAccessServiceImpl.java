@@ -186,7 +186,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value) {
         try {
-            List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, 10);
+            List<Long> idList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, 20);
             List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
             for (long id : idList) {
                 IntelectualEntity entity = entityById(id);
