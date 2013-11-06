@@ -70,7 +70,14 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	}
 
 	private Set<IntelectualEntityDTO> searchByIdentifiers(String request) {
-		List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(request);
+		String[] words = request.split(" ");
+		String sep = "";
+		StringBuilder query = new StringBuilder();
+		for (String word : words) {
+			query.append(sep).append(word);
+			sep = " &";
+		}
+		List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
 		Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 		for (IntelectualEntity entity : entities) {
 			result.add(transformedEntity(entity));
