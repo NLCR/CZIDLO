@@ -16,6 +16,12 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler;
 
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
+import org.quartz.JobListener;
+
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
@@ -23,98 +29,111 @@ import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcesStateUpdater;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.JobListener;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class JobListenerImpl implements JobListener {
 
-    public String getName() {
-        return JobListenerImpl.class.getName();
-    }
+	public String getName() {
+		return JobListenerImpl.class.getName();
+	}
 
-    public void jobToBeExecuted(JobExecutionContext context) {
-        Long jobId = getJobId(context);
-        JobDataMap processData = context.getMergedJobDataMap();
-        ProcessType type = getProcessType(processData);
-        AdminLogger.getLogger().info("process " + type + " of user '" + getProcessOwner(processData)
-                + "' with parameters " + getProcessParams(processData, type)
-                + " will start now");
-        new ProcesStateUpdater(jobId).updateProcessStateToRunning();
-    }
+	public void jobToBeExecuted(JobExecutionContext context) {
+		Long jobId = getJobId(context);
+		JobDataMap processData = context.getMergedJobDataMap();
+		ProcessType type = getProcessType(processData);
+		AdminLogger.getLogger().info(
+				"process " + type + " of user '" + getProcessOwner(processData) + "' with parameters "
+						+ getProcessParams(processData, type) + " will start now");
+		new ProcesStateUpdater(jobId).updateProcessStateToRunning();
+	}
 
-    public void jobExecutionVetoed(JobExecutionContext context) {
-        Long jobId = getJobId(context);
-        System.err.println("job " + jobId + " was vetoed");
-    }
+	public void jobExecutionVetoed(JobExecutionContext context) {
+		Long jobId = getJobId(context);
+		System.err.println("job " + jobId + " was vetoed");
+	}
 
-    public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        Long jobId = getJobId(context);
-        ProcessState finalState = (ProcessState) context.getResult();
-        new ProcesStateUpdater(jobId).updateProcessStatToFinished(finalState);
-        JobDataMap processData = context.getMergedJobDataMap();
-        ProcessType type = getProcessType(processData);
-        AdminLogger.getLogger().info("process " + type + " of user '" + getProcessOwner(processData)
-                + "' with parameters " + getProcessParams(processData, type)
-                + " ended as " + finalState);
-    }
+	public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
+		Long jobId = getJobId(context);
+		ProcessState finalState = (ProcessState) context.getResult();
+		new ProcesStateUpdater(jobId).updateProcessStatToFinished(finalState);
+		JobDataMap processData = context.getMergedJobDataMap();
+		ProcessType type = getProcessType(processData);
+		AdminLogger.getLogger().info(
+				"process " + type + " of user '" + getProcessOwner(processData) + "' with parameters "
+						+ getProcessParams(processData, type) + " ended as " + finalState);
+	}
 
-    private Long getJobId(JobExecutionContext context) {
-        JobKey key = context.getJobDetail().getKey();
-        return Long.valueOf(key.getName());
-    }
+	private Long getJobId(JobExecutionContext context) {
+		JobKey key = context.getJobDetail().getKey();
+		return Long.valueOf(key.getName());
+	}
 
-    private ProcessType getProcessType(JobDataMap processData) {
-        return ProcessType.valueOf((String) processData.get(AbstractJob.PARAM_PROCESS_TYPE));
-    }
+	private ProcessType getProcessType(JobDataMap processData) {
+		return ProcessType.valueOf((String) processData.get(AbstractJob.PARAM_PROCESS_TYPE));
+	}
 
-    private String getProcessOwner(JobDataMap processData) {
-        return (String) processData.get(AbstractJob.PARAM_OWNER_LOGIN);
-    }
+	private String getProcessOwner(JobDataMap processData) {
+		return (String) processData.get(AbstractJob.PARAM_OWNER_LOGIN);
+	}
 
-    private String getProcessParams(JobDataMap processData, ProcessType type) {
-        switch (type) {
-            case OAI_ADAPTER:
-                return oaiAdapterParams(processData);
-            case REGISTRARS_URN_NBN_CSV_EXPORT:
-                return registrarsUrnNbnExportParams(processData);
-            default:
-                return "[]";
-        }
-    }
+	private String getProcessParams(JobDataMap processData, ProcessType type) {
+		switch (type) {
+		case OAI_ADAPTER:
+			return oaiAdapterParams(processData);
+		case REGISTRARS_URN_NBN_CSV_EXPORT:
+			return registrarsUrnNbnExportParams(processData);
+		default:
+			return "[]";
+		}
+	}
 
-    private String oaiAdapterParams(JobDataMap processData) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        appendKeyValue(processData, builder, "registrarion_mode", OaiAdapterJob.PARAM_RESOLVER_REGISTRATION_MODE);
-        builder.append(", ");
-        appendKeyValue(processData, builder, "registrar_code", OaiAdapterJob.PARAM_RESOLVER_REGISTRAR_CODE);
-        builder.append(", ");
-        appendKeyValue(processData, builder, "oai_base_url", OaiAdapterJob.PARAM_OAI_BASE_URL);
-        builder.append(", ");
-        appendKeyValue(processData, builder, "oai_metadata_prefix", OaiAdapterJob.PARAM_OAI_METADATA_PREFIX);
-        builder.append(", ");
-        appendKeyValue(processData, builder, "oai_set", OaiAdapterJob.PARAM_OAI_SET);
-        builder.append("]");
-        return builder.toString();
-    }
+	private String oaiAdapterParams(JobDataMap processData) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		appendKeyValue(processData, builder, "registrarion_mode", OaiAdapterJob.PARAM_RESOLVER_REGISTRATION_MODE);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "registrar_code", OaiAdapterJob.PARAM_RESOLVER_REGISTRAR_CODE);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "oai_base_url", OaiAdapterJob.PARAM_OAI_BASE_URL);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "oai_metadata_prefix", OaiAdapterJob.PARAM_OAI_METADATA_PREFIX);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "oai_set", OaiAdapterJob.PARAM_OAI_SET);
+		builder.append("]");
+		return builder.toString();
+	}
 
-    private void appendKeyValue(JobDataMap data, StringBuilder builder, String attrName, String jobKey) {
-        builder.append(attrName).append('=');
-        builder.append('\"').append((String) data.get(jobKey)).append('\"');
-    }
+	private void appendKeyValue(JobDataMap data, StringBuilder builder, String attrName, String jobKey) {
+		builder.append(attrName).append('=');
+		builder.append('\"').append((String) data.get(jobKey)).append('\"');
+	}
 
-    private String registrarsUrnNbnExportParams(JobDataMap processData) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        appendKeyValue(processData, builder, "registrar_code", UrnNbnCsvExportJob.PARAM_REGISTRARS_CODE_KEY);
-        builder.append("]");
-        return builder.toString();
-    }
+	private String registrarsUrnNbnExportParams(JobDataMap processData) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		appendKeyValue(processData, builder, "begin", UrnNbnCsvExportJob.PARAM_BEGIN);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "end", UrnNbnCsvExportJob.PARAM_END);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "registrars", UrnNbnCsvExportJob.PARAM_REGISTRARS_CODES);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "intEntTypes", UrnNbnCsvExportJob.PARAM_ENT_TYPES);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "missingCcnb", UrnNbnCsvExportJob.PARAM_MISSING_CCNB);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "missingIssn", UrnNbnCsvExportJob.PARAM_MISSING_ISSN);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "missingIsbn", UrnNbnCsvExportJob.PARAM_MISSING_ISBN);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "returnActive", UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "returnDeactivated", UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED);
+		builder.append(", ");
+		appendKeyValue(processData, builder, "withDigInstNum", UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES);
+		builder.append("]");
+		return builder.toString();
+	}
 }

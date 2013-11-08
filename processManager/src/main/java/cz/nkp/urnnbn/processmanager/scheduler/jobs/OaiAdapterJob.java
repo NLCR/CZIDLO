@@ -50,6 +50,7 @@ public class OaiAdapterJob extends AbstractJob {
     public static final String PARAM_REPORT_FILE = "report";
     private OutputStream reportStream = null;
     
+    @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             //System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
