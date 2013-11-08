@@ -10,15 +10,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public interface DaoOperation {
 
-    public Object run(Connection connection) throws SQLException, DatabaseException, PersistenceException;
-
-    //public Object run(Connection connection) throws SQLException, PersistenceException;
-    
-    //public Object run(Connection connection) throws DatabaseException, PersistenceException;
+	public Object run(Connection connection) throws SQLException, DatabaseException, PersistenceException;
 
 }

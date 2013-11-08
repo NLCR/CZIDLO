@@ -48,6 +48,8 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
         return (Catalog) getRecordById(TABLE_NAME, ATTR_ID, id, new CatalogRT());
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public List<Catalog> getCatalogs() throws DatabaseException {
         try {
             StatementWrapper st = new SelectAllAttrs(TABLE_NAME);
@@ -63,6 +65,7 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Catalog> getCatalogs(long registrarId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         try {

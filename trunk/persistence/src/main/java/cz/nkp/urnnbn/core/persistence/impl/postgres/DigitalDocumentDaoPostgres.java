@@ -114,6 +114,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 	}
 
 	@Override
+    @SuppressWarnings("unchecked")
 	public List<DigitalDocument> getDocumentsOfIntEntity(long entityId) throws DatabaseException, RecordNotFoundException {
 		checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, entityId);
 		try {
@@ -130,6 +131,8 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 	}
 
 	// TODO: test
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until)
 			throws DatabaseException, RecordNotFoundException {
 		checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
@@ -146,6 +149,8 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 		}
 	}
 
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
 		try {
 			StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until);
@@ -160,6 +165,8 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 		}
 	}
 
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
 		try {
 			StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);

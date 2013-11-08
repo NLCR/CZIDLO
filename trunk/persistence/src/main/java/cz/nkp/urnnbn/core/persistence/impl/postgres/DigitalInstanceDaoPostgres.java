@@ -85,6 +85,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 	}
 
 	@Override
+    @SuppressWarnings("unchecked")
 	public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digDocId) throws DatabaseException, RecordNotFoundException {
 		checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocId);
 		try {
@@ -101,6 +102,8 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 	}
 
 	// TODO: test
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException {
 		try {
 			StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_DEACTIVATED, from, until);
@@ -135,7 +138,8 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
 		}
 	}
 
-	public void updateDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException {
+	@Override
+    public void updateDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException {
 		checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, instance.getDigDocId());
 		checkRecordExists(DigitalLibraryDAO.TABLE_NAME, DigitalLibraryDAO.ATTR_ID, instance.getLibraryId());
 		updateRecordWithLongPK(instance, TABLE_NAME, ATTR_ID, new UpdateDigitalInstance(instance));
