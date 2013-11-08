@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.client.services.ProcessService;
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.processmanager.control.ProcessManager;
 import cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl;
 import cz.nkp.urnnbn.processmanager.core.Process;
@@ -50,9 +51,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 			checkNotReadOnlyMode();
 			ProcessType processType = new ProcesDtoTypeTransformer(type).transform();
 			String login = getActiveUser().getLogin();
-			if (processType == ProcessType.OAI_ADAPTER) {
-				params = updateParamsForOai(params);
-			}
+			params = updateParamsOnServer(params, processType);
 			processManager().scheduleNewProcess(login, processType, params);
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
@@ -60,9 +59,10 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 		}
 	}
 
-	private String[] updateParamsForOai(String[] params) {
-		try {
-			checkNotReadOnlyMode();
+	private String[] updateParamsOnServer(String[] params, ProcessType processType) throws Exception {
+		String[] result;
+		switch (processType) {
+		case OAI_ADAPTER:
 			String registrarCode = params[0];
 			String registrationMode = params[1];
 			String oaiBaseUrl = params[2];
@@ -71,7 +71,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 			File ddRegistrationXslt = saveTemplateToTempFile(params[5]);
 			File diImportXslt = saveTemplateToTempFile(params[6]);
 
-			String[] result = new String[9];
+			result = new String[9];
 			result[0] = getUserLogin();
 			result[1] = getActiveUser().getPassword();
 			result[2] = registrationMode;
@@ -82,9 +82,18 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 			result[7] = ddRegistrationXslt.getAbsolutePath();
 			result[8] = diImportXslt.getAbsolutePath();
 			return result;
-		} catch (Throwable e) {
-			throw new SecurityException(e.getMessage());
+		case REGISTRARS_URN_NBN_CSV_EXPORT:
+			// login and password won't probably be needed here
+			result = new String[params.length + 1];
+			for (int i = 0; i < params.length; i++) {
+				result[i] = params[i];
+			}
+			result[result.length - 1] = CountryCode.getCode();
+			return result;
+		default:
+			return params;
 		}
+
 	}
 
 	private File saveTemplateToTempFile(String transformationIdStr) throws Exception {
