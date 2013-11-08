@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
-import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;
@@ -120,7 +119,6 @@ public class XmlTransformationsPanel extends VerticalPanel {
 	@Override
 	public void onLoad() {
 		reloadTransformations();
-		// reload();
 	}
 
 	void reloadTransformations() {

@@ -1,7 +1,6 @@
 package cz.nkp.urnnbn.client.processes;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +18,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import cz.nkp.urnnbn.client.forms.Field;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
@@ -32,11 +30,11 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
 	protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
-	
+
 	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
 	private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
 	private final Label errorLabel = errorLabel(320);
-	
+
 	private MultiSelectListBox absenceOfIdentifiersListBox;
 	private MultiSelectListBox registrarsListBox;
 	private MultiSelectListBox documentTypeListBox;
@@ -70,23 +68,23 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 			accountsService.getRegistrarsManagedByUser(callback);
 		}
 	}
-	
+
 	private static class MultiSelectListBox extends ListBox {
-		
+
 		public MultiSelectListBox() {
 			super(true);
 		}
-		
+
 		public List<String> getSelectedItems() {
 			ArrayList<String> result = new ArrayList<String>();
 			for (int i = 0; i < this.getItemCount(); i++) {
-		        if (this.isItemSelected(i)) {
-		            result.add(this.getItemText(i));
-		        }
-		    }
+				if (this.isItemSelected(i)) {
+					result.add(this.getItemText(i));
+				}
+			}
 			return result;
 		}
-		
+
 	}
 
 	void reload() {
@@ -100,7 +98,6 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		VerticalPanel result = new VerticalPanel();
 		result.add(selectDateRangePanel());
 		result.add(selectRegistrarPanel());
-		result.add(selectModusOfRegistrationPanel());
 		result.add(selectTypeOfDocumentPanel());
 		result.add(selectAbsenceOfIdentifiers());
 		result.add(numberOfDigitalInstancesCheckbox());
@@ -109,7 +106,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(errorLabel);
 		return result;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	private Panel selectDateRangePanel() {
 		HorizontalPanel result = new HorizontalPanel();
@@ -133,18 +130,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(registrarList());
 		return result;
 	}
-	
-	private Panel selectModusOfRegistrationPanel() {
-		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.allowedRegistrationModes()));
-		final ListBox list = new ListBox(true);
-		list.addItem("BY_RESOLVER");
-		list.addItem("BY_REGISTRAR");
-		list.addItem("BY_RESERVATION");
-		result.add(list);
-		return result;
-	}
-	
+
 	private Panel selectTypeOfDocumentPanel() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.documentType()));
@@ -160,7 +146,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(documentTypeListBox);
 		return result;
 	}
-	
+
 	private Panel selectAbsenceOfIdentifiers() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.absenceOfIdentifiers()));
@@ -171,7 +157,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(absenceOfIdentifiersListBox);
 		return result;
 	}
-	
+
 	private Panel numberOfDigitalInstancesCheckbox() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.includeNumberOfDigitalInstances()));
@@ -179,14 +165,14 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		result.add(numberOfDigitalInstances);
 		return result;
 	}
-	
+
 	private Panel selectActivationFlag() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.activityFlag()));
 		activationFlag = new ListBox();
-		activationFlag.addItem("ACTIVE");
-		activationFlag.addItem("INACTIVE");
-		activationFlag.addItem("ALL");
+		activationFlag.addItem(constants.activityAll());
+		activationFlag.addItem(constants.activityActiveOnly());
+		activationFlag.addItem(constants.activityDeactivatedOnly());
 		result.add(activationFlag);
 		return result;
 	}
@@ -211,19 +197,13 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		return new Button(constants.scheduleProcess(), new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
+				// TODO: i18n
 				List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
-				String cnbAssigned = "null";
-				String issnAssigned = "null";
-				String isbnAssigned = "null";
-				if (idents.contains("CNB")) {
-					cnbAssigned = "false";
-				}
-				if (idents.contains("ISSN")) {
-					issnAssigned = "false";
-				}
-				if (idents.contains("ISBN")) {
-					isbnAssigned = "false";
-				}
+
+				Boolean missingCnb = idents.contains("CNB");
+				Boolean missingIssn = idents.contains("ISSN");
+				Boolean missingIsbn = idents.contains("ISSN");
+
 				String registrars = null;
 				List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
 				if (selectedRegistrars.size() > 0) {
@@ -248,33 +228,18 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 					}
 					entityTypes = types.toString();
 				}
+
 				String begin = (String) beginDate.getInsertedValue();
 				String end = (String) endDate.getInsertedValue();
-				String active = null;
-				String selectedActivationFlag = null;
-				if (activationFlag.getSelectedIndex() >= 0) {
-					selectedActivationFlag = activationFlag.getItemText(activationFlag.getSelectedIndex());
-				}
-				if (selectedActivationFlag.equals("ACTIVE")) {
-					active = "true";
-				} else if (selectedActivationFlag.equals("INACTIVE")) {
-					active = "false";
-				}
+
+				int activitySelectedIndex = activationFlag.getSelectedIndex();
+				Boolean returnActive = activitySelectedIndex == 0 || activitySelectedIndex == 1;
+				Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;
 				Boolean exportNumberOfDigitalInstances = numberOfDigitalInstances.getValue();
 				if (true) {
-					String regMode = null;
-					String[] params = new String[] {
-							begin,
-							end,
-							registrars,
-							regMode,
-							entityTypes,
-							cnbAssigned,
-							issnAssigned,
-							isbnAssigned,
-							active,
-							exportNumberOfDigitalInstances.toString()
-					};
+					String[] params = new String[] { begin, end, registrars, entityTypes, missingCnb.toString(), missingIssn.toString(),
+							missingIsbn.toString(), returnActive.toString(), returnDeactivated.toString(),
+							exportNumberOfDigitalInstances.toString() };
 					processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
 						public void onSuccess(Void result) {
