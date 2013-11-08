@@ -392,5 +392,14 @@ public interface ConstantsImpl extends Constants {
 	String loading();
 
 	String cancel();
+	
+	//processes
+	
+	String activityAll();
+	
+	String activityActiveOnly();
+	
+	String activityDeactivatedOnly();
+	
 
 }
