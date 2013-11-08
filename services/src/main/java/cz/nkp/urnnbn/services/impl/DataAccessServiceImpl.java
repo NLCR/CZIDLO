@@ -4,8 +4,20 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.UrnNbnExport;
+import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
@@ -21,7 +33,6 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.UrnNbnExport;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -31,14 +42,6 @@ import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import org.joda.time.DateTime;
 
 /**
  *
@@ -499,15 +502,12 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
     
     @Override
-	public List<UrnNbnExport> selectByCriteria(DateTime begin, DateTime end,
-			List<String> registrars, String registrationMode,
-			List<String> entityTypes, Boolean cnbAssigned, Boolean issnAsigned,
-			Boolean isbnAssigned, Boolean active) {
-    	try {
-    		return factory.urnDao().selectByCriteria(begin, end, registrars, registrationMode, entityTypes, cnbAssigned, issnAsigned, isbnAssigned, active);
-    	} catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
-        }
+	public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) {
+		try {
+			return factory.urnDao().selectByCriteria(languageCode, filter, withDigitalInstances);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
     private Collection<DigitalDocument> findDigDocsOfChangedIntEntities(DateTime from, DateTime until) throws DatabaseException {
