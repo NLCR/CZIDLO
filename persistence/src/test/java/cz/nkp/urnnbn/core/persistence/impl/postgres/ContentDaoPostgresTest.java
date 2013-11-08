@@ -6,9 +6,6 @@ package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
 
 /**
  *

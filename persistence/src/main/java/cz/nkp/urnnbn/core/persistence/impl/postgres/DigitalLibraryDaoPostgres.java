@@ -89,6 +89,7 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<DigitalLibrary> getLibraries(long registrarId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
         try {
