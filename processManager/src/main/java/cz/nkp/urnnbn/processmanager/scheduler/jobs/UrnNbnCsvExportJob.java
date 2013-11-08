@@ -211,6 +211,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
 			csvWriter.println(buildHeaderLine(exportNumOfDigInstances));
 			int counter = 0;
 			int total = urnNbnList.size();
+			logger.info("records to export: " + total);
 			for (UrnNbnExport urnExport : urnNbnList) {
 				if (interrupted) {
 					csvWriter.flush();
