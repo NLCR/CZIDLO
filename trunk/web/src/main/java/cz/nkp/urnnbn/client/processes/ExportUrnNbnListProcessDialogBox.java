@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -97,7 +98,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	private Panel contentPanel() {
 		VerticalPanel result = new VerticalPanel();
 		result.add(selectDateRangePanel());
-		result.add(selectRegistrarPanel());
+		result.add(selectRegistrarsPanel());
 		result.add(selectTypeOfDocumentPanel());
 		result.add(selectAbsenceOfIdentifiers());
 		result.add(numberOfDigitalInstancesCheckbox());
@@ -110,22 +111,20 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	@SuppressWarnings("deprecation")
 	private Panel selectDateRangePanel() {
 		HorizontalPanel result = new HorizontalPanel();
-		beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampReserved(), "", false);
 		Date start = new Date();
 		start.setYear(start.getYear() - 2);
-		beginDate.getContentWidget().setValue(dateFormat.format(start));
+		beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampRegistered(), dateFormat.format(start),
+				false);
 		result.add(beginDate.getLabelWidget());
 		result.add(beginDate.getContentWidget());
-		endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", "", false);
-		endDate.getContentWidget().setValue(dateFormat.format(new Date()));
-		result.add(endDate.getLabelWidget());
+		endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
+		result.add(new HTML(" - "));
 		result.add(endDate.getContentWidget());
 		return result;
 	}
 
-	private Panel selectRegistrarPanel() {
+	private Panel selectRegistrarsPanel() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.setSpacing(5);
 		result.add(new Label(constants.processUrnNbnExportRegistrar() + SEPARATOR));
 		result.add(registrarList());
 		return result;
@@ -133,7 +132,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private Panel selectTypeOfDocumentPanel() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.documentType()));
+		result.add(new Label(constants.documentType() + SEPARATOR));
 		documentTypeListBox = new MultiSelectListBox();
 		documentTypeListBox.addItem("MONOGRAPH");
 		documentTypeListBox.addItem("MONOGRAPH_VOLUME");
@@ -149,7 +148,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private Panel selectAbsenceOfIdentifiers() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.absenceOfIdentifiers()));
+		result.add(new Label(constants.absenceOfIdentifiers() + SEPARATOR));
 		absenceOfIdentifiersListBox = new MultiSelectListBox();
 		absenceOfIdentifiersListBox.addItem("CNB");
 		absenceOfIdentifiersListBox.addItem("ISSN");
@@ -160,7 +159,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private Panel numberOfDigitalInstancesCheckbox() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.includeNumberOfDigitalInstances()));
+		result.add(new Label(constants.includeNumberOfDigitalInstances() + SEPARATOR));
 		numberOfDigitalInstances = new CheckBox();
 		result.add(numberOfDigitalInstances);
 		return result;
@@ -168,7 +167,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 	private Panel selectActivationFlag() {
 		HorizontalPanel result = new HorizontalPanel();
-		result.add(new Label(constants.activityFlag()));
+		result.add(new Label(constants.activityFlag() + SEPARATOR));
 		activationFlag = new ListBox();
 		activationFlag.addItem(constants.activityAll());
 		activationFlag.addItem(constants.activityActiveOnly());
