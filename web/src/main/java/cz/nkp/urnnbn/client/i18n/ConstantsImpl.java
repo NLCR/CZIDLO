@@ -5,6 +5,8 @@ import com.google.gwt.i18n.client.Constants;
 public interface ConstantsImpl extends Constants {
 
 	String headerSubtitle();
+	
+	String version();
 
 	String localeCz();
 
@@ -400,6 +402,8 @@ public interface ConstantsImpl extends Constants {
 	String activityActiveOnly();
 	
 	String activityDeactivatedOnly();
+	
+	
 	
 
 }

@@ -4,18 +4,18 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface MainCss extends CssResource {
 
-	public String headerPanel();
+	public String leftHeader();
 
-	public String headerTitle();
+	public String appName();
 
-	public String headerSubtitle();
+	public String appDescription();
 
-	public String headerTitlePanel();
+	public String appVersion();
 
 	public String languageSwitch();
-	
+
 	public String userPanel();
-	
+
 	public String userPanelContent();
 
 	public String mainPanel();
