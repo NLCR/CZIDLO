@@ -1,36 +1,41 @@
 @CHARSET "UTF-8";
 
-.headerPanel {
-	
-}
-
-.headerTitlePanel {
+.leftHeader {
 	padding-left: 17px;
 	padding-top: 22px;
 	white-space: nowrap;
 	vertical-align: middle;
 }
 
-.headerTitle {
-	padding: 10px;
-	padding-left: 17px;
+.appName {
 	color: black;
 	font-size: 32px;
 	font-weight: bold;
 	white-space: nowrap;
+	vertical-align: middle;
+	height: 40px;
 }
 
-.headerSubtitle {
+.appDescription {
 	color: #AAA;
 	font-size: 15px;
 	white-space: nowrap;
 	text-align: center;
-	vertical-align: text-bottom;
+	padding-top: 10px;
+	padding-left: 5px;
+	vertical-align: middle;
+	height: 30px;
+}
+
+.appVersion {
+	color: gray;
+	padding: 3px;
+	font-style: italic;
 }
 
 .userPanel {
 	padding: 5px;
-	margin-top: 10px;
+	margin-top: 20px;
 	margin-right: 20px;
 }
 

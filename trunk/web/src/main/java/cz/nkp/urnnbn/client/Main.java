@@ -11,10 +11,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
@@ -27,7 +29,9 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 public class Main implements EntryPoint {
 
 	private static final Logger logger = Logger.getLogger(Main.class.getName());
+	private static final String APP_VERSION = "4.0";
 	private Resources resources = GWT.create(Resources.class);
+	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private DockLayoutPanel mainPanel;
 
 	public void onModuleLoad() {
@@ -39,7 +43,7 @@ public class Main implements EntryPoint {
 
 			public void onSuccess(UserDTO user) {
 				// HEADER
-				HorizontalPanel headerPanel = headerPanel(user);
+				Panel headerPanel = headerPanel(user);
 				mainPanel.addNorth(headerPanel, 100);
 				// CONTENT
 				TabsPanel content = new TabsPanel(user);
@@ -56,44 +60,41 @@ public class Main implements EntryPoint {
 		mainPanel.addSouth(footerPanel, 50);
 	}
 
-	private HorizontalPanel headerPanel(UserDTO user) {
-		HorizontalPanel headerPanel = new HorizontalPanel();
-
-		headerPanel.addStyleName(resources.MainCss().headerPanel());
-		headerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		// title
-		// headerPanel.add(headerTitlePanel());
-		headerPanel.add(headerTitle());
-		headerPanel.add(headerSubtitle());
-
-		// space
-		Label emptyLabel1 = new Label("");
-		emptyLabel1.setWidth("100px");
-		headerPanel.add(emptyLabel1);
-
-		// logo
-		// Image booksImg = new Image("img/logo_books.png");
-		// headerPanel.add(booksImg);
-		// space
-		Label emptyLabel2 = new Label("");
-		headerPanel.add(emptyLabel2);
-		headerPanel.setCellWidth(emptyLabel2, "100%");
-		// user panel
-		headerPanel.add(new UserPanel(user));
-
+	private Panel headerPanel(UserDTO user) {
+		DockLayoutPanel headerPanel = new DockLayoutPanel(Unit.PX);
+		headerPanel.setWidth("100%");
+		headerPanel.addWest(leftHeaderPanel(), 1000);
+		headerPanel.addEast(new UserPanel(user), 80);
 		return headerPanel;
 	}
 
-	private Widget headerTitle() {
-		Widget headerSubtitle = new HTML("CZIDLO");
-		headerSubtitle.addStyleName(resources.MainCss().headerTitle());
-		return headerSubtitle;
+	private Widget leftHeaderPanel() {
+		VerticalPanel result = new VerticalPanel();
+		HorizontalPanel firstRowPanel = new HorizontalPanel();
+		firstRowPanel.add(applicationName());
+		firstRowPanel.add(applicationDescription());
+		result.add(firstRowPanel);
+		result.add(applicationVersion());
+		result.addStyleName(resources.MainCss().leftHeader());
+		return result;
 	}
 
-	private Widget headerSubtitle() {
-		Widget headerSubtitle = new HTML("(CZech IDentification and LOcalization tool)");
-		headerSubtitle.addStyleName(resources.MainCss().headerSubtitle());
-		return headerSubtitle;
+	private Widget applicationName() {
+		Widget name = new HTML("CZIDLO");
+		name.addStyleName(resources.MainCss().appName());
+		return name;
+	}
+
+	private Widget applicationDescription() {
+		Widget description = new HTML("(CZech IDentification and LOcalization tool)");
+		description.addStyleName(resources.MainCss().appDescription());
+		return description;
+	}
+
+	private Widget applicationVersion() {
+		Widget version = new HTML(constants.version() + " " + APP_VERSION);
+		version.addStyleName(resources.MainCss().appVersion());
+		return version;
 	}
 
 	private HorizontalPanel footerPanel() {
