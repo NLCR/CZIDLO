@@ -3,5 +3,5 @@
 	<Resource auth="Container" driverClassName="org.postgresql.Driver"
 		maxActive="100" maxIdle="30" maxWait="200" name="jdbc/postgres"
 		username="testuser" password="testpass" type="javax.sql.DataSource"
-		url="jdbc:postgresql://localhost:5432/resolver" />
+		url="jdbc:postgresql://localhost:5432/czidlo_core" />
 </Context>
