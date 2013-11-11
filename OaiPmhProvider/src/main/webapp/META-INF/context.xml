@@ -5,7 +5,7 @@
             name="jdbc/postgres" 
             type="javax.sql.DataSource" 
             driverClassName="org.postgresql.Driver" 
-            url="jdbc:postgresql://localhost:5432/resolver" 
+            url="jdbc:postgresql://localhost:5432/czidlo_core" 
             username="testuser"
             password="testpass" 
             />
