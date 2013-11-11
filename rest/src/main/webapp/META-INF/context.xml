@@ -7,6 +7,6 @@
               username="testuser"
               password="testpass" 
               type="javax.sql.DataSource" 
-              url="jdbc:postgresql://localhost:5432/resolver" 
+              url="jdbc:postgresql://localhost:5432/czidlo_core" 
   />
 </Context>
