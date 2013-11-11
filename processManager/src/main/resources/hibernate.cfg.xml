@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory>
-        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/resolverprocess</property>
-        <property name="hibernate.connection.username">testuser</property>
-        <property name="hibernate.connection.password">testpass</property>
-        <property name="hibernate.connection.pool_size">10</property>
-        <!--don't use hibernate.hbm2ddl.auto in production-->
-        <!--<property name="hibernate.hbm2ddl.auto">create-drop</property>-->
-        <!--<property name="hibernate.hbm2ddl.auto">update</property>-->
-
-        <!--<property type="org.joda.time.contrib.hibernate.PersistentDateTime" name="dateTime"/>-->
-        <!--<property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property>-->
-        <!-- Persistent classes -->
-        <mapping class="cz.nkp.urnnbn.processmanager.core.Process"/>
-        <mapping class="cz.nkp.urnnbn.processmanager.core.XmlTransformation"/>
-    </session-factory>
+	<!-- this configuration is used only by JUnit tests during build of module processManager -->
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/czidlo_process_junit_test</property>
+		<property name="hibernate.connection.username">testuser</property>
+		<property name="hibernate.connection.password">testpass</property>
+		<property name="hibernate.connection.pool_size">10</property>
+		<!--don't use hibernate.hbm2ddl.auto in production -->
+		<property name="hibernate.hbm2ddl.auto">create-drop</property>
+		<!--<property name="hibernate.hbm2ddl.auto">update</property> -->
+		<!-- Persistent classes -->
+		<mapping class="cz.nkp.urnnbn.processmanager.core.Process" />
+		<mapping class="cz.nkp.urnnbn.processmanager.core.XmlTransformation" />
+		<!-- Other -->
+		<!--<property type="org.joda.time.contrib.hibernate.PersistentDateTime" name="dateTime"/> -->
+		<!--<property name="dateTime">org.joda.time.contrib.hibernate.PersistentDateTime</property> -->
+	</session-factory>
 </hibernate-configuration>
