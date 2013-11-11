@@ -18,6 +18,7 @@ package cz.nkp.urnnbn.processmanager.core;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,135 +30,137 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 @Entity
 @Table(name = "PROCESS")
 public class Process implements Serializable {
 
-    private Long id;
-    private String ownerLogin;
-    private ProcessState state;
-    private ProcessType type;
-    private Date scheduled;
-    private Date started;
-    private Date finished;
-    private String[] params;
+	private static final long serialVersionUID = 2187447331721695135L;
+	private Long id;
+	private String ownerLogin;
+	private ProcessState state;
+	private ProcessType type;
+	private Date scheduled;
+	private Date started;
+	private Date finished;
+	private String[] params;
 
-    public static Process buildScheduledProcess(String userLogin, ProcessType type, String[] processParams) {
-        Process process = new Process();
-        process.setOwnerLogin(userLogin);
-        process.setType(type);
-        process.setParams(processParams);
-        process.setState(ProcessState.SCHEDULED);
-        process.setScheduled(new Date());
-        return process;
-    }
+	public static Process buildScheduledProcess(String userLogin, ProcessType type, String[] processParams) {
+		Process process = new Process();
+		process.setOwnerLogin(userLogin);
+		process.setType(type);
+		process.setParams(processParams);
+		process.setState(ProcessState.SCHEDULED);
+		process.setScheduled(new Date());
+		return process;
+	}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@SequenceGenerator(name="process_id_seq", sequenceName="process_id_seq", allocationSize=1)
-    @Column(name = "id", nullable = false)
-    public Long getId() {
-        return id;
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	// @SequenceGenerator(name="process_id_seq", sequenceName="process_id_seq", allocationSize=1)
+	@Column(name = "id", nullable = false)
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @Column(name = "scheduled", nullable = true)
-    public Date getScheduled() {
-        return scheduled;
-    }
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@Column(name = "scheduled", nullable = true)
+	public Date getScheduled() {
+		return scheduled;
+	}
 
-    public void setScheduled(Date scheduled) {
-        this.scheduled = scheduled;
-    }
+	public void setScheduled(Date scheduled) {
+		this.scheduled = scheduled;
+	}
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @Column(name = "started", nullable = true)
-    public Date getStarted() {
-        return started;
-    }
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@Column(name = "started", nullable = true)
+	public Date getStarted() {
+		return started;
+	}
 
-    public void setStarted(Date started) {
-        this.started = started;
-    }
+	public void setStarted(Date started) {
+		this.started = started;
+	}
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    @Column(name = "finished", nullable = true)
-    public Date getFinished() {
-        return finished;
-    }
+	@Temporal(javax.persistence.TemporalType.TIMESTAMP)
+	@Column(name = "finished", nullable = true)
+	public Date getFinished() {
+		return finished;
+	}
 
-    public void setFinished(Date finished) {
-        this.finished = finished;
-    }
+	public void setFinished(Date finished) {
+		this.finished = finished;
+	}
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pType", nullable = false)
-    public ProcessType getType() {
-        return type;
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "pType", nullable = false)
+	public ProcessType getType() {
+		return type;
+	}
 
-    public void setType(ProcessType type) {
-        this.type = type;
-    }
+	public void setType(ProcessType type) {
+		this.type = type;
+	}
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pState", nullable = false)
-    public ProcessState getState() {
-        return state;
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "pState", nullable = false)
+	public ProcessState getState() {
+		return state;
+	}
 
-    public void setState(ProcessState state) {
-        this.state = state;
-    }
+	public void setState(ProcessState state) {
+		this.state = state;
+	}
 
-    @Column(name = "owner", nullable = false)
-    public String getOwnerLogin() {
-        return ownerLogin;
-    }
+	@Column(name = "owner", nullable = false)
+	public String getOwnerLogin() {
+		return ownerLogin;
+	}
 
-    public void setOwnerLogin(String ownerLogin) {
-        this.ownerLogin = ownerLogin;
-    }
+	public void setOwnerLogin(String ownerLogin) {
+		this.ownerLogin = ownerLogin;
+	}
 
-    public String[] getParams() {
-        return params;
-    }
+	public String[] getParams() {
+		return params;
+	}
 
-    public void setParams(String[] params) {
-        this.params = params;
-    }
+	public void setParams(String[] params) {
+		this.params = params;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + (this.id != null ? this.id.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 71 * hash + (this.id != null ? this.id.hashCode() : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Process other = (Process) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Process other = (Process) obj;
+		if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return "Process{" + "id=" + id + ", ownerLogin=" + ownerLogin + ", state=" + state + ", type=" + type + ", scheduled=" + scheduled + ", started=" + started + ", finished=" + finished + '}';
-    }
+	@Override
+	public String toString() {
+		return "Process{" + "id=" + id + ", ownerLogin=" + ownerLogin + ", state=" + state + ", type=" + type + ", scheduled=" + scheduled
+				+ ", started=" + started + ", finished=" + finished + '}';
+	}
 }
