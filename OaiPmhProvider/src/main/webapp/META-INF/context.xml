@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/OaiPmhProvider">
+<Context antiJARLocking="true" path="/oaiPmhProvider">
     <Resource auth="Container" 
             maxActive="100" maxIdle="30" maxWait="200" 
             name="jdbc/postgres" 
