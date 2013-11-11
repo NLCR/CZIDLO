@@ -16,12 +16,14 @@
  */
 package cz.nkp.urnnbn.processdataserver.conf;
 
-import cz.nkp.urnnbn.utils.PropertyLoader;
-import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
 import java.io.InputStream;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import cz.nkp.urnnbn.utils.PropertyLoader;
+import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
 
 /**
  *
