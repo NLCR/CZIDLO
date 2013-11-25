@@ -150,6 +150,9 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		documentTypeListBox.addItem("THESIS");
 		documentTypeListBox.addItem("ANALYTICAL");
 		documentTypeListBox.addItem("OTHER");
+		for (int i = 0; i < documentTypeListBox.getItemCount(); i++) {
+			documentTypeListBox.setItemSelected(i, true);
+		}
 		result.add(documentTypeListBox);
 		return result;
 	}
