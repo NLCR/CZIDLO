@@ -55,8 +55,8 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private Set<IntelectualEntityDTO> searchByUrnNbn(String request) {
 		UrnNbn urnNbn = UrnNbn.valueOf(request);
-		UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
-				urnNbn.getDocumentCode(), true);
+		UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
+				true);
 		if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
 			DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
 			// Set allways contains just single item
@@ -77,7 +77,9 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 			query.append(sep).append(word);
 			sep = " &";
 		}
-		List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
+		//TODO: just temporerily disabled until fulltext search ready for production
+		List<IntelectualEntity> entities =readService.entitiesByIdValue(query.toString()); 
+		//List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
 		Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 		for (IntelectualEntity entity : entities) {
 			result.add(transformedEntity(entity));
@@ -116,8 +118,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 			Registrar registrar = registrarOfDocument(digitalDocument);
 			Archiver archiver = archiverOfDocument(digitalDocument);
 			ArrayList<DigitalInstanceDTO> instances = instancesOfDocument(digitalDocument);
-			DigitalDocumentDTO transformed = DtoTransformer.transformDigitalDocument(digitalDocument, urn, registrar,
-					archiver, instances);
+			DigitalDocumentDTO transformed = DtoTransformer.transformDigitalDocument(digitalDocument, urn, registrar, archiver, instances);
 			if (transformed != null) {
 				results.add(transformed);
 			}
