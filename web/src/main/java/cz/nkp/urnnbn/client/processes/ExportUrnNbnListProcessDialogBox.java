@@ -134,7 +134,8 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	private Panel selectRegistrarsPanel() {
 		HorizontalPanel result = new HorizontalPanel();
 		result.add(new Label(constants.processUrnNbnExportRegistrar() + SEPARATOR));
-		result.add(registrarList());
+		initRegistrarsList();
+		result.add(registrarsListBox);
 		return result;
 	}
 
@@ -192,12 +193,13 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 		return result;
 	}
 
-	private ListBox registrarList() {
+	private void initRegistrarsList() {
 		registrarsListBox = new MultiSelectListBox();
-		for (RegistrarDTO registrar : registrarsOfUser) {
+		for (int i = 0; i < registrarsOfUser.size(); i++) {
+			RegistrarDTO registrar = registrarsOfUser.get(i);
 			registrarsListBox.addItem(registrar.getCode());
+			registrarsListBox.setItemSelected(i, true);
 		}
-		return registrarsListBox;
 	}
 
 	private Button scheduleProcessButton() {
