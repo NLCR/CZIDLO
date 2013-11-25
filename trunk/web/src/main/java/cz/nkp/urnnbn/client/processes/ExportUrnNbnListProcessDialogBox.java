@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.processes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +58,12 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 			public void onSuccess(ArrayList<RegistrarDTO> result) {
 				registrarsOfUser = result;
+				Collections.sort(registrarsOfUser, new Comparator<RegistrarDTO>() {
+					@Override
+					public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+						return o1.getCode().compareTo(o2.getCode());
+					}
+				});
 				reload();
 			}
 
