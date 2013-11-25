@@ -210,7 +210,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 
 				Boolean missingCnb = idents.contains("CNB");
 				Boolean missingIssn = idents.contains("ISSN");
-				Boolean missingIsbn = idents.contains("ISSN");
+				Boolean missingIsbn = idents.contains("ISBN");
 
 				String registrars = null;
 				List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
