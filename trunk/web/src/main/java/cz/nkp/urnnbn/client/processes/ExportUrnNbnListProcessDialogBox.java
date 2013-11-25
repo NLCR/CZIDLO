@@ -119,8 +119,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
 	@SuppressWarnings("deprecation")
 	private Panel selectDateRangePanel() {
 		HorizontalPanel result = new HorizontalPanel();
-		Date start = new Date();
-		start.setYear(start.getYear() - 2);
+		Date start = new Date(112, 8, 1); // 1.9.2012
 		beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampRegistered(), dateFormat.format(start),
 				false);
 		result.add(beginDate.getLabelWidget());
