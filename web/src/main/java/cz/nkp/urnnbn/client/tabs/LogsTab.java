@@ -27,7 +27,7 @@ public class LogsTab extends SingleTabContentPanel {
 	private static final String ADMIN_LOG_URL = "/processDataServer/adminLog";
 	private final LogsServiceAsync logsService = GWT.create(LogsService.class);
 	private final LogsPanelCss css = initCss();
-	private final Timer refreshTabTimer = initTimer();
+	private Timer refreshTabTimer = null;
 	private List<String> adminLogsList = new ArrayList<String>();
 	private long adminLogsLastUpdated = 0;
 
@@ -36,52 +36,6 @@ public class LogsTab extends SingleTabContentPanel {
 		LogsPanelCss result = resources.LogsPanelCss();
 		result.ensureInjected();
 		return result;
-	}
-
-	private Timer initTimer() {
-		return new Timer() {
-
-			@Override
-			public void run() {
-				loadAdminLogsIfChanged();
-			}
-		};
-	}
-
-	private void loadAdminLogsIfChanged() {
-		logsService.getAdminLogLastUpdatedTime(new AsyncCallback<Long>() {
-
-			@Override
-			public void onSuccess(Long result) {
-				if (result > adminLogsLastUpdated) {
-					adminLogsLastUpdated = result;
-					loadAdminLogs();
-				}
-			}
-
-			private void loadAdminLogs() {
-				logsService.getAdminLogs(new AsyncCallback<List<String>>() {
-
-					@Override
-					public void onSuccess(List<String> result) {
-						if (adminLogsList != null) {
-							adminLogsList = result;
-							reload();
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						logger.severe("Error loading admin logs: " + caught.getMessage());
-					}
-				});
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.severe("Error loading admin logs last update time: " + caught.getMessage());
-			}
-		});
 	}
 
 	private void reload() {
@@ -124,17 +78,79 @@ public class LogsTab extends SingleTabContentPanel {
 	@Override
 	public void onLoad() {
 		reload();
-		refreshTabTimer.scheduleRepeating(TIMER_INTERVAL);
+		startTimerIfNotRunningAlready();
 	}
 
 	@Override
 	public void onSelection() {
-		refreshTabTimer.scheduleRepeating(TIMER_INTERVAL);
+		startTimerIfNotRunningAlready();
 	}
 
 	@Override
 	public void onDeselectionSelection() {
-		refreshTabTimer.cancel();
+		stopTimerIfRunning();
+	}
+
+	private void startTimerIfNotRunningAlready() {
+		if (refreshTabTimer == null) {
+			refreshTabTimer = initTimer();
+			refreshTabTimer.scheduleRepeating(TIMER_INTERVAL);
+		}
+	}
+
+	private void stopTimerIfRunning() {
+		if (refreshTabTimer != null) {
+			refreshTabTimer.cancel();
+			refreshTabTimer = null;
+		}
+	}
+
+	private Timer initTimer() {
+		return new Timer() {
+
+			@Override
+			public void run() {
+				loadAdminLogsIfChanged();
+			}
+		};
+	}
+
+	private void loadAdminLogsIfChanged() {
+		logsService.getAdminLogLastUpdatedTime(new AsyncCallback<Long>() {
+
+			@Override
+			public void onSuccess(Long result) {
+				//logger.info("Admin logs last updated: " + result);
+				if (result > adminLogsLastUpdated) {
+					adminLogsLastUpdated = result;
+					loadAdminLogs();
+				}
+			}
+
+			private void loadAdminLogs() {
+				logsService.getAdminLogs(new AsyncCallback<List<String>>() {
+
+					@Override
+					public void onSuccess(List<String> result) {
+						if (adminLogsList != null) {
+							//logger.info("Admin logs loaded");
+							adminLogsList = result;
+							reload();
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						logger.severe("Error loading admin logs: " + caught.getMessage());
+					}
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe("Error loading admin logs last update time: " + caught.getMessage());
+			}
+		});
 	}
 
 }
