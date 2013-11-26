@@ -1,6 +1,6 @@
 #######################################
 #######################################
-##         CZIDLO version 4.0        ##
+##         CZIDLO version 4.1        ##
 #######################################
 #######################################
 
@@ -17,16 +17,10 @@ Main featurese are:
 - OAI-PMH provider
 - possible to edit metadata manually though web interface, managing processes on server through web interface
 
-New features in version 4.0
-- manual changing order of registrars/archiver in web interface
-- hidden registrars/archivers in web interface
-- content of tabs "info" and "rules" can be edited through web interface
-- application "web" can now also be deployed in read-only mode 
-- login page configurable, which is usefull for more complicated system deployments
-- digital instances editable through web interface
-- more parameters for proces Export URN:NBN - so far we could restrict records produced only by registrar
-- CZIDLO version in web interface header
-- whole multimodule system properly mavenized
+New features in version 4.1
+- fixed bug in web search caused by premature deployment of fulltext features
+- web dialog for scheduling Export URN:NBN process slightly enhanced
+- fixed incorrect handling of paramether missingISBN for scheduling process Export URN:NBN
 
 System is being developed under GNU GPL v3 licence by National Library of the Czech Republic.
 http://nkp.cz/
@@ -53,12 +47,12 @@ This archive should contain these files:
 - api.war - API module  
 - oaiPmhProvider.war - OAI-PMH provider module
 - processDataServer.war - application to access logs and outputs of processes
-- initDatabase_4.0.sql - sql script for intializing the database (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- initDatabase_4.0-4.1.sql - sql script for intializing the database (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - updateDatabase-2.0-2.2_to_2.3-3.0.sql - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
-- updateDatabase-2.3_-3.0_to_4.0.sql - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to current version 4.0)
+- updateDatabase-2.3_-3.0_to_4.1.sql - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to current version 4.1)
 
 
-1. Provided you have database installed and properly configured, you should first run the initDatabase_4.0.sql (e. g. by psql) 
+1. Provided you have database installed and properly configured, you should first run the initDatabase_4.1.sql (e. g. by psql) 
 in order to create tables, sequences and indexes.
 Script also creates one administrator account (admin:adminPassword). 
 Since it is not possible yet to change user password, it is very important that this account is removed 
@@ -139,12 +133,25 @@ This will probably require fixing configuration files again, since application s
 
 
 ########################
+Upgrade from version 4.0
+########################
+
+Core database
+=============
+No need to upgrade.
+
+Process database
+================
+No need to upgrade.
+
+
+########################
 Upgrade from version 3.0
 ########################
 
 Core database
 =============
-Use script updateDatabase-2.3-2.4_to_3.0-4.0.sql.
+Use script updateDatabase-2.3-2.4_to_3.0-4.1.sql.
 
 Process database
 ================
@@ -229,7 +236,7 @@ Usage
 Without any redirection and with Tomcat only the applications are available (for domain maydomain.cz) here:
 http://mydomain.cz:8080/web - Web interface intended for human access.
 http://mydomain.cz:8080/api - REST API for automated imports. Also performs resolving.
-http://mydomain.cz:8080/OaiPmhProvider - OAI-PMH provider with simple web interface.
+http://mydomain.cz:8080/oaiPmhProvider - OAI-PMH provider with simple web interface.
 
 There should allways be available CZIDLO installation of National Library of the Czech Republic at http://resolver.nkp.cz.
 
