@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"                
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:r="http://resolver.nkp.cz/v2/"
+                xmlns:r="http://resolver.nkp.cz/v3/"
                 exclude-result-prefixes="dc">                    
 
     <xsl:output method="xml"
@@ -14,7 +14,7 @@
             />                        
             
     <xsl:template match="/">
-        <r:import xmlns:r="http://resolver.nkp.cz/v2/">            
+        <r:import xmlns:r="http://resolver.nkp.cz/v3/">            
             <r:analytical> 
                 <xsl:call-template name="titleInfo"/>
                 <xsl:call-template name="documentType"/>   

@@ -3,7 +3,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
                 xmlns:marc="http://www.loc.gov/MARC21/slim"
-                xmlns:r="http://resolver.nkp.cz/v2/"
+                xmlns:r="http://resolver.nkp.cz/v3/"
                 exclude-result-prefixes="marc">
 
     <xsl:output method="xml"
@@ -17,7 +17,7 @@
             
             
     <xsl:template match="/">
-        <r:import xmlns:r="http://resolver.nkp.cz/v2/">
+        <r:import xmlns:r="http://resolver.nkp.cz/v3/">
             
             <r:otherEntity> 
                 <xsl:call-template name="titleInfo"/>
