@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"                
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
-                xmlns:r="http://resolver.nkp.cz/v2/"
+                xmlns:r="http://resolver.nkp.cz/v3/"
                 exclude-result-prefixes="dc">                    
 
     <xsl:output method="xml"
@@ -16,7 +16,7 @@
             
             
     <xsl:template match="/">                
-        <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">        
+        <r:digitalInstance xmlns:r="http://resolver.nkp.cz/v3/">        
             <xsl:call-template name="url"/>
             <xsl:call-template name="digitalLibraryId"/>                
             <xsl:call-template name="format"/>   
