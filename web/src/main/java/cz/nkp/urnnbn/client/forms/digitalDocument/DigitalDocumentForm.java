@@ -48,6 +48,7 @@ public class DigitalDocumentForm extends Form {
 	public DigitalDocumentDTO getDto() {
 		DigitalDocumentDTO result = new DigitalDocumentDTO();
 		result.setId(originalDto.getId());
+		result.setIntEntId(originalDto.getIntEntId());
 		result.setRegistrar(originalDto.getRegistrar());
 		result.setArchiver((ArchiverDTO) fields.getFieldByKey("archiver").getInsertedValue());
 		result.setFinanced((String) fields.getFieldByKey("financed").getInsertedValue());

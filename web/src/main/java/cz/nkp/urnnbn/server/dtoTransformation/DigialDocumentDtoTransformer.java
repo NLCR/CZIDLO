@@ -33,6 +33,7 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 
 	public DigitalDocumentDTO transform() {
 		DigitalDocumentDTO result = new DigitalDocumentDTO();
+		result.setIntEntId(doc.getIntEntId());
 		result.setId(doc.getId());
 		result.setUrn(urnNbnTransformed());
 		result.setRegistrar(registrarTransformed());

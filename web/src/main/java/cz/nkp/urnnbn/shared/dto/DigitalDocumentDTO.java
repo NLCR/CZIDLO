@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class DigitalDocumentDTO implements Serializable {
 
 	private static final long serialVersionUID = 4858807458088967311L;
+	private Long intEntId;
 	private Long id;
 	private RegistrarDTO registrar;
 	private ArchiverDTO archiver;
@@ -105,4 +106,13 @@ public class DigitalDocumentDTO implements Serializable {
 	public void setModified(String modified) {
 		this.modified = modified;
 	}
+
+	public Long getIntEntId() {
+		return intEntId;
+	}
+
+	public void setIntEntId(Long intEntId) {
+		this.intEntId = intEntId;
+	}
+
 }
