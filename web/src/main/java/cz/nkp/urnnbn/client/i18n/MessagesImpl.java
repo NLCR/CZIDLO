@@ -56,4 +56,6 @@ public interface MessagesImpl extends Messages {
 	public String processPlaning(String processType);
 
 	public String validationNotInteger();
+	
+	public String confirmUrnNbnDeactivation(String urn);
 }
