@@ -29,7 +29,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 public class Main implements EntryPoint {
 
 	private static final Logger logger = Logger.getLogger(Main.class.getName());
-	private static final String APP_VERSION = "4.1";
+	private static final String APP_VERSION = "4.2";
 	private Resources resources = GWT.create(Resources.class);
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private DockLayoutPanel mainPanel;

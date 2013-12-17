@@ -15,27 +15,27 @@ import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.forms.digitalDocument.DeactivateUrnNbnForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
 public class DeactivateUrnNbnDialogBox extends DialogBox {
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
-	private final UrnNbnDTO urn;
 	private final SearchPanel superPanel;
-	private Label errorLabel = errorLabel();
-	private DeactivateUrnNbnForm form;
+	private final DeactivateUrnNbnForm form;
+	private final Label errorLabel;
 
 	public DeactivateUrnNbnDialogBox(SearchPanel superPanel, UrnNbnDTO urn) {
 		this.superPanel = superPanel;
-		this.urn = urn;
-		String title = "deaktivace URN:NBN";
-		setText(title);
+		this.form = new DeactivateUrnNbnForm(urn);
+		this.errorLabel = errorLabel();
+		setText(constants.urnNbnDeactivationDialogTitle());
 		setAnimationEnabled(true);
 		setPopupPosition(100, 100);
-		this.form = new DeactivateUrnNbnForm(urn);
-		setWidget(contentPanel());
+		setWidget(contentPanel(urn));
 	}
 
 	private Label errorLabel() {
@@ -45,11 +45,10 @@ public class DeactivateUrnNbnDialogBox extends DialogBox {
 		return result;
 	}
 
-	private Panel contentPanel() {
+	private Panel contentPanel(UrnNbnDTO urn) {
 		VerticalPanel result = new VerticalPanel();
-		result.add(new HTML("Opravdu chete deaktivovat " + urn.toString() + "?"));
-		// result.add(form);
-		result.add(new DeactivateUrnNbnForm(urn));
+		result.add(new HTML(messages.confirmUrnNbnDeactivation(urn.toString())));
+		result.add(form);
 		result.add(errorLabel);
 		result.add(buttons());
 		return result;
@@ -78,7 +77,7 @@ public class DeactivateUrnNbnDialogBox extends DialogBox {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							errorLabel.setText("server error: " + caught.getMessage());
+							errorLabel.setText(messages.serverError(caught.getMessage()));
 						}
 					});
 				}
