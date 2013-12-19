@@ -70,16 +70,17 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	}
 
 	private Set<IntelectualEntityDTO> searchByIdentifiers(String request) {
+		request = request.replaceAll(":", " ");
 		String[] words = request.split(" ");
 		String sep = "";
 		StringBuilder query = new StringBuilder();
 		for (String word : words) {
-			query.append(sep).append(word);
-			sep = " &";
+			if (!word.trim().isEmpty()) {
+				query.append(sep).append(word.trim());
+				sep = " &";
+			}
 		}
-		//TODO: just temporerily disabled until fulltext search ready for production
-		List<IntelectualEntity> entities =readService.entitiesByIdValue(query.toString()); 
-		//List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
+		List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
 		Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
 		for (IntelectualEntity entity : entities) {
 			result.add(transformedEntity(entity));
