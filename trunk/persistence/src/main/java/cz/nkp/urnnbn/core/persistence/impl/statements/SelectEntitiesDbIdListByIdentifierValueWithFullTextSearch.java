@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
@@ -12,6 +11,10 @@ import java.sql.SQLException;
  */
 public class SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch implements StatementWrapper {
 
+	private static final String TABLE_NAME = "IE_TITLE";
+	private static final String ATTR_ID = "ID";
+	private static final String ATTR_TITLE = "TITLE";
+	
     private String query;
     private int offset;
     private int limit;
@@ -24,8 +27,7 @@ public class SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch implement
     
     public String preparedStatement() {
         return String.format("SELECT %s FROM %s WHERE TO_TSVECTOR('simple', LOWER(%s)) @@ to_tsquery(lower(?)) offset ? limit ?", 
-                IntEntIdentifierDAO.ATTR_IE_ID, IntEntIdentifierDAO.TABLE_NAME,
-                IntEntIdentifierDAO.ATTR_VALUE);
+        		ATTR_ID, TABLE_NAME, ATTR_TITLE);
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
