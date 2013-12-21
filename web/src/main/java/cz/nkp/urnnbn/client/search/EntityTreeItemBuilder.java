@@ -115,8 +115,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
 	void appendSourceDocumentIfNotNull() {
 		String title = buildTitle(srcDoc.getTitle(), srcDoc.getVolumeTitle(), srcDoc.getIssueTitle());
-		String itemLabel = "<span class=\"" + css.attrLabel() + "\">" + constants.sourceDoc() + ": </span>" + title;
-		TreeItem srcDocItem = new TreeItem(itemLabel);
+		TreeItem srcDocItem = new TreeItem(new HTML("<span class=\"" + css.attrLabel() + "\">" + constants.sourceDoc() + ": </span>" + title));
 		if (srcDoc != null) {
 			addLabeledRowIfNotNull(srcDocItem, constants.title(), srcDoc.getTitle());
 			addLabeledRowIfNotNull(srcDocItem, constants.volumeTitle(), srcDoc.getVolumeTitle());

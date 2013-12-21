@@ -36,10 +36,10 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
-	private static boolean EXPAND_TECHNICAL = false;
-	private static boolean EXPAND_IDENTIFIERS = false;
-	private static boolean EXPAND_DIGITAL_INSTANCES = false;
-	private static String API_VERSION = "v3";
+	private static final boolean EXPAND_TECHNICAL = false;
+	private static final boolean EXPAND_DIGITAL_INSTANCES = false;
+	private static final boolean EXPAND_REGISTRAR_SCOPE_IDENTIFIERS = false;
+	private static final String API_VERSION = "v3";
 
 	private final DataServiceAsync dataService = GWT.create(DataService.class);
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
@@ -63,8 +63,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		if (dto.getModified() != null && !dto.getModified().equals(dto.getCreated())) {
 			addLabeledItemIfValueNotNull(rootItem, constants.modified(), dto.getModified());
 		}
-		addIdentifiers(rootItem);
 		addTechnicalMetadata(rootItem);
+		addRegistrarScopeIdentifiers(rootItem);
 		addDigitalInstances(dto.getUrn(), rootItem);
 		if (!dto.getUrn().isActive()) {
 			rootItem.setState(false);
@@ -90,7 +90,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		// predecessors
 		List<UrnNbnDTO> predecessors = urnNbn.getPredecessors();
 		if (predecessors != null && !predecessors.isEmpty()) {
-			TreeItem predecessorsItem = urnNbnItem.addItem("předchůdci");
+			TreeItem predecessorsItem = urnNbnItem.addItem(new HTML(constants.predecessors()));
 			for (UrnNbnDTO predecessor : predecessors) {
 				addUrnNbn(predecessorsItem, predecessor, true);
 			}
@@ -100,7 +100,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		// successors
 		List<UrnNbnDTO> successors = urnNbn.getSuccessors();
 		if (successors != null && !successors.isEmpty()) {
-			TreeItem successorsItem = urnNbnItem.addItem("následovníci");
+			TreeItem successorsItem = urnNbnItem.addItem(new HTML(constants.successors()));
 			for (UrnNbnDTO successor : successors) {
 				addUrnNbn(successorsItem, successor, true);
 			}
@@ -133,36 +133,6 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		String url = urlToResolverByUrnNbn(urnNbn, "show", "xml");
 		panel.add(openUrlButton(constants.showRecordInXml(), url));
 		return panel;
-	}
-
-	private String linkToDigDocXmlByUrnNbn(UrnNbnDTO urnNbn, String linkText) {
-		return linkToResolver(urnNbn, linkText, "show", "xml", true);
-	}
-
-	private String linkToDigDocHtmlByUrnNbn(UrnNbnDTO urnNbn, String linkText) {
-		return linkToResolver(urnNbn, linkText, "show", "html", true);
-	}
-
-	private String linkToResolver(UrnNbnDTO urn, String linkText, String action, String format, boolean inNewWindow) {
-		StringBuilder result = new StringBuilder();
-		result.append("<a href=");
-		result.append("\"");
-		// url itself
-		result.append("/api").append('/').append(API_VERSION).append('/').append("resolver").append('/');
-		// result.append("/resolver");
-		result.append(urn.toString());
-		result.append("?action=").append(action);
-		if (!action.equals("decide")) {
-			result.append("&format=").append(format);
-		}
-		result.append("\"");
-		if (inNewWindow) {
-			result.append(" target=\"_blank\"");
-		}
-		result.append(">");
-		result.append(linkText);
-		result.append("</a>");
-		return result.toString();
 	}
 
 	String urlToResolverByUrnNbn(UrnNbnDTO urn, String action, String format) {
@@ -250,7 +220,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 			}
 		});
-		 button.addStyleName(css.treeButton());
+		button.addStyleName(css.treeButton());
 		return button;
 	}
 
@@ -261,7 +231,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 	private void addRegistrar(TreeItem rootItem) {
 		if (dto.getRegistrar() != null) {
 			RegistrarDTO registrar = dto.getRegistrar();
-			// TODO: odkazovat se do aplikace na zaznam registratora
+			// TODO: mozna se odkazovat do aplikace na zaznam registratora
 			String url = "TODO";
 			// addLabeledItemIfValueNotNull(rootItem, constants.registrar(),
 			// registrar.getName() + " <a href=\"" + url +
@@ -294,22 +264,10 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		addLabeledRowAndButtonIfValueNotNull(label, text, rootItem, spanClass, button, css.treeButton());
 	}
 
-	private void addIdentifiers(TreeItem rootItem) {
-		ArrayList<RegistrarScopeIdDTO> idList = dto.getRegistrarScopeIdList();
-		if (idList != null && !idList.isEmpty()) {
-			TreeItem idsItem = addItemIfNotNull(rootItem, constants.identifiers());
-			for (RegistrarScopeIdDTO idDTO : idList) {
-				String row = idDTO.getType() + '=' + idDTO.getValue();
-				addItemIfNotNull(idsItem, row);
-			}
-			idsItem.setState(EXPAND_IDENTIFIERS);
-		}
-	}
-
 	private void addTechnicalMetadata(TreeItem rootItem) {
 		TechnicalMetadataDTO metadata = dto.getTechnicalMetadata();
 		if (metadata != null) {
-			TreeItem metadataItem = addItemIfNotNull(rootItem, constants.technicalMetadata());
+			TreeItem metadataItem = addItemIfNotNull(rootItem, new HTML(constants.technicalMetadata()));
 			addLabeledItemIfValueNotNull(metadataItem, constants.format(), metadata.getFormat());
 			addLabeledItemIfValueNotNull(metadataItem, constants.formatVersion(), metadata.getFormatVersion());
 			addLabeledItemIfValueNotNull(metadataItem, constants.extent(), metadata.getExtent());
@@ -358,6 +316,17 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
 	void addLabeledItemIfValueNotNull(TreeItem item, String label, Object value) {
 		addLabeledRowIfValueNotNull(label, value, item, css.attrLabel());
+	}
+
+	private void addRegistrarScopeIdentifiers(TreeItem rootItem) {
+		ArrayList<RegistrarScopeIdDTO> idList = dto.getRegistrarScopeIdList();
+		if (idList != null && !idList.isEmpty()) {
+			TreeItem idsItem = addItemIfNotNull(rootItem, new HTML("<i>registrar-scope</i>&nbsp;" + constants.identifiers()));
+			for (RegistrarScopeIdDTO idDTO : idList) {
+				idsItem.addItem(new HTML("<span class=\"" + css.attrLabel() + "\">" + idDTO.getType() + ": </span>" + idDTO.getValue()));
+			}
+			idsItem.setState(EXPAND_REGISTRAR_SCOPE_IDENTIFIERS);
+		}
 	}
 
 	private void addDigitalInstances(UrnNbnDTO urn, TreeItem rootItem) {
@@ -475,10 +444,10 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 		return button;
 	}
 
-	private TreeItem addItemIfNotNull(TreeItem item, String text) {
-		if (text != null) {
-			TreeItem newItem = new TreeItem(text);
-			item.addItem(newItem);
+	private TreeItem addItemIfNotNull(TreeItem rootItem, HTML textHtml) {
+		if (textHtml != null) {
+			TreeItem newItem = new TreeItem(textHtml);
+			rootItem.addItem(newItem);
 			return newItem;
 		} else {
 			return null;

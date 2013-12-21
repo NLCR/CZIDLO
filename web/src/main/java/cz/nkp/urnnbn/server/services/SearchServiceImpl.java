@@ -20,6 +20,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
@@ -114,17 +115,27 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		List<DigitalDocument> documents = getDigitalDocuments(entity);
 		ArrayList<DigitalDocumentDTO> results = new ArrayList<DigitalDocumentDTO>(documents.size());
 		for (DigitalDocument digitalDocument : documents) {
-			// TODO: dodat urnnbn, identifikatory
 			UrnNbn urn = urnNbnOfDocument(digitalDocument);
 			Registrar registrar = registrarOfDocument(digitalDocument);
 			Archiver archiver = archiverOfDocument(digitalDocument);
 			ArrayList<DigitalInstanceDTO> instances = instancesOfDocument(digitalDocument);
-			DigitalDocumentDTO transformed = DtoTransformer.transformDigitalDocument(digitalDocument, urn, registrar, archiver, instances);
+			List<RegistrarScopeIdentifier> registrarScopeIds = getRegistrarScopeIds(digitalDocument);
+			DigitalDocumentDTO transformed = DtoTransformer.transformDigitalDocument(digitalDocument, urn, registrar, archiver, instances,
+					registrarScopeIds);
 			if (transformed != null) {
 				results.add(transformed);
 			}
 		}
 		return results;
+	}
+
+	private List<RegistrarScopeIdentifier> getRegistrarScopeIds(DigitalDocument digitalDocument) {
+		try {
+			return readService.registrarScopeIdentifiers(digitalDocument.getId());
+		} catch (Throwable e) {
+			log("error getting registrar-scope identifiers of dd " + digitalDocument.getId());
+			return Collections.<RegistrarScopeIdentifier> emptyList();
+		}
 	}
 
 	private List<DigitalDocument> getDigitalDocuments(IntelectualEntity entity) {

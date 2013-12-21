@@ -404,5 +404,9 @@ public interface ConstantsImpl extends Constants {
 	String activityDeactivatedOnly();
 
 	String urnNbnDeactivationDialogTitle();
+	
+	String predecessors();
+
+	String successors();
 
 }
