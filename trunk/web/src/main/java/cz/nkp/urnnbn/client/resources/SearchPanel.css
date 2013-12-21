@@ -34,3 +34,7 @@
 	margin-left: 150px;
 	margin-top: 80px;
 }
+
+.searchTreeItem {
+	white-space: pre-wrap;
+}

@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 import cz.nkp.urnnbn.client.forms.intEntities.SourceDocumentForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.PublicationDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
@@ -27,7 +28,8 @@ import cz.nkp.urnnbn.shared.dto.ie.ThesisDTO;
 
 public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
-	ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+	final SearchPanelCss css = SearchPanelResources.css();
 	final UserDTO user;
 	private final PrimaryOriginatorDTO primaryOriginator;
 	private final PublicationDTO publication;
@@ -69,8 +71,9 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
 
 	public TreeItem getItem() {
 		HorizontalPanel panel = new HorizontalPanel();
-		String rootText = getAggregateTitle() + "<span style=\"color:grey\"> (" + entityType() + ")</span>";
-		panel.add(new HTML(rootText));
+		HTML rootItem = new HTML(getAggregateTitle() + "<span style=\"color:grey\"> (" + entityType() + ")</span>");
+		rootItem.getElement().addClassName(css.searchTreeItem());
+		panel.add(rootItem);
 		if (user.isSuperAdmin()) {
 			panel.add(new HTML("&nbsp&nbsp"));
 			panel.add(editEntityButton());

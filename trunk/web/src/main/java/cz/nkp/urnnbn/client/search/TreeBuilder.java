@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.client.search;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,7 +20,8 @@ public class TreeBuilder {
 
 	void addLabeledRowIfValueNotNull(String label, Object value, TreeItem root, String spanClass) {
 		if (value != null) {
-			String row = "<span class=\"" + spanClass + "\">" + label + ": </span>" + value;
+			HTML row = new HTML("<span class=\"" + spanClass + "\">" + label + ": </span>" + value);
+			row.getElement().addClassName(css.searchTreeItem());
 			root.addItem(row);
 		}
 	}
@@ -28,6 +30,7 @@ public class TreeBuilder {
 		if (value != null) {
 			HorizontalPanel panel = new HorizontalPanel();
 			HTML labelHtml = new HTML("<span><span class=\"" + spanClass + "\">" + label + ": </span>" + value.toString() + "&nbsp;</span>");
+			labelHtml.getElement().addClassName(css.searchTreeItem());
 			panel.add(labelHtml);
 			panel.add(button);
 			button.addStyleName(buttonStyle);
@@ -40,7 +43,7 @@ public class TreeBuilder {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				com.google.gwt.user.client.Window.open(url, "_blank", "");
+				Window.open(url, "_blank", "");
 			}
 		});
 		result.addStyleName(css.treeButton());
