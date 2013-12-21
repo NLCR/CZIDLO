@@ -19,6 +19,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.server.dtoTransformation.entities.EntityDtoTransformer;
@@ -42,11 +43,10 @@ public abstract class DtoTransformer {
 	}
 
 	public static DigitalDocumentDTO transformDigitalDocument(DigitalDocument doc, UrnNbn urn, Registrar registrar, Archiver archiver,
-			ArrayList<DigitalInstanceDTO> digitalInstances) {
-		return new DigialDocumentDtoTransformer(doc, urn, registrar, archiver, digitalInstances).transform();
+			ArrayList<DigitalInstanceDTO> digitalInstances, List<RegistrarScopeIdentifier> registrarScopeIds) {
+		return new DigialDocumentDtoTransformer(doc, urn, registrar, archiver, digitalInstances, registrarScopeIds).transform();
 	}
-	
-	
+
 	public Long datetTimeToMillisOrNull(DateTime dateTime) {
 		if (dateTime != null) {
 			return dateTime.getMillis();
@@ -54,11 +54,11 @@ public abstract class DtoTransformer {
 			return null;
 		}
 	}
-	
-	public String dateToStringOrNull(Date date){
-		if(date == null){
+
+	public String dateToStringOrNull(Date date) {
+		if (date == null) {
 			return null;
-		}else{
+		} else {
 			return dateTimeToStringOrNull(new DateTime(date.getTime()));
 		}
 	}

@@ -1,16 +1,19 @@
 package cz.nkp.urnnbn.server.dtoTransformation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
+import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
@@ -21,14 +24,16 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 	private final Registrar registrar;
 	private final Archiver archiver;
 	private final ArrayList<DigitalInstanceDTO> digitalInstances;
+	private final List<RegistrarScopeIdentifier> registrarScopeIds;
 
 	public DigialDocumentDtoTransformer(DigitalDocument doc, UrnNbn urn, Registrar registrar, Archiver archiver,
-			ArrayList<DigitalInstanceDTO> digitalInstances) {
+			ArrayList<DigitalInstanceDTO> digitalInstances, List<RegistrarScopeIdentifier> registrarScopeIds) {
 		this.doc = doc;
 		this.urn = urn;
 		this.registrar = registrar;
 		this.archiver = archiver;
 		this.digitalInstances = digitalInstances;
+		this.registrarScopeIds = registrarScopeIds;
 	}
 
 	public DigitalDocumentDTO transform() {
@@ -42,12 +47,23 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
 			result.setArchiver(null);
 		}
 		result.setInstances(digitalInstances);
-		result.setRegistrarScopeIdList(null);// TODO
+		result.setRegistrarScopeIdList(transformRegistrarScopeIds(registrarScopeIds));
 		result.setCreated(dateTimeToStringOrNull(doc.getCreated()));
 		result.setModified(dateTimeToStringOrNull(doc.getModified()));
 		result.setContractNumber(doc.getContractNumber());
 		result.setFinanced(doc.getFinancedFrom());
 		result.setTechnicalMetadata(technicalMetadataFromDoc());
+		return result;
+	}
+
+	private ArrayList<RegistrarScopeIdDTO> transformRegistrarScopeIds(List<RegistrarScopeIdentifier> original) {
+		ArrayList<RegistrarScopeIdDTO> result = new ArrayList<RegistrarScopeIdDTO>(original.size());
+		for (RegistrarScopeIdentifier id : original) {
+			RegistrarScopeIdDTO idTransformed = new RegistrarScopeIdDTO();
+			idTransformed.setType(id.getType().toString());
+			idTransformed.setValue(id.getValue());
+			result.add(idTransformed);
+		}
 		return result;
 	}
 
