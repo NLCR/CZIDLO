@@ -32,9 +32,9 @@ public class ThesisBuilder extends EntityTreeItemBuilder {
 	String entityType() {
 		return constants.thesis();
 	}
-	
+
 	@Override
-	String getAggregateTitle(){
+	String getAggregateTitle() {
 		return dto.getTitle();
 	}
 
