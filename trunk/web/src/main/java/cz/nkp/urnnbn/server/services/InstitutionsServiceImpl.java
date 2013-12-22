@@ -30,8 +30,7 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	public ArchiverDTO saveArchiver(ArchiverDTO archiver) throws ServerException {
 		try {
 			checkNotReadOnlyMode();
-			Archiver created = createService.insertNewArchiver(new DtoToArchiverTransformer(archiver).transform(),
-					getUserLogin());
+			Archiver created = createService.insertNewArchiver(new DtoToArchiverTransformer(archiver).transform(), getUserLogin());
 			return DtoTransformer.transformArchiver(created);
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
@@ -43,8 +42,7 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 	public RegistrarDTO saveRegistrar(RegistrarDTO registrar) throws ServerException {
 		try {
 			checkNotReadOnlyMode();
-			Registrar created = createService.insertNewRegistrar(new DtoToRegistrarTransformer(registrar).transform(),
-					getUserLogin());
+			Registrar created = createService.insertNewRegistrar(new DtoToRegistrarTransformer(registrar).transform(), getUserLogin());
 			return DtoTransformer.transformRegistrar(created);
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
@@ -57,8 +55,7 @@ public class InstitutionsServiceImpl extends AbstractService implements Institut
 		try {
 			checkNotReadOnlyMode();
 			DigitalLibrary transformed = new DtoToDigitalLibraryTransformer(dto).transform();
-			DigitalLibrary created = createService.insertNewDigitalLibrary(transformed, dto.getRegistrarId(),
-					getUserLogin());
+			DigitalLibrary created = createService.insertNewDigitalLibrary(transformed, dto.getRegistrarId(), getUserLogin());
 			return DtoTransformer.transformDigitalLibrary(created);
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
