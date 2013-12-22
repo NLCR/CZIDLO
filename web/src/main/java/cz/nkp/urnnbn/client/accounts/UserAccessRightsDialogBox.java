@@ -12,7 +12,9 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.AbstractDialogBox;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
@@ -85,10 +87,19 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
 	private Panel contentPanel() {
 		VerticalPanel result = new VerticalPanel();
-		result.add(registrarsGrid());
+		result.add(registrarsPanel());
 		result.add(buttons());
 		result.add(errorLabel);
 		return result;
+	}
+
+	private Widget registrarsPanel() {
+		ScrollPanel panel = new ScrollPanel();
+		panel.setAlwaysShowScrollBars(false);
+		String width = "" + getOffsetWidth() + "px";
+		panel.setSize(width, "200px");
+		panel.add(registrarsGrid());
+		return panel;
 	}
 
 	private Panel buttons() {
