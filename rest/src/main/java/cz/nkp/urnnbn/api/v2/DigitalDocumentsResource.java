@@ -79,7 +79,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
                 String login = req.getRemoteUser();
                 Document apiV2Request = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV2().loadDocument(content);
                 Document apiV3Request = ApiModuleConfiguration.instanceOf().getDigDocRegistrationV2ToV3DataTransformer().transform(apiV2Request);
-                String apiV3Response = registerDigitalDocumentByApiV3(apiV3Request, login);
+                String apiV3Response = registerDigitalDocumentByApiV3(apiV3Request, login, registrar.getCode());
                 XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getRegisterDigDocResponseV3ToV2Transformer();
                 return transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
             } catch (ValidityException ex) {
