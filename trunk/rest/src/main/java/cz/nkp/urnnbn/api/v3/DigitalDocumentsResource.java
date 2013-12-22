@@ -58,9 +58,9 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @Produces("application/xml")
     public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
-            checkServerNotReadOnly();
-            String login = req.getRemoteUser();
-            return registerDigitalDocumentByApiV3(content, login);
+        	checkServerNotReadOnly();
+        	String login = req.getRemoteUser();
+            return registerDigitalDocumentByApiV3(content, login, registrar.getCode());
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);
         } catch (ParsingException ex) {

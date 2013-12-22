@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.api.v3.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalDocumentException;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -53,127 +54,132 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public abstract class AbstractDigitalDocumentsResource extends Resource {
 
-    protected final Registrar registrar;
+	protected final Registrar registrar;
 
-    public AbstractDigitalDocumentsResource(Registrar registrar) {
-        this.registrar = registrar;
-    }
+	public AbstractDigitalDocumentsResource(Registrar registrar) {
+		this.registrar = registrar;
+	}
 
-    public abstract String getDigitalDocumentsXmlRecord();
+	public abstract String getDigitalDocumentsXmlRecord();
 
-    public final String getDigitalDocumentsApiV3XmlRecord() {
-        int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
-        DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
+	public final String getDigitalDocumentsApiV3XmlRecord() {
+		int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
+		DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
+		return builder.buildDocumentWithResponseHeader().toXML();
+	}
 
-    protected String registerDigitalDocumentByApiV3(String content, String login) throws ValidityException, IOException, ParsingException {
-        Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV3().loadDocument(content);
-        return registerDigitalDocumentByApiV3(doc, login);
-    }
+	protected String registerDigitalDocumentByApiV3(String content, String login, RegistrarCode registrarCode) throws ValidityException,
+			IOException, ParsingException {
+		Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV3().loadDocument(content);
+		return registerDigitalDocumentByApiV3(doc, login, registrarCode);
+	}
 
-    protected String registerDigitalDocumentByApiV3(Document doc, String login) {
-        try {
-            DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
-            UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
-            UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
-            UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
-            return builder.buildDocumentWithResponseHeader().toXML();
-        } catch (IncorrectPredecessorStatus ex) {
-            throw new IncorrectPredecessorException(ex.getPredecessor());
-        } catch (RegistrationModeNotAllowedException ex) {
-            throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
-        } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
-        } catch (UnknownArchiverException ex) {
-            throw new InvalidArchiverIdException(ex.getMessage());
-        } catch (RegistarScopeIdentifierCollisionException ex) {
-            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
-        } catch (UrnNotFromRegistrarException ex) {
-            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
-        } catch (UrnUsedException ex) {
-            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
-        } catch (UnknownRegistrarException ex) {
-            logger.log(Level.SEVERE, "unexpected application state", ex);
-            throw new InternalException(ex);
-        } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
-        }
-    }
+	protected String registerDigitalDocumentByApiV3(Document doc, String login, RegistrarCode registrarCode) {
+		try {
+			DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
+			UrnNbn urnInData = registrationData.getUrn();
+			if (urnInData != null && urnInData.getRegistrarCode() != registrarCode) {
+				throw new InvalidUrnException(urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString() + "'");
+			}
+			UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
+			UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
+			UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
+			return builder.buildDocumentWithResponseHeader().toXML();
+		} catch (IncorrectPredecessorStatus ex) {
+			throw new IncorrectPredecessorException(ex.getPredecessor());
+		} catch (RegistrationModeNotAllowedException ex) {
+			throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
+		} catch (UnknownUserException ex) {
+			throw new NotAuthorizedException(ex.getMessage());
+		} catch (UnknownArchiverException ex) {
+			throw new InvalidArchiverIdException(ex.getMessage());
+		} catch (RegistarScopeIdentifierCollisionException ex) {
+			throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
+		} catch (UrnNotFromRegistrarException ex) {
+			throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
+		} catch (UrnUsedException ex) {
+			throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
+		} catch (UnknownRegistrarException ex) {
+			logger.log(Level.SEVERE, "unexpected application state", ex);
+			throw new InternalException(ex);
+		} catch (AccessException ex) {
+			throw new NotAuthorizedException(ex.getMessage());
+		}
+	}
 
-    private DigDocRegistrationData digDocRegistrationDataFromDoc(Document doc) {
-        RecordImportUnmarshaller unmarshaller = new RecordImportUnmarshaller(doc);
-        DigDocRegistrationData result = new DigDocRegistrationData();
-        //intelectual entity
-        result.setEntity(unmarshaller.getIntelectualEntity());
-        result.setIntEntIds(unmarshaller.getIntEntIdentifiers());
-        result.setOriginator(unmarshaller.getOriginator());
-        result.setPublication(unmarshaller.getPublication());
-        result.setOriginator(unmarshaller.getOriginator());
-        result.setSourceDoc(unmarshaller.getSourceDocument());
-        //registrar        
-        result.setRegistrarCode(registrar.getCode());
-        //archiver
-        Long archiverId = unmarshaller.getArchiverId() == null
-                ? registrar.getId() : unmarshaller.getArchiverId();
-        //digital document
-        DigitalDocument digDoc = unmarshaller.getDigitalDocument();
-        digDoc.setRegistrarId(registrar.getId());
-        digDoc.setArchiverId(archiverId);
-        result.setDigitalDocument(digDoc);
-        result.setDigDocIdentifiers(unmarshaller.getRegistrarScopeIdentifiers());
-        //urn:nbn
-        result.setUrn(unmarshaller.getUrnNbn());
-        //predecessors
-        result.setPredecessors(appendStatuses(unmarshaller.getPredecessors()));
-        return result;
-    }
+	private DigDocRegistrationData digDocRegistrationDataFromDoc(Document doc) {
+		RecordImportUnmarshaller unmarshaller = new RecordImportUnmarshaller(doc);
+		DigDocRegistrationData result = new DigDocRegistrationData();
+		// intelectual entity
+		result.setEntity(unmarshaller.getIntelectualEntity());
+		result.setIntEntIds(unmarshaller.getIntEntIdentifiers());
+		result.setOriginator(unmarshaller.getOriginator());
+		result.setPublication(unmarshaller.getPublication());
+		result.setOriginator(unmarshaller.getOriginator());
+		result.setSourceDoc(unmarshaller.getSourceDocument());
+		// registrar
+		result.setRegistrarCode(registrar.getCode());
+		// archiver
+		Long archiverId = unmarshaller.getArchiverId() == null ? registrar.getId() : unmarshaller.getArchiverId();
+		// digital document
+		DigitalDocument digDoc = unmarshaller.getDigitalDocument();
+		digDoc.setRegistrarId(registrar.getId());
+		digDoc.setArchiverId(archiverId);
+		result.setDigitalDocument(digDoc);
+		result.setDigDocIdentifiers(unmarshaller.getRegistrarScopeIdentifiers());
+		// urn:nbn
+		result.setUrn(unmarshaller.getUrnNbn());
+		// predecessors
+		result.setPredecessors(appendStatuses(unmarshaller.getPredecessors()));
+		return result;
+	}
 
-    protected UrnNbnWithStatus urnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
-        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
-    }
+	protected UrnNbnWithStatus urnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
+		return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(),
+				withPredecessorsAndSuccessors);
+	}
 
-    public abstract AbstractDigitalDocumentResource getDigitalDocumentResource(String idTypeStr, String idValue);
+	public abstract AbstractDigitalDocumentResource getDigitalDocumentResource(String idTypeStr, String idValue);
 
-    protected final DigitalDocument getDigitalDocument(String idTypeStr, String idValue) {
-        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
-        RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
-        id.setRegistrarId(registrar.getId());
-        id.setType(type);
-        id.setValue(idValue);
-        DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
-        if (digDoc == null) {
-            throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
-        } else {
-            return digDoc;
-        }
-    }
+	protected final DigitalDocument getDigitalDocument(String idTypeStr, String idValue) {
+		RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
+		RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
+		id.setRegistrarId(registrar.getId());
+		id.setType(type);
+		id.setValue(idValue);
+		DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
+		if (digDoc == null) {
+			throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
+		} else {
+			return digDoc;
+		}
+	}
 
-    public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {
-        List<UrnNbnWithStatus> predecessorList = new ArrayList<UrnNbnWithStatus>(predecessorParams.size());
-        for (String predecessor : predecessorParams) {
-            UrnNbn urnNbn = UrnNbn.valueOf(predecessor);
-            UrnNbnWithStatus withStatus = urnWithStatus(urnNbn, false);
-            UrnNbnWithStatus.Status status = withStatus.getStatus();
-            if (status == UrnNbnWithStatus.Status.RESERVED || status == UrnNbnWithStatus.Status.FREE) {
-                throw new IncorrectPredecessorException(withStatus);
-            }
-            predecessorList.add(withStatus);
-        }
-        return predecessorList;
-    }
+	public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {
+		List<UrnNbnWithStatus> predecessorList = new ArrayList<UrnNbnWithStatus>(predecessorParams.size());
+		for (String predecessor : predecessorParams) {
+			UrnNbn urnNbn = UrnNbn.valueOf(predecessor);
+			UrnNbnWithStatus withStatus = urnWithStatus(urnNbn, false);
+			UrnNbnWithStatus.Status status = withStatus.getStatus();
+			if (status == UrnNbnWithStatus.Status.RESERVED || status == UrnNbnWithStatus.Status.FREE) {
+				throw new IncorrectPredecessorException(withStatus);
+			}
+			predecessorList.add(withStatus);
+		}
+		return predecessorList;
+	}
 
-    private List<UrnNbnWithStatus> appendStatuses(List<UrnNbnWithStatus> predecessors) {
-        List<UrnNbnWithStatus> result = new ArrayList<UrnNbnWithStatus>(predecessors.size());
-        for (UrnNbnWithStatus urn : predecessors) {
-            UrnNbnWithStatus withCorrectStatus = urnWithStatus(urn.getUrn(), false);
-            result.add(new UrnNbnWithStatus(withCorrectStatus.getUrn(), withCorrectStatus.getStatus(), urn.getNote()));
-        }
-        return result;
-    }
+	private List<UrnNbnWithStatus> appendStatuses(List<UrnNbnWithStatus> predecessors) {
+		List<UrnNbnWithStatus> result = new ArrayList<UrnNbnWithStatus>(predecessors.size());
+		for (UrnNbnWithStatus urn : predecessors) {
+			UrnNbnWithStatus withCorrectStatus = urnWithStatus(urn.getUrn(), false);
+			result.add(new UrnNbnWithStatus(withCorrectStatus.getUrn(), withCorrectStatus.getStatus(), urn.getNote()));
+		}
+		return result;
+	}
 }
