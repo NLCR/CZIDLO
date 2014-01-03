@@ -405,19 +405,19 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public List<User> users(String login, boolean includePasswords) throws UnknownUserException, NotAdminException {
+    public List<User> users(String login) throws UnknownUserException, NotAdminException {
         try {
             authorization.checkAdminRights(login);
-            return factory.userDao().getAllUsers(includePasswords);
+            return factory.userDao().getAllUsers();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public User userByLogin(String login, boolean includePassword) throws UnknownUserException {
+    public User userByLogin(String login) throws UnknownUserException {
         try {
-            return factory.userDao().getUserByLogin(login, includePassword);
+            return factory.userDao().getUserByLogin(login);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {

@@ -23,43 +23,42 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class XsdProvider {
 
-    private final String importXsd;
-    private final String digitalInstanceXsd;
+	private final String digDocRegistrationDataXsd;
+	private final String digInstImportDataXsd;
 
-    public XsdProvider(String importXsdUrl, String digitalInstanceXsdUrl) throws IOException {
-        importXsd = loadXsdFromUrl(importXsdUrl);
-        digitalInstanceXsd = loadXsdFromUrl(digitalInstanceXsdUrl);
-    }
+	public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
+		digDocRegistrationDataXsd = loadXsdFromUrl(digDocRegistrationDataXsdUrl);
+		digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
+	}
 
-    private String loadXsdFromUrl(String xsdUrl) throws IOException {
-        URL website = new URL(xsdUrl);
-        URLConnection connection = website.openConnection();
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            return response.toString();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-    }
+	private String loadXsdFromUrl(URL xsd) throws IOException {
+		URLConnection connection = xsd.openConnection();
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			StringBuilder response = new StringBuilder();
+			String inputLine;
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			return response.toString();
+		} finally {
+			if (in != null) {
+				in.close();
+			}
+		}
+	}
 
-    public String getImportXsd() {
-        return importXsd;
-    }
+	public String getDigitalDocumentRegistrationDataXsd() {
+		return digDocRegistrationDataXsd;
+	}
 
-    public String getDigitalInstanceXsd() {
-        return digitalInstanceXsd;
-    }
+	public String getDigitalInstanceImportDataXsd() {
+		return digInstImportDataXsd;
+	}
 }

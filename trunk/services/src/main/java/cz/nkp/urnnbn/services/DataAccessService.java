@@ -112,7 +112,7 @@ public interface DataAccessService extends BusinessService {
 	 * @throws UnknownUserException
 	 * @throws NotAdminException
 	 */
-	public List<User> users(String login, boolean includePasswords) throws UnknownUserException, NotAdminException;
+	public List<User> users(String login) throws UnknownUserException, NotAdminException;
 
 	/**
 	 * 
@@ -122,7 +122,7 @@ public interface DataAccessService extends BusinessService {
 	 * @return
 	 * @throws UnknownUserException
 	 */
-	public User userByLogin(String login, boolean includePassword) throws UnknownUserException;
+	public User userByLogin(String login) throws UnknownUserException;
 
 	/**
 	 * 

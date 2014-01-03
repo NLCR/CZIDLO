@@ -170,7 +170,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             authorization.checkAdminRights(login);
             factory.userDao().insertAdministrationRight(registrarId, userId);
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
-            User user = factory.userDao().getUserById(userId, false);
+            User user = factory.userDao().getUserById(userId);
             AdminLogger.getLogger().info("user '" + login + "' added access right for registrar '" + registrar.getCode() + "' to user '" + user.getLogin() + "'" );
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

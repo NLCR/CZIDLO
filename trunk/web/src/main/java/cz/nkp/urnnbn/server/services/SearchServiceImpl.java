@@ -40,6 +40,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	@Override
 	public ArrayList<IntelectualEntityDTO> getSearchResults(String searchRequest) throws ServerException {
 		try {
+			// TODO: max req. size nejspis pricina https://code.google.com/p/czidlo/issues/detail?id=4
 			if (searchRequest == null || searchRequest.isEmpty() || searchRequest.length() > MAX_REQUEST_SIZE) {
 				// System.err.println("found 0 records (empty or too long search request)");
 				return EMPTY_IE_LIST;

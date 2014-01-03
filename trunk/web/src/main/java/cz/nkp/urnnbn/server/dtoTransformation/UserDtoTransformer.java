@@ -20,7 +20,6 @@ public class UserDtoTransformer extends DtoTransformer {
 		result.setCreated(dateTimeToStringOrNull(original.getCreated()));
 		result.setModified(dateTimeToStringOrNull(original.getModified()));
 		result.setEmail(original.getEmail());
-		result.setPassword(original.getPassword());
 		if (original.isAdmin()) {
 			result.setRole(ROLE.SUPER_ADMIN);
 		} else {

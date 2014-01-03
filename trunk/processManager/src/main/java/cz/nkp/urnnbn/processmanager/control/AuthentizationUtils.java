@@ -28,7 +28,7 @@ public class AuthentizationUtils {
 
     public static boolean isAdmin(String userLogin) {
         try {
-            User user = Services.instanceOf().dataAccessService().userByLogin(userLogin, false);
+            User user = Services.instanceOf().dataAccessService().userByLogin(userLogin);
             return user.isAdmin();
         } catch (UnknownUserException ex) {
             throw new RuntimeException(ex);

@@ -70,8 +70,8 @@ public class App {
         } catch (IOException ex) {
             Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
-        adapter.setMetadataToImportTemplate(importStylesheet.toXML());
-        adapter.setMetadataToDigitalInstanceTemplate(digitalInstanceStylesheet.toXML());
+        adapter.setMetadataToDigDocRegistrationTemplate(importStylesheet.toXML());
+        adapter.setMetadataToDigInstImportTemplate(digitalInstanceStylesheet.toXML());
 
         adapter.run();
 
