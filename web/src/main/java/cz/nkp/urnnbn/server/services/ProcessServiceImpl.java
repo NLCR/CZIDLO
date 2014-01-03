@@ -31,6 +31,7 @@ import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import cz.nkp.urnnbn.webcommon.security.MemoryPasswordsStorage;
 
 public class ProcessServiceImpl extends AbstractService implements ProcessService {
 
@@ -73,7 +74,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
 			result = new String[9];
 			result[0] = getUserLogin();
-			result[1] = getActiveUser().getPassword();
+			result[1] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
 			result[2] = registrationMode;
 			result[3] = registrarCode;
 			result[4] = oaiBaseUrl;

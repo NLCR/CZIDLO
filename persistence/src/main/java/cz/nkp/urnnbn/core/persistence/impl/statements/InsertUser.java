@@ -32,10 +32,11 @@ public class InsertUser implements StatementWrapper {
                 + "," + UserDAO.ATTR_CREATED
                 + "," + UserDAO.ATTR_UPDATED
                 + "," + UserDAO.ATTR_LOGIN
-                + "," + UserDAO.ATTR_PASS
+                + "," + UserDAO.ATTR_PASS_SALT
+                + "," + UserDAO.ATTR_PASS_HASH
                 + "," + UserDAO.ATTR_IS_ADMIN
                 + "," + UserDAO.ATTR_EMAIL
-                + ") values(?,?,?,?,?,?,?)";
+                + ") values(?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -46,9 +47,10 @@ public class InsertUser implements StatementWrapper {
             st.setTimestamp(2, now);
             st.setTimestamp(3, now);
             st.setString(4, user.getLogin());
-            st.setString(5, user.getPassword());
-            st.setBoolean(6, user.isAdmin());
-            st.setString(7, user.getEmail());
+            st.setString(5, user.getPasswordSalt());
+            st.setString(6, user.getPasswordHash());
+            st.setBoolean(7, user.isAdmin());
+            st.setString(8, user.getEmail());
         } catch (SQLException e) {
             //chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

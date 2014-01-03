@@ -94,7 +94,7 @@ public class AuthorizationModule {
 
     private User userByLogin(String login) throws UnknownUserException {
         try {
-            return factory.userDao().getUserByLogin(login, true);
+            return factory.userDao().getUserByLogin(login);
         } catch (DatabaseException ex) {
             logger.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);

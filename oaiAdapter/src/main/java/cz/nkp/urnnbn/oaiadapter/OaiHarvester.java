@@ -174,13 +174,13 @@ public class OaiHarvester {
         return !identifiersStack.isEmpty() || next;
     }
 
-    public Record getNext() throws OaiHarvesterException {
+    public OriginalRecordFromOai getNext() throws OaiHarvesterException {
         String identifier = getNextId();
         if (identifier == null) {
             return null;
         } else {
             Document document = getRecordDocument(identifier);
-            return new Record(identifier, document);
+            return new OriginalRecordFromOai(identifier, document);
         }
     }
 

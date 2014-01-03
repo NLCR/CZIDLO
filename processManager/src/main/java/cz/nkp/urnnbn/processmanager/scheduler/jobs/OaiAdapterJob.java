@@ -16,6 +16,13 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
+
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
 import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
@@ -23,10 +30,6 @@ import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
-import java.io.IOException;
-import java.io.OutputStream;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 /**
  *
@@ -75,24 +78,24 @@ public class OaiAdapterJob extends AbstractJob {
             adapter.setMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
             logger.info("OAI metadata prefix: " + adapter.getMetadataPrefix());
             adapter.setSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
-            logger.info("OAI set: " + adapter.getSetSpec() == null ? "NOT DEFINED" : adapter.getSetSpec());
+            logger.info("OAI set: " + (adapter.getSetSpec() == null ? "NOT DEFINED" : adapter.getSetSpec()));
 
             //oai response -> dd registration XSLT
             String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);
             logger.info("XSL template to transform oai response to DD registration data: " + ddRegistrationXslt);
-            adapter.setMetadataToImportTemplate(XmlTools.loadXmlFromFile(ddRegistrationXslt));
+            adapter.setMetadataToDigDocRegistrationTemplate(XmlTools.loadXmlFromFile(ddRegistrationXslt));
 
             //oai response -> di import XSLT
             String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_XSL_FILE);
             logger.info("XSL template to transform oai response to DI import data: " + diImportXslt);
-            adapter.setMetadataToDigitalInstanceTemplate(XmlTools.loadXmlFromFile(diImportXslt));
+            adapter.setMetadataToDigInstImportTemplate(XmlTools.loadXmlFromFile(diImportXslt));
 
             //XSDs
             String ddRegistrationXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DD_XSD_URL);
             logger.info("XSD for validation of DD registration data: " + ddRegistrationXsdUrl);
             String diImportXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DI_XSD_URL);
             logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
-            adapter.setXsdProvider(new XsdProvider(ddRegistrationXsdUrl, diImportXsdUrl));
+            adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
 
             //report
             reportStream = fileToOutputStream(createWriteableProcessFile(REPORT_FILE_NAME));

@@ -43,18 +43,20 @@
     
     <modules>
         <module>core</module>
-        <module>gdrive</module>
+        <module>gdrive</module> 
         <module>oaiAdapter</module>
         <module>OaiPmhProvider</module> 
         <module>persistence</module>
         <module>processManager</module>
-        <module>rest</module> 
-        <module>services</module>
-        <module>web-common</module>
-        <module>xml</module>
-        <module>web</module> 
-        <module>processDataServer</module>  
-<!--        <module>legacyRecordsImport</module> -->
+        <module>rest</module>  
+        <module>services</module> 
+        <module>web-common</module> 
+        <module>xml</module> 
+        <module>web</module>  
+        <module>processDataServer</module>   
+<!--        <module>legacyRecordsImport</module>  -->
+        <module>databaseUpgrader</module>  
+
     </modules>
 
 </project>

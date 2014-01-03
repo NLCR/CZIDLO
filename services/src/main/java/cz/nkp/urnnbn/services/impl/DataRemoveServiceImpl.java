@@ -156,7 +156,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 	public void removeUser(long userId, String login) throws UnknownUserException, NotAdminException, UnknownUserException {
 		try {
 			authorization.checkAdminRights(login);
-			User user = factory.userDao().getUserById(userId, false);
+			User user = factory.userDao().getUserById(userId);
 			factory.userDao().deleteUser(userId);
 			AdminLogger.getLogger().info("user '" + login + "' deleted " + user + "'");
 		} catch (DatabaseException ex) {
@@ -171,7 +171,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 			UnknownRegistrarException {
 		try {
 			authorization.checkAdminRights(login);
-			User user = factory.userDao().getUserById(userId, false);
+			User user = factory.userDao().getUserById(userId);
 			Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
 			factory.userDao().deleteAdministrationRight(registrarId, userId);
 			AdminLogger.getLogger().info(

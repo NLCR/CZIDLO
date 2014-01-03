@@ -8,6 +8,8 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.utils.CryptoUtils;
+
 import java.util.List;
 
 /**
@@ -84,18 +86,19 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 	public void testGetUserById() throws Exception {
 		User inserted = builder.userWithoutId();
 		Long insertedId = userDao.insertUser(inserted);
-		User fetched = userDao.getUserById(insertedId, true);
+		User fetched = userDao.getUserById(insertedId);
 		assertNotNull(fetched);
 		assertNotNull(fetched.getId());
 		assertNotNull(fetched.getCreated());
 		assertNotNull(fetched.getLogin());
-		assertNotNull(fetched.getPassword());
+		assertNotNull(fetched.getPasswordSalt());
+		assertNotNull(fetched.getPasswordHash());
 		assertEquals(inserted, fetched);
 	}
 
 	public void testGetUserById_illegalId() throws Exception {
 		try {
-			userDao.getUserById(ILLEGAL_ID, true);
+			userDao.getUserById(ILLEGAL_ID);
 			fail();
 		} catch (RecordNotFoundException e) {
 			// ok
@@ -108,13 +111,29 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 	public void testGetUserByLogin() throws Exception {
 		User inserted = builder.userWithoutId();
 		userDao.insertUser(inserted);
-		User fetched = userDao.getUserByLogin(inserted.getLogin(), true);
+		User fetched = userDao.getUserByLogin(inserted.getLogin());
 		assertEquals(inserted, fetched);
+		assertEquals(inserted.getEmail(), fetched.getEmail());
+		assertEquals(inserted.isAdmin(), fetched.isAdmin());
+		assertEquals(inserted.getLogin(), fetched.getLogin());
+		assertEquals(inserted.getPasswordSalt(), fetched.getPasswordSalt());
+		assertEquals(inserted.getPasswordHash(), fetched.getPasswordHash());
+	}
+
+	private void assertDeepEquals(User first, User second) {
+		assertEquals(first, second);
+		assertEquals(first.getCreated(), second.getCreated());
+		assertEquals(first.getModified(), second.getModified());
+		assertEquals(first.getEmail(), second.getEmail());
+		assertEquals(first.isAdmin(), second.isAdmin());
+		assertEquals(first.getLogin(), second.getLogin());
+		assertEquals(first.getPasswordSalt(), second.getPasswordSalt());
+		assertEquals(first.getPasswordHash(), second.getPasswordHash());
 	}
 
 	public void testGetUserByLogin_unknownLogin() throws Exception {
 		try {
-			userDao.getUserByLogin("someLoginThatIsNotInDatabase", true);
+			userDao.getUserByLogin("someLoginThatIsNotInDatabase");
 			fail();
 		} catch (RecordNotFoundException e) {
 			// ok
@@ -173,15 +192,20 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 		updated.setId(inserted.getId());
 		updated.setAdmin(!inserted.isAdmin());
 		updated.setEmail(inserted.getEmail() + "-new");
-		updated.setPassword(inserted.getPassword() + "-new");
+		String newPassword = "new-password";
+		String newSalt = CryptoUtils.generateSalt();
+		updated.setPasswordSalt(newSalt);
+		updated.setPasswordHash(CryptoUtils.createSha256Hash(newPassword, newSalt));
+
 		updated.setLogin(inserted.getLogin() + "-new");
 		userDao.updateUser(updated);
 		// fetch
-		User fetched = userDao.getUserById(updated.getId(), true);
+		User fetched = userDao.getUserById(updated.getId());
 		assertEquals(updated.getEmail(), fetched.getEmail());
 		assertEquals(updated.isAdmin(), fetched.isAdmin());
 		assertEquals(inserted.getLogin(), fetched.getLogin());
-		assertEquals(inserted.getPassword(), fetched.getPassword());
+		assertEquals(inserted.getPasswordSalt(), fetched.getPasswordSalt());
+		assertEquals(inserted.getPasswordHash(), fetched.getPasswordHash());
 	}
 
 	/**
@@ -192,7 +216,7 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 		Long id = userDao.insertUser(user);
 		userDao.deleteUser(id);
 		try {
-			userDao.getUserById(id, false);
+			userDao.getUserById(id);
 			fail();
 		} catch (RecordNotFoundException e) {
 			// OK
