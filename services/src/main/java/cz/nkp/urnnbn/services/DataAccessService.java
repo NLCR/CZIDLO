@@ -66,7 +66,11 @@ public interface DataAccessService extends BusinessService {
 
 	public List<IntelectualEntity> entitiesByIdValue(String value);
 
-	public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
+	//public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
+
+	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit);
+
+	public List<IntelectualEntity> entitiesByIdValues(List<Long> ids);
 
 	public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId);
 

@@ -33,21 +33,21 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private static final long serialVersionUID = 1750995108864579331L;
 	private static final Logger logger = Logger.getLogger(SearchServiceImpl.class.getName());
-	private static final int MAX_REQUEST_SIZE = 200;
+	private static final int MAX_REQUEST_SIZE = 100;
 	private static ArrayList<IntelectualEntityDTO> EMPTY_IE_LIST = new ArrayList<IntelectualEntityDTO>(0);
+	private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
 	private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
+	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 500;
 
 	@Override
-	public ArrayList<IntelectualEntityDTO> getSearchResults(String searchRequest) throws ServerException {
+	public ArrayList<Long> getIntEntIdentifiersBySearch(String searchRequest) throws ServerException {
 		try {
-			// TODO: max req. size nejspis pricina https://code.google.com/p/czidlo/issues/detail?id=4
-			if (searchRequest == null || searchRequest.isEmpty() || searchRequest.length() > MAX_REQUEST_SIZE) {
-				// System.err.println("found 0 records (empty or too long search request)");
-				return EMPTY_IE_LIST;
-			} else if (searchRequest.toLowerCase().startsWith("urn:nbn:cz:")) {
-				return new ArrayList<IntelectualEntityDTO>(searchByUrnNbn(searchRequest));
+			if (searchRequest == null || searchRequest.isEmpty()) {
+				return EMPTY_LONG_LIST;
+			} else if (searchRequest.length() > MAX_REQUEST_SIZE) {
+				return searchByIdentifiers(searchRequest.substring(0, MAX_REQUEST_SIZE));
 			} else {
-				return new ArrayList<IntelectualEntityDTO>(searchByIdentifiers(searchRequest));
+				return searchByIdentifiers(searchRequest);
 			}
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
@@ -55,23 +55,42 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		}
 	}
 
-	private Set<IntelectualEntityDTO> searchByUrnNbn(String request) {
-		UrnNbn urnNbn = UrnNbn.valueOf(request);
-		UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
-				true);
-		if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
-			DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
-			// Set allways contains just single item
-			IntelectualEntity entity = readService.entityById(digDoc.getIntEntId());
-			Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
-			result.add(transformedEntity(entity));
+	@Override
+	public ArrayList<IntelectualEntityDTO> getIntelectualEntities(ArrayList<Long> identifiers) throws ServerException {
+		try {
+			ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(identifiers.size());
+			for (Long id : identifiers) {
+				IntelectualEntity entity = readService.entityById(id);
+				result.add(transformedEntity(entity));
+			}
 			return result;
-		} else {
-			return Collections.<IntelectualEntityDTO> emptySet();
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new ServerException(e.getMessage());
 		}
 	}
 
-	private Set<IntelectualEntityDTO> searchByIdentifiers(String request) {
+	@Override
+	public IntelectualEntityDTO searchByUrnNbn(String request) throws ServerException {
+		try {
+			UrnNbn urnNbn = UrnNbn.valueOf(request);
+			UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
+					urnNbn.getDocumentCode(), true);
+			if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
+				DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
+				Set<Long> result = new HashSet<Long>();
+				result.add(digDoc.getIntEntId());
+				return transformedEntity(readService.entityById(digDoc.getIntEntId()));
+			} else {
+				return null;
+			}
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new ServerException(e.getMessage());
+		}
+	}
+
+	private ArrayList<Long> searchByIdentifiers(String request) {
 		request = request.replaceAll(":", " ");
 		String[] words = request.split(" ");
 		String sep = "";
@@ -82,12 +101,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 				sep = " &";
 			}
 		}
-		List<IntelectualEntity> entities = readService.entitiesByIdValueWithFullTextSearch(query.toString());
-		Set<IntelectualEntityDTO> result = new HashSet<IntelectualEntityDTO>();
-		for (IntelectualEntity entity : entities) {
-			result.add(transformedEntity(entity));
-		}
-		return result;
+		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(request, FULLTEXT_SEARCH_HARD_LIMIT));
 	}
 
 	private IntelectualEntityDTO transformedEntity(IntelectualEntity entity) {

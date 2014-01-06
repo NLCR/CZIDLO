@@ -1,9 +1,11 @@
 package cz.nkp.urnnbn.client.search;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -17,6 +19,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -53,6 +56,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
 	private ConfigurationData configuration;
+	private TabLayoutPanel searchPaginationPanel;
 
 	private Tree searchResultTree;
 
@@ -134,16 +138,62 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 
 	public void search(final String request) {
 		showProcessingWheel();
-		searchService.getSearchResults(request, new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
-			public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
-				showResults(request, result);
-			}
+		if (request.toLowerCase().startsWith("urn:nbn:")) {
+			searchService.searchByUrnNbn(request, new AsyncCallback<IntelectualEntityDTO>() {
 
-			public void onFailure(Throwable caught) {
-				Window.alert(messages.serverError(caught.getMessage()));
-				hideProcessingSearchAnimation();
-			}
-		});
+				@Override
+				public void onSuccess(IntelectualEntityDTO result) {
+					ArrayList<IntelectualEntityDTO> list = new ArrayList<IntelectualEntityDTO>(1);
+					list.add(result);
+					showResults(request, list);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(messages.serverError(caught.getMessage()));
+					hideProcessingSearchAnimation();
+				}
+			});
+		} else {
+
+			searchService.getIntEntIdentifiersBySearch(request, new AsyncCallback<ArrayList<Long>>() {
+
+				@Override
+				public void onSuccess(ArrayList<Long> idList) {
+					if (idList.isEmpty()) {
+						showResults(request, new ArrayList<IntelectualEntityDTO>());
+					} else {
+						int maxResults = 20; // just temporary solution until pagination is solved
+						int max = Math.min(maxResults, idList.size());
+						// TODO: strankovani
+						// showResults(request, idList);
+
+						// transform and show
+						searchService.getIntelectualEntities(new ArrayList<Long>(idList.subList(0, max)),
+								new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
+
+									@Override
+									public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
+										showResults(request, result);
+									}
+
+									@Override
+									public void onFailure(Throwable caught) {
+										Window.alert(messages.serverError(caught.getMessage()));
+										hideProcessingSearchAnimation();
+									}
+								});
+					}
+
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert(messages.serverError(caught.getMessage()));
+					hideProcessingSearchAnimation();
+				}
+			});
+		}
 	}
 
 	private void hideProcessingSearchAnimation() {
@@ -163,7 +213,32 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 		return result;
 	}
 
-	public void showResults(String request, ArrayList<IntelectualEntityDTO> results) {
+	private void showResults(String request, ArrayList<Long> intEntIdentifiers) {
+		// paginace
+		searchResultsPanel.clear();
+		// searchResultsPanel.add(new Label("Výsledky pro dotaz '" + request + "'"));
+		// paginated results
+		searchPaginationPanel = new TabLayoutPanel(1.5, Unit.EM);
+		// PanelsBuilder builder = new PanelsBuilder(searchPaginationPanel);
+		int size = 20;
+		if (!intEntIdentifiers.isEmpty()) {
+			int first = 0;
+			int afterLast = Math.min(size, intEntIdentifiers.size());
+			int pageId = 1;
+			while (afterLast < intEntIdentifiers.size()) {
+				logger.info("page " + pageId + " (" + first + " - " + afterLast + ")");
+				ArrayList<Long> subList = new ArrayList<Long>(intEntIdentifiers.subList(first, afterLast));
+				ResultsPage page = new ResultsPage(null, subList);
+				searchPaginationPanel.add(page, String.valueOf(pageId));
+				first = afterLast;
+				afterLast = Math.min(afterLast + size, intEntIdentifiers.size());
+				pageId++;
+			}
+		}
+		searchResultsPanel.add(searchPaginationPanel);
+	}
+
+	public void showResults(String request, List<IntelectualEntityDTO> results) {
 		searchResultsPanel.clear();
 		searchResultTree = new Tree();
 		searchResultTree.setAnimationEnabled(true);
@@ -171,7 +246,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 		searchResultsPanel.add(searchResultTree);
 	}
 
-	private TreeItem resultsItem(String searchRequest, ArrayList<IntelectualEntityDTO> searchResults) {
+	private TreeItem resultsItem(String searchRequest, List<IntelectualEntityDTO> searchResults) {
 		TreeItem searchResult = new TreeItem(messages.searchResults(searchRequest, searchResults.size()));
 		for (IntelectualEntityDTO entity : searchResults) {
 			TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, superPanel.getActiveUser(), this);
