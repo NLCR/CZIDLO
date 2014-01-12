@@ -15,4 +15,6 @@ public interface SearchServiceAsync {
 	void getIntEntIdentifiersBySearch(String request, AsyncCallback<ArrayList<Long>> callback);
 
 	void getIntelectualEntities(ArrayList<Long> identifiers, AsyncCallback<ArrayList<IntelectualEntityDTO>> callback);
+
+	void getIntelectualEntity(Long intEntId, AsyncCallback<IntelectualEntityDTO> callback);
 }

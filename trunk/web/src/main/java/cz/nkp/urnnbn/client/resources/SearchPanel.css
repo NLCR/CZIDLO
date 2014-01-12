@@ -35,6 +35,21 @@
 	margin-top: 80px;
 }
 
+.paginationProcessWheelPanel {
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
 .searchTreeItem {
 	white-space: pre-wrap;
+}
+
+.resultsPagesPanel {
+	margin-top: 10px;
+}
+
+.noSearchResults {
+	margin-left: 10px;
+	margin-top: 10px;
+	font-size: medium;
 }

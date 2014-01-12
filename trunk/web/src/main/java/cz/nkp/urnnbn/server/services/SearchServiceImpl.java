@@ -36,7 +36,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private static final int MAX_REQUEST_SIZE = 100;
 	private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
 	private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
-	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 500;
+	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 100;
 
 	@Override
 	public ArrayList<Long> getIntEntIdentifiersBySearch(String searchRequest) throws ServerException {
@@ -64,6 +64,17 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 				result.add(transformedEntity(entity));
 			}
 			return result;
+		} catch (Throwable e) {
+			logger.log(Level.SEVERE, null, e);
+			throw new ServerException(e.getMessage());
+		}
+	}
+
+	@Override
+	public IntelectualEntityDTO getIntelectualEntity(Long intEntId) throws ServerException {
+		try {
+			IntelectualEntity entity = readService.entityById(intEntId);
+			return transformedEntity(entity);
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
@@ -275,4 +286,5 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 			return null;
 		}
 	}
+
 }

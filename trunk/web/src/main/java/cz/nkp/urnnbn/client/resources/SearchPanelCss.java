@@ -15,6 +15,12 @@ public interface SearchPanelCss extends CssResource {
 
 	public String processWheelPanel();
 
+	public String paginationProcessWheelPanel();
+
+	public String resultsPagesPanel();
+
 	public String searchTreeItem();
+
+	public String noSearchResults();
 
 }

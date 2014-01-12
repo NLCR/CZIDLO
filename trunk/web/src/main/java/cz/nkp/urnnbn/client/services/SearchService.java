@@ -18,4 +18,6 @@ public interface SearchService extends RemoteService {
 	ArrayList<Long> getIntEntIdentifiersBySearch(String request) throws ServerException;
 
 	ArrayList<IntelectualEntityDTO> getIntelectualEntities(ArrayList<Long> identifiers) throws ServerException;
+
+	IntelectualEntityDTO getIntelectualEntity(Long intEntId) throws ServerException;
 }
