@@ -34,7 +34,6 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private static final long serialVersionUID = 1750995108864579331L;
 	private static final Logger logger = Logger.getLogger(SearchServiceImpl.class.getName());
 	private static final int MAX_REQUEST_SIZE = 100;
-	private static ArrayList<IntelectualEntityDTO> EMPTY_IE_LIST = new ArrayList<IntelectualEntityDTO>(0);
 	private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
 	private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
 	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 500;
@@ -42,6 +41,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	@Override
 	public ArrayList<Long> getIntEntIdentifiersBySearch(String searchRequest) throws ServerException {
 		try {
+			// logger.info("request: " + searchRequest);
 			if (searchRequest == null || searchRequest.isEmpty()) {
 				return EMPTY_LONG_LIST;
 			} else if (searchRequest.length() > MAX_REQUEST_SIZE) {
@@ -91,17 +91,43 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	}
 
 	private ArrayList<Long> searchByIdentifiers(String request) {
-		request = request.replaceAll(":", " ");
+		request = removePreficies(request, new String[] { "isbn:", "ISBN:", "issn:", "ISSN:" });
+		if (request.startsWith("CNB")) {
+			request = request.replace("CNB", "cnb");
+		}
+		request = replaceForbiddenCharacters(request, new char[] { '\'', ':', '!', '&' });
 		String[] words = request.split(" ");
-		String sep = "";
 		StringBuilder query = new StringBuilder();
-		for (String word : words) {
-			if (!word.trim().isEmpty()) {
-				query.append(sep).append(word.trim());
-				sep = " &";
+		query.append('\'');
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+			String trimmed = word.trim();
+			if (!trimmed.isEmpty()) {
+				query.append(trimmed);
+				if (i != words.length - 1) {
+					query.append('&');
+				}
 			}
 		}
-		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(request, FULLTEXT_SEARCH_HARD_LIMIT));
+		query.append('\'');
+		// logger.info("query: " + query.toString());
+		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(query.toString(), FULLTEXT_SEARCH_HARD_LIMIT));
+	}
+
+	private String removePreficies(String request, String[] preficies) {
+		for (String prefix : preficies) {
+			if (request.startsWith(prefix)) {
+				request = request.substring(prefix.length());
+			}
+		}
+		return request;
+	}
+
+	private String replaceForbiddenCharacters(String request, char[] forbiddenChars) {
+		for (char forbiddenChar : forbiddenChars) {
+			request = request.replace(forbiddenChar, ' ');
+		}
+		return request;
 	}
 
 	private IntelectualEntityDTO transformedEntity(IntelectualEntity entity) {
