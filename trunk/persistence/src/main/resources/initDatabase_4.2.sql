@@ -494,12 +494,15 @@ INSERT INTO CONTENT(ID, LANGUAGE, NAME, CONTENT) VALUES (nextval('SEQ_CONTENT'),
 CREATE OR REPLACE VIEW IE_TITLE_VIEW AS
 SELECT
    title.id AS id,
-   COALESCE(title.value, '') || ' ' || COALESCE(subtitle.value, '') || ' ' || COALESCE(issue.value, '') || ' ' || COALESCE(volume.value, '') AS title
+   COALESCE(title.value, '') || ' ' || COALESCE(subtitle.value, '') || ' ' || COALESCE(issue.value, '') || ' ' || COALESCE(volume.value, '') || ' ' || COALESCE(ccnb.value, '') || ' ' || COALESCE(isbn.value, '') || ' ' || COALESCE(issn.value, '') AS title
 FROM
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'TITLE') AS title FULL OUTER JOIN
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'SUB_TITLE') AS subtitle ON title.id = subtitle.id FULL OUTER JOIN
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'VOLUME_TITLE') AS volume ON title.id = volume.id FULL OUTER JOIN
-   (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'ISSUE_TITLE') AS issue ON title.id = issue.id
+   (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'ISSUE_TITLE') AS issue ON title.id = issue.id FULL OUTER JOIN
+   (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'CCNB') AS ccnb ON title.id = ccnb.id FULL OUTER JOIN
+   (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'ISBN') AS isbn ON title.id = isbn.id FULL OUTER JOIN
+   (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'ISSN') AS issn ON title.id = issn.id
 ;
  
 CREATE LANGUAGE plpgsql;
