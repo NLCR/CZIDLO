@@ -33,7 +33,8 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private static final long serialVersionUID = 1750995108864579331L;
 	private static final Logger logger = Logger.getLogger(SearchServiceImpl.class.getName());
-	private static final int MAX_REQUEST_SIZE = 100;
+	private static final int MIN_SEARCH_STRING_LENGTH = 3;
+	private static final int MAX_SEARCH_STRING_LENGTH = 100;
 	private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
 	private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
 	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 100;
@@ -44,8 +45,8 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 			// logger.info("request: " + searchRequest);
 			if (searchRequest == null || searchRequest.isEmpty()) {
 				return EMPTY_LONG_LIST;
-			} else if (searchRequest.length() > MAX_REQUEST_SIZE) {
-				return searchByIdentifiers(searchRequest.substring(0, MAX_REQUEST_SIZE));
+			} else if (searchRequest.length() > MAX_SEARCH_STRING_LENGTH) {
+				return searchByIdentifiers(searchRequest.substring(0, MAX_SEARCH_STRING_LENGTH));
 			} else {
 				return searchByIdentifiers(searchRequest);
 			}
@@ -102,10 +103,10 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	}
 
 	private ArrayList<Long> searchByIdentifiers(String request) {
-		request = removePreficies(request, new String[] { "isbn:", "ISBN:", "issn:", "ISSN:" });
-		if (request.startsWith("CNB")) {
-			request = request.replace("CNB", "cnb");
-		}
+		request = normalizeIfIsbn(request);
+		request = normalizeIfIssn(request);
+		request = normalizeIfCcnb(request);
+
 		request = replaceForbiddenCharacters(request, new char[] { '\'', ':', '!', '&' });
 		String[] words = request.split(" ");
 		StringBuilder query = new StringBuilder();
@@ -113,7 +114,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
 			String trimmed = word.trim();
-			if (!trimmed.isEmpty()) {
+			if (!trimmed.isEmpty() && trimmed.length() >= MIN_SEARCH_STRING_LENGTH) {
 				query.append(trimmed);
 				if (i != words.length - 1) {
 					query.append('&');
@@ -125,13 +126,58 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(query.toString(), FULLTEXT_SEARCH_HARD_LIMIT));
 	}
 
-	private String removePreficies(String request, String[] preficies) {
+	private String normalizeIfCcnb(String request) {
+		request = request.toUpperCase();
+		String standardPrefix = "cnb";
+		String incorrectPrefix = "ČNB";
+		if (request.toUpperCase().startsWith(incorrectPrefix)) {
+			return standardPrefix + request.substring(incorrectPrefix.length());
+		} else {
+			return request;
+		}
+	}
+
+	private String normalizeIfIssn(String request) {
+		request = request.toUpperCase();
+		String[] preficies = new String[] { "ISSN ", "ISSN: ", "ISSN:" };
 		for (String prefix : preficies) {
 			if (request.startsWith(prefix)) {
-				request = request.substring(prefix.length());
+				return request.substring(prefix.length());
 			}
 		}
 		return request;
+	}
+
+	private String normalizeIfIsbn(String request) {
+		request = request.toUpperCase();
+		String[] preficies = new String[] { "ISBN:", "ISBN: ", "ISBN:" };
+		for (String prefix : preficies) {
+			if (request.startsWith(prefix)) {
+				request = request.substring(prefix.length());
+				return removeSeparators(request, new char[] { '-', ' ' });
+			}
+		}
+		return request;
+	}
+
+	private String removeSeparators(String original, char[] separators) {
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < original.length(); i++) {
+			char character = original.charAt(i);
+			if (!isSeparator(character, separators)) {
+				result.append(character);
+			}
+		}
+		return result.toString();
+	}
+
+	private boolean isSeparator(char character, char[] separators) {
+		for (char separator : separators) {
+			if (character == separator) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String replaceForbiddenCharacters(String request, char[] forbiddenChars) {
