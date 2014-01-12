@@ -1,16 +1,17 @@
 package cz.nkp.urnnbn.client.search;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -45,8 +46,8 @@ import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 public class SearchPanel extends SingleTabContentPanel implements DigitalInstanceRefreshable {
 
 	private static final Logger logger = Logger.getLogger(SearchPanel.class.getName());
-	private static final int MAX_ENTITIES_TO_EXPAND = 3;
 	private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
+	private static final int ITEMS_PER_PAGE = 10;
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final SearchPanelCss css = SearchPanelResources.css();
@@ -56,9 +57,8 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 	private final TextBox searchBox = searchBox();
 	private final TabsPanel superPanel;
 	private ConfigurationData configuration;
-	private TabLayoutPanel searchPaginationPanel;
-
-	private Tree searchResultTree;
+	private TabPanel searchPaginationPanel;
+	private LinkedList<ResultsPage> searchResultsPages;
 
 	private TextBox searchBox() {
 		final TextBox result = new TextBox();
@@ -143,9 +143,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 
 				@Override
 				public void onSuccess(IntelectualEntityDTO result) {
-					ArrayList<IntelectualEntityDTO> list = new ArrayList<IntelectualEntityDTO>(1);
-					list.add(result);
-					showResults(request, list);
+					showSingleResult(result);
 				}
 
 				@Override
@@ -161,30 +159,12 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 				@Override
 				public void onSuccess(ArrayList<Long> idList) {
 					if (idList.isEmpty()) {
-						showResults(request, new ArrayList<IntelectualEntityDTO>());
+						showNoResults(request);
+					} else if (idList.size() == 1) {
+						showSingleResultFromId(idList.get(0));
 					} else {
-						int maxResults = 20; // just temporary solution until pagination is solved
-						int max = Math.min(maxResults, idList.size());
-						// TODO: strankovani
-						// showResults(request, idList);
-
-						// transform and show
-						searchService.getIntelectualEntities(new ArrayList<Long>(idList.subList(0, max)),
-								new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
-
-									@Override
-									public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
-										showResults(request, result);
-									}
-
-									@Override
-									public void onFailure(Throwable caught) {
-										Window.alert(messages.serverError(caught.getMessage()));
-										hideProcessingSearchAnimation();
-									}
-								});
+						showResultsWithPagination(request, idList);
 					}
-
 				}
 
 				@Override
@@ -194,6 +174,28 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 				}
 			});
 		}
+	}
+
+	private void showSingleResultFromId(Long intEntId) {
+		searchResultsPanel.clear();
+		VerticalPanel processingWheelPanel = new VerticalPanel();
+		processingWheelPanel.setStyleName(css.paginationProcessWheelPanel());
+		Image booksImg = new Image("img/ajax-loader.gif");
+		processingWheelPanel.add(booksImg);
+		searchResultsPanel.add(processingWheelPanel);
+		searchService.getIntelectualEntity(intEntId, new AsyncCallback<IntelectualEntityDTO>() {
+
+			@Override
+			public void onSuccess(IntelectualEntityDTO result) {
+				showSingleResult(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert(messages.serverError(caught.getMessage()));
+				searchResultsPanel.clear();
+			}
+		});
 	}
 
 	private void hideProcessingSearchAnimation() {
@@ -213,58 +215,63 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 		return result;
 	}
 
-	private void showResults(String request, ArrayList<Long> intEntIdentifiers) {
-		// paginace
+	private void showResultsWithPagination(String request, ArrayList<Long> intEntIdentifiers) {
 		searchResultsPanel.clear();
-		// searchResultsPanel.add(new Label("Výsledky pro dotaz '" + request + "'"));
-		// paginated results
-		searchPaginationPanel = new TabLayoutPanel(1.5, Unit.EM);
-		// PanelsBuilder builder = new PanelsBuilder(searchPaginationPanel);
-		int size = 20;
+		searchPaginationPanel = new TabPanel();
 		if (!intEntIdentifiers.isEmpty()) {
 			int first = 0;
-			int afterLast = Math.min(size, intEntIdentifiers.size());
-			int pageId = 1;
-			while (afterLast < intEntIdentifiers.size()) {
-				logger.info("page " + pageId + " (" + first + " - " + afterLast + ")");
+			int afterLast = Math.min(ITEMS_PER_PAGE, intEntIdentifiers.size());
+			// int tabCounter = 0;
+			searchResultsPages = new LinkedList<ResultsPage>();
+			logger.info("first=" + first + ", afterLast=" + afterLast);
+			while (true) {
+				// logger.info("tab=" + ++tabCounter + ", first=" + first + ", afterLast=" + afterLast);
 				ArrayList<Long> subList = new ArrayList<Long>(intEntIdentifiers.subList(first, afterLast));
-				ResultsPage page = new ResultsPage(null, subList);
-				searchPaginationPanel.add(page, String.valueOf(pageId));
-				first = afterLast;
-				afterLast = Math.min(afterLast + size, intEntIdentifiers.size());
-				pageId++;
+				String tabCaption = "" + (first + 1) + "-" + afterLast;
+				ResultsPage page = new ResultsPage(this, superPanel.getActiveUser(), subList);
+				searchResultsPages.add(page);
+				searchPaginationPanel.add(page, tabCaption);
+				if (afterLast == intEntIdentifiers.size()) {
+					// logger.info("last tab");
+					break;
+				} else {
+					first = afterLast;
+					afterLast = Math.min(afterLast + ITEMS_PER_PAGE, intEntIdentifiers.size());
+				}
 			}
+
+			searchPaginationPanel.addStyleName(css.resultsPagesPanel());
+			searchResultsPanel.add(searchPaginationPanel);
+			// load data on tab selection
+			searchPaginationPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+				@Override
+				public void onSelection(SelectionEvent<Integer> event) {
+					searchResultsPages.get(event.getSelectedItem()).onSelected();
+				}
+			});
+			searchPaginationPanel.selectTab(0);
 		}
-		searchResultsPanel.add(searchPaginationPanel);
 	}
 
-	public void showResults(String request, List<IntelectualEntityDTO> results) {
+	private void showSingleResult(IntelectualEntityDTO entity) {
 		searchResultsPanel.clear();
-		searchResultTree = new Tree();
-		searchResultTree.setAnimationEnabled(true);
-		searchResultTree.addItem(resultsItem(request, results));
-		searchResultsPanel.add(searchResultTree);
+		Tree entityTree = new Tree();
+		entityTree.setAnimationEnabled(true);
+		TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, superPanel.getActiveUser(), this);
+		entityItem.setState(true);
+		entityTree.addItem(entityItem);
+		if (entity.getDocuments() != null) {
+			appendDocuments(entityItem, entity.getDocuments());
+		}
+		searchResultsPanel.add(entityTree);
 	}
 
-	private TreeItem resultsItem(String searchRequest, List<IntelectualEntityDTO> searchResults) {
-		TreeItem searchResult = new TreeItem(messages.searchResults(searchRequest, searchResults.size()));
-		for (IntelectualEntityDTO entity : searchResults) {
-			TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, superPanel.getActiveUser(), this);
-			if (entity.getDocuments() != null) {
-				appendDocuments(entityItem, entity.getDocuments());
-			}
-			searchResult.addItem(entityItem);
-		}
-		// expand results
-		searchResult.setState(true);
-		boolean expand = searchResult.getChildCount() <= MAX_ENTITIES_TO_EXPAND;
-		// expand intelectual entities
-		if (expand) {
-			for (int i = 0; i < searchResult.getChildCount(); i++) {
-				searchResult.getChild(i).setState(true);
-			}
-		}
-		return searchResult;
+	private void showNoResults(String query) {
+		searchResultsPanel.clear();
+		Label label = new Label(messages.noResultsForSearch(query));
+		label.addStyleName(css.noSearchResults());
+		searchResultsPanel.add(label);
 	}
 
 	private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {

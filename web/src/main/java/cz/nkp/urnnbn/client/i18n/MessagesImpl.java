@@ -58,4 +58,6 @@ public interface MessagesImpl extends Messages {
 	public String validationNotInteger();
 	
 	public String confirmUrnNbnDeactivation(String urn);
+	
+	public String noResultsForSearch(String query);
 }
