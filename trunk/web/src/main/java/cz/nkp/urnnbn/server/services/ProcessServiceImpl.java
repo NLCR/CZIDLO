@@ -31,6 +31,7 @@ import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 import cz.nkp.urnnbn.webcommon.security.MemoryPasswordsStorage;
 
 public class ProcessServiceImpl extends AbstractService implements ProcessService {
@@ -141,7 +142,9 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 		try {
 			return transform(processManager().getProcessesByOwner(getUserLogin()));
 		} catch (Throwable e) {
-			logger.log(Level.SEVERE, null, e);
+			if (!SessionExpirationException.MESSAGE.equals(e.getMessage())) {
+				logger.log(Level.SEVERE, null, e);
+			}
 			throw new SecurityException(e.getMessage());
 		}
 	}
@@ -240,7 +243,9 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 			List<XmlTransformation> original = xmlTransforamtionDao().getTransformationsOfUser(getUserLogin());
 			return transformTransformations(original);
 		} catch (Throwable e) {
-			logger.log(Level.SEVERE, null, e);
+			if (!SessionExpirationException.MESSAGE.equals(e.getMessage())) {
+				logger.log(Level.SEVERE, null, e);
+			}
 			throw new ServerException(e.getMessage());
 		}
 	}
