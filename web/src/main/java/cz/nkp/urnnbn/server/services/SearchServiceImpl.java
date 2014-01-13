@@ -85,7 +85,12 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	@Override
 	public IntelectualEntityDTO searchByUrnNbn(String request) throws ServerException {
 		try {
-			UrnNbn urnNbn = UrnNbn.valueOf(request);
+			UrnNbn urnNbn;
+			try {
+				urnNbn = UrnNbn.valueOf(request);
+			} catch (Throwable e) {
+				return null;
+			}
 			UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
 					urnNbn.getDocumentCode(), true);
 			if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {

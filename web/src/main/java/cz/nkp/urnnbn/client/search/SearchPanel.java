@@ -143,7 +143,11 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 
 				@Override
 				public void onSuccess(IntelectualEntityDTO result) {
-					showSingleResult(result);
+					if (result == null) {
+						showNoResults(request);
+					} else {
+						showSingleResult(result);
+					}
 				}
 
 				@Override
