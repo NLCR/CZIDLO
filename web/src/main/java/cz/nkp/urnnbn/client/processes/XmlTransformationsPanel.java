@@ -3,10 +3,12 @@ package cz.nkp.urnnbn.client.processes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
@@ -23,9 +25,11 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
+import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class XmlTransformationsPanel extends VerticalPanel {
 
+	private static final Logger logger = Logger.getLogger(XmlTransformationsPanel.class.getName());
 	private final ProcessAdministrationCss css = initCss();
 	private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -147,7 +151,11 @@ public class XmlTransformationsPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// nothing
+				if (SessionExpirationException.MESSAGE.equals(caught.getMessage())) {
+					Window.Location.replace(".");
+				} else {
+					logger.severe("Error loading XSLTs: " + caught.getMessage());
+				}
 			}
 		});
 	}

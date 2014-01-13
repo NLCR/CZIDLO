@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
+import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
@@ -86,7 +87,11 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe("Error loading processes: " + caught.getMessage());
+				if (SessionExpirationException.MESSAGE.equals(caught.getMessage())) {
+					Window.Location.replace(".");
+				} else {
+					logger.severe("Error loading processes: " + caught.getMessage());
+				}
 			}
 		};
 		if (showProcessesOfAllUsers()) {
