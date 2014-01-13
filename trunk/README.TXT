@@ -1,12 +1,12 @@
 #######################################
 #######################################
-##         CZIDLO version 4.1        ##
+##         CZIDLO version 4.2        ##
 #######################################
 #######################################
 
 This archive contains files for installation the CZIDLO (CZech IDentification and LOcalization Tool based on URN:NBN) system.
 CZIDLO is authority over global persistent identifiers URN:NBN for single national space 
-and should be therefore run by particular national library. 
+and should be therefore run only by particular national library. 
 
 Main featurese are:
 - resolving the URN:NBN for given nation space (i. e. redirecting to digital libraries or showing metadata of digital document in user friendly form or in xml).
@@ -17,10 +17,11 @@ Main featurese are:
 - OAI-PMH provider
 - possible to edit metadata manually though web interface, managing processes on server through web interface
 
-New features in version 4.1
-- fixed bug in web search caused by premature deployment of fulltext features
-- web dialog for scheduling Export URN:NBN process slightly enhanced
-- fixed incorrect handling of paramether missingISBN for scheduling process Export URN:NBN
+New features in version 4.2
+- bug fixes
+- passwords from now on stored more securely as hash of password concancated with random salt
+- fulltext web search though only withing title data
+- for more see https://code.google.com/p/czidlo/wiki/Changelog#4.2
 
 System is being developed under GNU GPL v3 licence by National Library of the Czech Republic.
 http://nkp.cz/
@@ -29,7 +30,7 @@ http://code.google.com/p/czidlo/
 This document describes installation of this system on Linux server. 
 Since all the middleware (database, servlet container, web server) is available on multiple platforms,
 it should be possible to install the system on different platform. 
-This has not been tested though and will not be explained here.
+This processed has not been tested though and will not be explained here.
 
 
 ############################
@@ -47,22 +48,25 @@ This archive should contain these files:
 - api.war - API module  
 - oaiPmhProvider.war - OAI-PMH provider module
 - processDataServer.war - application to access logs and outputs of processes
-- initDatabase_4.0-4.1.sql - sql script for intializing the database (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- initDatabase_4.2.sql - sql script for intializing the database (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - updateDatabase-2.0-2.2_to_2.3-3.0.sql - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
-- updateDatabase-2.3_-3.0_to_4.1.sql - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to current version 4.1)
+- updateDatabase-2.3-3.0_to_4.1.sql - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
+- updateDatabase_4.1_to_4.2.sql - sql script for updating core database (from version 4.1 to current version 4.2). 
+It is NOT sufficient only to run this script to update database. Complete database upgrade is described below.
+- databaseUpgrader-4.2.jar - java program that replaces plaintext passwords with their encrypted form.
 
 
-1. Provided you have database installed and properly configured, you should first run the initDatabase_4.1.sql (e. g. by psql) 
+1. Provided you have database installed and properly configured, you should first run the initDatabase_4.2.sql (e. g. by psql) 
 in order to create tables, sequences and indexes.
 Script also creates one administrator account (admin:adminPassword). 
 Since it is not possible yet to change user password, it is very important that this account is removed 
 immediatelly after another administrator account (with publicly unknown password) is created. 
 
 
-2. Next step is installation of the four web applications. That is done simply by copying web.war, api.war,  OaiPmhProvider.war
+2. Next step is installation of the four web applications. That is done simply by copying web.war, api.war, oaiPmhProvider.war
 and processDataServer.war into $TOMCAT_HOME/webapps. Applications are independent so you can choose from multiple deployment options. For example:
-- web.war + processDataServer + api.war - if OAI-PMH functionality is not desired
-- api.war + processDataServer only - if only resolving and importing records through API is requiered
+- web.war + processDataServer.war + api.war - if OAI-PMH functionality is not desired
+- api.war + processDataServer.war only - if only resolving and importing records through API is required
 - each module in different Tomcat (possibly different machines) - for better scalability
 
 
@@ -123,9 +127,9 @@ PROCESS_DATA_SERVER: processDataServer.properties, hibernate.cfg.xml
 Upgrade from previous version
 #############################
 Previous versions of CZIDLO (formerly called URN:NBN Resolver) may or may not differ in core database structure.
-There is also new database required since version 3.0. It stores data of externall processes and xsl transformations for process OAI Adapter. 
+There is also new database required since version 3.0. It stores data of external processes and xsl transformations for process OAI Adapter. 
 Initialization of this database is described in section installation (item 5) of this document. 
-Concrete actions needed to upgrade database(s) to current version 4.0 are described bellow.
+Concrete actions needed to upgrade database(s) to current version 4.2 are described bellow.
 You should allways backup your database before upgrading it in order to avoid data loss if somthing goes wrong.
 
 Apart from that, applications need to be replaced with newer versions.
@@ -133,12 +137,15 @@ This will probably require fixing configuration files again, since application s
 
 
 ########################
-Upgrade from version 4.0
+Upgrade from version 4.1
 ########################
 
 Core database
 =============
-No need to upgrade.
+1. Use script updateDatabase_4.1_to_4.2.sql. You may need to manually change owner of table ie_title and view ie_title_view.
+2. Use databaseUpgrader-4.2.jar to replace plaintext passwords with generated salt and salted password hash. 
+Usage:
+USAGE: java -jar databaseUpgrader.jar HOST PORT DATABASE LOGIN PASSWORD
 
 Process database
 ================
@@ -151,7 +158,7 @@ Upgrade from version 3.0
 
 Core database
 =============
-Use script updateDatabase-2.3-2.4_to_3.0-4.1.sql.
+Proceed as described in "Upgrade from version 4.1" section of this document.
 
 Process database
 ================
@@ -159,12 +166,13 @@ No need to upgrade.
 
 
 ################################
-Upgrade from versions 2.4 or 2.3
+Upgrade from versions 2.3 or 2.4
 ################################
 
 Core database
 =============
-No need to upgrade.
+1. Use script updateDatabase-2.3-2.4_to_3.0-4.1.sql to update to version 4.1 compatible database.
+2. Proceed as described in "Upgrade from version 4.1" section of this document.
 
 Process database
 ================
@@ -178,7 +186,9 @@ Upgrade from versions 2.2, 2.1 or 2.0
 
 Core database
 =============
-Use script updateDatabase-2.0-2.2_to_2.3-3.0.sql
+1. Use script updateDatabase-2.0-2.2_to_2.3-3.0.sql to update to version 2.3 compatible database.
+2. Use script updateDatabase-2.3-2.4_to_3.0-4.1.sql to update to version 4.1 compatible database.
+3. Proceed as described in "Upgrade from version 4.1" section of this document.
 
 Process database
 ================
