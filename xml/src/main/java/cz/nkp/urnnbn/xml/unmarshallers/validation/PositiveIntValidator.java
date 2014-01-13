@@ -16,22 +16,32 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers.validation;
 
+import java.util.logging.Logger;
+
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class PositiveIntValidator implements ElementContentEnhancer {
 
-    @Override
-    public String toEnhancedValueOrNull(String originalContent) {
-        if (originalContent == null || originalContent.isEmpty()) {
-            return null;
-        }
-        try {
-            int intValue = Integer.parseInt(originalContent);
-            return intValue > 0 ? originalContent : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
+	private static final Logger logger = Logger.getLogger(PositiveIntValidator.class.getName());
+
+	@Override
+	public String toEnhancedValueOrNull(String originalContent) {
+		if (originalContent == null || originalContent.isEmpty()) {
+			return null;
+		}
+		try {
+			int intValue = Integer.parseInt(originalContent);
+			if (intValue > 0) {
+				return originalContent;
+			} else {
+				logger.warning("not positive number '" + originalContent + "', dropping");
+				return null;
+			}
+		} catch (NumberFormatException e) {
+			logger.warning("not a number '" + originalContent + "', dropping");
+			return null;
+		}
+	}
 }

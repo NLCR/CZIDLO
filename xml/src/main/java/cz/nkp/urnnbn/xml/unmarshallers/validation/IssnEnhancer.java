@@ -16,59 +16,64 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers.validation;
 
+import java.util.logging.Logger;
+
 /**
- * Accepts issn in forms like "1234-5678", "1234-567x", "1234-567X", "ISSN:
- * 1234-5678", "ISSN 1234-5678", "ISSN:1234-5678", "issn: 1234-5678", "issn
- * 1234-5678", "issn:1234-5678" and returns issn in standard value "1234-567X",
- * i. e. without any prefix and with potential x in upper cas.
- *
+ * Accepts issn in forms like "1234-5678", "1234-567x", "1234-567X", "ISSN: 1234-5678", "ISSN
+ * 1234-5678", "ISSN:1234-5678", "issn: 1234-5678", "issn
+ * 1234-5678", "issn:1234-5678" and returns issn in standard value "1234-567X", i. e. without any prefix and with
+ * potential x in upper cas.
+ * 
  * @author Martin Řehánek
  */
 public class IssnEnhancer implements ElementContentEnhancer {
 
-    private static final String[] PREFICIES = {"ISSN ", "ISSN: ", "ISSN:"};
-    private static final String REGEXP = "\\d{4}-\\d{3}[0-9Xx]{1}";
+	private static final Logger logger = Logger.getLogger(IssnEnhancer.class.getName());
 
-    @Override
-    public String toEnhancedValueOrNull(String originalContent) {
-        if (originalContent == null || originalContent.isEmpty()) {
-            return null;
-        }
-        String issn = removePrefix(originalContent.toUpperCase());
-        if (matchesRegexp(issn) && hasCorrectChecksum(issn)) {
-            return issn;
-        } else {
-            return null;
-        }
-    }
+	private static final String[] PREFICIES = { "ISSN ", "ISSN: ", "ISSN:" };
+	private static final String REGEXP = "\\d{4}-\\d{3}[0-9Xx]{1}";
 
-    private String removePrefix(String original) {
-        for (String prefix : PREFICIES) {
-            if (original.startsWith(prefix)) {
-                return original.substring(prefix.length());
-            }
-        }
-        return original;
-    }
+	@Override
+	public String toEnhancedValueOrNull(String originalContent) {
+		if (originalContent == null || originalContent.isEmpty()) {
+			return null;
+		}
+		String issn = removePrefix(originalContent.toUpperCase());
+		if (matchesRegexp(issn) && hasCorrectChecksum(issn)) {
+			return issn;
+		} else {
+			logger.warning("invalid ISSN '" + originalContent + "', dropping");
+			return null;
+		}
+	}
 
-    private boolean matchesRegexp(String original) {
-        return original.matches(REGEXP);
-    }
+	private String removePrefix(String original) {
+		for (String prefix : PREFICIES) {
+			if (original.startsWith(prefix)) {
+				return original.substring(prefix.length());
+			}
+		}
+		return original;
+	}
 
-    private boolean hasCorrectChecksum(String original) {
-        int sum = 0;
-        int weight = 9;
-        for (int i = 0; i < 9; i++) {
-            char character = original.charAt(i);
-            if (character == '-') {
-                continue;
-            } else {
-                String valueStr = (character == 'x' || character == 'X') ? "10" : String.valueOf(character);
-                weight--;
-                int valueAtPosition = Integer.parseInt(valueStr);
-                sum += weight * valueAtPosition;
-            }
-        }
-        return sum % 11 == 0;
-    }
+	private boolean matchesRegexp(String original) {
+		return original.matches(REGEXP);
+	}
+
+	private boolean hasCorrectChecksum(String original) {
+		int sum = 0;
+		int weight = 9;
+		for (int i = 0; i < 9; i++) {
+			char character = original.charAt(i);
+			if (character == '-') {
+				continue;
+			} else {
+				String valueStr = (character == 'x' || character == 'X') ? "10" : String.valueOf(character);
+				weight--;
+				int valueAtPosition = Integer.parseInt(valueStr);
+				sum += weight * valueAtPosition;
+			}
+		}
+		return sum % 11 == 0;
+	}
 }

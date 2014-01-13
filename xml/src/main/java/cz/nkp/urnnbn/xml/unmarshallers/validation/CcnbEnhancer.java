@@ -16,35 +16,40 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers.validation;
 
+import java.util.logging.Logger;
+
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class CcnbEnhancer implements ElementContentEnhancer {
 
-    private static final String STANDARD_PREFIX = "cnb";
-    private static final String[] PREFICIES = {"cnb", "čnb"};
-    private static final String REGEXP = "[0-9]{9}";
+	private static final Logger logger = Logger.getLogger(CcnbEnhancer.class.getName());
 
-    @Override
-    public String toEnhancedValueOrNull(String originalContent) {
-        if (originalContent == null || originalContent.isEmpty()) {
-            return null;
-        }
-        String issn = removePrefix(originalContent.toLowerCase());
-        if (issn.matches(REGEXP)) {
-            return STANDARD_PREFIX + issn;
-        } else {
-            return null;
-        }
-    }
+	private static final String STANDARD_PREFIX = "cnb";
+	private static final String[] PREFICIES = { "cnb", "čnb" };
+	private static final String REGEXP = "[0-9]{9}";
 
-    private String removePrefix(String original) {
-        for (String prefix : PREFICIES) {
-            if (original.startsWith(prefix)) {
-                return original.substring(prefix.length());
-            }
-        }
-        return original;
-    }
+	@Override
+	public String toEnhancedValueOrNull(String originalContent) {
+		if (originalContent == null || originalContent.isEmpty()) {
+			return null;
+		}
+		String ccnb = removePrefix(originalContent.toLowerCase());
+		if (ccnb.matches(REGEXP)) {
+			return STANDARD_PREFIX + ccnb;
+		} else {
+			logger.warning("invalid cCNB '" + originalContent + "', dropping");
+			return null;
+		}
+	}
+
+	private String removePrefix(String original) {
+		for (String prefix : PREFICIES) {
+			if (original.startsWith(prefix)) {
+				return original.substring(prefix.length());
+			}
+		}
+		return original;
+	}
 }
