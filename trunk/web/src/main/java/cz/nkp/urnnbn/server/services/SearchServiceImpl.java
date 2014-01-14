@@ -40,15 +40,15 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private static final int FULLTEXT_SEARCH_HARD_LIMIT = 100;
 
 	@Override
-	public ArrayList<Long> getIntEntIdentifiersBySearch(String searchRequest) throws ServerException {
+	public ArrayList<Long> getIntEntIdentifiersBySearch(String query) throws ServerException {
 		try {
-			// logger.info("request: " + searchRequest);
-			if (searchRequest == null || searchRequest.isEmpty()) {
+			//logger.info("searching for \"" + query + "\" (ie identifiers)");
+			if (query == null || query.isEmpty()) {
 				return EMPTY_LONG_LIST;
-			} else if (searchRequest.length() > MAX_SEARCH_STRING_LENGTH) {
-				return searchByIdentifiers(searchRequest.substring(0, MAX_SEARCH_STRING_LENGTH));
+			} else if (query.length() > MAX_SEARCH_STRING_LENGTH) {
+				return searchByIdentifiers(query.substring(0, MAX_SEARCH_STRING_LENGTH));
 			} else {
-				return searchByIdentifiers(searchRequest);
+				return searchByIdentifiers(query);
 			}
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
@@ -83,11 +83,12 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	}
 
 	@Override
-	public IntelectualEntityDTO searchByUrnNbn(String request) throws ServerException {
+	public IntelectualEntityDTO searchByUrnNbn(String query) throws ServerException {
+		//logger.info("searching for \"" + query + "\" (urn:nbn)");
 		try {
 			UrnNbn urnNbn;
 			try {
-				urnNbn = UrnNbn.valueOf(request);
+				urnNbn = UrnNbn.valueOf(query);
 			} catch (Throwable e) {
 				return null;
 			}
@@ -107,62 +108,70 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		}
 	}
 
-	private ArrayList<Long> searchByIdentifiers(String request) {
-		request = normalizeIfIsbn(request);
-		request = normalizeIfIssn(request);
-		request = normalizeIfCcnb(request);
+	private ArrayList<Long> searchByIdentifiers(String query) {
+		//logger.info("searching in ie identifiers");
+		query = query.toUpperCase();
+		query = normalizeIfIsbn(query);
+		query = normalizeIfIssn(query);
+		query = normalizeIfCcnb(query);
 
-		request = replaceForbiddenCharacters(request, new char[] { '\'', ':', '!', '&' });
-		String[] words = request.split(" ");
-		StringBuilder query = new StringBuilder();
-		query.append('\'');
+		query = replaceForbiddenCharacters(query, new char[] { '\'', ':', '!', '&' });
+		String[] words = query.split(" ");
+		StringBuilder indexSearchQuery = new StringBuilder();
+		indexSearchQuery.append('\'');
 		for (int i = 0; i < words.length; i++) {
 			String word = words[i];
 			String trimmed = word.trim();
 			if (!trimmed.isEmpty() && trimmed.length() >= MIN_SEARCH_STRING_LENGTH) {
-				query.append(trimmed);
+				indexSearchQuery.append(trimmed);
 				if (i != words.length - 1) {
-					query.append('&');
+					indexSearchQuery.append('&');
 				}
 			}
 		}
-		query.append('\'');
-		// logger.info("query: " + query.toString());
-		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(query.toString(), FULLTEXT_SEARCH_HARD_LIMIT));
+		indexSearchQuery.append('\'');
+		//logger.info("indexSearchQuery: " + indexSearchQuery.toString());
+		return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(indexSearchQuery.toString(), FULLTEXT_SEARCH_HARD_LIMIT));
 	}
 
-	private String normalizeIfCcnb(String request) {
-		request = request.toUpperCase();
+	private String normalizeIfCcnb(String query) {
+		//query = query.toUpperCase();
 		String standardPrefix = "cnb";
 		String incorrectPrefix = "ČNB";
-		if (request.toUpperCase().startsWith(incorrectPrefix)) {
-			return standardPrefix + request.substring(incorrectPrefix.length());
+		if (query.toUpperCase().startsWith(incorrectPrefix)) {
+			String normalized = standardPrefix + query.substring(incorrectPrefix.length());
+			//logger.info("CCNB normalized: '" + normalized + "'");
+			return normalized;
 		} else {
-			return request;
+			return query;
 		}
 	}
 
-	private String normalizeIfIssn(String request) {
-		request = request.toUpperCase();
+	private String normalizeIfIssn(String query) {
+		//query = query.toUpperCase();
 		String[] preficies = new String[] { "ISSN ", "ISSN: ", "ISSN:" };
 		for (String prefix : preficies) {
-			if (request.startsWith(prefix)) {
-				return request.substring(prefix.length());
+			if (query.startsWith(prefix)) {
+				String normalized = query.substring(prefix.length());
+				//logger.info("ISSN normalized: '" + normalized + "'");
+				return normalized;
 			}
 		}
-		return request;
+		return query;
 	}
 
-	private String normalizeIfIsbn(String request) {
-		request = request.toUpperCase();
+	private String normalizeIfIsbn(String query) {
+		//query = query.toUpperCase();
 		String[] preficies = new String[] { "ISBN:", "ISBN: ", "ISBN:" };
 		for (String prefix : preficies) {
-			if (request.startsWith(prefix)) {
-				request = request.substring(prefix.length());
-				return removeSeparators(request, new char[] { '-', ' ' });
+			if (query.startsWith(prefix)) {
+				query = query.substring(prefix.length());
+				String normalized = removeSeparators(query, new char[] { '-', ' ' });
+				//logger.info("ISBN normalized: '" + normalized + "'");
+				return normalized;
 			}
 		}
-		return request;
+		return query;
 	}
 
 	private String removeSeparators(String original, char[] separators) {
@@ -185,11 +194,11 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 		return false;
 	}
 
-	private String replaceForbiddenCharacters(String request, char[] forbiddenChars) {
+	private String replaceForbiddenCharacters(String string, char[] forbiddenChars) {
 		for (char forbiddenChar : forbiddenChars) {
-			request = request.replace(forbiddenChar, ' ');
+			string = string.replace(forbiddenChar, ' ');
 		}
-		return request;
+		return string;
 	}
 
 	private IntelectualEntityDTO transformedEntity(IntelectualEntity entity) {

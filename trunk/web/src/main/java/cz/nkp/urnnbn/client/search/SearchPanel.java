@@ -272,6 +272,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
 	}
 
 	private void showNoResults(String query) {
+		logger.info("no results for \"" + query + "\"");
 		searchResultsPanel.clear();
 		Label label = new Label(messages.noResultsForSearch(query));
 		label.addStyleName(css.noSearchResults());

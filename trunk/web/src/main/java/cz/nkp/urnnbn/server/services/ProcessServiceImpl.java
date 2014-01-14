@@ -138,13 +138,13 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	}
 
 	@Override
-	public List<ProcessDTO> getUsersProcesses() throws ServerException {
+	public List<ProcessDTO> getUsersProcesses() throws ServerException, SessionExpirationException {
 		try {
 			return transform(processManager().getProcessesByOwner(getUserLogin()));
+		} catch (SessionExpirationException e) {
+			throw e;
 		} catch (Throwable e) {
-			if (!SessionExpirationException.MESSAGE.equals(e.getMessage())) {
-				logger.log(Level.SEVERE, null, e);
-			}
+			logger.log(Level.SEVERE, null, e);
 			throw new SecurityException(e.getMessage());
 		}
 	}
@@ -238,14 +238,14 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 	}
 
 	@Override
-	public List<XmlTransformationDTO> getXmlTransformationsOfUser() throws ServerException {
+	public List<XmlTransformationDTO> getXmlTransformationsOfUser() throws ServerException, SessionExpirationException {
 		try {
 			List<XmlTransformation> original = xmlTransforamtionDao().getTransformationsOfUser(getUserLogin());
 			return transformTransformations(original);
+		} catch (SessionExpirationException e) {
+			throw e;
 		} catch (Throwable e) {
-			if (!SessionExpirationException.MESSAGE.equals(e.getMessage())) {
-				logger.log(Level.SEVERE, null, e);
-			}
+			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
 		}
 	}

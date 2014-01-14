@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.client.services.LogsService;
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.server.services.AbstractService;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class LogsServiceImpl extends AbstractService implements LogsService {
 
@@ -38,10 +39,12 @@ public class LogsServiceImpl extends AbstractService implements LogsService {
 	}
 
 	@Override
-	public long getAdminLogLastUpdatedTime() throws ServerException {
+	public long getAdminLogLastUpdatedTime() throws ServerException, SessionExpirationException {
 		try {
 			checkUserIsAdmin();
 			return queu.getLastChanged().getTime();
+		} catch (SessionExpirationException e) {
+			throw e;
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
@@ -49,10 +52,12 @@ public class LogsServiceImpl extends AbstractService implements LogsService {
 	}
 
 	@Override
-	public List<String> getAdminLogs() throws ServerException {
+	public List<String> getAdminLogs() throws ServerException, SessionExpirationException {
 		try {
 			checkUserIsAdmin();
 			return queu.getQueueContentInverted();
+		} catch (SessionExpirationException e) {
+			throw e;
 		} catch (Throwable e) {
 			logger.log(Level.SEVERE, null, e);
 			throw new ServerException(e.getMessage());
