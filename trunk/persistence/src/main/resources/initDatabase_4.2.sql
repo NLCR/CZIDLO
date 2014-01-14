@@ -494,7 +494,26 @@ INSERT INTO CONTENT(ID, LANGUAGE, NAME, CONTENT) VALUES (nextval('SEQ_CONTENT'),
 CREATE OR REPLACE VIEW IE_TITLE_VIEW AS
 SELECT
    title.id AS id,
-   COALESCE(title.value, '') || ' ' || COALESCE(subtitle.value, '') || ' ' || COALESCE(issue.value, '') || ' ' || COALESCE(volume.value, '') || ' ' || COALESCE(ccnb.value, '') || ' ' || COALESCE(isbn.value, '') || ' ' || COALESCE(issn.value, '') AS title
+   COALESCE(title.value, '') ||
+   case when subtitle.value is null then ''
+        else ' ' || subtitle.value
+   end ||
+   case when volume.value is null then ''
+        else ' ' || volume.value
+   end ||
+   case when issue.value is null then ''
+        else ' ' || issue.value
+   end ||
+   case when ccnb.value is null then ''
+        else ' ' || ccnb.value
+   end ||
+   case when isbn.value is null then ''
+        else ' ' || isbn.value
+   end ||
+   case when issn.value is null then ''
+        else ' ' || issn.value
+   end
+as title
 FROM
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'TITLE') AS title FULL OUTER JOIN
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'SUB_TITLE') AS subtitle ON title.id = subtitle.id FULL OUTER JOIN
