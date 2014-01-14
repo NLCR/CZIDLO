@@ -126,7 +126,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
         }
     }
     
-    public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, int offset, int limit) throws DatabaseException {
+    public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, Integer offset, Integer limit) throws DatabaseException {
         try {
             StatementWrapper st = new SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch(query, offset, limit);
             DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
