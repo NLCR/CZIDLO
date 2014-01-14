@@ -110,7 +110,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private ArrayList<Long> searchByIdentifiers(String query) {
 		//logger.info("searching in ie identifiers");
-		query = query.toUpperCase();
+		query = query.toLowerCase();
 		query = normalizeIfIsbn(query);
 		query = normalizeIfIssn(query);
 		query = normalizeIfCcnb(query);
@@ -137,7 +137,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 	private String normalizeIfCcnb(String query) {
 		//query = query.toUpperCase();
 		String standardPrefix = "cnb";
-		String incorrectPrefix = "ČNB";
+		String incorrectPrefix = "čnb";
 		if (query.toUpperCase().startsWith(incorrectPrefix)) {
 			String normalized = standardPrefix + query.substring(incorrectPrefix.length());
 			//logger.info("CCNB normalized: '" + normalized + "'");
@@ -149,7 +149,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private String normalizeIfIssn(String query) {
 		//query = query.toUpperCase();
-		String[] preficies = new String[] { "ISSN ", "ISSN: ", "ISSN:" };
+		String[] preficies = new String[] { "issn ", "issn: ", "issn:" };
 		for (String prefix : preficies) {
 			if (query.startsWith(prefix)) {
 				String normalized = query.substring(prefix.length());
@@ -162,7 +162,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
 	private String normalizeIfIsbn(String query) {
 		//query = query.toUpperCase();
-		String[] preficies = new String[] { "ISBN:", "ISBN: ", "ISBN:" };
+		String[] preficies = new String[] { "isbn:", "isbn: ", "isbn:" };
 		for (String prefix : preficies) {
 			if (query.startsWith(prefix)) {
 				query = query.substring(prefix.length());
