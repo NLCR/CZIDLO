@@ -187,32 +187,42 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 		}
 	}
 
-//	@Override
-//	public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value) {
-//		try {
-//			// TODO: put back
-//			int limit = 500;
-//			List<Long> wholeIdList = factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, limit);
-//			int last = Math.min(limit, wholeIdList.size());
-//			List<Long> idList = wholeIdList.subList(0, last);
-//
-//			List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
-//			for (long id : idList) {
-//				IntelectualEntity entity = entityById(id);
-//				if (entity != null) {
-//					result.add(entity);
-//				}
-//			}
-//			return result;
-//		} catch (DatabaseException ex) {
-//			throw new RuntimeException(ex);
-//		}
-//	}
+	// @Override
+	// public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value) {
+	// try {
+	// // TODO: put back
+	// int limit = 500;
+	// List<Long> wholeIdList =
+	// factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, limit);
+	// int last = Math.min(limit, wholeIdList.size());
+	// List<Long> idList = wholeIdList.subList(0, last);
+	//
+	// List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
+	// for (long id : idList) {
+	// IntelectualEntity entity = entityById(id);
+	// if (entity != null) {
+	// result.add(entity);
+	// }
+	// }
+	// return result;
+	// } catch (DatabaseException ex) {
+	// throw new RuntimeException(ex);
+	// }
+	// }
 
 	@Override
 	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit) {
 		try {
 			return factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, hardLimit);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value) {
+		try {
+			return factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, null, null);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}
