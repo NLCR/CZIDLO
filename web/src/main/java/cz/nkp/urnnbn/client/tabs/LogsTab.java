@@ -15,10 +15,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.resources.LogsPanelCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.LogsService;
 import cz.nkp.urnnbn.client.services.LogsServiceAsync;
+import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class LogsTab extends SingleTabContentPanel {
 
@@ -120,11 +122,12 @@ public class LogsTab extends SingleTabContentPanel {
 
 			@Override
 			public void onSuccess(Long result) {
-				//logger.info("Admin logs last updated: " + result);
+				// logger.info("Admin logs last updated: " + result);
 				if (result > adminLogsLastUpdated) {
 					adminLogsLastUpdated = result;
 					loadAdminLogs();
 				}
+
 			}
 
 			private void loadAdminLogs() {
@@ -133,7 +136,7 @@ public class LogsTab extends SingleTabContentPanel {
 					@Override
 					public void onSuccess(List<String> result) {
 						if (adminLogsList != null) {
-							//logger.info("Admin logs loaded");
+							// logger.info("Admin logs loaded");
 							adminLogsList = result;
 							reload();
 						}
@@ -141,16 +144,23 @@ public class LogsTab extends SingleTabContentPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						logger.severe("Error loading admin logs: " + caught.getMessage());
+						if (caught instanceof SessionExpirationException) {
+							Utils.sessionExpirationRedirect();
+						} else {
+							logger.severe("Error loading admin logs: " + caught.getMessage());
+						}
 					}
 				});
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe("Error loading admin logs last update time: " + caught.getMessage());
+				if (caught instanceof SessionExpirationException) {
+					Utils.sessionExpirationRedirect();
+				} else {
+					logger.severe("Error loading admin logs last update time: " + caught.getMessage());
+				}
 			}
 		});
 	}
-
 }

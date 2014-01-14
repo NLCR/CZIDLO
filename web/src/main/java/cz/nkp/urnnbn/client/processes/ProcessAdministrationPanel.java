@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;
@@ -87,8 +88,8 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				if (SessionExpirationException.MESSAGE.equals(caught.getMessage())) {
-					Window.Location.replace(".");
+				if (caught instanceof SessionExpirationException) {
+					Utils.sessionExpirationRedirect();
 				} else {
 					logger.severe("Error loading processes: " + caught.getMessage());
 				}

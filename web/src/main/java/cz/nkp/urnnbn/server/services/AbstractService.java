@@ -16,6 +16,7 @@ import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO.ROLE;
+import cz.nkp.urnnbn.shared.exceptions.AuthorizationException;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public abstract class AbstractService extends RemoteServiceServlet {
@@ -41,10 +42,12 @@ public abstract class AbstractService extends RemoteServiceServlet {
 		return user.getLogin();
 	}
 
-	protected void checkUserIsAdmin() throws Exception {
+	protected void checkUserIsAdmin() throws AuthorizationException, SessionExpirationException {
 		UserDTO user = getActiveUser();
-		if (user.getRole() != ROLE.SUPER_ADMIN) {
-			throw new Exception("unauthorized operation attempt detected (allowed only for admins)");
+		if (user.getRole() == ROLE.USER) {
+			throw new SessionExpirationException();
+		} else if (user.getRole() != ROLE.SUPER_ADMIN) {
+			throw new AuthorizationException("unauthorized operation attempt detected (allowed only for admins)");
 		}
 	}
 
