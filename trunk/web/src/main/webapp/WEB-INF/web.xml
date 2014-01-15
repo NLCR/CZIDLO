@@ -26,6 +26,11 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+        <listener>
+        <!-- because of this: http://stackoverflow.com/questions/1997852/spring-security-max-login-session -->
+                <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+        </listener>
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
