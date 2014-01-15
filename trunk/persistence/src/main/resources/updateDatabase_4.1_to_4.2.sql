@@ -54,7 +54,7 @@ BEGIN
          INSERT INTO ie_title (SELECT * FROM IE_TITLE_VIEW WHERE id = $1);
       END IF;
    ELSE
-      DELETE FROM ie_title WHERE id = id;
+      DELETE FROM ie_title WHERE id = $1;
    END IF;
 END;
 $BODY$
