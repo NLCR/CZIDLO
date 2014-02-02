@@ -83,8 +83,9 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
 		try {
 			DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
 			UrnNbn urnInData = registrationData.getUrn();
-			if (urnInData != null && urnInData.getRegistrarCode() != registrarCode) {
-				throw new InvalidUrnException(urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString() + "'");
+			if (urnInData != null && !urnInData.getRegistrarCode().toString().equals(registrarCode.toString())) {
+				throw new InvalidUrnException(urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString()
+						+ "'");
 			}
 			UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
 			UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
