@@ -22,23 +22,23 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import javax.ws.rs.core.Response.Status;
 
 /**
- *
+ * 
  * @author Martin Řehánek
  */
 public class UnauthorizedRegistrationModeException extends ApiV3Exception {
 
-    public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
-        super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
-    }
+	public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
+		super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
+	}
 
-    private static String errorMessage(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
-        StringBuilder result = new StringBuilder();
-        result.append("cannot register digital document ");
-        if (urn != null) {
-            result.append("with ").append(urn.toString()).append(' ');
-        }
-        result.append("- registration mode ").append(mode.toString()).append(' ');
-        result.append("not allowed for registrar ").append(registrar.getCode()).append(" (").append(registrar.getName()).append(")") ;
-        return result.toString();
-    }
+	private static String errorMessage(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
+		StringBuilder result = new StringBuilder();
+		result.append("cannot register digital document ");
+		if (urn != null) {
+			result.append("with ").append(urn.toString()).append(' ');
+		}
+		result.append("- registration mode ").append(mode.toString()).append(' ');
+		result.append("not allowed for registrar ").append(registrar.getCode()).append(" (").append(registrar.getName()).append(")");
+		return result.toString();
+	}
 }
