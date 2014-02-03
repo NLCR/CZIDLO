@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.oaipmhprovider.conf;
 
 /**
- * Properties for module OaiPmhProvider. All the keyas are prefixed by
+ * Properties for module oaiPmhProvider. All the keyas are prefixed by
  * "provider".
  * 
  * @author Martin Řehánek
