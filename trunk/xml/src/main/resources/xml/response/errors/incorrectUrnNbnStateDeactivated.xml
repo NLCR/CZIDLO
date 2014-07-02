@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2013 Martin Řehánek
+Copyright (C) 2014 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v3/response.xsd">
     <error>
-        <code>NOT_AUTHORIZED</code>
-        <message>user 'test2' not allowed to manage registrar with code 'tst02'</message>
+        <code>INCORRECT_URN_NBN_STATE</code>
+        <message>urn:nbn:cz:aba001-000001: DEACTIVATED</message>
     </error>
 </response>
+
