@@ -212,6 +212,9 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 		try {
 			long registrarId = registrarOfDigDoc(urn.getDigDocId());
 			authorization.checkAccessRights(registrarId, login);
+			if ("".equals(note)) {
+				note = null;
+			}
 			factory.urnDao().deactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode(), note);
 			if (note != null) {
 				AdminLogger.getLogger().info("user '" + login + "' deactivated " + urn + "' with note: \"" + note + "\"");
