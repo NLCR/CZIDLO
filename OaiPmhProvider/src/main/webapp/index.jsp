@@ -73,7 +73,7 @@
         <p class="descriptionText">
             <h3>General information</h3>
             Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider of
-            <a href="http://code.google.com/p/urnnbn-resolver-v2/">CZIDLO (version 4.2.1)</a>.
+            <a href="http://code.google.com/p/urnnbn-resolver-v2/">CZIDLO (version 4.2.2)</a>.
             This particular instance,
             which is deployed at <b><%=request.getHeader("host")%></b>,
             handles language code <b><%=conf.getLanguageCode()%></b>.
