@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
     <name>CZIDLO</name>
     <description>Application for administration of national librarian URN:NBN registry</description>
-    <url>http://code.google.com/p/czidlo</url>
+    <url>https://github.com/NLCR/CZIDLO/</url>
     <inceptionYear>2011</inceptionYear>
     <organization>
         <name>National Library of the Czech Republic</name>
@@ -37,8 +37,8 @@
         </contributor>
     </contributors>
     <issueManagement>
-        <system>Google Code</system>
-        <url>http://code.google.com/p/czidlo/issues/</url>
+        <system>GitHub</system>
+        <url>https://github.com/NLCR/CZIDLO/issues/</url>
     </issueManagement>
     
     <modules>
