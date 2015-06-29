@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+    <dc:title>Slang pražských dopraváků</dc:title>
+    <dc:creator>Adámek, Pavel</dc:creator>
+    <dc:creator>Prošek, František</dc:creator>
+    <dc:subject>městská hromadná doprava</dc:subject>
+    <dc:subject>městská hromadná doprava--Česko</dc:subject>
+    <dc:subject>čeština</dc:subject>
+    <dc:subject>profesní slang</dc:subject>
+    <dc:subject>urban public transportation</dc:subject>
+    <dc:subject>urban public transportation--Czechia</dc:subject>
+    <dc:subject>Czech language</dc:subject>
+    <dc:subject>professional slang</dc:subject>
+    <dc:subject/>
+    <dc:subject/>
+    <dc:subject>811.162.3</dc:subject>
+    <dc:subject>81'276.6</dc:subject>
+    <dc:subject>656.121</dc:subject>
+    <dc:subject>(437.311)</dc:subject>
+    <dc:subject>(038)81</dc:subject>
+    <dc:subject>(082)</dc:subject>
+    <dc:description>Pavel Adámek, František Prošek</dc:description>
+    <dc:description>2500 výt.</dc:description>
+    <dc:description>Obsahuje bibliografické odkazy</dc:description>
+    <dc:publisher>Dopravní podnik hl. m. Prahy</dc:publisher>
+    <dc:date>2001</dc:date>
+    <dc:type>model:monograph</dc:type>
+    <dc:format>55 s. : il. ; 21 cm</dc:format>
+    <dc:format>print</dc:format>
+    <dc:identifier>urnnbn:urn:nbn:cz:nk-0001hu</dc:identifier>
+    <dc:identifier>URN:ISBN:80-238-8071-3</dc:identifier>
+    <dc:identifier>uuid:c450bb70-8325-11e2-bb63-00505682629d</dc:identifier>
+    <dc:identifier>oclc:85022755</dc:identifier>
+    <dc:identifier>barCode:1000922439</dc:identifier>
+    <dc:identifier>ccnb:cnb001065197</dc:identifier>
+    <dc:language>cze</dc:language>
+    <dc:coverage>Česko</dc:coverage>
+    <dc:coverage>Czechia</dc:coverage>
+    <dc:coverage>Praha (Česko)</dc:coverage>
+    <dc:coverage>Prague (Czechia)</dc:coverage>
+    <dc:rights>policy:private</dc:rights>
+</oai_dc:dc>
+

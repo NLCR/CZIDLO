@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+   <r:monograph>
+      <r:titleInfo>
+         <r:title>Slang pražských dopraváků</r:title>
+      </r:titleInfo>
+      <r:ccnb>cnb001065197</r:ccnb>
+      <r:isbn>80-238-8071-3</r:isbn>
+      <r:otherId>oclc:85022755</r:otherId>
+      <r:primaryOriginator type="AUTHOR">Adámek, Pavel</r:primaryOriginator>
+      <r:publication>
+         <r:publisher>Dopravní podnik hl. m. Prahy</r:publisher>
+         <r:year>2001</r:year>
+      </r:publication>
+   </r:monograph>
+   <r:digitalDocument>
+      <r:urnNbn>
+         <r:value>urn:nbn:cz:nk-0001hu</r:value>
+      </r:urnNbn>
+      <r:registrarScopeIdentifiers>
+         <r:id type="K4_pid">uuid:c450bb70-8325-11e2-bb63-00505682629d</r:id>
+      </r:registrarScopeIdentifiers>
+      <r:financed>NDK</r:financed>
+   </r:digitalDocument>
+</r:import>
+
