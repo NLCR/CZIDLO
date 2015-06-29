@@ -48,7 +48,7 @@
         <module>oaiPmhProvider</module>   
         <module>persistence</module>  
         <module>processManager</module>   
-        <module>rest</module>    
+        <module>api</module>    
         <module>services</module>   
         <module>web-common</module>   
         <module>xml</module>  
