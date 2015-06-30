@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v3/" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v3/">
+    <!--    Chybí povinný element url, dokument není validní-->
     <r:digitalLibraryId>44</r:digitalLibraryId>
     <r:format>JPEG 2000</r:format>
     <r:accessibility>volně přístupné</r:accessibility>

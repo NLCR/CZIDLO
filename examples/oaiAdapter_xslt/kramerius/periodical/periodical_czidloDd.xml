@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <r:periodical>
         <r:titleInfo>
-            <r:title>Jurisprudence: specialista na komentování
-                judikatu</r:title>
+            <r:title>Jurisprudence: specialista na komentování judikatu</r:title>
         </r:titleInfo>
         <r:documentType>model:periodical</r:documentType>
         <r:publication>

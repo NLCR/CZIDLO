@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:import xmlns:r="http://resolver.nkp.cz/v3/" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <r:otherEntity>
         <r:titleInfo>
             <r:title>Polen nach den Letzte Friedenschlüssen, nebst den angränzenden Laendern.</r:title>
@@ -22,3 +22,4 @@
         </r:technicalMetadata>
     </r:digitalDocument>
 </r:import>
+

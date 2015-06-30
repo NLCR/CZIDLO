@@ -18,9 +18,6 @@
         </r:sourceDocument>
     </r:analytical>
     <r:digitalDocument>
-        <r:urnNbn>
-            <r:value/>
-        </r:urnNbn>
         <r:technicalMetadata>
             <r:format>html</r:format>
         </r:technicalMetadata>

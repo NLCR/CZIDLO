@@ -74,9 +74,19 @@
     
     <xsl:template name="digitalDocument">           
         <r:digitalDocument>
-            <r:urnNbn>
-                <r:value><xsl:value-of select='//dc:identifier[starts-with(.,"urn")]'/></r:value>
-            </r:urnNbn>
+            <!-- URN:NBN -->
+            <xsl:variable name="URN">
+                <xsl:value-of select='//dc:identifier[starts-with(., "urn:nbn:")]'/>
+            </xsl:variable>
+            
+            <xsl:if test="$URN != ''">
+                <r:urnNbn>
+                    <r:value>
+                        <xsl:value-of select='$URN'/>
+                    </r:value>
+                </r:urnNbn>
+            </xsl:if>
+            
             <r:technicalMetadata>
                 <r:format>html</r:format>
             </r:technicalMetadata>
