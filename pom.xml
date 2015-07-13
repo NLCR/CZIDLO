@@ -40,10 +40,10 @@
         <system>GitHub</system>
         <url>https://github.com/NLCR/CZIDLO/issues/</url>
     </issueManagement>
-    
+
     <modules>
         <module>core</module>  
-        <module>gdrive</module>   
+<!--        <module>gdrive</module>   -->
         <module>oaiAdapter</module> 
         <module>oaiPmhProvider</module>   
         <module>persistence</module>  
