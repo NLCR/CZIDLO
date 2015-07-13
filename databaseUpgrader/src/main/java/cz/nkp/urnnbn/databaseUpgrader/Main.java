@@ -25,6 +25,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// generateSaltAndHash("admin");
 		try {
 			if (args.length != 5) {
 				throw new Exception("illegal number of parameters");
@@ -34,8 +35,9 @@ public class Main {
 			String database = args[2];
 			String login = args[3];
 			String password = args[4];
-			DatabaseConnector connector = DatabaseConnectorFactory.getConnector(DatabaseDriver.POSTGRES, host, database, port, login,
-					password);
+			DatabaseConnector connector = DatabaseConnectorFactory
+					.getConnector(DatabaseDriver.POSTGRES, host, database,
+							port, login, password);
 			transformPaswordsToHashes(connector.getConnection());
 		} catch (Throwable e) {
 			System.err.println("ERROR: " + e.getMessage());
@@ -44,11 +46,25 @@ public class Main {
 		}
 	}
 
+	private static void generateSaltAndHash(String pass) {
+		try {
+			String salt = CryptoUtils.generateSalt();
+			String passwordHash = CryptoUtils.createSha256Hash(pass, salt);
+			System.out.println("password: " + pass);
+			System.out.println("salt: " + salt);
+			System.out.println("hash: " + passwordHash);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	private static int parsePort(String string) throws Exception {
 		try {
 			int result = Integer.valueOf(string);
 			if (result <= 0) {
-				throw new IllegalArgumentException("port must be positive number");
+				throw new IllegalArgumentException(
+						"port must be positive number");
 			}
 			return result;
 		} catch (NumberFormatException e) {
@@ -56,9 +72,11 @@ public class Main {
 		}
 	}
 
-	private static void transformPaswordsToHashes(Connection connection) throws SQLException, NoSuchAlgorithmException {
+	private static void transformPaswordsToHashes(Connection connection)
+			throws SQLException, NoSuchAlgorithmException {
 		Statement stm = connection.createStatement();
-		ResultSet results = stm.executeQuery("SELECT " + ATTR_ID + "," + ATTR_LOGIN + "," + ATTR_PASS + " from " + TABLE_NAME);
+		ResultSet results = stm.executeQuery("SELECT " + ATTR_ID + ","
+				+ ATTR_LOGIN + "," + ATTR_PASS + " from " + TABLE_NAME);
 		int counter = 0;
 		while (results.next()) {
 			int id = results.getInt(1);
@@ -70,16 +88,20 @@ public class Main {
 		System.out.println("Fixed " + counter + " table records");
 	}
 
-	private static void fixAccount(int id, String pass, Connection connection) throws NoSuchAlgorithmException, SQLException {
+	private static void fixAccount(int id, String pass, Connection connection)
+			throws NoSuchAlgorithmException, SQLException {
 		String salt = CryptoUtils.generateSalt();
 		// System.out.println("salt:" + salt + " (" + salt.length() + ")");
 		String passwordHash = CryptoUtils.createSha256Hash(pass, salt);
-		// System.out.println("hash:" + passwordHash + " (" + passwordHash.length() + ")");
+		// System.out.println("hash:" + passwordHash + " (" +
+		// passwordHash.length() + ")");
 		updateDatabaseRecord(id, salt, passwordHash, connection);
 	}
 
-	private static void updateDatabaseRecord(int id, String salt, String passwordHash, Connection connection) throws SQLException {
-		PreparedStatement stm = connection.prepareStatement("UPDATE " + TABLE_NAME + " SET " + ATTR_PASS + "= ?, " + ATTR_SALT
+	private static void updateDatabaseRecord(int id, String salt,
+			String passwordHash, Connection connection) throws SQLException {
+		PreparedStatement stm = connection.prepareStatement("UPDATE "
+				+ TABLE_NAME + " SET " + ATTR_PASS + "= ?, " + ATTR_SALT
 				+ "=? WHERE " + ATTR_ID + "=?");
 		stm.setString(1, passwordHash);
 		stm.setString(2, salt);

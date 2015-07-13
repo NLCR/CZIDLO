@@ -479,9 +479,9 @@ CREATE INDEX URNNBN_PREDECESSOR_SUCCESSOR ON URNNBNSUCCESSORS (PREDECESSORREGCOD
 CREATE INDEX ie_title_fulltext_idx ON ie_title USING gin(to_tsvector('simple', lower(title)));
 
 
-/* Create initial administrator account */
-INSERT INTO USERACCOUNT(ID, CREATED, MODIFIED, LOGIN, PASSWORD, ISADMIN, EMAIL) 
-VALUES(nextval('SEQ_USERACCOUNT'), LOCALTIMESTAMP, LOCALTIMESTAMP, 'admin', 'adminPassword', true, 'somone@somewhere.com');
+/* Create initial administrator account admin:admin */
+INSERT INTO USERACCOUNT(ID, CREATED, MODIFIED, LOGIN, PASSHASH, PASSSALT, ISADMIN, EMAIL) 
+VALUES(nextval('SEQ_USERACCOUNT'), LOCALTIMESTAMP, LOCALTIMESTAMP, 'admin', '906c4a1d79fec34d4d7243ff9583fc823147a68ef4d5c9a315a122d060105f27', '[B@75b84c92', true, 'somone@somewhere.com');
 
 /* Initialize content of panels "info" and "rules" for language version "cs", "en" */
 INSERT INTO CONTENT(ID, LANGUAGE, NAME, CONTENT) VALUES (nextval('SEQ_CONTENT'), 'cs', 'info', '');

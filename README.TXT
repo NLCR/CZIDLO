@@ -92,7 +92,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
 
 1. Provided you have database installed and properly configured, you should first run the initDatabase_4.2.2.sql (e. g. by psql) 
 in order to create tables, sequences and indexes.
-Script also creates one administrator account (admin:adminPassword). 
+Script also creates one administrator account (admin:admin). 
 Since it is not possible yet to change user password, it is very important that this account is removed 
 immediatelly after another administrator account (with publicly unknown password) is created. 
 
