@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/oaiPmhProvider">
     <Resource auth="Container" 
-            maxActive="100" maxIdle="30" maxWait="200" 
-            name="jdbc/postgres" 
-            type="javax.sql.DataSource" 
-            driverClassName="org.postgresql.Driver" 
-            url="jdbc:postgresql://localhost:5432/czidlo_core" 
-            username="testuser"
-            password="testpass" 
-            />
+              driverClassName="org.postgresql.Driver" 
+              maxActive="100" maxIdle="30" maxWait="200" 
+              type="javax.sql.DataSource" 
+              name="jdbc/postgres"
+              url="jdbc:postgresql://localhost:5432/czidlo_core" 
+              username="testuser"
+              password="testpass" 
+    />
 </Context>
