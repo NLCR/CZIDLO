@@ -13,6 +13,10 @@ DROP INDEX IF EXISTS URNNBN_SUCCESSOR;
 DROP INDEX IF EXISTS URNNBN_PREDECESSOR_SUCCESSOR;
 
 
+/* Drop triggers */
+
+DROP TRIGGER IF EXISTS ie_title_update_trigger ON IEIDENTIFIER;
+
 
 /* Drop Tables */
 
@@ -48,8 +52,6 @@ DROP SEQUENCE IF EXISTS SEQ_DIGITALLIBRARY;
 DROP SEQUENCE IF EXISTS SEQ_INTELECTUALENTITY;
 DROP SEQUENCE IF EXISTS SEQ_USERACCOUNT;
 DROP SEQUENCE IF EXISTS SEQ_CONTENT;
-
-
 
 
 /* Create Sequences */
@@ -524,7 +526,8 @@ FROM
    (SELECT intelectualentityid AS id, idvalue AS value FROM ieidentifier WHERE type = 'ISSN') AS issn ON title.id = issn.id
 ;
  
-CREATE LANGUAGE plpgsql;
+/* This must be run by database owner if language plgsql is not installed */ 
+/* CREATE OR REPLACE LANGUAGE plpgsql; */ 
  
 CREATE OR REPLACE FUNCTION ie_title_update(NUMERIC) RETURNS void AS $BODY$
 BEGIN
@@ -553,7 +556,4 @@ CREATE OR REPLACE FUNCTION ie_title_update_trigger_function() RETURNS TRIGGER AS
 $BODY$
 LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS ie_title_update_trigger ON ieidentifier;
 CREATE TRIGGER ie_title_update_trigger AFTER INSERT OR UPDATE OR DELETE ON ieidentifier FOR EACH ROW EXECUTE PROCEDURE ie_title_update_trigger_function();
-
-CREATE INDEX ie_title_fulltext_idx ON ie_title USING gin(to_tsvector('simple', lower(title)));
