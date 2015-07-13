@@ -86,3 +86,5 @@ local.properties
 
 # build target
 target
+
+maven-cheatsheet.txt
