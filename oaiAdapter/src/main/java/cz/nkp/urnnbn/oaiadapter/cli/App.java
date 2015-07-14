@@ -7,9 +7,9 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
@@ -43,7 +43,7 @@ public class App {
 		// resolver
 		adapter.setResolverConnector(new ResolverConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), properties
 				.loadString(DefinedProperties.RESOLVER_LOGIN), properties.loadString(DefinedProperties.RESOLVER_PASSWORD)));
-		adapter.setRegistrationMode(RegistrationMode.BY_REGISTRAR);
+		adapter.setRegistrationMode(UrnNbnRegistrationMode.BY_REGISTRAR);
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
 		// oai harvester
 		adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));

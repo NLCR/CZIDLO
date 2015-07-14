@@ -4,17 +4,14 @@
  */
 package cz.nkp.urnnbn.oaiadapter.resolver;
 
-import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.net.ssl.HttpsURLConnection;
+
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -22,6 +19,10 @@ import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XPathContext;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
  * 
@@ -207,7 +208,7 @@ public class ResolverConnector {
 		return UrnnbnStatus.UNDEFINED;
 	}
 
-	public boolean checkRegistrarMode(String registrarCode, RegistrationMode mode) throws ResolverConnectionException {
+	public boolean checkRegistrarMode(String registrarCode, UrnNbnRegistrationMode mode) throws ResolverConnectionException {
 		String url = getRegistrarUrl(registrarCode);
 		Document document = null;
 		try {

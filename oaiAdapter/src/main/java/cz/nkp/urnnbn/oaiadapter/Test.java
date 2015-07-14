@@ -4,17 +4,18 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
+import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 
 /**
  *
@@ -74,7 +75,7 @@ public class Test {
 //            oaiAdapter.setPassword(Credentials.PASSWORD);
             oaiAdapter.setRegistrarCode(registrator);
             //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
-            oaiAdapter.setRegistrationMode(RegistrationMode.BY_RESERVATION);
+            oaiAdapter.setRegistrationMode(UrnNbnRegistrationMode.BY_RESERVATION);
             //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
 
             oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
