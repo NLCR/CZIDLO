@@ -20,6 +20,7 @@ public class DefinedProperties {
     static String RESOLVER_LOGIN = "oaiAdapter.resolver.login";
     static String RESOLVER_PASSWORD = "oaiAdapter.resolver.password";
     static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.resolver.registrarCode";
+    static String RESOLVER_REGISTRATION_MODE = "oaiAdapter.resolver.registrationMode";
     //xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
