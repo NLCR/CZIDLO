@@ -23,9 +23,9 @@ import java.net.URL;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
@@ -67,7 +67,7 @@ public class OaiAdapterJob extends AbstractJob {
             adapter.setResolverConnector(new ResolverConnector(resolverApiUrl,
                     (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN),
                     (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_PASS)));
-            adapter.setRegistrationMode(RegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRATION_MODE)));
+            adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRATION_MODE)));
             logger.info("registration mode: " + adapter.getRegistrationMode().toString());
             adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRAR_CODE));
             logger.info("registrar code: " + adapter.getRegistrarCode());
