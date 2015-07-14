@@ -166,7 +166,7 @@ public class OaiAdapter {
 		}
 	}
 
-	public Object[] processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
+	public RecordResult processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
 			throws OaiAdapterException, ResolverConnectionException {
 		Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
 		ImportDocumentHandler.putRegistrarScopeIdentifier(digDocRegistrationData, oaiIdentifier);
@@ -178,7 +178,8 @@ public class OaiAdapter {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 				}
 			} else {
-				throw new OaiAdapterException("Incorrect mode - document doesn't contain URN:NBN and mode is not BY_RESOLVER");
+				throw new OaiAdapterException("Incorrect mode - document doesn't contain URN:NBN and mode is not "
+						+ UrnNbnRegistrationMode.BY_RESOLVER);
 			}
 		} else {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
@@ -210,6 +211,12 @@ public class OaiAdapter {
 				registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 			}
 		}
+
+		return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData);
+	}
+
+	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document digInstImportData)
+			throws OaiAdapterException, ResolverConnectionException {
 		DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digInstImportData);
 		DigitalInstance oldDi = null;
 		try {
@@ -224,7 +231,7 @@ public class OaiAdapter {
 			// IMPORT
 			importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
 			report("- DI doesn't exists - importing DI.");
-			return new Object[] { urnnbn, Boolean.TRUE };
+			return new RecordResult(urnnbn, DigitalInstanceStatus.IMPORTED);
 		} else {
 			// di already exist
 			if (newDi.isChanged(oldDi)) {
@@ -234,11 +241,11 @@ public class OaiAdapter {
 				// IMPORT
 				importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
 				report("- DI already exists and is modified - removing old one and imporing new DI.");
-				return new Object[] { urnnbn, Boolean.TRUE };
+				return new RecordResult(urnnbn, DigitalInstanceStatus.UPDATED);
 			} else {
 				// no change ..do nothing
 				report("- DI already exists and is not modified - doing nothing.");
-				return new Object[] { urnnbn, Boolean.FALSE };
+				return new RecordResult(urnnbn, DigitalInstanceStatus.UNTOUCHED);
 			}
 		}
 	}
@@ -272,8 +279,8 @@ public class OaiAdapter {
 		}
 	}
 
-	private boolean processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate, Document digInstImportTemplate)
-			throws OaiAdapterException {
+	private DigitalInstanceStatus processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate,
+			Document digInstImportTemplate) throws OaiAdapterException {
 		report("------------------------------------------------------");
 		String identifier = originalRecord.getIdentifier();
 		report("Processing next record - identifier: " + identifier);
@@ -320,12 +327,12 @@ public class OaiAdapter {
 		}
 
 		try {
-			Object[] documentProcessingResult = processSingleDocument(identifier, digDocRegistrationData, digInstImportData);
-			String urnnbn = (String) documentProcessingResult[0];
+			RecordResult documentProcessingResult = processSingleDocument(identifier, digDocRegistrationData, digInstImportData);
+			String urnnbn = (String) documentProcessingResult.getUrnnbn();
 			if (urnnbn != null) {
 				report("- " + urnnbn);
 			}
-			return (Boolean) documentProcessingResult[1];
+			return documentProcessingResult.getDiStatus();
 		} catch (ResolverConnectionException ex) {
 			throw new OaiAdapterException(ex.getMessage());
 		}
@@ -373,9 +380,11 @@ public class OaiAdapter {
 				return;
 			}
 			int counter = 0;
-			int success = 0;
+			int disImported = 0;
+			int disUpdated = 0;
+			int disUntouched = 0;
+
 			int all = 0;
-			int alreadyImported = 0;
 			while (harvester.hasNext()) {
 				if (limit > 0 && counter++ >= limit) {
 					break;
@@ -384,13 +393,20 @@ public class OaiAdapter {
 					OriginalRecordFromOai record = harvester.getNext();
 					all++;
 					try {
-						boolean imported = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
-						if (imported) {
-							success++;
-							logger.log(Level.INFO, "Record successfully processed. Identifier {0}", record.getIdentifier());
-						} else {
-							alreadyImported++;
+						DigitalInstanceStatus diStatus = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
+						switch (diStatus) {
+						case IMPORTED:
+							disImported++;
+							break;
+						case UPDATED:
+							disUpdated++;
+							break;
+						case UNTOUCHED:
+							disUntouched++;
+							break;
 						}
+						logger.log(Level.INFO, "Record successfully processed. Identifier {0}, di state: {1}",
+								new Object[] { record.getIdentifier(), diStatus });
 						report("STATUS: OK");
 					} catch (OaiAdapterException ex) {
 						logger.log(Level.SEVERE, ex.getMessage());
@@ -406,10 +422,10 @@ public class OaiAdapter {
 			}
 			report("-----------------------------------------------------");
 			report("ALL RECORDS: " + all);
-			report("SUCCESSFUL RECORDS (NEW/MODIFIED): " + success);
-			report("SUCCESSFUL RECORDS:(ALREADY IMPORTED AND NOT MODIFIED): " + alreadyImported);
-			report("NOT SUCCESSFUL: " + (all - (success + alreadyImported)));
-
+			report("DI IMPORTED: " + disImported);
+			report("DI UPDATED: " + disUpdated);
+			report("DI NOT IMPORTED NOR UPDATED: " + disUntouched);
+			report("NOT SUCCESSFUL: " + (all - (disImported + disUpdated + disUntouched)));
 			if (reportLogger != null) {
 				reportLogger.close();
 			}
