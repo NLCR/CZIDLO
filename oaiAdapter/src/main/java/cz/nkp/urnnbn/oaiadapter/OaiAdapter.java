@@ -4,6 +4,16 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.xslt.XSLException;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.oaiadapter.resolver.RegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
 import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
@@ -11,14 +21,6 @@ import cz.nkp.urnnbn.oaiadapter.resolver.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
 import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.xslt.XSLException;
 
 /**
  * 
@@ -180,7 +182,7 @@ public class OaiAdapter {
 			}
 		} else {
 			if (getRegistrationMode() == RegistrationMode.BY_RESOLVER) {
-				throw new OaiAdapterException("Incorrect mode - document contains URN:NBN and mode is BY_RESOLVER");
+				throw new OaiAdapterException("Incorrect mode - document contains URN:NBN and mode is " + RegistrationMode.BY_RESOLVER);
 			}
 			UrnnbnStatus urnnbnStatus = resolverConnector.getUrnnbnStatus(urnnbn);
 			report("- URN:NBN status: " + urnnbnStatus);
@@ -189,10 +191,12 @@ public class OaiAdapter {
 				throw new OaiAdapterException("Checking URN:NBN status failed");
 			}
 			if (urnnbnStatus == UrnnbnStatus.RESERVED && getRegistrationMode() != RegistrationMode.BY_RESERVATION) {
-				throw new OaiAdapterException("Incorrect mode - URN:NBN has status RESERVED and mode is not RESERVATION");
+				throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.RESERVED,
+						RegistrationMode.BY_RESERVATION));
 			}
 			if (urnnbnStatus == UrnnbnStatus.FREE && getRegistrationMode() != RegistrationMode.BY_REGISTRAR) {
-				throw new OaiAdapterException("Incorrect mode - URN:NBN has status FREE and mode is not BY_REGISTRAR");
+				throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.FREE,
+						RegistrationMode.BY_REGISTRAR));
 			}
 
 			if (urnnbnStatus == UrnnbnStatus.ACTIVE) {
@@ -287,7 +291,8 @@ public class OaiAdapter {
 			XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
 			report("- Digital Document Registration data validation successful - continuing.");
 		} catch (DocumentOperationException ex) {
-			// saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
+			// saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
+			// ".xml");
 			throw new OaiAdapterException("- Digital Document Registration data invalid - skipping.\nMessage: " + ex.getMessage());
 		}
 
@@ -296,7 +301,8 @@ public class OaiAdapter {
 		try {
 			digInstImportData = XmlTools.getTransformedDocument(originalRecord.getDocument(), digInstImportTemplate);
 			report("- record successfuly transformed to Digital Instance Import data - continuing.");
-			// File tmpFile = saveToTempFile(digInstImportData, "digitalInstance-" + originalRecord.getIdentifier(),
+			// File tmpFile = saveToTempFile(digInstImportData, "digitalInstance-" +
+			// originalRecord.getIdentifier(),
 			// ".xml");
 		} catch (XSLException ex) {
 			throw new OaiAdapterException("XSLException occurred when transforming record to Digital Instance Import data: "
@@ -305,7 +311,8 @@ public class OaiAdapter {
 		try {
 			XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
 			report("- Digital Instance Import data validation successful - continuing.");
-			// File tmpFile = saveToTempFile(digitalInstanceDocument, "digitalInstance-" + record.getIdentifier(),
+			// File tmpFile = saveToTempFile(digitalInstanceDocument, "digitalInstance-" +
+			// record.getIdentifier(),
 			// ".xml");
 		} catch (DocumentOperationException ex) {
 			throw new OaiAdapterException("- Digital Instance Import data invalid - skipping.\nMessage: " + ex.getMessage());
