@@ -292,7 +292,7 @@ public class OaiAdapter {
 		}
 	}
 
-	private DigitalInstanceStatus processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate,
+	private RecordResult processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate,
 			Document digInstImportTemplate) throws OaiAdapterException {
 		report("------------------------------------------------------");
 		String identifier = originalRecord.getIdentifier();
@@ -340,12 +340,12 @@ public class OaiAdapter {
 		}
 
 		try {
-			RecordResult documentProcessingResult = processSingleDocument(identifier, digDocRegistrationData, digInstImportData);
-			String urnnbn = (String) documentProcessingResult.getUrnnbn();
+			RecordResult recordResult = processSingleDocument(identifier, digDocRegistrationData, digInstImportData);
+			String urnnbn = (String) recordResult.getUrnnbn();
 			if (urnnbn != null) {
 				report("- " + urnnbn);
 			}
-			return documentProcessingResult.getDiStatus();
+			return recordResult;
 		} catch (CzidloConnectionException ex) {
 			throw new OaiAdapterException(ex.getMessage());
 		}
@@ -393,9 +393,18 @@ public class OaiAdapter {
 				return;
 			}
 			int counter = 0;
-			int disImported = 0;
-			int disUpdated = 0;
-			int disUntouched = 0;
+
+			int ddRegisteredNow = 0;
+			int ddRegisteredAlready = 0;
+			int ddIgnored = 0;
+
+			int ddRegisteredNowDisImported = 0;
+			int ddRegisteredNowDisUpdated = 0;
+			int ddRegisteredNowDisUntouched = 0;
+
+			int ddRegisteredAlreadyDisImported = 0;
+			int ddRegisteredAlreadyDisUpdated = 0;
+			int ddRegisteredAlreadyDisUntouched = 0;
 
 			int all = 0;
 			while (harvester.hasNext()) {
@@ -406,20 +415,42 @@ public class OaiAdapter {
 					OriginalRecordFromOai record = harvester.getNext();
 					all++;
 					try {
-						DigitalInstanceStatus diStatus = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
-						switch (diStatus) {
-						case IMPORTED:
-							disImported++;
+						RecordResult recordResult = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
+						switch (recordResult.getDdStatus()) {
+						case IGNORED:
+							ddIgnored++;
 							break;
-						case UPDATED:
-							disUpdated++;
+						case ALREADY_REGISTERED:
+							ddRegisteredAlready++;
+							switch (recordResult.getDiStatus()) {
+							case IMPORTED:
+								ddRegisteredAlreadyDisImported++;
+								break;
+							case UPDATED:
+								ddRegisteredAlreadyDisUpdated++;
+								break;
+							case UNTOUCHED:
+								ddRegisteredAlreadyDisUntouched++;
+								break;
+							}
 							break;
-						case UNTOUCHED:
-							disUntouched++;
-							break;
+						case NOW_REGISTERED:
+							ddRegisteredNow++;
+							switch (recordResult.getDiStatus()) {
+							case IMPORTED:
+								ddRegisteredNowDisImported++;
+								break;
+							case UPDATED:
+								ddRegisteredNowDisUpdated++;
+								break;
+							case UNTOUCHED:
+								ddRegisteredNowDisUntouched++;
+								break;
+							}
 						}
-						logger.log(Level.INFO, "Record successfully processed. Identifier {0}, di state: {1}",
-								new Object[] { record.getIdentifier(), diStatus });
+
+						logger.log(Level.INFO, "Record successfully processed. Identifier {0}, dd state {1}, di state: {2}", new Object[] {
+								record.getIdentifier(), recordResult.getDdStatus(), recordResult.getDiStatus() });
 						report("STATUS: OK");
 					} catch (OaiAdapterException ex) {
 						logger.log(Level.SEVERE, ex.getMessage());
@@ -433,12 +464,26 @@ public class OaiAdapter {
 					report("STATUS: NOT OK");
 				}
 			}
-			report("-----------------------------------------------------");
+			report("=====================================================");
 			report("ALL RECORDS: " + all);
-			report("DI IMPORTED: " + disImported);
-			report("DI UPDATED: " + disUpdated);
-			report("DI NOT IMPORTED NOR UPDATED: " + disUntouched);
-			report("NOT SUCCESSFUL: " + (all - (disImported + disUpdated + disUntouched)));
+			report("DD REGISTERED NOW: " + ddRegisteredNow);
+			report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
+			report("DD IGNORED: " + ddIgnored);
+			report("NOT SUCCESSFUL: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddIgnored)));
+			if (ddRegisteredNow != 0) {
+				report("-----------------------------------------------------");
+				report("DD REGISTERED NOW: " + ddRegisteredNow);
+				report("DI IMPORTED: " + ddRegisteredNowDisImported);
+				report("DI UPDATED: " + ddRegisteredNowDisUpdated);
+				report("DI NOT IMPORTED NOR UPDATED: " + ddRegisteredNowDisUntouched);
+			}
+			if (ddRegisteredAlready != 0) {
+				report("-----------------------------------------------------");
+				report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
+				report("DI IMPORTED: " + ddRegisteredAlreadyDisImported);
+				report("DI UPDATED: " + ddRegisteredAlreadyDisUpdated);
+				report("DI NOT IMPORTED NOR UPDATED: " + ddRegisteredAlreadyDisUntouched);
+			}
 			if (reportLogger != null) {
 				reportLogger.close();
 			}
