@@ -44,13 +44,13 @@ public class CzidloApiConnector {
 		this.password = password;
 	}
 
-	public String getResolverApiUrl() {
+	public String getCzidloApiUrl() {
 		return czidloApiUrl;
 	}
 
 	private String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
-		String url = "http://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/"
-				+ registarScopeId + "/" + identifier + "?format=xml&action=show";
+		String url = "http://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId
+				+ "/" + identifier + "?format=xml&action=show";
 
 		return url;
 	}
@@ -60,7 +60,7 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	private String getImportDocumetUrl(String registrarCode) {
+	private String getDigDocRegistrationUrl(String registrarCode) {
 		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode + "/digitalDocuments";
 		return url;
 	}
@@ -80,18 +80,8 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	private String getImportDigitalInstanceUrl(String urnnbn) {
-		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
-		return url;
-	}
-
 	private String getUpdateRegistrarScopeIdUrl(String urnnbn, String registrarScopeId) {
 		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/identifiers/" + registrarScopeId;
-		return url;
-	}
-
-	private String getRemoveDigitalInstanceUrl(String id) {
-		String url = "https://" + czidloApiUrl + "digitalInstances/id/" + id;
 		return url;
 	}
 
@@ -117,7 +107,8 @@ public class CzidloApiConnector {
 		return null;
 	}
 
-	// public static boolean isDocumentAlreadyImported(String registrar, String identifier, String registarScopeId)
+	// public static boolean isDocumentAlreadyImported(String registrar, String identifier, String
+	// registarScopeId)
 	// throws IOException, ParsingException {
 	// String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
 	// Document document = XmlTools.getDocument(url, true);
@@ -258,7 +249,7 @@ public class CzidloApiConnector {
 	}
 
 	public String importDocument(Document document, String registarCode) throws IOException, ParsingException, CzidloConnectionException {
-		String url = getImportDocumetUrl(registarCode);
+		String url = getDigDocRegistrationUrl(registarCode);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(document.toXML());
@@ -281,7 +272,7 @@ public class CzidloApiConnector {
 	}
 
 	public void importDigitalInstance(Document document, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
-		String url = getImportDigitalInstanceUrl(urnnbn);
+		String url = getDigitalInsatancesUrl(urnnbn);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(document.toXML());
@@ -310,7 +301,7 @@ public class CzidloApiConnector {
 
 	public void removeDigitalInstance(String id) throws CzidloConnectionException {
 		try {
-			String url = getRemoveDigitalInstanceUrl(id);
+			String url = getDigitalInsatancesUrl(id);
 			HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "DELETE", false);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {

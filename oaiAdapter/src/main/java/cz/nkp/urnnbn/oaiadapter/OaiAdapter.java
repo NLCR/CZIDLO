@@ -353,7 +353,7 @@ public class OaiAdapter {
 			report(" ");
 			report(" CZIDLO API");
 			report(" -----------------");
-			report("  CZIDLO API base url: " + resolverConnector.getResolverApiUrl());
+			report("  CZIDLO API base url: " + resolverConnector.getCzidloApiUrl());
 			report("  Mode: " + getRegistrationMode());
 			report("------------------------------");
 
