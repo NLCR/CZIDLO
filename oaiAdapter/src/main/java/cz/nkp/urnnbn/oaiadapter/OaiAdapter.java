@@ -15,9 +15,9 @@ import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
-import cz.nkp.urnnbn.oaiadapter.resolver.UrnnbnStatus;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
+import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
 import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
@@ -38,7 +38,7 @@ public class OaiAdapter {
 	// RESOLVER
 	private String registrarCode;
 	private UrnNbnRegistrationMode registrationMode;
-	private ResolverConnector resolverConnector;
+	private CzidloApiConnector resolverConnector;
 	// XSLT
 	private String metadataToDigDocRegistrationTemplate;
 	private String metadataToDigInstImportTemplate;
@@ -119,11 +119,11 @@ public class OaiAdapter {
 		this.reportLogger = new ReportLogger(os);
 	}
 
-	public ResolverConnector getResolverConnector() {
+	public CzidloApiConnector getResolverConnector() {
 		return resolverConnector;
 	}
 
-	public void setResolverConnector(ResolverConnector resolverConnector) {
+	public void setCzidloConnector(CzidloApiConnector resolverConnector) {
 		this.resolverConnector = resolverConnector;
 	}
 
@@ -167,7 +167,7 @@ public class OaiAdapter {
 	}
 
 	public RecordResult processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
-			throws OaiAdapterException, ResolverConnectionException {
+			throws OaiAdapterException, CzidloConnectionException {
 		Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
 		ImportDocumentHandler.putRegistrarScopeIdentifier(digDocRegistrationData, oaiIdentifier);
 		String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digDocRegistrationData);
@@ -216,7 +216,7 @@ public class OaiAdapter {
 	}
 
 	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document digInstImportData)
-			throws OaiAdapterException, ResolverConnectionException {
+			throws OaiAdapterException, CzidloConnectionException {
 		DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digInstImportData);
 		DigitalInstance oldDi = null;
 		try {
@@ -258,7 +258,7 @@ public class OaiAdapter {
 			throw new OaiAdapterException("IOException occurred during Digital Instance Import: " + ex.getMessage());
 		} catch (ParsingException ex) {
 			throw new OaiAdapterException("ParsingException occurred during Digital Instance Import: " + ex.getMessage());
-		} catch (ResolverConnectionException ex) {
+		} catch (CzidloConnectionException ex) {
 			throw new OaiAdapterException("ResolverConnectionException occurred during Digital Instance Import: " + ex.getMessage());
 		}
 
@@ -274,7 +274,7 @@ public class OaiAdapter {
 			throw new OaiAdapterException("IOException occurred during Digital Document Registration: " + ex.getMessage());
 		} catch (ParsingException ex) {
 			throw new OaiAdapterException("ParsingException occurred during Digital Document Registration: " + ex.getMessage());
-		} catch (ResolverConnectionException ex) {
+		} catch (CzidloConnectionException ex) {
 			throw new OaiAdapterException("ResolverConnectionException occurred during Digital Document Registration: " + ex.getMessage());
 		}
 	}
@@ -333,7 +333,7 @@ public class OaiAdapter {
 				report("- " + urnnbn);
 			}
 			return documentProcessingResult.getDiStatus();
-		} catch (ResolverConnectionException ex) {
+		} catch (CzidloConnectionException ex) {
 			throw new OaiAdapterException(ex.getMessage());
 		}
 
@@ -364,7 +364,7 @@ public class OaiAdapter {
 							getRegistrarCode() });
 					return;
 				}
-			} catch (ResolverConnectionException e) {
+			} catch (CzidloConnectionException e) {
 				report("Resolver API not available: " + e.getMessage());
 				logger.log(Level.SEVERE, "Resolver API not available: " + e.getMessage());
 				return;

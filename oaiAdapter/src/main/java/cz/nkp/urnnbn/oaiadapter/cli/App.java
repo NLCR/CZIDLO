@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
@@ -40,8 +40,8 @@ public class App {
 
 	private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
 		OaiAdapter adapter = new OaiAdapter();
-		// resolver
-		adapter.setResolverConnector(new ResolverConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), properties
+		// czidlo api
+		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), properties
 				.loadString(DefinedProperties.RESOLVER_LOGIN), properties.loadString(DefinedProperties.RESOLVER_PASSWORD)));
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
 		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(DefinedProperties.RESOLVER_REGISTRATION_MODE));

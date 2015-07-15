@@ -6,11 +6,13 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -28,16 +30,16 @@ public class ImportDocumentHandler {
 
     public static Document putRegistrarScopeIdentifier(Document document, String oaiIdentifier) {
         Element root = document.getRootElement();
-        Element digitalDocumentElement = root.getFirstChildElement("digitalDocument", ResolverConnector.RESOLVER_NAMESPACE);
+        Element digitalDocumentElement = root.getFirstChildElement("digitalDocument", CzidloApiConnector.RESOLVER_NAMESPACE);
         if (digitalDocumentElement == null) {
-            digitalDocumentElement = new Element("r:digitalDocument", ResolverConnector.RESOLVER_NAMESPACE);
+            digitalDocumentElement = new Element("r:digitalDocument", CzidloApiConnector.RESOLVER_NAMESPACE);
             root.appendChild(digitalDocumentElement);
         }
-        Element registrarScopeIdentifiersElement = digitalDocumentElement.getFirstChildElement("registrarScopeIdentifiers", ResolverConnector.RESOLVER_NAMESPACE);
+        Element registrarScopeIdentifiersElement = digitalDocumentElement.getFirstChildElement("registrarScopeIdentifiers", CzidloApiConnector.RESOLVER_NAMESPACE);
         if (registrarScopeIdentifiersElement == null) {
-            registrarScopeIdentifiersElement = new Element("r:registrarScopeIdentifiers", ResolverConnector.RESOLVER_NAMESPACE);
-            int archiverIdPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("archiverId", ResolverConnector.RESOLVER_NAMESPACE));
-            int urnnbnPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("urnNbn", ResolverConnector.RESOLVER_NAMESPACE));
+            registrarScopeIdentifiersElement = new Element("r:registrarScopeIdentifiers", CzidloApiConnector.RESOLVER_NAMESPACE);
+            int archiverIdPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("archiverId", CzidloApiConnector.RESOLVER_NAMESPACE));
+            int urnnbnPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("urnNbn", CzidloApiConnector.RESOLVER_NAMESPACE));
             int position = 0;
             if (urnnbnPosition != -1) {
                 position = urnnbnPosition + 1;
@@ -46,7 +48,7 @@ public class ImportDocumentHandler {
             }
             digitalDocumentElement.insertChild(registrarScopeIdentifiersElement, position);
         }
-        Element oaiAdapterScopeElement = new Element("r:id", ResolverConnector.RESOLVER_NAMESPACE);
+        Element oaiAdapterScopeElement = new Element("r:id", CzidloApiConnector.RESOLVER_NAMESPACE);
         oaiAdapterScopeElement.addAttribute(new Attribute("type", OaiAdapter.REGISTAR_SCOPE_ID));
         oaiAdapterScopeElement.appendChild(oaiIdentifier);
         registrarScopeIdentifiersElement.appendChild(oaiAdapterScopeElement);
@@ -55,7 +57,7 @@ public class ImportDocumentHandler {
 
     public static String getUrnnbnFromDocument(Document document) {
         //Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn", ResolverConnector.CONTEXT);
-        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn/r:value", ResolverConnector.CONTEXT);
+        Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn/r:value", CzidloApiConnector.CONTEXT);
         //System.out.println(document.toXML().toString());               
         //System.out.println(nodes.size());
         //System.out.println(ResolverConnector.CONTEXT);
@@ -67,23 +69,23 @@ public class ImportDocumentHandler {
 
     public static DigitalInstance getDIFromResponseDocument(Document document) {
         DigitalInstance di = new DigitalInstance();
-        Nodes libraryIdNodes = document.query("//r:digitalInstance/r:digitalLibrary/@id", ResolverConnector.CONTEXT);
+        Nodes libraryIdNodes = document.query("//r:digitalInstance/r:digitalLibrary/@id", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
             di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
         }
-        Nodes urlNodes = document.query("//r:digitalInstance/r:url", ResolverConnector.CONTEXT);
+        Nodes urlNodes = document.query("//r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {
             di.setUrl(urlNodes.get(0).getValue());
         }
-        Nodes formatNodes = document.query("//r:digitalInstance/r:format", ResolverConnector.CONTEXT);
+        Nodes formatNodes = document.query("//r:digitalInstance/r:format", CzidloApiConnector.CONTEXT);
         if (formatNodes.size() == 1) {
             di.setFormat(formatNodes.get(0).getValue());
         }
-        Nodes accessibilityNodes = document.query("//r:digitalInstance/r:accessibility", ResolverConnector.CONTEXT);
+        Nodes accessibilityNodes = document.query("//r:digitalInstance/r:accessibility", CzidloApiConnector.CONTEXT);
         if (accessibilityNodes.size() == 1) {
             di.setAccessibility(accessibilityNodes.get(0).getValue());
         }
-        Nodes idNodes = document.query("//r:digitalInstance/@id", ResolverConnector.CONTEXT);
+        Nodes idNodes = document.query("//r:digitalInstance/@id", CzidloApiConnector.CONTEXT);
         if (idNodes.size() == 1) {
             di.setId(idNodes.get(0).getValue());
         }
@@ -92,19 +94,19 @@ public class ImportDocumentHandler {
 
     public static DigitalInstance getDIFromSourceDocument(Document document) {
         DigitalInstance di = new DigitalInstance();
-        Nodes libraryIdNodes = document.query("/r:digitalInstance/r:digitalLibraryId", ResolverConnector.CONTEXT);
+        Nodes libraryIdNodes = document.query("/r:digitalInstance/r:digitalLibraryId", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
             di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
         }
-        Nodes urlNodes = document.query("/r:digitalInstance/r:url", ResolverConnector.CONTEXT);
+        Nodes urlNodes = document.query("/r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {
             di.setUrl(urlNodes.get(0).getValue());
         }
-        Nodes formatNodes = document.query("/r:digitalInstance/r:format", ResolverConnector.CONTEXT);
+        Nodes formatNodes = document.query("/r:digitalInstance/r:format", CzidloApiConnector.CONTEXT);
         if (formatNodes.size() == 1) {
             di.setFormat(formatNodes.get(0).getValue());
         }
-        Nodes accessibilityNodes = document.query("/r:digitalInstance/r:accessibility", ResolverConnector.CONTEXT);
+        Nodes accessibilityNodes = document.query("/r:digitalInstance/r:accessibility", CzidloApiConnector.CONTEXT);
         if (accessibilityNodes.size() == 1) {
             di.setAccessibility(accessibilityNodes.get(0).getValue());
         }

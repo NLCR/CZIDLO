@@ -14,8 +14,8 @@ import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnectionException;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 
 /**
  *
@@ -23,17 +23,17 @@ import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
  */
 public class Test {
     
-    private ResolverConnector resolverConnector = new ResolverConnector("resolver-test2.nkp.cz/api","someLogin","somePassword");
+    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api","someLogin","somePassword");
 
     public void makeReservation() {
         try {
-            List<String> reserveUrnnbnBundle = resolverConnector.reserveUrnnbnBundle("rych01", 5);
+            List<String> reserveUrnnbnBundle = czidloConnector.reserveUrnnbnBundle("rych01", 5);
             for (String string : reserveUrnnbnBundle) {
                 System.out.println(string);
             }
         } catch (IOException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ResolverConnectionException ex) {
+        } catch (CzidloConnectionException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,12 +49,12 @@ public class Test {
             String registrator = "tsh03";
             Builder builder = new Builder();
             Document digitalInstance = builder.build(new File(di));
-            resolverConnector.importDigitalInstance(digitalInstance, urn);
+            czidloConnector.importDigitalInstance(digitalInstance, urn);
         } catch (IOException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ResolverConnectionException ex) {
+        } catch (CzidloConnectionException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -79,7 +79,7 @@ public class Test {
             //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
 
             oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
-        } catch (ResolverConnectionException ex) {
+        } catch (CzidloConnectionException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         } catch (OaiAdapterException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);

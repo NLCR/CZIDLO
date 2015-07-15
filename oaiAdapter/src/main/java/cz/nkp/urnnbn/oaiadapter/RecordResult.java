@@ -5,7 +5,6 @@ public class RecordResult {
 	private final DigitalInstanceStatus diStatus;
 
 	public RecordResult(String urnnbn, DigitalInstanceStatus diStatus) {
-		super();
 		this.urnnbn = urnnbn;
 		this.diStatus = diStatus;
 	}

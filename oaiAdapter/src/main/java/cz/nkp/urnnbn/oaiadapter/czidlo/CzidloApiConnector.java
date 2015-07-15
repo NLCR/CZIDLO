@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.resolver;
+package cz.nkp.urnnbn.oaiadapter.czidlo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,87 +28,87 @@ import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
  * 
  * @author hanis
  */
-public class ResolverConnector {
+public class CzidloApiConnector {
 
 	public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
 	public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
 	public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v3/";
 	public static final XPathContext CONTEXT = new XPathContext("r", RESOLVER_NAMESPACE);
-	public final String resolverApiUrl;
+	public final String czidloApiUrl;
 	public final String login;
 	public final String password;
 
-	public ResolverConnector(String resolverApiUrl, String login, String password) {
-		this.resolverApiUrl = resolverApiUrl + "/v3/";
+	public CzidloApiConnector(String czidloApiUrl, String login, String password) {
+		this.czidloApiUrl = czidloApiUrl + "/v3/";
 		this.login = login;
 		this.password = password;
 	}
 
 	public String getResolverApiUrl() {
-		return resolverApiUrl;
+		return czidloApiUrl;
 	}
 
 	private String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
-		String url = "http://" + resolverApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/"
+		String url = "http://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/"
 				+ registarScopeId + "/" + identifier + "?format=xml&action=show";
 
 		return url;
 	}
 
 	private String getRegistrarUrl(String registrarCode) {
-		String url = "http://" + resolverApiUrl + "registrars/" + registrarCode;
+		String url = "http://" + czidloApiUrl + "registrars/" + registrarCode;
 		return url;
 	}
 
 	private String getImportDocumetUrl(String registrarCode) {
-		String url = "https://" + resolverApiUrl + "registrars/" + registrarCode + "/digitalDocuments";
+		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode + "/digitalDocuments";
 		return url;
 	}
 
 	private String getUrnnbnReservationUrl(String registrarCode, int size) {
-		String url = "https://" + resolverApiUrl + "registrars/" + registrarCode + "/urnNbnReservations?size=" + size;
+		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode + "/urnNbnReservations?size=" + size;
 		return url;
 	}
 
 	private String getUrnnbnStatusUrl(String urnnbn) {
-		String url = "http://" + resolverApiUrl + "urnnbn/" + urnnbn;
+		String url = "http://" + czidloApiUrl + "urnnbn/" + urnnbn;
 		return url;
 	}
 
 	private String getDigitalInsatancesUrl(String urnnbn) {
-		String url = "http://" + resolverApiUrl + "resolver/" + urnnbn + "/digitalInstances";
+		String url = "http://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
 		return url;
 	}
 
 	private String getImportDigitalInstanceUrl(String urnnbn) {
-		String url = "https://" + resolverApiUrl + "resolver/" + urnnbn + "/digitalInstances";
+		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
 		return url;
 	}
 
 	private String getUpdateRegistrarScopeIdUrl(String urnnbn, String registrarScopeId) {
-		String url = "https://" + resolverApiUrl + "resolver/" + urnnbn + "/identifiers/" + registrarScopeId;
+		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/identifiers/" + registrarScopeId;
 		return url;
 	}
 
 	private String getRemoveDigitalInstanceUrl(String id) {
-		String url = "https://" + resolverApiUrl + "digitalInstances/id/" + id;
+		String url = "https://" + czidloApiUrl + "digitalInstances/id/" + id;
 		return url;
 	}
 
 	private String getDigitalInstanceUrl(String id) {
-		String url = "http://" + resolverApiUrl + "digitalInstances/id/" + id;
+		String url = "http://" + czidloApiUrl + "digitalInstances/id/" + id;
 		return url;
 	}
 
-	public String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws ResolverConnectionException {
+	public String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws CzidloConnectionException {
 		String url = getDigitalDocumentUrl(registrar, registarScopeId, identifier);
 		Document document;
 		try {
 			document = XmlTools.getDocument(url, true);
 		} catch (IOException ex) {
-			throw new ResolverConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
+			throw new CzidloConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
 		} catch (ParsingException ex) {
-			throw new ResolverConnectionException("ParsingException occured while getting urnnbn by OAI_ADAPTER ID");
+			throw new CzidloConnectionException("ParsingException occured while getting urnnbn by OAI_ADAPTER ID");
 		}
 		Nodes nodes = document.query("//r:digitalDocument/r:urnNbn/r:value", CONTEXT);
 		if (nodes.size() > 0) {
@@ -208,13 +208,13 @@ public class ResolverConnector {
 		return UrnnbnStatus.UNDEFINED;
 	}
 
-	public boolean checkRegistrarMode(String registrarCode, UrnNbnRegistrationMode mode) throws ResolverConnectionException {
+	public boolean checkRegistrarMode(String registrarCode, UrnNbnRegistrationMode mode) throws CzidloConnectionException {
 		String url = getRegistrarUrl(registrarCode);
 		Document document = null;
 		try {
 			document = XmlTools.getDocument(url, true);
 		} catch (Exception ex) {
-			throw new ResolverConnectionException(ex.getMessage());
+			throw new CzidloConnectionException(ex.getMessage());
 		}
 		Element rootElement = document.getRootElement();
 		String modeString = "";
@@ -236,14 +236,14 @@ public class ResolverConnector {
 		return false;
 	}
 
-	public List<String> reserveUrnnbnBundle(String registarCode, int bundleSize) throws IOException, ResolverConnectionException,
+	public List<String> reserveUrnnbnBundle(String registarCode, int bundleSize) throws IOException, CzidloConnectionException,
 			ParsingException {
 		List<String> urnnbnList = new ArrayList<String>();
 		String url = getUrnnbnReservationUrl(registarCode, bundleSize);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 200??
-			throw new ResolverConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
+			throw new CzidloConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
 		}
 		InputStream is = connection.getInputStream();
 		Builder builder = new Builder();
@@ -257,7 +257,7 @@ public class ResolverConnector {
 
 	}
 
-	public String importDocument(Document document, String registarCode) throws IOException, ParsingException, ResolverConnectionException {
+	public String importDocument(Document document, String registarCode) throws IOException, ParsingException, CzidloConnectionException {
 		String url = getImportDocumetUrl(registarCode);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
@@ -271,7 +271,7 @@ public class ResolverConnector {
 			if (message == null) {
 				message = "Importing record document: response code expected 200, found " + responseCode;
 			}
-			throw new ResolverConnectionException(message);
+			throw new CzidloConnectionException(message);
 		}
 		InputStream is = connection.getInputStream();
 		Builder builder = new Builder();
@@ -280,7 +280,7 @@ public class ResolverConnector {
 		return urnnbn;
 	}
 
-	public void importDigitalInstance(Document document, String urnnbn) throws IOException, ParsingException, ResolverConnectionException {
+	public void importDigitalInstance(Document document, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
 		String url = getImportDigitalInstanceUrl(urnnbn);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
@@ -289,12 +289,12 @@ public class ResolverConnector {
 		wr.close();
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 201??
-			throw new ResolverConnectionException("Putting digital instance: response code expected 201, found " + responseCode);
+			throw new CzidloConnectionException("Putting digital instance: response code expected 201, found " + responseCode);
 		}
 	}
 
 	public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId) throws IOException,
-			ResolverConnectionException {
+			CzidloConnectionException {
 		String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
@@ -303,21 +303,21 @@ public class ResolverConnector {
 		wr.close();
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 201??
-			throw new ResolverConnectionException("Puttin registrar scope identifier: response code expected 201, found " + responseCode);
+			throw new CzidloConnectionException("Puttin registrar scope identifier: response code expected 201, found " + responseCode);
 		}
 
 	}
 
-	public void removeDigitalInstance(String id) throws ResolverConnectionException {
+	public void removeDigitalInstance(String id) throws CzidloConnectionException {
 		try {
 			String url = getRemoveDigitalInstanceUrl(id);
 			HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "DELETE", false);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
-				throw new ResolverConnectionException("Removing digital instance: response code expected 200, found " + responseCode);
+				throw new CzidloConnectionException("Removing digital instance: response code expected 200, found " + responseCode);
 			}
 		} catch (IOException ex) {
-			throw new ResolverConnectionException("IOException occured while removing DI with id: " + id);
+			throw new CzidloConnectionException("IOException occured while removing DI with id: " + id);
 		}
 	}
 

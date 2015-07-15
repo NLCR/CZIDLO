@@ -26,7 +26,7 @@ import org.quartz.JobExecutionException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.resolver.ResolverConnector;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
@@ -64,7 +64,7 @@ public class OaiAdapterJob extends AbstractJob {
             //resolver
             String resolverApiUrl = (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_API_URL);
             logger.info("Resolver API url: " + resolverApiUrl);
-            adapter.setResolverConnector(new ResolverConnector(resolverApiUrl,
+            adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl,
                     (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN),
                     (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_PASS)));
             adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRATION_MODE)));
