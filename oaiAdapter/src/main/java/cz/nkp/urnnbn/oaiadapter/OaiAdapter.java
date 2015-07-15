@@ -20,7 +20,8 @@ import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalInstanceStatus;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
-import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
+import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
+import cz.nkp.urnnbn.oaiadapter.utils.DiImportDataHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
@@ -171,8 +172,9 @@ public class OaiAdapter {
 	public RecordResult processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
 			throws OaiAdapterException, CzidloConnectionException {
 		Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
-		ImportDocumentHandler.putRegistrarScopeIdentifier(digDocRegistrationData, oaiIdentifier);
-		String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digDocRegistrationData);
+		DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
+		docHelper.putRegistrarScopeIdentifier(oaiIdentifier);
+		String urnnbn = docHelper.getUrnnbnFromDocument();
 		if (urnnbn == null) {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
 				urnnbn = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
@@ -228,9 +230,9 @@ public class OaiAdapter {
 		}
 	}
 
-	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document digInstImportData,
-			DigitalDocumentStatus ddStatus) throws OaiAdapterException, CzidloConnectionException {
-		DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digInstImportData);
+	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document diImportData, DigitalDocumentStatus ddStatus)
+			throws OaiAdapterException, CzidloConnectionException {
+		DigitalInstance newDi = new DiImportDataHelper(diImportData).buildDi();
 		DigitalInstance oldDi = null;
 		try {
 			oldDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
@@ -242,7 +244,7 @@ public class OaiAdapter {
 		if (oldDi == null) {
 			// di doesnt exist yet
 			// IMPORT
-			importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
+			importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 			report("- DI doesn't exists - importing DI.");
 			return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
 		} else {
@@ -252,7 +254,7 @@ public class OaiAdapter {
 				// REMOVE
 				czidloConnector.removeDigitalInstance(oldDi.getId());
 				// IMPORT
-				importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
+				importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 				report("- DI already exists and is modified - removing old one and imporing new DI.");
 				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
 			} else {

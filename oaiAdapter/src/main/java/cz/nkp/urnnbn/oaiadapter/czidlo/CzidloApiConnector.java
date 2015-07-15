@@ -21,7 +21,8 @@ import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.ImportDocumentHandler;
+import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
+import cz.nkp.urnnbn.oaiadapter.utils.DiApiResponseDocHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
@@ -85,8 +86,8 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	private String getDigitalInstanceUrl(String id) {
-		String url = "http://" + czidloApiUrl + "digitalInstances/id/" + id;
+	private String getDigitalInstanceUrl(String diId) {
+		String url = "http://" + czidloApiUrl + "digitalInstances/id/" + diId;
 		return url;
 	}
 
@@ -333,8 +334,8 @@ public class CzidloApiConnector {
 	public DigitalInstance getDigitalInstanceByLibraryId(String urnnbn, DigitalInstance newDi) throws IOException, ParsingException {
 		List<String> idList = getDigitalInstancesIdList(urnnbn);
 		for (String id : idList) {
-			Document document = getDigitailInstanceById(id);
-			DigitalInstance oldDi = ImportDocumentHandler.getDIFromResponseDocument(document);
+			Document diDoc = getDigitailInstanceById(id);
+			DigitalInstance oldDi = new DiApiResponseDocHelper(diDoc).buildDi();
 			// System.out.println("odi:" + oldDi);
 			if (oldDi.getDigitalLibraryId().equals(newDi.getDigitalLibraryId())) {
 				return oldDi;
