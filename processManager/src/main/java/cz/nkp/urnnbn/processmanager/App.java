@@ -1,6 +1,14 @@
 package cz.nkp.urnnbn.processmanager;
 
-import cz.nkp.urnnbn.oaiadapter.czidlo.RegistrationMode;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.quartz.SchedulerException;
+
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.control.AccessRightException;
 import cz.nkp.urnnbn.processmanager.control.InvalidStateException;
@@ -10,14 +18,6 @@ import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.quartz.SchedulerException;
 
 /**
  * Hello world!
@@ -105,7 +105,7 @@ public class App {
         manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[]{
                     "oaiAdapter-rehan-test",
                     "dlhIob5z",
-                    RegistrationMode.BY_REGISTRAR.toString(),
+                    UrnNbnRegistrationMode.BY_REGISTRAR.toString(),
                     "duha",
                     "http://duha-devel.mzk.cz/oai",
                     "oai_dc",
