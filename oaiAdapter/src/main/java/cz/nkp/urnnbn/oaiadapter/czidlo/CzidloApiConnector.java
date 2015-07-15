@@ -49,10 +49,9 @@ public class CzidloApiConnector {
 		return czidloApiUrl;
 	}
 
-	private String getDigitalDocumentUrl(String registrar, String identifier, String registarScopeId) {
+	private String getDigitalDocumentByRegistrarScopeIdUrl(String registrar, String identifier, String registarScopeId) {
 		String url = "http://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId
 				+ "/" + identifier + "?format=xml&action=show";
-
 		return url;
 	}
 
@@ -81,8 +80,8 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	private String getUpdateRegistrarScopeIdUrl(String urnnbn, String registrarScopeId) {
-		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/identifiers/" + registrarScopeId;
+	private String getRegistrarScopeIdentifierUrl(String urnnbn, String registrarScopeId) {
+		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + registrarScopeId;
 		return url;
 	}
 
@@ -92,7 +91,7 @@ public class CzidloApiConnector {
 	}
 
 	public String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws CzidloConnectionException {
-		String url = getDigitalDocumentUrl(registrar, registarScopeId, identifier);
+		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrar, registarScopeId, identifier);
 		Document document;
 		try {
 			document = XmlTools.getDocument(url, true);
@@ -243,11 +242,12 @@ public class CzidloApiConnector {
 
 	}
 
-	public String importDocument(Document document, String registarCode) throws IOException, ParsingException, CzidloConnectionException {
+	public String registerDigitalDocument(Document digDocRegistrationData, String registarCode) throws IOException, ParsingException,
+			CzidloConnectionException {
 		String url = getDigDocRegistrationUrl(registarCode);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-		wr.write(document.toXML());
+		wr.write(digDocRegistrationData.toXML());
 		wr.flush();
 		wr.close();
 		int responseCode = connection.getResponseCode();
@@ -266,11 +266,11 @@ public class CzidloApiConnector {
 		return urnnbn;
 	}
 
-	public void importDigitalInstance(Document document, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
+	public void importDigitalInstance(Document diImportData, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
 		String url = getDigitalInsatancesUrl(urnnbn);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-		wr.write(document.toXML());
+		wr.write(diImportData.toXML());
 		wr.flush();
 		wr.close();
 		int responseCode = connection.getResponseCode();
@@ -281,7 +281,7 @@ public class CzidloApiConnector {
 
 	public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId) throws IOException,
 			CzidloConnectionException {
-		String url = getUpdateRegistrarScopeIdUrl(urnnbn, registrarScopeId);
+		String url = getRegistrarScopeIdentifierUrl(urnnbn, registrarScopeId);
 		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(documentId);

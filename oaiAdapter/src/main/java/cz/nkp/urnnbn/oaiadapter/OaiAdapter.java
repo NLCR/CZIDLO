@@ -265,9 +265,9 @@ public class OaiAdapter {
 		}
 	}
 
-	private void importDigitalInstance(Document digitalInstance, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
+	private void importDigitalInstance(Document diImportData, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
 		try {
-			czidloConnector.importDigitalInstance(digitalInstance, urnnbn);
+			czidloConnector.importDigitalInstance(diImportData, urnnbn);
 			report("- Digital Instance Import successful - continuing.");
 		} catch (IOException ex) {
 			throw new OaiAdapterException("IOException occurred during Digital Instance Import: " + ex.getMessage());
@@ -279,9 +279,9 @@ public class OaiAdapter {
 
 	}
 
-	private String registerDigitalDocument(Document digitalDocument, String oaiIdentifier) throws OaiAdapterException {
+	private String registerDigitalDocument(Document digDocRegistrationData, String oaiIdentifier) throws OaiAdapterException {
 		try {
-			String urnnbn = czidloConnector.importDocument(digitalDocument, registrarCode);
+			String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
 			report("- Digital Document Registration successful - continuing.");
 			report("- URN:NBN: " + urnnbn);
 			return urnnbn;
