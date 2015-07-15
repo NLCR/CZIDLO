@@ -32,8 +32,8 @@ public class CzidloApiConnector {
 
 	public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
 	public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
-	public static final String RESOLVER_NAMESPACE = "http://resolver.nkp.cz/v3/";
-	public static final XPathContext CONTEXT = new XPathContext("r", RESOLVER_NAMESPACE);
+	public static final String CZIDLO_NAMESPACE = "http://resolver.nkp.cz/v3/";
+	public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
 	public final String czidloApiUrl;
 	public final String login;
 	public final String password;

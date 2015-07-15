@@ -30,16 +30,16 @@ public class ImportDocumentHandler {
 
     public static Document putRegistrarScopeIdentifier(Document document, String oaiIdentifier) {
         Element root = document.getRootElement();
-        Element digitalDocumentElement = root.getFirstChildElement("digitalDocument", CzidloApiConnector.RESOLVER_NAMESPACE);
+        Element digitalDocumentElement = root.getFirstChildElement("digitalDocument", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (digitalDocumentElement == null) {
-            digitalDocumentElement = new Element("r:digitalDocument", CzidloApiConnector.RESOLVER_NAMESPACE);
+            digitalDocumentElement = new Element("r:digitalDocument", CzidloApiConnector.CZIDLO_NAMESPACE);
             root.appendChild(digitalDocumentElement);
         }
-        Element registrarScopeIdentifiersElement = digitalDocumentElement.getFirstChildElement("registrarScopeIdentifiers", CzidloApiConnector.RESOLVER_NAMESPACE);
+        Element registrarScopeIdentifiersElement = digitalDocumentElement.getFirstChildElement("registrarScopeIdentifiers", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (registrarScopeIdentifiersElement == null) {
-            registrarScopeIdentifiersElement = new Element("r:registrarScopeIdentifiers", CzidloApiConnector.RESOLVER_NAMESPACE);
-            int archiverIdPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("archiverId", CzidloApiConnector.RESOLVER_NAMESPACE));
-            int urnnbnPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("urnNbn", CzidloApiConnector.RESOLVER_NAMESPACE));
+            registrarScopeIdentifiersElement = new Element("r:registrarScopeIdentifiers", CzidloApiConnector.CZIDLO_NAMESPACE);
+            int archiverIdPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("archiverId", CzidloApiConnector.CZIDLO_NAMESPACE));
+            int urnnbnPosition = digitalDocumentElement.indexOf(digitalDocumentElement.getFirstChildElement("urnNbn", CzidloApiConnector.CZIDLO_NAMESPACE));
             int position = 0;
             if (urnnbnPosition != -1) {
                 position = urnnbnPosition + 1;
@@ -48,7 +48,7 @@ public class ImportDocumentHandler {
             }
             digitalDocumentElement.insertChild(registrarScopeIdentifiersElement, position);
         }
-        Element oaiAdapterScopeElement = new Element("r:id", CzidloApiConnector.RESOLVER_NAMESPACE);
+        Element oaiAdapterScopeElement = new Element("r:id", CzidloApiConnector.CZIDLO_NAMESPACE);
         oaiAdapterScopeElement.addAttribute(new Attribute("type", OaiAdapter.REGISTAR_SCOPE_ID));
         oaiAdapterScopeElement.appendChild(oaiIdentifier);
         registrarScopeIdentifiersElement.appendChild(oaiAdapterScopeElement);

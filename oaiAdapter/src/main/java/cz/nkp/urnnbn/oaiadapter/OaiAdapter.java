@@ -40,7 +40,7 @@ public class OaiAdapter {
 	// RESOLVER
 	private String registrarCode;
 	private UrnNbnRegistrationMode registrationMode;
-	private CzidloApiConnector resolverConnector;
+	private CzidloApiConnector czidloConnector;
 	// XSLT
 	private String metadataToDigDocRegistrationTemplate;
 	private String metadataToDigInstImportTemplate;
@@ -122,11 +122,11 @@ public class OaiAdapter {
 	}
 
 	public CzidloApiConnector getResolverConnector() {
-		return resolverConnector;
+		return czidloConnector;
 	}
 
-	public void setCzidloConnector(CzidloApiConnector resolverConnector) {
-		this.resolverConnector = resolverConnector;
+	public void setCzidloConnector(CzidloApiConnector czidloConnector) {
+		this.czidloConnector = czidloConnector;
 	}
 
 	public XsdProvider getXsdProvider() {
@@ -175,7 +175,7 @@ public class OaiAdapter {
 		String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(digDocRegistrationData);
 		if (urnnbn == null) {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
-				urnnbn = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
+				urnnbn = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
 				if (urnnbn == null) {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
@@ -191,7 +191,7 @@ public class OaiAdapter {
 				throw new OaiAdapterException("Incorrect mode - document contains URN:NBN and mode is "
 						+ UrnNbnRegistrationMode.BY_RESOLVER);
 			}
-			UrnnbnStatus urnnbnStatus = resolverConnector.getUrnnbnStatus(urnnbn);
+			UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
 			report("- URN:NBN status: " + urnnbnStatus);
 			switch (urnnbnStatus) {
 			case RESERVED:
@@ -211,7 +211,7 @@ public class OaiAdapter {
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
 				}
 			case ACTIVE:
-				String urnnbnByTriplet = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
+				String urnnbnByTriplet = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
 				if (urnnbnByTriplet != null && !urnnbn.equals(urnnbnByTriplet)) {
 					throw new OaiAdapterException("URN:NBN in digital-document-registration data (" + urnnbn
 							+ ") doesn't match URN:NBN obtained by OAI_ADAPTER ID (" + urnnbnByTriplet + ")");
@@ -233,7 +233,7 @@ public class OaiAdapter {
 		DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digInstImportData);
 		DigitalInstance oldDi = null;
 		try {
-			oldDi = resolverConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
+			oldDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
 		} catch (IOException ex) {
 			Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (ParsingException ex) {
@@ -250,7 +250,7 @@ public class OaiAdapter {
 			if (newDi.isChanged(oldDi)) {
 				// di has been changed
 				// REMOVE
-				resolverConnector.removeDigitalInstance(oldDi.getId());
+				czidloConnector.removeDigitalInstance(oldDi.getId());
 				// IMPORT
 				importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
 				report("- DI already exists and is modified - removing old one and imporing new DI.");
@@ -265,7 +265,7 @@ public class OaiAdapter {
 
 	private void importDigitalInstance(Document digitalInstance, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
 		try {
-			resolverConnector.importDigitalInstance(digitalInstance, urnnbn);
+			czidloConnector.importDigitalInstance(digitalInstance, urnnbn);
 			report("- Digital Instance Import successful - continuing.");
 		} catch (IOException ex) {
 			throw new OaiAdapterException("IOException occurred during Digital Instance Import: " + ex.getMessage());
@@ -279,7 +279,7 @@ public class OaiAdapter {
 
 	private String registerDigitalDocument(Document digitalDocument, String oaiIdentifier) throws OaiAdapterException {
 		try {
-			String urnnbn = resolverConnector.importDocument(digitalDocument, registrarCode);
+			String urnnbn = czidloConnector.importDocument(digitalDocument, registrarCode);
 			report("- Digital Document Registration successful - continuing.");
 			report("- URN:NBN: " + urnnbn);
 			return urnnbn;
@@ -366,12 +366,12 @@ public class OaiAdapter {
 			report(" ");
 			report(" CZIDLO API");
 			report(" -----------------");
-			report("  CZIDLO API base url: " + resolverConnector.getCzidloApiUrl());
+			report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
 			report("  Mode: " + getRegistrationMode());
 			report("------------------------------");
 
 			try {
-				if (!resolverConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
+				if (!czidloConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
 					report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode());
 					logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[] { getRegistrationMode(),
 							getRegistrarCode() });

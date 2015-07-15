@@ -16,11 +16,11 @@ public class DefinedProperties {
     static String OAI_SET = "oaiAdapter.oai.setSpec";
     static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
     //czidlo api
-    public static String RESOLVER_API_URL = "oaiAdapter.resolver.apiUrl";
-    static String RESOLVER_LOGIN = "oaiAdapter.resolver.login";
-    static String RESOLVER_PASSWORD = "oaiAdapter.resolver.password";
-    static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.resolver.registrarCode";
-    static String RESOLVER_REGISTRATION_MODE = "oaiAdapter.resolver.registrationMode";
+    public static String RESOLVER_API_URL = "oaiAdapter.czidlo_api.url";
+    static String RESOLVER_LOGIN = "oaiAdapter.czidlo_api.login";
+    static String RESOLVER_PASSWORD = "oaiAdapter.czidlo_api.password";
+    static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
+    static String RESOLVER_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
     //xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
