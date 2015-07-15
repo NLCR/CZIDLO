@@ -188,13 +188,7 @@ public class CzidloApiConnector {
 		Nodes statusNode = rootElement.query("//r:status", CONTEXT);
 		if (statusNode.size() > 0) {
 			String status = statusNode.get(0).getValue();
-			if ("FREE".equals(status)) {
-				return UrnnbnStatus.FREE;
-			} else if ("RESERVED".equals(status)) {
-				return UrnnbnStatus.RESERVED;
-			} else if ("ACTIVE".equals(status)) {
-				return UrnnbnStatus.ACTIVE;
-			}
+			return UrnnbnStatus.valueOf(status);
 		}
 		return UrnnbnStatus.UNDEFINED;
 	}

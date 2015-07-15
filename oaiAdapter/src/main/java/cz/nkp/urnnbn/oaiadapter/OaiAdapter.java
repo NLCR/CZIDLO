@@ -15,6 +15,8 @@ import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
+import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
+import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalInstanceStatus;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
@@ -176,6 +178,9 @@ public class OaiAdapter {
 				urnnbn = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
 				if (urnnbn == null) {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
+				} else {
+					throw new OaiAdapterException("Cannot find urn:nbn by registrar-scope id");
 				}
 			} else {
 				throw new OaiAdapterException("Incorrect mode - document doesn't contain URN:NBN and mode is not "
@@ -188,35 +193,43 @@ public class OaiAdapter {
 			}
 			UrnnbnStatus urnnbnStatus = resolverConnector.getUrnnbnStatus(urnnbn);
 			report("- URN:NBN status: " + urnnbnStatus);
-
-			if (urnnbnStatus == UrnnbnStatus.UNDEFINED) {
-				throw new OaiAdapterException("Checking URN:NBN status failed");
-			}
-			if (urnnbnStatus == UrnnbnStatus.RESERVED && getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
-				throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.RESERVED,
-						UrnNbnRegistrationMode.BY_RESERVATION));
-			}
-			if (urnnbnStatus == UrnnbnStatus.FREE && getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
-				throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.FREE,
-						UrnNbnRegistrationMode.BY_REGISTRAR));
-			}
-
-			if (urnnbnStatus == UrnnbnStatus.ACTIVE) {
+			switch (urnnbnStatus) {
+			case RESERVED:
+				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d",
+							Status.RESERVED, UrnNbnRegistrationMode.BY_RESERVATION));
+				} else {
+					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
+				}
+			case FREE:
+				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.FREE,
+							UrnNbnRegistrationMode.BY_REGISTRAR));
+				} else {
+					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
+				}
+			case ACTIVE:
 				String urnnbnByTriplet = resolverConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
 				if (urnnbnByTriplet != null && !urnnbn.equals(urnnbnByTriplet)) {
-					throw new OaiAdapterException("URN:NBN in import document (" + urnnbn
+					throw new OaiAdapterException("URN:NBN in digital-document-registration data (" + urnnbn
 							+ ") doesn't match URN:NBN obtained by OAI_ADAPTER ID (" + urnnbnByTriplet + ")");
+				} else {
+					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.ALREADY_REGISTERED);
 				}
-			} else {
-				registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+			case DEACTIVATED:
+				return new RecordResult(urnnbn, DigitalDocumentStatus.IGNORED, null);
+			case UNDEFINED:
+				throw new OaiAdapterException("Checking URN:NBN status failed");
+			default:
+				throw new IllegalStateException();
 			}
 		}
-
-		return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData);
 	}
 
-	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document digInstImportData)
-			throws OaiAdapterException, CzidloConnectionException {
+	private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document digInstImportData,
+			DigitalDocumentStatus ddStatus) throws OaiAdapterException, CzidloConnectionException {
 		DigitalInstance newDi = ImportDocumentHandler.getDIFromSourceDocument(digInstImportData);
 		DigitalInstance oldDi = null;
 		try {
@@ -231,7 +244,7 @@ public class OaiAdapter {
 			// IMPORT
 			importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
 			report("- DI doesn't exists - importing DI.");
-			return new RecordResult(urnnbn, DigitalInstanceStatus.IMPORTED);
+			return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
 		} else {
 			// di already exist
 			if (newDi.isChanged(oldDi)) {
@@ -241,11 +254,11 @@ public class OaiAdapter {
 				// IMPORT
 				importDigitalInstance(digInstImportData, urnnbn, oaiIdentifier);
 				report("- DI already exists and is modified - removing old one and imporing new DI.");
-				return new RecordResult(urnnbn, DigitalInstanceStatus.UPDATED);
+				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
 			} else {
 				// no change ..do nothing
 				report("- DI already exists and is not modified - doing nothing.");
-				return new RecordResult(urnnbn, DigitalInstanceStatus.UNTOUCHED);
+				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNTOUCHED);
 			}
 		}
 	}
