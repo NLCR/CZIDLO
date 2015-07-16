@@ -85,7 +85,7 @@ public class OaiHarvester {
 	private String addIdentifiers(String url) throws OaiHarvesterException {
 		Document document = null;
 		try {
-			document = XmlTools.getDocument(url, null);
+			document = XmlTools.getDocument(url, null, false);
 		} catch (ParsingException ex) {
 			next = false;
 			throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
@@ -125,7 +125,7 @@ public class OaiHarvester {
 	private Document getRecordDocument(String identifier) throws OaiHarvesterException {
 		String url = getRecordUrl(identifier);
 		try {
-			return XmlTools.getDocument(url, null);
+			return XmlTools.getDocument(url, null, false);
 		} catch (IOException ex) {
 			throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
 		} catch (ParsingException ex) {

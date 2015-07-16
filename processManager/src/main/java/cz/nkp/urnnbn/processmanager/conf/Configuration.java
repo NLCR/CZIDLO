@@ -34,7 +34,7 @@ public class Configuration {
     //private static ResolverDatabaseCreditentials resolverDbCreditentials;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
-    private static String resolverApiUrl;
+    private static String czidloApiBaseUrl;
     //configuration for processes
     private static String digDocRegistrationXsdUrl;
     private static String digInstImportXsdUrl;
@@ -55,7 +55,7 @@ public class Configuration {
         //oai adapter
         digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
         digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
-        resolverApiUrl = loader.loadString(DefinedProperties.CZIDLO_API_URL);
+        czidloApiBaseUrl = loader.loadString(DefinedProperties.CZIDLO_API_BASE_URL);
     }
 
     public static File getJobsDir() {
@@ -79,6 +79,6 @@ public class Configuration {
     }
 
     public static String getResolverApiUrl() {
-        return resolverApiUrl;
+        return czidloApiBaseUrl;
     }
 }

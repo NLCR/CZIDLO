@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
  */
 public class Test {
     
-    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api",new Credentials("someLogin","somePassword"));
+    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api",new Credentials("someLogin","somePassword"), true);
 
     public void makeReservation() {
         try {

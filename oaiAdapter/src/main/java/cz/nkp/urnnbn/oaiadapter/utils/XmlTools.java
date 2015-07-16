@@ -4,11 +4,6 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
-import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
-import cz.nkp.urnnbn.oaiadapter.czidlo.HttpMethod;
-import cz.nkp.urnnbn.xml.commons.XOMUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,13 +12,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -34,6 +28,10 @@ import nu.xom.ParsingException;
 import nu.xom.Serializer;
 import nu.xom.xslt.XSLException;
 import nu.xom.xslt.XSLTransform;
+import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
+import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
+import cz.nkp.urnnbn.oaiadapter.czidlo.HttpMethod;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
 /**
  *
@@ -41,34 +39,27 @@ import nu.xom.xslt.XSLTransform;
  */
 public class XmlTools {
 
-	// public static Document getDocument(String url) throws IOException, ParsingException {
-	// return getDocument(new URL(url));
-	// }
-
-	// public static Document getDocument(String login, String password, String url, boolean
-	// status404Allowed) throws IOException, ParsingException {
-	// return getDocument(new URL(url), status404Allowed);
-	// }
-
-	public static Document getDocument(String url, Credentials credentials) throws IOException, ParsingException {
-		return getDocument(url, credentials, false);
-	}
-
 	public static Document getTemplateDocumentFromString(String template) throws ParsingException, IOException, XSLException {
 		Builder builder = new Builder();
 		Document document = builder.build(template, null);
 		return document;
 	}
 
-	public static Document getDocument(String url, Credentials credentials, boolean status404Allowed) throws IOException, ParsingException {
+	public static Document getDocument(String url, Credentials credentials, boolean ignoreInvalidApiCretificate) throws IOException,
+			ParsingException {
+		return getDocument(url, credentials, false, ignoreInvalidApiCretificate);
+	}
+
+	public static Document getDocumentAccept404Data(String url, Credentials credentials, boolean ignoreInvalidApiCretificate)
+			throws IOException, ParsingException {
+		return getDocument(url, credentials, true, ignoreInvalidApiCretificate);
+	}
+
+	private static Document getDocument(String url, Credentials credentials, boolean status404Allowed, boolean ignoreInvalidApiCretificate)
+			throws IOException, ParsingException {
 		Builder builder = new Builder();
-
-		// TODO: tohle neni autentizovane
-		// HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		// String urlString = url.toString();
-
 		HttpURLConnection con = credentials == null ? (HttpURLConnection) new URL(url).openConnection() : getAuthConnection(url,
-				credentials, HttpMethod.GET, true);
+				credentials, HttpMethod.GET, ignoreInvalidApiCretificate);
 		InputStream is = null;
 		if (status404Allowed && con.getResponseCode() == 404) {
 			is = con.getErrorStream();
@@ -97,21 +88,44 @@ public class XmlTools {
 		return result;
 	}
 
-	public static HttpsURLConnection getAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean doOutput)
-			throws IOException {
+	public static HttpsURLConnection getWritableAuthConnection(String urlString, Credentials credentialsm, HttpMethod method,
+			boolean ignoreInvalidApiCretificate) throws IOException {
+		return getAuthConnection(urlString, credentialsm, method, true, ignoreInvalidApiCretificate);
+	}
+
+	public static HttpsURLConnection getAuthConnection(String urlString, Credentials credentialsm, HttpMethod method,
+			boolean ignoreInvalidApiCretificate) throws IOException {
+		return getAuthConnection(urlString, credentialsm, method, false, ignoreInvalidApiCretificate);
+	}
+
+	private static HttpsURLConnection getAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean doOutput,
+			boolean ignoreInvalidApiCretificate) throws IOException {
 		HttpsURLConnection connection = null;
-		try { // TODO: tohle disable, anebo explicitne v properties
+		URL url = new URL(urlString);
+		connection = (HttpsURLConnection) url.openConnection();
+		if (ignoreInvalidApiCretificate) {
+			connection.setSSLSocketFactory(buildIgnoreAllSslSocketFactory());
+		}
+		connection.setDoOutput(doOutput);
+		connection.setRequestMethod(method.toString());
+
+		connection.setDoInput(true);
+		connection.setRequestProperty("Content-type", "application/xml");
+		connection.setRequestProperty("Authorization", credentialsm.getBasicAccessAuthorizationHeader());
+		return connection;
+	}
+
+	private static SSLSocketFactory buildIgnoreAllSslSocketFactory() throws IOException {
+		try {
 			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 					return null;
 				}
 
 				public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-					// System.out.println("checking client ");
 				}
 
 				public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-					// System.out.println("checking server ");
 				}
 			} };
 			SSLContext sc = SSLContext.getInstance("SSL");
@@ -122,21 +136,12 @@ public class XmlTools {
 			};
 			HttpsURLConnection.setDefaultHostnameVerifier(hv);
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-			URL url = new URL(urlString);
-			connection = (HttpsURLConnection) url.openConnection();
-			connection.setDoOutput(doOutput);
-			connection.setRequestMethod(method.toString());
-			connection.setDoInput(true);
-			connection.setRequestProperty("Content-type", "application/xml");
-			connection.setRequestProperty("Authorization", credentialsm.getBasicAccessAuthorizationHeader());
-
+			return sc.getSocketFactory();
 		} catch (KeyManagementException ex) {
-			Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+			throw new IOException(ex);
 		} catch (NoSuchAlgorithmException ex) {
-			Logger.getLogger(XmlTools.class.getName()).log(Level.SEVERE, null, ex);
+			throw new IOException(ex);
 		}
-		return connection;
 	}
 
 	public static void validateByXsdAsString(Document document, String xsd) throws DocumentOperationException {

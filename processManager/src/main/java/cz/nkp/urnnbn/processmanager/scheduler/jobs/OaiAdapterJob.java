@@ -68,7 +68,9 @@ public class OaiAdapterJob extends AbstractJob {
 			logger.info("Resolver API url: " + resolverApiUrl);
 			Credentials credentials = new Credentials((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN), (String) context
 					.getMergedJobDataMap().get(PARAM_RESOLVER_PASS));
-			adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl, credentials));
+			// pozor, kvuli ignoreInvalidCertificate=false tohle nepojede na resolver-test a
+			// resolver-test2, kde nejsou platne certifikaty
+			adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl, credentials, false));
 			adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(
 					PARAM_RESOLVER_REGISTRATION_MODE)));
 			logger.info("registration mode: " + adapter.getRegistrationMode().toString());

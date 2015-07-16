@@ -28,6 +28,7 @@ public class App {
 			// for testing - comment out before commiting changes
 			// args = new
 			// String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
+			args = new String[] { "/home/martin/zakazky/czidlo2015/oaiAdapter-testovani/config-monographs.properties" };
 			if (args.length != 1) {
 				System.err.println(USAGE);
 				return;
@@ -45,9 +46,14 @@ public class App {
 		// czidlo api
 		Credentials credentials = new Credentials(properties.loadString(DefinedProperties.CZIDLO_API_LOGIN),
 				properties.loadString(DefinedProperties.CZIDLO_API_PASSWORD));
-		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.CZIDLO_API_URL), credentials));
+		boolean ignoreInvalidCertificate = properties
+				.loadBooleanFalseIfNullOrEmpty(DefinedProperties.CZIDLO_API_IGNORE_INVALID_CERTIFICATE);
+		String czidloApiBaseUrl = properties.loadString(DefinedProperties.CZIDLO_API_BASE_URL);
+		adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, credentials, ignoreInvalidCertificate));
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRAR_CODE));
 		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRATION_MODE)));
+		// adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRATION_MODE)));
+
 		// oai harvester
 		adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));
 		adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));

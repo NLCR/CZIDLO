@@ -34,64 +34,67 @@ public class CzidloApiConnector {
 	public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
 	public static final String CZIDLO_NAMESPACE = "http://resolver.nkp.cz/v3/";
 	public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
-	public final String czidloApiUrl;
+	public final String baseUrl;
 	private final Credentials credentials;
+	private final boolean ignoreInvalidCertificate;
 
-	public CzidloApiConnector(String czidloApiUrl, Credentials credentials) {
-		this.czidloApiUrl = czidloApiUrl + "/v3/";
+	public CzidloApiConnector(String baseUrl, Credentials credentials, boolean ignoreInvalidCertificate) {
+		this.baseUrl = baseUrl + "/v3/";
 		this.credentials = credentials;
+		this.ignoreInvalidCertificate = ignoreInvalidCertificate;
 	}
 
 	public String getCzidloApiUrl() {
-		return czidloApiUrl;
+		return baseUrl;
 	}
 
 	private String getDigitalDocumentByRegistrarScopeIdUrl(String registrar, String identifier, String registarScopeId) {
-		String url = "https://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/"
-				+ registarScopeId + "/" + identifier + "?format=xml&action=show";
+		String url = "https://" + baseUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId
+				+ "/" + identifier + "?format=xml&action=show";
 		return url;
 	}
 
 	private String getRegistrarUrl(String registrarCode) {
-		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode;
+		String url = "https://" + baseUrl + "registrars/" + registrarCode;
 		return url;
 	}
 
 	private String getDigDocRegistrationUrl(String registrarCode) {
-		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode + "/digitalDocuments";
+		String url = "https://" + baseUrl + "registrars/" + registrarCode + "/digitalDocuments";
 		return url;
 	}
 
 	private String getUrnnbnReservationUrl(String registrarCode, int size) {
-		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode + "/urnNbnReservations?size=" + size;
+		String url = "https://" + baseUrl + "registrars/" + registrarCode + "/urnNbnReservations?size=" + size;
 		return url;
 	}
 
 	private String getUrnnbnStatusUrl(String urnnbn) {
-		String url = "https://" + czidloApiUrl + "urnnbn/" + urnnbn;
+		String url = "https://" + baseUrl + "urnnbn/" + urnnbn;
 		return url;
 	}
 
 	private String getDigitalInsatancesUrl(String urnnbn) {
-		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
+		String url = "https://" + baseUrl + "resolver/" + urnnbn + "/digitalInstances";
 		return url;
 	}
 
 	private String getRegistrarScopeIdentifierUrl(String urnnbn, String registrarScopeId) {
-		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + registrarScopeId;
+		String url = "https://" + baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + registrarScopeId;
 		return url;
 	}
 
 	private String getDigitalInstanceUrl(String diId) {
-		String url = "https://" + czidloApiUrl + "digitalInstances/id/" + diId;
+		String url = "https://" + baseUrl + "digitalInstances/id/" + diId;
 		return url;
 	}
 
-	public String getUrnnbnByTriplet(String registrar, String identifier, String registarScopeId) throws CzidloConnectionException {
-		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrar, registarScopeId, identifier);
+	// TODO: vymenit pozice poslednich dvou parametru
+	public String getUrnnbnByTriplet(String registrarCode, String idValue, String idType) throws CzidloConnectionException {
+		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrarCode, idType, idValue);
 		Document document;
 		try {
-			document = XmlTools.getDocument(url, credentials, true);
+			document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
 		} catch (IOException ex) {
 			throw new CzidloConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
 		} catch (ParsingException ex) {
@@ -136,7 +139,7 @@ public class CzidloApiConnector {
 		List<String> list = new ArrayList<String>();
 		String url = getDigitalInsatancesUrl(urnnbn);
 		// System.out.println("getDigitalInstancesIdList " + url);
-		Document document = XmlTools.getDocument(url, credentials, false);
+		Document document = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
 		Element rootElement = document.getRootElement();
 		Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/@id", CONTEXT);
 		// Nodes idNodes = rootElement.query("//r:digitalInstance/r:id", CONTEXT);
@@ -169,7 +172,7 @@ public class CzidloApiConnector {
 		// List<String> list = new ArrayList<String>();
 		String url = getDigitalInstanceUrl(id);
 		// System.out.println("getDigitailInstanceById " + url);
-		Document document = XmlTools.getDocument(url, credentials, false);
+		Document document = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
 		return document;
 	}
 
@@ -177,7 +180,7 @@ public class CzidloApiConnector {
 		String url = getUrnnbnStatusUrl(urnnbn);
 		Document document = null;
 		try {
-			document = XmlTools.getDocument(url, credentials, true);
+			document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
 		} catch (Exception ex) {
 			return UrnnbnStatus.UNDEFINED;
 		}
@@ -194,7 +197,7 @@ public class CzidloApiConnector {
 		String url = getRegistrarUrl(registrarCode);
 		Document document = null;
 		try {
-			document = XmlTools.getDocument(url, credentials, true);
+			document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
 		} catch (Exception ex) {
 			throw new CzidloConnectionException(ex);
 		}
@@ -222,7 +225,7 @@ public class CzidloApiConnector {
 			ParsingException {
 		List<String> urnnbnList = new ArrayList<String>();
 		String url = getUrnnbnReservationUrl(registarCode, bundleSize);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
+		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 200??
 			throw new CzidloConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
@@ -242,7 +245,7 @@ public class CzidloApiConnector {
 	public String registerDigitalDocument(Document digDocRegistrationData, String registarCode) throws IOException, ParsingException,
 			CzidloConnectionException {
 		String url = getDigDocRegistrationUrl(registarCode);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
+		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(digDocRegistrationData.toXML());
 		wr.flush();
@@ -265,7 +268,7 @@ public class CzidloApiConnector {
 
 	public void importDigitalInstance(Document diImportData, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
 		String url = getDigitalInsatancesUrl(urnnbn);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
+		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(diImportData.toXML());
 		wr.flush();
@@ -279,7 +282,7 @@ public class CzidloApiConnector {
 	public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId) throws IOException,
 			CzidloConnectionException {
 		String url = getRegistrarScopeIdentifierUrl(urnnbn, registrarScopeId);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.PUT, true);
+		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(documentId);
 		wr.flush();
@@ -294,7 +297,7 @@ public class CzidloApiConnector {
 	public void removeDigitalInstance(String id) throws CzidloConnectionException {
 		try {
 			String url = getDigitalInsatancesUrl(id);
-			HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, false);
+			HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
 				throw new CzidloConnectionException("Removing digital instance: response code expected 200, found " + responseCode);

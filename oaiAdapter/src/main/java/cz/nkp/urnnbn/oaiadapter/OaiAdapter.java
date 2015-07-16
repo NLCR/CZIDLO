@@ -33,7 +33,7 @@ import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 public class OaiAdapter {
 
 	private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
-	public static final String REGISTAR_SCOPE_ID = "OAI_Adapter";
+	public static final String REGISTAR_SCOPE_ID_TYPE = "OAI_Adapter";
 	// OAI
 	private String oaiBaseUrl;
 	private String metadataPrefix;
@@ -42,6 +42,7 @@ public class OaiAdapter {
 	private String registrarCode;
 	private UrnNbnRegistrationMode registrationMode;
 	private CzidloApiConnector czidloConnector;
+	
 	// XSLT
 	private String metadataToDigDocRegistrationTemplate;
 	private String metadataToDigInstImportTemplate;
@@ -183,7 +184,7 @@ public class OaiAdapter {
 		String urnnbn = docHelper.getUrnnbnFromDocument();
 		if (urnnbn == null) {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
-				urnnbn = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
+				urnnbn = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
 				if (urnnbn == null) {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
@@ -219,7 +220,7 @@ public class OaiAdapter {
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
 				}
 			case ACTIVE:
-				String urnnbnByTriplet = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID, oaiIdentifier);
+				String urnnbnByTriplet = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
 				if (urnnbnByTriplet != null && !urnnbn.equals(urnnbnByTriplet)) {
 					throw new OaiAdapterException("URN:NBN in digital-document-registration data (" + urnnbn
 							+ ") doesn't match URN:NBN obtained by OAI_ADAPTER ID (" + urnnbnByTriplet + ")");
