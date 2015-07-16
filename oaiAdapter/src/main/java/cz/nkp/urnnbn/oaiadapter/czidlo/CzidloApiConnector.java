@@ -48,9 +48,9 @@ public class CzidloApiConnector {
 		return baseUrl;
 	}
 
-	private String getDigitalDocumentByRegistrarScopeIdUrl(String registrar, String identifier, String registarScopeId) {
-		String url = "https://" + baseUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId
-				+ "/" + identifier + "?format=xml&action=show";
+	private String getDigitalDocumentByRegistrarScopeIdUrl(String registrar, String idType, String idValue) {
+		String url = "https://" + baseUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + idType + "/"
+				+ idValue + "?format=xml&action=show";
 		return url;
 	}
 
@@ -74,13 +74,13 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	private String getDigitalInsatancesUrl(String urnnbn) {
+	private String getDigitalInstancesUrl(String urnnbn) {
 		String url = "https://" + baseUrl + "resolver/" + urnnbn + "/digitalInstances";
 		return url;
 	}
 
-	private String getRegistrarScopeIdentifierUrl(String urnnbn, String registrarScopeId) {
-		String url = "https://" + baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + registrarScopeId;
+	private String getRegistrarScopeIdentifierUrl(String urnnbn, String idType) {
+		String url = "https://" + baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
 		return url;
 	}
 
@@ -89,8 +89,7 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	// TODO: vymenit pozice poslednich dvou parametru
-	public String getUrnnbnByTriplet(String registrarCode, String idValue, String idType) throws CzidloConnectionException {
+	public String getUrnnbnByTriplet(String registrarCode, String idType, String idValue) throws CzidloConnectionException {
 		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrarCode, idType, idValue);
 		Document document;
 		try {
@@ -137,7 +136,7 @@ public class CzidloApiConnector {
 	// }
 	public List<String> getDigitalInstancesIdList(String urnnbn) throws IOException, ParsingException {
 		List<String> list = new ArrayList<String>();
-		String url = getDigitalInsatancesUrl(urnnbn);
+		String url = getDigitalInstancesUrl(urnnbn);
 		// System.out.println("getDigitalInstancesIdList " + url);
 		Document document = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
 		Element rootElement = document.getRootElement();
@@ -267,7 +266,7 @@ public class CzidloApiConnector {
 	}
 
 	public void importDigitalInstance(Document diImportData, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
-		String url = getDigitalInsatancesUrl(urnnbn);
+		String url = getDigitalInstancesUrl(urnnbn);
 		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(diImportData.toXML());
@@ -296,7 +295,7 @@ public class CzidloApiConnector {
 
 	public void removeDigitalInstance(String id) throws CzidloConnectionException {
 		try {
-			String url = getDigitalInsatancesUrl(id);
+			String url = getDigitalInstancesUrl(id);
 			HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {

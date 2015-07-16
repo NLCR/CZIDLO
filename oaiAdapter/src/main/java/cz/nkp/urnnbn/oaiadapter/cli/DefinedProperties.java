@@ -21,7 +21,6 @@ public class DefinedProperties {
 	static String CZIDLO_API_PASSWORD = "oaiAdapter.czidlo_api.password";
 	static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
 	static String CZIDLO_API_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
-	// TODO: use or drop this
 	static String CZIDLO_API_IGNORE_INVALID_CERTIFICATE = "oaiAdapter.czidlo_api.ignoreInvalidCertificate";
 	
 	// xsl transformations
