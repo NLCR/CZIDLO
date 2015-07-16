@@ -89,7 +89,7 @@ public class CzidloApiConnector {
 		return url;
 	}
 
-	public String getUrnnbnByTriplet(String registrarCode, String idType, String idValue) throws CzidloConnectionException {
+	public String getUrnnbnByRegistrarScopeId(String registrarCode, String idType, String idValue) throws CzidloConnectionException {
 		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrarCode, idType, idValue);
 		Document document;
 		try {
@@ -226,7 +226,7 @@ public class CzidloApiConnector {
 		String url = getUrnnbnReservationUrl(registarCode, bundleSize);
 		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
 		int responseCode = connection.getResponseCode();
-		if (responseCode != 201) { // TODO pokud ok, pak vzdy 200??
+		if (responseCode != 201) {
 			throw new CzidloConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
 		}
 		InputStream is = connection.getInputStream();
@@ -250,11 +250,11 @@ public class CzidloApiConnector {
 		wr.flush();
 		wr.close();
 		int responseCode = connection.getResponseCode();
-		if (responseCode != 200) { // TODO pokud ok, pak vzdy 200??
+		if (responseCode != 201) {
 			Builder builder = new Builder();
 			String message = getErrorMessage(builder.build(connection.getErrorStream()));
 			if (message == null) {
-				message = "Importing record document: response code expected 200, found " + responseCode;
+				message = "Registering digital document: response code expected 201, found " + responseCode;
 			}
 			throw new CzidloConnectionException(message);
 		}
@@ -278,24 +278,25 @@ public class CzidloApiConnector {
 		}
 	}
 
-	public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId) throws IOException,
-			CzidloConnectionException {
-		String url = getRegistrarScopeIdentifierUrl(urnnbn, registrarScopeId);
+	// TODO: why not used??
+	public void putRegistrarScopeIdentifier(String urnnbn, String idValue, String idType) throws IOException, CzidloConnectionException {
+		String url = getRegistrarScopeIdentifierUrl(urnnbn, idType);
 		HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-		wr.write(documentId);
+		wr.write(idValue);
 		wr.flush();
 		wr.close();
 		int responseCode = connection.getResponseCode();
-		if (responseCode != 201) { // TODO pokud ok, pak vzdy 201??
+		if (responseCode != 201) {
+			// TODO: bude tahle metoda delat jen vkladani, nebo i aktualizaci?
+			// 201 - aktualizace, 200 - vlozeni nove hodnoty
 			throw new CzidloConnectionException("Putting registrar scope identifier: response code expected 201, found " + responseCode);
 		}
-
 	}
 
-	public void removeDigitalInstance(String id) throws CzidloConnectionException {
+	public void deactivateDigitalInstance(String id) throws CzidloConnectionException {
 		try {
-			String url = getDigitalInstancesUrl(id);
+			String url = getDigitalInstanceUrl(id);
 			HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {

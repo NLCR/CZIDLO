@@ -28,7 +28,6 @@ public class App {
 			// for testing - comment out before commiting changes
 			// args = new
 			// String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
-			args = new String[] { "/home/martin/zakazky/czidlo2015/oaiAdapter-testovani/config-monographs.properties" };
 			if (args.length != 1) {
 				System.err.println(USAGE);
 				return;

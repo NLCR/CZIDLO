@@ -42,7 +42,7 @@ public class OaiAdapter {
 	private String registrarCode;
 	private UrnNbnRegistrationMode registrationMode;
 	private CzidloApiConnector czidloConnector;
-	
+
 	// XSLT
 	private String metadataToDigDocRegistrationTemplate;
 	private String metadataToDigInstImportTemplate;
@@ -184,7 +184,7 @@ public class OaiAdapter {
 		String urnnbn = docHelper.getUrnnbnFromDocument();
 		if (urnnbn == null) {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
-				urnnbn = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+				urnnbn = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
 				if (urnnbn == null) {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
@@ -220,7 +220,8 @@ public class OaiAdapter {
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
 				}
 			case ACTIVE:
-				String urnnbnByTriplet = czidloConnector.getUrnnbnByTriplet(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+				String urnnbnByTriplet = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE,
+						oaiIdentifier);
 				if (urnnbnByTriplet != null && !urnnbn.equals(urnnbnByTriplet)) {
 					throw new OaiAdapterException("URN:NBN in digital-document-registration data (" + urnnbn
 							+ ") doesn't match URN:NBN obtained by OAI_ADAPTER ID (" + urnnbnByTriplet + ")");
@@ -258,14 +259,14 @@ public class OaiAdapter {
 			// di already exist
 			if (newDi.isChanged(oldDi)) {
 				// di has been changed
-				// REMOVE
-				czidloConnector.removeDigitalInstance(oldDi.getId());
+				// DEACTIVATE
+				czidloConnector.deactivateDigitalInstance(oldDi.getId());
 				// IMPORT
 				importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 				report("- DI already exists and is modified - removing old one and imporing new DI.");
 				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
 			} else {
-				// no change ..do nothing
+				// no change - do nothing
 				report("- DI already exists and is not modified - doing nothing.");
 				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNTOUCHED);
 			}
