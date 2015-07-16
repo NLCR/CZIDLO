@@ -44,7 +44,7 @@ public class App {
 		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), properties
 				.loadString(DefinedProperties.RESOLVER_LOGIN), properties.loadString(DefinedProperties.RESOLVER_PASSWORD)));
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
-		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(DefinedProperties.RESOLVER_REGISTRATION_MODE));
+		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.RESOLVER_REGISTRATION_MODE)));
 		// oai harvester
 		adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));
 		adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));
