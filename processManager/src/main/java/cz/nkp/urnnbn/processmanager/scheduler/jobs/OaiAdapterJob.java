@@ -26,6 +26,7 @@ import org.quartz.JobExecutionException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
+import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
@@ -36,95 +37,97 @@ import cz.nkp.urnnbn.processmanager.core.ProcessType;
  * @author Martin Řehánek
  */
 public class OaiAdapterJob extends AbstractJob {
-    
-    public static final String REPORT_FILE_NAME = "report.txt";
-    public static final String PARAM_RESOLVER_API_URL = "apiUrl";
-    public static final String PARAM_RESOLVER_REGISTRATION_MODE = "registrationMode";
-    public static final String PARAM_RESOLVER_REGISTRAR_CODE = "registrarCode";
-    public static final String PARAM_RESOLVER_LOGIN = "login";
-    public static final String PARAM_RESOLVER_PASS = "pass";
-    public static final String PARAM_OAI_BASE_URL = "oaiBaseUrl";
-    public static final String PARAM_OAI_METADATA_PREFIX = "oaiMetadataPrefix";
-    public static final String PARAM_OAI_SET = "oaiSet";
-    public static final String PARAM_DD_XSL_FILE = "ddXsl";
-    public static final String PARAM_DI_XSL_FILE = "diXsl";
-    public static final String PARAM_DD_XSD_URL = "ddXsdUrl";
-    public static final String PARAM_DI_XSD_URL = "diXsdUrl";
-    public static final String PARAM_REPORT_FILE = "report";
-    private OutputStream reportStream = null;
-    
-    @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-        try {
-            //System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-            init(context.getMergedJobDataMap(), ProcessType.OAI_ADAPTER);
-            logger.info("executing " + OaiAdapterJob.class.getName());
-            OaiAdapter adapter = new OaiAdapter();
 
-            //resolver
-            String resolverApiUrl = (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_API_URL);
-            logger.info("Resolver API url: " + resolverApiUrl);
-            adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl,
-                    (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN),
-                    (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_PASS)));
-            adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRATION_MODE)));
-            logger.info("registration mode: " + adapter.getRegistrationMode().toString());
-            adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRAR_CODE));
-            logger.info("registrar code: " + adapter.getRegistrarCode());
+	public static final String REPORT_FILE_NAME = "report.txt";
+	public static final String PARAM_RESOLVER_API_URL = "apiUrl";
+	public static final String PARAM_RESOLVER_REGISTRATION_MODE = "registrationMode";
+	public static final String PARAM_RESOLVER_REGISTRAR_CODE = "registrarCode";
+	public static final String PARAM_RESOLVER_LOGIN = "login";
+	public static final String PARAM_RESOLVER_PASS = "pass";
+	public static final String PARAM_OAI_BASE_URL = "oaiBaseUrl";
+	public static final String PARAM_OAI_METADATA_PREFIX = "oaiMetadataPrefix";
+	public static final String PARAM_OAI_SET = "oaiSet";
+	public static final String PARAM_DD_XSL_FILE = "ddXsl";
+	public static final String PARAM_DI_XSL_FILE = "diXsl";
+	public static final String PARAM_DD_XSD_URL = "ddXsdUrl";
+	public static final String PARAM_DI_XSD_URL = "diXsdUrl";
+	public static final String PARAM_REPORT_FILE = "report";
+	private OutputStream reportStream = null;
 
-            //oai provider
-            adapter.setOaiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL));
-            logger.info("OAI base url: " + adapter.getOaiBaseUrl());
-            adapter.setMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
-            logger.info("OAI metadata prefix: " + adapter.getMetadataPrefix());
-            adapter.setSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
-            logger.info("OAI set: " + (adapter.getSetSpec() == null ? "NOT DEFINED" : adapter.getSetSpec()));
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		try {
+			// System.setProperty("javax.xml.parsers.SAXParserFactory",
+			// "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+			init(context.getMergedJobDataMap(), ProcessType.OAI_ADAPTER);
+			logger.info("executing " + OaiAdapterJob.class.getName());
+			OaiAdapter adapter = new OaiAdapter();
 
-            //oai response -> dd registration XSLT
-            String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);
-            logger.info("XSL template to transform oai response to DD registration data: " + ddRegistrationXslt);
-            adapter.setMetadataToDigDocRegistrationTemplate(XmlTools.loadXmlFromFile(ddRegistrationXslt));
+			// czidlo api
+			String resolverApiUrl = (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_API_URL);
+			logger.info("Resolver API url: " + resolverApiUrl);
+			Credentials credentials = new Credentials((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN), (String) context
+					.getMergedJobDataMap().get(PARAM_RESOLVER_PASS));
+			adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl, credentials));
+			adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(
+					PARAM_RESOLVER_REGISTRATION_MODE)));
+			logger.info("registration mode: " + adapter.getRegistrationMode().toString());
+			adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRAR_CODE));
+			logger.info("registrar code: " + adapter.getRegistrarCode());
 
-            //oai response -> di import XSLT
-            String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_XSL_FILE);
-            logger.info("XSL template to transform oai response to DI import data: " + diImportXslt);
-            adapter.setMetadataToDigInstImportTemplate(XmlTools.loadXmlFromFile(diImportXslt));
+			// oai provider
+			adapter.setOaiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL));
+			logger.info("OAI base url: " + adapter.getOaiBaseUrl());
+			adapter.setMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
+			logger.info("OAI metadata prefix: " + adapter.getMetadataPrefix());
+			adapter.setSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
+			logger.info("OAI set: " + (adapter.getSetSpec() == null ? "NOT DEFINED" : adapter.getSetSpec()));
 
-            //XSDs
-            String ddRegistrationXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DD_XSD_URL);
-            logger.info("XSD for validation of DD registration data: " + ddRegistrationXsdUrl);
-            String diImportXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DI_XSD_URL);
-            logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
-            adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
+			// oai response -> dd registration XSLT
+			String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);
+			logger.info("XSL template to transform oai response to DD registration data: " + ddRegistrationXslt);
+			adapter.setMetadataToDigDocRegistrationTemplate(XmlTools.loadXmlFromFile(ddRegistrationXslt));
 
-            //report
-            reportStream = fileToOutputStream(createWriteableProcessFile(REPORT_FILE_NAME));
-            adapter.setOutputStream(reportStream);
-            logger.info("running oai adapter");
-            adapter.run();
-            if (interrupted) {
-                context.setResult(ProcessState.KILLED);
-                logger.info("process killed");
-            } else {
-                context.setResult(ProcessState.FINISHED);
-                logger.info("oai adapter finished, see report");
-            }
-        } catch (Throwable ex) {
-            logger.error("OAI Adapter process failed", ex);
-            context.setResult(ProcessState.FAILED);
-        } finally {
-            close();
-        }
-    }
-    
-    @Override
-    void close() {
-        if (reportStream != null) {
-            try {
-                reportStream.close();
-            } catch (IOException ex) {
-                throw new RuntimeException();
-            }
-        }
-    }
+			// oai response -> di import XSLT
+			String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_XSL_FILE);
+			logger.info("XSL template to transform oai response to DI import data: " + diImportXslt);
+			adapter.setMetadataToDigInstImportTemplate(XmlTools.loadXmlFromFile(diImportXslt));
+
+			// XSDs
+			String ddRegistrationXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DD_XSD_URL);
+			logger.info("XSD for validation of DD registration data: " + ddRegistrationXsdUrl);
+			String diImportXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DI_XSD_URL);
+			logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
+			adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
+
+			// report
+			reportStream = fileToOutputStream(createWriteableProcessFile(REPORT_FILE_NAME));
+			adapter.setOutputStream(reportStream);
+			logger.info("running oai adapter");
+			adapter.run();
+			if (interrupted) {
+				context.setResult(ProcessState.KILLED);
+				logger.info("process killed");
+			} else {
+				context.setResult(ProcessState.FINISHED);
+				logger.info("oai adapter finished, see report");
+			}
+		} catch (Throwable ex) {
+			logger.error("OAI Adapter process failed", ex);
+			context.setResult(ProcessState.FAILED);
+		} finally {
+			close();
+		}
+	}
+
+	@Override
+	void close() {
+		if (reportStream != null) {
+			try {
+				reportStream.close();
+			} catch (IOException ex) {
+				throw new RuntimeException();
+			}
+		}
+	}
 }

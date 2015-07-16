@@ -16,7 +16,7 @@ public class DefinedProperties {
 	static String OAI_SET = "oaiAdapter.oai.setSpec";
 	static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
 	// czidlo api
-	static String CZIDLO_API_URL = "oaiAdapter.czidlo_api.url";
+	public static String CZIDLO_API_URL = "oaiAdapter.czidlo_api.url";
 	static String CZIDLO_API_LOGIN = "oaiAdapter.czidlo_api.login";
 	static String CZIDLO_API_PASSWORD = "oaiAdapter.czidlo_api.password";
 	static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
