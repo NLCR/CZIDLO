@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
+import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
@@ -24,8 +25,10 @@ public class App {
 
 	public static void main(String[] args) {
 		try {
-			// for testing - comment when commiting changes
-			// args = new String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
+			// for testing - comment out before commiting changes
+			// args = new
+			// String[]{"/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/oaiAdapter.properties"};
+			args = new String[] { "/home/martin/zakazky/czidlo2015/oaiAdapter-testovani/config-monographs.properties" };
 			if (args.length != 1) {
 				System.err.println(USAGE);
 				return;
@@ -41,8 +44,9 @@ public class App {
 	private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
 		OaiAdapter adapter = new OaiAdapter();
 		// czidlo api
-		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), properties
-				.loadString(DefinedProperties.RESOLVER_LOGIN), properties.loadString(DefinedProperties.RESOLVER_PASSWORD)));
+		Credentials credentials = new Credentials(properties.loadString(DefinedProperties.RESOLVER_LOGIN),
+				properties.loadString(DefinedProperties.RESOLVER_PASSWORD));
+		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), credentials));
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.RESOLVER_REGISTRAR_CODE));
 		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.RESOLVER_REGISTRATION_MODE)));
 		// oai harvester

@@ -21,7 +21,6 @@ import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.DiApiResponseDocHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
@@ -36,13 +35,11 @@ public class CzidloApiConnector {
 	public static final String CZIDLO_NAMESPACE = "http://resolver.nkp.cz/v3/";
 	public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
 	public final String czidloApiUrl;
-	public final String login;
-	public final String password;
+	private final Credentials credentials;
 
-	public CzidloApiConnector(String czidloApiUrl, String login, String password) {
+	public CzidloApiConnector(String czidloApiUrl, Credentials credentials) {
 		this.czidloApiUrl = czidloApiUrl + "/v3/";
-		this.login = login;
-		this.password = password;
+		this.credentials = credentials;
 	}
 
 	public String getCzidloApiUrl() {
@@ -50,13 +47,13 @@ public class CzidloApiConnector {
 	}
 
 	private String getDigitalDocumentByRegistrarScopeIdUrl(String registrar, String identifier, String registarScopeId) {
-		String url = "http://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/" + registarScopeId
-				+ "/" + identifier + "?format=xml&action=show";
+		String url = "https://" + czidloApiUrl + "registrars/" + registrar + "/digitalDocuments/registrarScopeIdentifier/"
+				+ registarScopeId + "/" + identifier + "?format=xml&action=show";
 		return url;
 	}
 
 	private String getRegistrarUrl(String registrarCode) {
-		String url = "http://" + czidloApiUrl + "registrars/" + registrarCode;
+		String url = "https://" + czidloApiUrl + "registrars/" + registrarCode;
 		return url;
 	}
 
@@ -71,12 +68,12 @@ public class CzidloApiConnector {
 	}
 
 	private String getUrnnbnStatusUrl(String urnnbn) {
-		String url = "http://" + czidloApiUrl + "urnnbn/" + urnnbn;
+		String url = "https://" + czidloApiUrl + "urnnbn/" + urnnbn;
 		return url;
 	}
 
 	private String getDigitalInsatancesUrl(String urnnbn) {
-		String url = "http://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
+		String url = "https://" + czidloApiUrl + "resolver/" + urnnbn + "/digitalInstances";
 		return url;
 	}
 
@@ -86,7 +83,7 @@ public class CzidloApiConnector {
 	}
 
 	private String getDigitalInstanceUrl(String diId) {
-		String url = "http://" + czidloApiUrl + "digitalInstances/id/" + diId;
+		String url = "https://" + czidloApiUrl + "digitalInstances/id/" + diId;
 		return url;
 	}
 
@@ -94,7 +91,7 @@ public class CzidloApiConnector {
 		String url = getDigitalDocumentByRegistrarScopeIdUrl(registrar, registarScopeId, identifier);
 		Document document;
 		try {
-			document = XmlTools.getDocument(url, true);
+			document = XmlTools.getDocument(url, credentials, true);
 		} catch (IOException ex) {
 			throw new CzidloConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
 		} catch (ParsingException ex) {
@@ -139,7 +136,7 @@ public class CzidloApiConnector {
 		List<String> list = new ArrayList<String>();
 		String url = getDigitalInsatancesUrl(urnnbn);
 		// System.out.println("getDigitalInstancesIdList " + url);
-		Document document = XmlTools.getDocument(url, false);
+		Document document = XmlTools.getDocument(url, credentials, false);
 		Element rootElement = document.getRootElement();
 		Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/@id", CONTEXT);
 		// Nodes idNodes = rootElement.query("//r:digitalInstance/r:id", CONTEXT);
@@ -172,7 +169,7 @@ public class CzidloApiConnector {
 		// List<String> list = new ArrayList<String>();
 		String url = getDigitalInstanceUrl(id);
 		// System.out.println("getDigitailInstanceById " + url);
-		Document document = XmlTools.getDocument(url, false);
+		Document document = XmlTools.getDocument(url, credentials, false);
 		return document;
 	}
 
@@ -180,7 +177,7 @@ public class CzidloApiConnector {
 		String url = getUrnnbnStatusUrl(urnnbn);
 		Document document = null;
 		try {
-			document = XmlTools.getDocument(url, true);
+			document = XmlTools.getDocument(url, credentials, true);
 		} catch (Exception ex) {
 			return UrnnbnStatus.UNDEFINED;
 		}
@@ -197,9 +194,9 @@ public class CzidloApiConnector {
 		String url = getRegistrarUrl(registrarCode);
 		Document document = null;
 		try {
-			document = XmlTools.getDocument(url, true);
+			document = XmlTools.getDocument(url, credentials, true);
 		} catch (Exception ex) {
-			throw new CzidloConnectionException(ex.getMessage());
+			throw new CzidloConnectionException(ex);
 		}
 		Element rootElement = document.getRootElement();
 		String modeString = "";
@@ -225,7 +222,7 @@ public class CzidloApiConnector {
 			ParsingException {
 		List<String> urnnbnList = new ArrayList<String>();
 		String url = getUrnnbnReservationUrl(registarCode, bundleSize);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
+		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 200??
 			throw new CzidloConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
@@ -245,7 +242,7 @@ public class CzidloApiConnector {
 	public String registerDigitalDocument(Document digDocRegistrationData, String registarCode) throws IOException, ParsingException,
 			CzidloConnectionException {
 		String url = getDigDocRegistrationUrl(registarCode);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
+		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(digDocRegistrationData.toXML());
 		wr.flush();
@@ -268,7 +265,7 @@ public class CzidloApiConnector {
 
 	public void importDigitalInstance(Document diImportData, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
 		String url = getDigitalInsatancesUrl(urnnbn);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "POST", true);
+		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.POST, true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(diImportData.toXML());
 		wr.flush();
@@ -282,14 +279,14 @@ public class CzidloApiConnector {
 	public void putRegistrarScopeIdentifier(String urnnbn, String documentId, String registrarScopeId) throws IOException,
 			CzidloConnectionException {
 		String url = getRegistrarScopeIdentifierUrl(urnnbn, registrarScopeId);
-		HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "PUT", true);
+		HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.PUT, true);
 		OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 		wr.write(documentId);
 		wr.flush();
 		wr.close();
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) { // TODO pokud ok, pak vzdy 201??
-			throw new CzidloConnectionException("Puttin registrar scope identifier: response code expected 201, found " + responseCode);
+			throw new CzidloConnectionException("Putting registrar scope identifier: response code expected 201, found " + responseCode);
 		}
 
 	}
@@ -297,7 +294,7 @@ public class CzidloApiConnector {
 	public void removeDigitalInstance(String id) throws CzidloConnectionException {
 		try {
 			String url = getDigitalInsatancesUrl(id);
-			HttpsURLConnection connection = XmlTools.getAuthConnection(login, password, url, "DELETE", false);
+			HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, false);
 			int responseCode = connection.getResponseCode();
 			if (responseCode != 200) {
 				throw new CzidloConnectionException("Removing digital instance: response code expected 200, found " + responseCode);

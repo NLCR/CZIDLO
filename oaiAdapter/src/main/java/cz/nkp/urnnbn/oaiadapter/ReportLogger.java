@@ -12,21 +12,24 @@ import java.io.PrintStream;
  * @author hanis
  */
 public class ReportLogger {
-    
-    private PrintStream stream;
-    
-    public ReportLogger(OutputStream outputStream) {
-        this.stream = new PrintStream(outputStream);
-    } 
-    
-    public void report(String message) {
-        stream.println(message);
-    }
-    
-    
-    public void close() {
-        stream.close();
-    }
-    
-    
+
+	private PrintStream stream;
+
+	public ReportLogger(OutputStream outputStream) {
+		this.stream = new PrintStream(outputStream);
+	}
+
+	public void report(String message) {
+		stream.println(message);
+	}
+
+	public void report(String message, Throwable e) {
+		stream.print(message);
+		e.printStackTrace(stream);
+	}
+
+	public void close() {
+		stream.close();
+	}
+
 }

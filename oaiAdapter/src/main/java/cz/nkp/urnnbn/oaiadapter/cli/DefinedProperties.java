@@ -10,21 +10,24 @@ package cz.nkp.urnnbn.oaiadapter.cli;
  */
 public class DefinedProperties {
 
-    static String REPORT_FILE = "oaiAdapter.reportFile";
-    //oai provider
-    static String OAI_BASE_URL = "oaiAdapter.oai.baseUrl";
-    static String OAI_SET = "oaiAdapter.oai.setSpec";
-    static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
-    //czidlo api
-    public static String RESOLVER_API_URL = "oaiAdapter.czidlo_api.url";
-    static String RESOLVER_LOGIN = "oaiAdapter.czidlo_api.login";
-    static String RESOLVER_PASSWORD = "oaiAdapter.czidlo_api.password";
-    static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
-    static String RESOLVER_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
-    //xsl transformations
-    static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
-    static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
-    //xsd for transformation results
-    public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
-    public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
+	static String REPORT_FILE = "oaiAdapter.reportFile";
+	// oai provider
+	static String OAI_BASE_URL = "oaiAdapter.oai.baseUrl";
+	static String OAI_SET = "oaiAdapter.oai.setSpec";
+	static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
+	// czidlo api
+	public static String RESOLVER_API_URL = "oaiAdapter.czidlo_api.url";
+	static String RESOLVER_LOGIN = "oaiAdapter.czidlo_api.login";
+	static String RESOLVER_PASSWORD = "oaiAdapter.czidlo_api.password";
+	static String RESOLVER_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
+	static String RESOLVER_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
+	static String RESOLVER_USE_DEV_CERTIFICATE = "oaiAdapter.czidlo_api.useDevCertificate";
+	static String RESOLVER_DEV_CERTIFICATE_FILE = "oaiAdapter.czidlo_api.devCertificateFile";
+
+	// xsl transformations
+	static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
+	static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
+	// xsd for transformation results
+	public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
+	public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
 }

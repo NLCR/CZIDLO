@@ -14,6 +14,7 @@ import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 
@@ -23,7 +24,7 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
  */
 public class Test {
     
-    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api","someLogin","somePassword");
+    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api",new Credentials("someLogin","somePassword"));
 
     public void makeReservation() {
         try {

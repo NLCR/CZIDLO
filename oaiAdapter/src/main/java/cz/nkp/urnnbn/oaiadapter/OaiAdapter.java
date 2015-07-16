@@ -169,6 +169,12 @@ public class OaiAdapter {
 		}
 	}
 
+	private void report(String message, Throwable e) {
+		if (reportLogger != null) {
+			reportLogger.report(message, e);
+		}
+	}
+
 	public RecordResult processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
 			throws OaiAdapterException, CzidloConnectionException {
 		Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
@@ -198,7 +204,7 @@ public class OaiAdapter {
 			switch (urnnbnStatus) {
 			case RESERVED:
 				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
-					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d",
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s",
 							Status.RESERVED, UrnNbnRegistrationMode.BY_RESERVATION));
 				} else {
 					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
@@ -206,7 +212,7 @@ public class OaiAdapter {
 				}
 			case FREE:
 				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
-					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %d", Status.FREE,
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %s", Status.FREE,
 							UrnNbnRegistrationMode.BY_REGISTRAR));
 				} else {
 					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
@@ -380,8 +386,8 @@ public class OaiAdapter {
 					return;
 				}
 			} catch (CzidloConnectionException e) {
-				report("Resolver API not available: " + e.getMessage());
-				logger.log(Level.SEVERE, "Resolver API not available: " + e.getMessage());
+				report("Czidlo API not available: ", e);
+				logger.log(Level.SEVERE, "Czidlo API not available: ", e);
 				return;
 			}
 
@@ -475,16 +481,16 @@ public class OaiAdapter {
 			if (ddRegisteredNow != 0) {
 				report("-----------------------------------------------------");
 				report("DD REGISTERED NOW: " + ddRegisteredNow);
-				report("DI IMPORTED: " + ddRegisteredNowDisImported);
-				report("DI UPDATED: " + ddRegisteredNowDisUpdated);
-				report("DI NOT IMPORTED NOR UPDATED: " + ddRegisteredNowDisUntouched);
+				report("	DI IMPORTED: " + ddRegisteredNowDisImported);
+				report("	DI UPDATED: " + ddRegisteredNowDisUpdated);
+				report("	DI NOT IMPORTED NOR UPDATED: " + ddRegisteredNowDisUntouched);
 			}
 			if (ddRegisteredAlready != 0) {
 				report("-----------------------------------------------------");
 				report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
-				report("DI IMPORTED: " + ddRegisteredAlreadyDisImported);
-				report("DI UPDATED: " + ddRegisteredAlreadyDisUpdated);
-				report("DI NOT IMPORTED NOR UPDATED: " + ddRegisteredAlreadyDisUntouched);
+				report("	DI IMPORTED: " + ddRegisteredAlreadyDisImported);
+				report("	DI UPDATED: " + ddRegisteredAlreadyDisUpdated);
+				report("	DI NOT IMPORTED NOR UPDATED: " + ddRegisteredAlreadyDisUntouched);
 			}
 			if (reportLogger != null) {
 				reportLogger.close();

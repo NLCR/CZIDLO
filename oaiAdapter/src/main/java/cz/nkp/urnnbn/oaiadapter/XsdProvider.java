@@ -36,6 +36,7 @@ public class XsdProvider {
 		digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
 	}
 
+	//TODO: use cz.nkp.urnnbn.oaiadapter.utils.getDocument instead (dev certificate, etc)
 	private String loadXsdFromUrl(URL xsd) throws IOException {
 		URLConnection connection = xsd.openConnection();
 		BufferedReader in = null;
