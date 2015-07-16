@@ -55,7 +55,7 @@ public class Configuration {
         //oai adapter
         digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
         digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
-        resolverApiUrl = loader.loadString(DefinedProperties.RESOLVER_API_URL);
+        resolverApiUrl = loader.loadString(DefinedProperties.CZIDLO_API_URL);
     }
 
     public static File getJobsDir() {

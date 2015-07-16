@@ -38,7 +38,7 @@ public class OaiAdapter {
 	private String oaiBaseUrl;
 	private String metadataPrefix;
 	private String setSpec;
-	// RESOLVER
+	// CZIDLO API
 	private String registrarCode;
 	private UrnNbnRegistrationMode registrationMode;
 	private CzidloApiConnector czidloConnector;
@@ -122,7 +122,7 @@ public class OaiAdapter {
 		this.reportLogger = new ReportLogger(os);
 	}
 
-	public CzidloApiConnector getResolverConnector() {
+	public CzidloApiConnector getCzidloApiConnector() {
 		return czidloConnector;
 	}
 
@@ -280,7 +280,7 @@ public class OaiAdapter {
 		} catch (ParsingException ex) {
 			throw new OaiAdapterException("ParsingException occurred during Digital Instance Import: " + ex.getMessage());
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("ResolverConnectionException occurred during Digital Instance Import: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital Instance Import: " + ex.getMessage());
 		}
 
 	}
@@ -296,7 +296,7 @@ public class OaiAdapter {
 		} catch (ParsingException ex) {
 			throw new OaiAdapterException("ParsingException occurred during Digital Document Registration: " + ex.getMessage());
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("ResolverConnectionException occurred during Digital Document Registration: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital Document Registration: " + ex.getMessage());
 		}
 	}
 

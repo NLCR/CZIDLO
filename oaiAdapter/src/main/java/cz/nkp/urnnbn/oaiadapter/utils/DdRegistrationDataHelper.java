@@ -58,8 +58,6 @@ public class DdRegistrationDataHelper {
 	}
 
 	public String getUrnnbnFromDocument() {
-		// Nodes nodes = document.query("/r:import/r:digitalDocument/r:urnNbn",
-		// ResolverConnector.CONTEXT);
 		Nodes nodes = ddRegistrationData.query("/r:import/r:digitalDocument/r:urnNbn/r:value", CzidloApiConnector.CONTEXT);
 		// System.out.println(document.toXML().toString());
 		// System.out.println(nodes.size());

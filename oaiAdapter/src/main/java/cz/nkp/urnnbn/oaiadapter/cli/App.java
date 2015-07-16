@@ -45,7 +45,7 @@ public class App {
 		// czidlo api
 		Credentials credentials = new Credentials(properties.loadString(DefinedProperties.CZIDLO_API_LOGIN),
 				properties.loadString(DefinedProperties.CZIDLO_API_PASSWORD));
-		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.RESOLVER_API_URL), credentials));
+		adapter.setCzidloConnector(new CzidloApiConnector(properties.loadString(DefinedProperties.CZIDLO_API_URL), credentials));
 		adapter.setRegistrarCode(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRAR_CODE));
 		adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRATION_MODE)));
 		// oai harvester
