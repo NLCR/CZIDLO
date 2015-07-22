@@ -289,6 +289,7 @@ public class OaiAdapter {
 
 	private String registerDigitalDocument(Document digDocRegistrationData, String oaiIdentifier) throws OaiAdapterException {
 		try {
+			//TODO: pridava se tam registrar-scope id tady, nebo kde
 			String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
 			report("- Digital Document Registration successful - continuing.");
 			report("- URN:NBN: " + urnnbn);
@@ -305,8 +306,8 @@ public class OaiAdapter {
 	private RecordResult processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate,
 			Document digInstImportTemplate) throws OaiAdapterException {
 		report("------------------------------------------------------");
-		String identifier = originalRecord.getIdentifier();
-		report("Processing next record - identifier: " + identifier);
+		String oaiIdentifier = originalRecord.getIdentifier();
+		report("Processing next record - identifier: " + oaiIdentifier);
 
 		// DIGITAL DOCUMENT REGISTRATION
 		Document digDocRegistrationData = null;
@@ -350,7 +351,7 @@ public class OaiAdapter {
 		}
 
 		try {
-			RecordResult recordResult = processSingleRecord(identifier, digDocRegistrationData, digInstImportData);
+			RecordResult recordResult = processSingleRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
 			String urnnbn = (String) recordResult.getUrnnbn();
 			if (urnnbn != null) {
 				report("- " + urnnbn);
