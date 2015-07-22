@@ -176,7 +176,7 @@ public class OaiAdapter {
 		}
 	}
 
-	public RecordResult processSingleDocument(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
+	public RecordResult processSingleRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
 			throws OaiAdapterException, CzidloConnectionException {
 		Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
 		DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
@@ -312,45 +312,45 @@ public class OaiAdapter {
 		Document digDocRegistrationData = null;
 		try {
 			digDocRegistrationData = XmlTools.getTransformedDocument(originalRecord.getDocument(), digDocRegistrationTemplate);
-			report("- record successfuly transformed to Digital Document Registration data - continuing.");
+			report("- OAI record successfuly transformed into digital-document-registration data - continuing.");
 			// saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
 		} catch (XSLException ex) {
-			throw new OaiAdapterException("XSLException occurred when transforming record to Digital Document Registration data: "
+			throw new OaiAdapterException("XSLException occurred when transforming record into digital-document-registration data: "
 					+ ex.getMessage());
 		}
 		try {
 			XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
-			report("- Digital Document Registration data validation successful - continuing.");
+			report("- Digital-document-registration data validation successful - continuing.");
 		} catch (DocumentOperationException ex) {
 			// saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
 			// ".xml");
-			throw new OaiAdapterException("- Digital Document Registration data invalid - skipping.\nMessage: " + ex.getMessage());
+			throw new OaiAdapterException("- Digital-document-registration data invalid - skipping.\nMessage: " + ex.getMessage());
 		}
 
 		// DIGITAL INSTANCE IMPORT
 		Document digInstImportData = null;
 		try {
 			digInstImportData = XmlTools.getTransformedDocument(originalRecord.getDocument(), digInstImportTemplate);
-			report("- record successfuly transformed to Digital Instance Import data - continuing.");
+			report("- OAI record successfuly transformed to digital-instance-import data - continuing.");
 			// File tmpFile = saveToTempFile(digInstImportData, "digitalInstance-" +
 			// originalRecord.getIdentifier(),
 			// ".xml");
 		} catch (XSLException ex) {
-			throw new OaiAdapterException("XSLException occurred when transforming record to Digital Instance Import data: "
+			throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data: "
 					+ ex.getMessage());
 		}
 		try {
 			XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
-			report("- Digital Instance Import data validation successful - continuing.");
+			report("- Ddigital-instance-import data validation successful - continuing.");
 			// File tmpFile = saveToTempFile(digitalInstanceDocument, "digitalInstance-" +
 			// record.getIdentifier(),
 			// ".xml");
 		} catch (DocumentOperationException ex) {
-			throw new OaiAdapterException("- Digital Instance Import data invalid - skipping.\nMessage: " + ex.getMessage());
+			throw new OaiAdapterException("- Digital-instance-import data invalid - skipping.\nMessage: " + ex.getMessage());
 		}
 
 		try {
-			RecordResult recordResult = processSingleDocument(identifier, digDocRegistrationData, digInstImportData);
+			RecordResult recordResult = processSingleRecord(identifier, digDocRegistrationData, digInstImportData);
 			String urnnbn = (String) recordResult.getUrnnbn();
 			if (urnnbn != null) {
 				report("- " + urnnbn);

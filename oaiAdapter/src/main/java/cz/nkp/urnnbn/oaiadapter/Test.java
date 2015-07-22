@@ -79,7 +79,7 @@ public class Test {
             oaiAdapter.setRegistrationMode(UrnNbnRegistrationMode.BY_RESERVATION);
             //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
 
-            oaiAdapter.processSingleDocument(oaiIdentifier, digitalDocument, digitalInstance);
+            oaiAdapter.processSingleRecord(oaiIdentifier, digitalDocument, digitalInstance);
         } catch (CzidloConnectionException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
         } catch (OaiAdapterException ex) {
