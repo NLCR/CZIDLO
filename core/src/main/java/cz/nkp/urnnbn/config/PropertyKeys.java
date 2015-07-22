@@ -23,16 +23,16 @@ package cz.nkp.urnnbn.config;
  */
 public class PropertyKeys {
 
-    public static final String SERVER_READ_ONLY = "resolver.readOnly";
-    public static final String DEVEL = "resolver.develMode";
-    public static final String LANGUAGE_CODE = "resolver.languageCode";
-    public static final String ADMIN_NAME = "resolver.admin.name";
-    public static final String ADMIN_EMAIL = "resolver.admin.email";
-    public static final String DB_DRIVER = "resolver.db.driver";
-    public static final String DB_HOST = "resolver.db.host";
-    public static final String DB_PORT = "resolver.db.port";
-    public static final String DB_DATABASE = "resolver.db.database";
-    public static final String DB_LOGIN = "resolver.db.login";
-    public static final String DB_PASSWORD = "resolver.db.password";
-    public static final String ADMIN_LOG_FILE = "resolver.admin.logFile";
+    public static final String SERVER_READ_ONLY = "czidlo.readOnly";
+    public static final String DEVEL = "czidlo.develMode";
+    public static final String LANGUAGE_CODE = "czidlo.languageCode";
+    public static final String ADMIN_NAME = "czidlo.admin.name";
+    public static final String ADMIN_EMAIL = "czidlo.admin.email";
+    public static final String DB_DRIVER = "czidlo.db.driver";
+    public static final String DB_HOST = "czidlo.db.host";
+    public static final String DB_PORT = "czidlo.db.port";
+    public static final String DB_DATABASE = "czidlo.db.database";
+    public static final String DB_LOGIN = "czidlo.db.login";
+    public static final String DB_PASSWORD = "czidlo.db.password";
+    public static final String ADMIN_LOG_FILE = "czidlo.admin.logFile";
 }
