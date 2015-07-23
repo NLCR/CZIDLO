@@ -214,7 +214,7 @@ public class OaiAdapter {
 				}
 			case FREE:
 				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
-					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %s!", Status.FREE,
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", Status.FREE,
 							UrnNbnRegistrationMode.BY_REGISTRAR));
 				} else {
 					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
