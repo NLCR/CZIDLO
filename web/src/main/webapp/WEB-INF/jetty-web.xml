@@ -7,8 +7,8 @@
 			<New class="org.apache.commons.dbcp.BasicDataSource">
 				<Set name="driverClassName">org.postgresql.Driver</Set>
 				<Set name="url">jdbc:postgresql://localhost:5432/czidlo_core</Set>
-				<Set name="username">testuser</Set>
-				<Set name="password">testpass</Set>
+				<Set name="username">czidlo</Set>
+				<Set name="password">czidlo</Set>
 			</New>
 		</Arg>
 	</New>

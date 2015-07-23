@@ -35,7 +35,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
     private int listIdentifiersMaxSize;
     private int listRecordsMaxSize;
     private int listRequestsMinutesValid;
-    private XsltXmlTransformer resolverToOaidcTransformer;
+    private XsltXmlTransformer czidloToOaidcTransformer;
 
     /**
      *
@@ -57,9 +57,9 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
         listRequestsMinutesValid = loader.loadInt(PropertyKeys.LIST_REQUESTS_MINUTES_VALID);
     }
 
-    void initResolverToOaidcTemplate(InputStream in) throws ParsingException, ValidityException, IOException, XSLException {
+    void initCzidloToOaidcTemplate(InputStream in) throws ParsingException, ValidityException, IOException, XSLException {
         Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
-        resolverToOaidcTransformer = new XsltXmlTransformer(xslt);
+        czidloToOaidcTransformer = new XsltXmlTransformer(xslt);
     }
 
     public static OaiPmhConfiguration instanceOf() {
@@ -116,7 +116,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
         return listRequestsMinutesValid;
     }
 
-    public XsltXmlTransformer getResolverToOaidcTransformer() {
-        return resolverToOaidcTransformer;
+    public XsltXmlTransformer getCzidloToOaidcTransformer() {
+        return czidloToOaidcTransformer;
     }
 }

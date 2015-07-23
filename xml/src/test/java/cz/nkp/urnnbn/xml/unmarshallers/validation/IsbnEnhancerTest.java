@@ -228,7 +228,7 @@ public class IsbnEnhancerTest extends TestCase {
     }
     
     /**
-     * http://code.google.com/p/urnnbn-resolver-v2/issues/detail?id=57
+     * https://github.com/NLCR/CZIDLO/issues/57
      */
     public void testIssue57(){
         ElementContentEnhancer enhancer = new IsbnEnhancer();

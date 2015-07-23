@@ -13,8 +13,8 @@ and should be therefore run only by particular national library.
 
 System is being developed under GNU GPL v3 licence by National Library of the Czech Republic.
 http://nkp.cz/
-Source codes, built software and documentation is available on google code.
-http://code.google.com/p/czidlo/
+Source codes, built software and documentation is available on Github:
+https://github.com/NLCR/CZIDLO
 This document describes installation of this system on Linux server.
 Since all the middleware (database, servlet container, web server) is available on multiple platforms,
 it should be possible to install the system on different platform.
@@ -28,7 +28,7 @@ Main features
 - resolving the URN:NBN for given nation space (i. e. redirecting to digital libraries or showing metadata of digital document in user friendly form or in xml).
 - redirecting according to access origin (HTTP header REFERER)
 - assigning URN:NBN identifiers for given subspace manually or by means of REST API
-- resposibility for subspaces delagated to organisations yet Resolver is still global authority
+- resposibility for subspaces delagated to organisations yet Czidlo is still global authority
 - user accounts management and accounts assigned to subspaces
 - OAI-PMH provider
 - possible to edit metadata manually though web interface, managing processes on server through web interface
@@ -58,10 +58,10 @@ version 4.2:
 - bug fixes
 - passwords from now on stored more securely as hash of password concancated with random salt
 - fulltext web search though only withing title data
-- for more see https://code.google.com/p/czidlo/wiki/Changelog#4.2
+- for more see https://github.com/NLCR/CZIDLO/wiki/P%C5%99ehled-zm%C4%9Bn#42
 
 version 4.2.1:
-- fixed bug https://code.google.com/p/czidlo/issues/detail?id=38
+- fixed bug https://github.com/NLCR/CZIDLO/issues/98
 
 version 4.2.2:
 - urn:nbn deactivation implemented in API v3. With or without note, without predecessor(s)/successor(s).
@@ -114,20 +114,20 @@ Context definition looks this way:
 
 <Context antiJARLocking="true" path="/api">
  <Resource auth="Container"
-  driverClassName="org.postgresql.Driver"
-  maxActive="100" maxIdle="30" maxWait="200"
-  name="jdbc/postgres"
-  username="testuser"
-  password="testpass"
   type="javax.sql.DataSource"
+  name="jdbc/postgres"
+  driverClassName="org.postgresql.Driver"
   url="jdbc:postgresql://localhost:5432/czidlo_core"
+  username="czidlo"
+  password="czidlo"
+  maxActive="100" maxIdle="30" maxWait="200"
   />
 </Context>
 
 Bear in mind that there allways exists default context.xml in each war 
 so it will be copied into $TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml when the application is (re)deployed.
 
-4. All modules installed on the same machine should set property resolver.admin.logFile to the same file so that admin logs of all modules
+4. All modules installed on the same machine should set property czidlo.admin.logFile to the same file so that admin logs of all modules
 are accessible through web interface.
 
 5. Web applications web and processDataServer need that database for processes and OAI Adapter xsl transformations is initialized. 

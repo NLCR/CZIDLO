@@ -24,8 +24,8 @@ public class DevelDatabaseConfig {
 
     public static String DRIVER = "org.postgresql.Driver";
     public static String HOST = "localhost";
-    public static String DATABASE = "resolver";
+    public static String DATABASE = "czidlo_junit_core";
     public static int PORT = 5432;
-    public static String LOGIN = "testuser";
-    public static String PASSWORD = "testpass";
+    public static String LOGIN = "czidlo_test";
+    public static String PASSWORD = "czidlo_test";
 }

@@ -31,7 +31,6 @@ import java.io.InputStream;
 public class Configuration {
 
     private static File jobsDir;
-    //private static ResolverDatabaseCreditentials resolverDbCreditentials;
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
     private static String czidloApiBaseUrl;
@@ -78,7 +77,7 @@ public class Configuration {
         return digInstImportXsdUrl;
     }
 
-    public static String getResolverApiUrl() {
+    public static String getCzidloApiBaseUrl() {
         return czidloApiBaseUrl;
     }
 }

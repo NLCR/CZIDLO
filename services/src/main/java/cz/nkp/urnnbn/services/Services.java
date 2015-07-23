@@ -32,7 +32,7 @@ public class Services {
     private AuthenticationService authenticationService;
 
     private Services(DatabaseConnector connector, Integer urnNbnReservationMaxSize) {
-        this.connector = connector;
+    	this.connector = connector;
         if (urnNbnReservationMaxSize == null) {
             this.urnNbnReservationMaxSize = DEFAULT_MAX_URN_RESERVATION_SIZE;
         } else {
@@ -41,10 +41,12 @@ public class Services {
     }
 
     public static void init(DatabaseConnector con, Integer urnNbnReservationMaxSize) {
+    	logger.info("Initializing");
         instance = new Services(con, urnNbnReservationMaxSize);
     }
 
     public static void init(DatabaseConnector con) {
+    	logger.info("Initializing");
         instance = new Services(con, null);
     }
 

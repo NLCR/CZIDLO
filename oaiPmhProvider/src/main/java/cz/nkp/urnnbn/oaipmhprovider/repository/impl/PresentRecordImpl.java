@@ -172,7 +172,7 @@ public class PresentRecordImpl implements PresentRecord {
     private Document transformToOaiDc(String metadataInResolverFormat) throws DocumentException {
         try {
             nu.xom.Document original = XOMUtils.loadDocumentWithoutValidation(metadataInResolverFormat);
-            String transformed = OaiPmhConfiguration.instanceOf().getResolverToOaidcTransformer().transform(original).toXML();
+            String transformed = OaiPmhConfiguration.instanceOf().getCzidloToOaidcTransformer().transform(original).toXML();
             return Dom4jUtils.loadDocument(transformed, false);
         } catch (DocumentException ex) {
             throw ex;

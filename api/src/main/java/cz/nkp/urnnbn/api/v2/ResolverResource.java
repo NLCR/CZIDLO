@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
-import cz.nkp.urnnbn.api.AbstractResolverResource;
+import cz.nkp.urnnbn.api.AbstractResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
@@ -25,7 +25,7 @@ import javax.ws.rs.WebApplicationException;
  * @author Martin Řehánek
  */
 @Path("/resolver")
-public class ResolverResource extends AbstractResolverResource {
+public class ResolverResource extends AbstractResource {
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {

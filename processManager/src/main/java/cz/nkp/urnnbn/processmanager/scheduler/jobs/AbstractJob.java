@@ -38,11 +38,11 @@ public abstract class AbstractJob implements InterruptableJob {
     public static String PARAM_PROCESS_ID_KEY = "processId";
     public static String PARAM_PROCESS_TYPE = "processType";
     public static String PARAM_OWNER_LOGIN = "processOwner";
-    public static String PARAM_RESOLVER_DB_HOST_KEY = "resolverDbHost";
-    public static String PARAM_RESOLVER_DB_PORT_KEY = "resolverDbPort";
-    public static String PARAM_RESOLVER_DB_DATABASE_KEY = "resolverDbDatabase";
-    public static String PARAM_RESOLVER_DB_LOGIN_KEY = "resolverDbLogin";
-    public static String PARAM_RESOLVER_DB_PASSWORD_KEY = "resolverDbPassword";
+    public static String PARAM_CZIDLO_DB_HOST = "czidloDbHost";
+    public static String PARAM_CZIDLO_DB_PORT = "czidloDbPort";
+    public static String PARAM_CZIDLO_DB_DATABASE = "czidloDbDatabase";
+    public static String PARAM_CZIDLO_DB_LOGIN = "czidloDbLogin";
+    public static String PARAM_CZIDLO_DB_PASSWORD = "czidloDbPassword";
     protected Long processId;
     protected Logger logger;
     protected boolean interrupted = false;

@@ -7,8 +7,8 @@
         This XML Schema (W3C) document validates digital instances
         that are imported into application urnnbn-resolver-v2 
         through its http rest api.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified" 

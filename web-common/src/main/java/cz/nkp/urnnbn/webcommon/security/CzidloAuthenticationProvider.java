@@ -24,9 +24,9 @@ import cz.nkp.urnnbn.services.Services;
  * 
  * @author Martin Řehánek
  */
-public class ResolverAuthenticationProvider implements AuthenticationProvider {
+public class CzidloAuthenticationProvider implements AuthenticationProvider {
 
-	private static final Logger logger = Logger.getLogger(ResolverAuthenticationProvider.class.getName());
+	private static final Logger logger = Logger.getLogger(CzidloAuthenticationProvider.class.getName());
 	static final List<GrantedAuthority> ADMIN = new ArrayList<GrantedAuthority>();
 	static final List<GrantedAuthority> USER = new ArrayList<GrantedAuthority>();
 

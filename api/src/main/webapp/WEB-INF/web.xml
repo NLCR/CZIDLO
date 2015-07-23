@@ -9,7 +9,7 @@
         <res-auth>Container</res-auth>
     </resource-ref>
     <context-param>
-        <param-name>resolverConfig</param-name>
+        <param-name>apiConfig</param-name>
         <param-value>
             /api.properties
         </param-value>

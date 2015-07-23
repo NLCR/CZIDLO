@@ -33,8 +33,8 @@ public enum ProcessType {
      */
     REGISTRARS_URN_NBN_CSV_EXPORT,
     /**
-     * Harvests external OAI-PMH repository, transforms records into import xmls
-     * and registers DD and imports DI into resolver.
+     * Harvests external OAI-PMH repository, transforms records into xmls
+     * for digital-document-registration and digital-instance-import/update data and realizes registers those operations.
      */
     OAI_ADAPTER,
     /**

@@ -34,7 +34,7 @@ public enum ProcessType {
     REGISTRARS_URN_NBN_CSV_EXPORT,
     /**
      * Harvests external OAI-PMH repository, transforms records into import xmls
-     * and registers DD and imports DI into resolver.
+     * and registers DD and imports DI into czidlo.
      */
     OAI_ADAPTER,
     /**

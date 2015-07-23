@@ -79,7 +79,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     @Override
     public void initialize(String appName, PropertyLoader loader) throws IOException {
         super.initialize(appName, loader);
-        logger.log(Level.INFO, "Initializing {0}", ApiModuleConfiguration.class.getName());
+        logger.log(Level.INFO, "Initializing {0}", appName);
         urnReservationDefaultSize = loader.loadInt(PropertyKeys.URN_RESERVATION_DEFAULT_SIZE);
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);

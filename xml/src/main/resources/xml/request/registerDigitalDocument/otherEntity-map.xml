@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         to any other Intelectual Entity type . Particulary maps and music sheets. 
         The type of document can be further described in element documentType.
         This is example of map.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <r:otherEntity>

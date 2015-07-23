@@ -48,6 +48,6 @@
 		<authentication-provider ref='authenticationProvider' />
 	</authentication-manager>
 
-	<beans:bean id="authenticationProvider"	class="cz.nkp.urnnbn.webcommon.security.ResolverAuthenticationProvider" />
+	<beans:bean id="authenticationProvider"	class="cz.nkp.urnnbn.webcommon.security.CzidloAuthenticationProvider" />
 	<beans:bean id="logListener" class="cz.nkp.urnnbn.webcommon.security.SecurityListener" />
 </beans:beans>

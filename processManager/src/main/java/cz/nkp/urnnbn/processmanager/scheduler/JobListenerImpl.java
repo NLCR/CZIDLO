@@ -93,9 +93,9 @@ public class JobListenerImpl implements JobListener {
 	private String oaiAdapterParams(JobDataMap processData) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		appendKeyValue(processData, builder, "registrarion_mode", OaiAdapterJob.PARAM_RESOLVER_REGISTRATION_MODE);
+		appendKeyValue(processData, builder, "registrarion_mode", OaiAdapterJob.PARAM_CZIDLO_REGISTRATION_MODE);
 		builder.append(", ");
-		appendKeyValue(processData, builder, "registrar_code", OaiAdapterJob.PARAM_RESOLVER_REGISTRAR_CODE);
+		appendKeyValue(processData, builder, "registrar_code", OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE);
 		builder.append(", ");
 		appendKeyValue(processData, builder, "oai_base_url", OaiAdapterJob.PARAM_OAI_BASE_URL);
 		builder.append(", ");

@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         This example also contains urn:nbn. It means that when importing this record,
         that particular urn:nbn should be registered. If not possible,
         the import operation must return error.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- monografie -->

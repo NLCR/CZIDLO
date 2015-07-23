@@ -5,8 +5,8 @@
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/czidlo_process</property>
-		<property name="hibernate.connection.username">testuser</property>
-		<property name="hibernate.connection.password">testpass</property>
+		<property name="hibernate.connection.username">czidlo</property>
+		<property name="hibernate.connection.password">czidlo</property>
 		<property name="hibernate.connection.pool_size">10</property>
 		<!--Don't use hibernate.hbm2ddl.auto in production. Only once to intialize process database 
 			first time one of application using the database (web or processDataManager) is deployed. -->

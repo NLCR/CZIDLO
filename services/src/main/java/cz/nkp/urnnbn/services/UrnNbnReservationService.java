@@ -19,18 +19,16 @@ public interface UrnNbnReservationService extends BusinessService {
 
     /**
      * This operation reserves certain number of urnNbns. UrnNbns that are
-     * reservec are not used for assigning by the application. The registrar is
+     * reserved are not used for assigning by the application. The registrar is
      * expected to put those urnNbns into it's metadata records that are ready
-     * for import into the Resolver application. When one of those records is
-     * imported, the application assignes urnNbn, that is present in import
-     * metadata, to newly created digital instance.
+     * for import into the Czidlo. When one of those records is
+     * imported, the application assignes urnNbn, that is present in metadata, to newly created digital instance.
      *
      * @param batchSize number of urnNbn identifiers returned
      * @param registrar
      * @param login Login of user to perform this operation.
      * @return Batch of urnNbn of size batchSize.
      */
-    //public List<UrnNbn> reserveUrnNbnBatch(int batchSize, Registrar registrar, long userId) 
     public List<UrnNbn> reserveUrnNbnBatch(int batchSize, Registrar registrar, String login)
             throws UnknownUserException, AccessException;
 

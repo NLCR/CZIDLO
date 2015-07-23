@@ -12,7 +12,7 @@
 	</resource-ref>
 
 	<context-param>
-		<param-name>resolverConfig</param-name>
+		<param-name>webConfig</param-name>
 		<param-value>
          /web.properties
         </param-value>

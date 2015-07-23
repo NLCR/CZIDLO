@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Intelectual Entity in this example is of type PERIODICAL_ISSUE.
         The type will be used for single issues of periodical publication. 
         E.g. single issue(number) of papers or magazine.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- výtisk periodika -->

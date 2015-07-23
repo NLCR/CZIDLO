@@ -6,8 +6,8 @@
     Description:
         This XML Schema (W3C) document validates identifiers
         that are used in schema recordImport.xsd.xml.
-        http://code.google.com/p/urnnbn-resolver-v3/
-        http://code.google.com/p/urnnbn-resolver-v3/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified" 

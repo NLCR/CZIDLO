@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Intelectual Entity in this example is of type PERIODICAL_VOLUME.
         The type will be used for whole physical (and/or) logical volumes
         of periodical publication. 
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <r:import xmlns:r="http://resolver.nkp.cz/v3/">
     <!-- ročník případně jiný svazek periodika -->

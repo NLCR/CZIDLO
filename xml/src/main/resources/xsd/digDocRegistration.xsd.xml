@@ -24,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         This XML Schema (W3C) document validates records
         that are imported into application urnnbn-resolver-v3 
         through its http rest api.
-        http://code.google.com/p/urnnbn-resolver-v3/
-        http://code.google.com/p/urnnbn-resolver-v3/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 

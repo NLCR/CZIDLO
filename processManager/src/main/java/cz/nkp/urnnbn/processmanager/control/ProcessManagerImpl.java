@@ -269,9 +269,9 @@ public class ProcessManagerImpl implements ProcessManager {
 					.usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, process.getParams()[9])
 					.usingJobData(UrnNbnCsvExportJob.PARAM_COUNTRY_CODE, process.getParams()[10]).build();
 		case OAI_ADAPTER:
-			String resolverApiUrl = Configuration.getResolverApiUrl();
-			String resolverLogin = process.getParams()[0];
-			String resolverPass = process.getParams()[1];
+			String apiBaseUrl = Configuration.getCzidloApiBaseUrl();
+			String apiLogin = process.getParams()[0];
+			String apiPassword = process.getParams()[1];
 			String registrationMode = process.getParams()[2];
 			String registrarCode = process.getParams()[3];
 			String oaiBaseUrl = process.getParams()[4];
@@ -286,11 +286,11 @@ public class ProcessManagerImpl implements ProcessManager {
 					.usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
 					.usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())
 					.usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())
-					.usingJobData(OaiAdapterJob.PARAM_RESOLVER_API_URL, resolverApiUrl)
-					.usingJobData(OaiAdapterJob.PARAM_RESOLVER_LOGIN, resolverLogin)
-					.usingJobData(OaiAdapterJob.PARAM_RESOLVER_PASS, resolverPass)
-					.usingJobData(OaiAdapterJob.PARAM_RESOLVER_REGISTRATION_MODE, registrationMode)
-					.usingJobData(OaiAdapterJob.PARAM_RESOLVER_REGISTRAR_CODE, registrarCode)
+					.usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, apiBaseUrl)
+					.usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, apiLogin)
+					.usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, apiPassword)
+					.usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRATION_MODE, registrationMode)
+					.usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, registrarCode)
 					.usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, oaiBaseUrl)
 					.usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, metadataPrefix)
 					.usingJobData(OaiAdapterJob.PARAM_OAI_SET, oaiSet).usingJobData(OaiAdapterJob.PARAM_DD_XSL_FILE, ddXslFile)

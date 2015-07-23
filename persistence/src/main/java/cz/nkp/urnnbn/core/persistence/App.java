@@ -37,11 +37,11 @@ import org.joda.time.DateTime;
 public class App {
 
 	static String driver = "org.postgresql.Driver";
-	static String login = "testuser";
-	static String password = "testpass";
 	static String host = "localhost";
 	static int port = 5432;
-	static String database = "resolver";
+	static String database = "czidlo_test2";
+	static String login = "czidlo";
+	static String password = "czidlo";
 	List<Registrar> registrars = new ArrayList<Registrar>();
 	List<IntelectualEntity> entities = new ArrayList<IntelectualEntity>();
 	List<DigitalDocument> representations = new ArrayList<DigitalDocument>();

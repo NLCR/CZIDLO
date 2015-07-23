@@ -116,7 +116,7 @@ public class ProcessResource {
                 case REGISTRARS_URN_NBN_CSV_EXPORT:
                     return UrnNbnCsvExportJob.CSV_EXPORT_FILE_NAME;
                 case OAI_ADAPTER:
-                    return OaiAdapterJob.REPORT_FILE_NAME;
+                    return OaiAdapterJob.PARAM_REPORT_FILE;
                 default:
                     throw new RuntimeException("Filename of process ouptput for process type " + type + " not defined");
             }

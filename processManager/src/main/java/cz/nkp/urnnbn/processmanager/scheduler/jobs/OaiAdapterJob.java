@@ -38,20 +38,23 @@ import cz.nkp.urnnbn.processmanager.core.ProcessType;
  */
 public class OaiAdapterJob extends AbstractJob {
 
-	public static final String REPORT_FILE_NAME = "report.txt";
-	public static final String PARAM_RESOLVER_API_URL = "apiUrl";
-	public static final String PARAM_RESOLVER_REGISTRATION_MODE = "registrationMode";
-	public static final String PARAM_RESOLVER_REGISTRAR_CODE = "registrarCode";
-	public static final String PARAM_RESOLVER_LOGIN = "login";
-	public static final String PARAM_RESOLVER_PASS = "pass";
+	public static final String PARAM_REPORT_FILE = "report.txt";
+	//oai
 	public static final String PARAM_OAI_BASE_URL = "oaiBaseUrl";
 	public static final String PARAM_OAI_METADATA_PREFIX = "oaiMetadataPrefix";
 	public static final String PARAM_OAI_SET = "oaiSet";
+	//transformations
 	public static final String PARAM_DD_XSL_FILE = "ddXsl";
 	public static final String PARAM_DI_XSL_FILE = "diXsl";
 	public static final String PARAM_DD_XSD_URL = "ddXsdUrl";
 	public static final String PARAM_DI_XSD_URL = "diXsdUrl";
-	public static final String PARAM_REPORT_FILE = "report";
+	//czidlo api
+	public static final String PARAM_CZIDLO_API_BASE_URL = "apiBaseUrl";
+	public static final String PARAM_CZIDLO_REGISTRATION_MODE = "registrationMode";
+	public static final String PARAM_CZIDLO_REGISTRAR_CODE = "registrarCode";
+	public static final String PARAM_CZIDLO_API_LOGIN = "login";
+	public static final String PARAM_CZIDLO_API_PASSWORD = "password";
+	
 	private OutputStream reportStream = null;
 
 	@Override
@@ -64,17 +67,17 @@ public class OaiAdapterJob extends AbstractJob {
 			OaiAdapter adapter = new OaiAdapter();
 
 			// czidlo api
-			String resolverApiUrl = (String) context.getMergedJobDataMap().get(PARAM_RESOLVER_API_URL);
-			logger.info("Resolver API url: " + resolverApiUrl);
-			Credentials credentials = new Credentials((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_LOGIN), (String) context
-					.getMergedJobDataMap().get(PARAM_RESOLVER_PASS));
+			String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
+			logger.info("Czidlo API base url: " + czidloApiBaseUrl);
+			Credentials czidloApicredentials = new Credentials((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN), (String) context
+					.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD));
 			// pozor, kvuli ignoreInvalidCertificate=false tohle nepojede na resolver-test a
 			// resolver-test2, kde nejsou platne certifikaty
-			adapter.setCzidloConnector(new CzidloApiConnector(resolverApiUrl, credentials, false));
+			adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, czidloApicredentials, false));
 			adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(
-					PARAM_RESOLVER_REGISTRATION_MODE)));
+					PARAM_CZIDLO_REGISTRATION_MODE)));
 			logger.info("registration mode: " + adapter.getRegistrationMode().toString());
-			adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_RESOLVER_REGISTRAR_CODE));
+			adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRAR_CODE));
 			logger.info("registrar code: " + adapter.getRegistrarCode());
 
 			// oai provider
@@ -103,7 +106,7 @@ public class OaiAdapterJob extends AbstractJob {
 			adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
 
 			// report
-			reportStream = fileToOutputStream(createWriteableProcessFile(REPORT_FILE_NAME));
+			reportStream = fileToOutputStream(createWriteableProcessFile(PARAM_REPORT_FILE));
 			adapter.setOutputStream(reportStream);
 			logger.info("running oai adapter");
 			adapter.run();

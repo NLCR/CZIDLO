@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         Intelectual Entity in this example is of type MONOGRAPH. 
         The type will be used for publications that do not come out periodically 
         and type MONOGRAPH_VOLUME cannot be used.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <r:import xmlns:r="http://resolver.nkp.cz/v2/">
     <!-- monografie -->

@@ -20,5 +20,5 @@ package cz.nkp.urnnbn.api;
  *
  * @author Martin Řehánek
  */
-public class AbstractResolverResource extends Resource {
+public class AbstractResource extends Resource {
 }

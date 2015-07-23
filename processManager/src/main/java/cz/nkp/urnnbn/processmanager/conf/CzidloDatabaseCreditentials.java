@@ -20,7 +20,7 @@ package cz.nkp.urnnbn.processmanager.conf;
  *
  * @author Martin Řehánek
  */
-public class ResolverDatabaseCreditentials {
+public class CzidloDatabaseCreditentials {
 
     private final String host;
     private final Integer port;
@@ -28,7 +28,7 @@ public class ResolverDatabaseCreditentials {
     private final String login;
     private final String password;
 
-    public ResolverDatabaseCreditentials(String host, Integer port, String database, String login, String password) {
+    public CzidloDatabaseCreditentials(String host, Integer port, String database, String login, String password) {
         this.host = host;
         this.port = port;
         this.database = database;

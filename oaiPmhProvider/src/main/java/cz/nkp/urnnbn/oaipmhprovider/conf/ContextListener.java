@@ -21,12 +21,12 @@ public class ContextListener implements ServletContextListener {
 	private static final String WEB_APP_NAME = "oaiPmhProvider";
 	private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
 	private static final String PROPERTIES_FILE = "provider.properties";
-	private static final String RESOLVER_TO_OAIDC_XSLT = "resolverToOaiDc.xsl";
+	private static final String CZIDLO_TO_OAIDC_XSLT = "resolverToOaiDc.xsl";
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		loadPropertiesFile();
-		loadResolverToOaidcXslt();
+		loadCzidloToOaidcXslt();
 	}
 
 	private void loadPropertiesFile() {
@@ -40,13 +40,13 @@ public class ContextListener implements ServletContextListener {
 		}.run(PROPERTIES_FILE);
 	}
 
-	private void loadResolverToOaidcXslt() {
+	private void loadCzidloToOaidcXslt() {
 		new ResourceUtilizer(logger) {
 			@Override
 			public void processResource(InputStream in) throws Exception {
-				OaiPmhConfiguration.instanceOf().initResolverToOaidcTemplate(in);
+				OaiPmhConfiguration.instanceOf().initCzidloToOaidcTemplate(in);
 			}
-		}.run(RESOLVER_TO_OAIDC_XSLT);
+		}.run(CZIDLO_TO_OAIDC_XSLT);
 	}
 
 	@Override
