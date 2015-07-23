@@ -143,12 +143,12 @@ public class OaiAdapter {
 		try {
 			return XmlTools.getTemplateDocumentFromString(getMetadataToDigDocRegistrationTemplate());
 		} catch (XSLException ex) {
-			throw new TemplateException("XSLException occurred during building Digital Document Registration templat: " + ex.getMessage());
+			throw new TemplateException("XSLException occurred during building Digital-document-registration template: " + ex.getMessage());
 		} catch (ParsingException ex) {
-			throw new TemplateException("ParsingException occurred during building Digital Document Registration templat: "
+			throw new TemplateException("ParsingException occurred during building Digital-document-registration template: "
 					+ ex.getMessage());
 		} catch (IOException ex) {
-			throw new TemplateException("IOException occurred during building Digital Document Registration templat: " + ex.getMessage());
+			throw new TemplateException("IOException occurred during building Digital-document-registration templat: " + ex.getMessage());
 		}
 	}
 
@@ -156,11 +156,11 @@ public class OaiAdapter {
 		try {
 			return XmlTools.getTemplateDocumentFromString(getMetadataToDigInstImportTemplate());
 		} catch (XSLException ex) {
-			throw new TemplateException("XSLException occurred during building Digital Instance Import template: " + ex.getMessage());
+			throw new TemplateException("XSLException occurred during building Digital-instance-import template: " + ex.getMessage());
 		} catch (ParsingException ex) {
-			throw new TemplateException("ParsingException occurred during building Digital Instance Import template: " + ex.getMessage());
+			throw new TemplateException("ParsingException occurred during building Digital-instance-import template: " + ex.getMessage());
 		} catch (IOException ex) {
-			throw new TemplateException("IOException occurred during building Digital Instance Import template: " + ex.getMessage());
+			throw new TemplateException("IOException occurred during building Digital-instance-import template: " + ex.getMessage());
 		}
 	}
 
@@ -277,13 +277,13 @@ public class OaiAdapter {
 	private void importDigitalInstance(Document diImportData, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
 		try {
 			czidloConnector.importDigitalInstance(diImportData, urnnbn);
-			report("- Digital Instance Import successful - continuing.");
+			report("- Digital-instance-import successful - continuing.");
 		} catch (IOException ex) {
-			throw new OaiAdapterException("IOException occurred during Digital Instance Import: " + ex.getMessage());
+			throw new OaiAdapterException("IOException occurred during digital-instance-import: " + ex.getMessage());
 		} catch (ParsingException ex) {
-			throw new OaiAdapterException("ParsingException occurred during Digital Instance Import: " + ex.getMessage());
+			throw new OaiAdapterException("ParsingException occurred during Digital-instance-import: " + ex.getMessage());
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("CzidloConnectionException occurred during Digital Instance Import: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-instance-import: " + ex.getMessage());
 		}
 
 	}
@@ -294,11 +294,11 @@ public class OaiAdapter {
 			report("- Digital-document-registration successful - continuing.");
 			return urnnbn;
 		} catch (IOException ex) {
-			throw new OaiAdapterException("IOException occurred during Digital Document Registration: " + ex.getMessage());
+			throw new OaiAdapterException("IOException occurred during Digital-document-registration: " + ex.getMessage());
 		} catch (ParsingException ex) {
-			throw new OaiAdapterException("ParsingException occurred during Digital Document Registration: " + ex.getMessage());
+			throw new OaiAdapterException("ParsingException occurred during Digital-document-registration: " + ex.getMessage());
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("CzidloConnectionException occurred during Digital Document Registration: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-document-registration: " + ex.getMessage());
 		}
 	}
 
@@ -406,11 +406,11 @@ public class OaiAdapter {
 
 			int ddRegisteredNowDisImported = 0;
 			int ddRegisteredNowDisUpdated = 0;
-			int ddRegisteredNowDisUntouched = 0;
+			int ddRegisteredNowDisUnchanged = 0;
 
 			int ddRegisteredAlreadyDisImported = 0;
 			int ddRegisteredAlreadyDisUpdated = 0;
-			int ddRegisteredAlreadyDisUntouched = 0;
+			int ddRegisteredAlreadyDisUnchanged = 0;
 
 			int all = 0;
 			while (harvester.hasNext()) {
@@ -439,7 +439,7 @@ public class OaiAdapter {
 								ddRegisteredAlreadyDisUpdated++;
 								break;
 							case UNCHANGED:
-								ddRegisteredAlreadyDisUntouched++;
+								ddRegisteredAlreadyDisUnchanged++;
 								break;
 							}
 							break;
@@ -453,7 +453,7 @@ public class OaiAdapter {
 								ddRegisteredNowDisUpdated++;
 								break;
 							case UNCHANGED:
-								ddRegisteredNowDisUntouched++;
+								ddRegisteredNowDisUnchanged++;
 								break;
 							}
 						}
@@ -493,14 +493,14 @@ public class OaiAdapter {
 				report("DD REGISTERED NOW: " + ddRegisteredNow);
 				report("	DI IMPORTED: " + ddRegisteredNowDisImported);
 				report("	DI UPDATED: " + ddRegisteredNowDisUpdated);
-				report("	DI NOT IMPORTED NOR UPDATED: " + ddRegisteredNowDisUntouched);
+				report("	DI UNCHANGED: " + ddRegisteredNowDisUnchanged);
 			}
 			if (ddRegisteredAlready != 0) {
 				report("-----------------------------------------------------");
 				report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
 				report("	DI IMPORTED: " + ddRegisteredAlreadyDisImported);
 				report("	DI UPDATED: " + ddRegisteredAlreadyDisUpdated);
-				report("	DI NOT IMPORTED NOR UPDATED: " + ddRegisteredAlreadyDisUntouched);
+				report("	DI UNCHANGED: " + ddRegisteredAlreadyDisUnchanged);
 			}
 			if (reportLogger != null) {
 				reportLogger.close();

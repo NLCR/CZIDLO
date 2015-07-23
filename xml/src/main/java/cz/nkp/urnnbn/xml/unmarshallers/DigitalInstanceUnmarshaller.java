@@ -28,20 +28,24 @@ import nu.xom.Element;
  */
 public class DigitalInstanceUnmarshaller extends Unmarshaller {
 
-    private final Document doc;
+	public static final int URL_MAX_LENGTH = 200;
+	public static final int FORMAT_MAX_LENGTH = 50;
+	public static final int ACCESSIBILITY_MAX_LENGTH = 50;
 
-    public DigitalInstanceUnmarshaller(Document doc) {
-        this.doc = doc;
-    }
+	private final Document doc;
 
-    public DigitalInstance getDigitalInstance() {
-        DigitalInstance result = new DigitalInstance();
-        Element root = doc.getRootElement();
-        result.setUrl(elementContentOrNull("url", root, new UrlValidator(200)));
-        result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root, null)));
-        result.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(50)));
-        result.setAccessibility(elementContentOrNull("accessibility", root, new LimitedLengthEnhancer(50)));
-        result.setActive(Boolean.TRUE);
-        return result;
-    }
+	public DigitalInstanceUnmarshaller(Document doc) {
+		this.doc = doc;
+	}
+
+	public DigitalInstance getDigitalInstance() {
+		DigitalInstance result = new DigitalInstance();
+		Element root = doc.getRootElement();
+		result.setUrl(elementContentOrNull("url", root, new UrlValidator(URL_MAX_LENGTH)));
+		result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root, null)));
+		result.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(FORMAT_MAX_LENGTH)));
+		result.setAccessibility(elementContentOrNull("accessibility", root, new LimitedLengthEnhancer(ACCESSIBILITY_MAX_LENGTH)));
+		result.setActive(Boolean.TRUE);
+		return result;
+	}
 }

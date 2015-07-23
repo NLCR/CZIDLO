@@ -6,6 +6,9 @@ package cz.nkp.urnnbn.oaiadapter;
 
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
+import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
+
 /**
  *
  * @author hanis
@@ -47,7 +50,7 @@ public class DigitalInstance {
 	}
 
 	public void setFormat(String format) {
-		this.format = format;
+		this.format = new LimitedLengthEnhancer(DigitalInstanceUnmarshaller.ACCESSIBILITY_MAX_LENGTH).toEnhancedValueOrNull(format);
 	}
 
 	public String getAccessibility() {
@@ -55,7 +58,8 @@ public class DigitalInstance {
 	}
 
 	public void setAccessibility(String accessibility) {
-		this.accessibility = accessibility;
+		this.accessibility = new LimitedLengthEnhancer(DigitalInstanceUnmarshaller.ACCESSIBILITY_MAX_LENGTH)
+				.toEnhancedValueOrNull(accessibility);
 	}
 
 	public boolean isChanged(DigitalInstance di) {
