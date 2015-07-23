@@ -417,7 +417,7 @@ public class OaiAdapter {
 				if (limit > 0 && counter++ >= limit) {
 					break;
 				}
-				if (all % 10 == 0) {
+				if (all % 100 == 0) {
 					logger.info(String.format("processed %d records", all));
 				}
 				try {

@@ -72,13 +72,13 @@ public class DigitalInstance {
 		boolean accessibilitySame = accessibility.equals(oldDi.getAccessibility());
 		StringBuilder builder = new StringBuilder();
 		if (!urlsSame) {
-			builder.append(String.format("url: old: '%s', new: '%s'; ", oldDi.getUrl(), url));
+			builder.append(String.format("current url: '%s', new url: '%s'; ", oldDi.getUrl(), url));
 		}
 		if (!formatSame) {
-			builder.append(String.format("format: old: '%s', new: '%s'; ", oldDi.getFormat(), format));
+			builder.append(String.format("current format: '%s', new format: '%s'; ", oldDi.getFormat(), format));
 		}
 		if (!accessibilitySame) {
-			builder.append(String.format("accessibility: old: '%s', new: '%s'; ", oldDi.getAccessibility(), accessibility));
+			builder.append(String.format("current accessibility: '%s', new accessibility: '%s'; ", oldDi.getAccessibility(), accessibility));
 		}
 		return builder.toString();
 	}
