@@ -229,7 +229,7 @@ public class OaiAdapter {
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.ALREADY_REGISTERED);
 				}
 			case DEACTIVATED:
-				return new RecordResult(urnnbn, DigitalDocumentStatus.IGNORED, null);
+				return new RecordResult(urnnbn, DigitalDocumentStatus.IS_DEACTIVATED, null);
 			case UNDEFINED:
 				throw new OaiAdapterException("Checking URN:NBN status failed");
 			default:
@@ -259,16 +259,17 @@ public class OaiAdapter {
 			// di already exist
 			if (newDi.isChanged(oldDi)) {
 				// di has been changed
+				report("- DI already exists and is modified: " + newDi.getDiff(oldDi) + ".");
+				report("- Deactivating old DI and importing new one.");
 				// DEACTIVATE
 				czidloConnector.deactivateDigitalInstance(oldDi.getId());
 				// IMPORT
 				importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
-				report("- DI already exists and is modified - removing old one and imporing new DI.");
 				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
 			} else {
 				// no change - do nothing
 				report("- DI already exists and is not modified - doing nothing.");
-				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNTOUCHED);
+				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNCHANGED);
 			}
 		}
 	}
@@ -289,10 +290,8 @@ public class OaiAdapter {
 
 	private String registerDigitalDocument(Document digDocRegistrationData, String oaiIdentifier) throws OaiAdapterException {
 		try {
-			//TODO: pridava se tam registrar-scope id tady, nebo kde
 			String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
-			report("- Digital Document Registration successful - continuing.");
-			report("- URN:NBN: " + urnnbn);
+			report("- Digital-document-registration successful - continuing.");
 			return urnnbn;
 		} catch (IOException ex) {
 			throw new OaiAdapterException("IOException occurred during Digital Document Registration: " + ex.getMessage());
@@ -352,10 +351,6 @@ public class OaiAdapter {
 
 		try {
 			RecordResult recordResult = processSingleRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
-			String urnnbn = (String) recordResult.getUrnnbn();
-			if (urnnbn != null) {
-				report("- " + urnnbn);
-			}
 			return recordResult;
 		} catch (CzidloConnectionException ex) {
 			throw new OaiAdapterException(ex.getMessage());
@@ -407,7 +402,7 @@ public class OaiAdapter {
 
 			int ddRegisteredNow = 0;
 			int ddRegisteredAlready = 0;
-			int ddIgnored = 0;
+			int ddDeactivated = 0;
 
 			int ddRegisteredNowDisImported = 0;
 			int ddRegisteredNowDisUpdated = 0;
@@ -422,14 +417,17 @@ public class OaiAdapter {
 				if (limit > 0 && counter++ >= limit) {
 					break;
 				}
+				if (all % 10 == 0) {
+					logger.info(String.format("processed %d records", all));
+				}
 				try {
 					OriginalRecordFromOai record = harvester.getNext();
 					all++;
 					try {
 						RecordResult recordResult = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
 						switch (recordResult.getDdStatus()) {
-						case IGNORED:
-							ddIgnored++;
+						case IS_DEACTIVATED:
+							ddDeactivated++;
 							break;
 						case ALREADY_REGISTERED:
 							ddRegisteredAlready++;
@@ -440,7 +438,7 @@ public class OaiAdapter {
 							case UPDATED:
 								ddRegisteredAlreadyDisUpdated++;
 								break;
-							case UNTOUCHED:
+							case UNCHANGED:
 								ddRegisteredAlreadyDisUntouched++;
 								break;
 							}
@@ -454,14 +452,23 @@ public class OaiAdapter {
 							case UPDATED:
 								ddRegisteredNowDisUpdated++;
 								break;
-							case UNTOUCHED:
+							case UNCHANGED:
 								ddRegisteredNowDisUntouched++;
 								break;
 							}
 						}
 
-						logger.log(Level.INFO, "Record successfully processed. Identifier {0}, dd state {1}, di state: {2}", new Object[] {
-								record.getIdentifier(), recordResult.getDdStatus(), recordResult.getDiStatus() });
+						if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
+							report(String.format("- DD status: %s", recordResult.getDdStatus().toString()));
+						} else {
+							String ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus().toString();
+							String diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus().toString();
+							report(String.format("- DD status: %s, DI status: %s", ddStatussStr, diStatusStr));
+						}
+						if (recordResult.getUrnnbn() != null) {
+							report("- " + recordResult.getUrnnbn());
+						}
+
 						report("STATUS: OK");
 					} catch (OaiAdapterException ex) {
 						logger.log(Level.SEVERE, ex.getMessage());
@@ -479,8 +486,8 @@ public class OaiAdapter {
 			report("ALL RECORDS: " + all);
 			report("DD REGISTERED NOW: " + ddRegisteredNow);
 			report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
-			report("DD IGNORED: " + ddIgnored);
-			report("NOT SUCCESSFUL: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddIgnored)));
+			report("DD IS DEACTIVATED: " + ddDeactivated);
+			report("NOT SUCCESSFUL: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddDeactivated)));
 			if (ddRegisteredNow != 0) {
 				report("-----------------------------------------------------");
 				report("DD REGISTERED NOW: " + ddRegisteredNow);

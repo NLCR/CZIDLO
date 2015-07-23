@@ -24,11 +24,11 @@ public class RecordResult {
 	}
 
 	public static enum DigitalInstanceStatus {
-		IMPORTED, UPDATED, UNTOUCHED;
+		IMPORTED, UPDATED, UNCHANGED;
 	}
 
 	public static enum DigitalDocumentStatus {
-		NOW_REGISTERED, ALREADY_REGISTERED, IGNORED
+		NOW_REGISTERED, ALREADY_REGISTERED, IS_DEACTIVATED
 	}
 
 }
