@@ -9,12 +9,13 @@ package cz.nkp.urnnbn.oaiadapter;
  * @author hanis
  */
 public class OaiAdapterException extends Exception {
-    
-    OaiAdapterException() {
-    }
 
-    OaiAdapterException(String msg) {
-        super(msg);
-    }
+	OaiAdapterException(String msg, Throwable e) {
+		super(msg, e);
+	}
+
+	OaiAdapterException(String msg) {
+		super(msg);
+	}
 
 }

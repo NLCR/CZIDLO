@@ -148,7 +148,7 @@ public class OaiAdapter {
 			throw new TemplateException("ParsingException occurred during building Digital-document-registration template: "
 					+ ex.getMessage());
 		} catch (IOException ex) {
-			throw new TemplateException("IOException occurred during building Digital-document-registration templat: " + ex.getMessage());
+			throw new TemplateException("IOException occurred during building Digital-document-registration template: " + ex.getMessage());
 		}
 	}
 
@@ -189,23 +189,24 @@ public class OaiAdapter {
 					urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
 				} else {
-					throw new OaiAdapterException("Cannot find urn:nbn by registrar-scope id");
+					throw new OaiAdapterException(String.format("Cannot find urn:nbn by registrar-scope id %1 -> %2!",
+							OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier));
 				}
 			} else {
-				throw new OaiAdapterException("Incorrect mode - document doesn't contain URN:NBN and mode is not "
-						+ UrnNbnRegistrationMode.BY_RESOLVER);
+				throw new OaiAdapterException(String.format("Incorrect mode - document doesn't contain URN:NBN and mode is not %s!",
+						UrnNbnRegistrationMode.BY_RESOLVER));
 			}
 		} else {
 			if (getRegistrationMode() == UrnNbnRegistrationMode.BY_RESOLVER) {
-				throw new OaiAdapterException("Incorrect mode - document contains URN:NBN and mode is "
-						+ UrnNbnRegistrationMode.BY_RESOLVER);
+				throw new OaiAdapterException(String.format("Incorrect mode - document contains URN:NBN and mode is %s!",
+						UrnNbnRegistrationMode.BY_RESOLVER));
 			}
 			UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
 			report("- URN:NBN status: " + urnnbnStatus);
 			switch (urnnbnStatus) {
 			case RESERVED:
 				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
-					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s",
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!",
 							Status.RESERVED, UrnNbnRegistrationMode.BY_RESERVATION));
 				} else {
 					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
@@ -213,18 +214,19 @@ public class OaiAdapter {
 				}
 			case FREE:
 				if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
-					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %s", Status.FREE,
+					throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %d and mode is not %s!", Status.FREE,
 							UrnNbnRegistrationMode.BY_REGISTRAR));
 				} else {
 					registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
 				}
 			case ACTIVE:
-				String urnnbnByTriplet = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE,
-						oaiIdentifier);
-				if (urnnbnByTriplet != null && !urnnbn.equals(urnnbnByTriplet)) {
-					throw new OaiAdapterException("URN:NBN in digital-document-registration data (" + urnnbn
-							+ ") doesn't match URN:NBN obtained by OAI_ADAPTER ID (" + urnnbnByTriplet + ")");
+				String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode,
+						OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+				if (urnnbnByRegistrarScopeId != null && !urnnbn.equals(urnnbnByRegistrarScopeId)) {
+					throw new OaiAdapterException(String.format(
+							"URN:NBN in digital-document-registration data (%s) doesn't match URN:NBN obtained by OAI_ADAPTER ID (%s)!",
+							urnnbn, urnnbnByRegistrarScopeId));
 				} else {
 					return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.ALREADY_REGISTERED);
 				}
@@ -251,9 +253,9 @@ public class OaiAdapter {
 		}
 		if (oldDi == null) {
 			// di doesnt exist yet
-			// IMPORT
-			importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 			report("- DI doesn't exists - importing DI.");
+			// import
+			importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 			return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
 		} else {
 			// di already exist
@@ -261,9 +263,9 @@ public class OaiAdapter {
 				// di has been changed
 				report("- DI already exists and is modified: " + newDi.getDiff(oldDi) + ".");
 				report("- Deactivating old DI and importing new one.");
-				// DEACTIVATE
+				// deactivate
 				czidloConnector.deactivateDigitalInstance(oldDi.getId());
-				// IMPORT
+				// import
 				importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
 				return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
 			} else {
@@ -279,11 +281,11 @@ public class OaiAdapter {
 			czidloConnector.importDigitalInstance(diImportData, urnnbn);
 			report("- Digital-instance-import successful - continuing.");
 		} catch (IOException ex) {
-			throw new OaiAdapterException("IOException occurred during digital-instance-import: " + ex.getMessage());
+			throw new OaiAdapterException("IOException occurred during digital-instance-import:", ex);
 		} catch (ParsingException ex) {
-			throw new OaiAdapterException("ParsingException occurred during Digital-instance-import: " + ex.getMessage());
+			throw new OaiAdapterException("ParsingException occurred during Digital-instance-import:", ex);
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-instance-import: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-instance-import:", ex);
 		}
 
 	}
@@ -294,11 +296,11 @@ public class OaiAdapter {
 			report("- Digital-document-registration successful - continuing.");
 			return urnnbn;
 		} catch (IOException ex) {
-			throw new OaiAdapterException("IOException occurred during Digital-document-registration: " + ex.getMessage());
+			throw new OaiAdapterException("IOException occurred during Digital-document-registration:", ex);
 		} catch (ParsingException ex) {
-			throw new OaiAdapterException("ParsingException occurred during Digital-document-registration: " + ex.getMessage());
+			throw new OaiAdapterException("ParsingException occurred during Digital-document-registration:", ex);
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-document-registration: " + ex.getMessage());
+			throw new OaiAdapterException("CzidloConnectionException occurred during Digital-document-registration:", ex);
 		}
 	}
 
@@ -315,8 +317,7 @@ public class OaiAdapter {
 			report("- OAI record successfuly transformed into digital-document-registration data - continuing.");
 			// saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
 		} catch (XSLException ex) {
-			throw new OaiAdapterException("XSLException occurred when transforming record into digital-document-registration data: "
-					+ ex.getMessage());
+			throw new OaiAdapterException("XSLException occurred when transforming record into digital-document-registration data:", ex);
 		}
 		try {
 			XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
@@ -324,7 +325,7 @@ public class OaiAdapter {
 		} catch (DocumentOperationException ex) {
 			// saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
 			// ".xml");
-			throw new OaiAdapterException("- Digital-document-registration data invalid - skipping.\nMessage: " + ex.getMessage());
+			throw new OaiAdapterException("Digital-document-registration data invalid:", ex);
 		}
 
 		// DIGITAL INSTANCE IMPORT
@@ -336,24 +337,23 @@ public class OaiAdapter {
 			// originalRecord.getIdentifier(),
 			// ".xml");
 		} catch (XSLException ex) {
-			throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data: "
-					+ ex.getMessage());
+			throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data:", ex);
 		}
 		try {
 			XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
-			report("- Ddigital-instance-import data validation successful - continuing.");
+			report("- Digital-instance-import data validation successful - continuing.");
 			// File tmpFile = saveToTempFile(digitalInstanceDocument, "digitalInstance-" +
 			// record.getIdentifier(),
 			// ".xml");
 		} catch (DocumentOperationException ex) {
-			throw new OaiAdapterException("- Digital-instance-import data invalid - skipping.\nMessage: " + ex.getMessage());
+			throw new OaiAdapterException("Digital-instance-import data invalid:", ex);
 		}
 
 		try {
 			RecordResult recordResult = processSingleRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
 			return recordResult;
 		} catch (CzidloConnectionException ex) {
-			throw new OaiAdapterException(ex.getMessage());
+			throw new OaiAdapterException("Czidlo API error:", ex);
 		}
 
 	}
@@ -459,48 +459,48 @@ public class OaiAdapter {
 						}
 
 						if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
-							report(String.format("- DD status: %s", recordResult.getDdStatus().toString()));
+							report(String.format("* DD status: %s", recordResult.getDdStatus()));
 						} else {
-							String ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus().toString();
-							String diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus().toString();
-							report(String.format("- DD status: %s, DI status: %s", ddStatussStr, diStatusStr));
+							Object ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus();
+							Object diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus();
+							report(String.format("* DD status: %s, DI status: %s", ddStatussStr, diStatusStr));
 						}
 						if (recordResult.getUrnnbn() != null) {
-							report("- " + recordResult.getUrnnbn());
+							report("* " + recordResult.getUrnnbn());
 						}
 
 						report("STATUS: OK");
 					} catch (OaiAdapterException ex) {
-						logger.log(Level.SEVERE, ex.getMessage());
 						report(ex.getMessage());
+						if (ex.getCause() != null) {
+							report(ex.getCause().getMessage());
+						}
 						report("STATUS: NOT OK");
 					}
 				} catch (OaiHarvesterException ex) {
-					logger.log(Level.SEVERE, "OaiHarvester exception while getting next document: {0}, url: {1}",
-							new Object[] { ex.getMessage(), ex.getUrl() });
-					report("OaiHarvester exception while getting next document: " + ex.getMessage() + ", url: " + ex.getUrl());
+					report(String.format("OaiHarvester exception while getting document from %s: %s: ", ex.getUrl(), ex.getMessage()));
 					report("STATUS: NOT OK");
 				}
 			}
 			report("=====================================================");
 			report("ALL RECORDS: " + all);
-			report("DD REGISTERED NOW: " + ddRegisteredNow);
-			report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
-			report("DD IS DEACTIVATED: " + ddDeactivated);
-			report("NOT SUCCESSFUL: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddDeactivated)));
-			if (ddRegisteredNow != 0) {
-				report("-----------------------------------------------------");
-				report("DD REGISTERED NOW: " + ddRegisteredNow);
-				report("	DI IMPORTED: " + ddRegisteredNowDisImported);
-				report("	DI UPDATED: " + ddRegisteredNowDisUpdated);
-				report("	DI UNCHANGED: " + ddRegisteredNowDisUnchanged);
-			}
+			report("RECORDS WITH ERROR: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddDeactivated)));
+			report("RECORDS WITH URN:NBN DEACTIVATED: " + ddDeactivated);
+			report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);
+			report("DDs REGISTERED NOW: " + ddRegisteredNow);
 			if (ddRegisteredAlready != 0) {
 				report("-----------------------------------------------------");
-				report("DD REGISTERED ALREADY: " + ddRegisteredAlready);
-				report("	DI IMPORTED: " + ddRegisteredAlreadyDisImported);
-				report("	DI UPDATED: " + ddRegisteredAlreadyDisUpdated);
-				report("	DI UNCHANGED: " + ddRegisteredAlreadyDisUnchanged);
+				report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);
+				report("	DIs IMPORTED NOW: " + ddRegisteredAlreadyDisImported);
+				report("	DIs UPDATED NOW: " + ddRegisteredAlreadyDisUpdated);
+				report("	DIs UNCHANGED: " + ddRegisteredAlreadyDisUnchanged);
+			}
+			if (ddRegisteredNow != 0) {
+				report("-----------------------------------------------------");
+				report("DDs REGISTERED NOW: " + ddRegisteredNow);
+				report("	DIs IMPORTED NOW: " + ddRegisteredNowDisImported);
+				report("	DIs UPDATED NOW: " + ddRegisteredNowDisUpdated);
+				report("	DIs UNCHANGED: " + ddRegisteredNowDisUnchanged);
 			}
 			if (reportLogger != null) {
 				reportLogger.close();

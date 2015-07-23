@@ -23,114 +23,114 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
  * @author hanis
  */
 public class Test {
-    
-    private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api",new Credentials("someLogin","somePassword"), true);
 
-    public void makeReservation() {
-        try {
-            List<String> reserveUrnnbnBundle = czidloConnector.reserveUrnnbnBundle("rych01", 5);
-            for (String string : reserveUrnnbnBundle) {
-                System.out.println(string);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (CzidloConnectionException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	private CzidloApiConnector czidloConnector = new CzidloApiConnector("resolver-test2.nkp.cz/api", new Credentials("someLogin",
+			"somePassword"), true);
 
-    public void importDI() {
-        try {
+	public void makeReservation() {
+		try {
+			List<String> reserveUrnnbnBundle = czidloConnector.reserveUrnnbnBundle("rych01", 5);
+			for (String string : reserveUrnnbnBundle) {
+				System.out.println(string);
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (CzidloConnectionException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ParsingException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-            String urn = "urn:nbn:cz:tsh01-0000qv";
-            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance3.xml";
+	public void importDI() {
+		try {
 
-            String registrator = "tsh03";
-            Builder builder = new Builder();
-            Document digitalInstance = builder.build(new File(di));
-            czidloConnector.importDigitalInstance(digitalInstance, urn);
-        } catch (IOException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (CzidloConnectionException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+			String urn = "urn:nbn:cz:tsh01-0000qv";
+			String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance3.xml";
 
-    public void importDDwithDI() {
-        try {
-            String dd = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument.xml";
-            String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance4.xml";
-            String registrator = "rych01";
-            String oaiIdentifier = "myCollectionx:myIdi23";
+			String registrator = "tsh03";
+			Builder builder = new Builder();
+			Document digitalInstance = builder.build(new File(di));
+			czidloConnector.importDigitalInstance(digitalInstance, urn);
+		} catch (IOException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ParsingException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (CzidloConnectionException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-            Builder builder = new Builder();
-            Document digitalDocument = builder.build(new File(dd));
-            Document digitalInstance = builder.build(new File(di));
+	public void importDDwithDI() {
+		try {
+			String dd = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument.xml";
+			String di = "/home/hanis/prace/resolver/oai/parser-test/docs/digitalInstance4.xml";
+			String registrator = "rych01";
+			String oaiIdentifier = "myCollectionx:myIdi23";
 
-            OaiAdapter oaiAdapter = new OaiAdapter();
-//            oaiAdapter.setLogin(Credentials.LOGIN);
-//            oaiAdapter.setPassword(Credentials.PASSWORD);
-            oaiAdapter.setRegistrarCode(registrator);
-            //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
-            oaiAdapter.setRegistrationMode(UrnNbnRegistrationMode.BY_RESERVATION);
-            //oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_RESERVATION);
+			Builder builder = new Builder();
+			Document digitalDocument = builder.build(new File(dd));
+			Document digitalInstance = builder.build(new File(di));
 
-            oaiAdapter.processSingleRecord(oaiIdentifier, digitalDocument, digitalInstance);
-        } catch (CzidloConnectionException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (OaiAdapterException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-        }
+			OaiAdapter oaiAdapter = new OaiAdapter();
+			// oaiAdapter.setLogin(Credentials.LOGIN);
+			// oaiAdapter.setPassword(Credentials.PASSWORD);
+			oaiAdapter.setRegistrarCode(registrator);
+			// oaiAdapter.setRegistrationMode(OaiAdapter.RegistrationMode.BY_REGISTRAR);
+			oaiAdapter.setRegistrationMode(UrnNbnRegistrationMode.BY_RESERVATION);
+			oaiAdapter.processSingleRecord(oaiIdentifier, digitalDocument, digitalInstance);
+		} catch (CzidloConnectionException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (OaiAdapterException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ParsingException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IOException ex) {
+			Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
-    }
+	}
 
-    //public void 
-    public static void main(String[] args) {
+	// public void
+	public static void main(String[] args) {
 
+		Test test = new Test();
 
+		// test.makeReservation();
 
-        Test test = new Test();
+		// urn:nbn:cz:rych01-000000
+		// urn:nbn:cz:rych01-000001
+		// urn:nbn:cz:rych01-000002
+		// urn:nbn:cz:rych01-000003
+		// urn:nbn:cz:rych01-000004
+		// test.importDDwithDI();
 
-        //  test.makeReservation();
+		// String rc = "roe301";
+		// System.out.println("BY_REGISTRAR: " + ResolverConnector.checkRegistrarMode(rc,
+		// OaiAdapter.RegistrationMode.BY_REGISTRAR));
+		// System.out.println("BY_RESOLVER: " + ResolverConnector.checkRegistrarMode(rc,
+		// OaiAdapter.RegistrationMode.BY_RESOLVER));
+		// System.out.println("RESERVATION: " + ResolverConnector.checkRegistrarMode(rc,
+		// OaiAdapter.RegistrationMode.BY_RESERVATION));
 
+		// / System.out.println(ResolverConnector.getDigitailInstanceById("35747").toXML());
 
-//urn:nbn:cz:rych01-000000
-//urn:nbn:cz:rych01-000001
-//urn:nbn:cz:rych01-000002
-//urn:nbn:cz:rych01-000003
-//urn:nbn:cz:rych01-000004            
-        // test.importDDwithDI();
+		// test.importDI();
+		// try {
+		// ResolverConnector.removeDigitalInstance("35747", Credentials.LOGIN,
+		// Credentials.PASSWORD);
+		// } catch (IOException ex) {
+		// Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		// } catch (ResolverConnectionException ex) {
+		// Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+		// }
 
-//            String rc = "roe301";
-//            System.out.println("BY_REGISTRAR: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_REGISTRAR));
-//            System.out.println("BY_RESOLVER: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_RESOLVER));
-//            System.out.println("RESERVATION: " + ResolverConnector.checkRegistrarMode(rc, OaiAdapter.RegistrationMode.BY_RESERVATION));
+		// RESERVED
+		// urn:nbn:cz:tsh01-0000qz
+		// urn:nbn:cz:tsh01-0000r0
+		// urn:nbn:cz:tsh01-0000r1
+		// urn:nbn:cz:tsh01-0000r2
+		// urn:nbn:cz:tsh01-0000r3
 
-        /// System.out.println(ResolverConnector.getDigitailInstanceById("35747").toXML());
-
-        //  test.importDI();
-//        try {    
-//            ResolverConnector.removeDigitalInstance("35747", Credentials.LOGIN, Credentials.PASSWORD);
-//        } catch (IOException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (ResolverConnectionException ex) {
-//            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-
-//            RESERVED
-//                urn:nbn:cz:tsh01-0000qz
-//                urn:nbn:cz:tsh01-0000r0
-//                urn:nbn:cz:tsh01-0000r1
-//                urn:nbn:cz:tsh01-0000r2
-//                urn:nbn:cz:tsh01-0000r3
-
-    }
+	}
 }
