@@ -202,6 +202,7 @@ public class OaiAdapter {
 						UrnNbnRegistrationMode.BY_RESOLVER));
 			}
 			UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
+			report("- " + urnnbn);
 			report("- URN:NBN status: " + urnnbnStatus);
 			switch (urnnbnStatus) {
 			case RESERVED:

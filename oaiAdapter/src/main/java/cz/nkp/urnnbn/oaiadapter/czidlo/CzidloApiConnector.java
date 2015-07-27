@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -21,6 +22,7 @@ import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.utils.DiApiResponseDocHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
@@ -29,6 +31,8 @@ import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
  * @author hanis
  */
 public class CzidloApiConnector {
+	
+	private static final Logger logger = Logger.getLogger(CzidloApiConnector.class.getName());
 
 	public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
 	public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
@@ -251,12 +255,18 @@ public class CzidloApiConnector {
 		wr.close();
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) {
+			logger.warning("Unexpected response code: " + responseCode);
 			Builder builder = new Builder();
-			String message = getErrorMessage(builder.build(connection.getErrorStream()));
-			if (message == null) {
-				message = "Registering digital document: response code expected 201, found " + responseCode;
+			InputStream in = connection.getErrorStream();
+			if(in !=null){
+				String message = getErrorMessage(builder.build(in));
+				if (message == null) {
+					message = "Registering digital document: response code expected 201, found " + responseCode;
+				}
+				throw new CzidloConnectionException(message);
+			}else{
+				throw new CzidloConnectionException("unexpected response code: " + responseCode);
 			}
-			throw new CzidloConnectionException(message);
 		}
 		InputStream is = connection.getInputStream();
 		Builder builder = new Builder();
