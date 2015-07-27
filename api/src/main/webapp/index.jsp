@@ -11,7 +11,7 @@
         <h1>CZIDLO: aplikační rozhraní</h1>
         Aplikační programové rozhraní je popsáno na
         <a href="https://github.com/NLCR/CZIDLO/wiki/API">wiki projektu na Githubu</a>. 
-        Tato verze CZIDLO (4.2.1) podporuje API ve verzi 3 
+        Tato verze CZIDLO (<%=cz.nkp.urnnbn.core.Czidlo.VERSION%>) podporuje API ve verzi 3 
         <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V3)</a>
         a kvůli zpětně kompatibilitě i verzi 2
         <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V2)</a>

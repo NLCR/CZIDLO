@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
+import cz.nkp.urnnbn.core.Czidlo;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 /**
@@ -29,7 +30,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 public class Main implements EntryPoint {
 
 	private static final Logger logger = Logger.getLogger(Main.class.getName());
-	private static final String APP_VERSION = "4.2.2";
+	private static final String APP_VERSION = Czidlo.VERSION;
 	private Resources resources = GWT.create(Resources.class);
 	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private DockLayoutPanel mainPanel;

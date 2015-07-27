@@ -1,9 +1,9 @@
-README file for CZIDLO v4.2.2
-Copyright (C) 2013-2014 Martin Řehánek
+README file for CZIDLO v4.3.alpha
+Copyright (C) 2013-2015 Martin Řehánek
 
 #######################################
 #######################################
-##         CZIDLO version 4.2.2      ##
+##         CZIDLO version 4.3.alpha  ##
 #######################################
 #######################################
 
