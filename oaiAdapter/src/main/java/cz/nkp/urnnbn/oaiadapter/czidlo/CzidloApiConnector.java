@@ -255,17 +255,22 @@ public class CzidloApiConnector {
 		wr.close();
 		int responseCode = connection.getResponseCode();
 		if (responseCode != 201) {
-			logger.warning("Unexpected response code: " + responseCode);
-			Builder builder = new Builder();
-			InputStream in = connection.getErrorStream();
-			if(in !=null){
-				String message = getErrorMessage(builder.build(in));
-				if (message == null) {
-					message = "Registering digital document: response code expected 201, found " + responseCode;
+			// see https://github.com/NLCR/CZIDLO/issues/111
+			if(responseCode!=200){
+				logger.warning("Unexpected response code: " + responseCode);
+				Builder builder = new Builder();
+				InputStream in = connection.getErrorStream();
+				if(in !=null){
+					String message = getErrorMessage(builder.build(in));
+					if (message == null) {
+						message = "Registering digital document: response code expected 201, found " + responseCode;
+					}
+					throw new CzidloConnectionException(message);
+				}else{
+					throw new CzidloConnectionException("unexpected response code: " + responseCode);
 				}
-				throw new CzidloConnectionException(message);
 			}else{
-				throw new CzidloConnectionException("unexpected response code: " + responseCode);
+				logger.warning("urn:nbn registration response code should be 201, not 200");	
 			}
 		}
 		InputStream is = connection.getInputStream();
