@@ -24,14 +24,14 @@
         <xsl:if test="$pid !=''">
             <r:url>
                 <!--<xsl:value-of select="concat('http://kramerius.mzk.cz/search/handle/', $pid)"/>-->
-                <xsl:value-of select="concat('http://kramerius-nkp-test2.nkp.cz/search/handle/', $pid)"/>
+                <xsl:value-of select="concat('http://kramerius-nkp-test4.nkp.cz/search/handle/', $pid)"/>
             </r:url>
         </xsl:if>
     </xsl:template>
 
     <!--http://resolver-test.nkp.cz/api/v3/registrars/nk-->
     <xsl:template name="digitalLibraryId">
-        <r:digitalLibraryId>60</r:digitalLibraryId>
+        <r:digitalLibraryId>41</r:digitalLibraryId>
     </xsl:template>
 
     <xsl:template name="format">

@@ -91,6 +91,7 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
 			UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
 			UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
 			return builder.buildDocumentWithResponseHeader().toXML();
+			//TODO: tady to vraci asi 200 misto 201
 		} catch (IncorrectPredecessorStatus ex) {
 			throw new IncorrectPredecessorException(ex.getPredecessor());
 		} catch (RegistrationModeNotAllowedException ex) {
