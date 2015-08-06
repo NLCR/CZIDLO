@@ -4,6 +4,9 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -37,7 +40,7 @@ abstract class BusinessServiceImpl implements BusinessService {
 		authorization = new AuthorizationModule(factory);
 	}
 
-	long registrarOfDigLibrary(long libraryId) throws DatabaseException, UnknownDigLibException {
+	long registrarIdFromDigLibId(long libraryId) throws DatabaseException, UnknownDigLibException {
 		try {
 			DigitalLibrary lib = factory.diglLibDao().getLibraryById(libraryId);
 			return lib.getRegistrarId();
@@ -72,5 +75,9 @@ abstract class BusinessServiceImpl implements BusinessService {
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownDigDocException(digDocId);
 		}
+	}
+
+	String formatDateTime(DateTime dateTime) {
+		return DateTimeFormat.forPattern("dd.MM.YYYY HH:mm:ss").print(dateTime);
 	}
 }

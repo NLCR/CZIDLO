@@ -4,6 +4,9 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import java.util.Collection;
+import java.util.List;
+
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
@@ -18,10 +21,9 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -38,7 +40,6 @@ import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import java.util.Collection;
 
 /**
  * 
@@ -55,21 +56,45 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 			UnknownDigDocException, IdentifierConflictException, AccessException, UnknownUserException {
 		try {
 			authorization.checkAccessRightsOrAdmin(id.getRegistrarId(), login);
-			factory.digDocIdDao().updateRegistrarScopeIdValue(id);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + id + "'");
+			Registrar registrar;
+			try {
+				registrar = factory.registrarDao().getRegistrarById(id.getRegistrarId());
+			} catch (RecordNotFoundException e) {
+				throw new UnknownRegistrarException(id.getRegistrarId());
+			}
+			UrnNbn urn;
+			try {
+				urn = factory.urnDao().getUrnNbnByDigDocId(id.getDigDocId());
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			try {
+				factory.digDocIdDao().updateRegistrarScopeIdValue(id);
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			} catch (AlreadyPresentException e) {
+				throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+			}
+			try {
+				factory.documentDao().updateDocumentDatestamp(id.getDigDocId());
+			} catch (RecordNotFoundException e) {
+				throw new UnknownDigDocException(id.getDigDocId());
+			}
+			logRegistrarScopeIdUpdated(login, id, registrar, urn);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
-		} catch (RecordNotFoundException ex) {
-			if (RegistrarScopeIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-				throw new UnknownDigDocException(id.getDigDocId());
-			} else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
-				throw new UnknownRegistrarException(id.getRegistrarId());
-			} else {
-				throw new RuntimeException(ex);
-			}
-		} catch (AlreadyPresentException ex) {
-			throw new IdentifierConflictException(id.getType().toString(), id.getValue());
 		}
+	}
+
+	private void logRegistrarScopeIdUpdated(String login, RegistrarScopeIdentifier id, Registrar registrar, UrnNbn urn) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s updated registrar-scope-id with registrar: %s", login, registrar.getName()));
+		builder.append(String.format(", type: %s", id.getType()));
+		builder.append(String.format(", value: %s", id.getValue()));
+		builder.append(String.format(", %s", urn));
+		builder.append(String.format(", created: %s", formatDateTime(id.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -78,7 +103,8 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 		try {
 			authorization.checkAccessRightsOrAdmin(doc.getRegistrarId(), login);
 			factory.documentDao().updateDocument(doc);
-			AdminLogger.getLogger().info("user '" + login + "' updated digital document with id '" + doc.getId() + "'");
+			UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
+			AdminLogger.getLogger().info(String.format("User %s updated digital-document of %s.", login, urn));
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		} catch (RecordNotFoundException ex) {
@@ -91,7 +117,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 		try {
 			authorization.checkAccessRightsOrAdmin(registrar.getId(), login);
 			factory.registrarDao().updateRegistrar(registrar);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + registrar + "'");
+			logRegistrarUpdated(login, registrar);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		} catch (RecordNotFoundException ex) {
@@ -99,32 +125,91 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 		}
 	}
 
+	private void logRegistrarUpdated(String login, Registrar registrar) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s updated registrar with code: %s", login, registrar.getCode()));
+		builder.append(String.format(", name: %s", registrar.getName()));
+		if (registrar.getDescription() != null) {
+			builder.append(String.format(", description: %s", registrar.getDescription()));
+		}
+		// TODO: nejak reg. mody nenatahuji z db
+		builder.append(String.format(", registration modes: %s", registrar.modesToHumanReadableString()));
+		builder.append(String.format(", created: %s", formatDateTime(registrar.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
+	}
+
 	@Override
 	public void updateArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException, UnknownArchiverException {
 		try {
 			authorization.checkAdminRights(login);
-			factory.archiverDao().updateArchiver(archiver);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + archiver + "'");
+			try {
+				factory.archiverDao().updateArchiver(archiver);
+			} catch (RecordNotFoundException e) {
+				throw new UnknownArchiverException(archiver.getId());
+			}
+			try {
+				factory.registrarDao().getRegistrarById(archiver.getId());
+			} catch (RecordNotFoundException e) {
+				// archiver is not registrar as well
+				logArchiverUpdated(login, archiver);
+			}
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
-		} catch (RecordNotFoundException ex) {
-			throw new UnknownArchiverException(archiver.getId());
 		}
+	}
+
+	private void logArchiverUpdated(String login, Archiver archiver) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s updated archiver with id: %d", login, archiver.getId()));
+		builder.append(String.format(", name: %s", archiver.getName()));
+		if (archiver.getDescription() != null) {
+			builder.append(String.format(", description: %s", archiver.getDescription()));
+		}
+		builder.append(String.format(", created: %s", formatDateTime(archiver.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
 	public void updateDigitalLibrary(DigitalLibrary library, String login) throws UnknownUserException, AccessException,
 			UnknownDigLibException {
 		try {
-			long registrarId = registrarOfDigLibrary(library.getId());
+			long registrarId = registrarIdFromDigLibId(library.getId());
 			authorization.checkAccessRightsOrAdmin(registrarId, login);
 			factory.diglLibDao().updateLibrary(library);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + library + "'");
+			// because library object only contains data to be updated and not datestampes,
+			// registrar id
+			logLibraryUpdated(login, factory.diglLibDao().getLibraryById(library.getId()));
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownDigLibException(library.getId());
 		}
+	}
+
+	private void logLibraryUpdated(String login, DigitalLibrary library) throws DatabaseException {
+		Registrar registrar;
+		try {
+			System.out.println(library);
+			registrar = factory.registrarDao().getRegistrarById(library.getRegistrarId());
+		} catch (RecordNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s updated digital-library with id: %d", login, library.getId()));
+		builder.append(String.format(", registrar: %s", registrar.getName()));
+		builder.append(String.format(", name: %s", library.getName()));
+		if (library.getDescription() != null) {
+			builder.append(String.format(", description: %s", library.getDescription()));
+		}
+		if (library.getUrl() != null) {
+			builder.append(String.format(", url: %s", library.getUrl()));
+		}
+		builder.append(String.format(", created: %s", formatDateTime(library.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -133,12 +218,34 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 			long registrarId = registrarOfCatalog(catalog.getId());
 			authorization.checkAccessRightsOrAdmin(registrarId, login);
 			factory.catalogDao().updateCatalog(catalog);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + catalog + "'");
+			logCatalogUpdated(login, catalog);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownCatalogException(catalog.getId());
 		}
+	}
+
+	private void logCatalogUpdated(String login, Catalog catalog) throws DatabaseException {
+		// Web: user martin updated catalog with registrar: Národní knihovna, name:
+		// test-katalog, description: testovaci kagalog, urlPrefix: http://aleph.novadomena.cz,
+		// created: 03.08.2015 15:35:29
+		Registrar registrar;
+		try {
+			registrar = factory.registrarDao().getRegistrarById(catalog.getRegistrarId());
+		} catch (RecordNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s updated catalog with registrar: %s", login, registrar.getName()));
+		builder.append(String.format(", name: %s", catalog.getName()));
+		if (catalog.getDescription() != null) {
+			builder.append(String.format(", description: %s", catalog.getDescription()));
+		}
+		builder.append(String.format(", url prefix: %s", catalog.getUrlPrefix()));
+		builder.append(String.format(", created: %s", formatDateTime(catalog.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -147,7 +254,23 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 			UnknownIntelectualEntity, IdentifierConflictException {
 		authorization.checkAdminRights(login);
 		new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
-		AdminLogger.getLogger().info("user '" + login + "' updated intelectual entity with id '" + entity.getId() + "'");
+		UrnNbn urn;
+		List<DigitalDocument> digDocs;
+		try {
+			digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
+			// there is allways exactly one digital document, even though data model allows more
+			// dig-docs for single int-entity
+			if (digDocs == null || digDocs.isEmpty()) {
+				urn = null;
+			} else {
+				urn = factory.urnDao().getUrnNbnByDigDocId(digDocs.get(0).getId());
+			}
+		} catch (RecordNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (DatabaseException e) {
+			throw new RuntimeException(e);
+		}
+		AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
 	}
 
 	@Override
@@ -155,12 +278,22 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 		try {
 			authorization.checkAdminRights(login);
 			factory.userDao().updateUser(user);
-			AdminLogger.getLogger().info("user '" + login + "' updated '" + user + "'");
+			logUserUpdated(login, user);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownUserException(user.getId());
 		}
+	}
+
+	private void logUserUpdated(String actorLogin, User user) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created user with login: %s", actorLogin, user.getLogin()));
+		builder.append(String.format(", email: %s", user.getEmail()));
+		builder.append(String.format(", admin: %s", user.isAdmin()));
+		builder.append(String.format(", created: %s", formatDateTime(user.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override

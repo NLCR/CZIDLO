@@ -14,9 +14,6 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
-import cz.nkp.urnnbn.core.persistence.UserDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -56,7 +53,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			UnknownArchiverException, UnknownUserException, RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
 		authorization.checkAccessRights(importData.getRegistrarCode(), login);
 		UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData).run();
-		AdminLogger.getLogger().info("user '" + login + "' registered digital document to " + urnNbn);
+		AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
 		return urnNbn;
 	}
 
@@ -64,10 +61,23 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 	public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws AccessException, UnknownDigLibException,
 			UnknownDigDocException, UnknownUserException {
 		try {
-			long registrarId = registrarOfDigLibrary(instance.getLibraryId());
+			long registrarId = registrarIdFromDigLibId(instance.getLibraryId());
 			authorization.checkAccessRights(registrarId, login);
 			DigitalInstance digitalInstance = new DigitalInstanceAdder(factory, instance).run();
-			AdminLogger.getLogger().info("user '" + login + "' imported " + digitalInstance);
+			UrnNbn urn;
+			try {
+				urn = factory.urnDao().getUrnNbnByDigDocId(digitalInstance.getDigDocId());
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			DigitalLibrary lib;
+			try {
+				lib = factory.diglLibDao().getLibraryById(digitalInstance.getLibraryId());
+			} catch (RecordNotFoundException e) {
+				throw new UnknownDigLibException(digitalInstance.getLibraryId());
+			}
+			AdminLogger.getLogger().info(
+					String.format("User %s imported digital-instance with id: %d, %s, library: %s.", login, urn, lib.getName()));
 			return digitalInstance;
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
@@ -79,20 +89,39 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			UnknownDigDocException, IdentifierConflictException, AccessException, UnknownUserException {
 		try {
 			authorization.checkAccessRights(id.getRegistrarId(), login);
-			factory.digDocIdDao().insertRegistrarScopeId(id);
+			Registrar registrar;
+			try {
+				registrar = factory.registrarDao().getRegistrarById(id.getRegistrarId());
+			} catch (RecordNotFoundException e) {
+				throw new UnknownRegistrarException(id.getRegistrarId());
+			}
+			UrnNbn urn;
+			try {
+				urn = factory.urnDao().getUrnNbnByDigDocId(id.getDigDocId());
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			try {
+				factory.digDocIdDao().insertRegistrarScopeId(id);
+			} catch (RecordNotFoundException e) {
+				throw new UnknownDigDocException(id.getDigDocId());
+			} catch (AlreadyPresentException e) {
+				throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+			}
+			logRegistrarScopeIdCreated(login, id, registrar, urn);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
-		} catch (RecordNotFoundException ex) {
-			if (RegistrarScopeIdentifierDAO.TABLE_NAME.equals(ex.getTableName())) {
-				throw new UnknownDigDocException(id.getDigDocId());
-			} else if (RegistrarDAO.TABLE_NAME.equals(ex.getTableName())) {
-				throw new UnknownRegistrarException(id.getRegistrarId());
-			} else {
-				throw new RuntimeException(ex);
-			}
-		} catch (AlreadyPresentException ex) {
-			throw new IdentifierConflictException(id.getType().toString(), id.getValue());
 		}
+	}
+
+	private void logRegistrarScopeIdCreated(String login, RegistrarScopeIdentifier id, Registrar registrar, UrnNbn urn) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created registrar-scope-id with registrar: %s", login, registrar.getName()));
+		builder.append(String.format(", type: %s", id.getType()));
+		builder.append(String.format(", value: %s", id.getValue()));
+		builder.append(String.format(", %s", urn));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -101,11 +130,22 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			authorization.checkAdminRights(login);
 			Long id = factory.archiverDao().insertArchiver(archiver);
 			archiver.setId(id);
-			AdminLogger.getLogger().info("user '" + login + "' inserted " + archiver);
+			logArchiverCreated(login, archiver);
 			return archiver;
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	private void logArchiverCreated(String login, Archiver archiver) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created archiver with id: %d", login, archiver.getId()));
+		builder.append(String.format(", name: %s", archiver.getName()));
+		if (archiver.getDescription() != null) {
+			builder.append(String.format(", description: %s", archiver.getDescription()));
+		}
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -115,13 +155,25 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			authorization.checkAdminRights(login);
 			Long id = factory.registrarDao().insertRegistrar(registrar);
 			registrar.setId(id);
-			AdminLogger.getLogger().info("user '" + login + "' inserted " + registrar);
+			logRegistrarCreated(login, registrar);
 			return registrar;
 		} catch (AlreadyPresentException ex) {
 			throw new RegistrarCollisionException(registrar.getCode().toString());
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	void logRegistrarCreated(String login, Registrar registrar) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created registrar with code: %s", login, registrar.getCode()));
+		builder.append(String.format(", name: %s", registrar.getName()));
+		if (registrar.getDescription() != null) {
+			builder.append(String.format(", description: %s", registrar.getDescription()));
+		}
+		builder.append(String.format(", registration modes: %s", registrar.modesToHumanReadableString()));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -131,13 +183,34 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			authorization.checkAccessRightsOrAdmin(registrarId, login);
 			Long id = factory.diglLibDao().insertLibrary(library);
 			library.setId(id);
-			AdminLogger.getLogger().info("user '" + login + "' inserted " + library);
+			logLibraryCreated(login, library);
 			return library;
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownRegistrarException(registrarId);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+
+	private void logLibraryCreated(String login, DigitalLibrary library) throws DatabaseException {
+		Registrar registrar;
+		try {
+			registrar = factory.registrarDao().getRegistrarById(library.getRegistrarId());
+		} catch (RecordNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created digital-library with id: %d", login, library.getId()));
+		builder.append(String.format(", registrar: %s", registrar.getName()));
+		builder.append(String.format(", name: %s", library.getName()));
+		if (library.getDescription() != null) {
+			builder.append(String.format(", description: %s", library.getDescription()));
+		}
+		if (library.getUrl() != null) {
+			builder.append(String.format(", url: %s", library.getUrl()));
+		}
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override
@@ -147,7 +220,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 			authorization.checkAccessRightsOrAdmin(registrarId, login);
 			Long id = factory.catalogDao().insertCatalog(catalog);
 			catalog.setId(id);
-			AdminLogger.getLogger().info("user '" + login + "' inserted " + catalog);
+			logCatalogCreated(login, catalog);
 			return catalog;
 		} catch (RecordNotFoundException ex) {
 			throw new UnknownRegistrarException(registrarId);
@@ -156,13 +229,31 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 		}
 	}
 
+	private void logCatalogCreated(String login, Catalog catalog) throws DatabaseException {
+		Registrar registrar;
+		try {
+			registrar = factory.registrarDao().getRegistrarById(catalog.getRegistrarId());
+		} catch (RecordNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created catalog with registrar: %s", login, registrar.getName()));
+		builder.append(String.format(", name: %s", catalog.getName()));
+		if (catalog.getDescription() != null) {
+			builder.append(String.format(", description: %s", catalog.getDescription()));
+		}
+		builder.append(String.format(", url prefix: %s", catalog.getUrlPrefix()));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
+	}
+
 	@Override
 	public User addNewUser(User user, String login) throws UnknownUserException, NotAdminException, LoginConflictException {
 		try {
 			authorization.checkAdminRights(login);
 			Long id = factory.userDao().insertUser(user);
 			user.setId(id);
-			AdminLogger.getLogger().info("user '" + login + "' created " + user);
+			logUserCreated(login, user);
 			return user;
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
@@ -171,29 +262,49 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 		}
 	}
 
+	private void logUserCreated(String actorLogin, User user) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s created user with login: %s", actorLogin, user.getLogin()));
+		builder.append(String.format(", email: %s", user.getEmail()));
+		builder.append(String.format(", admin: %s", user.isAdmin()));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
+	}
+
 	@Override
 	public void addRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException,
 			RegistrarRightCollisionException, UnknownRegistrarException {
 		try {
-			authorization.checkAdminRights(login);
-			factory.userDao().insertAdministrationRight(registrarId, userId);
-			Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
-			User user = factory.userDao().getUserById(userId);
-			AdminLogger.getLogger()
-					.info("user '" + login + "' added access right for registrar '" + registrar.getCode() + "' to user '" + user.getLogin()
-							+ "'");
-		} catch (DatabaseException ex) {
-			throw new RuntimeException(ex);
-		} catch (RecordNotFoundException ex) {
-			if (ex.getTableName().equals(UserDAO.TABLE_NAME)) {
-				throw new UnknownUserException(userId);
-			} else if (ex.getTableName().equals(RegistrarDAO.TABLE_NAME)) {
+			Registrar registrar;
+			try {
+				registrar = factory.registrarDao().getRegistrarById(registrarId);
+			} catch (RecordNotFoundException e) {
 				throw new UnknownRegistrarException(registrarId);
-			} else {
-				throw new RuntimeException(ex);
 			}
-		} catch (AlreadyPresentException ex) {
-			throw new RegistrarRightCollisionException(userId, registrarId);
+			User user;
+			try {
+				user = factory.userDao().getUserById(userId);
+			} catch (RecordNotFoundException e) {
+				throw new UnknownUserException(userId);
+			}
+			try {
+				factory.userDao().insertAdministrationRight(registrarId, userId);
+			} catch (RecordNotFoundException e) {
+				// user or registrar again
+				throw new RuntimeException(e);
+			} catch (AlreadyPresentException e) {
+				throw new RegistrarRightCollisionException(userId, registrarId);
+			}
+			logRegistrarRightAssigned(login, user, registrar);
+		} catch (DatabaseException e) {
+			throw new RuntimeException(e);
 		}
+	}
+
+	private void logRegistrarRightAssigned(String login, User user, Registrar registrar) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s assigned access-right for registrar %s to user %s.", login, registrar.getCode(),
+				user.getLogin()));
+		AdminLogger.getLogger().info(builder);
 	}
 }
