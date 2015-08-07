@@ -341,20 +341,44 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
 	public void deactivateDigitalInstance(long instanceId, String login) throws UnknownUserException, AccessException,
 			UnknownDigInstException {
 		try {
-			long registrarId = registrarOfDigInstance(instanceId);
-			authorization.checkAccessRights(registrarId, login);
-			DigitalInstance digInstance = factory.digInstDao().getDigInstanceById(instanceId);
-			factory.digInstDao().deactivateDigInstance(instanceId);
-			DigitalLibrary lib = factory.diglLibDao().getLibraryById(digInstance.getLibraryId());
-			String created = formatDateTime(digInstance.getCreated());
-			AdminLogger.getLogger().info(
-					String.format("User %s deactivated digital-instance with id: %d, %s, library %s, created: %s.", login, instanceId,
-							lib.getName(), created));
+			DigitalInstance digInstance;
+			try {
+				digInstance = factory.digInstDao().getDigInstanceById(instanceId);
+			} catch (RecordNotFoundException e) {
+				throw new UnknownDigInstException(instanceId);
+			}
+			DigitalLibrary lib;
+			try {
+				lib = factory.diglLibDao().getLibraryById(digInstance.getLibraryId());
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			UrnNbn urn;
+			try {
+				urn = factory.urnDao().getUrnNbnByDigDocId(digInstance.getDigDocId());
+			} catch (RecordNotFoundException e) {
+				throw new RuntimeException(e);
+			}
+			authorization.checkAccessRights(lib.getRegistrarId(), login);
+			try {
+				factory.digInstDao().deactivateDigInstance(instanceId);
+			} catch (RecordNotFoundException e) {
+				throw new UnknownDigInstException(instanceId);
+			}
+			logDigitalInstanceDeactivated(login, digInstance, urn, lib);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
-		} catch (RecordNotFoundException ex) {
-			throw new UnknownDigInstException(instanceId);
 		}
+	}
+
+	private void logDigitalInstanceDeactivated(String login, DigitalInstance instance, UrnNbn urn, DigitalLibrary lib) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("User %s deactivated digital-instance with id: %d", login, instance.getId()));
+		builder.append(String.format(", %s", urn));
+		builder.append(String.format(", library: %s", lib.getName()));
+		builder.append(String.format(", created: %s", formatDateTime(instance.getCreated())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	@Override

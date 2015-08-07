@@ -63,22 +63,24 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 		try {
 			long registrarId = registrarIdFromDigLibId(instance.getLibraryId());
 			authorization.checkAccessRights(registrarId, login);
-			DigitalInstance digitalInstance = new DigitalInstanceAdder(factory, instance).run();
+			instance = new DigitalInstanceImporter(factory, instance).run();
 			UrnNbn urn;
 			try {
-				urn = factory.urnDao().getUrnNbnByDigDocId(digitalInstance.getDigDocId());
+				urn = factory.urnDao().getUrnNbnByDigDocId(instance.getDigDocId());
 			} catch (RecordNotFoundException e) {
 				throw new RuntimeException(e);
 			}
 			DigitalLibrary lib;
 			try {
-				lib = factory.diglLibDao().getLibraryById(digitalInstance.getLibraryId());
+				lib = factory.diglLibDao().getLibraryById(instance.getLibraryId());
 			} catch (RecordNotFoundException e) {
-				throw new UnknownDigLibException(digitalInstance.getLibraryId());
+				throw new UnknownDigLibException(instance.getLibraryId());
 			}
+			// admin log
 			AdminLogger.getLogger().info(
-					String.format("User %s imported digital-instance with id: %d, %s, library: %s.", login, urn, lib.getName()));
-			return digitalInstance;
+					String.format("User %s imported digital-instance with id: %d, %s, library: %s.", login, instance.getId(), urn,
+							lib.getName()));
+			return instance;
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -164,7 +166,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 		}
 	}
 
-	void logRegistrarCreated(String login, Registrar registrar) {
+	private void logRegistrarCreated(String login, Registrar registrar) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(String.format("User %s created registrar with code: %s", login, registrar.getCode()));
 		builder.append(String.format(", name: %s", registrar.getName()));
