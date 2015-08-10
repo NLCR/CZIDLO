@@ -93,21 +93,21 @@ public class App {
 	private void insertTestData() throws Exception {
 		try {
 
-			// archivar MK
+			// archiver MK
 			Archiver archMk = new Archiver();
 			archMk.setName("MK");
 			archMk.setDescription("Mala knihovna ");
 			archMk.setId(factory.archiverDao().insertArchiver(archMk));
 			System.out.println("created archiver MK with id " + archMk.getId());
 
-			// archivar MK2
+			// archiver MK2
 			Archiver archMk2 = new Archiver();
 			archMk2.setName("MK2");
 			archMk2.setDescription("Mala knihovna 2");
 			archMk2.setId(factory.archiverDao().insertArchiver(archMk2));
 			System.out.println("created archiver MK2 with id " + archMk2.getId());
 
-			// archivar MK3
+			// archiver MK3
 			Archiver archMk3 = new Archiver();
 			archMk3.setName("MK3");
 			archMk3.setDescription("Mala knihovna 3");
