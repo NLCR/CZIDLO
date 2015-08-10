@@ -15,7 +15,7 @@ import cz.nkp.urnnbn.utils.PropertyLoader;
  */
 public class ContextListener implements ServletContextListener {
 
-	private static final String WEB_APP_NAME = "Web";
+	private static final String WEB_APP_NAME = "WEB";
 	private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
 	private static final String WEB_PROPERTIES = "web.properties";
 

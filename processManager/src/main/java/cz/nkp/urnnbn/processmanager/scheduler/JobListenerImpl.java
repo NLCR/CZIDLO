@@ -23,6 +23,7 @@ import org.quartz.JobKey;
 import org.quartz.JobListener;
 
 import cz.nkp.urnnbn.core.AdminLogger;
+import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
@@ -43,11 +44,16 @@ public class JobListenerImpl implements JobListener {
 	public void jobToBeExecuted(JobExecutionContext context) {
 		Long jobId = getJobId(context);
 		JobDataMap processData = context.getMergedJobDataMap();
-		ProcessType type = getProcessType(processData);
-		AdminLogger.getLogger().info(
-				"process " + type + " of user '" + getProcessOwner(processData) + "' with parameters "
-						+ getProcessParams(processData, type) + " will start now");
+		getProcessParams(processData, getProcessType(processData));
 		new ProcesStateUpdater(jobId).updateProcessStateToRunning();
+		logProcessStarted(processData, jobId);
+	}
+
+	private void logProcessStarted(JobDataMap processData, Long jobId) {
+		ProcessType type = getProcessType(processData);
+		String processOwner = getProcessOwner(processData);
+		String log = String.format("Started process %s of user %s with id: %d.", type.toString(), processOwner, jobId);
+		AdminLogger.getLogger().info(log);
 	}
 
 	public void jobExecutionVetoed(JobExecutionContext context) {
@@ -60,10 +66,14 @@ public class JobListenerImpl implements JobListener {
 		ProcessState finalState = (ProcessState) context.getResult();
 		new ProcesStateUpdater(jobId).updateProcessStatToFinished(finalState);
 		JobDataMap processData = context.getMergedJobDataMap();
+		logProcessFinished(processData, finalState, jobId);
+	}
+
+	private void logProcessFinished(JobDataMap processData, ProcessState finalState, Long jobId) {
 		ProcessType type = getProcessType(processData);
-		AdminLogger.getLogger().info(
-				"process " + type + " of user '" + getProcessOwner(processData) + "' with parameters "
-						+ getProcessParams(processData, type) + " ended as " + finalState);
+		String processOwner = getProcessOwner(processData);
+		String log = String.format("Ended process %s of user %s with id: %d, state: %s.", type.toString(), processOwner, jobId, finalState);
+		AdminLogger.getLogger().info(log);
 	}
 
 	private Long getJobId(JobExecutionContext context) {
@@ -93,7 +103,7 @@ public class JobListenerImpl implements JobListener {
 	private String oaiAdapterParams(JobDataMap processData) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		appendKeyValue(processData, builder, "registrarion_mode", OaiAdapterJob.PARAM_CZIDLO_REGISTRATION_MODE);
+		appendKeyValue(processData, builder, "registration_mode", OaiAdapterJob.PARAM_CZIDLO_REGISTRATION_MODE);
 		builder.append(", ");
 		appendKeyValue(processData, builder, "registrar_code", OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE);
 		builder.append(", ");

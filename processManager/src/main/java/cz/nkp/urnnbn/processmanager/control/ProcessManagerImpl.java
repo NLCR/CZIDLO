@@ -16,6 +16,30 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
@@ -30,29 +54,6 @@ import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcesStateUpdater;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcessFileUtils;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static org.quartz.JobBuilder.*;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import static org.quartz.SimpleScheduleBuilder.*;
-import org.quartz.Trigger;
-import static org.quartz.TriggerBuilder.*;
-import org.quartz.impl.StdSchedulerFactory;
-import static org.quartz.impl.matchers.GroupMatcher.*;
-
-//import static org.quartz.impl.matchers.OrMatcher.*;
 
 /**
  * 
@@ -92,8 +93,11 @@ public class ProcessManagerImpl implements ProcessManager {
 		logger.log(Level.INFO, "max number of user jobs running: {0}", this.maxUserJobsRunning);
 		initScheduler();
 		runJobChecker();
-		// delat _nejak_ pri inicializaci. No jenze pokud se inicializuje vic vlaken, tak jsem stejne v prdeli
-		// mozna tohle proste ignorovat alespon prozatim a mazat procesy, ktere evidentne nejedou zpetne rovnou v
+		// TODO
+		// delat _nejak_ pri inicializaci. No jenze pokud se inicializuje vic vlaken, tak je tam
+		// stejne problem
+		// mozna tohle proste ignorovat alespon prozatim a mazat procesy, ktere evidentne nejedou
+		// zpetne rovnou v
 		// databazi
 		setRunningProcessesFromDatabaseStateToFailed();
 		// napodobne
@@ -150,9 +154,107 @@ public class ProcessManagerImpl implements ProcessManager {
 
 	public synchronized Process scheduleNewProcess(String userLogin, ProcessType type, String[] processParams) {
 		Process process = processDao.saveProcess(Process.buildScheduledProcess(userLogin, type, processParams));
-		AdminLogger.getLogger().info("process " + type.toString() + " of user '" + process.getOwnerLogin() + "' has been scheduled ");
 		enqueueScheduledProcess(process);
+		logProcessScheduled(process);
 		return process;
+	}
+
+	private void logProcessScheduled(Process process) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("Scheduled process %s of user %s with id: %d", process.getType().toString(), process.getOwnerLogin(),
+				process.getId()));
+		builder.append(String.format(", parameters: %s", paramsToString(process.getType(), process.getParams())));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
+	}
+
+	private String paramsToString(ProcessType processType, String[] params) {
+		// use generalParamsString to debug
+		switch (processType) {
+		case REGISTRARS_URN_NBN_CSV_EXPORT:
+			return urnNbnExportProcessParamsToString(params);
+		case OAI_ADAPTER:
+			return oaiAdapterProcessParamsToString(params);
+		default:
+			return null;
+		}
+	}
+
+	private String generalParamsString(String[] params) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(", general:[");
+		for (int i = 0; i < params.length; i++) {
+			builder.append(String.format("%d: %s", i, params[i]));
+			if (i != params.length - 1) {
+				builder.append("; ");
+			}
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	private String oaiAdapterProcessParamsToString(String[] params) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		builder.append("registrar_code: " + params[3]);
+		builder.append(", registration_mode: " + params[2]);
+		builder.append("; oai_metadata_prefix: " + params[5]);
+		String oaiSet = params[6];
+		if (oaiSet != null) {
+			builder.append("; oai_set: " + params[6]);
+		}
+		builder.append("; oai_base_url: " + params[4]);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	private String urnNbnExportProcessParamsToString(String[] params) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		builder.append("registrars: " + params[2]);
+		builder.append("; intelectual_entity_types: " + params[3]);
+
+		Boolean missingCcnb = Boolean.valueOf(params[4]);
+		Boolean missingIssn = Boolean.valueOf(params[5]);
+		Boolean missingIsbn = Boolean.valueOf(params[6]);
+		if (missingCcnb || missingIsbn || missingIssn) {
+			builder.append("; filter_only_missing_ids: " + toMissingIdsString(missingCcnb, missingIsbn, missingIssn));
+		}
+		boolean returnActive = Boolean.valueOf(params[7]);
+		boolean returnDeactivated = Boolean.valueOf(params[8]);
+		if (!(returnActive && returnDeactivated)) {
+			if (returnActive) {
+				builder.append("; filter_by_urn_state: active_only");
+			} else if (returnDeactivated) {
+				builder.append("; filter_by_urn_state: deactivated_only");
+			}
+		}
+		builder.append("; include_number_of_di: " + params[9]);
+		builder.append("; begin: " + params[0]);
+		builder.append("; end: " + params[1]);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	private String toMissingIdsString(Boolean missingCcnb, Boolean missingIsbn, Boolean missingIssn) {
+		List<String> missing = new ArrayList<String>();
+		if (missingCcnb) {
+			missing.add("cCNB");
+		}
+		if (missingIsbn) {
+			missing.add("ISBN");
+		}
+		if (missingIssn) {
+			missing.add("ISSN");
+		}
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < missing.size(); i++) {
+			builder.append(missing.get(i));
+			if (i != missing.size() - 1) {
+				builder.append("+");
+			}
+		}
+		return builder.toString();
 	}
 
 	private void enqueueScheduledProcess(Process process) {
@@ -250,7 +352,8 @@ public class ProcessManagerImpl implements ProcessManager {
 		switch (process.getType()) {
 		case REGISTRARS_URN_NBN_CSV_EXPORT:
 			return newJob(UrnNbnCsvExportJob.class)
-					// .withIdentity(process.getId().toString(), (asAdmin ? GROUP_ADMIN : GROUP_USER) +
+					// .withIdentity(process.getId().toString(), (asAdmin ? GROUP_ADMIN :
+					// GROUP_USER) +
 					// process.getId().toString())
 					// .withIdentity(id, group)
 					.withIdentity(new JobKey(id, PROCESS_GROUP_JOBS)).usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())
@@ -388,10 +491,16 @@ public class ProcessManagerImpl implements ProcessManager {
 		}
 		// change process state in db
 		new ProcesStateUpdater(processId).upadateProcessStateToCanceled();
-		AdminLogger.getLogger().info(
-				"process " + process.getType().toString() + " of user '" + process.getOwnerLogin() + "' has been canceled by user '"
-						+ login + "'");
+		logProcessCanceled(process);
 		return removedFromQueue;
+	}
+
+	private void logProcessCanceled(Process process) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("Canceled process %s of user %s with id: %d", process.getType().toString(), process.getOwnerLogin(),
+				process.getId()));
+		builder.append(".");
+		AdminLogger.getLogger().info(builder);
 	}
 
 	private boolean removeFromQueueSynchronized(Queue<Process> queue, Process processToBeRemoved, String queueName) {
@@ -439,9 +548,12 @@ public class ProcessManagerImpl implements ProcessManager {
 			} else {
 				logger.log(Level.INFO, "Deleted data of process {0}", processId);
 			}
-			AdminLogger.getLogger().info(
-					"process " + process.getType().toString() + " of user '" + process.getOwnerLogin() + "' was deleted by user '"
-							+ userLogin + "'");
+			logProcessDeleted(process, processId);
 		}
+	}
+
+	private void logProcessDeleted(Process process, Long processId) {
+		String log = String.format("Deleted process %s of user %s with id: %d.", process.getType(), process.getOwnerLogin(), processId);
+		AdminLogger.getLogger().info(log);
 	}
 }
