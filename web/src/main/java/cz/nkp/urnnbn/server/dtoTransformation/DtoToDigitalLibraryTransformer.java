@@ -6,7 +6,7 @@ import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 public class DtoToDigitalLibraryTransformer {
 
 	private final DigitalLibraryDTO dto;
-	
+
 	public DtoToDigitalLibraryTransformer(DigitalLibraryDTO dto) {
 		this.dto = dto;
 	}

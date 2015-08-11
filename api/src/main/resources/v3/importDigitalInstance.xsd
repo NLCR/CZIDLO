@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2011 - 2015 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
-    Document   : digitalInstanceImport.xsd.xml
+    Document   : importDigitalInstance.xsd
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:

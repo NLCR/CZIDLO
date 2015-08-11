@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2011 - 2015 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
-    Document   : recordImport.xsd.xml
+    Document   : registerDigitalDocument.xsd
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
@@ -272,7 +272,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </xs:restriction>
     </xs:simpleType>
     
-    <!-- registrar scope identifiers -->
+    <!-- registrar-scope identifiers -->
     <xs:complexType name="registrarScopeIdentifiers">
         <xs:sequence>
             <xs:element name="id" type="r:registrarScopeIdentifier" minOccurs="0" maxOccurs="unbounded"/>
