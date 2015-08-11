@@ -25,7 +25,9 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
+
 import java.util.logging.Level;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,6 +37,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -72,7 +76,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
+    public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
             try {
                 checkServerNotReadOnly();
@@ -81,7 +85,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
                 Document apiV3Request = ApiModuleConfiguration.instanceOf().getDigDocRegistrationV2ToV3DataTransformer().transform(apiV2Request);
                 String apiV3Response = registerDigitalDocumentByApiV3(apiV3Request, login, registrar.getCode());
                 XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getRegisterDigDocResponseV3ToV2Transformer();
-                return transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
+                String response = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response); 
+                return Response.created(null).entity(response).build();
             } catch (ValidityException ex) {
                 throw new InvalidDataException(ex);
             } catch (ParsingException ex) {

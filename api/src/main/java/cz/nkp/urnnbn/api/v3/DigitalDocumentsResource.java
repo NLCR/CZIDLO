@@ -9,7 +9,9 @@ import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+
 import java.util.logging.Level;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -19,7 +21,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
@@ -56,11 +60,12 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public String registerDigitalDocument(@Context HttpServletRequest req, String content) {
+    public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
         	checkServerNotReadOnly();
         	String login = req.getRemoteUser();
-            return registerDigitalDocumentByApiV3(content, login, registrar.getCode());
+            String response = registerDigitalDocumentByApiV3(content, login, registrar.getCode());
+            return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);
         } catch (ParsingException ex) {

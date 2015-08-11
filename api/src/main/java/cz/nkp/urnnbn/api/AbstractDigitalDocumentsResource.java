@@ -16,6 +16,14 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v3.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
@@ -45,13 +53,6 @@ import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
 import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 
 /**
  * 
@@ -91,7 +92,6 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
 			UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
 			UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
 			return builder.buildDocumentWithResponseHeader().toXML();
-			//TODO: tady to vraci asi 200 misto 201
 		} catch (IncorrectPredecessorStatus ex) {
 			throw new IncorrectPredecessorException(ex.getPredecessor());
 		} catch (RegistrationModeNotAllowedException ex) {
