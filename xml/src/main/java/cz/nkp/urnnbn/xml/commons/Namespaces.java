@@ -22,6 +22,6 @@ package cz.nkp.urnnbn.xml.commons;
  */
 public class Namespaces {
 
-    public static String RESOLVER_NS = "http://resolver.nkp.cz/v3/";
+    public static String CZIDLO_NS = "http://resolver.nkp.cz/v3/";
     public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 }

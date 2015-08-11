@@ -34,7 +34,7 @@ public class ArchiverBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("archiver", RESOLVER_NS);
+        Element root = new Element("archiver", CZIDLO_NS);
         root.addAttribute(new Attribute("id", archiver.getId().toString()));
         appendElementWithContentIfNotNull(root, archiver.getName(), "name");
         appendElementWithContentIfNotNull(root, archiver.getDescription(), "description");

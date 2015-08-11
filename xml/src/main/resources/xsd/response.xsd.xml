@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2011 - 2015 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -137,6 +137,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="name" type="xs:string"/>
             <xs:element name="description" type="xs:string" minOccurs="0"/>
             <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" use="optional" type="xs:string"/>
     </xs:complexType>

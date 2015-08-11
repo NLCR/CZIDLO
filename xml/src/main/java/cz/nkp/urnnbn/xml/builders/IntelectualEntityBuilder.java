@@ -83,7 +83,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
     }
 
     Element entityElement() {
-        Element result = new Element("intelectualEntity", RESOLVER_NS);
+        Element result = new Element("intelectualEntity", CZIDLO_NS);
         EntityType entityType = entity.getEntityType();
         result.addAttribute(new Attribute("type", entityType.name()));
         return result;

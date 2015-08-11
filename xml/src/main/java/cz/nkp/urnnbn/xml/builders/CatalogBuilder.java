@@ -36,7 +36,7 @@ public class CatalogBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("catalog", RESOLVER_NS);
+        Element root = new Element("catalog", CZIDLO_NS);
         root.addAttribute(new Attribute("id", catalog.getId().toString()));
         appendElementWithContentIfNotNull(root, catalog.getName(), "name");
         appendElementWithContentIfNotNull(root, catalog.getDescription(), "description");

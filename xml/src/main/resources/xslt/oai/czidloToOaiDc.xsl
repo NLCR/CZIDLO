@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-    Document   : resolverToOaiDc.xsl
+    Document   : czidloToOaiDc.xsl
     Created on : 22. červenec 2012, 19:22
     Author     : Martin Řehánek
     Description:

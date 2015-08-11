@@ -33,7 +33,7 @@ public class DigitalDocumentsBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalDocuments", RESOLVER_NS);
+        Element root = new Element("digitalDocuments", CZIDLO_NS);
         root.addAttribute(new Attribute("count", Integer.toString(digDocCount)));
         return root;
     }

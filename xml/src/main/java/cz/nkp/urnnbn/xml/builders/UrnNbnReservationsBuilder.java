@@ -49,10 +49,10 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("urnNbnReservations", RESOLVER_NS);
+        Element root = new Element("urnNbnReservations", CZIDLO_NS);
         appendElementWithContentIfNotNull(root, maxReservationSize, "maxReservationSize");
         appendElementWithContentIfNotNull(root, defaultReservationSize, "defaultReservationSize");
-        Element reservations = new Element("reserved", RESOLVER_NS);
+        Element reservations = new Element("reserved", CZIDLO_NS);
         root.appendChild(reservations);
         Attribute size = new Attribute("totalSize", reservedSize.toString());
         reservations.addAttribute(size);
@@ -69,7 +69,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
             if (++counter > MAX_RESERVATION_TO_BE_PRINTED) {
                 break;
             }
-            Element element = new Element("urnNbn", RESOLVER_NS);
+            Element element = new Element("urnNbn", CZIDLO_NS);
             element.appendChild(urnNbn.toString());
             Attribute reserved = new Attribute("reserved", urnNbn.getReserved().toString());
             element.addAttribute(reserved);

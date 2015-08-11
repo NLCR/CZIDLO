@@ -38,7 +38,7 @@ public abstract class XmlBuilder {
     private static final Logger logger = Logger.getLogger(XmlBuilder.class.getName());
     private static final boolean INCLUDE_SCHEMA = true;
     private static String responseSchema = null;
-    static String RESOLVER_NS = Namespaces.RESOLVER_NS;
+    static String CZIDLO_NS = Namespaces.CZIDLO_NS;
     static String IDTYPE_INTERNAL = "INTERNAL";
 
     abstract Element buildRootElement();
@@ -51,7 +51,7 @@ public abstract class XmlBuilder {
     }
 
     public Document buildDocumentWithResponseHeader() {
-        Element response = new Element("response", RESOLVER_NS);
+        Element response = new Element("response", CZIDLO_NS);
         if (INCLUDE_SCHEMA) {
             Attribute schemaLocation = new Attribute("xsi:schemaLocation", Namespaces.XSI_NS, getResponseSchema());
             response.addAttribute(schemaLocation);
@@ -70,14 +70,14 @@ public abstract class XmlBuilder {
     }
 
     Element appendElement(Element root, String elementName) {
-        Element child = new Element(elementName, RESOLVER_NS);
+        Element child = new Element(elementName, CZIDLO_NS);
         root.appendChild(child);
         return child;
     }
 
     final Element appendElementWithContentIfNotNull(Element root, Object content, String elementName) {
         if (content != null) {
-            Element child = new Element(elementName, RESOLVER_NS);
+            Element child = new Element(elementName, CZIDLO_NS);
             root.appendChild(child);
             child.appendChild(String.valueOf(content));
             return child;
@@ -111,7 +111,7 @@ public abstract class XmlBuilder {
         List<UrnNbnWithStatus> predecessors = urn.getPredecessors();
         if (predecessors != null && !predecessors.isEmpty()) {
             for (UrnNbnWithStatus predecessor : predecessors) {
-                Element predecessorEl = new Element("predecessor", RESOLVER_NS);
+                Element predecessorEl = new Element("predecessor", CZIDLO_NS);
                 predecessorEl.addAttribute(new Attribute("value", predecessor.getUrn().toString()));
                 if (predecessor.getNote() != null) {
                     predecessorEl.addAttribute(new Attribute("note", predecessor.getNote()));
@@ -125,7 +125,7 @@ public abstract class XmlBuilder {
         List<UrnNbnWithStatus> successors = urn.getSuccessors();
         if (successors != null && !successors.isEmpty()) {
             for (UrnNbnWithStatus successor : successors) {
-                Element predecessorEl = new Element("successor", RESOLVER_NS);
+                Element predecessorEl = new Element("successor", CZIDLO_NS);
                 predecessorEl.addAttribute(new Attribute("value", successor.getUrn().toString()));
                 if (successor.getNote() != null) {
                     predecessorEl.addAttribute(new Attribute("note", successor.getNote()));
@@ -136,7 +136,7 @@ public abstract class XmlBuilder {
     }
 
     protected Element appendUrnNbnElement(Element root, UrnNbn urnNbn) {
-        Element predecessorEl = new Element("urnNbn", RESOLVER_NS);
+        Element predecessorEl = new Element("urnNbn", CZIDLO_NS);
         appendElementWithContentIfNotNull(predecessorEl, urnNbn, "value");
         root.appendChild(predecessorEl);
         return predecessorEl;

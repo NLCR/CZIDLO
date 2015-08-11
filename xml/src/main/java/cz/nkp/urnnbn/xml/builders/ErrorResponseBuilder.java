@@ -40,7 +40,7 @@ public class ErrorResponseBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("error", RESOLVER_NS);
+        Element root = new Element("error", CZIDLO_NS);
         appendElementWithContentIfNotNull(root, errorCode, "code");
         appendElementWithContentIfNotNull(root, errorMessage, "message");
         return root;

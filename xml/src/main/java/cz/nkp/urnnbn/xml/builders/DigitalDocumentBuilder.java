@@ -47,7 +47,7 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     @Override
     public Element buildRootElement() {
-        Element root = new Element("digitalDocument", RESOLVER_NS);
+        Element root = new Element("digitalDocument", CZIDLO_NS);
         root.addAttribute(new Attribute("id", doc.getId().toString()));
         Element urnEl = appendUrnNbnElement(root, urn);
         appendPredecessors(urnEl, urn);

@@ -28,8 +28,8 @@ public class Namespaces {
 //    public static final Namespace oai = DocumentHelper.createNamespace("oai", "http://www.openarchives.org/OAI/2.0/");
 //    public static final Namespace adm = DocumentHelper.createNamespace("adm", "http://www.qbizm.cz/kramerius-fedora/image-adm-description");
 //    public static final Namespace marc21 = DocumentHelper.createNamespace("marc21", "http://www.loc.gov/MARC21/slim");
-    public static final Namespace oai_dc = DocumentHelper.createNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-    public static final Namespace resolver = DocumentHelper.createNamespace("resolver", "http://resolver.nkp.cz/v2/");
+    public static final Namespace OAI_DC = DocumentHelper.createNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+    public static final Namespace CZIDLO = DocumentHelper.createNamespace("czidlo", cz.nkp.urnnbn.xml.commons.Namespaces.CZIDLO_NS);
     private static final Map<String, String> unmodifiablePrefixUriMap;
     private static final Map<String, Namespace> prefixNamespaceMap = new HashMap<String, Namespace>();
 
@@ -46,8 +46,8 @@ public class Namespaces {
 //        prefixNamespaceMap.put(oai.getPrefix(), oai);
 //        prefixNamespaceMap.put(adm.getPrefix(), adm);
 //        prefixNamespaceMap.put(marc21.getPrefix(), marc21);
-        prefixNamespaceMap.put(oai_dc.getPrefix(), oai_dc);
-        prefixNamespaceMap.put(resolver.getPrefix(), resolver);
+        prefixNamespaceMap.put(OAI_DC.getPrefix(), OAI_DC);
+        prefixNamespaceMap.put(CZIDLO.getPrefix(), CZIDLO);
         unmodifiablePrefixUriMap = initPrefixUriMap(prefixNamespaceMap);
     }
 
@@ -63,7 +63,4 @@ public class Namespaces {
         return unmodifiablePrefixUriMap;
     }
 
-    public static Namespace getNamespace(String prefix) {
-        return prefixNamespaceMap.get(prefix);
-    }
 }

@@ -106,9 +106,9 @@ public class PresentRecordImpl implements PresentRecord {
             DigitalDocumentBuilder digDocBuilder = digDocBuilder(urnNbn.getDigDocId());
             String metadataInResolverFormat = digDocBuilder.buildDocumentWithoutResponseHeader().toXML();
             switch (format) {
-                case resolver:
+                case CZIDLO:
                     return Dom4jUtils.loadDocument(metadataInResolverFormat, false);
-                case oai_dc:
+                case OAI_DC:
                     return transformToOaiDc(metadataInResolverFormat);
                 default:
                     return null;

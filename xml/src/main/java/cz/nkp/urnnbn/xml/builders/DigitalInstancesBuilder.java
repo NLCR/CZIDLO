@@ -41,7 +41,7 @@ public class DigitalInstancesBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalInstances", RESOLVER_NS);
+        Element root = new Element("digitalInstances", CZIDLO_NS);
         root.addAttribute(new Attribute("count", Long.toString(count)));
         if (instanceBuilderList != null) {
             for (DigitalInstanceBuilder builder : instanceBuilderList) {

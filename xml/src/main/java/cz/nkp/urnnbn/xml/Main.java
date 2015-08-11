@@ -1,11 +1,14 @@
 package cz.nkp.urnnbn.xml;
 
+import cz.nkp.urnnbn.xml.commons.Namespaces;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Document;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
@@ -174,7 +177,7 @@ public class Main {
         try {
             File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
             nu.xom.Document doc = XOMUtils.loadDocumentWithoutValidation(in);
-            XPathContext context = new XPathContext("r", "http://resolver.nkp.cz/v3/");
+            XPathContext context = new XPathContext("r", Namespaces.CZIDLO_NS);
             Nodes nodes = doc.query("r:digitalInstance/r:url", context);
             System.out.println("nodes:" + nodes.size());
             for (int i = 0; i < nodes.size(); i++) {
@@ -285,8 +288,7 @@ public class Main {
     static void transformationTest() {
         try {
             File inFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/oai/response-resolver.xml");
-            //File xsltFile = new File("/home/martin/NetBeansProjects/oaiPmhProvider/src/main/resources/resolverToOaiDc.xsd");
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/oai/resolverToOaiDc.xsl");
+            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/oai/czidloToOaiDc.xsl");
             Document srcDoc = XOMUtils.loadDocumentWithoutValidation(inFile);
             Document xslt = XOMUtils.loadDocumentWithoutValidation(xsltFile);
             XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);

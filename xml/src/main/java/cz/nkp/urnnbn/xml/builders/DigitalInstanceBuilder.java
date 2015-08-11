@@ -47,7 +47,7 @@ public class DigitalInstanceBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalInstance", RESOLVER_NS);
+        Element root = new Element("digitalInstance", CZIDLO_NS);
         root.addAttribute(new Attribute("id", instance.getId().toString()));
         root.addAttribute(new Attribute("active", instance.isActive().toString()));
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");

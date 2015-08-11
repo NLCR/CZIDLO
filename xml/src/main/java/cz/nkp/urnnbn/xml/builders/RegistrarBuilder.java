@@ -39,7 +39,7 @@ public class RegistrarBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("registrar", RESOLVER_NS);
+        Element root = new Element("registrar", CZIDLO_NS);
         root.addAttribute(new Attribute("code", registrar.getCode().toString()));
         root.addAttribute(new Attribute("id", registrar.getId().toString()));
         appendElementWithContentIfNotNull(root, registrar.getName(), "name");

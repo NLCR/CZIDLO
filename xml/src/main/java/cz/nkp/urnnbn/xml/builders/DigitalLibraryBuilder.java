@@ -36,7 +36,7 @@ public class DigitalLibraryBuilder extends XmlBuilder {
 
     @Override
     Element buildRootElement() {
-        Element root = new Element("digitalLibrary", RESOLVER_NS);
+        Element root = new Element("digitalLibrary", CZIDLO_NS);
         root.addAttribute(new Attribute("id", lib.getId().toString()));
         appendElementWithContentIfNotNull(root, lib.getName(), "name");
         appendElementWithContentIfNotNull(root, lib.getDescription(), "description");

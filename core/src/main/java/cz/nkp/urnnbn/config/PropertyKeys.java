@@ -17,7 +17,7 @@
 package cz.nkp.urnnbn.config;
 
 /**
- * Properties shared among all modules. All the keys are prefixed by "resolver".
+ * Properties shared among all modules. All the keys are prefixed with "czidlo".
  *
  * @author Martin Řehánek
  */
