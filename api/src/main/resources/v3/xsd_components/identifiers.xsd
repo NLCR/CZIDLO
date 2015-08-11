@@ -30,16 +30,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified" 
 targetNamespace="http://resolver.nkp.cz/v3/" 
-xmlns:r="http://resolver.nkp.cz/v3/"
+xmlns:czidlo="http://resolver.nkp.cz/v3/"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
 
     <xs:element name="identifiers">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="isbn" type="r:isbnType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="ccnb" type="r:ccnbType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="issn" type="r:issnType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="isbn" type="czidlo:isbnType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="ccnb" type="czidlo:ccnbType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="issn" type="czidlo:issnType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

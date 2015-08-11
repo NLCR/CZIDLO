@@ -21,16 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
-        This XML Schema (W3C) document validates records
-        that are imported into application urnnbn-resolver-v3 
-        through its http rest api.
+        This XML Schema (W3C) document validates api v3 digital-document-registration operation input data.
+        Document is not complete - some shared definitions are referenced here. It is defined in other xsd files.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
            targetNamespace="http://resolver.nkp.cz/v3/" 
-           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:czidlo="http://resolver.nkp.cz/v3/"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <!--<xs:include schemaLocation="identifiers.xsd.xml"/>-->
@@ -41,16 +40,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:complexType>
             <xs:sequence>
                 <xs:choice>
-                    <xs:element ref="r:monograph"/>
-                    <xs:element ref="r:monographVolume"/>
-                    <xs:element ref="r:periodical" />
-                    <xs:element ref="r:periodicalVolume"/>
-                    <xs:element ref="r:periodicalIssue"/>
-                    <xs:element ref="r:analytical"/>
-                    <xs:element ref="r:thesis"/>
-                    <xs:element ref="r:otherEntity"/>
+                    <xs:element ref="czidlo:monograph"/>
+                    <xs:element ref="czidlo:monographVolume"/>
+                    <xs:element ref="czidlo:periodical" />
+                    <xs:element ref="czidlo:periodicalVolume"/>
+                    <xs:element ref="czidlo:periodicalIssue"/>
+                    <xs:element ref="czidlo:analytical"/>
+                    <xs:element ref="czidlo:thesis"/>
+                    <xs:element ref="czidlo:otherEntity"/>
                 </xs:choice>
-                <xs:element ref="r:digitalDocument" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="czidlo:digitalDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -61,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="title" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
@@ -71,9 +70,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -84,8 +83,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="monographTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
-                            <xs:element name="volumeTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="monographTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="volumeTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -94,9 +93,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -107,7 +106,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="title" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
@@ -117,9 +116,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -130,8 +129,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="periodicalTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
-                            <xs:element name="volumeTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="periodicalTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="volumeTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -140,9 +139,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -153,9 +152,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="periodicalTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="periodicalTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="volumeTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                            <xs:element name="issueTitle" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="issueTitle" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
@@ -164,9 +163,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -177,16 +176,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="title" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="sourceDocument" type="r:sourceDocument" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="sourceDocument" type="czidlo:sourceDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -197,7 +196,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="title" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
@@ -206,9 +205,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="degreeAwardingInstitution" type="xs:string" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
@@ -220,7 +219,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
                     <xs:complexType > 
                         <xs:sequence>
-                            <xs:element name="title" type="r:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
                             <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
                         </xs:sequence>
                     </xs:complexType>
@@ -230,9 +229,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="primaryOriginator" type="r:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -246,15 +245,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <xs:element name="urnNbn" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="value" type="r:urnNbnType" minOccurs="0"/> 
-                            <xs:element name="predecessor" type="r:predecessor" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="value" type="czidlo:urnNbnType" minOccurs="0"/> 
+                            <xs:element name="predecessor" type="czidlo:predecessor" minOccurs="0" maxOccurs="unbounded"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element name="registrarScopeIdentifiers" type="r:registrarScopeIdentifiers" minOccurs="0" maxOccurs="1" />
+                <xs:element name="registrarScopeIdentifiers" type="czidlo:registrarScopeIdentifiers" minOccurs="0" maxOccurs="1" />
                 <xs:element name="financed" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="contractNumber" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="technicalMetadata" type="r:technicalMetadata" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="technicalMetadata" type="czidlo:technicalMetadata" minOccurs="0" maxOccurs="1"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

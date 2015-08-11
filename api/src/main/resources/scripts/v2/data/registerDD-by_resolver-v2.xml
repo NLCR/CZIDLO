@@ -28,87 +28,87 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->
-<r:import xmlns:r="http://resolver.nkp.cz/v2/">
+<import xmlns="http://resolver.nkp.cz/v2/">
     <!-- monografie -->
-    <r:monograph>
+    <monograph>
 <neco/>
-        <r:titleInfo>
+        <titleInfo>
             <!-- název (povinný údaj) -->
-            <r:title>Babička</r:title>
+            <title>Babička</title>
             <!-- další názvové údaje -->
-            <r:subTitle>Obrazy z venkovského života</r:subTitle>
-        </r:titleInfo>
+            <subTitle>Obrazy z venkovského života</subTitle>
+        </titleInfo>
         <!-- čČNB -->
-        <r:ccnb>cnb002251177</r:ccnb>
+        <ccnb>cnb002251177</ccnb>
         <!-- ISBN -->
-        <r:isbn>8090119964</r:isbn>
+        <isbn>8090119964</isbn>
         <!-- jiný globální identifikátor monografie -->
-        <r:otherId>DOI:TODO</r:otherId>
+        <otherId>DOI:TODO</otherId>
         <!-- druh dokumentu -->
-        <r:documentType>kniha</r:documentType>
+        <documentType>kniha</documentType>
         <!-- zda je dokument e-born, defaultně false -->
-        <r:digitalBorn>false</r:digitalBorn>
+        <digitalBorn>false</digitalBorn>
         <!-- hlavní původce (autor/korporace/akce) -->
-        <r:primaryOriginator type="AUTHOR">Božena Němcová</r:primaryOriginator>
+        <primaryOriginator type="AUTHOR">Božena Němcová</primaryOriginator>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
-        <r:otherOriginator>Adolf Kašpar</r:otherOriginator>
+        <otherOriginator>Adolf Kašpar</otherOriginator>
         <!-- informace o publikování -->
-        <r:publication>
+        <publication>
             <!-- název vydavatele -->
-            <r:publisher>Československý spisovatel</r:publisher>
+            <publisher>Československý spisovatel</publisher>
             <!-- místo vydání -->
-            <r:place>V Praze</r:place>
+            <place>V Praze</place>
             <!-- rok vydání -->
-            <r:year>2011</r:year>
-        </r:publication>
-    </r:monograph>
-    <r:digitalDocument>
+            <year>2011</year>
+        </publication>
+    </monograph>
+    <digitalDocument>
         <!-- identifikátor archivátora -->
-        <r:archiverId>3</r:archiverId>
+        <archiverId>3</archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
-<!--        <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1234</r:id>
-            <r:id type="signatura">PK-0123.999</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</r:id>
-        </r:registrarScopeIdentifiers>
+<!--        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1234</id>
+            <id type="signatura">PK-0123.999</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</id>
+        </registrarScopeIdentifiers>
 -->
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
-        <r:financed>norské fondy</r:financed>
+        <financed>norské fondy</financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
-        <r:contractNumber>123</r:contractNumber>
+        <contractNumber>123</contractNumber>
         <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
         digitálního dokumentu -->
-        <r:technicalMetadata>
+        <technicalMetadata>
             <!-- typ a verze formátu -->
-            <r:format version="1.0">jpeg</r:format>
+            <format version="1.0">jpeg</format>
             <!-- rozlišení nastavené na skeneru v dpi-->
             <!-- rozsah (v počtu souborů) -->
-            <r:extent>245 x jpeg2000;245 x mods-alto;1 x mods</r:extent>
+            <extent>245 x jpeg2000;245 x mods-alto;1 x mods</extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
-            <r:resolution>
+            <resolution>
                 <!-- horizontální -->
-                <r:horizontal>1280</r:horizontal>
+                <horizontal>1280</horizontal>
                 <!-- vertikální -->
-                <r:vertical>1024</r:vertical>
-            </r:resolution>
+                <vertical>1024</vertical>
+            </resolution>
             <!-- kompresní algoritmus a komprimační poměr -->
-            <r:compression ratio="0.3">LZW</r:compression>
-            <r:color>
+            <compression ratio="0.3">LZW</compression>
+            <color>
                 <!-- barevný model (např. RGB, CMYK)-->
-                <r:model>RGB</r:model>
+                <model>RGB</model>
                 <!-- bitová hloubka -->
-                <r:depth>24</r:depth>
-            </r:color>
+                <depth>24</depth>
+            </color>
             <!-- ICC profil -->
-            <r:iccProfile>some ICC profile</r:iccProfile>
+            <iccProfile>some ICC profile</iccProfile>
             <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
-            <r:pictureSize>
-                <r:width>600</r:width>
-                <r:height>1000</r:height>
-            </r:pictureSize>
-        </r:technicalMetadata>
-    </r:digitalDocument>
-</r:import>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>
 

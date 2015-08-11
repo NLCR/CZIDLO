@@ -15,9 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<r:response xmlns:r="http://resolver.nkp.cz/v3/">
-    <r:error>
-        <r:code>UNKNOWN_URN</r:code>
-        <r:message>No such urn 'urn:nbn:cz:boa001-00000d' has been assigned yet</r:message>
-    </r:error>
-</r:response>
+<response xmlns="http://resolver.nkp.cz/v3/">
+    <error>
+        <code>UNKNOWN_URN</code>
+        <message>No such urn 'urn:nbn:cz:boa001-00000d' has been assigned yet</message>
+    </error>
+</response>

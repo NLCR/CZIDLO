@@ -16,9 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:url>https://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</r:url>
-    <r:digitalLibraryId>4</r:digitalLibraryId>
-    <r:format>jpg;pdf</r:format>
-    <r:accessibility>volně přístupné</r:accessibility>
-</r:digitalInstance>
+<digitalInstance xmlns="http://resolver.nkp.cz/v2/">
+    <url>https://kramerius3.mzk.cz/kramerius/handle/BOA001/935239</url>
+    <digitalLibraryId>4</digitalLibraryId>
+    <format>jpg;pdf</format>
+    <accessibility>volně přístupné</accessibility>
+</digitalInstance>

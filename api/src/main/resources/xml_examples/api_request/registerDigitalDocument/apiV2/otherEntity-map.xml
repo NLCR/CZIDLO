@@ -31,84 +31,84 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->
-<r:import xmlns:r="http://resolver.nkp.cz/v2/">
-    <r:otherEntity>
-        <r:titleInfo>
+<import xmlns="http://resolver.nkp.cz/v2/">
+    <otherEntity>
+        <titleInfo>
             <!-- název (povinný údaj) -->
-            <r:title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</r:title>
+            <title>Uterque Rheni Circulus, Superior, et Inferior Electoralis, cum Palatinatu</title>
             <!-- další názvové údaje -->
-            <r:subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</r:subTitle>
-        </r:titleInfo>
+            <subTitle>Quos pro Parte includunt Westphalicus, Belgium Hispanicum, et Lotharingia qua Oriens</subTitle>
+        </titleInfo>
         <!-- čČNB -->
-        <r:ccnb>cnb123456789</r:ccnb>
+        <ccnb>cnb123456789</ccnb>
         <!-- ISBN (konrétně zde u mapy nemá význam, obecně ale u otherEntity být může)
-        <r:isbn/>
+        <isbn/>
         -->
         <!-- jiný globální identifikátor intelektuální entity -->
-        <r:otherId>DOI:10.3892/ijo_00000788</r:otherId>
+        <otherId>DOI:10.3892/ijo_00000788</otherId>
         <!-- druh dokumentu -->
-        <r:documentType>mapa</r:documentType>
+        <documentType>mapa</documentType>
         <!-- zda je dokument e-born, defaultně false -->
-        <r:digitalBorn>false</r:digitalBorn>
+        <digitalBorn>false</digitalBorn>
         <!-- hlavní původce (autor/korporace/akce) -->
-        <r:primaryOriginator type="AUTHOR">Valk, Gerhard</r:primaryOriginator>
+        <primaryOriginator type="AUTHOR">Valk, Gerhard</primaryOriginator>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
-        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
+        <otherOriginator>Jan Ilustrator</otherOriginator>
         <!-- informace o publikování -->
-        <r:publication>
+        <publication>
         <!-- název vydavatele -->
-            <r:publisher>Gerhard Valk</r:publisher>
+            <publisher>Gerhard Valk</publisher>
             <!-- místo vydání -->
-            <r:place>Amsterdam</r:place>
+            <place>Amsterdam</place>
             <!-- rok vydání -->
-            <r:year>1701</r:year>
-        </r:publication>
-    </r:otherEntity>
-    <r:digitalDocument>
+            <year>1701</year>
+        </publication>
+    </otherEntity>
+    <digitalDocument>
         <!-- identifikátor archivátora -->
-        <r:archiverId>3</r:archiverId>
+        <archiverId>3</archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
-        <r:registrarScopeIdentifiers>
-            <r:id type="aleph_id">mzk03:001056568</r:id>
-            <r:id type="signatura">Moll-0004.102</r:id>
-            <r:id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</r:id>
-            <r:id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</r:id>
-        </r:registrarScopeIdentifiers>
+        <registrarScopeIdentifiers>
+            <id type="aleph_id">mzk03:001056568</id>
+            <id type="signatura">Moll-0004.102</id>
+            <id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</id>
+            <id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</id>
+        </registrarScopeIdentifiers>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
-        <r:financed>norské fondy</r:financed>
+        <financed>norské fondy</financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
-        <r:contractNumber>123</r:contractNumber>
+        <contractNumber>123</contractNumber>
         <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
              digitálního dokumentu -->
-        <r:technicalMetadata>
+        <technicalMetadata>
             <!-- typ a verze formátu -->
-            <r:format version="1.0">jpeg</r:format>
+            <format version="1.0">jpeg</format>
             <!-- rozsah (v počtu souborů) -->
-            <r:extent>3 x jpeg2000;3 x mods-alto;1 x mods</r:extent>
+            <extent>3 x jpeg2000;3 x mods-alto;1 x mods</extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
-            <r:resolution>
+            <resolution>
                 <!-- horizontální -->
-                <r:horizontal>1280</r:horizontal>
+                <horizontal>1280</horizontal>
                 <!-- vertikální -->
-                <r:vertical>1024</r:vertical>
-            </r:resolution>
+                <vertical>1024</vertical>
+            </resolution>
             <!-- kompresní algoritmus a komprimační poměr -->
-            <r:compression ratio="0.3">LZW</r:compression>
-            <r:color>
+            <compression ratio="0.3">LZW</compression>
+            <color>
                 <!-- barevný model -->
-                <r:model>RGB</r:model>
+                <model>RGB</model>
                 <!-- bitová hloubka -->
-                <r:depth>24</r:depth>
-            </r:color>
+                <depth>24</depth>
+            </color>
             <!-- ICC profil -->
-            <r:iccProfile>some ICC profile</r:iccProfile>
+            <iccProfile>some ICC profile</iccProfile>
             <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
-            <r:pictureSize>
-                <r:width>600</r:width>
-                <r:height>1000</r:height>
-            </r:pictureSize>
-        </r:technicalMetadata>
-    </r:digitalDocument>
-</r:import>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

@@ -21,23 +21,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
-        This XML Schema (W3C) document validates digital instances
-        that are imported into application urnnbn-resolver-v3 
-        through its http rest api.
+        This XML Schema (W3C) document validates api v3 digital-instance-import operation input data.
+        Document is not complete - some shared definitions are referenced here. It is defined in other xsd files.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
            targetNamespace="http://resolver.nkp.cz/v3/" 
-           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:czidlo="http://resolver.nkp.cz/v3/"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <xs:include schemaLocation="common.xsd.xml"/>
     <xs:element name="digitalInstance">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="url" type="r:url"/>
+                <xs:element name="url" type="czidlo:url"/>
                 <xs:element name="digitalLibraryId" type="xs:integer"/>
                 <xs:element name="format" type="xs:string" minOccurs="0"/>
                 <xs:element name="accessibility" type="xs:string" minOccurs="0"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<r:digitalInstance xmlns:r="http://resolver.nkp.cz/v3/">
-    <r:url>http://kramerius.nkp.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</r:url> 
-    <r:digitalLibraryId>39</r:digitalLibraryId>
-    <r:format>jpg;pdf</r:format>
-    <r:accessibility>volně přístupné</r:accessibility>
-</r:digitalInstance>
+<digitalInstance xmlns="http://resolver.nkp.cz/v3/">
+    <url>http://kramerius.nkp.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d</url> 
+    <digitalLibraryId>39</digitalLibraryId>
+    <format>jpg;pdf</format>
+    <accessibility>volně přístupné</accessibility>
+</digitalInstance>

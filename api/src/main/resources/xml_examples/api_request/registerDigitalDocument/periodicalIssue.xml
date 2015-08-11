@@ -29,84 +29,84 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->
-<r:import xmlns:r="http://resolver.nkp.cz/v3/">
+<import xmlns="http://resolver.nkp.cz/v3/">
     <!-- výtisk periodika -->
-    <r:periodicalIssue>
-        <r:titleInfo>
+    <periodicalIssue>
+        <titleInfo>
             <!-- název periodika (povinný údaj) -->
-            <r:periodicalTitle>Rudé právo</r:periodicalTitle>
+            <periodicalTitle>Rudé právo</periodicalTitle>
             <!-- název ročníku (svazku) -->
-            <r:volumeTitle>ročník 1945</r:volumeTitle>
+            <volumeTitle>ročník 1945</volumeTitle>
             <!-- název čísla (povinný údaj) -->
-            <r:issueTitle>16.5.1945</r:issueTitle>
-        </r:titleInfo>
+            <issueTitle>16.5.1945</issueTitle>
+        </titleInfo>
         <!-- čČNB periodika -->
-        <r:ccnb>cnb000431774</r:ccnb>
+        <ccnb>cnb000431774</ccnb>
         <!-- ISSN periodika -->
-        <r:issn>0032-6569</r:issn>
+        <issn>0032-6569</issn>
         <!-- jiný globální identifikátor periodika -->
-        <r:otherId>SICI:TODO</r:otherId>
+        <otherId>SICI:TODO</otherId>
         <!-- druh dokumentu -->
-        <r:documentType>ranní vydání novin</r:documentType>
+        <documentType>ranní vydání novin</documentType>
         <!-- zda je dokument e-born, defaultně false -->
-        <r:digitalBorn>false</r:digitalBorn>
+        <digitalBorn>false</digitalBorn>
         <!-- hlavní původce (autor/korporace/akce) -->
-        <r:primaryOriginator type="CORPORATION">Komunistická strana Československa</r:primaryOriginator>
+        <primaryOriginator type="CORPORATION">Komunistická strana Československa</primaryOriginator>
         <!-- další původce (např. ilustrátor nebo překladatel) -->
-        <r:otherOriginator>Jan Ilustrator</r:otherOriginator>
+        <otherOriginator>Jan Ilustrator</otherOriginator>
         <!-- informace o publikování -->
-        <r:publication>
+        <publication>
         <!-- název vydavatele -->
-            <r:publisher>Ústřední výbor KSČ</r:publisher>
+            <publisher>Ústřední výbor KSČ</publisher>
             <!-- místo vydání -->
-            <r:place>Praha</r:place>
+            <place>Praha</place>
             <!-- rok vydání -->
-            <r:year>1945</r:year>
-        </r:publication>
-    </r:periodicalIssue>
-    <r:digitalDocument>
+            <year>1945</year>
+        </publication>
+    </periodicalIssue>
+    <digitalDocument>
         <!-- identifikátor archivátora -->
-        <r:archiverId>3</r:archiverId>
+        <archiverId>3</archiverId>
         <!-- seznam identifikátorů v rámci registrátora -->
-        <r:registrarScopeIdentifiers>
-            <r:id type="OAI_harvester">1237</r:id>
-            <r:id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedj</r:id>
-        </r:registrarScopeIdentifiers>
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1237</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedj</id>
+        </registrarScopeIdentifiers>
         <!-- čím/kým byla digitalizace financována 
              pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
         -->
-        <r:financed>norské fondy</r:financed>
+        <financed>norské fondy</financed>
         <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
-        <r:contractNumber>123</r:contractNumber>
+        <contractNumber>123</contractNumber>
         <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
              digitálního dokumentu -->
-        <r:technicalMetadata>
+        <technicalMetadata>
             <!-- typ a verze formátu -->
-            <r:format version="1.0">jpeg</r:format>
+            <format version="1.0">jpeg</format>
             <!-- rozsah (v počtu souborů) -->
-            <r:extent>12 x jpeg2000;12 x mods-alto;1 x mods</r:extent>
+            <extent>12 x jpeg2000;12 x mods-alto;1 x mods</extent>
             <!-- rozlišení nastavené na skeneru v dpi-->
-            <r:resolution>
+            <resolution>
                 <!-- horizontální -->
-                <r:horizontal>1280</r:horizontal>
+                <horizontal>1280</horizontal>
                 <!-- vertikální -->
-                <r:vertical>1024</r:vertical>
-            </r:resolution>
+                <vertical>1024</vertical>
+            </resolution>
             <!-- kompresní algoritmus a komprimační poměr -->
-            <r:compression ratio="0.3">LZW</r:compression>
-            <r:color>
+            <compression ratio="0.3">LZW</compression>
+            <color>
                 <!-- barevný model -->
-                <r:model>RGB</r:model>
+                <model>RGB</model>
                 <!-- bitová hloubka -->
-                <r:depth>24</r:depth>
-            </r:color>
+                <depth>24</depth>
+            </color>
             <!-- ICC profil -->
-            <r:iccProfile>some ICC profile</r:iccProfile>
+            <iccProfile>some ICC profile</iccProfile>
             <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
-            <r:pictureSize>
-                <r:width>600</r:width>
-                <r:height>1000</r:height>
-            </r:pictureSize>
-        </r:technicalMetadata>
-    </r:digitalDocument>
-</r:import>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

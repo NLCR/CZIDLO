@@ -20,20 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
            targetNamespace="http://resolver.nkp.cz/v3/" 
-           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:czidlo="http://resolver.nkp.cz/v3/"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
 
     <!-- technical metadata -->
     <xs:complexType name="technicalMetadata">
         <xs:sequence>
-            <xs:element name="format" type="r:format" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="format" type="czidlo:format" minOccurs="0" maxOccurs="1"/>
             <xs:element name="extent" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="resolution" type="r:resolution" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="compression" type="r:compression" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="color" type="r:color" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="resolution" type="czidlo:resolution" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="compression" type="czidlo:compression" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="color" type="czidlo:color" minOccurs="0" maxOccurs="1"/>
             <xs:element name="iccProfile" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="pictureSize" type="r:pictureSize" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="pictureSize" type="czidlo:pictureSize" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     

@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
            targetNamespace="http://resolver.nkp.cz/v3/" 
-           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:czidlo="http://resolver.nkp.cz/v3/"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <xs:complexType name="errorType">
         <xs:sequence>
-            <xs:element name="code" type="r:errorCodeType"/>
+            <xs:element name="code" type="czidlo:errorCodeType"/>
             <xs:element name="message" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>

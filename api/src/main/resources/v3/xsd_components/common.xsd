@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified" 
            targetNamespace="http://resolver.nkp.cz/v3/" 
-           xmlns:r="http://resolver.nkp.cz/v3/"
+           xmlns:czidlo="http://resolver.nkp.cz/v3/"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     
@@ -39,16 +39,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- registrar scope identifiers -->
     <xs:complexType name="registrarScopeIdentifiers">
         <xs:sequence>
-            <xs:element name="id" type="r:registrarScopeIdentifier" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="id" type="czidlo:registrarScopeIdentifier" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     
     <!-- registrar scope identifier and type -->
     <xs:complexType name="registrarScopeIdentifier">
         <xs:simpleContent>
-            <xs:extension base="r:registarScopeIdValueType">
-                <xs:attribute name="type" use="required" type="r:registarScopeIdTypeType"/>
-                <xs:attribute name="previousValue" use="optional" type="r:registarScopeIdValueType"/>
+            <xs:extension base="czidlo:registarScopeIdValueType">
+                <xs:attribute name="type" use="required" type="czidlo:registarScopeIdTypeType"/>
+                <xs:attribute name="previousValue" use="optional" type="czidlo:registarScopeIdValueType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="primaryOriginator">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="type" use="required" type="r:originatorTypeType"/>
+                <xs:attribute name="type" use="required" type="czidlo:originatorTypeType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -108,7 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:element name="isbn" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="issn" type="xs:string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="publication" type="r:publication" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -166,17 +166,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </xs:simpleType>
             </xs:element>
             <xs:element name="deactivationNote" type="xs:string" minOccurs="0"/> 
-            <xs:element name="value" type="r:urnNbnType"/> 
-            <xs:element name="countryCode" type="r:countryCode" minOccurs="0"/> 
-            <xs:element name="registrarCode" type="r:registrarCode" minOccurs="0"/> 
-            <xs:element name="documentCode" type="r:documentCode" minOccurs="0"/> 
+            <xs:element name="value" type="czidlo:urnNbnType"/> 
+            <xs:element name="countryCode" type="czidlo:countryCode" minOccurs="0"/> 
+            <xs:element name="registrarCode" type="czidlo:registrarCode" minOccurs="0"/> 
+            <xs:element name="documentCode" type="czidlo:documentCode" minOccurs="0"/> 
             <xs:element name="digitalDocumentId" type="xs:int" minOccurs="0"/> 
             <xs:element name="reserved" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="registered" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="deactivated" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="predecessor" type="r:predecessor" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="successor" type="r:successor" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="predecessor" type="czidlo:predecessor" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="successor" type="czidlo:successor" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -184,7 +184,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="predecessor">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="value" type="r:urnNbnType"/>
+                <xs:attribute name="value" type="czidlo:urnNbnType"/>
                 <xs:attribute name="note" use="optional" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
@@ -194,7 +194,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="successor">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="value" type="r:urnNbnType"/>
+                <xs:attribute name="value" type="czidlo:urnNbnType"/>
                 <xs:attribute name="note" use="optional" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
