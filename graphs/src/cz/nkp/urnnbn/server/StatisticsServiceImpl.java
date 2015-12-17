@@ -1,8 +1,13 @@
 package cz.nkp.urnnbn.server;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
 import cz.nkp.urnnbn.client.StatisticsService;
 import cz.nkp.urnnbn.shared.FieldVerifier;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import cz.nkp.urnnbn.shared.Registrar;
 
 /**
  * The server-side implementation of the RPC service.
@@ -44,5 +49,34 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements
 		}
 		return html.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
 				.replaceAll(">", "&gt;");
+	}
+	
+	@Override
+	public Map<Integer, Map<String, Integer>> getRegistrationPerYears() {
+		RegistrarsManager registrars = RegistrarsManager.getInstance();
+		Map<Integer, Map<String, Integer>> result = new HashMap<>();
+		for (RegistrarRegistrationsData registrar : registrars.getRegistrars()) {
+			for (Integer year : registrar.getActiveYears()) {
+				Map<String, Integer> yearMap = result.get(year);
+				if (yearMap == null) {
+					yearMap = new HashMap<>();
+					result.put(year, yearMap);
+				}
+				yearMap.put(registrar.getRegistrar().getCode(),
+						registrar.getRegistrations(year));
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Map<Registrar, Integer> getTotalRegistrationsByRegistrar() {
+		RegistrarsManager regManager = RegistrarsManager.getInstance();
+		Map<Registrar, Integer> result = new HashMap<>();
+		for (RegistrarRegistrationsData registrationData : regManager.getRegistrars()) {
+			int total = registrationData.getRegistrationsTotal();
+			result.put(registrationData.getRegistrar(), total);
+		}
+		return result;
 	}
 }
