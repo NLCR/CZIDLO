@@ -120,7 +120,7 @@ public class Graphs implements EntryPoint {
 		// }
 		// });
 
-		service.getRegistrationPerYears(new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
+		service.getAssignmentsByYear(new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
 
 			@Override
 			public void onSuccess(Map<Integer, Map<String, Integer>> result) {

@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.server;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -48,30 +49,55 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
-	public Map<Integer, Map<String, Integer>> getRegistrationPerYears() {
-		RegistrarsManager registrars = RegistrarsManager.getInstance();
+	public Map<Registrar, Integer> getTotalRegistrationsByRegistrar() {
+		RegistrarsManager registrarMgr = RegistrarsManager.getInstance();
+		Map<Registrar, Integer> result = new HashMap<>();
+		for (Registrar registrar : registrarMgr.getRegistrars()) {
+			Assignments assignments = registrarMgr.getAssignmentData(registrar.getCode());
+			int total = assignments.getRegistrationsTotal();
+			result.put(registrar, total);
+		}
+		return result;
+	}
+
+	@Override
+	public Set<Registrar> getRegistrars() {
+		return RegistrarsManager.getInstance().getRegistrars();
+	}
+
+	@Override
+	public Map<Integer, Integer> getAssignmentsByYear(String registrarCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Integer, Map<String, Integer>> getAssignmentsByYear() {
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
 		Map<Integer, Map<String, Integer>> result = new HashMap<>();
-		for (RegistrarRegistrationsData registrar : registrars.getRegistrars()) {
-			for (Integer year : registrar.getActiveYears()) {
+		for (Registrar registrar : registraMgr.getRegistrars()) {
+			Assignments assignments = registraMgr.getAssignmentData(registrar.getCode());
+			for (Integer year : assignments.getActiveYears()) {
 				Map<String, Integer> yearMap = result.get(year);
 				if (yearMap == null) {
 					yearMap = new HashMap<>();
 					result.put(year, yearMap);
 				}
-				yearMap.put(registrar.getRegistrar().getCode(), registrar.getRegistrations(year));
+				yearMap.put(registrar.getCode(), assignments.getRegistrations(year));
 			}
 		}
 		return result;
 	}
 
 	@Override
-	public Map<Registrar, Integer> getTotalRegistrationsByRegistrar() {
-		RegistrarsManager regManager = RegistrarsManager.getInstance();
-		Map<Registrar, Integer> result = new HashMap<>();
-		for (RegistrarRegistrationsData registrationData : regManager.getRegistrars()) {
-			int total = registrationData.getRegistrationsTotal();
-			result.put(registrationData.getRegistrar(), total);
-		}
-		return result;
+	public Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -15,7 +16,18 @@ public interface StatisticsService extends RemoteService {
 
 	String greetServer(String name) throws IllegalArgumentException;
 
-	Map<Integer, Map<String, Integer>> getRegistrationPerYears();
-
+	@Deprecated
 	Map<Registrar, Integer> getTotalRegistrationsByRegistrar();
+	
+	Set<Registrar> getRegistrars();
+	
+	Map<Integer, Integer> getAssignmentsByYear(String registrarCode);
+	
+	Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year);
+	
+	Map<Integer, Map<String, Integer>> getAssignmentsByYear();
+	
+	Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year);
+	
+	
 }

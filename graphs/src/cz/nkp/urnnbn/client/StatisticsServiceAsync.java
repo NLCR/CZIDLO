@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -13,7 +14,15 @@ public interface StatisticsServiceAsync {
 
 	void greetServer(String input, AsyncCallback<String> callback) throws IllegalArgumentException;
 
-	void getRegistrationPerYears(AsyncCallback<Map<Integer, Map<String, Integer>>> callback);
+	void getAssignmentsByYear(AsyncCallback<Map<Integer, Map<String, Integer>>> callback);
 
 	void getTotalRegistrationsByRegistrar(AsyncCallback<Map<Registrar, Integer>> callback);
+
+	void getRegistrars(AsyncCallback<Set<Registrar>> callback);
+
+	void getAssignmentsByYear(String registrarCode, AsyncCallback<Map<Integer, Integer>> callback);
+
+	void getAssignmentsByMonth(int year, AsyncCallback<Map<Integer, Map<String, Integer>>> callback);
+
+	void getAssignmentsByMonth(String registrarCode, int year, AsyncCallback<Map<Integer, Integer>> callback);
 }
