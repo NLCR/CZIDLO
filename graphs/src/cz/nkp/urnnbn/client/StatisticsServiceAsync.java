@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,4 +26,10 @@ public interface StatisticsServiceAsync {
 	void getAssignmentsByMonth(int year, AsyncCallback<Map<Integer, Map<String, Integer>>> callback);
 
 	void getAssignmentsByMonth(String registrarCode, int year, AsyncCallback<Map<Integer, Integer>> callback);
+
+	void getYearsSorted(AsyncCallback<List<Integer>> callback);
+
+	void getTotalAssignmentsByYear(AsyncCallback<Map<Integer, Integer>> callback);
+
+	void getTotalAssignmentsByMonth(int year, AsyncCallback<Map<Integer, Integer>> callback);
 }

@@ -15,9 +15,13 @@ public class RegistrarBuilder {
 	public static Registrar buildKnav() {
 		return new Registrar("knav", "Knihovna akademie věd");
 	}
-	
+
 	public static Registrar buildRegistrar(int id) {
 		return new Registrar("test_" + id, "Testovací registrátor " + id);
+	}
+
+	public static Registrar buildMuni() {
+		return new Registrar("muni", "Masarykova univerzita");
 	}
 
 }

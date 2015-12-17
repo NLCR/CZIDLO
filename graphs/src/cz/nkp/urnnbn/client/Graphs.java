@@ -11,12 +11,15 @@ import java.util.logging.Logger;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -34,6 +37,8 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
+import cz.nkp.urnnbn.shared.Registrar;
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
@@ -50,7 +55,19 @@ public class Graphs implements EntryPoint {
 	// private SimpleLayoutPanel layoutPanel;
 	// private VerticalPanel panel;
 
-	private StackLayoutPanel panel;
+	// private StackLayoutPanel panel;
+	private VerticalPanel container;
+	private VerticalPanel header;
+	private HorizontalPanel headerRegistrators;
+	private HorizontalPanel headerCumulated;
+	private HorizontalPanel headerYears;
+
+	// data
+	private Registrar currentRegistrar;
+	private Map<Integer, Integer> currentData;
+	private boolean accumulated = false;
+	private Integer currentYear = null;
+
 	// TabLayoutPanel panel;
 
 	// private RegistrationsByRegistrarPieChart totalByRegistrarChart;
@@ -58,14 +75,51 @@ public class Graphs implements EntryPoint {
 	private PieChart pieChart;
 	private ColumnChart columnChart;
 
+	private IntegerKeyColumnChart registrarYearlyChart;
+
 	/**
 	 * This is the entry point method.
 	 */
 	@Override
 	public void onModuleLoad() {
+		// logger.info("onModuleLoad");
 		Window.enableScrolling(true);
 		Window.setMargin("0px");
-		RootLayoutPanel.get().add(getPanel());
+
+		container = new VerticalPanel();
+		container.setWidth("100%");
+		RootLayoutPanel.get().add(container);
+
+		// header
+		header = new VerticalPanel();
+		header.setSpacing(10);
+		header.setWidth("100%");
+		container.add(header);
+		// registrar selection
+		headerRegistrators = new HorizontalPanel();
+		header.add(headerRegistrators);
+		initRegistrars();
+		// accumulated checkbox
+		headerCumulated = new HorizontalPanel();
+		CheckBox cumulatedCheckbox = new CheckBox("kumulované");
+		cumulatedCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				accumulated = event.getValue();
+				reloadGraphs();
+			}
+		});
+		headerCumulated.add(cumulatedCheckbox);
+		header.add(headerCumulated);
+		// year selection
+
+		headerYears = new HorizontalPanel();
+		header.add(headerYears);
+		initYears();
+
+		// registrarYearlyChart = new IntegerKeyColumnChart();
+		// container.add(registrarYearlyChart.getWidget());
 
 		// Create the API Loader
 		ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
@@ -78,18 +132,153 @@ public class Graphs implements EntryPoint {
 				// getPanel().add(getTotalByRegistrarPieChart(),
 				// new HTML("total by registrar"));
 
-				getPanel().add(getYearsChart(), new HTML("years"), 4);
-				getPanel().add(getPieChart(), new HTML("pie test"), 4);
-				getPanel().add(getColumnChart(), new HTML("column test"), 4);
+				// getPanel().add(getRegistrarYearlyChart().getWidget(), new HTML("yearly total"), 4);
+				// getPanel().add(getYearsChart(), new HTML("years"), 4);
+				// getPanel().add(getPieChart(), new HTML("pie test"), 4);
+				// getPanel().add(getColumnChart(), new HTML("column test"), 4);
+
+				// container.add(getRegistrarYearlyChart().getWidget());
+				registrarYearlyChart = new IntegerKeyColumnChart();
+				container.add(registrarYearlyChart.getWidget());
+				container.add(getYearsChart());
+				container.add(getPieChart());
+				container.add(getColumnChart());
 
 				// getPanel().add(new HTML("TODO"),
 				// new HTML("months (registrar)"), 4);
 				// getPanel().add(getTotalByRegistrarPieChart().getWidget(),
 				// new HTML("total by registrar"), 4);
-				initData();
+				// initData();
 			}
 
 		});
+	}
+
+	private void initYears() {
+		service.getYearsSorted(new AsyncCallback<List<Integer>>() {
+
+			@Override
+			public void onSuccess(List<Integer> result) {
+				RadioButton wholeTimeCheckbox = new RadioButton("years", "celé období");
+				headerYears.add(wholeTimeCheckbox);
+				wholeTimeCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+					@Override
+					public void onValueChange(ValueChangeEvent<Boolean> event) {
+						// currentYear = null;
+						// reloadGraphs();
+						loadData(currentRegistrar, null);
+					}
+				});
+				wholeTimeCheckbox.setValue(true);
+
+				for (Integer year : result) {
+					final Integer thisYear = year;
+					RadioButton yearCheckbox = new RadioButton("years", year.toString());
+					headerYears.add(yearCheckbox);
+					yearCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							// currentYear = thisYear;
+							loadData(currentRegistrar, thisYear);
+							// reloadGraphs();
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe(caught.getMessage());
+			}
+		});
+
+	}
+
+	private void initRegistrars() {
+		service.getRegistrars(new AsyncCallback<Set<Registrar>>() {
+
+			@Override
+			public void onSuccess(Set<Registrar> result) {
+				RadioButton totalButton = new RadioButton("registrars", "total");
+				headerRegistrators.add(totalButton);
+				totalButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+					@Override
+					public void onValueChange(ValueChangeEvent<Boolean> event) {
+						boolean selected = event.getValue();
+						if (selected) {
+							loadData(null, currentYear);
+						}
+					}
+				});
+				totalButton.setValue(true);
+
+				for (Registrar registrar : result) {
+					RadioButton registrarButton = new RadioButton("registrars", registrar.getCode());
+					headerRegistrators.add(registrarButton);
+					final Registrar thisRegistrar = registrar;
+					registrarButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+						@Override
+						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							boolean selected = event.getValue();
+							if (selected) {
+								loadData(thisRegistrar, currentYear);
+							}
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe(caught.getMessage());
+			}
+		});
+	}
+
+	private void loadData(final Registrar registrar, final Integer year) {
+		AsyncCallback<Map<Integer, Integer>> callback = new AsyncCallback<Map<Integer, Integer>>() {
+
+			@Override
+			public void onSuccess(Map<Integer, Integer> result) {
+				currentRegistrar = registrar;
+				currentYear = year;
+				currentData = result;
+				reloadGraphs();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe(caught.getMessage());
+			}
+		};
+
+		if (registrar != null) {
+			if (year != null) {
+				service.getAssignmentsByMonth(registrar.getCode(), year, callback);
+			} else {
+				service.getAssignmentsByYear(registrar.getCode(), callback);
+			}
+		} else {
+			if (year != null) {
+				service.getTotalAssignmentsByMonth(year, callback);
+			} else {
+				service.getTotalAssignmentsByYear(callback);
+			}
+		}
+	}
+
+	private void reloadGraphs() {
+		if (registrarYearlyChart != null) {
+			String yLabel = accumulated ? "přiřazení (kumulované)" : "přiřazení";
+			String xLabel = currentYear != null ? "rok" : "měsíc";
+			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
+			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
+			registrarYearlyChart.setDataAndDraw(currentData, title, xLabel, yLabel, valueLabel, accumulated);
+		}
 	}
 
 	private void initData() {
@@ -131,6 +320,20 @@ public class Graphs implements EntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {
 				// logger.severe("here-x-2");
+				logger.severe(caught.getMessage());
+			}
+		});
+
+		service.getAssignmentsByYear("mzk", new AsyncCallback<Map<Integer, Integer>>() {
+
+			@Override
+			public void onSuccess(Map<Integer, Integer> result) {
+				// getRegistrarYearlyChart().setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK");
+				registrarYearlyChart.setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK", false);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
 				logger.severe(caught.getMessage());
 			}
 		});
@@ -237,12 +440,24 @@ public class Graphs implements EntryPoint {
 
 	}
 
-	private StackLayoutPanel getPanel() {
-		if (panel == null) {
-			panel = new StackLayoutPanel(Unit.EM);
-		}
-		return panel;
-	}
+	// private StackLayoutPanel getPanel() {
+	// if (panel == null) {
+	// panel = new StackLayoutPanel(Unit.EM);
+	// }
+	// return panel;
+	// }
+
+	// private VerticalPanel getContainer() {
+	// if (container == null) {
+	// container = new VerticalPanel();
+	// container.setWidth("100%");
+	// header = new VerticalPanel();
+	// header.setWidth("100%");
+	// headerRegistrators = new HorizontalPanel();
+	// header.add(headerRegistrators);
+	// }
+	// return container;
+	// }
 
 	private PieChart getPieChart() {
 		if (pieChart == null) {
@@ -358,9 +573,9 @@ public class Graphs implements EntryPoint {
 		List<String> result = new ArrayList<>();
 		result.addAll(registrarCodes);
 		Collections.sort(result);
-		for (String registrar : result) {
-			logger.info("registrar " + registrar);
-		}
+		// for (String registrar : result) {
+		// logger.info("registrar " + registrar);
+		// }
 		return result;
 	}
 
@@ -368,9 +583,9 @@ public class Graphs implements EntryPoint {
 		List<Integer> result = new ArrayList<>();
 		result.addAll(data.keySet());
 		Collections.sort(result);
-		for (Integer year : result) {
-			logger.info("year " + year);
-		}
+		// for (Integer year : result) {
+		// logger.info("year " + year);
+		// }
 		return result;
 	}
 

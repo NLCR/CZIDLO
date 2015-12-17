@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.server;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,6 +42,15 @@ public class Assignments {
 		}
 	}
 
+	public Map<Integer, Integer> getAnnualAssignments() {
+		Map<Integer, Integer> result = new HashMap<>();
+		for (Integer year : yearsMap.keySet()) {
+			Integer allMonths = getRegistrations(year);
+			result.put(year, allMonths);
+		}
+		return result;
+	}
+
 	public int getRegistrations(int year) {
 		Map<Integer, Integer> monthMap = yearsMap.get(year);
 		if (monthMap == null) {
@@ -61,6 +72,15 @@ public class Assignments {
 			}
 		}
 		return sum;
+	}
+
+	public Set<Integer> getActiveMonths(int year) {
+		Map<Integer, Integer> months = yearsMap.get(year);
+		if (months == null) {
+			return Collections.emptySet();
+		} else {
+			return yearsMap.get(year).keySet();
+		}
 	}
 
 }

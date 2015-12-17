@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,16 +19,21 @@ public interface StatisticsService extends RemoteService {
 
 	@Deprecated
 	Map<Registrar, Integer> getTotalRegistrationsByRegistrar();
-	
+
+	List<Integer> getYearsSorted();
+
 	Set<Registrar> getRegistrars();
-	
+
 	Map<Integer, Integer> getAssignmentsByYear(String registrarCode);
-	
+
 	Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year);
-	
+
+	Map<Integer, Integer> getTotalAssignmentsByYear();
+
+	Map<Integer, Integer> getTotalAssignmentsByMonth(int year);
+
 	Map<Integer, Map<String, Integer>> getAssignmentsByYear();
-	
+
 	Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year);
-	
-	
+
 }

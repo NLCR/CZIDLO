@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.server;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,20 +62,35 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
+	public List<Integer> getYearsSorted() {
+		return RegistrarsManager.getInstance().getYears();
+	}
+
+	@Override
 	public Set<Registrar> getRegistrars() {
 		return RegistrarsManager.getInstance().getRegistrars();
 	}
 
 	@Override
 	public Map<Integer, Integer> getAssignmentsByYear(String registrarCode) {
-		// TODO Auto-generated method stub
-		return null;
+		return RegistrarsManager.getInstance().getAssignmentData(registrarCode).getAnnualAssignments();
 	}
 
 	@Override
 	public Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year) {
-		// TODO Auto-generated method stub
-		return null;
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
+		Map<Integer, Integer> result = new HashMap<>();
+		for (Integer month : registraMgr.getMonths()) {
+			result.put(month, 0);
+		}
+		Assignments assignments = registraMgr.getAssignmentData(registrarCode);
+		for (Integer month : assignments.getActiveMonths(year)) {
+			// System.out.println("year: " + year + ", month: " + month);
+
+			int inMonth = assignments.getRegistrations(year, month);
+			result.put(month, inMonth);
+		}
+		return result;
 	}
 
 	@Override
@@ -100,4 +116,44 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Map<Integer, Integer> getTotalAssignmentsByYear() {
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
+		List<Integer> years = registraMgr.getYears();
+		Map<Integer, Integer> result = new HashMap<>();
+		for (Integer year : years) {
+			result.put(year, 0);
+		}
+		for (Registrar registrar : registraMgr.getRegistrars()) {
+			Assignments assignments = registraMgr.getAssignmentData(registrar.getCode());
+			for (Integer year : assignments.getActiveYears()) {
+				Integer soFar = result.get(year);// teoreticky muze byt null
+				soFar += assignments.getRegistrations(year);
+				result.put(year, soFar);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Map<Integer, Integer> getTotalAssignmentsByMonth(int year) {
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
+		Map<Integer, Integer> result = new HashMap<>();
+		List<Integer> months = registraMgr.getMonths();
+		for (Integer month : months) {
+			result.put(month, 0);
+		}
+		for (Registrar registrar : registraMgr.getRegistrars()) {
+			Assignments assignments = registraMgr.getAssignmentData(registrar.getCode());
+			for (Integer month : assignments.getActiveMonths(year)) {
+				Integer soFar = result.get(month);// teoreticky muze byt null
+				// System.out.println("year: " + year + ", month: " + month);
+				soFar += assignments.getRegistrations(year, month);
+				result.put(month, soFar);
+			}
+		}
+		return result;
+	}
+
 }
