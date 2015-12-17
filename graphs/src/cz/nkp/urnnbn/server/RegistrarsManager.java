@@ -36,19 +36,17 @@ public class RegistrarsManager {
 		result.addRegistrar(mzk());
 		result.addRegistrar(knav());
 		Random random = new Random();
-//		for (int i = 0; i < 1; i++) {
-//			result.addRegistrar(randomRegistrar(i, random));
-//		}
+		// for (int i = 0; i < 1; i++) {
+		// result.addRegistrar(randomRegistrar(i, random));
+		// }
 		return result;
 	}
 
-	private static RegistrarRegistrationsData randomRegistrar(int i,
-			Random random) {
-		RegistrarRegistrationsData result = new RegistrarRegistrationsData(
-				new Registrar("generated_" + i, "Knihovna " + i));
+	private static RegistrarRegistrationsData randomRegistrar(int i, Random random) {
+		RegistrarRegistrationsData result = new RegistrarRegistrationsData(new Registrar("generated_" + i, "Knihovna " + i));
 		for (int year = 2013; year <= 2015; year++) {
 			for (int month = 1; month <= 12; month++) {
-				int registrations = random.nextInt(5)+1;
+				int registrations = random.nextInt(5) + 1;
 				// current -= 10 * i;
 				result.setMonthRegistrations(year, month, registrations);
 			}
@@ -57,8 +55,7 @@ public class RegistrarsManager {
 	}
 
 	private static RegistrarRegistrationsData knav() {
-		RegistrarRegistrationsData result = new RegistrarRegistrationsData(
-				new Registrar("knav", "Knihovna akademie věd"));
+		RegistrarRegistrationsData result = new RegistrarRegistrationsData(new Registrar("knav", "Knihovna akademie věd"));
 		// 2013
 		int current = 1000;
 		for (int i = 0; i < 12; i++) {
@@ -84,8 +81,7 @@ public class RegistrarsManager {
 	}
 
 	private static RegistrarRegistrationsData mzk() {
-		RegistrarRegistrationsData result = new RegistrarRegistrationsData(
-				new Registrar("mzk", "Moravská zemská knihovna"));
+		RegistrarRegistrationsData result = new RegistrarRegistrationsData(new Registrar("mzk", "Moravská zemská knihovna"));
 		// 2013
 		int current = 2;
 		for (int i = 0; i < 12; i++) {
@@ -109,8 +105,7 @@ public class RegistrarsManager {
 	}
 
 	private static RegistrarRegistrationsData nkp() {
-		RegistrarRegistrationsData result = new RegistrarRegistrationsData(
-				new Registrar("nkp", "Národní knihovna v Praze"));
+		RegistrarRegistrationsData result = new RegistrarRegistrationsData(new Registrar("nkp", "Národní knihovna v Praze"));
 		// 2013
 		int current = 3;
 		for (int i = 0; i < 12; i++) {

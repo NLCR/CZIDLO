@@ -12,8 +12,9 @@ import cz.nkp.urnnbn.shared.Registrar;
  */
 @RemoteServiceRelativePath("statistics")
 public interface StatisticsService extends RemoteService {
+
 	String greetServer(String name) throws IllegalArgumentException;
-	
+
 	Map<Integer, Map<String, Integer>> getRegistrationPerYears();
 
 	Map<Registrar, Integer> getTotalRegistrationsByRegistrar();

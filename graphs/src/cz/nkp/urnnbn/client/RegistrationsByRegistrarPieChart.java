@@ -72,13 +72,11 @@ public class RegistrationsByRegistrarPieChart {
 		}
 	}
 
-	private static class RegistrarWithRegistration implements
-			Comparable<RegistrarWithRegistration> {
+	private static class RegistrarWithRegistration implements Comparable<RegistrarWithRegistration> {
 		private final Registrar registrar;
 		private final Integer registrations;
 
-		public RegistrarWithRegistration(Registrar registrar,
-				Integer registrations) {
+		public RegistrarWithRegistration(Registrar registrar, Integer registrations) {
 			super();
 			this.registrar = registrar;
 			this.registrations = registrations;

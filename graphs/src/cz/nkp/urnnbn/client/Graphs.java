@@ -39,23 +39,13 @@ import com.googlecode.gwt.charts.client.options.VAxis;
  */
 public class Graphs implements EntryPoint {
 
-	private final Logger logger = Logger
-			.getLogger(Graphs.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(Graphs.class.getSimpleName());
+	private static final String SERVER_ERROR = "An error occurred while attempting to contact the server. Please check your network connection and try again.";
 
 	/**
-	 * The message displayed to the user when the server cannot be reached or
-	 * returns an error.
+	 * Create a remote service proxy to talk to the server-side Greeting service.
 	 */
-	private static final String SERVER_ERROR = "An error occurred while "
-			+ "attempting to contact the server. Please check your network "
-			+ "connection and try again.";
-
-	/**
-	 * Create a remote service proxy to talk to the server-side Greeting
-	 * service.
-	 */
-	private final StatisticsServiceAsync greetingService = GWT
-			.create(StatisticsService.class);
+	private final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
 
 	// private SimpleLayoutPanel layoutPanel;
 	// private VerticalPanel panel;
@@ -130,22 +120,20 @@ public class Graphs implements EntryPoint {
 		// }
 		// });
 
-		greetingService
-				.getRegistrationPerYears(new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
+		service.getRegistrationPerYears(new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
 
-					@Override
-					public void onSuccess(
-							Map<Integer, Map<String, Integer>> result) {
-						drawColumnChart(result);
+			@Override
+			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
+				drawColumnChart(result);
 
-					}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// logger.severe("here-x-2");
-						logger.severe(caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// logger.severe("here-x-2");
+				logger.severe(caught.getMessage());
+			}
+		});
 
 		drawTestPieChart();
 		drawTestColumnChart();
@@ -159,9 +147,8 @@ public class Graphs implements EntryPoint {
 		String[] countries = new String[] { "Austria" };
 		// int[] years = new int[] { 2001, 2002, 2003, 2004, 2005, 2006, 2007,
 		// 2008, 2009, 2010, 2011, 2012};
-		int[] years = new int[] { 2001, 2002, 2003, 2004, 2005, 2006, 2007,
-				2008, 2009, 2010, 2011, 2012, 2001, 2002, 2003, 2004, 2005,
-				2006, 2007, 2008, 2009, 2010, 2011, 2012 };
+		int[] years = new int[] { 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2001, 2002, 2003, 2004, 2005, 2006, 2007,
+				2008, 2009, 2010, 2011, 2012 };
 		int[][] values = new int[][] {
 		// { 1336060, 1538156, 1576579, 1600652, 1968113, 1901067, 1336060,
 		// 1538156, 1576579, 1600652, 1968113, 1901067},
@@ -175,9 +162,8 @@ public class Graphs implements EntryPoint {
 		// 930593, 897127, 1080887, 1056036,997974, 941795, 930593, 897127,
 		// 1080887, 1056036,997974, 941795, 930593, 897127, 1080887, 1056036 }
 		// };
-		{ 997974, 941795, 930593, 897127, 1080887, 1056036, 997974, 941795,
-				930593, 897127, 1080887, 1056036, 997974, 941795, 930593, 7,
-				1080887, 100, 997974, 1000, 930593, 10000, 1080887, 1056036 } };
+		{ 997974, 941795, 930593, 897127, 1080887, 1056036, 997974, 941795, 930593, 897127, 1080887, 1056036, 997974, 941795, 930593, 7, 1080887,
+				100, 997974, 1000, 930593, 10000, 1080887, 1056036 } };
 
 		// Prepare the data
 		DataTable dataTable = DataTable.create();
@@ -331,8 +317,7 @@ public class Graphs implements EntryPoint {
 				// logger.severe("registrar: " + registrarCode);
 				Integer registrations = registrarsMap.get(registrarCode);
 				// logger.severe("registrations: " + registrations);
-				dataTable.setValue(row, col + 1,
-						registrations != null ? registrations : 0);
+				dataTable.setValue(row, col + 1, registrations != null ? registrations : 0);
 				// logger.severe("registrar finished");
 			}
 		}
@@ -365,8 +350,7 @@ public class Graphs implements EntryPoint {
 
 	}
 
-	private List<String> toSortedRegistrarCodes(
-			Map<Integer, Map<String, Integer>> data) {
+	private List<String> toSortedRegistrarCodes(Map<Integer, Map<String, Integer>> data) {
 		Set<String> registrarCodes = new HashSet<>();
 		for (Integer year : data.keySet()) {
 			registrarCodes.addAll(data.get(year).keySet());
@@ -380,8 +364,7 @@ public class Graphs implements EntryPoint {
 		return result;
 	}
 
-	private List<Integer> toSortedYearList(
-			Map<Integer, Map<String, Integer>> data) {
+	private List<Integer> toSortedYearList(Map<Integer, Map<String, Integer>> data) {
 		List<Integer> result = new ArrayList<>();
 		result.addAll(data.keySet());
 		Collections.sort(result);
@@ -392,14 +375,10 @@ public class Graphs implements EntryPoint {
 	}
 
 	private void drawColumnChart() {
-		String[] countries = new String[] { "Austria", "Bulgaria", "Denmark",
-				"Greece" };
+		String[] countries = new String[] { "Austria", "Bulgaria", "Denmark", "Greece" };
 		int[] years = new int[] { 2003, 2004, 2005, 2006, 2007, 2008 };
-		int[][] values = new int[][] {
-				{ 1336060, 1538156, 1576579, 1600652, 1968113, 1901067 },
-				{ 400361, 366849, 440514, 434552, 393032, 517206 },
-				{ 1001582, 1119450, 993360, 1004163, 979198, 916965 },
-				{ 997974, 941795, 930593, 897127, 1080887, 1056036 } };
+		int[][] values = new int[][] { { 1336060, 1538156, 1576579, 1600652, 1968113, 1901067 }, { 400361, 366849, 440514, 434552, 393032, 517206 },
+				{ 1001582, 1119450, 993360, 1004163, 979198, 916965 }, { 997974, 941795, 930593, 897127, 1080887, 1056036 } };
 
 		// Prepare the data
 		DataTable dataTable = DataTable.create();
