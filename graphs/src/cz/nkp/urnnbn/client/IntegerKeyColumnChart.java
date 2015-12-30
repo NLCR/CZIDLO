@@ -44,10 +44,9 @@ public class IntegerKeyColumnChart {
 		});
 	}
 
-	public void setDataAndDraw(List<Integer> keysSorted, Map<Integer, Integer> data, String title, String xAxisDescription, String yAxisDescription,
-			String valueDescription, boolean agregate) {
+	public void setDataAndDraw(List<Integer> keysSorted, Map<Integer, Integer> data, Map<Integer, String> columnLabels, String title,
+			String xAxisDescription, String yAxisDescription, String valueDescription, boolean agregate) {
 		// logger.info("setDataAndDraw");
-		// prepare data
 		// keys = toSortedList(data.keySet());
 		keys = keysSorted;
 		if (agregate) {
@@ -64,7 +63,8 @@ public class IntegerKeyColumnChart {
 		// fill data
 		// key column
 		for (int i = 0; i < keys.size(); i++) {
-			dataTable.setValue(i, 0, keys.get(i).toString());
+			String label = columnLabels == null ? keys.get(i).toString() : columnLabels.get(keys.get(i));
+			dataTable.setValue(i, 0, label);
 		}
 		// value column
 		for (int row = 0; row < keys.size(); row++) {

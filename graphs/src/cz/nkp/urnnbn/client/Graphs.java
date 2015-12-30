@@ -277,7 +277,7 @@ public class Graphs implements EntryPoint {
 			String xLabel = currentYear != null ? "rok" : "měsíc";
 			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
-			registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), currentData, title, xLabel, yLabel, valueLabel, accumulated);
+			registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), currentData, null, title, xLabel, yLabel, valueLabel, accumulated);
 		}
 	}
 
@@ -329,7 +329,7 @@ public class Graphs implements EntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> result) {
 				// getRegistrarYearlyChart().setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK");
-				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result, "Počet přiřazení URN:NBN za celé období", "Rok",
+				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result,null, "Počet přiřazení URN:NBN za celé období", "Rok",
 						"přiřazených URN:NBN", "MZK", false);
 			}
 

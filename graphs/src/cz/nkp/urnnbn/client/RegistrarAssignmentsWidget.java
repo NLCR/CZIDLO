@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -211,7 +212,11 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
 			List<Integer> keys = currentYear != null ? months : years;
-			chart.setDataAndDraw(keys, currentData, title, xLabel, yLabel, valueLabel, accumulated.getValue());
+			Map<Integer, String> columnDesc = null;
+			if (currentYear != null) {
+				columnDesc = getMonthLabels();
+			}
+			chart.setDataAndDraw(keys, currentData, columnDesc, title, xLabel, yLabel, valueLabel, accumulated.getValue());
 		}
 	}
 
