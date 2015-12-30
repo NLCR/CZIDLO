@@ -72,12 +72,19 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
-	public Map<Integer, Integer> getAssignmentsByYear(String registrarCode) {
-		return RegistrarsManager.getInstance().getAssignmentData(registrarCode).getAnnualAssignments();
+	public Map<Integer, Integer> getAssignmentsByYear(String registrarCode, boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
+		Map<Integer, Integer> original = RegistrarsManager.getInstance().getAssignmentData(registrarCode).getAnnualAssignments();
+		Map<Integer, Integer> result = new HashMap<>();
+		for (Integer key : original.keySet()) {
+			result.put(key, (int) (original.get(key) * factor));
+		}
+		return result;
 	}
 
 	@Override
-	public Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year) {
+	public Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year, boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
 		Map<Integer, Integer> result = new HashMap<>();
 		for (Integer month : registraMgr.getMonths()) {
@@ -86,15 +93,15 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 		Assignments assignments = registraMgr.getAssignmentData(registrarCode);
 		for (Integer month : assignments.getActiveMonths(year)) {
 			// System.out.println("year: " + year + ", month: " + month);
-
-			int inMonth = assignments.getRegistrations(year, month);
+			int inMonth = (int) (assignments.getRegistrations(year, month) * factor);
 			result.put(month, inMonth);
 		}
 		return result;
 	}
 
 	@Override
-	public Map<Integer, Map<String, Integer>> getAssignmentsByYear() {
+	public Map<Integer, Map<String, Integer>> getAssignmentsByYear(boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
 		Map<Integer, Map<String, Integer>> result = new HashMap<>();
 		for (Registrar registrar : registraMgr.getRegistrars()) {
@@ -105,20 +112,22 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 					yearMap = new HashMap<>();
 					result.put(year, yearMap);
 				}
-				yearMap.put(registrar.getCode(), assignments.getRegistrations(year));
+				yearMap.put(registrar.getCode(), (int) (assignments.getRegistrations(year) * factor));
 			}
 		}
 		return result;
 	}
 
 	@Override
-	public Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year) {
+	public Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<Integer, Integer> getTotalAssignmentsByYear() {
+	public Map<Integer, Integer> getTotalAssignmentsByYear(boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
 		List<Integer> years = registraMgr.getYears();
 		Map<Integer, Integer> result = new HashMap<>();
@@ -129,7 +138,7 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			Assignments assignments = registraMgr.getAssignmentData(registrar.getCode());
 			for (Integer year : assignments.getActiveYears()) {
 				Integer soFar = result.get(year);// teoreticky muze byt null
-				soFar += assignments.getRegistrations(year);
+				soFar += (int) (assignments.getRegistrations(year) * factor);
 				result.put(year, soFar);
 			}
 		}
@@ -137,7 +146,8 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
-	public Map<Integer, Integer> getTotalAssignmentsByMonth(int year) {
+	public Map<Integer, Integer> getTotalAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
 		Map<Integer, Integer> result = new HashMap<>();
 		List<Integer> months = registraMgr.getMonths();
@@ -149,11 +159,15 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			for (Integer month : assignments.getActiveMonths(year)) {
 				Integer soFar = result.get(month);// teoreticky muze byt null
 				// System.out.println("year: " + year + ", month: " + month);
-				soFar += assignments.getRegistrations(year, month);
+				soFar += (int) (assignments.getRegistrations(year, month) * factor);
 				result.put(month, soFar);
 			}
 		}
 		return result;
+	}
+
+	private double getDecreaseFactor(boolean includeActive, boolean includeDeactivated) {
+		return includeActive && includeDeactivated ? 1.0 : includeActive ? 0.9 : includeDeactivated ? 0.1 : 0.0;
 	}
 
 }

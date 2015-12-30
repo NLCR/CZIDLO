@@ -11,8 +11,11 @@ import java.util.logging.Logger;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.ColumnChart;
 import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
+import com.googlecode.gwt.charts.client.event.SelectEvent;
+import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
@@ -27,13 +30,26 @@ public class IntegerKeyColumnChart {
 
 	public IntegerKeyColumnChart() {
 		chart = new ColumnChart();
+		chart.addSelectHandler(new SelectHandler() {
+
+			@Override
+			public void onSelect(SelectEvent event) {
+				if (handler != null) {
+					Selection sel = chart.getSelection().get(0);
+					Integer year = keys.get(sel.getRow());
+					// logger.info("selected year: " + year);
+					handler.onSelected(year);
+				}
+			}
+		});
 	}
 
-	public void setDataAndDraw(Map<Integer, Integer> data, String title, String xAxisDescription, String yAxisDescription, String valueDescription,
-			boolean agregate) {
+	public void setDataAndDraw(List<Integer> keysSorted, Map<Integer, Integer> data, String title, String xAxisDescription, String yAxisDescription,
+			String valueDescription, boolean agregate) {
 		// logger.info("setDataAndDraw");
 		// prepare data
-		keys = toSortedList(data.keySet());
+		// keys = toSortedList(data.keySet());
+		keys = keysSorted;
 		if (agregate) {
 			data = agregate(data);
 		}
@@ -43,7 +59,7 @@ public class IntegerKeyColumnChart {
 		dataTable.addColumn(ColumnType.STRING, null);
 		dataTable.addColumn(ColumnType.NUMBER, valueDescription);
 		// rows
-		dataTable.addRows(data.size());
+		dataTable.addRows(keys.size());
 
 		// fill data
 		// key column
@@ -53,8 +69,12 @@ public class IntegerKeyColumnChart {
 		// value column
 		for (int row = 0; row < keys.size(); row++) {
 			Integer key = keys.get(row);
+			// logger.warning("key is null for row " + row);
 			Integer value = data.get(key);
-			//logger.info("key: " + key + ", value: " + value);
+			if (value == null) {
+				value = 0;
+			}
+			// logger.info("key: " + key + ", value: " + value);
 			dataTable.setValue(row, 1, value.toString());
 		}
 
@@ -70,11 +90,14 @@ public class IntegerKeyColumnChart {
 	}
 
 	private Map<Integer, Integer> agregate(Map<Integer, Integer> data) {
+		logger.info("aggregate");
 		Map<Integer, Integer> result = new HashMap<>();
 		Integer sum = 0;
 		for (Integer key : keys) {
 			Integer value = data.get(key);
-			sum += value;
+			if (value != null) {
+				sum += value;
+			}
 			result.put(key, sum);
 		}
 		return result;
@@ -91,8 +114,8 @@ public class IntegerKeyColumnChart {
 		return chart;
 	}
 
-	public IntegerSelectionHandler getHandler() {
-		return handler;
+	public void setHandler(IntegerSelectionHandler handler) {
+		this.handler = handler;
 	}
 
 	public interface IntegerSelectionHandler {

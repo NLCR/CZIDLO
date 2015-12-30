@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ChartLoader;
@@ -76,6 +77,8 @@ public class Graphs implements EntryPoint {
 	private ColumnChart columnChart;
 
 	private IntegerKeyColumnChart registrarYearlyChart;
+	// after chartloader
+	RegistrarAssignmentsWidget assGraph;
 
 	/**
 	 * This is the entry point method.
@@ -127,28 +130,21 @@ public class Graphs implements EntryPoint {
 
 			@Override
 			public void run() {
+				logger.info("chart api loaded");
 
-				// getPanel().add(getYearsChart(), new HTML("years"));
-				// getPanel().add(getTotalByRegistrarPieChart(),
-				// new HTML("total by registrar"));
+				// registrarYearlyChart = new IntegerKeyColumnChart();
+				// container.add(registrarYearlyChart.getWidget());
 
-				// getPanel().add(getRegistrarYearlyChart().getWidget(), new HTML("yearly total"), 4);
-				// getPanel().add(getYearsChart(), new HTML("years"), 4);
-				// getPanel().add(getPieChart(), new HTML("pie test"), 4);
-				// getPanel().add(getColumnChart(), new HTML("column test"), 4);
+				// container.add(getYearsChart());
+				// container.add(getPieChart());
+				// container.add(getColumnChart());
 
-				// container.add(getRegistrarYearlyChart().getWidget());
-				registrarYearlyChart = new IntegerKeyColumnChart();
-				container.add(registrarYearlyChart.getWidget());
-				container.add(getYearsChart());
-				container.add(getPieChart());
-				container.add(getColumnChart());
+				TextBox blabla = new TextBox();
+				blabla.setText("blabla");
+				// container.add(blabla);
 
-				// getPanel().add(new HTML("TODO"),
-				// new HTML("months (registrar)"), 4);
-				// getPanel().add(getTotalByRegistrarPieChart().getWidget(),
-				// new HTML("total by registrar"), 4);
-				// initData();
+				assGraph = new RegistrarAssignmentsWidget();
+				container.add(assGraph);
 			}
 
 		});
@@ -240,6 +236,10 @@ public class Graphs implements EntryPoint {
 	}
 
 	private void loadData(final Registrar registrar, final Integer year) {
+		if (assGraph != null) {
+			assGraph.setRegistrar(registrar);
+		}
+
 		AsyncCallback<Map<Integer, Integer>> callback = new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
@@ -258,15 +258,15 @@ public class Graphs implements EntryPoint {
 
 		if (registrar != null) {
 			if (year != null) {
-				service.getAssignmentsByMonth(registrar.getCode(), year, callback);
+				service.getAssignmentsByMonth(registrar.getCode(), year, true, true, callback);
 			} else {
-				service.getAssignmentsByYear(registrar.getCode(), callback);
+				service.getAssignmentsByYear(registrar.getCode(), true, true, callback);
 			}
 		} else {
 			if (year != null) {
-				service.getTotalAssignmentsByMonth(year, callback);
+				service.getTotalAssignmentsByMonth(year, true, true, callback);
 			} else {
-				service.getTotalAssignmentsByYear(callback);
+				service.getTotalAssignmentsByYear(true, true, callback);
 			}
 		}
 	}
@@ -277,7 +277,7 @@ public class Graphs implements EntryPoint {
 			String xLabel = currentYear != null ? "rok" : "měsíc";
 			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
-			registrarYearlyChart.setDataAndDraw(currentData, title, xLabel, yLabel, valueLabel, accumulated);
+			registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), currentData, title, xLabel, yLabel, valueLabel, accumulated);
 		}
 	}
 
@@ -309,7 +309,7 @@ public class Graphs implements EntryPoint {
 		// }
 		// });
 
-		service.getAssignmentsByYear(new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
+		service.getAssignmentsByYear(true, true, new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
 
 			@Override
 			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
@@ -324,12 +324,13 @@ public class Graphs implements EntryPoint {
 			}
 		});
 
-		service.getAssignmentsByYear("mzk", new AsyncCallback<Map<Integer, Integer>>() {
+		service.getAssignmentsByYear("mzk", true, true, new AsyncCallback<Map<Integer, Integer>>() {
 
 			@Override
 			public void onSuccess(Map<Integer, Integer> result) {
 				// getRegistrarYearlyChart().setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK");
-				registrarYearlyChart.setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK", false);
+				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result, "Počet přiřazení URN:NBN za celé období", "Rok",
+						"přiřazených URN:NBN", "MZK", false);
 			}
 
 			@Override
