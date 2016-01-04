@@ -78,7 +78,8 @@ public class Graphs implements EntryPoint {
 
 	private IntegerKeyColumnChart registrarYearlyChart;
 	// after chartloader
-	RegistrarAssignmentsWidget assGraph;
+	private RegistrarAssignmentsWidget registrarGraph;
+	private RegistrarsAssignmentsWidget registrarsGraph;
 
 	/**
 	 * This is the entry point method.
@@ -142,9 +143,22 @@ public class Graphs implements EntryPoint {
 				TextBox blabla = new TextBox();
 				blabla.setText("blabla");
 				// container.add(blabla);
+				service.getYearsSorted(new AsyncCallback<List<Integer>>() {
 
-				assGraph = new RegistrarAssignmentsWidget();
-				container.add(assGraph);
+					@Override
+					public void onSuccess(List<Integer> result) {
+						registrarGraph = new RegistrarAssignmentsWidget(result);
+						container.add(registrarGraph);
+						registrarsGraph = new RegistrarsAssignmentsWidget();
+						container.add(registrarsGraph);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+				});
 			}
 
 		});
@@ -236,8 +250,8 @@ public class Graphs implements EntryPoint {
 	}
 
 	private void loadData(final Registrar registrar, final Integer year) {
-		if (assGraph != null) {
-			assGraph.setRegistrar(registrar);
+		if (registrarGraph != null) {
+			registrarGraph.setRegistrar(registrar);
 		}
 
 		AsyncCallback<Map<Integer, Integer>> callback = new AsyncCallback<Map<Integer, Integer>>() {
@@ -329,7 +343,7 @@ public class Graphs implements EntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> result) {
 				// getRegistrarYearlyChart().setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK");
-				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result,null, "Počet přiřazení URN:NBN za celé období", "Rok",
+				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result, null, "Počet přiřazení URN:NBN za celé období", "Rok",
 						"přiřazených URN:NBN", "MZK", false);
 			}
 

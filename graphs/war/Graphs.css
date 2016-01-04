@@ -32,3 +32,15 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+.RegistrarAssignmentsGraph{
+	background-color: #ccddee;
+}
+
+.RegistrarssGraph{
+	background-color: #eeddcc;
+}
+
+.test{
+	background-color: #aaeecc;
+}

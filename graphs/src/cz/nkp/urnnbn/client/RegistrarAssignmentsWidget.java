@@ -27,63 +27,76 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 
 	private static final Logger logger = Logger.getLogger(RegistrarAssignmentsWidget.class.getSimpleName());
 
-	private final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
+	// fixed data
+	private final List<Integer> years;
+	private final List<Integer> months = initMonths();
 
 	// data
 	private Registrar currentRegistrar;
-	private List<Integer> years = Collections.emptyList();
-	private List<Integer> months = initMonths();
 	private Map<Integer, Integer> currentData;
 	private Integer currentYear = null;
 
 	// widgets
 	private Label title = new Label();
-	private ListBox timePeriods;
+	private final ListBox timePeriods;
 	private RadioButton stateAll;
 	private RadioButton stateActiveOnly;
 	private RadioButton stateDeactivatedOnly;
 	private CheckBox accumulated;
 	private IntegerKeyColumnChart chart;
 
-	public RegistrarAssignmentsWidget() {
+	public RegistrarAssignmentsWidget(List<Integer> years) {
+		this.years = years;
+
 		// container
 		VerticalPanel container = new VerticalPanel();
+		container.setSpacing(5);
 		container.setWidth("100%");
+		// container.setWidth("800px");
 		RootLayoutPanel.get().add(container);
 
 		// header
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(10);
-		header.setWidth("100%");
+		// header.setWidth("100%");
+		header.setWidth("1000px");
 		container.add(header);
 
 		// label
 		header.add(title);
 
-		// year selection
+		// year filter
+		timePeriods = createTimePeriods();
 		HorizontalPanel headerYears = new HorizontalPanel();
+		headerYears.add(timePeriods);
 		header.add(headerYears);
-		fetchAvaliableYears(headerYears);
 
-		// state filter - all, active, deactivated
+		// urn state filter
+		// TODO: i18n
+		stateAll = createUrnStateRadibutton("all", true);
+		stateActiveOnly = createUrnStateRadibutton("active only", false);
+		stateDeactivatedOnly = createUrnStateRadibutton("decativated only", false);
 		HorizontalPanel urnStateFilterPanel = new HorizontalPanel();
+		urnStateFilterPanel.add(stateAll);
+		urnStateFilterPanel.add(stateActiveOnly);
+		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
-		initUrnStateFilter(urnStateFilterPanel);
 
-		// accumulated
-		accumulated = new CheckBox("kumulované");
-		accumulated.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				redrawChart();
-			}
-		});
+		// accumulated filter
+		accumulated = createAccumulatedCheckbox();
 		header.add(accumulated);
 
 		// chart
-		chart = new IntegerKeyColumnChart();
-		chart.setHandler(new IntegerSelectionHandler() {
+		chart = createChart();
+		container.add(chart.getWidget());
+
+		initWidget(container);
+		setStyleName("RegistrarAssignmentsGraph");
+	}
+
+	private IntegerKeyColumnChart createChart() {
+		IntegerKeyColumnChart result = new IntegerKeyColumnChart();
+		result.setHandler(new IntegerSelectionHandler() {
 
 			@Override
 			public void onSelected(Integer key) {
@@ -100,15 +113,25 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 				}
 			}
 		});
-		container.add(chart.getWidget());
-
-		initWidget(container);
-		setStyleName("RegistrarAssignmentsGraph");
-
+		return result;
 	}
 
-	private void initUrnStateFilter(HorizontalPanel urnStateFilter) {
-		ValueChangeHandler<Boolean> handler = new ValueChangeHandler<Boolean>() {
+	private CheckBox createAccumulatedCheckbox() {
+		CheckBox result = new CheckBox("kumulované");
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				redrawChart();
+			}
+		});
+		return result;
+	}
+
+	private RadioButton createUrnStateRadibutton(String title, boolean selected) {
+		RadioButton result = new RadioButton("urn-state-filter", title);
+		result.setValue(selected);
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
@@ -117,57 +140,31 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 				}
 
 			}
-		};
-		// all
-		stateAll = new RadioButton("urn-state-filter", "všechny");
-		stateAll.addValueChangeHandler(handler);
-		stateAll.setValue(true);
-		urnStateFilter.add(stateAll);
-		// active only
-		stateActiveOnly = new RadioButton("urn-state-filter", "jen aktivní");
-		stateActiveOnly.addValueChangeHandler(handler);
-		urnStateFilter.add(stateActiveOnly);
-		// deactivated only
-		stateDeactivatedOnly = new RadioButton("urn-state-filter", "jen deaktivované");
-		stateDeactivatedOnly.addValueChangeHandler(handler);
-		urnStateFilter.add(stateDeactivatedOnly);
+		});
+		return result;
 	}
 
-	private void fetchAvaliableYears(final HorizontalPanel headerYears) {
-		service.getYearsSorted(new AsyncCallback<List<Integer>>() {
+	private ListBox createTimePeriods() {
+		ListBox result = new ListBox();
+		result.addItem("celé období");
+		for (Integer year : years) {
+			result.addItem(year.toString());
+		}
+		result.addChangeHandler(new ChangeHandler() {
 
 			@Override
-			public void onSuccess(List<Integer> result) {
-				years = result;
-				// views
-				timePeriods = new ListBox();
-				timePeriods.addItem("celé období");
-				for (Integer year : result) {
-					timePeriods.addItem(year.toString());
+			public void onChange(ChangeEvent event) {
+
+				int index = timePeriods.getSelectedIndex();
+				if (index == 0 || years.isEmpty()) {
+					currentYear = null;
+				} else {
+					currentYear = years.get(index - 1);
 				}
-				timePeriods.addChangeHandler(new ChangeHandler() {
-
-					@Override
-					public void onChange(ChangeEvent event) {
-						int index = timePeriods.getSelectedIndex();
-						if (index == 0 || years.isEmpty()) {
-							currentYear = null;
-						} else {
-							currentYear = years.get(index - 1);
-						}
-						loadData(currentRegistrar, currentYear);
-					}
-				});
-
-				headerYears.add(timePeriods);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				logger.severe(caught.getMessage());
+				loadData(currentRegistrar, currentYear);
 			}
 		});
-
+		return result;
 	}
 
 	private void loadData(final Registrar registrar, final Integer year) {
