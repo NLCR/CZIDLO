@@ -1,27 +1,51 @@
 package cz.nkp.urnnbn.client;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import cz.nkp.urnnbn.client.IntegerKeyColumnChart.IntegerSelectionHandler;
 
 public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
 	private static final Logger logger = Logger.getLogger(RegistrarsAssignmentsWidget.class.getSimpleName());
-	private final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
 
-	private List<Integer> years = Collections.emptyList();
-	private List<Integer> months = initMonths();
-	private Map<Integer, Integer> currentData;
-	private boolean accumulated = false;
+	// fixed data
+	private final List<Integer> years;
+	private final List<Integer> months = initMonths();
+
+	// data
+	private Map<Integer, Map<String, Integer>> currentData;// TODO
 	private Integer currentYear = null;
 
-	public RegistrarsAssignmentsWidget() {
+	// widgets
+	private final Label title;
+	private final ListBox timePeriods;
+	private final RadioButton stateAll;
+	private final RadioButton stateActiveOnly;
+	private final RadioButton stateDeactivatedOnly;
+	private final CheckBox accumulated;
+	private final IntegerKeyColumnChart totalColumnChart;
+
+	// private final IntegerKeyColumnChart chart;
+
+	public RegistrarsAssignmentsWidget(List<Integer> years) {
+		this.years = years;
+
 		// container
 		VerticalPanel container = new VerticalPanel();
 		container.setSpacing(5);
@@ -31,17 +55,179 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		// header
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(10);
-		//header.setWidth("100%");
+		// header.setWidth("100%");
 		header.setWidth("1500px");
 		container.add(header);
-		
-		Label label = new Label("Total");
-		header.add(label);
-		
+
+		title = new Label("Total");
+		header.add(title);
+
+		// year filter
+		timePeriods = createTimePeriods();
+		HorizontalPanel headerYears = new HorizontalPanel();
+		headerYears.add(timePeriods);
+		header.add(headerYears);
+
+		// urn state filter
+		// TODO: i18n
+		stateAll = createUrnStateRadibutton("all", true);
+		stateActiveOnly = createUrnStateRadibutton("active only", false);
+		stateDeactivatedOnly = createUrnStateRadibutton("decativated only", false);
+		HorizontalPanel urnStateFilterPanel = new HorizontalPanel();
+		urnStateFilterPanel.add(stateAll);
+		urnStateFilterPanel.add(stateActiveOnly);
+		urnStateFilterPanel.add(stateDeactivatedOnly);
+		header.add(urnStateFilterPanel);
+
+		// accumulated filter
+		accumulated = createAccumulatedCheckbox();
+		header.add(accumulated);
+
+		// registrar ratio chart
 		container.add(new Top3PieChart().getWidget());
+
+		// total chart
+		totalColumnChart = createTotalChart();
+		container.add(totalColumnChart.getWidget());
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
+		loadData(currentYear);
+	}
+
+	private ListBox createTimePeriods() {
+		ListBox result = new ListBox();
+		result.addItem("celé období");
+		for (Integer year : years) {
+			result.addItem(year.toString());
+		}
+		result.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				int index = timePeriods.getSelectedIndex();
+				if (index == 0 || years.isEmpty()) {
+					currentYear = null;
+				} else {
+					currentYear = years.get(index - 1);
+				}
+				loadData(currentYear);
+			}
+		});
+		return result;
+	}
+
+	private RadioButton createUrnStateRadibutton(String title, boolean selected) {
+		RadioButton result = new RadioButton("registrars-urn-state", title);
+		result.setValue(selected);
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue()) {
+					loadData(currentYear);
+				}
+			}
+		});
+		return result;
+	}
+
+	private CheckBox createAccumulatedCheckbox() {
+		CheckBox result = new CheckBox("kumulované");
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				redrawChart();
+			}
+
+		});
+		return result;
+	}
+
+	private IntegerKeyColumnChart createTotalChart() {
+		IntegerKeyColumnChart result = new IntegerKeyColumnChart();
+		result.setHandler(new IntegerSelectionHandler() {
+
+			@Override
+			public void onSelected(Integer key) {
+				if (key > 12) { // year
+					for (int position = 0; position < years.size(); position++) {
+						int year = years.get(position);
+						if (year == key) {
+							currentYear = key;
+							timePeriods.setSelectedIndex(position + 1);
+							break;
+						}
+					}
+					loadData(currentYear);
+				}
+			}
+		});
+		return result;
+	}
+
+	private void loadData(final Integer year) {
+		AsyncCallback<Map<Integer, Map<String, Integer>>> callback = new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
+
+			@Override
+			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
+				currentYear = year;
+				currentData = result;
+				redrawChart();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				logger.severe(caught.getMessage());
+			}
+		};
+		boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
+		boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
+
+		if (year != null) {
+			service.getAssignmentsByMonth(year, includeActive, includeDeactivated, callback);
+		} else {
+			service.getAssignmentsByYear(includeActive, includeDeactivated, callback);
+		}
+	}
+
+	private void redrawChart() {
+		if (totalColumnChart != null) {
+			// TODO: i18n
+			String yLabel = accumulated.getValue() ? "přiřazení (kumulované)" : "přiřazení";
+			String xLabel = currentYear != null ? "rok" : "měsíc";
+			// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
+			//String valueLabel = "TODO:valueLabel";
+			String valueLabel = null;
+			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
+			List<Integer> keys = currentYear != null ? months : years;
+			Map<Integer, String> columnDesc = null;
+			if (currentYear != null) {
+				columnDesc = getMonthLabels();
+			}
+			Map<Integer, Integer> data = agregate(keys, currentData);
+			totalColumnChart.setDataAndDraw(keys, data, columnDesc, title, xLabel, yLabel, valueLabel, accumulated.getValue());
+		}
+	}
+
+	private Map<Integer, Integer> agregate(List<Integer> periods, Map<Integer, Map<String, Integer>> input) {
+		Map<Integer, Integer> result = new HashMap<>();
+		logger.info("here1");
+		for (Integer period : periods) {
+			logger.info("period: " + period);
+			Integer sum = 0;
+			if (input != null) {
+				Map<String, Integer> registrars = input.get(period);
+				if (registrars != null) {
+					for (Integer perRegistrar : registrars.values()) {
+						sum += perRegistrar;
+					}
+				}
+			}
+			result.put(period, sum);
+		}
+		return result;
 	}
 
 }

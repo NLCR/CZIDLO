@@ -1,12 +1,9 @@
 package cz.nkp.urnnbn.client;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -37,13 +34,13 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 	private Integer currentYear = null;
 
 	// widgets
-	private Label title = new Label();
+	private final Label title = new Label();
 	private final ListBox timePeriods;
-	private RadioButton stateAll;
-	private RadioButton stateActiveOnly;
-	private RadioButton stateDeactivatedOnly;
-	private CheckBox accumulated;
-	private IntegerKeyColumnChart chart;
+	private final RadioButton stateAll;
+	private final RadioButton stateActiveOnly;
+	private final RadioButton stateDeactivatedOnly;
+	private final CheckBox accumulated;
+	private final IntegerKeyColumnChart chart;
 
 	public RegistrarAssignmentsWidget(List<Integer> years) {
 		this.years = years;
@@ -62,7 +59,7 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 		header.setWidth("1000px");
 		container.add(header);
 
-		// label
+		// title
 		header.add(title);
 
 		// year filter
@@ -94,56 +91,6 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 		setStyleName("RegistrarAssignmentsGraph");
 	}
 
-	private IntegerKeyColumnChart createChart() {
-		IntegerKeyColumnChart result = new IntegerKeyColumnChart();
-		result.setHandler(new IntegerSelectionHandler() {
-
-			@Override
-			public void onSelected(Integer key) {
-				if (key > 12) { // year
-					for (int position = 0; position < years.size(); position++) {
-						int year = years.get(position);
-						if (year == key) {
-							currentYear = key;
-							timePeriods.setSelectedIndex(position + 1);
-							break;
-						}
-					}
-					loadData(currentRegistrar, currentYear);
-				}
-			}
-		});
-		return result;
-	}
-
-	private CheckBox createAccumulatedCheckbox() {
-		CheckBox result = new CheckBox("kumulované");
-		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				redrawChart();
-			}
-		});
-		return result;
-	}
-
-	private RadioButton createUrnStateRadibutton(String title, boolean selected) {
-		RadioButton result = new RadioButton("urn-state-filter", title);
-		result.setValue(selected);
-		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if (event.getValue()) {
-					loadData(currentRegistrar, currentYear);
-				}
-
-			}
-		});
-		return result;
-	}
-
 	private ListBox createTimePeriods() {
 		ListBox result = new ListBox();
 		result.addItem("celé období");
@@ -162,6 +109,57 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 					currentYear = years.get(index - 1);
 				}
 				loadData(currentRegistrar, currentYear);
+			}
+		});
+		return result;
+	}
+
+	private RadioButton createUrnStateRadibutton(String title, boolean selected) {
+		//TODO: filtrovat instance
+		RadioButton result = new RadioButton("registrar-urn-state", title);
+		result.setValue(selected);
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue()) {
+					loadData(currentRegistrar, currentYear);
+				}
+
+			}
+		});
+		return result;
+	}
+
+	private CheckBox createAccumulatedCheckbox() {
+		CheckBox result = new CheckBox("kumulované");
+		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				redrawChart();
+			}
+		});
+		return result;
+	}
+
+	private IntegerKeyColumnChart createChart() {
+		IntegerKeyColumnChart result = new IntegerKeyColumnChart();
+		result.setHandler(new IntegerSelectionHandler() {
+
+			@Override
+			public void onSelected(Integer key) {
+				if (key > 12) { // year
+					for (int position = 0; position < years.size(); position++) {
+						int year = years.get(position);
+						if (year == key) {
+							currentYear = key;
+							timePeriods.setSelectedIndex(position + 1);
+							break;
+						}
+					}
+					loadData(currentRegistrar, currentYear);
+				}
 			}
 		});
 		return result;

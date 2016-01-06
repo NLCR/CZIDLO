@@ -149,7 +149,7 @@ public class Graphs implements EntryPoint {
 					public void onSuccess(List<Integer> result) {
 						registrarGraph = new RegistrarAssignmentsWidget(result);
 						container.add(registrarGraph);
-						registrarsGraph = new RegistrarsAssignmentsWidget();
+						registrarsGraph = new RegistrarsAssignmentsWidget(result);
 						container.add(registrarsGraph);
 					}
 
