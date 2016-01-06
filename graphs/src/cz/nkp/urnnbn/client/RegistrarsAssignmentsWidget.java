@@ -22,14 +22,14 @@ import cz.nkp.urnnbn.client.IntegerKeyColumnChart.IntegerSelectionHandler;
 
 public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
-	private static final Logger logger = Logger.getLogger(RegistrarsAssignmentsWidget.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(RegistrarsAssignmentsWidget.class.getSimpleName());
 
 	// fixed data
 	private final List<Integer> years;
 	private final List<Integer> months = initMonths();
 
 	// data
-	private Map<Integer, Map<String, Integer>> currentData;// TODO
+	private Map<Integer, Map<String, Integer>> currentData;// period(year/month) -> registrar_code -> assignments_in_period
 	private Integer currentYear = null;
 
 	// widgets
@@ -40,8 +40,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	private final RadioButton stateDeactivatedOnly;
 	private final CheckBox accumulated;
 	private final IntegerKeyColumnChart totalColumnChart;
-
-	// private final IntegerKeyColumnChart chart;
+	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 
 	public RegistrarsAssignmentsWidget(List<Integer> years) {
 		this.years = years;
@@ -84,7 +83,8 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		header.add(accumulated);
 
 		// registrar ratio chart
-		container.add(new Top3PieChart().getWidget());
+		registrarsRatioPiechart = new TopNRegistrarsPieChart();
+		container.add(registrarsRatioPiechart.getWidget());
 
 		// total chart
 		totalColumnChart = createTotalChart();
@@ -138,7 +138,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				redrawChart();
+				redrawCharts();
 			}
 
 		});
@@ -174,12 +174,12 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
 				currentYear = year;
 				currentData = result;
-				redrawChart();
+				redrawCharts();
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe(caught.getMessage());
+				LOGGER.severe(caught.getMessage());
 			}
 		};
 		boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
@@ -192,13 +192,13 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		}
 	}
 
-	private void redrawChart() {
+	private void redrawCharts() {
 		if (totalColumnChart != null) {
 			// TODO: i18n
 			String yLabel = accumulated.getValue() ? "přiřazení (kumulované)" : "přiřazení";
 			String xLabel = currentYear != null ? "rok" : "měsíc";
 			// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
-			//String valueLabel = "TODO:valueLabel";
+			// String valueLabel = "TODO:valueLabel";
 			String valueLabel = null;
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
 			List<Integer> keys = currentYear != null ? months : years;
@@ -209,13 +209,39 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			Map<Integer, Integer> data = agregate(keys, currentData);
 			totalColumnChart.setDataAndDraw(keys, data, columnDesc, title, xLabel, yLabel, valueLabel, accumulated.getValue());
 		}
+		if (registrarsRatioPiechart != null) {
+			// preprocess data
+			int totalAssignments = computeTotalAssignments();
+			Map<String, Integer> assignmentsByRegistrar = computeAssignmentsByRegistrar();
+			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar);
+		}
+	}
+
+	private Map<String, Integer> computeAssignmentsByRegistrar() {
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		for (Map<String, Integer> map : currentData.values()) {
+			for (String registrarCode : map.keySet()) {
+				int totalForRegistrar = result.containsKey(registrarCode) ? result.get(registrarCode) : 0;
+				totalForRegistrar += map.get(registrarCode);
+				result.put(registrarCode, totalForRegistrar);
+			}
+		}
+		return result;
+	}
+
+	private int computeTotalAssignments() {
+		int sum = 0;
+		for (Map<String, Integer> map : currentData.values()) {
+			for (Integer value : map.values()) {
+				sum += value;
+			}
+		}
+		return sum;
 	}
 
 	private Map<Integer, Integer> agregate(List<Integer> periods, Map<Integer, Map<String, Integer>> input) {
 		Map<Integer, Integer> result = new HashMap<>();
-		logger.info("here1");
 		for (Integer period : periods) {
-			logger.info("period: " + period);
 			Integer sum = 0;
 			if (input != null) {
 				Map<String, Integer> registrars = input.get(period);
