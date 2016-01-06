@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tools.zip.AsiExtraField;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import cz.nkp.urnnbn.client.StatisticsService;
@@ -121,8 +123,21 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	@Override
 	public Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated) {
 		double factor = getDecreaseFactor(includeActive, includeDeactivated);
-		// TODO Auto-generated method stub
-		return null;
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
+		Map<Integer, Map<String, Integer>> result = new HashMap<>();
+		for (Registrar registrar : registraMgr.getRegistrars()) {
+			Assignments assignments = registraMgr.getAssignmentData(registrar.getCode());
+			for (int month = 1; month <= 12; month++) {
+				Map<String, Integer> map = result.get(month);
+				if (map == null) {
+					map = new HashMap<String, Integer>();
+					result.put(month, map);
+				}
+				int value = (int) (assignments.getRegistrations(year, month) * factor);
+				map.put(registrar.getCode(), value);
+			}
+		}
+		return result;
 	}
 
 	@Override
