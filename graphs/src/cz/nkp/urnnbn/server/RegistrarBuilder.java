@@ -24,4 +24,12 @@ public class RegistrarBuilder {
 		return new Registrar("muni", "Masarykova univerzita");
 	}
 
+	public static Registrar buildNlk() {
+		return new Registrar("nlk", "Národní lékařská knihovna");
+	}
+
+	public static Registrar buildOva() {
+		return new Registrar("ova", "Ostravská univerzita v Ostravě - Univerzitní knihovna");
+	}
+
 }

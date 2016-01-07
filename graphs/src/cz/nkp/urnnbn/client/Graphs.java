@@ -92,6 +92,8 @@ public class Graphs implements EntryPoint {
 
 		container = new VerticalPanel();
 		container.setWidth("100%");
+		//container.setWidth("5000px");
+		//container.setHeight("500px");
 		RootLayoutPanel.get().add(container);
 
 		// header

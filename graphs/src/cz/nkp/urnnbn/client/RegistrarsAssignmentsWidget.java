@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client;
 
+import java.awt.geom.Area;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	private final CheckBox accumulated;
 	private final IntegerKeyColumnChart totalColumnChart;
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
+	private final TopNRegistrarsAccumulatedAreaChart registrarsAccumulatedAreaChart;
 
 	public RegistrarsAssignmentsWidget(List<Integer> years) {
 		this.years = years;
@@ -85,6 +87,10 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
 		container.add(registrarsRatioPiechart.getWidget());
+
+		// registrar accumulated volume area chart
+		registrarsAccumulatedAreaChart = new TopNRegistrarsAccumulatedAreaChart();
+		container.add(registrarsAccumulatedAreaChart.getWidget());
 
 		// total chart
 		totalColumnChart = createTotalChart();
@@ -214,6 +220,12 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			int totalAssignments = computeTotalAssignments();
 			Map<String, Integer> assignmentsByRegistrar = computeAssignmentsByRegistrar();
 			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar);
+		}
+		if (registrarsAccumulatedAreaChart != null) {
+			List<Integer> keys = currentYear != null ? months : years;
+			// TODO: realne naplnit
+			Map<String, Integer> volumeBeforeFistPeriod = new HashMap<String, Integer>();
+			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData);
 		}
 	}
 

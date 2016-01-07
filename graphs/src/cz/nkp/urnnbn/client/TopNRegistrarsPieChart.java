@@ -16,10 +16,11 @@ public class TopNRegistrarsPieChart {
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
 
-	private final PieChart chart;
-
-	private List<RegistrarWithData> topNRecords = null;
+	// data
+	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
+	// widgets
+	private final PieChart chart;
 
 	public TopNRegistrarsPieChart() {
 		chart = new PieChart();
@@ -31,19 +32,19 @@ public class TopNRegistrarsPieChart {
 		draw();
 	}
 
-	private int extractOtherAmount(List<RegistrarWithData> data, int totalAssignments) {
+	private int extractOtherAmount(List<RegistrarWithStatistic> data, int totalAssignments) {
 		int sum = 0;
-		for (RegistrarWithData registrar : data) {
-			sum += registrar.data;
+		for (RegistrarWithStatistic registrar : data) {
+			sum += registrar.getData();
 		}
 		return Math.max(0, totalAssignments - sum);
 	}
 
-	private List<RegistrarWithData> extractTopn(Map<String, Integer> assignmentsByRegistrar, int n) {
-		List<RegistrarWithData> result = new ArrayList<RegistrarWithData>(assignmentsByRegistrar.size());
+	private List<RegistrarWithStatistic> extractTopn(Map<String, Integer> assignmentsByRegistrar, int n) {
+		List<RegistrarWithStatistic> result = new ArrayList<RegistrarWithStatistic>(assignmentsByRegistrar.size());
 		for (String registrarCode : assignmentsByRegistrar.keySet()) {
 			Integer amount = assignmentsByRegistrar.get(registrarCode);
-			result.add(new RegistrarWithData(registrarCode, amount));
+			result.add(new RegistrarWithStatistic(registrarCode, amount));
 		}
 		Collections.sort(result);
 		if (n >= result.size()) {
@@ -58,8 +59,8 @@ public class TopNRegistrarsPieChart {
 		// TODO: i18n
 		pieNewData.addColumn(ColumnType.STRING, "Registrar");
 		pieNewData.addColumn(ColumnType.NUMBER, "registrations");
-		for (RegistrarWithData registrar : topNRecords) {
-			pieNewData.addRow(registrar.code, registrar.data);
+		for (RegistrarWithStatistic registrar : topNRecords) {
+			pieNewData.addRow(registrar.getCode(), registrar.getData());
 		}
 		// TODO: i18n
 		pieNewData.addRow("Other", remainingAmount);
@@ -68,22 +69,6 @@ public class TopNRegistrarsPieChart {
 
 	public Widget getWidget() {
 		return chart;
-	}
-
-	public class RegistrarWithData implements Comparable<RegistrarWithData> {
-		String code;
-		Integer data;
-
-		public RegistrarWithData(String code, Integer data) {
-			this.code = code;
-			this.data = data;
-		}
-
-		@Override
-		public int compareTo(RegistrarWithData other) {
-			// decreasing order
-			return -data.compareTo(other.data);
-		}
 	}
 
 }
