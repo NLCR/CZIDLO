@@ -35,5 +35,7 @@ public interface StatisticsService extends RemoteService {
 	Map<Integer, Map<String, Integer>> getAssignmentsByYear(boolean includeActive, boolean includeDeactivated);
 
 	Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated);
+	
+	Map<String, String> getRegistrarNames();
 
 }

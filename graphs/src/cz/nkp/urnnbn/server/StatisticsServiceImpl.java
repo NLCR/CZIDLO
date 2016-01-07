@@ -185,4 +185,14 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 		return includeActive && includeDeactivated ? 1.0 : includeActive ? 0.9 : includeDeactivated ? 0.1 : 0.0;
 	}
 
+	@Override
+	public Map<String, String> getRegistrarNames() {
+		RegistrarsManager registraMgr = RegistrarsManager.getInstance();
+		Map<String, String> result = new HashMap<>();
+		for (Registrar registrar : registraMgr.getRegistrars()) {
+			result.put(registrar.getCode(), registrar.getName());
+		}
+		return result;
+	}
+
 }

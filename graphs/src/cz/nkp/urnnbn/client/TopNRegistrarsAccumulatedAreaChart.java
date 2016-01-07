@@ -22,6 +22,7 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 	// data
 	private List<Integer> periods;
+	private Map<String, String> registrarNames;
 	private List<String> topNRegistrarCodes;
 	private Map<Integer, Map<String, Integer>> dataAccumulated; // period -> registrar_code -> registrars_volume_for_period_(accumulated)
 	private Map<Integer, Integer> remainingDataAccumulated; // period -> remaining_registrars_total_volume_for_period_(accumulated)
@@ -35,15 +36,17 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 	public TopNRegistrarsAccumulatedAreaChart() {
 		chart = new AreaChart();
+		// chart.setWidth("1000px");
 	}
 
 	public Widget getWidget() {
 		return chart;
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod,
+	public void setDataAndDraw(List<Integer> periods, Map<String, String> registrarNames, Map<String, Integer> volumeBeforeFirstPeriod,
 			Map<Integer, Map<String, Integer>> volumePerPeriod, String title, String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
+		this.registrarNames = registrarNames;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
 		this.dataAccumulated = Utils.accumulate(periods, topNRegistrarCodes, volumeBeforeFirstPeriod, volumePerPeriod);
 		this.remainingDataAccumulated = extractAndAccumulateRemainingData(periods, topNRegistrarCodes, volumePerPeriod, volumeBeforeFirstPeriod);
@@ -87,17 +90,18 @@ public class TopNRegistrarsAccumulatedAreaChart {
 		DataTable dataTable = DataTable.create();
 
 		dataTable.addColumn(ColumnType.STRING, "Period");
-		dataTable.addColumn(ColumnType.NUMBER, "Other");
+		dataTable.addColumn(ColumnType.NUMBER, "Ostatní");
 		for (int i = 0; i < topNRegistrarCodes.size(); i++) {
-			dataTable.addColumn(ColumnType.NUMBER, topNRegistrarCodes.get(i));
+			String registrarCode = topNRegistrarCodes.get(i);
+			// String label = registrarNames == null ? registrarCode : registrarCode + " - " + registrarNames.get(registrarCode);
+			String label = registrarNames == null ? registrarCode : registrarCode + "-" + registrarNames.get(registrarCode);
+			dataTable.addColumn(ColumnType.NUMBER, label);
 		}
 
 		dataTable.addRows(periods.size());
 		for (int i = 0; i < periods.size(); i++) {
 			String label = columnLabels == null ? periods.get(i).toString() : columnLabels.get(periods.get(i));
 			dataTable.setValue(i, 0, label);
-
-			// dataTable.setValue(i, 0, periods.get(i).toString());
 		}
 
 		for (int col = 0; col < periods.size(); col++) {

@@ -8,9 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import cz.nkp.urnnbn.shared.Registrar;
 
-/**
- * The async counterpart of <code>GreetingService</code>.
- */
 public interface StatisticsServiceAsync {
 
 	void greetServer(String input, AsyncCallback<String> callback) throws IllegalArgumentException;
@@ -33,4 +30,6 @@ public interface StatisticsServiceAsync {
 	void getTotalAssignmentsByYear(boolean includeActive, boolean includeDeactivated, AsyncCallback<Map<Integer, Integer>> callback);
 
 	void getTotalAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated, AsyncCallback<Map<Integer, Integer>> callback);
+
+	void getRegistrarNames(AsyncCallback<Map<String, String>> callback);
 }

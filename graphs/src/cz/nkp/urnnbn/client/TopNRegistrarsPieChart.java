@@ -19,6 +19,8 @@ public class TopNRegistrarsPieChart {
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
+	private Map<String, String> registraNames = null;
+
 	// widgets
 	private final PieChart chart;
 
@@ -26,9 +28,10 @@ public class TopNRegistrarsPieChart {
 		chart = new PieChart();
 	}
 
-	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar) {
-		topNRecords = extractTopn(assignmentsByRegistrar, MAX_REGISTRARS);
-		remainingAmount = extractOtherAmount(topNRecords, totalAssignments);
+	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, Map<String, String> registraNames) {
+		this.topNRecords = extractTopn(assignmentsByRegistrar, MAX_REGISTRARS);
+		this.remainingAmount = extractOtherAmount(topNRecords, totalAssignments);
+		this.registraNames = registraNames;
 		draw();
 	}
 
@@ -60,10 +63,11 @@ public class TopNRegistrarsPieChart {
 		pieNewData.addColumn(ColumnType.STRING, "Registrar");
 		pieNewData.addColumn(ColumnType.NUMBER, "registrations");
 		for (RegistrarWithStatistic registrar : topNRecords) {
-			pieNewData.addRow(registrar.getCode(), registrar.getData());
+			String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
+			pieNewData.addRow(label, registrar.getData());
 		}
 		// TODO: i18n
-		pieNewData.addRow("Other", remainingAmount);
+		pieNewData.addRow("Ostatní", remainingAmount);
 		chart.draw(pieNewData);
 	}
 

@@ -27,6 +27,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	// fixed data
 	private final List<Integer> years;
 	private final List<Integer> months = initMonths();
+	private Map<String, String> registraNames = null;
 
 	// data
 	private Map<Integer, Map<String, Integer>> currentData;// period(year/month) -> registrar_code -> assignments_in_period
@@ -57,7 +58,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(10);
 		// header.setWidth("100%");
-		header.setWidth("1500px");
+		header.setWidth("1300px");
 		container.add(header);
 
 		title = new Label("Total");
@@ -98,7 +99,21 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
-		loadData(currentYear);
+		service.getRegistrarNames(new AsyncCallback<Map<String, String>>() {
+
+			@Override
+			public void onSuccess(Map<String, String> result) {
+				registraNames = result;
+				loadData(currentYear);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 	}
 
 	private ListBox createTimePeriods() {
@@ -218,7 +233,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		if (registrarsRatioPiechart != null) {
 			int totalAssignments = computeTotalAssignments();
 			Map<String, Integer> assignmentsByRegistrar = computeAssignmentsByRegistrar();
-			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar);
+			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, registraNames);
 		}
 		if (registrarsAccumulatedAreaChart != null) {
 			List<Integer> keys = currentYear != null ? months : years;
@@ -228,7 +243,8 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
 			String yAxisLabel = "Počet";
 			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
-			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels);
+			registrarsAccumulatedAreaChart.setDataAndDraw(keys, registraNames, volumeBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel,
+					columnLabels);
 		}
 	}
 
