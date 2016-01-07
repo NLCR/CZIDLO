@@ -20,10 +20,17 @@ public class TopNRegistrarsAccumulatedAreaChart {
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
 
+	// data
 	private List<Integer> periods;
 	private List<String> topNRegistrarCodes;
 	private Map<Integer, Map<String, Integer>> dataAccumulated; // period -> registrar_code -> registrars_volume_for_period_(accumulated)
 	private Map<Integer, Integer> remainingDataAccumulated; // period -> remaining_registrars_total_volume_for_period_(accumulated)
+	// labels
+	private String title;
+	private String xAxisLabel;
+	private String yAxisLabel;
+	private Map<Integer, String> columnLabels;
+	// widgets
 	private AreaChart chart;
 
 	public TopNRegistrarsAccumulatedAreaChart() {
@@ -34,11 +41,16 @@ public class TopNRegistrarsAccumulatedAreaChart {
 		return chart;
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod, Map<Integer, Map<String, Integer>> volumePerPeriod, Map<Integer, String> columnDesc) {
+	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod,
+			Map<Integer, Map<String, Integer>> volumePerPeriod, String title, String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
 		this.dataAccumulated = Utils.accumulate(periods, topNRegistrarCodes, volumeBeforeFirstPeriod, volumePerPeriod);
 		this.remainingDataAccumulated = extractAndAccumulateRemainingData(periods, topNRegistrarCodes, volumePerPeriod, volumeBeforeFirstPeriod);
+		this.title = title;
+		this.xAxisLabel = xAxisLabel;
+		this.yAxisLabel = yAxisLabel;
+		this.columnLabels = columnLabels;
 		draw();
 	}
 
@@ -79,11 +91,13 @@ public class TopNRegistrarsAccumulatedAreaChart {
 		for (int i = 0; i < topNRegistrarCodes.size(); i++) {
 			dataTable.addColumn(ColumnType.NUMBER, topNRegistrarCodes.get(i));
 		}
-		// dataTable.addColumn(ColumnType.NUMBER, "Other");
 
 		dataTable.addRows(periods.size());
 		for (int i = 0; i < periods.size(); i++) {
-			dataTable.setValue(i, 0, periods.get(i).toString());
+			String label = columnLabels == null ? periods.get(i).toString() : columnLabels.get(periods.get(i));
+			dataTable.setValue(i, 0, label);
+
+			// dataTable.setValue(i, 0, periods.get(i).toString());
 		}
 
 		for (int col = 0; col < periods.size(); col++) {
@@ -106,11 +120,10 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 		// Set options
 		AreaChartOptions options = AreaChartOptions.create();
-		// TODO: in setData
-		options.setTitle("Objem URN:NBN");
+		options.setTitle(title);
 		options.setIsStacked(true);
-		options.setHAxis(HAxis.create("Období"));
-		options.setVAxis(VAxis.create("Počet"));
+		options.setHAxis(HAxis.create(xAxisLabel));
+		options.setVAxis(VAxis.create(yAxisLabel));
 
 		// Draw the chart
 		chart.draw(dataTable, options);

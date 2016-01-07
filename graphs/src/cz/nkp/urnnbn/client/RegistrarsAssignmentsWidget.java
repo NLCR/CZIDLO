@@ -203,20 +203,19 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
 	private void redrawCharts() {
 		if (totalColumnChart != null) {
+			List<Integer> keys = currentYear != null ? months : years;
+			Map<Integer, Integer> data = agregate(keys, currentData);
 			// TODO: i18n
-			String yLabel = accumulated.getValue() ? "přiřazení (kumulované)" : "přiřazení";
-			String xLabel = currentYear != null ? "rok" : "měsíc";
+			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
 			// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 			// String valueLabel = "TODO:valueLabel";
 			String valueLabel = null;
-			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
-			List<Integer> keys = currentYear != null ? months : years;
-			Map<Integer, String> columnDesc = currentYear == null ? null : getMonthLabels();
-			Map<Integer, Integer> data = agregate(keys, currentData);
-			totalColumnChart.setDataAndDraw(keys, data, accumulated.getValue(), columnDesc, title, xLabel, yLabel, valueLabel);
+			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
+			String yAxisLabel = accumulated.getValue() ? "Přiřazení (kumulované)" : "Přiřazení";
+			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
+			totalColumnChart.setDataAndDraw(keys, data, accumulated.getValue(), title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
 		}
 		if (registrarsRatioPiechart != null) {
-			// preprocess data
 			int totalAssignments = computeTotalAssignments();
 			Map<String, Integer> assignmentsByRegistrar = computeAssignmentsByRegistrar();
 			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar);
@@ -224,8 +223,12 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		if (registrarsAccumulatedAreaChart != null) {
 			List<Integer> keys = currentYear != null ? months : years;
 			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
-			Map<Integer, String> columnDesc = currentYear == null ? null : getMonthLabels();
-			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData, columnDesc);
+			// TODO: i18n
+			String title = currentYear != null ? "Objem URN:NBN v roce " + currentYear : "Objem URN:NBN za celé období";
+			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
+			String yAxisLabel = "Počet";
+			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
+			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels);
 		}
 	}
 

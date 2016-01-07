@@ -201,17 +201,14 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 
 	private void redrawChart() {
 		if (chart != null) {
-			// TODO: i18n
-			String yLabel = accumulated.getValue() ? "přiřazení (kumulované)" : "přiřazení";
-			String xLabel = currentYear != null ? "rok" : "měsíc";
-			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
-			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
 			List<Integer> keys = currentYear != null ? months : years;
-			Map<Integer, String> columnDesc = null;
-			if (currentYear != null) {
-				columnDesc = getMonthLabels();
-			}
-			chart.setDataAndDraw(keys, currentData, accumulated.getValue(), columnDesc, title, xLabel, yLabel, valueLabel);
+			// TODO: i18n
+			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
+			String valueDesc = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
+			String xLabel = currentYear != null ? "rok" : "měsíc";
+			String yLabel = accumulated.getValue() ? "přiřazení (kumulované)" : "přiřazení";
+			Map<Integer, String> columnDesc = currentYear == null ? null : getMonthLabels();
+			chart.setDataAndDraw(keys, currentData, accumulated.getValue(), title, valueDesc, xLabel, yLabel, columnDesc);
 		}
 	}
 

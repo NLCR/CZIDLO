@@ -27,11 +27,11 @@ public class IntegerKeyColumnChart {
 	private List<Integer> periods;
 	private Map<Integer, Integer> data; // period -> volume_per_period
 	// labels
-	private String valueDescription;
-	private Map<Integer, String> columnLabels;
 	private String title;
-	private String xAxisDescription;
-	private String yAxisDescription;
+	private String valueDescription;
+	private String xAxisLabel;
+	private String yAxisLabel;
+	private Map<Integer, String> columnLabels;
 	// widgets
 	private final ColumnChart chart;
 	// callbacks
@@ -46,22 +46,21 @@ public class IntegerKeyColumnChart {
 				if (handler != null) {
 					Selection sel = chart.getSelection().get(0);
 					Integer year = periods.get(sel.getRow());
-					// logger.info("selected year: " + year);
 					handler.onSelected(year);
 				}
 			}
 		});
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, boolean agregate, Map<Integer, String> columnLabels, String title,
-			String xAxisDescription, String yAxisDescription, String valueDescription) {
+	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, boolean agregate, String title, String valueDescription,
+			String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
 		this.data = agregate ? agregate(data) : data;
-		this.valueDescription = valueDescription;
-		this.columnLabels = columnLabels;
 		this.title = title;
-		this.xAxisDescription = xAxisDescription;
-		this.yAxisDescription = yAxisDescription;
+		this.valueDescription = valueDescription;
+		this.xAxisLabel = xAxisLabel;
+		this.yAxisLabel = yAxisLabel;
+		this.columnLabels = columnLabels;
 		draw();
 	}
 
@@ -96,8 +95,8 @@ public class IntegerKeyColumnChart {
 		ColumnChartOptions options = ColumnChartOptions.create();
 		// options.setFontName("Tahoma");
 		options.setTitle(title);
-		options.setHAxis(HAxis.create(xAxisDescription));
-		options.setVAxis(VAxis.create(yAxisDescription));
+		options.setHAxis(HAxis.create(xAxisLabel));
+		options.setVAxis(VAxis.create(yAxisLabel));
 
 		// Draw the chart
 		chart.draw(dataTable, options);
