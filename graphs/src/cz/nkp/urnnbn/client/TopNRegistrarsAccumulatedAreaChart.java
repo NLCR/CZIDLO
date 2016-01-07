@@ -2,9 +2,9 @@ package cz.nkp.urnnbn.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +37,7 @@ public class TopNRegistrarsAccumulatedAreaChart {
 	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod, Map<Integer, Map<String, Integer>> volumePerPeriod) {
 		this.periods = periods;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
-		this.dataAccumulated = accumulate(periods, topNRegistrarCodes, volumePerPeriod, volumeBeforeFirstPeriod);
+		this.dataAccumulated = Utils.accumulate(periods, topNRegistrarCodes, volumeBeforeFirstPeriod, volumePerPeriod);
 		this.remainingDataAccumulated = extractAndAccumulateRemainingData(periods, topNRegistrarCodes, volumePerPeriod, volumeBeforeFirstPeriod);
 		draw();
 	}
@@ -46,12 +46,13 @@ public class TopNRegistrarsAccumulatedAreaChart {
 			Map<Integer, Map<String, Integer>> data, Map<String, Integer> volumeBeforeFirstPeriod) {
 		Map<Integer, Integer> result = new HashMap<>();
 		Integer previousPeriod = null;
+		List<String> allRegistrarCodes = Utils.extractAllRegistrarCodes(data);
 		for (Integer period : periods) {
 			Map<String, Integer> originalPeriodData = data.get(period);
 			Integer accumulatedPeriodVolume = previousPeriod == null ? 0 : result.get(previousPeriod);
-			for (String registrarCode : topNRegistrarCodes) {
+			for (String registrarCode : allRegistrarCodes) {
 				if (!topNRegistrarCodes.contains(registrarCode)) {
-					if (previousPeriod == null) {// before first period
+					if (previousPeriod == null && volumeBeforeFirstPeriod != null) {// before first period
 						Integer registrarVolumeBeforeFirstPeriod = volumeBeforeFirstPeriod.get(registrarCode);
 						if (registrarVolumeBeforeFirstPeriod != null) {
 							accumulatedPeriodVolume += registrarVolumeBeforeFirstPeriod;
@@ -67,50 +68,6 @@ public class TopNRegistrarsAccumulatedAreaChart {
 			previousPeriod = period;
 		}
 		return result;
-	}
-
-	private Map<Integer, Map<String, Integer>> accumulate(List<Integer> periods, List<String> topNRegistrarCodes,
-			Map<Integer, Map<String, Integer>> originalData, Map<String, Integer> volumeBeforeFirstPeriod) {
-		Map<Integer, Map<String, Integer>> result = new HashMap<Integer, Map<String, Integer>>();
-		Integer previousPeriod = null;
-		for (Integer period : periods) {
-			LOGGER.warning(period.toString());
-			Map<String, Integer> originalPeriodData = originalData.get(period);
-			Map<String, Integer> accumulatedPeriodData = new HashMap<String, Integer>();
-			for (String registrarCode : topNRegistrarCodes) {
-				Integer registrarPreviousPeriodsVolume = computePreviousPeriodsVolume(registrarCode, previousPeriod, result, volumeBeforeFirstPeriod);
-				Integer registrarCurrentPeriodVolume = computeCurrentPeriodVolume(registrarCode, originalPeriodData);
-				accumulatedPeriodData.put(registrarCode, registrarPreviousPeriodsVolume + registrarCurrentPeriodVolume);
-			}
-			result.put(period, accumulatedPeriodData);
-			previousPeriod = period;
-		}
-		return result;
-	}
-
-	private Integer computeCurrentPeriodVolume(String registrarCode, Map<String, Integer> originalPeriodData) {
-		if (originalPeriodData == null) {
-			return 0;
-		} else {
-			Integer result = originalPeriodData.get(registrarCode);
-			return result != null ? result : 0;
-		}
-	}
-
-	private Integer computePreviousPeriodsVolume(String registrarCode, Integer previousPeriod, Map<Integer, Map<String, Integer>> accumulatedData,
-			Map<String, Integer> volumeBeforeFirstPeriod) {
-		if (previousPeriod == null) {
-			Integer beforeFistPeriod = volumeBeforeFirstPeriod.get(registrarCode);
-			return beforeFistPeriod != null ? beforeFistPeriod : 0;
-		} else {
-			Map<String, Integer> previousPeriodAccumulatedData = accumulatedData.get(previousPeriod);
-			if (previousPeriodAccumulatedData != null) {
-				Integer registrarPreviousPeriodsData = previousPeriodAccumulatedData.get(registrarCode);
-				return registrarPreviousPeriodsData != null ? registrarPreviousPeriodsData : 0;
-			} else {
-				return 0;
-			}
-		}
 	}
 
 	private void draw() {
@@ -131,7 +88,6 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 		for (int col = 0; col < periods.size(); col++) {
 			int period = periods.get(col);
-			LOGGER.warning("" + period);
 			// other (second column)
 			dataTable.setValue(col, 1, remainingDataAccumulated.get(period));
 			Map<String, Integer> periodData = dataAccumulated.get(period);
@@ -141,13 +97,9 @@ public class TopNRegistrarsAccumulatedAreaChart {
 				if (periodData != null) {
 					Integer registrarData = periodData.get(registrarCode);
 					if (registrarData != null) {
-						LOGGER.info(registrarCode + ": " + registrarData);
 						value = registrarData;
 					}
 				}
-				// Integer value = currentData.get(period).get(registrarCode);// pozor na NPE
-				// dataTable.setValue(row, col + 1, value);
-				// dataTable.setValue(col, row+1, value);
 				dataTable.setValue(col, row + 2, value);
 			}
 		}
@@ -166,8 +118,10 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 	private List<String> extractTopRegistrarCodes(Map<Integer, Map<String, Integer>> volumePerPeriod, Map<String, Integer> volumeBeforeFirstPeriod) {
 		Map<String, Integer> totalVolumeByRegistrar = new HashMap<String, Integer>();
-		for (String registrarCode : volumeBeforeFirstPeriod.keySet()) {
-			totalVolumeByRegistrar.put(registrarCode, volumeBeforeFirstPeriod.get(registrarCode));
+		if (volumeBeforeFirstPeriod != null) {
+			for (String registrarCode : volumeBeforeFirstPeriod.keySet()) {
+				totalVolumeByRegistrar.put(registrarCode, volumeBeforeFirstPeriod.get(registrarCode));
+			}
 		}
 		for (Map<String, Integer> periodData : volumePerPeriod.values()) {
 			for (String registrarCode : periodData.keySet()) {

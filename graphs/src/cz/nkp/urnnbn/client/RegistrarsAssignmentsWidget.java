@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.client;
 
-import java.awt.geom.Area;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	// data
 	private Map<Integer, Map<String, Integer>> currentData;// period(year/month) -> registrar_code -> assignments_in_period
 	private Integer currentYear = null;
+	private Map<Integer, Map<String, Integer>> accumulatedVolumeBeforeYear; // year -> registrar_code -> all_assignments_before_this_year
 
 	// widgets
 	private final Label title;
@@ -180,6 +180,9 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
 				currentYear = year;
 				currentData = result;
+				if (year == null) {
+					accumulatedVolumeBeforeYear = Utils.accumulate(years, Utils.extractAllRegistrarCodes(currentData), null, currentData);
+				}
 				redrawCharts();
 			}
 
@@ -223,8 +226,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		}
 		if (registrarsAccumulatedAreaChart != null) {
 			List<Integer> keys = currentYear != null ? months : years;
-			// TODO: realne naplnit
-			Map<String, Integer> volumeBeforeFistPeriod = new HashMap<String, Integer>();
+			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
 			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData);
 		}
 	}
