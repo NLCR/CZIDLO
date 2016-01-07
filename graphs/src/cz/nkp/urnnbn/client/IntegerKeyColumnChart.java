@@ -21,12 +21,21 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 
 public class IntegerKeyColumnChart {
 
-	private static final Logger logger = Logger.getLogger(IntegerKeyColumnChart.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(IntegerKeyColumnChart.class.getSimpleName());
 
+	// data
+	private List<Integer> periods;
+	private Map<Integer, Integer> data; // period -> volume_per_period
+	// labels
+	private String valueDescription;
+	private Map<Integer, String> columnLabels;
+	private String title;
+	private String xAxisDescription;
+	private String yAxisDescription;
+	// widgets
 	private final ColumnChart chart;
-
+	// callbacks
 	private IntegerSelectionHandler handler;
-	private List<Integer> keys;
 
 	public IntegerKeyColumnChart() {
 		chart = new ColumnChart();
@@ -36,7 +45,7 @@ public class IntegerKeyColumnChart {
 			public void onSelect(SelectEvent event) {
 				if (handler != null) {
 					Selection sel = chart.getSelection().get(0);
-					Integer year = keys.get(sel.getRow());
+					Integer year = periods.get(sel.getRow());
 					// logger.info("selected year: " + year);
 					handler.onSelected(year);
 				}
@@ -44,31 +53,36 @@ public class IntegerKeyColumnChart {
 		});
 	}
 
-	public void setDataAndDraw(List<Integer> keysSorted, Map<Integer, Integer> data, Map<Integer, String> columnLabels, String title,
-			String xAxisDescription, String yAxisDescription, String valueDescription, boolean agregate) {
-		// logger.info("setDataAndDraw");
-		// keys = toSortedList(data.keySet());
-		keys = keysSorted;
-		if (agregate) {
-			data = agregate(data);
-		}
+	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, boolean agregate, Map<Integer, String> columnLabels, String title,
+			String xAxisDescription, String yAxisDescription, String valueDescription) {
+		this.periods = periods;
+		this.data = agregate ? agregate(data) : data;
+		this.valueDescription = valueDescription;
+		this.columnLabels = columnLabels;
+		this.title = title;
+		this.xAxisDescription = xAxisDescription;
+		this.yAxisDescription = yAxisDescription;
+		draw();
+	}
+
+	private void draw() {
 		DataTable dataTable = DataTable.create();
 
 		// columns
 		dataTable.addColumn(ColumnType.STRING, null);
 		dataTable.addColumn(ColumnType.NUMBER, valueDescription);
 		// rows
-		dataTable.addRows(keys.size());
+		dataTable.addRows(periods.size());
 
 		// fill data
 		// key column
-		for (int i = 0; i < keys.size(); i++) {
-			String label = columnLabels == null ? keys.get(i).toString() : columnLabels.get(keys.get(i));
+		for (int i = 0; i < periods.size(); i++) {
+			String label = columnLabels == null ? periods.get(i).toString() : columnLabels.get(periods.get(i));
 			dataTable.setValue(i, 0, label);
 		}
 		// value column
-		for (int row = 0; row < keys.size(); row++) {
-			Integer key = keys.get(row);
+		for (int row = 0; row < periods.size(); row++) {
+			Integer key = periods.get(row);
 			// logger.warning("key is null for row " + row);
 			Integer value = data.get(key);
 			if (value == null) {
@@ -90,10 +104,10 @@ public class IntegerKeyColumnChart {
 	}
 
 	private Map<Integer, Integer> agregate(Map<Integer, Integer> data) {
-		logger.info("aggregate");
+		LOGGER.info("aggregate");
 		Map<Integer, Integer> result = new HashMap<>();
 		Integer sum = 0;
-		for (Integer key : keys) {
+		for (Integer key : periods) {
 			Integer value = data.get(key);
 			if (value != null) {
 				sum += value;

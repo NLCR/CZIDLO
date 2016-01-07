@@ -211,12 +211,9 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			String valueLabel = null;
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
 			List<Integer> keys = currentYear != null ? months : years;
-			Map<Integer, String> columnDesc = null;
-			if (currentYear != null) {
-				columnDesc = getMonthLabels();
-			}
+			Map<Integer, String> columnDesc = currentYear == null ? null : getMonthLabels();
 			Map<Integer, Integer> data = agregate(keys, currentData);
-			totalColumnChart.setDataAndDraw(keys, data, columnDesc, title, xLabel, yLabel, valueLabel, accumulated.getValue());
+			totalColumnChart.setDataAndDraw(keys, data, accumulated.getValue(), columnDesc, title, xLabel, yLabel, valueLabel);
 		}
 		if (registrarsRatioPiechart != null) {
 			// preprocess data
@@ -227,7 +224,8 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		if (registrarsAccumulatedAreaChart != null) {
 			List<Integer> keys = currentYear != null ? months : years;
 			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
-			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData);
+			Map<Integer, String> columnDesc = currentYear == null ? null : getMonthLabels();
+			registrarsAccumulatedAreaChart.setDataAndDraw(keys, volumeBeforeFistPeriod, currentData, columnDesc);
 		}
 	}
 

@@ -92,8 +92,8 @@ public class Graphs implements EntryPoint {
 
 		container = new VerticalPanel();
 		container.setWidth("100%");
-		//container.setWidth("5000px");
-		//container.setHeight("500px");
+		// container.setWidth("5000px");
+		// container.setHeight("500px");
 		RootLayoutPanel.get().add(container);
 
 		// header
@@ -293,7 +293,7 @@ public class Graphs implements EntryPoint {
 			String xLabel = currentYear != null ? "rok" : "měsíc";
 			String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
-			registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), currentData, null, title, xLabel, yLabel, valueLabel, accumulated);
+			registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), currentData, accumulated, null, title, xLabel, yLabel, valueLabel);
 		}
 	}
 
@@ -345,8 +345,8 @@ public class Graphs implements EntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> result) {
 				// getRegistrarYearlyChart().setDataAndDraw(result, "Počet přiřazení URN:NBN za celé období", "Rok", "přiřazených URN:NBN", "MZK");
-				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result, null, "Počet přiřazení URN:NBN za celé období", "Rok",
-						"přiřazených URN:NBN", "MZK", false);
+				registrarYearlyChart.setDataAndDraw(Collections.<Integer> emptyList(), result, false, null, "Počet přiřazení URN:NBN za celé období",
+						"Rok", "přiřazených URN:NBN", "MZK");
 			}
 
 			@Override

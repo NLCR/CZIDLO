@@ -115,7 +115,7 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 	}
 
 	private RadioButton createUrnStateRadibutton(String title, boolean selected) {
-		//TODO: filtrovat instance
+		// TODO: filtrovat instance
 		RadioButton result = new RadioButton("registrar-urn-state", title);
 		result.setValue(selected);
 		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -211,7 +211,7 @@ public class RegistrarAssignmentsWidget extends AbstractStatisticsWidget {
 			if (currentYear != null) {
 				columnDesc = getMonthLabels();
 			}
-			chart.setDataAndDraw(keys, currentData, columnDesc, title, xLabel, yLabel, valueLabel, accumulated.getValue());
+			chart.setDataAndDraw(keys, currentData, accumulated.getValue(), columnDesc, title, xLabel, yLabel, valueLabel);
 		}
 	}
 

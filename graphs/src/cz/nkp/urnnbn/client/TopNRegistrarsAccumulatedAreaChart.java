@@ -34,7 +34,7 @@ public class TopNRegistrarsAccumulatedAreaChart {
 		return chart;
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod, Map<Integer, Map<String, Integer>> volumePerPeriod) {
+	public void setDataAndDraw(List<Integer> periods, Map<String, Integer> volumeBeforeFirstPeriod, Map<Integer, Map<String, Integer>> volumePerPeriod, Map<Integer, String> columnDesc) {
 		this.periods = periods;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
 		this.dataAccumulated = Utils.accumulate(periods, topNRegistrarCodes, volumeBeforeFirstPeriod, volumePerPeriod);
