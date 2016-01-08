@@ -36,7 +36,9 @@ public class TopNRegistrarsAccumulatedAreaChart {
 
 	public TopNRegistrarsAccumulatedAreaChart() {
 		chart = new AreaChart();
-		// chart.setWidth("1000px");
+		// TODO: timhle se to da trochu tunit
+		// chart.setWidth("1200px");
+		// chart.setHeight("200px");
 	}
 
 	public Widget getWidget() {
