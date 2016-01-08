@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -32,9 +34,13 @@ public class Graphs implements EntryPoint {
 	private List<Integer> years;
 
 	// widgets
-	private VerticalPanel container;
-	private VerticalPanel header;
-	private HorizontalPanel headerRegistrars;
+	private TabLayoutPanel tabPanel;
+
+	private VerticalPanel registrarsContainer;
+	private VerticalPanel registrarContainer;
+
+	// private VerticalPanel header;
+	private HorizontalPanel registrarSelection;
 	private RegistrarAssignmentsWidget registrarGraph;
 	private RegistrarsAssignmentsWidget registrarsGraph;
 
@@ -44,23 +50,25 @@ public class Graphs implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		// logger.info("onModuleLoad");
+
 		Window.enableScrolling(true);
 		Window.setMargin("0px");
 
-		container = new VerticalPanel();
-		container.setWidth("100%");
-		// container.setWidth("5000px");
-		// container.setHeight("500px");
-		RootLayoutPanel.get().add(container);
+		tabPanel = new TabLayoutPanel(1.5, Unit.EM);
+		RootLayoutPanel.get().add(tabPanel);
 
-		// header
-		header = new VerticalPanel();
-		header.setSpacing(10);
-		header.setWidth("100%");
-		container.add(header);
+		// registrars
+		registrarsContainer = new VerticalPanel();
+		registrarsContainer.setWidth("100%");
+		tabPanel.add(registrarsContainer, "registrars");
+
+		// registrar
+		registrarContainer = new VerticalPanel();
+		registrarContainer.setWidth("100%");
+		tabPanel.add(registrarContainer, "registrar");
 		// registrar selection
-		headerRegistrars = new HorizontalPanel();
-		header.add(headerRegistrars);
+		registrarSelection = new HorizontalPanel();
+		registrarContainer.add(registrarSelection);
 
 		initData();
 	}
@@ -83,7 +91,7 @@ public class Graphs implements EntryPoint {
 
 						for (Registrar registrar : result) {
 							RadioButton registrarButton = new RadioButton("registrars", registrar.getCode());
-							headerRegistrars.add(registrarButton);
+							registrarSelection.add(registrarButton);
 							final Registrar thisRegistrar = registrar;
 							registrarButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -111,9 +119,9 @@ public class Graphs implements EntryPoint {
 								LOGGER.info("chart api loaded");
 								// charts
 								registrarGraph = new RegistrarAssignmentsWidget(years);
-								container.add(registrarGraph);
+								registrarContainer.add(registrarGraph);
 								registrarsGraph = new RegistrarsAssignmentsWidget(years);
-								container.add(registrarsGraph);
+								registrarsContainer.add(registrarsGraph);
 							}
 
 						});

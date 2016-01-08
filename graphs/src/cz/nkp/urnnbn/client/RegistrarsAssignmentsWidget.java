@@ -61,7 +61,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		header.setWidth("1300px");
 		container.add(header);
 
-		title = new Label("Total");
+		title = new Label("Statistiky přiřazených URN:NBN");
 		header.add(title);
 
 		// year filter
@@ -239,7 +239,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 			List<Integer> keys = currentYear != null ? months : years;
 			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
 			// TODO: i18n
-			String title = currentYear != null ? "Objem URN:NBN v roce " + currentYear : "Objem URN:NBN za celé období";
+			String title = currentYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + currentYear : "Roční vývoj počtu URN:NBN";
 			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
 			String yAxisLabel = "Počet";
 			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
