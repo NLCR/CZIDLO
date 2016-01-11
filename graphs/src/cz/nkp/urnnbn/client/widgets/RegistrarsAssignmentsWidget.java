@@ -41,7 +41,6 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
-	private final CheckBox accumulated;
 	private final SingleItemColumnChart totalColumnChart;
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart registrarsAccumulatedAreaChart;
@@ -81,10 +80,6 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 		urnStateFilterPanel.add(stateActiveOnly);
 		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
-
-		// accumulated filter
-		accumulated = createAccumulatedCheckbox();
-		header.add(accumulated);
 
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
@@ -239,10 +234,9 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 				// String valueLabel = "TODO:valueLabel";
 				String valueLabel = null;
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = accumulated.getValue() ? "Přiřazení (kumulované)" : "Přiřazení";
+				String yAxisLabel = "Přiřazení";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				totalColumnChart.setDataAndDraw(periods, aggregatedData, accumulated.getValue(), title, valueLabel, xAxisLabel, yAxisLabel,
-						columnLabels);
+				totalColumnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
 			}
 			if (registrarsRatioPiechart != null) {
 				// TODO

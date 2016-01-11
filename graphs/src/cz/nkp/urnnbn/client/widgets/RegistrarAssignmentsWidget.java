@@ -187,7 +187,7 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Přiřazení";
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
-				assignmentsColumnChart.setDataAndDraw(keys, periodData, false, title, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
+				assignmentsColumnChart.setDataAndDraw(keys, periodData, title, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
 			}
 			if (areaChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;

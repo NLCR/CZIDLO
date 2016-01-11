@@ -1,15 +1,10 @@
 package cz.nkp.urnnbn.client.widgets;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.Selection;
@@ -56,10 +51,10 @@ public class SingleItemColumnChart extends Composite {
 		initWidget(chart);
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, boolean agregate, String title, String valueDescription,
-			String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
+	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, String title, String valueDescription, String xAxisLabel,
+			String yAxisLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
-		this.data = agregate ? agregate(data) : data;
+		this.data = data;
 		this.title = title;
 		this.valueDescription = valueDescription;
 		this.xAxisLabel = xAxisLabel;
@@ -104,27 +99,6 @@ public class SingleItemColumnChart extends Composite {
 
 		// Draw the chart
 		chart.draw(dataTable, options);
-	}
-
-	private Map<Integer, Integer> agregate(Map<Integer, Integer> data) {
-		LOGGER.info("aggregate");
-		Map<Integer, Integer> result = new HashMap<>();
-		Integer sum = 0;
-		for (Integer key : periods) {
-			Integer value = data.get(key);
-			if (value != null) {
-				sum += value;
-			}
-			result.put(key, sum);
-		}
-		return result;
-	}
-
-	private List<Integer> toSortedList(Set<Integer> set) {
-		List<Integer> result = new ArrayList<>();
-		result.addAll(set);
-		Collections.sort(result);
-		return result;
 	}
 
 	public void setHandler(IntegerSelectionHandler handler) {
