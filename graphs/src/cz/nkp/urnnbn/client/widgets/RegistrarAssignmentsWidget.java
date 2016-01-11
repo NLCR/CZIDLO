@@ -79,12 +79,16 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
 
+		IntegerSelectionHandler selectionHandler = createChartSelectionHandler();
+
 		// column chart
-		assignmentsColumnChart = createChart();
+		assignmentsColumnChart = new SingleItemColumnChart();
+		assignmentsColumnChart.setHandler(selectionHandler);
 		container.add(assignmentsColumnChart);
 
 		// area chart
 		areaChart = new SingleRegistrarAreaChart();
+		areaChart.setHandler(selectionHandler);
 		container.add(areaChart);
 
 		initWidget(container);
@@ -131,9 +135,8 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 		return result;
 	}
 
-	private SingleItemColumnChart createChart() {
-		SingleItemColumnChart result = new SingleItemColumnChart();
-		result.setHandler(new IntegerSelectionHandler() {
+	private IntegerSelectionHandler createChartSelectionHandler() {
+		return new IntegerSelectionHandler() {
 
 			@Override
 			public void onSelected(Integer key) {
@@ -149,8 +152,7 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 					loadData(selectedRegistrar, selectedYear);
 				}
 			}
-		});
-		return result;
+		};
 	}
 
 	private void loadData(final Registrar registrar, final Integer year) {
