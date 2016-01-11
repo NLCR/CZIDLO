@@ -101,6 +101,15 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
+	public Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(boolean includeActive, boolean includeDeactivated) {
+		Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
+		for (Registrar registrar : getRegistrars()) {
+			result.put(registrar.getCode(), getStatistics(registrar.getCode(), includeActive, includeDeactivated));
+		}
+		return result;
+	}
+
+	@Override
 	public Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
 		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();

@@ -66,12 +66,11 @@ public class TopNRegistrarsPieChart extends Composite {
 		// TODO: i18n
 		pieNewData.addColumn(ColumnType.STRING, "Registrar");
 		pieNewData.addColumn(ColumnType.NUMBER, "registrations");
+		pieNewData.addRow("Ostatní", remainingAmount);
 		for (RegistrarWithStatistic registrar : topNRecords) {
 			String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
 			pieNewData.addRow(label, registrar.getData());
 		}
-		// TODO: i18n
-		pieNewData.addRow("Ostatní", remainingAmount);
 		chart.draw(pieNewData);
 	}
 

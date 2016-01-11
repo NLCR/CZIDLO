@@ -35,4 +35,6 @@ public interface StatisticsServiceAsync {
 
 	void getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated,
 			AsyncCallback<Map<Integer, Map<Integer, Integer>>> callback);
+
+	void getStatistics(boolean includeActive, boolean includeDeactivated, AsyncCallback<Map<String, Map<Integer, Map<Integer, Integer>>>> callback);
 }

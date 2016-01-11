@@ -30,7 +30,7 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 
 	// data
 	private Registrar selectedRegistrar;
-	private Map<Integer, Map<Integer, Integer>> registrarData;
+	private Map<Integer, Map<Integer, Integer>> registrarData; // year -> month -> statistics
 	private Integer selectedYear = null;
 
 	// widgets

@@ -1,8 +1,10 @@
 package cz.nkp.urnnbn.client.widgets;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -19,7 +21,6 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.client.IntegerSelectionHandler;
-import cz.nkp.urnnbn.client.Utils;
 
 public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 
@@ -31,11 +32,8 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 	private Map<String, String> registraNames = null;
 
 	// data
-	private Map<Integer, Map<String, Integer>> currentData;// period(year/month) -> registrar_code -> assignments_in_period
-	private Integer currentYear = null;
-	private Map<Integer, Map<String, Integer>> accumulatedVolumeBeforeYear; // year -> registrar_code -> all_assignments_before_this_year 
-	//TODO: neni to VCETNE tohohle roku?
-
+	private Map<Integer, Map<Integer, Map<String, Integer>>> data; // year -> month -> registrar_code -> statistics
+	private Integer selectedYear = null;
 
 	// widgets
 	private final Label title;
@@ -108,7 +106,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 			@Override
 			public void onSuccess(Map<String, String> result) {
 				registraNames = result;
-				loadData(currentYear);
+				loadData(selectedYear);
 			}
 
 			@Override
@@ -132,11 +130,11 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 			public void onChange(ChangeEvent event) {
 				int index = timePeriods.getSelectedIndex();
 				if (index == 0 || years.isEmpty()) {
-					currentYear = null;
+					selectedYear = null;
 				} else {
-					currentYear = years.get(index - 1);
+					selectedYear = years.get(index - 1);
 				}
-				loadData(currentYear);
+				loadData(selectedYear);
 			}
 		});
 		return result;
@@ -150,7 +148,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if (event.getValue()) {
-					loadData(currentYear);
+					loadData(selectedYear);
 				}
 			}
 		});
@@ -180,12 +178,12 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 					for (int position = 0; position < years.size(); position++) {
 						int year = years.get(position);
 						if (year == key) {
-							currentYear = key;
+							selectedYear = key;
 							timePeriods.setSelectedIndex(position + 1);
 							break;
 						}
 					}
-					loadData(currentYear);
+					loadData(selectedYear);
 				}
 			}
 		});
@@ -193,86 +191,135 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 	}
 
 	private void loadData(final Integer year) {
-		AsyncCallback<Map<Integer, Map<String, Integer>>> callback = new AsyncCallback<Map<Integer, Map<String, Integer>>>() {
+		boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
+		boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
+		service.getStatistics(includeActive, includeDeactivated, new AsyncCallback<Map<String, Map<Integer, Map<Integer, Integer>>>>() {
 
 			@Override
-			public void onSuccess(Map<Integer, Map<String, Integer>> result) {
-				currentYear = year;
-				currentData = result;
-				if (year == null) {
-					accumulatedVolumeBeforeYear = Utils.accumulate(years, Utils.extractAllRegistrarCodes(currentData), null, currentData);
-				}
+			public void onSuccess(Map<String, Map<Integer, Map<Integer, Integer>>> result) {
+				selectedYear = year;
+				data = transform(result);
 				redrawCharts();
+			}
+
+			private Map<Integer, Map<Integer, Map<String, Integer>>> transform(Map<String, Map<Integer, Map<Integer, Integer>>> input) {
+				Map<Integer, Map<Integer, Map<String, Integer>>> result = new HashMap<>();
+				for (Integer year : years) {
+					Map<Integer, Map<String, Integer>> anualData = new HashMap<>();
+					for (Integer month : months) {
+						Map<String, Integer> monthData = new HashMap<>();
+						for (String registrarCode : input.keySet()) {
+							Integer statistics = input.get(registrarCode).get(year).get(month);
+							monthData.put(registrarCode, statistics);
+						}
+						anualData.put(month, monthData);
+					}
+					result.put(year, anualData);
+				}
+				return result;
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
 				LOGGER.severe(caught.getMessage());
 			}
-		};
-		boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
-		boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
-
-		if (year != null) {
-			service.getAssignmentsByMonth(year, includeActive, includeDeactivated, callback);
-		} else {
-			service.getAssignmentsByYear(includeActive, includeDeactivated, callback);
-		}
+		});
 	}
 
 	private void redrawCharts() {
-		if (totalColumnChart != null) {
-			List<Integer> keys = currentYear != null ? months : years;
-			Map<Integer, Integer> data = agregate(keys, currentData);
-			// TODO: i18n
-			String title = currentYear != null ? "Počet přiřazení URN:NBN za rok " + currentYear : "Počet přiřazení URN:NBN za celé období";
-			// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
-			// String valueLabel = "TODO:valueLabel";
-			String valueLabel = null;
-			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
-			String yAxisLabel = accumulated.getValue() ? "Přiřazení (kumulované)" : "Přiřazení";
-			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
-			totalColumnChart.setDataAndDraw(keys, data, accumulated.getValue(), title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
-		}
-		if (registrarsRatioPiechart != null) {
-			int totalAssignments = computeTotalAssignments();
-			Map<String, Integer> assignmentsByRegistrar = computeAssignmentsByRegistrar();
-			registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, registraNames);
-		}
-		if (registrarsAccumulatedAreaChart != null) {
-			List<Integer> keys = currentYear != null ? months : years;
-			//TODO: nema tady byt -1
-			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
-			// TODO: i18n
-			String title = currentYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + currentYear : "Roční vývoj počtu URN:NBN";
-			String xAxisLabel = currentYear != null ? "měsíc v roce " + currentYear : "rok";
-			String yAxisLabel = "Počet";
-			Map<Integer, String> columnLabels = currentYear == null ? null : getMonthLabels();
-			registrarsAccumulatedAreaChart.setDataAndDraw(keys, registraNames, volumeBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel,
-					columnLabels);
+		if (data != null) {
+			Set<String> registrarCodes = extractRegistrarCodes(data);
+			Map<Integer, Map<String, Integer>> currentData = selectedYear != null ? data.get(selectedYear) : aggregateYearlyData(registrarCodes);
+			List<Integer> periods = selectedYear != null ? months : years;
+			if (totalColumnChart != null) {
+				Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
+				// TODO: i18n
+				String title = selectedYear != null ? "Počet přiřazení URN:NBN za rok " + selectedYear : "Počet přiřazení URN:NBN za celé období";
+				// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
+				// String valueLabel = "TODO:valueLabel";
+				String valueLabel = null;
+				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
+				String yAxisLabel = accumulated.getValue() ? "Přiřazení (kumulované)" : "Přiřazení";
+				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
+				totalColumnChart.setDataAndDraw(periods, aggregatedData, accumulated.getValue(), title, valueLabel, xAxisLabel, yAxisLabel,
+						columnLabels);
+			}
+			if (registrarsRatioPiechart != null) {
+				// TODO
+				int totalAssignments = computeTotalStatistics();
+				Map<String, Integer> assignmentsByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
+				registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, registraNames);
+			}
+			if (registrarsAccumulatedAreaChart != null) {
+				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
+						: null;
+				// TODO: i18n
+				String title = selectedYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + selectedYear : "Roční vývoj počtu URN:NBN";
+				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
+				String yAxisLabel = "Počet";
+				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
+				registrarsAccumulatedAreaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel,
+						yAxisLabel, columnLabels);
+			}
 		}
 	}
 
-	private Map<String, Integer> computeAssignmentsByRegistrar() {
-		Map<String, Integer> result = new HashMap<String, Integer>();
-		for (Map<String, Integer> map : currentData.values()) {
-			for (String registrarCode : map.keySet()) {
-				int totalForRegistrar = result.containsKey(registrarCode) ? result.get(registrarCode) : 0;
-				totalForRegistrar += map.get(registrarCode);
-				result.put(registrarCode, totalForRegistrar);
+	private Map<String, Integer> computeStatisticsByRegistrar(Map<Integer, Map<String, Integer>> currentData, Set<String> registrarCodes) {
+		Map<String, Integer> result = new HashMap<>();
+		for (String registrarCode : registrarCodes) {
+			int sum = 0;
+			for (Map<String, Integer> value : currentData.values()) {
+				sum += value.get(registrarCode);
 			}
+			result.put(registrarCode, sum);
 		}
 		return result;
 	}
 
-	private int computeTotalAssignments() {
+	private int computeTotalStatistics() {
 		int sum = 0;
-		for (Map<String, Integer> map : currentData.values()) {
-			for (Integer value : map.values()) {
-				sum += value;
+		for (Map<Integer, Map<String, Integer>> monthData : data.values()) {
+			for (Map<String, Integer> registrarsMonthData : monthData.values()) {
+				for (Integer registrarMonthValue : registrarsMonthData.values()) {
+					sum += registrarMonthValue;
+				}
 			}
 		}
 		return sum;
+	}
+
+	private Map<Integer, Map<String, Integer>> aggregateYearlyData(Set<String> registrarCodes) {
+		Map<Integer, Map<String, Integer>> result = new HashMap<>();
+		for (Integer year : years) {
+			Map<Integer, Map<String, Integer>> anualData = data.get(year);
+			result.put(year, sumOverMonths(anualData, registrarCodes));
+		}
+		return result;
+	}
+
+	// month -> reg_code -> volume => reg_code -> total_volume_over_all_months
+	private Map<String, Integer> sumOverMonths(Map<Integer, Map<String, Integer>> anualData, Set<String> registrarCodes) {
+		Map<String, Integer> result = new HashMap<>();
+		for (String registrarCode : registrarCodes) {
+			int sum = 0;
+			for (Map<String, Integer> monthData : anualData.values()) {
+				sum += monthData.get(registrarCode);
+			}
+			result.put(registrarCode, sum);
+		}
+		return result;
+	}
+
+	private Set<String> extractRegistrarCodes(Map<Integer, Map<Integer, Map<String, Integer>>> dataByYears) {
+		Set<String> result = new HashSet<>();
+		for (Map<Integer, Map<String, Integer>> dataByMonths : dataByYears.values()) {
+			for (Map<String, Integer> dataByRegistrar : dataByMonths.values()) {
+				for (String registrarCode : dataByRegistrar.keySet()) {
+					result.add(registrarCode);
+				}
+			}
+		}
+		return result;
 	}
 
 	private Map<Integer, Integer> agregate(List<Integer> periods, Map<Integer, Map<String, Integer>> input) {
