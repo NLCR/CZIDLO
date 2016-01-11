@@ -1,11 +1,10 @@
 package cz.nkp.urnnbn.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tools.zip.AsiExtraField;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -97,6 +96,32 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			// System.out.println("year: " + year + ", month: " + month);
 			int inMonth = (int) (assignments.getRegistrations(year, month) * factor);
 			result.put(month, inMonth);
+		}
+		return result;
+	}
+
+	@Override
+	public Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
+		double factor = getDecreaseFactor(includeActive, includeDeactivated);
+		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();
+		Assignments assignments = RegistrarsManager.getInstance().getAssignmentData(registrarCode);
+		List<Integer> years = getYearsSorted();
+		List<Integer> months = getMothsSorted();
+		for (Integer year : years) {
+			Map<Integer, Integer> annualData = new HashMap<>();
+			for (Integer month : months) {
+				Integer registrations = assignments.getRegistrations(year, month);
+				annualData.put(month, (int) (registrations * factor));
+			}
+			result.put(year, annualData);
+		}
+		return result;
+	}
+
+	private List<Integer> getMothsSorted() {
+		List<Integer> result = new ArrayList<>();
+		for (int month = 1; month <= 12; month++) {
+			result.add(month);
 		}
 		return result;
 	}

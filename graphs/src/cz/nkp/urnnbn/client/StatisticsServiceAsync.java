@@ -32,4 +32,7 @@ public interface StatisticsServiceAsync {
 	void getTotalAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated, AsyncCallback<Map<Integer, Integer>> callback);
 
 	void getRegistrarNames(AsyncCallback<Map<String, String>> callback);
+
+	void getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated,
+			AsyncCallback<Map<Integer, Map<Integer, Integer>>> callback);
 }

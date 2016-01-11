@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 
-public class TopNRegistrarsPieChart {
+import cz.nkp.urnnbn.client.RegistrarWithStatistic;
+
+public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
@@ -26,6 +29,7 @@ public class TopNRegistrarsPieChart {
 
 	public TopNRegistrarsPieChart() {
 		chart = new PieChart();
+		initWidget(chart);
 	}
 
 	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, Map<String, String> registraNames) {
@@ -69,10 +73,6 @@ public class TopNRegistrarsPieChart {
 		// TODO: i18n
 		pieNewData.addRow("Ostatní", remainingAmount);
 		chart.draw(pieNewData);
-	}
-
-	public Widget getWidget() {
-		return chart;
 	}
 
 }

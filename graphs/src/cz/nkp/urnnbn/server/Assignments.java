@@ -32,7 +32,7 @@ public class Assignments {
 		return yearsMap.keySet();
 	}
 
-	public int getRegistrations(int year, int month) {
+	public Integer getRegistrations(int year, int month) {
 		Map<Integer, Integer> monthMap = yearsMap.get(year);
 		if (monthMap == null) {
 			return 0;

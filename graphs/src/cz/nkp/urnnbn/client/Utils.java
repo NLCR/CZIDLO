@@ -9,6 +9,30 @@ import java.util.Set;
 
 public class Utils {
 
+	public static Map<Integer, Integer> accumulate(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData) {
+		Map<Integer, Integer> result = new HashMap<>();
+		Integer previousPeriod = null;
+		for (Integer period : periods) {
+			Integer periodVolume = currentData.get(period);
+			if (periodVolume == null) {
+				periodVolume = 0;
+			}
+			Integer previousPeriodsVolume = computePreviousPeriodsVolume(result, previousPeriod, volumeBeforeFistPeriod);
+			result.put(period, periodVolume + previousPeriodsVolume);
+			previousPeriod = period;
+		}
+		return result;
+	}
+
+	private static Integer computePreviousPeriodsVolume(Map<Integer, Integer> data, Integer previousPeriod, Integer volumeBeforeFistPeriod) {
+		if (previousPeriod == null) {
+			return volumeBeforeFistPeriod == null ? 0 : volumeBeforeFistPeriod;
+		} else {
+			Integer value = data.get(previousPeriod);
+			return value == null ? 0 : value;
+		}
+	}
+
 	public static Map<Integer, Map<String, Integer>> accumulate(List<Integer> periods, List<String> registrarCodes,
 			Map<String, Integer> beforePeriodsData, Map<Integer, Map<String, Integer>> periodsData) {
 		Map<Integer, Map<String, Integer>> result = new HashMap<Integer, Map<String, Integer>>();

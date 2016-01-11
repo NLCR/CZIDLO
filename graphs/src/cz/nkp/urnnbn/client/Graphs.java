@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 
+import cz.nkp.urnnbn.client.widgets.RegistrarAssignmentsWidget;
+import cz.nkp.urnnbn.client.widgets.RegistrarsAssignmentsWidget;
 import cz.nkp.urnnbn.shared.Registrar;
 
 /**

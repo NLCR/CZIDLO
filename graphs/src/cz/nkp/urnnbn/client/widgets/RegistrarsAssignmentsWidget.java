@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +18,10 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import cz.nkp.urnnbn.client.IntegerKeyColumnChart.IntegerSelectionHandler;
+import cz.nkp.urnnbn.client.IntegerSelectionHandler;
+import cz.nkp.urnnbn.client.Utils;
 
-public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
+public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 
 	private static final Logger LOGGER = Logger.getLogger(RegistrarsAssignmentsWidget.class.getSimpleName());
 
@@ -32,7 +33,9 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	// data
 	private Map<Integer, Map<String, Integer>> currentData;// period(year/month) -> registrar_code -> assignments_in_period
 	private Integer currentYear = null;
-	private Map<Integer, Map<String, Integer>> accumulatedVolumeBeforeYear; // year -> registrar_code -> all_assignments_before_this_year
+	private Map<Integer, Map<String, Integer>> accumulatedVolumeBeforeYear; // year -> registrar_code -> all_assignments_before_this_year 
+	//TODO: neni to VCETNE tohohle roku?
+
 
 	// widgets
 	private final Label title;
@@ -41,7 +44,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
 	private final CheckBox accumulated;
-	private final IntegerKeyColumnChart totalColumnChart;
+	private final SingleItemColumnChart totalColumnChart;
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart registrarsAccumulatedAreaChart;
 
@@ -87,18 +90,19 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
-		container.add(registrarsRatioPiechart.getWidget());
+		container.add(registrarsRatioPiechart);
 
 		// registrar accumulated volume area chart
 		registrarsAccumulatedAreaChart = new TopNRegistrarsAccumulatedAreaChart();
-		container.add(registrarsAccumulatedAreaChart.getWidget());
+		container.add(registrarsAccumulatedAreaChart);
 
 		// total chart
 		totalColumnChart = createTotalChart();
-		container.add(totalColumnChart.getWidget());
+		container.add(totalColumnChart);
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
+		// TODO: mozna posilat v konstruktoru jmena registratoru
 		service.getRegistrarNames(new AsyncCallback<Map<String, String>>() {
 
 			@Override
@@ -166,8 +170,8 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		return result;
 	}
 
-	private IntegerKeyColumnChart createTotalChart() {
-		IntegerKeyColumnChart result = new IntegerKeyColumnChart();
+	private SingleItemColumnChart createTotalChart() {
+		SingleItemColumnChart result = new SingleItemColumnChart();
 		result.setHandler(new IntegerSelectionHandler() {
 
 			@Override
@@ -237,6 +241,7 @@ public class RegistrarsAssignmentsWidget extends AbstractStatisticsWidget {
 		}
 		if (registrarsAccumulatedAreaChart != null) {
 			List<Integer> keys = currentYear != null ? months : years;
+			//TODO: nema tady byt -1
 			Map<String, Integer> volumeBeforeFistPeriod = currentYear == null ? null : accumulatedVolumeBeforeYear.get(currentYear);
 			// TODO: i18n
 			String title = currentYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + currentYear : "Roční vývoj počtu URN:NBN";

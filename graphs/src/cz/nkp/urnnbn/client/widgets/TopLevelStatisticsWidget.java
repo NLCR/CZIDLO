@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,10 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
-public class AbstractStatisticsWidget extends Composite {
+import cz.nkp.urnnbn.client.StatisticsService;
+import cz.nkp.urnnbn.client.StatisticsServiceAsync;
+
+public class TopLevelStatisticsWidget extends Composite {
 
 	final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
 

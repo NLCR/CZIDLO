@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
@@ -19,9 +20,11 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-public class IntegerKeyColumnChart {
+import cz.nkp.urnnbn.client.IntegerSelectionHandler;
 
-	private static final Logger LOGGER = Logger.getLogger(IntegerKeyColumnChart.class.getSimpleName());
+public class SingleItemColumnChart extends Composite {
+
+	private static final Logger LOGGER = Logger.getLogger(SingleItemColumnChart.class.getSimpleName());
 
 	// data
 	private List<Integer> periods;
@@ -37,7 +40,7 @@ public class IntegerKeyColumnChart {
 	// callbacks
 	private IntegerSelectionHandler handler;
 
-	public IntegerKeyColumnChart() {
+	public SingleItemColumnChart() {
 		chart = new ColumnChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -50,6 +53,7 @@ public class IntegerKeyColumnChart {
 				}
 			}
 		});
+		initWidget(chart);
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, boolean agregate, String title, String valueDescription,
@@ -123,15 +127,8 @@ public class IntegerKeyColumnChart {
 		return result;
 	}
 
-	public Widget getWidget() {
-		return chart;
-	}
-
 	public void setHandler(IntegerSelectionHandler handler) {
 		this.handler = handler;
 	}
 
-	public interface IntegerSelectionHandler {
-		public void onSelected(Integer key);
-	}
 }

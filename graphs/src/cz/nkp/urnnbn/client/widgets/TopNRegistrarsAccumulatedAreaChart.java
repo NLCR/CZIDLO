@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Composite;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.AreaChart;
@@ -15,7 +15,10 @@ import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-public class TopNRegistrarsAccumulatedAreaChart {
+import cz.nkp.urnnbn.client.RegistrarWithStatistic;
+import cz.nkp.urnnbn.client.Utils;
+
+public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
@@ -39,10 +42,7 @@ public class TopNRegistrarsAccumulatedAreaChart {
 		// TODO: timhle se to da trochu tunit
 		// chart.setWidth("1200px");
 		// chart.setHeight("200px");
-	}
-
-	public Widget getWidget() {
-		return chart;
+		initWidget(chart);
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Map<String, String> registrarNames, Map<String, Integer> volumeBeforeFirstPeriod,
@@ -90,7 +90,6 @@ public class TopNRegistrarsAccumulatedAreaChart {
 	private void draw() {
 		// Prepare the data
 		DataTable dataTable = DataTable.create();
-
 		dataTable.addColumn(ColumnType.STRING, "Period");
 		dataTable.addColumn(ColumnType.NUMBER, "Ostatní");
 		for (int i = 0; i < topNRegistrarCodes.size(); i++) {
