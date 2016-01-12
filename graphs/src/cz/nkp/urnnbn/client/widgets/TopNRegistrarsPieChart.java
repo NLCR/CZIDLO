@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
+import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
 
 import cz.nkp.urnnbn.client.RegistrarWithStatistic;
 
@@ -23,7 +23,8 @@ public class TopNRegistrarsPieChart extends Composite {
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
 	private Map<String, String> registraNames = null;
-
+	// labels
+	private String title;
 	// widgets
 	private final PieChart chart;
 
@@ -32,9 +33,10 @@ public class TopNRegistrarsPieChart extends Composite {
 		initWidget(chart);
 	}
 
-	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, Map<String, String> registraNames) {
+	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, String title, Map<String, String> registraNames) {
 		this.topNRecords = extractTopn(assignmentsByRegistrar, MAX_REGISTRARS);
 		this.remainingAmount = extractOtherAmount(topNRecords, totalAssignments);
+		this.title = title;
 		this.registraNames = registraNames;
 		draw();
 	}
@@ -64,14 +66,17 @@ public class TopNRegistrarsPieChart extends Composite {
 	private void draw() {
 		DataTable pieNewData = DataTable.create();
 		// TODO: i18n
-		pieNewData.addColumn(ColumnType.STRING, "Registrar");
-		pieNewData.addColumn(ColumnType.NUMBER, "registrations");
+		pieNewData.addColumn(ColumnType.STRING, "registrar");
+		pieNewData.addColumn(ColumnType.NUMBER, "statistics");
 		pieNewData.addRow("Ostatní", remainingAmount);
 		for (RegistrarWithStatistic registrar : topNRecords) {
 			String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
 			pieNewData.addRow(label, registrar.getData());
 		}
-		chart.draw(pieNewData);
+		PieChartOptions options = PieChartOptions.create();
+		options.setTitle(title);
+		options.setIs3D(true);
+		chart.draw(pieNewData, options);
 	}
 
 }

@@ -68,6 +68,7 @@ public class Graphs implements EntryPoint {
 		registrarContainer = new VerticalPanel();
 		registrarContainer.setWidth("100%");
 		tabPanel.add(registrarContainer, "registrar");
+		
 		// registrar selection
 		registrarSelection = new HorizontalPanel();
 		registrarContainer.add(registrarSelection);

@@ -81,17 +81,17 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
 
-		// registrar ratio chart
-		registrarsRatioPiechart = new TopNRegistrarsPieChart();
-		container.add(registrarsRatioPiechart);
+		// assignments per period chart
+		totalColumnChart = createTotalChart();
+		container.add(totalColumnChart);
 
 		// registrar accumulated volume area chart
 		registrarsAccumulatedAreaChart = new TopNRegistrarsAccumulatedAreaChart();
 		container.add(registrarsAccumulatedAreaChart);
 
-		// total chart
-		totalColumnChart = createTotalChart();
-		container.add(totalColumnChart);
+		// registrar ratio chart
+		registrarsRatioPiechart = new TopNRegistrarsPieChart();
+		container.add(registrarsRatioPiechart);
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
@@ -229,7 +229,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 			if (totalColumnChart != null) {
 				Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
 				// TODO: i18n
-				String title = selectedYear != null ? "Počet přiřazení URN:NBN za rok " + selectedYear : "Počet přiřazení URN:NBN za celé období";
+				String title = selectedYear != null ? "Přiřazení URN:NBN za rok " + selectedYear : "Přiřazení URN:NBN za celé období";
 				// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
 				// String valueLabel = "TODO:valueLabel";
 				String valueLabel = null;
@@ -242,7 +242,9 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 				// TODO
 				int totalAssignments = computeTotalStatistics();
 				Map<String, Integer> assignmentsByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
-				registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, registraNames);
+				// TODO: i18n
+				String title = selectedYear != null ? "Poměr přiřazení URN:NBN za rok " + selectedYear : "Poměr přiřazení URN:NBN za celé období";
+				registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, title, registraNames);
 			}
 			if (registrarsAccumulatedAreaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
