@@ -41,9 +41,9 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
-	private final SingleItemColumnChart totalColumnChart;
+	private final SingleItemColumnChart currentStatisticsColumnChart;
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
-	private final TopNRegistrarsAccumulatedAreaChart registrarsAccumulatedAreaChart;
+	private final TopNRegistrarsAccumulatedAreaChart accumulatedStatisticsAreaChart;
 
 	public RegistrarsAssignmentsWidget(List<Integer> years) {
 		this.years = years;
@@ -61,7 +61,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 		header.setWidth("1300px");
 		container.add(header);
 
-		title = new Label("Statistiky přiřazených URN:NBN");
+		title = new Label("Vizualizace přiřazení URN:NBN");
 		header.add(title);
 
 		// year filter
@@ -81,17 +81,17 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
 
-		// assignments per period chart
-		totalColumnChart = createTotalChart();
-		container.add(totalColumnChart);
-
-		// registrar accumulated volume area chart
-		registrarsAccumulatedAreaChart = new TopNRegistrarsAccumulatedAreaChart();
-		container.add(registrarsAccumulatedAreaChart);
-
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
 		container.add(registrarsRatioPiechart);
+
+		// assignments per period chart
+		currentStatisticsColumnChart = createTotalChart();
+		container.add(currentStatisticsColumnChart);
+
+		// registrar accumulated volume area chart
+		accumulatedStatisticsAreaChart = new TopNRegistrarsAccumulatedAreaChart();
+		container.add(accumulatedStatisticsAreaChart);
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
@@ -146,19 +146,6 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 					loadData(selectedYear);
 				}
 			}
-		});
-		return result;
-	}
-
-	private CheckBox createAccumulatedCheckbox() {
-		CheckBox result = new CheckBox("kumulované");
-		result.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				redrawCharts();
-			}
-
 		});
 		return result;
 	}
@@ -226,7 +213,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 			Set<String> registrarCodes = extractRegistrarCodes(data);
 			Map<Integer, Map<String, Integer>> currentData = selectedYear != null ? data.get(selectedYear) : aggregateYearlyData(registrarCodes);
 			List<Integer> periods = selectedYear != null ? months : years;
-			if (totalColumnChart != null) {
+			if (currentStatisticsColumnChart != null) {
 				Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
 				// TODO: i18n
 				String title = selectedYear != null ? "Přiřazení URN:NBN za rok " + selectedYear : "Přiřazení URN:NBN za celé období";
@@ -236,17 +223,16 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Přiřazení";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				totalColumnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
+				currentStatisticsColumnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
 			}
 			if (registrarsRatioPiechart != null) {
-				// TODO
-				int totalAssignments = computeTotalStatistics();
-				Map<String, Integer> assignmentsByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
+				int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
+				Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
 				// TODO: i18n
 				String title = selectedYear != null ? "Poměr přiřazení URN:NBN za rok " + selectedYear : "Poměr přiřazení URN:NBN za celé období";
-				registrarsRatioPiechart.setDataAndDraw(totalAssignments, assignmentsByRegistrar, title, registraNames);
+				registrarsRatioPiechart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames);
 			}
-			if (registrarsAccumulatedAreaChart != null) {
+			if (accumulatedStatisticsAreaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
 						: null;
 				// TODO: i18n
@@ -254,7 +240,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Počet";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				registrarsAccumulatedAreaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel,
+				accumulatedStatisticsAreaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel,
 						yAxisLabel, columnLabels);
 			}
 		}
@@ -272,13 +258,24 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 		return result;
 	}
 
-	private int computeTotalStatistics() {
+	private int sumAllStatistics() {
 		int sum = 0;
 		for (Map<Integer, Map<String, Integer>> monthData : data.values()) {
 			for (Map<String, Integer> registrarsMonthData : monthData.values()) {
 				for (Integer registrarMonthValue : registrarsMonthData.values()) {
 					sum += registrarMonthValue;
 				}
+			}
+		}
+		return sum;
+	}
+
+	private int sumStatistics(int year) {
+		int sum = 0;
+		Map<Integer, Map<String, Integer>> monthData = data.get(year);
+		for (Map<String, Integer> registrarsMonthData : monthData.values()) {
+			for (Integer registrarMonthValue : registrarsMonthData.values()) {
+				sum += registrarMonthValue;
 			}
 		}
 		return sum;
