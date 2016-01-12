@@ -40,7 +40,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	// widgets
 	private AreaChart chart;
 	// callbacks
-	private StringSelectionHandler handler;
+	private StringSelectionHandler registrarSelectionHandler;
 
 	public TopNRegistrarsAccumulatedAreaChart() {
 		chart = new AreaChart();
@@ -51,13 +51,13 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 
 			@Override
 			public void onSelect(SelectEvent event) {
-				if (handler != null) {
+				if (registrarSelectionHandler != null) {
 					Selection selection = chart.getSelection().get(0);
 					if (selection != null) {
 						int column = selection.getColumn();
 						if (column >= 2) {
 							String code = topNRegistrarCodes.get(column - 2);
-							handler.onSelected(code);
+							registrarSelectionHandler.onSelected(code);
 						}
 					}
 				}
@@ -188,7 +188,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		return result;
 	}
 
-	public void setHandler(StringSelectionHandler handler) {
-		this.handler = handler;
+	public void setRegistrarSelectionHandler(StringSelectionHandler registrarSelectionHandler) {
+		this.registrarSelectionHandler = registrarSelectionHandler;
 	}
 }

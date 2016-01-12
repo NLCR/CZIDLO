@@ -29,7 +29,7 @@ public class SingleRegistrarAreaChart extends Composite {
 	// widgets
 	private AreaChart chart;
 	// callbacks
-	private IntegerSelectionHandler handler;
+	private IntegerSelectionHandler yearSelectionHandler;
 
 	public SingleRegistrarAreaChart() {
 		chart = new AreaChart();
@@ -37,11 +37,15 @@ public class SingleRegistrarAreaChart extends Composite {
 
 			@Override
 			public void onSelect(SelectEvent event) {
-				if (handler != null) {
+				if (yearSelectionHandler != null) {
 					Selection selection = chart.getSelection().get(0);
 					if (selection != null) {
-						Integer year = periods.get(selection.getRow());
-						handler.onSelected(year);
+						Integer row = selection.getRow();
+						if (row == null) {
+							yearSelectionHandler.onSelected(null);
+						} else {
+							yearSelectionHandler.onSelected(periods.get(row));
+						}
 					}
 				}
 			}
@@ -90,8 +94,8 @@ public class SingleRegistrarAreaChart extends Composite {
 		chart.draw(dataTable, options);
 	}
 
-	public void setHandler(IntegerSelectionHandler handler) {
-		this.handler = handler;
+	public void setYearSelectionHandler(IntegerSelectionHandler yearSelectionHandler) {
+		this.yearSelectionHandler = yearSelectionHandler;
 	}
 
 }

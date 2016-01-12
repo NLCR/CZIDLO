@@ -31,7 +31,7 @@ public class SingleItemColumnChart extends Composite {
 	// widgets
 	private final ColumnChart chart;
 	// callbacks
-	private IntegerSelectionHandler handler;
+	private IntegerSelectionHandler yearSelectionHandler;
 
 	public SingleItemColumnChart() {
 		chart = new ColumnChart();
@@ -39,10 +39,16 @@ public class SingleItemColumnChart extends Composite {
 
 			@Override
 			public void onSelect(SelectEvent event) {
-				if (handler != null) {
-					Selection sel = chart.getSelection().get(0);
-					Integer year = periods.get(sel.getRow());
-					handler.onSelected(year);
+				if (yearSelectionHandler != null) {
+					Selection selection = chart.getSelection().get(0);
+					if (selection != null) {
+						Integer row = selection.getRow();
+						if (row == null) {
+							yearSelectionHandler.onSelected(null);
+						} else {
+							yearSelectionHandler.onSelected(periods.get(row));
+						}
+					}
 				}
 			}
 		});
@@ -99,8 +105,8 @@ public class SingleItemColumnChart extends Composite {
 		chart.draw(dataTable, options);
 	}
 
-	public void setHandler(IntegerSelectionHandler handler) {
-		this.handler = handler;
+	public void setYearSelectionHandler(IntegerSelectionHandler yearSelectionHandler) {
+		this.yearSelectionHandler = yearSelectionHandler;
 	}
 
 }

@@ -31,7 +31,7 @@ public class TopNRegistrarsPieChart extends Composite {
 	// widgets
 	private final PieChart chart;
 	// callbacks
-	private StringSelectionHandler handler;
+	private StringSelectionHandler registrarSelectionHandler;
 
 	public TopNRegistrarsPieChart() {
 		chart = new PieChart();
@@ -39,7 +39,7 @@ public class TopNRegistrarsPieChart extends Composite {
 
 			@Override
 			public void onSelect(SelectEvent event) {
-				if (handler != null) {
+				if (registrarSelectionHandler != null) {
 					Selection selection = chart.getSelection().get(0);
 					if (selection != null) {
 						int row = selection.getRow();
@@ -48,7 +48,7 @@ public class TopNRegistrarsPieChart extends Composite {
 						} else {
 							String registrarCode = topNRecords.get(row - 1).getCode();
 							LOGGER.info("selected registrar: " + registrarCode);
-							handler.onSelected(registrarCode);
+							registrarSelectionHandler.onSelected(registrarCode);
 						}
 					}
 				}
@@ -104,8 +104,8 @@ public class TopNRegistrarsPieChart extends Composite {
 		chart.draw(pieNewData, options);
 	}
 
-	public void setHandler(StringSelectionHandler handler) {
-		this.handler = handler;
+	public void setRegistrarSelectionHandler(StringSelectionHandler registrarSelectionHandler) {
+		this.registrarSelectionHandler = registrarSelectionHandler;
 	}
 
 }

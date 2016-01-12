@@ -78,16 +78,16 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		urnStateFilterPanel.add(stateDeactivatedOnly);
 		header.add(urnStateFilterPanel);
 
-		IntegerSelectionHandler selectionHandler = createChartSelectionHandler();
+		IntegerSelectionHandler yearSelectionHandler = createYearSelectionHandler();
 
 		// column chart
 		assignmentsColumnChart = new SingleItemColumnChart();
-		assignmentsColumnChart.setHandler(selectionHandler);
+		assignmentsColumnChart.setYearSelectionHandler(yearSelectionHandler);
 		container.add(assignmentsColumnChart);
 
 		// area chart
 		areaChart = new SingleRegistrarAreaChart();
-		areaChart.setHandler(selectionHandler);
+		areaChart.setYearSelectionHandler(yearSelectionHandler);
 		container.add(areaChart);
 
 		initWidget(container);
@@ -134,12 +134,15 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		return result;
 	}
 
-	private IntegerSelectionHandler createChartSelectionHandler() {
+	private IntegerSelectionHandler createYearSelectionHandler() {
 		return new IntegerSelectionHandler() {
 
 			@Override
 			public void onSelected(Integer key) {
-				if (key > 12) { // year
+				if (key == null || key <= 12) { // not year
+					timePeriods.setSelectedIndex(0);
+					selectedYear = null;
+				} else {
 					for (int position = 0; position < years.size(); position++) {
 						int year = years.get(position);
 						if (year == key) {
@@ -148,8 +151,8 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 							break;
 						}
 					}
-					loadData(selectedRegistrar, selectedYear);
 				}
+				loadData(selectedRegistrar, selectedYear);
 			}
 		};
 	}

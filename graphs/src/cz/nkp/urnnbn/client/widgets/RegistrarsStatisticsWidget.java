@@ -81,16 +81,17 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
-		registrarsRatioPiechart.setHandler(registrarSelectionHandler);
+		registrarsRatioPiechart.setRegistrarSelectionHandler(registrarSelectionHandler);
 		container.add(registrarsRatioPiechart);
 
 		// assignments per period chart
-		currentStatisticsColumnChart = createTotalChart();
+		currentStatisticsColumnChart = new SingleItemColumnChart();
+		currentStatisticsColumnChart.setYearSelectionHandler(createYearSelectionHandler());
 		container.add(currentStatisticsColumnChart);
 
 		// registrar accumulated volume area chart
 		accumulatedStatisticsAreaChart = new TopNRegistrarsAccumulatedAreaChart();
-		accumulatedStatisticsAreaChart.setHandler(registrarSelectionHandler);
+		accumulatedStatisticsAreaChart.setRegistrarSelectionHandler(registrarSelectionHandler);
 		container.add(accumulatedStatisticsAreaChart);
 
 		initWidget(container);
@@ -150,13 +151,15 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		return result;
 	}
 
-	private SingleItemColumnChart createTotalChart() {
-		SingleItemColumnChart result = new SingleItemColumnChart();
-		result.setHandler(new IntegerSelectionHandler() {
+	private IntegerSelectionHandler createYearSelectionHandler() {
+		return new IntegerSelectionHandler() {
 
 			@Override
 			public void onSelected(Integer key) {
-				if (key > 12) { // year
+				if (key == null || key <= 12) { // not year
+					selectedYear = null;
+					timePeriods.setSelectedIndex(0);
+				} else {
 					for (int position = 0; position < years.size(); position++) {
 						int year = years.get(position);
 						if (year == key) {
@@ -165,11 +168,10 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 							break;
 						}
 					}
-					loadData(selectedYear);
 				}
+				loadData(selectedYear);
 			}
-		});
-		return result;
+		};
 	}
 
 	private void loadData(final Integer year) {
