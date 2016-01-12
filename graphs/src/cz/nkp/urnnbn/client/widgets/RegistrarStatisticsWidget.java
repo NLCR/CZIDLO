@@ -39,7 +39,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
 	private final SingleItemColumnChart assignmentsColumnChart;
-	private final SingleRegistrarAreaChart areaChart;
+	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
 	public RegistrarStatisticsWidget(List<Integer> years) {
 		this.years = years;
@@ -86,7 +86,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		container.add(assignmentsColumnChart);
 
 		// area chart
-		areaChart = new SingleRegistrarAreaChart();
+		areaChart = new SingleRegistrarAccumulatedAreaChart();
 		areaChart.setYearSelectionHandler(yearSelectionHandler);
 		container.add(areaChart);
 
@@ -200,7 +200,8 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Počet";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, columnLabels);
+				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, selectedRegistrar.getCode(),
+						columnLabels);
 				areaChart.draw();
 			}
 		}

@@ -16,7 +16,7 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 
 import cz.nkp.urnnbn.client.Utils;
 
-public class SingleRegistrarAreaChart extends Composite {
+public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
 	// data
 	private List<Integer> periods;
@@ -25,13 +25,14 @@ public class SingleRegistrarAreaChart extends Composite {
 	private String title;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private String valueLabel;
 	private Map<Integer, String> columnLabels;
 	// widgets
 	private AreaChart chart;
 	// callbacks
 	private IntegerSelectionHandler yearSelectionHandler;
 
-	public SingleRegistrarAreaChart() {
+	public SingleRegistrarAccumulatedAreaChart() {
 		chart = new AreaChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -55,12 +56,13 @@ public class SingleRegistrarAreaChart extends Composite {
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData, String title,
-			String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
+			String xAxisLabel, String yAxisLabel, String valueLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
 		this.dataAccumulated = Utils.accumulate(periods, volumeBeforeFistPeriod, currentData);
 		this.title = title;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
+		this.valueLabel = valueLabel;
 		this.columnLabels = columnLabels;
 		draw();
 	}
@@ -69,7 +71,7 @@ public class SingleRegistrarAreaChart extends Composite {
 		// Prepare the data
 		DataTable dataTable = DataTable.create();
 		dataTable.addColumn(ColumnType.STRING, "Period");
-		dataTable.addColumn(ColumnType.NUMBER, "Value");
+		dataTable.addColumn(ColumnType.NUMBER, valueLabel);
 
 		// dataTable.addRows(1);
 		dataTable.addRows(periods.size());
