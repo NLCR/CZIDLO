@@ -20,11 +20,9 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import cz.nkp.urnnbn.client.IntegerSelectionHandler;
+public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
-public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
-
-	private static final Logger LOGGER = Logger.getLogger(RegistrarsAssignmentsWidget.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(RegistrarsStatisticsWidget.class.getSimpleName());
 
 	// fixed data
 	private final List<Integer> years;
@@ -45,7 +43,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart accumulatedStatisticsAreaChart;
 
-	public RegistrarsAssignmentsWidget(List<Integer> years) {
+	public RegistrarsStatisticsWidget(List<Integer> years, StringSelectionHandler registrarSelectionHandler) {
 		this.years = years;
 
 		// container
@@ -83,6 +81,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 
 		// registrar ratio chart
 		registrarsRatioPiechart = new TopNRegistrarsPieChart();
+		registrarsRatioPiechart.setHandler(registrarSelectionHandler);
 		container.add(registrarsRatioPiechart);
 
 		// assignments per period chart
@@ -91,6 +90,7 @@ public class RegistrarsAssignmentsWidget extends TopLevelStatisticsWidget {
 
 		// registrar accumulated volume area chart
 		accumulatedStatisticsAreaChart = new TopNRegistrarsAccumulatedAreaChart();
+		accumulatedStatisticsAreaChart.setHandler(registrarSelectionHandler);
 		container.add(accumulatedStatisticsAreaChart);
 
 		initWidget(container);

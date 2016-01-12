@@ -14,7 +14,6 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-import cz.nkp.urnnbn.client.IntegerSelectionHandler;
 import cz.nkp.urnnbn.client.Utils;
 
 public class SingleRegistrarAreaChart extends Composite {
@@ -39,9 +38,11 @@ public class SingleRegistrarAreaChart extends Composite {
 			@Override
 			public void onSelect(SelectEvent event) {
 				if (handler != null) {
-					Selection sel = chart.getSelection().get(0);
-					Integer year = periods.get(sel.getRow());
-					handler.onSelected(year);
+					Selection selection = chart.getSelection().get(0);
+					if (selection != null) {
+						Integer year = periods.get(selection.getRow());
+						handler.onSelected(year);
+					}
 				}
 			}
 		});

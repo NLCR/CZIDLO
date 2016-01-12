@@ -17,12 +17,11 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import cz.nkp.urnnbn.client.IntegerSelectionHandler;
 import cz.nkp.urnnbn.shared.Registrar;
 
-public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
+public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
-	private static final Logger logger = Logger.getLogger(RegistrarAssignmentsWidget.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(RegistrarStatisticsWidget.class.getSimpleName());
 
 	// fixed data
 	private final List<Integer> years;
@@ -42,7 +41,7 @@ public class RegistrarAssignmentsWidget extends TopLevelStatisticsWidget {
 	private final SingleItemColumnChart assignmentsColumnChart;
 	private final SingleRegistrarAreaChart areaChart;
 
-	public RegistrarAssignmentsWidget(List<Integer> years) {
+	public RegistrarStatisticsWidget(List<Integer> years) {
 		this.years = years;
 
 		// container

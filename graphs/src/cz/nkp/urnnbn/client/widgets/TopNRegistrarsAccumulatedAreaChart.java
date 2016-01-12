@@ -10,8 +10,11 @@ import java.util.logging.Logger;
 import com.google.gwt.user.client.ui.Composite;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.AreaChart;
 import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
+import com.googlecode.gwt.charts.client.event.SelectEvent;
+import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
@@ -36,12 +39,30 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	private Map<Integer, String> columnLabels;
 	// widgets
 	private AreaChart chart;
+	// callbacks
+	private StringSelectionHandler handler;
 
 	public TopNRegistrarsAccumulatedAreaChart() {
 		chart = new AreaChart();
 		// TODO: timhle se to da trochu tunit
 		// chart.setWidth("1200px");
 		// chart.setHeight("200px");
+		chart.addSelectHandler(new SelectHandler() {
+
+			@Override
+			public void onSelect(SelectEvent event) {
+				if (handler != null) {
+					Selection selection = chart.getSelection().get(0);
+					if (selection != null) {
+						int column = selection.getColumn();
+						if (column >= 2) {
+							String code = topNRegistrarCodes.get(column - 2);
+							handler.onSelected(code);
+						}
+					}
+				}
+			}
+		});
 		initWidget(chart);
 	}
 
@@ -165,5 +186,9 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 			result.add(withStatistics.get(i).getCode());
 		}
 		return result;
+	}
+
+	public void setHandler(StringSelectionHandler handler) {
+		this.handler = handler;
 	}
 }

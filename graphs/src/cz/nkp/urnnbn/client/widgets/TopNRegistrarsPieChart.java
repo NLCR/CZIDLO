@@ -9,8 +9,11 @@ import java.util.logging.Logger;
 import com.google.gwt.user.client.ui.Composite;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
+import com.googlecode.gwt.charts.client.Selection;
 import com.googlecode.gwt.charts.client.corechart.PieChart;
 import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
+import com.googlecode.gwt.charts.client.event.SelectEvent;
+import com.googlecode.gwt.charts.client.event.SelectHandler;
 
 import cz.nkp.urnnbn.client.RegistrarWithStatistic;
 
@@ -27,9 +30,31 @@ public class TopNRegistrarsPieChart extends Composite {
 	private String title;
 	// widgets
 	private final PieChart chart;
+	// callbacks
+	private StringSelectionHandler handler;
 
 	public TopNRegistrarsPieChart() {
 		chart = new PieChart();
+		chart.addSelectHandler(new SelectHandler() {
+
+			@Override
+			public void onSelect(SelectEvent event) {
+				if (handler != null) {
+					Selection selection = chart.getSelection().get(0);
+					if (selection != null) {
+						int row = selection.getRow();
+						if (row == 0) {
+							// sum of other registrars, ignore
+						} else {
+							String registrarCode = topNRecords.get(row - 1).getCode();
+							LOGGER.info("selected registrar: " + registrarCode);
+							handler.onSelected(registrarCode);
+						}
+					}
+				}
+			}
+		});
+
 		initWidget(chart);
 	}
 
@@ -77,6 +102,10 @@ public class TopNRegistrarsPieChart extends Composite {
 		options.setTitle(title);
 		options.setIs3D(true);
 		chart.draw(pieNewData, options);
+	}
+
+	public void setHandler(StringSelectionHandler handler) {
+		this.handler = handler;
 	}
 
 }

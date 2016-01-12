@@ -12,20 +12,21 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 
-import cz.nkp.urnnbn.client.widgets.RegistrarAssignmentsWidget;
-import cz.nkp.urnnbn.client.widgets.RegistrarsAssignmentsWidget;
+import cz.nkp.urnnbn.client.widgets.RegistrarStatisticsWidget;
+import cz.nkp.urnnbn.client.widgets.RegistrarsStatisticsWidget;
+import cz.nkp.urnnbn.client.widgets.StringSelectionHandler;
 import cz.nkp.urnnbn.shared.Registrar;
 
-/**
- * Entry point classes define <code>onModuleLoad()</code>.
- */
 public class Graphs implements EntryPoint {
 
 	private static final Logger LOGGER = Logger.getLogger(Graphs.class.getSimpleName());
@@ -34,21 +35,17 @@ public class Graphs implements EntryPoint {
 
 	// data
 	private List<Integer> years;
+	private Set<Registrar> registrars;
 
 	// widgets
 	private TabLayoutPanel tabPanel;
 
-	private VerticalPanel registrarsContainer;
-	private VerticalPanel registrarContainer;
+	// urn:nbn assignment widgets
+	private VerticalPanel assignmentsPanel;
+	private RegistrarsStatisticsWidget assignmentsGlobalWidget;
+	private HorizontalPanel assignmentsRegistrarSelectionPanel;
+	private RegistrarStatisticsWidget assignmentsRegistrarWidget;
 
-	// private VerticalPanel header;
-	private HorizontalPanel registrarSelection;
-	private RegistrarAssignmentsWidget registrarGraph;
-	private RegistrarsAssignmentsWidget registrarsGraph;
-
-	/**
-	 * This is the entry point method.
-	 */
 	@Override
 	public void onModuleLoad() {
 		// logger.info("onModuleLoad");
@@ -56,22 +53,19 @@ public class Graphs implements EntryPoint {
 		Window.enableScrolling(true);
 		Window.setMargin("0px");
 
+		// tabs
 		tabPanel = new TabLayoutPanel(1.5, Unit.EM);
 		RootLayoutPanel.get().add(tabPanel);
 
-		// registrars
-		registrarsContainer = new VerticalPanel();
-		registrarsContainer.setWidth("100%");
-		tabPanel.add(registrarsContainer, "registrars");
+		// URN:NBN assignments
+		ScrollPanel assignmentsScrollContainer = new ScrollPanel();
+		tabPanel.add(assignmentsScrollContainer, "assignments");
+		assignmentsPanel = new VerticalPanel();
+		assignmentsPanel.setWidth("100%");
+		assignmentsScrollContainer.add(assignmentsPanel);
 
-		// registrar
-		registrarContainer = new VerticalPanel();
-		registrarContainer.setWidth("100%");
-		tabPanel.add(registrarContainer, "registrar");
-		
-		// registrar selection
-		registrarSelection = new HorizontalPanel();
-		registrarContainer.add(registrarSelection);
+		// URN:NB resolvations
+		tabPanel.add(new Label("todo: resolvation statistics"), "resolvations");
 
 		initData();
 	}
@@ -91,10 +85,16 @@ public class Graphs implements EntryPoint {
 
 					@Override
 					public void onSuccess(Set<Registrar> result) {
+						Graphs.this.registrars = result;
+						initAssignmentsRegistrarSelectionPanel();
+						initChartLoader();
+					}
 
-						for (Registrar registrar : result) {
+					private void initAssignmentsRegistrarSelectionPanel() {
+						assignmentsRegistrarSelectionPanel = new HorizontalPanel();
+						for (Registrar registrar : registrars) {
 							RadioButton registrarButton = new RadioButton("registrars", registrar.getCode());
-							registrarSelection.add(registrarButton);
+							assignmentsRegistrarSelectionPanel.add(registrarButton);
 							final Registrar thisRegistrar = registrar;
 							registrarButton.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -102,15 +102,11 @@ public class Graphs implements EntryPoint {
 								public void onValueChange(ValueChangeEvent<Boolean> event) {
 									boolean selected = event.getValue();
 									if (selected) {
-										if (registrarGraph != null) {
-											registrarGraph.setRegistrar(thisRegistrar);
-										}
-										// loadData(thisRegistrar, currentYear);
+										setAssignmentsRegistrar(thisRegistrar);
 									}
 								}
 							});
 						}
-						initChartLoader();
 					}
 
 					private void initChartLoader() {
@@ -120,11 +116,14 @@ public class Graphs implements EntryPoint {
 							@Override
 							public void run() {
 								LOGGER.info("chart api loaded");
-								// charts
-								registrarGraph = new RegistrarAssignmentsWidget(years);
-								registrarContainer.add(registrarGraph);
-								registrarsGraph = new RegistrarsAssignmentsWidget(years);
-								registrarsContainer.add(registrarsGraph);
+								StringSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
+								// widgets
+								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrarSelectionHandler);
+								assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years);
+								// add to panels
+								assignmentsPanel.add(assignmentsGlobalWidget);
+								assignmentsPanel.add(assignmentsRegistrarSelectionPanel);
+								assignmentsPanel.add(assignmentsRegistrarWidget);
 							}
 
 						});
@@ -144,7 +143,26 @@ public class Graphs implements EntryPoint {
 				LOGGER.severe(caught.getMessage());
 			}
 		});
+	}
 
+	private StringSelectionHandler buildRegistrarSelectionHandler() {
+		return new StringSelectionHandler() {
+
+			@Override
+			public void onSelected(String code) {
+				for (Registrar registrar : registrars) {
+					if (registrar.getCode().equals(code)) {
+						setAssignmentsRegistrar(registrar);
+					}
+				}
+			}
+		};
+	}
+
+	private void setAssignmentsRegistrar(Registrar registrar) {
+		if (assignmentsRegistrarWidget != null) {
+			assignmentsRegistrarWidget.setRegistrar(registrar);
+		}
 	}
 
 }

@@ -15,8 +15,6 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-import cz.nkp.urnnbn.client.IntegerSelectionHandler;
-
 public class SingleItemColumnChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(SingleItemColumnChart.class.getSimpleName());
