@@ -44,8 +44,9 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart accumulatedStatisticsAreaChart;
 
-	public RegistrarsStatisticsWidget(List<Integer> years, StringSelectionHandler registrarSelectionHandler) {
+	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, StringSelectionHandler registrarSelectionHandler) {
 		this.years = years;
+		this.registraNames = extractRegistrarNames(registrars);
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -98,26 +99,17 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
 
-		// TODO: mozna posilat v konstruktoru seznam registratoru
-		service.getRegistrars(new AsyncCallback<Set<Registrar>>() {
+		loadData(selectedYear);
+	}
 
-			@Override
-			public void onSuccess(Set<Registrar> result) {
-				registraNames = new HashMap<>();
-				if (result != null) {
-					for (Registrar registrar : result) {
-						registraNames.put(registrar.getCode(), registrar.getName());
-					}
-				}
-				loadData(selectedYear);
+	private Map<String, String> extractRegistrarNames(Set<Registrar> registrars) {
+		Map<String, String> result = new HashMap<>();
+		if (registrars != null) {
+			for (Registrar registrar : registrars) {
+				result.put(registrar.getCode(), registrar.getName());
 			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		}
+		return result;
 	}
 
 	private ListBox createTimePeriods() {

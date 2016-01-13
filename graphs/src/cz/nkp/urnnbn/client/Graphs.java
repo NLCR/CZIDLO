@@ -118,7 +118,7 @@ public class Graphs implements EntryPoint {
 								LOGGER.info("chart api loaded");
 								StringSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
 								// widgets
-								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrarSelectionHandler);
+								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, registrarSelectionHandler);
 								assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years);
 								// add to panels
 								assignmentsPanel.add(assignmentsGlobalWidget);
