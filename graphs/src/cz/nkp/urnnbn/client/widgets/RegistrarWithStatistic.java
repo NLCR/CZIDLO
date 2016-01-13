@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.widgets;
 
 public class RegistrarWithStatistic implements Comparable<RegistrarWithStatistic> {
 	private final String code;

@@ -12,13 +12,14 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import cz.nkp.urnnbn.shared.Registrar;
 
 public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
@@ -96,12 +97,18 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
 		initWidget(container);
 		setStyleName("RegistrarssGraph");
-		// TODO: mozna posilat v konstruktoru jmena registratoru
-		service.getRegistrarNames(new AsyncCallback<Map<String, String>>() {
+
+		// TODO: mozna posilat v konstruktoru seznam registratoru
+		service.getRegistrars(new AsyncCallback<Set<Registrar>>() {
 
 			@Override
-			public void onSuccess(Map<String, String> result) {
-				registraNames = result;
+			public void onSuccess(Set<Registrar> result) {
+				registraNames = new HashMap<>();
+				if (result != null) {
+					for (Registrar registrar : result) {
+						registraNames.put(registrar.getCode(), registrar.getName());
+					}
+				}
 				loadData(selectedYear);
 			}
 
@@ -111,7 +118,6 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
 			}
 		});
-
 	}
 
 	private ListBox createTimePeriods() {

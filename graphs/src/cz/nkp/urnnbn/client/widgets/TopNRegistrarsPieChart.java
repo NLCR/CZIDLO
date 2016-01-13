@@ -15,8 +15,6 @@ import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 
-import cz.nkp.urnnbn.client.RegistrarWithStatistic;
-
 public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());

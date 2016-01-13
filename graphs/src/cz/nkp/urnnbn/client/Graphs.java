@@ -72,7 +72,7 @@ public class Graphs implements EntryPoint {
 
 	private void initData() {
 		// years
-		service.getYearsSorted(new AsyncCallback<List<Integer>>() {
+		service.getAvailableYearsSorted(new AsyncCallback<List<Integer>>() {
 
 			@Override
 			public void onSuccess(List<Integer> result) {

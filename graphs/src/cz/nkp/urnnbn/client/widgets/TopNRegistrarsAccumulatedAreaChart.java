@@ -18,7 +18,6 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-import cz.nkp.urnnbn.client.RegistrarWithStatistic;
 import cz.nkp.urnnbn.client.Utils;
 
 public class TopNRegistrarsAccumulatedAreaChart extends Composite {

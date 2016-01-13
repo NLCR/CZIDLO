@@ -15,31 +15,12 @@ import cz.nkp.urnnbn.shared.Registrar;
 @RemoteServiceRelativePath("statistics")
 public interface StatisticsService extends RemoteService {
 
-	String greetServer(String name) throws IllegalArgumentException;
-
-	@Deprecated
-	Map<Registrar, Integer> getTotalRegistrationsByRegistrar();
-
-	List<Integer> getYearsSorted();
+	List<Integer> getAvailableYearsSorted();
 
 	Set<Registrar> getRegistrars();
 
-	Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated);
-
 	Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(boolean includeActive, boolean includeDeactivated);
 
-	Map<Integer, Integer> getAssignmentsByYear(String registrarCode, boolean includeActive, boolean includeDeactivated);
-
-	Map<Integer, Integer> getAssignmentsByMonth(String registrarCode, int year, boolean includeActive, boolean includeDeactivated);
-
-	Map<Integer, Integer> getTotalAssignmentsByYear(boolean includeActive, boolean includeDeactivated);
-
-	Map<Integer, Integer> getTotalAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated);
-
-	Map<Integer, Map<String, Integer>> getAssignmentsByYear(boolean includeActive, boolean includeDeactivated);
-
-	Map<Integer, Map<String, Integer>> getAssignmentsByMonth(int year, boolean includeActive, boolean includeDeactivated);
-
-	Map<String, String> getRegistrarNames();
+	Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated);
 
 }
