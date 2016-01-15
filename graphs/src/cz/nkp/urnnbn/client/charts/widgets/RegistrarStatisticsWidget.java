@@ -194,19 +194,32 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 			if (assignmentsColumnChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
 				// TODO: i18n
-				String title = selectedYear != null ? "Počet přiřazení URN:NBN za rok " + selectedYear : "Počet přiřazení URN:NBN za celé období";
+				String title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear
+						: "Počet přiřazení URN:NBN přes jednotlivé roky";
+
+				if (stateActiveOnly.getValue()) {
+					title += " (jen aktivní)";
+				} else if (stateDeactivatedOnly.getValue()) {
+					title += " (jen deaktivované)";
+				}
 				String valueDesc = selectedRegistrar != null ? selectedRegistrar.getCode() : "celkově";
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Přiřazení";
+				String yAxisLabel = "Nových přiřazení";
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
 				assignmentsColumnChart.setDataAndDraw(keys, periodData, title, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
 			}
 			if (areaChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
 				// TODO: i18n
-				String title = selectedYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + selectedYear : "Roční vývoj počtu URN:NBN";
+				String title = selectedYear != null ? "Měsíční vývoj objemu přiřazených URN:NBN v roce " + selectedYear
+						: "Roční vývoj objemu přiřazených URN:NBN";
+				if (stateActiveOnly.getValue()) {
+					title += " (jen aktivní)";
+				} else if (stateDeactivatedOnly.getValue()) {
+					title += " (jen deaktivované)";
+				}
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Počet";
+				String yAxisLabel = "Počet URN:NBN";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
 				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, selectedRegistrar.getCode(),
 						columnLabels);

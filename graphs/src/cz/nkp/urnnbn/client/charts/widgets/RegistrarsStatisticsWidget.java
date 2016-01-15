@@ -42,7 +42,7 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
-	private final SingleItemColumnChart currentStatisticsColumnChart;
+	private final SingleItemColumnChart totalVolumeInPeriodColumnChart;
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart accumulatedStatisticsAreaChart;
 
@@ -89,9 +89,9 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		container.add(registrarsRatioPiechart);
 
 		// assignments per period chart
-		currentStatisticsColumnChart = new SingleItemColumnChart();
-		currentStatisticsColumnChart.setYearSelectionHandler(createYearSelectionHandler());
-		container.add(currentStatisticsColumnChart);
+		totalVolumeInPeriodColumnChart = new SingleItemColumnChart();
+		totalVolumeInPeriodColumnChart.setYearSelectionHandler(createYearSelectionHandler());
+		container.add(totalVolumeInPeriodColumnChart);
 
 		// registrar accumulated volume area chart
 		accumulatedStatisticsAreaChart = new TopNRegistrarsAccumulatedAreaChart();
@@ -220,32 +220,48 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 			Set<String> registrarCodes = extractRegistrarCodes(data);
 			Map<Integer, Map<String, Integer>> currentData = selectedYear != null ? data.get(selectedYear) : aggregateYearlyData(registrarCodes);
 			List<Integer> periods = selectedYear != null ? months : years;
-			if (currentStatisticsColumnChart != null) {
+			if (totalVolumeInPeriodColumnChart != null) {
 				Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
 				// TODO: i18n
-				String title = selectedYear != null ? "Přiřazení URN:NBN za rok " + selectedYear : "Přiřazení URN:NBN za celé období";
-				// String valueLabel = currentRegistrar != null ? currentRegistrar.getCode() : "celkově";
-				// String valueLabel = "TODO:valueLabel";
-				String valueLabel = null;
+				String title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear
+						: "Počet přiřazení URN:NBN přes jednotlivé roky";
+				if (stateActiveOnly.getValue()) {
+					title += " (jen aktivní)";
+				} else if (stateDeactivatedOnly.getValue()) {
+					title += " (jen deaktivované)";
+				}
+				String valueLabel = "Celkem";
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Přiřazení";
+				String yAxisLabel = "Nových přiřazení";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				currentStatisticsColumnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
+				totalVolumeInPeriodColumnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
 			}
 			if (registrarsRatioPiechart != null) {
 				int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
 				Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
 				// TODO: i18n
-				String title = selectedYear != null ? "Poměr přiřazení URN:NBN za rok " + selectedYear : "Poměr přiřazení URN:NBN za celé období";
+				String title = selectedYear != null ? "Podíl registrátorů na objemu přiřazených URN:NBN v roce " + selectedYear
+						: "Celkový podíl registrátorů na objemu přiřazených URN:NBN";
+				if (stateActiveOnly.getValue()) {
+					title += " (jen aktivní)";
+				} else if (stateDeactivatedOnly.getValue()) {
+					title += " (jen deaktivované)";
+				}
 				registrarsRatioPiechart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames);
 			}
 			if (accumulatedStatisticsAreaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
 						: null;
 				// TODO: i18n
-				String title = selectedYear != null ? "Měsíčný vývoj počtu URN:NBN v roce " + selectedYear : "Roční vývoj počtu URN:NBN";
+				String title = selectedYear != null ? "Měsíční vývoj objemu přiřazených URN:NBN v roce " + selectedYear
+						: "Roční vývoj objemu přiřazených URN:NBN";
+				if (stateActiveOnly.getValue()) {
+					title += " (jen aktivní)";
+				} else if (stateDeactivatedOnly.getValue()) {
+					title += " (jen deaktivované)";
+				}
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Počet";
+				String yAxisLabel = "Počet URN:NBN";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
 				accumulatedStatisticsAreaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel,
 						yAxisLabel, columnLabels);

@@ -111,11 +111,12 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		// Prepare the data
 		DataTable dataTable = DataTable.create();
 		dataTable.addColumn(ColumnType.STRING, "Period");
-		dataTable.addColumn(ColumnType.NUMBER, "Ostatní");
+		dataTable.addColumn(ColumnType.NUMBER, "Ostatní dohromady");
 		for (int i = 0; i < topNRegistrarCodes.size(); i++) {
 			String registrarCode = topNRegistrarCodes.get(i);
 			// String label = registrarNames == null ? registrarCode : registrarCode + " - " + registrarNames.get(registrarCode);
-			String label = registrarNames == null ? registrarCode : registrarCode + "-" + registrarNames.get(registrarCode);
+			// String label = registrarNames == null ? registrarCode : registrarCode + "-" + registrarNames.get(registrarCode);
+			String label = registrarNames == null ? registrarCode : registrarNames.get(registrarCode);
 			dataTable.addColumn(ColumnType.NUMBER, label);
 		}
 
