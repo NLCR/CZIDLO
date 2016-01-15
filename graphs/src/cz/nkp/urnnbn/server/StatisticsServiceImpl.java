@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.server;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import cz.nkp.urnnbn.client.StatisticsService;
 import cz.nkp.urnnbn.shared.Registrar;
+import cz.nkp.urnnbn.shared.Statistic;
 
 /**
  * The server-side implementation of the RPC service.
@@ -28,16 +30,43 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	}
 
 	@Override
-	public Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(boolean includeActive, boolean includeDeactivated) {
+	public Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options) {
+		switch (type) {
+		case URN_NBN_ASSIGNEMNTS:
+			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE);
+			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
+			return getUrnNbnAssignments(includeActive, includeDeactivated);
+		case URN_NBN_RESOLVATIONS:
+			// TODO
+		default:
+			return null;
+		}
+	}
+
+	private Map<String, Map<Integer, Map<Integer, Integer>>> getUrnNbnAssignments(boolean includeActive, boolean includeDeactivated) {
 		Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
 		for (Registrar registrar : getRegistrars()) {
-			result.put(registrar.getCode(), getStatistics(registrar.getCode(), includeActive, includeDeactivated));
+			result.put(registrar.getCode(), getUrnNbnAssignments(registrar.getCode(), includeActive, includeDeactivated));
 		}
 		return result;
 	}
 
 	@Override
-	public Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
+	public Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type,
+			HashMap<Statistic.Option, Serializable> options) {
+		switch (type) {
+		case URN_NBN_ASSIGNEMNTS:
+			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE);
+			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
+			return getUrnNbnAssignments(registrarCode, includeActive, includeDeactivated);
+		case URN_NBN_RESOLVATIONS:
+			// TODO
+		default:
+			return null;
+		}
+	}
+
+	private Map<Integer, Map<Integer, Integer>> getUrnNbnAssignments(String registrarCode, boolean includeActive, boolean includeDeactivated) {
 		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();
 		Assignments assignments = RegistrarsManager.getInstance().getAssignmentData(registrarCode);

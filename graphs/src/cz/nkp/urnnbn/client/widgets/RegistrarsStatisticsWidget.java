@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client.widgets;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.shared.Registrar;
+import cz.nkp.urnnbn.shared.Statistic;
 
 public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
@@ -173,10 +175,15 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	}
 
 	private void loadData(final Integer year) {
-		boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
-		boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
-		service.getStatistics(includeActive, includeDeactivated, new AsyncCallback<Map<String, Map<Integer, Map<Integer, Integer>>>>() {
+		Boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
+		Boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
 
+		Statistic.Type type = Statistic.Type.URN_NBN_ASSIGNEMNTS;
+		HashMap<Statistic.Option, Serializable> options = new HashMap<>();
+		options.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE, includeActive);
+		options.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED, includeDeactivated);
+
+		service.getStatistics(type, options, new AsyncCallback<Map<String, Map<Integer, Map<Integer, Integer>>>>() {
 			@Override
 			public void onSuccess(Map<String, Map<Integer, Map<Integer, Integer>>> result) {
 				selectedYear = year;
