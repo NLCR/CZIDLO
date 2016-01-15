@@ -1,40 +1,39 @@
-package cz.nkp.urnnbn.client.widgets;
+package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
 import com.googlecode.gwt.charts.client.Selection;
-import com.googlecode.gwt.charts.client.corechart.ColumnChart;
-import com.googlecode.gwt.charts.client.corechart.ColumnChartOptions;
+import com.googlecode.gwt.charts.client.corechart.AreaChart;
+import com.googlecode.gwt.charts.client.corechart.AreaChartOptions;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-public class SingleItemColumnChart extends Composite {
+import cz.nkp.urnnbn.client.charts.Utils;
 
-	private static final Logger LOGGER = Logger.getLogger(SingleItemColumnChart.class.getSimpleName());
+public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
 	// data
 	private List<Integer> periods;
-	private Map<Integer, Integer> data; // period -> volume_per_period
+	private Map<Integer, Integer> dataAccumulated; // period -> registrar_code -> registrars_volume_for_period_(accumulated)
 	// labels
 	private String title;
-	private String valueDescription;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private String valueLabel;
 	private Map<Integer, String> columnLabels;
 	// widgets
-	private final ColumnChart chart;
+	private AreaChart chart;
 	// callbacks
 	private IntegerSelectionHandler yearSelectionHandler;
 
-	public SingleItemColumnChart() {
-		chart = new ColumnChart();
+	public SingleRegistrarAccumulatedAreaChart() {
+		chart = new AreaChart();
 		chart.addSelectHandler(new SelectHandler() {
 
 			@Override
@@ -53,51 +52,43 @@ public class SingleItemColumnChart extends Composite {
 			}
 		});
 		initWidget(chart);
+		// setStyleName("RegistrarAssignmentsGraph");
 	}
 
-	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, String title, String valueDescription, String xAxisLabel,
-			String yAxisLabel, Map<Integer, String> columnLabels) {
+	public void setDataAndDraw(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData, String title,
+			String xAxisLabel, String yAxisLabel, String valueLabel, Map<Integer, String> columnLabels) {
 		this.periods = periods;
-		this.data = data;
+		this.dataAccumulated = Utils.accumulate(periods, volumeBeforeFistPeriod, currentData);
 		this.title = title;
-		this.valueDescription = valueDescription;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
+		this.valueLabel = valueLabel;
 		this.columnLabels = columnLabels;
 		draw();
 	}
 
-	private void draw() {
+	public void draw() {
+		// Prepare the data
 		DataTable dataTable = DataTable.create();
+		dataTable.addColumn(ColumnType.STRING, "Period");
+		dataTable.addColumn(ColumnType.NUMBER, valueLabel);
 
-		// columns
-		dataTable.addColumn(ColumnType.STRING, null);
-		dataTable.addColumn(ColumnType.NUMBER, valueDescription);
-		// rows
+		// dataTable.addRows(1);
 		dataTable.addRows(periods.size());
-
-		// fill data
-		// key column
 		for (int i = 0; i < periods.size(); i++) {
 			String label = columnLabels == null ? periods.get(i).toString() : columnLabels.get(periods.get(i));
 			dataTable.setValue(i, 0, label);
 		}
-		// value column
-		for (int row = 0; row < periods.size(); row++) {
-			Integer key = periods.get(row);
-			// logger.warning("key is null for row " + row);
-			Integer value = data.get(key);
-			if (value == null) {
-				value = 0;
-			}
-			// logger.info("key: " + key + ", value: " + value);
-			dataTable.setValue(row, 1, value.toString());
+
+		for (int col = 0; col < periods.size(); col++) {
+			int period = periods.get(col);
+			dataTable.setValue(col, 1, dataAccumulated.get(period));
 		}
 
 		// Set options
-		ColumnChartOptions options = ColumnChartOptions.create();
-		// options.setFontName("Tahoma");
+		AreaChartOptions options = AreaChartOptions.create();
 		options.setTitle(title);
+		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
 

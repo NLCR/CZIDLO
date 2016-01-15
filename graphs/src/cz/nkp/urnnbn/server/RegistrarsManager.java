@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import cz.nkp.urnnbn.shared.Registrar;
+import cz.nkp.urnnbn.shared.charts.Registrar;
 
 public class RegistrarsManager {
 

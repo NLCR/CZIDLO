@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.widgets;
+package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import cz.nkp.urnnbn.shared.Registrar;
-import cz.nkp.urnnbn.shared.Statistic;
+import cz.nkp.urnnbn.shared.charts.Registrar;
+import cz.nkp.urnnbn.shared.charts.Statistic;
 
 public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 

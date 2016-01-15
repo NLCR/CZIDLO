@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.server;
 
-import cz.nkp.urnnbn.shared.Registrar;
+import cz.nkp.urnnbn.shared.charts.Registrar;
 
 public class RegistrarBuilder {
 

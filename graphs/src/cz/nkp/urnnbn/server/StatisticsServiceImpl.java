@@ -9,9 +9,9 @@ import java.util.Set;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import cz.nkp.urnnbn.client.StatisticsService;
-import cz.nkp.urnnbn.shared.Registrar;
-import cz.nkp.urnnbn.shared.Statistic;
+import cz.nkp.urnnbn.client.charts.StatisticsService;
+import cz.nkp.urnnbn.shared.charts.Registrar;
+import cz.nkp.urnnbn.shared.charts.Statistic;
 
 /**
  * The server-side implementation of the RPC service.

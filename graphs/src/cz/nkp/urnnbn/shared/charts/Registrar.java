@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared;
+package cz.nkp.urnnbn.shared.charts;
 
 import java.io.Serializable;
 

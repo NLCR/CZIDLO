@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.charts;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -9,8 +9,8 @@ import java.util.Set;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import cz.nkp.urnnbn.shared.Registrar;
-import cz.nkp.urnnbn.shared.Statistic;
+import cz.nkp.urnnbn.shared.charts.Registrar;
+import cz.nkp.urnnbn.shared.charts.Statistic;
 
 /**
  * The client-side stub for the RPC service.

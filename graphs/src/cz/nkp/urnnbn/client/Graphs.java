@@ -22,10 +22,12 @@ import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 import com.sun.xml.internal.ws.api.ha.StickyFeature;
 
-import cz.nkp.urnnbn.client.widgets.RegistrarStatisticsWidget;
-import cz.nkp.urnnbn.client.widgets.RegistrarsStatisticsWidget;
-import cz.nkp.urnnbn.client.widgets.StringSelectionHandler;
-import cz.nkp.urnnbn.shared.Registrar;
+import cz.nkp.urnnbn.client.charts.StatisticsService;
+import cz.nkp.urnnbn.client.charts.StatisticsServiceAsync;
+import cz.nkp.urnnbn.client.charts.widgets.RegistrarStatisticsWidget;
+import cz.nkp.urnnbn.client.charts.widgets.RegistrarsStatisticsWidget;
+import cz.nkp.urnnbn.client.charts.widgets.StringSelectionHandler;
+import cz.nkp.urnnbn.shared.charts.Registrar;
 
 public class Graphs implements EntryPoint {
 

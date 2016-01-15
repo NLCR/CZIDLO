@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.widgets;
+package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +18,7 @@ import com.googlecode.gwt.charts.client.event.SelectHandler;
 import com.googlecode.gwt.charts.client.options.HAxis;
 import com.googlecode.gwt.charts.client.options.VAxis;
 
-import cz.nkp.urnnbn.client.Utils;
+import cz.nkp.urnnbn.client.charts.Utils;
 
 public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 

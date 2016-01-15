@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.widgets;
+package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
-import cz.nkp.urnnbn.client.StatisticsService;
-import cz.nkp.urnnbn.client.StatisticsServiceAsync;
+import cz.nkp.urnnbn.client.charts.StatisticsService;
+import cz.nkp.urnnbn.client.charts.StatisticsServiceAsync;
 
 public class TopLevelStatisticsWidget extends Composite {
 

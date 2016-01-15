@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.widgets;
+package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;

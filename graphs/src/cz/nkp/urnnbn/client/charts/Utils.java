@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.charts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
