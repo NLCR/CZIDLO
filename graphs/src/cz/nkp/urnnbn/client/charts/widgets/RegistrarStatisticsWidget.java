@@ -21,14 +21,13 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
 
 public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
-	private static final Logger logger = Logger.getLogger(RegistrarStatisticsWidget.class.getSimpleName());
+	private static final Logger LOGGER = Logger.getLogger(RegistrarStatisticsWidget.class.getSimpleName());
 
 	// fixed data
 	private final List<Integer> years;
@@ -234,7 +233,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					logger.severe(caught.getMessage());
+					LOGGER.severe(caught.getMessage());
 				}
 			});
 		}
@@ -255,7 +254,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				} else if (stateDeactivatedOnly.getValue()) {
 					title += " (jen deaktivované)";
 				}
-				String valueDesc = selectedRegistrar != null ? selectedRegistrar.getCode() : "celkově";
+				String valueDesc = selectedRegistrar != null ? getRegistrarName(selectedRegistrar.getCode()) : "celkově";
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Nových přiřazení";
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
@@ -274,11 +273,21 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = "Počet URN:NBN";
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, selectedRegistrar.getCode(),
-						columnLabels);
+				// String valueLabel = selectedRegistrar.getCode();
+				String valueLabel = getRegistrarName(selectedRegistrar.getCode());
+				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, valueLabel, columnLabels);
 				areaChart.draw();
 			}
 		}
+	}
+
+	private String getRegistrarName(String code) {
+		for (Registrar registrar : registrars) {
+			if (registrar.getCode().equals(code)) {
+				return registrar.getName();
+			}
+		}
+		return "";
 	}
 
 	private Integer extractVolumeBeforeFirstPeriod() {

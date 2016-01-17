@@ -45,7 +45,6 @@ public class TopNRegistrarsPieChart extends Composite {
 							// sum of other registrars, ignore
 						} else {
 							String registrarCode = topNRecords.get(row - 1).getCode();
-							LOGGER.info("selected registrar: " + registrarCode);
 							registrarSelectionHandler.onSelected(registrarCode);
 						}
 					}
@@ -93,7 +92,8 @@ public class TopNRegistrarsPieChart extends Composite {
 		pieNewData.addColumn(ColumnType.NUMBER, "statistics");
 		pieNewData.addRow("Ostatní", remainingAmount);
 		for (RegistrarWithStatistic registrar : topNRecords) {
-			String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
+			//String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
+			String label = registraNames == null ? registrar.getCode() : registraNames.get(registrar.getCode());
 			pieNewData.addRow(label, registrar.getData());
 		}
 		PieChartOptions options = PieChartOptions.create();
