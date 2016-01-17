@@ -1,9 +1,13 @@
 package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -17,6 +21,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
@@ -30,12 +35,15 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 
 	// data
+	private List<Registrar> registrars;
 	private Registrar selectedRegistrar;
 	private Map<Integer, Map<Integer, Integer>> registrarData; // year -> month -> statistics
 	private Integer selectedYear = null;
 
 	// widgets
-	private final Label title = new Label();
+	private final Label title;
+	private final ListBox registrarsListbox;
+
 	private final ListBox timePeriods;
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
@@ -43,7 +51,8 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final SingleItemColumnChart assignmentsColumnChart;
 	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
-	public RegistrarStatisticsWidget(List<Integer> years) {
+	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars) {
+		this.registrars = toListSortedByName(registrars);
 		this.years = years;
 
 		// container
@@ -60,8 +69,15 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		header.setWidth("1000px");
 		container.add(header);
 
-		// title
-		header.add(title);
+		if (registrars.isEmpty() || registrars.size() == 1) {
+			registrarsListbox = null;
+			title = new Label();
+			header.add(title);
+		} else {
+			title = null;
+			registrarsListbox = createRegistrarsListBox();
+			header.add(registrarsListbox);
+		}
 
 		// year filter
 		timePeriods = createTimePeriods();
@@ -94,6 +110,43 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
 		initWidget(container);
 		setStyleName("RegistrarAssignmentsGraph");
+		if (!registrars.isEmpty()) {
+			setRegistrar(this.registrars.get(0));
+		}
+	}
+
+	private ListBox createRegistrarsListBox() {
+		ListBox result = new ListBox();
+		for (Registrar registrar : registrars) {
+			// result.addItem(registrar.getName() + " (" + registrar.getCode() + ")");
+			result.addItem(registrar.getName());
+		}
+
+		result.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				int index = registrarsListbox.getSelectedIndex();
+				Registrar registrar = registrars.get(index);
+				setRegistrar(registrar);
+			}
+		});
+		return result;
+	}
+
+	private List<Registrar> toListSortedByName(Set<Registrar> input) {
+		List<Registrar> result = new ArrayList<>();
+		if (input != null && !input.isEmpty()) {
+
+			result.addAll(input);
+			Collections.sort(result, new Comparator<Registrar>() {
+				@Override
+				public int compare(Registrar o1, Registrar o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+		}
+		return result;
 	}
 
 	private ListBox createTimePeriods() {
@@ -262,10 +315,19 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		}
 	}
 
-	public void setRegistrar(Registrar registrar) {
-		String registrarName = registrar != null ? registrar.getName() : null;
-		title.setText(registrarName);
-		selectedRegistrar = registrar;
+	public void setRegistrar(Registrar newRegistrar) {
+		String registrarName = newRegistrar != null ? newRegistrar.getName() : null;
+		if (title != null) {
+			title.setText(registrarName);
+		}
+		if (registrarsListbox != null) {
+			for (int i = 0; i < registrars.size(); i++) {
+				if (newRegistrar.getCode().equals(registrars.get(i).getCode())) {
+					registrarsListbox.setSelectedIndex(i);
+				}
+			}
+		}
+		selectedRegistrar = newRegistrar;
 		loadData(selectedRegistrar, selectedYear);
 	}
 
