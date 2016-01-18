@@ -36,13 +36,18 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 	private final List<Registrar> registrars;
 	private final Type statisticType;
+	private final Map<String, String> colors;
+	private final String defaultColor;
 
 	// data
 	private Registrar selectedRegistrar;
 	private Map<Integer, Map<Integer, Integer>> registrarData; // year -> month -> statistics
 	private Integer selectedYear = null;
+	// private String currentColor;
+	// colors
 
 	// widgets
+	private final VerticalPanel container;
 	private final Label titleLabel;
 	private final Label registrarNameLabel;
 	private final ListBox registrarsListbox;
@@ -54,13 +59,17 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final SingleItemColumnChart columnChart;
 	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
-	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType) {
+	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, Map<String, String> colors,
+			String defaultColor) {
 		this.years = years;
 		this.registrars = toListSortedByName(registrars);
 		this.statisticType = statisticType;
+		this.colors = colors;
+		this.defaultColor = defaultColor;
+		// this.singlevalueGraphColor = buildSinglevalueGraphColor();
 
 		// container
-		VerticalPanel container = new VerticalPanel();
+		container = new VerticalPanel();
 		container.setSpacing(5);
 		// container.setWidth("100%");
 		// container.setWidth("1000px");
@@ -124,9 +133,41 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		container.add(areaChart);
 
 		initWidget(container);
-		setStyleName("RegistrarAssignmentsGraph");
+		setStyleName(buildStyleName());
 		if (!registrars.isEmpty()) {
 			setRegistrar(this.registrars.get(0));
+		}
+	}
+
+	private String buildStyleName() {
+		switch (statisticType) {
+		case URN_NBN_ASSIGNMENTS:
+			return "czidloChartRegistrarAssignments";
+		case URN_NBN_RESOLVATIONS:
+			return "czidloChartRegistrarResolvations";
+		default:
+			return "";
+		}
+	}
+
+	private String buildSinglevalueGraphColor() {
+		// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
+		// primary-2
+		return "FE1300";
+
+	}
+
+	private String[] buildChartsColors() {
+		switch (statisticType) {
+		case URN_NBN_ASSIGNMENTS:
+			return new String[] { "#fe1100" };
+			// return new String[] { "#e0440e", "#ee693e", "#ec8f6e", "#f3b49f", "#f6c7b6" };
+		case URN_NBN_RESOLVATIONS:
+
+			return new String[] { "#017783" };
+			// return new String[] { "#e0440e", "#ee693e", "#ec8f6e", "#f3b49f", "#f6c7b6" };
+		default:
+			return null;
 		}
 	}
 
@@ -288,7 +329,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
-				columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
+				columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc, getCurrentColor());
 			}
 			if (areaChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
@@ -298,10 +339,23 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				String yAxisLabel = buildAreaChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
 				String valueLabel = getRegistrarName(selectedRegistrar.getCode());
-				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, valueLabel, columnLabels);
+				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, valueLabel, columnLabels,
+						getCurrentColor());
 				areaChart.draw();
 			}
 		}
+	}
+
+	private String getCurrentColor() {
+		if (selectedRegistrar != null) {
+			if (colors != null) {
+				String colorByRegistrar = colors.get(selectedRegistrar.getCode());
+				if (colorByRegistrar != null) {
+					return colorByRegistrar;
+				}
+			}
+		}
+		return defaultColor;
 	}
 
 	private String buildColumnChartYAxisLabel() {

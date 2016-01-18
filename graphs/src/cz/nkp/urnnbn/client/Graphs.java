@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.client.charts.StatisticsService;
 import cz.nkp.urnnbn.client.charts.StatisticsServiceAsync;
 import cz.nkp.urnnbn.client.charts.widgets.RegistrarStatisticsWidget;
 import cz.nkp.urnnbn.client.charts.widgets.RegistrarsStatisticsWidget;
-import cz.nkp.urnnbn.client.charts.widgets.StringSelectionHandler;
+import cz.nkp.urnnbn.client.charts.widgets.RegistrarSelectionHandler;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
 
@@ -63,14 +63,16 @@ public class Graphs implements EntryPoint {
 
 		// URN:NBN assignments
 		ScrollPanel assignmentsScrollContainer = new ScrollPanel();
-		tabPanel.add(assignmentsScrollContainer, "assignments");
+		// TODO: i18n
+		tabPanel.add(assignmentsScrollContainer, "Přiřazení");
 		assignmentsPanel = new VerticalPanel();
 		assignmentsPanel.setWidth("100%");
 		assignmentsScrollContainer.add(assignmentsPanel);
 
 		// URN:NBN resolvations
 		ScrollPanel resolvationsScrollContainer = new ScrollPanel();
-		tabPanel.add(resolvationsScrollContainer, "assignments");
+		// TODO: i18n
+		tabPanel.add(resolvationsScrollContainer, "Rezolvování");
 		resolvationsPanel = new VerticalPanel();
 		resolvationsPanel.setWidth("100%");
 		resolvationsScrollContainer.add(resolvationsPanel);
@@ -112,7 +114,7 @@ public class Graphs implements EntryPoint {
 							@Override
 							public void run() {
 								LOGGER.info("chart api loaded");
-								StringSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
+								RegistrarSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
 
 								// assignments
 								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNMENTS,
@@ -129,12 +131,12 @@ public class Graphs implements EntryPoint {
 								singleRegistrarSet.add((Registrar) registrars.toArray()[0]);
 								// assignments
 								randomRegistrarAssignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
-										Statistic.Type.URN_NBN_ASSIGNMENTS);
+										Statistic.Type.URN_NBN_ASSIGNMENTS, null, null);
 								randomRegistrarAssignmentsWidget.setWidth("100%");
 								randomRegistrarPanel.add(randomRegistrarAssignmentsWidget);
 								// resolvations
 								randomRegistrarResolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
-										Statistic.Type.URN_NBN_RESOLVATIONS);
+										Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
 								randomRegistrarResolvationsWidget.setWidth("100%");
 								randomRegistrarPanel.add(randomRegistrarResolvationsWidget);
 
@@ -158,30 +160,32 @@ public class Graphs implements EntryPoint {
 		});
 	}
 
-	private StringSelectionHandler buildRegistrarSelectionHandler() {
-		return new StringSelectionHandler() {
+	private RegistrarSelectionHandler buildRegistrarSelectionHandler() {
+		return new RegistrarSelectionHandler() {
 
 			@Override
-			public void onSelected(String code) {
+			public void onSelected(String code, String color) {
 				for (Registrar registrar : registrars) {
 					if (registrar.getCode().equals(code)) {
-						setAssignmentsRegistrar(registrar);
+						setRegistrar(registrar, color);
 					}
 				}
 			}
 		};
 	}
 
-	private void setAssignmentsRegistrar(Registrar registrar) {
+	private void setRegistrar(Registrar registrar, String color) {
 		if (assignmentsRegistrarWidget == null) {
-			assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNMENTS);
+			assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNMENTS, null, null);
 			assignmentsPanel.add(assignmentsRegistrarWidget);
 		}
+		// assignmentsRegistrarWidget.setColor(color);
 		assignmentsRegistrarWidget.setRegistrar(registrar);
 		if (resolvationsRegistrarWidget == null) {
-			resolvationsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS);
+			resolvationsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
 			resolvationsPanel.add(resolvationsRegistrarWidget);
 		}
+		// resolvationsRegistrarWidget.setColor(color);
 		resolvationsRegistrarWidget.setRegistrar(registrar);
 	}
 

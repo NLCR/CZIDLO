@@ -36,10 +36,12 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	private String xAxisLabel;
 	private String yAxisLabel;
 	private Map<Integer, String> columnLabels;
+	// colors
+	private String[] colors;
 	// widgets
 	private AreaChart chart;
 	// callbacks
-	private StringSelectionHandler registrarSelectionHandler;
+	private RegistrarSelectionHandler registrarSelectionHandler;
 
 	public TopNRegistrarsAccumulatedAreaChart() {
 		chart = new AreaChart();
@@ -55,8 +57,11 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 					if (selection != null) {
 						int column = selection.getColumn();
 						if (column >= 2) {
-							String code = topNRegistrarCodes.get(column - 2);
-							registrarSelectionHandler.onSelected(code);
+							int position = column - 1;
+							String registrarCode = topNRegistrarCodes.get(position - 1);
+							String color = colors != null ? colors[position] : null;
+							// String code = topNRegistrarCodes.get(column - 2);
+							registrarSelectionHandler.onSelected(registrarCode, color);
 						}
 					}
 				}
@@ -66,7 +71,8 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Map<String, String> registrarNames, Map<String, Integer> volumeBeforeFirstPeriod,
-			Map<Integer, Map<String, Integer>> volumePerPeriod, String title, String xAxisLabel, String yAxisLabel, Map<Integer, String> columnLabels) {
+			Map<Integer, Map<String, Integer>> volumePerPeriod, String title, String xAxisLabel, String yAxisLabel,
+			Map<Integer, String> columnLabels, String[] colors) {
 		this.periods = periods;
 		this.registrarNames = registrarNames;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
@@ -76,6 +82,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.columnLabels = columnLabels;
+		this.colors = colors;
 		draw();
 	}
 
@@ -150,6 +157,10 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
+		if (colors != null) {
+			options.setColors(colors);
+		}
+		// options.setColors("#9B0B00", "#C50E00", "#FE1300", "#FF4739");
 
 		// Draw the chart
 		chart.draw(dataTable, options);
@@ -188,7 +199,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		return result;
 	}
 
-	public void setRegistrarSelectionHandler(StringSelectionHandler registrarSelectionHandler) {
+	public void setRegistrarSelectionHandler(RegistrarSelectionHandler registrarSelectionHandler) {
 		this.registrarSelectionHandler = registrarSelectionHandler;
 	}
 }

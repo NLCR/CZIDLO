@@ -28,6 +28,9 @@ public class SingleItemColumnChart extends Composite {
 	private String xAxisLabel;
 	private String yAxisLabel;
 	private Map<Integer, String> columnLabels;
+	// colors
+	private String color;
+
 	// widgets
 	private final ColumnChart chart;
 	// callbacks
@@ -56,7 +59,7 @@ public class SingleItemColumnChart extends Composite {
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Map<Integer, Integer> data, String title, String valueDescription, String xAxisLabel,
-			String yAxisLabel, Map<Integer, String> columnLabels) {
+			String yAxisLabel, Map<Integer, String> columnLabels, String color) {
 		this.periods = periods;
 		this.data = data;
 		this.title = title;
@@ -64,6 +67,7 @@ public class SingleItemColumnChart extends Composite {
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.columnLabels = columnLabels;
+		this.color = color;
 		draw();
 	}
 
@@ -100,6 +104,13 @@ public class SingleItemColumnChart extends Composite {
 		options.setTitle(title);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
+		if (color != null) {
+			options.setColors(new String[]{color});
+		}
+		// options.setColors("#e0440e", "#e6693e", "#ec8f6e", "#f3b49f", "#f6c7b6");
+		// options.setColors(buildColors());
+
+		// options.setColors("#e0440e", "#e0093e", "#ec8f6e", "#f3b49f", "#f6c7b6");
 
 		// Draw the chart
 		chart.draw(dataTable, options);

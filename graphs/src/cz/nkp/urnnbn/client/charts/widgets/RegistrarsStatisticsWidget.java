@@ -34,10 +34,13 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 	private Map<String, String> registraNames = null;
 	private final Type statisticType;
+	private final String singlevalueGraphColor;
+	private final String[] multivaluedGraphColors;
 
 	// data
 	private Map<Integer, Map<Integer, Map<String, Integer>>> data; // year -> month -> registrar_code -> statistics
 	private Integer selectedYear = null;
+	private String selectedRegistrarColor;
 
 	// widgets
 	private final Label titleLabel;
@@ -50,10 +53,12 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsAccumulatedAreaChart areaChart;
 
 	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType,
-			StringSelectionHandler registrarSelectionHandler) {
+			RegistrarSelectionHandler registrarSelectionHandler) {
 		this.years = years;
 		this.registraNames = extractRegistrarNames(registrars);
 		this.statisticType = statisticType;
+		this.singlevalueGraphColor = buildSingleValueGraphColor();
+		this.multivaluedGraphColors = buildMultivaluedGraphColors();
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -112,9 +117,50 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		container.add(areaChart);
 
 		initWidget(container);
-		setStyleName("RegistrarsGraph");
+		setStyleName(buildStyleName());
 
 		loadData(selectedYear);
+	}
+
+	private String buildStyleName() {
+		switch (statisticType) {
+		case URN_NBN_ASSIGNMENTS:
+			return "czidloChartRegistrarsAssignments";
+		case URN_NBN_RESOLVATIONS:
+			return "czidloChartRegistrarsResolvations";
+		default:
+			return null;
+		}
+	}
+
+	private String buildSingleValueGraphColor() {
+		switch (statisticType) {
+		case URN_NBN_ASSIGNMENTS:
+			// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
+			// primary-2
+			return "FE1300";
+		case URN_NBN_RESOLVATIONS:
+			// http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi
+			// primary-2
+			return "#017883";
+		default:
+			return null;
+		}
+	}
+
+	private String[] buildMultivaluedGraphColors() {
+		switch (statisticType) {
+		case URN_NBN_ASSIGNMENTS:
+			// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
+			// primary-0, complement-2, secondery2-2, secondery-2
+			return new String[] { "#FF6F63", "#00C222", "#03899C", "#FE7A00" };
+		case URN_NBN_RESOLVATIONS:
+			// http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi
+			// primary-0, complement-2, secondery2-2, secondery-2
+			return new String[] { "#1EA6B3", "#D76500", "#D7B500", "#2E0A94" };
+		default:
+			return null;
+		}
 	}
 
 	private String buildTitle() {
@@ -261,14 +307,15 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels);
+				//String color = buildSelectedRegistrarColor();
+				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, null);
 			}
 			if (pieChart != null) {
 				int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
 				Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
 				// TODO: i18n
 				String title = buildiPieChartTitle();
-				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames);
+				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, multivaluedGraphColors);
 			}
 			if (areaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
@@ -278,7 +325,8 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildAreChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels);
+				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
+						multivaluedGraphColors);
 			}
 		}
 	}

@@ -19,17 +19,19 @@ public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
-	
+
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
 	private Map<String, String> registraNames = null;
 	// labels
 	private String title;
+	// colors
+	private String[] colors;
 	// widgets
 	private final PieChart chart;
 	// callbacks
-	private StringSelectionHandler registrarSelectionHandler;
+	private RegistrarSelectionHandler registrarSelectionHandler;
 
 	public TopNRegistrarsPieChart() {
 		chart = new PieChart();
@@ -44,8 +46,10 @@ public class TopNRegistrarsPieChart extends Composite {
 						if (row == 0) {
 							// sum of other registrars, ignore
 						} else {
-							String registrarCode = topNRecords.get(row - 1).getCode();
-							registrarSelectionHandler.onSelected(registrarCode);
+							int position = row;
+							String registrarCode = topNRecords.get(position - 1).getCode();
+							String color = colors != null ? colors[position] : null;
+							registrarSelectionHandler.onSelected(registrarCode, color);
 						}
 					}
 				}
@@ -55,11 +59,13 @@ public class TopNRegistrarsPieChart extends Composite {
 		initWidget(chart);
 	}
 
-	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, String title, Map<String, String> registraNames) {
+	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, String title, Map<String, String> registraNames,
+			String[] colors) {
 		this.topNRecords = extractTopn(assignmentsByRegistrar, MAX_REGISTRARS);
 		this.remainingAmount = extractOtherAmount(topNRecords, totalAssignments);
 		this.title = title;
 		this.registraNames = registraNames;
+		this.colors = colors;
 		draw();
 	}
 
@@ -92,17 +98,20 @@ public class TopNRegistrarsPieChart extends Composite {
 		pieNewData.addColumn(ColumnType.NUMBER, "statistics");
 		pieNewData.addRow("Ostatní", remainingAmount);
 		for (RegistrarWithStatistic registrar : topNRecords) {
-			//String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
+			// String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
 			String label = registraNames == null ? registrar.getCode() : registraNames.get(registrar.getCode());
 			pieNewData.addRow(label, registrar.getData());
 		}
 		PieChartOptions options = PieChartOptions.create();
 		options.setTitle(title);
-		//options.setIs3D(true);
+		if (colors != null) {
+			options.setColors(colors);
+		}
+		// options.setIs3D(true);
 		chart.draw(pieNewData, options);
 	}
 
-	public void setRegistrarSelectionHandler(StringSelectionHandler registrarSelectionHandler) {
+	public void setRegistrarSelectionHandler(RegistrarSelectionHandler registrarSelectionHandler) {
 		this.registrarSelectionHandler = registrarSelectionHandler;
 	}
 

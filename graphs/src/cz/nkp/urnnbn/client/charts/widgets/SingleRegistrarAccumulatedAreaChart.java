@@ -27,6 +27,9 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 	private String yAxisLabel;
 	private String valueLabel;
 	private Map<Integer, String> columnLabels;
+	// colors
+	private String color;
+
 	// widgets
 	private AreaChart chart;
 	// callbacks
@@ -56,7 +59,7 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData, String title,
-			String xAxisLabel, String yAxisLabel, String valueLabel, Map<Integer, String> columnLabels) {
+			String xAxisLabel, String yAxisLabel, String valueLabel, Map<Integer, String> columnLabels, String color) {
 		this.periods = periods;
 		this.dataAccumulated = Utils.accumulate(periods, volumeBeforeFistPeriod, currentData);
 		this.title = title;
@@ -64,6 +67,7 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 		this.yAxisLabel = yAxisLabel;
 		this.valueLabel = valueLabel;
 		this.columnLabels = columnLabels;
+		this.color = color;
 		draw();
 	}
 
@@ -91,6 +95,9 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
+		if (color != null) {
+			options.setColors(new String[] { color });
+		}
 
 		// Draw the chart
 		chart.draw(dataTable, options);

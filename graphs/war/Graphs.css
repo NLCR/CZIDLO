@@ -31,26 +31,39 @@ h1 {
 	margin: 15px 6px 6px;
 }
 
-.RegistrarAssignmentsGraph {
-	background-color: #ccddee;
+.czidloChartRegistrarAssignments {
+	/** primary-0 from http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs **/
+	background-color: #FF6F63;
 	margin: 10px;
 }
 
-.RegistrarsGraph {
-	background-color: #eeddcc;
+.czidloChartRegistrarResolvations {
+	/** primary-0 from http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi **/
+	background-color: #1EA6B3;
+	margin: 10px;
+}
+
+.czidloChartRegistrarsAssignments {
+	/** primary-0 from http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs **/
+	background-color: #FF6F63;
+	margin: 10px;
+}
+
+.czidloChartRegistrarsResolvations {
+	/** primary-0 from http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi **/
+	background-color: #1EA6B3;
 	margin: 10px;
 }
 
 .czidloChartHeader {
 	/**background-color: #cceedd;**/
-	background-color: #cceedd;
+	background-color: #ffffff;
 	width: 1000px;
 	/** margin: 5px;**/
 }
 
 .czidloChartTitle {
-	/**background-color: #cceedd;**/
-	/**background-color: #cceeaa;**/
+	/**background-color: #cceedd;**/ /**background-color: #cceeaa;**/
 	/**width: 1000px;**/
 	font-size: large;
 	margin: 5px;
@@ -58,8 +71,7 @@ h1 {
 }
 
 .czidloChartRegistrarTitle {
-	/**background-color: #cceedd;**/
-	/**background-color: #cceeaa;**/
+	/**background-color: #cceedd;**/ /**background-color: #cceeaa;**/
 	/**width: 1000px;**/
 	font-size: larger;
 	margin: 3px;
