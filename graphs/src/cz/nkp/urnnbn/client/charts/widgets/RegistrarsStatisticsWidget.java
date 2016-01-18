@@ -52,15 +52,15 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
 		// container
 		VerticalPanel container = new VerticalPanel();
-		container.setSpacing(5);
-		container.setWidth("100%");
+		container.setSpacing(5);// TODO: should be in css
+		// container.setWidth("100%");
+		// container.setWidth("1000px");
 		RootLayoutPanel.get().add(container);
 
 		// header
 		VerticalPanel header = new VerticalPanel();
-		header.setSpacing(10);
-		// header.setWidth("100%");
-		header.setWidth("1300px");
+		header.setSpacing(5);// TODO: should be in css
+		header.setStyleName("GraphHeader");
 		container.add(header);
 
 		title = new Label("Vizualizace přiřazení URN:NBN");
@@ -74,9 +74,9 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
 		// urn state filter
 		// TODO: i18n
-		stateAll = createUrnStateRadibutton("all", true);
-		stateActiveOnly = createUrnStateRadibutton("active only", false);
-		stateDeactivatedOnly = createUrnStateRadibutton("decativated only", false);
+		stateAll = createUrnStateRadibutton("všechno", true);
+		stateActiveOnly = createUrnStateRadibutton("jen aktivní", false);
+		stateDeactivatedOnly = createUrnStateRadibutton("jen deaktivované", false);
 		HorizontalPanel urnStateFilterPanel = new HorizontalPanel();
 		urnStateFilterPanel.add(stateAll);
 		urnStateFilterPanel.add(stateActiveOnly);
@@ -99,7 +99,7 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		container.add(accumulatedStatisticsAreaChart);
 
 		initWidget(container);
-		setStyleName("RegistrarssGraph");
+		setStyleName("RegistrarsGraph");
 
 		loadData(selectedYear);
 	}

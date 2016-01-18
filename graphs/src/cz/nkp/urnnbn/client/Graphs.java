@@ -8,13 +8,9 @@ import java.util.logging.Logger;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -45,7 +41,6 @@ public class Graphs implements EntryPoint {
 	// urn:nbn assignment widgets
 	private VerticalPanel assignmentsPanel;
 	private RegistrarsStatisticsWidget assignmentsGlobalWidget;
-	// private HorizontalPanel assignmentsRegistrarSelectionPanel;
 	private RegistrarStatisticsWidget assignmentsRegistrarWidget;
 
 	// random registrar
@@ -113,6 +108,7 @@ public class Graphs implements EntryPoint {
 								Set<Registrar> singleRegistrarSet = new HashSet<>();
 								singleRegistrarSet.add((Registrar) registrars.toArray()[0]);
 								randomRegistrarAssignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet);
+								randomRegistrarAssignmentsWidget.setWidth("100%");
 								tabPanel.add(randomRegistrarAssignmentsWidget, "random registrar");
 							}
 						});
