@@ -32,9 +32,9 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	@Override
 	public Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options) {
 		switch (type) {
-		case URN_NBN_ASSIGNEMNTS:
-			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE);
-			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
+		case URN_NBN_ASSIGNMENTS:
+			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_ACTIVE);
+			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_DEACTIVATED);
 			return getUrnNbnAssignments(includeActive, includeDeactivated);
 		case URN_NBN_RESOLVATIONS:
 			return getUrnNbnResolvations();
@@ -63,9 +63,9 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 	public Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type,
 			HashMap<Statistic.Option, Serializable> options) {
 		switch (type) {
-		case URN_NBN_ASSIGNEMNTS:
-			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE);
-			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
+		case URN_NBN_ASSIGNMENTS:
+			boolean includeActive = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_ACTIVE);
+			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_DEACTIVATED);
 			return getUrnNbnAssignments(registrarCode, includeActive, includeDeactivated);
 		case URN_NBN_RESOLVATIONS:
 			return getUrnNbnResolvations(registrarCode);

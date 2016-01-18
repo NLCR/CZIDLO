@@ -95,7 +95,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		header.add(headerYears);
 
 		// urn state filter
-		if (statisticType == Type.URN_NBN_ASSIGNEMNTS) {
+		if (statisticType == Type.URN_NBN_ASSIGNMENTS) {
 			// TODO: i18n
 			stateAll = createUrnStateRadibutton("všechno", true);
 			stateActiveOnly = createUrnStateRadibutton("jen aktivní", false);
@@ -133,7 +133,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private String buildTitle() {
 		// TODO: i18n
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			return "Statistiky přiřazení URN:NBN podle registrátora";
 		case URN_NBN_RESOLVATIONS:
 			return "Statistiky rezolvování URN:NBN podle registrátora";
@@ -262,11 +262,11 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private HashMap<Option, Serializable> buildOptions() {
 		HashMap<Statistic.Option, Serializable> result = new HashMap<>();
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
 			boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
-			result.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE, includeActive);
-			result.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED, includeDeactivated);
+			result.put(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_ACTIVE, includeActive);
+			result.put(Statistic.Option.URN_NBN_ASSIGNMENTS_INCLUDE_DEACTIVATED, includeDeactivated);
 			break;
 		case URN_NBN_RESOLVATIONS:
 			// TODO: options if needed
@@ -307,7 +307,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private String buildColumnChartYAxisLabel() {
 		// TODO: i18n
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			return "Nových přiřazení";
 		case URN_NBN_RESOLVATIONS:
 			return "Nových rezolvování";
@@ -319,7 +319,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private String buildAreaChartYAxisLabel() {
 		// TODO: i18n
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			return "Počet přiřazených URN:NBN";
 		case URN_NBN_RESOLVATIONS:
 			return "Agregovaný počet rezolvování";
@@ -332,7 +332,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		// TODO: i18n
 		String title = "";
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			title = selectedYear != null ? "Měsíční vývoj počtu přiřazených URN:NBN v roce " + selectedYear : "Roční vývoj počtu přiřazených URN:NBN";
 			if (stateActiveOnly.getValue()) {
 				title += " (jen aktivní)";
@@ -352,7 +352,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		// TODO: i18n
 		String title = "";
 		switch (statisticType) {
-		case URN_NBN_ASSIGNEMNTS:
+		case URN_NBN_ASSIGNMENTS:
 			title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear : "Počet přiřazení URN:NBN přes jednotlivé roky";
 			if (stateActiveOnly.getValue()) {
 				title += " (jen aktivní)";

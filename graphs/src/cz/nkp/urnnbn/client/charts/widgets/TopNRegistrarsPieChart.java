@@ -19,7 +19,7 @@ public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
-
+	
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
