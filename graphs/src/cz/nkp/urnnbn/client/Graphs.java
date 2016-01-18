@@ -1,7 +1,8 @@
 package cz.nkp.urnnbn.client;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -11,19 +12,16 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 
 import cz.nkp.urnnbn.client.charts.StatisticsService;
 import cz.nkp.urnnbn.client.charts.StatisticsServiceAsync;
-import cz.nkp.urnnbn.client.charts.widgets.RegistrarStatisticsWidget;
-import cz.nkp.urnnbn.client.charts.widgets.RegistrarsStatisticsWidget;
-import cz.nkp.urnnbn.client.charts.widgets.RegistrarSelectionHandler;
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.AssignmentsWidget;
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.ResolvationsWidget;
 import cz.nkp.urnnbn.shared.charts.Registrar;
-import cz.nkp.urnnbn.shared.charts.Statistic;
 
 public class Graphs implements EntryPoint {
 
@@ -37,21 +35,9 @@ public class Graphs implements EntryPoint {
 
 	// widgets
 	private TabLayoutPanel tabPanel;
-
-	// urn:nbn assignments widgets
-	private VerticalPanel assignmentsPanel;
-	private RegistrarsStatisticsWidget assignmentsGlobalWidget;
-	private RegistrarStatisticsWidget assignmentsRegistrarWidget;
-
-	// urn:nbn resolvations widgets
-	private VerticalPanel resolvationsPanel;
-	private RegistrarsStatisticsWidget resolvationsGlobalWidget;
-	private RegistrarStatisticsWidget resolvationsRegistrarWidget;
-
-	// random registrar widgets
-	private VerticalPanel randomRegistrarPanel;
-	private RegistrarStatisticsWidget randomRegistrarAssignmentsWidget;
-	private RegistrarStatisticsWidget randomRegistrarResolvationsWidget;
+	private AssignmentsWidget assignmentsWidget;
+	private ResolvationsWidget resolvationsWidget;
+	private RegistrarWidget registrarWidget;
 
 	@Override
 	public void onModuleLoad() {
@@ -60,31 +46,6 @@ public class Graphs implements EntryPoint {
 		Window.setMargin("0px");
 		tabPanel = new TabLayoutPanel(1.5, Unit.EM);
 		RootLayoutPanel.get().add(tabPanel);
-
-		// URN:NBN assignments
-		ScrollPanel assignmentsScrollContainer = new ScrollPanel();
-		// TODO: i18n
-		tabPanel.add(assignmentsScrollContainer, "Přiřazení");
-		assignmentsPanel = new VerticalPanel();
-		assignmentsPanel.setWidth("100%");
-		assignmentsScrollContainer.add(assignmentsPanel);
-
-		// URN:NBN resolvations
-		ScrollPanel resolvationsScrollContainer = new ScrollPanel();
-		// TODO: i18n
-		tabPanel.add(resolvationsScrollContainer, "Rezolvování");
-		resolvationsPanel = new VerticalPanel();
-		resolvationsPanel.setWidth("100%");
-		resolvationsScrollContainer.add(resolvationsPanel);
-		// tabPanel.add(new Label("todo: resolvation statistics"), "resolvations");
-
-		// random registrar
-		ScrollPanel randomRegistrarContainer = new ScrollPanel();
-		tabPanel.add(randomRegistrarContainer, "random registrar");
-		randomRegistrarPanel = new VerticalPanel();
-		randomRegistrarPanel.setWidth("100%");
-		randomRegistrarContainer.add(randomRegistrarPanel);
-
 		initData();
 	}
 
@@ -114,33 +75,24 @@ public class Graphs implements EntryPoint {
 							@Override
 							public void run() {
 								LOGGER.info("chart api loaded");
-								RegistrarSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
 
-								// assignments
-								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNMENTS,
-										registrarSelectionHandler);
-								assignmentsPanel.add(assignmentsGlobalWidget);
+								// assignments tab
+								assignmentsWidget = new AssignmentsWidget(years, registrars);
+								tabPanel.add(assignmentsWidget, "Přiřazení");
+								// resolvations tab
+								resolvationsWidget = new ResolvationsWidget(years, registrars);
+								tabPanel.add(resolvationsWidget, "Rezolvování");
+								// random registrar tab
+								Registrar randomRegistrar = getRandomRegistrar();
+								registrarWidget = new RegistrarWidget(years, randomRegistrar);
+								tabPanel.add(registrarWidget, randomRegistrar.getName());
+							}
 
-								// resolvations
-								resolvationsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS,
-										registrarSelectionHandler);
-								resolvationsPanel.add(resolvationsGlobalWidget);
-
-								// random registrar
-								Set<Registrar> singleRegistrarSet = new HashSet<>();
-								singleRegistrarSet.add((Registrar) registrars.toArray()[0]);
-								// assignments
-								randomRegistrarAssignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
-										Statistic.Type.URN_NBN_ASSIGNMENTS, null, null);
-								randomRegistrarAssignmentsWidget.setWidth("100%");
-								randomRegistrarPanel.add(randomRegistrarAssignmentsWidget);
-								// resolvations
-								randomRegistrarResolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
-										Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
-								randomRegistrarResolvationsWidget.setWidth("100%");
-								randomRegistrarPanel.add(randomRegistrarResolvationsWidget);
-
-								// tabPanel.add(randomRegistrarAssignmentsWidget, "random registrar");
+							private Registrar getRandomRegistrar() {
+								List<Registrar> list = new ArrayList<>();
+								list.addAll(registrars);
+								int position = new Random().nextInt(list.size());
+								return list.get(position);
 							}
 						});
 					}
@@ -158,35 +110,6 @@ public class Graphs implements EntryPoint {
 				LOGGER.severe(caught.getMessage());
 			}
 		});
-	}
-
-	private RegistrarSelectionHandler buildRegistrarSelectionHandler() {
-		return new RegistrarSelectionHandler() {
-
-			@Override
-			public void onSelected(String code, String color) {
-				for (Registrar registrar : registrars) {
-					if (registrar.getCode().equals(code)) {
-						setRegistrar(registrar, color);
-					}
-				}
-			}
-		};
-	}
-
-	private void setRegistrar(Registrar registrar, String color) {
-		if (assignmentsRegistrarWidget == null) {
-			assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNMENTS, null, null);
-			assignmentsPanel.add(assignmentsRegistrarWidget);
-		}
-		// assignmentsRegistrarWidget.setColor(color);
-		assignmentsRegistrarWidget.setRegistrar(registrar);
-		if (resolvationsRegistrarWidget == null) {
-			resolvationsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
-			resolvationsPanel.add(resolvationsRegistrarWidget);
-		}
-		// resolvationsRegistrarWidget.setColor(color);
-		resolvationsRegistrarWidget.setRegistrar(registrar);
 	}
 
 }
