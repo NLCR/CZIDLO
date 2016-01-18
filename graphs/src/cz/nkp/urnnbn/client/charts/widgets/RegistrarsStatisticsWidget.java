@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
+import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
 public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 
@@ -31,13 +32,14 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> years;
 	private final List<Integer> months = initMonths();
 	private Map<String, String> registraNames = null;
+	private final Type statisticType;
 
 	// data
 	private Map<Integer, Map<Integer, Map<String, Integer>>> data; // year -> month -> registrar_code -> statistics
 	private Integer selectedYear = null;
 
 	// widgets
-	private final Label title;
+	private final Label titleLabel;
 	private final ListBox timePeriods;
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
@@ -46,9 +48,11 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsPieChart registrarsRatioPiechart;
 	private final TopNRegistrarsAccumulatedAreaChart accumulatedStatisticsAreaChart;
 
-	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, StringSelectionHandler registrarSelectionHandler) {
+	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType,
+			StringSelectionHandler registrarSelectionHandler) {
 		this.years = years;
 		this.registraNames = extractRegistrarNames(registrars);
+		this.statisticType = statisticType;
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -57,14 +61,16 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		// container.setWidth("1000px");
 		RootLayoutPanel.get().add(container);
 
+		// title
+		titleLabel = new Label(buildTitle());
+		titleLabel.setStyleName("czidloChartTitle");
+		container.add(titleLabel);
+
 		// header
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(5);// TODO: should be in css
-		header.setStyleName("GraphHeader");
+		header.setStyleName("czidloChartHeader");
 		container.add(header);
-
-		title = new Label("Vizualizace přiřazení URN:NBN");
-		header.add(title);
 
 		// year filter
 		timePeriods = createTimePeriods();
@@ -102,6 +108,18 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		setStyleName("RegistrarsGraph");
 
 		loadData(selectedYear);
+	}
+
+	private String buildTitle() {
+		// TODO: i18n
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			return "Souhrnné Statistiky přiřazení URN:NBN";
+		case URN_NBN_RESOLVATIONS:
+			return "Souhrnné Statistiky rezolvování URN:NBN";
+		default:
+			return "";
+		}
 	}
 
 	private Map<String, String> extractRegistrarNames(Set<Registrar> registrars) {

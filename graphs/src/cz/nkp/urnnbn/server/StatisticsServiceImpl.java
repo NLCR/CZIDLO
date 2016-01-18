@@ -21,7 +21,7 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 
 	@Override
 	public List<Integer> getAvailableYearsSorted() {
-		return RegistrarsManager.getInstance().getYears();
+		return RegistrarsManager.getInstance().getAvailableYears();
 	}
 
 	@Override
@@ -37,10 +37,18 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
 			return getUrnNbnAssignments(includeActive, includeDeactivated);
 		case URN_NBN_RESOLVATIONS:
-			// TODO
+			return getUrnNbnResolvations();
 		default:
 			return null;
 		}
+	}
+
+	private Map<String, Map<Integer, Map<Integer, Integer>>> getUrnNbnResolvations() {
+		Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
+		for (Registrar registrar : getRegistrars()) {
+			result.put(registrar.getCode(), getUrnNbnResolvations(registrar.getCode()));
+		}
+		return result;
 	}
 
 	private Map<String, Map<Integer, Map<Integer, Integer>>> getUrnNbnAssignments(boolean includeActive, boolean includeDeactivated) {
@@ -60,16 +68,32 @@ public class StatisticsServiceImpl extends RemoteServiceServlet implements Stati
 			boolean includeDeactivated = (boolean) options.get(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED);
 			return getUrnNbnAssignments(registrarCode, includeActive, includeDeactivated);
 		case URN_NBN_RESOLVATIONS:
-			// TODO
+			return getUrnNbnResolvations(registrarCode);
 		default:
 			return null;
 		}
 	}
 
+	private Map<Integer, Map<Integer, Integer>> getUrnNbnResolvations(String registrarCode) {
+		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();
+		Statistics assignments = RegistrarsManager.getInstance().getResolvationsData(registrarCode);
+		List<Integer> years = getAvailableYearsSorted();
+		List<Integer> months = getMothsSorted();
+		for (Integer year : years) {
+			Map<Integer, Integer> annualData = new HashMap<>();
+			for (Integer month : months) {
+				Integer registrations = assignments.getRegistrations(year, month);
+				annualData.put(month, registrations);
+			}
+			result.put(year, annualData);
+		}
+		return result;
+	}
+
 	private Map<Integer, Map<Integer, Integer>> getUrnNbnAssignments(String registrarCode, boolean includeActive, boolean includeDeactivated) {
 		double factor = getDecreaseFactor(includeActive, includeDeactivated);
 		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();
-		Assignments assignments = RegistrarsManager.getInstance().getAssignmentData(registrarCode);
+		Statistics assignments = RegistrarsManager.getInstance().getAssignmentData(registrarCode);
 		List<Integer> years = getAvailableYearsSorted();
 		List<Integer> months = getMothsSorted();
 		for (Integer year : years) {

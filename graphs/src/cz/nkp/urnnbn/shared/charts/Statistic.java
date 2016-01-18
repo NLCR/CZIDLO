@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.shared.charts;
 public class Statistic {
 
 	public static enum Type {
+		//TODO: prejmenovat preklepy
 		URN_NBN_ASSIGNEMNTS, URN_NBN_RESOLVATIONS;
 	}
 

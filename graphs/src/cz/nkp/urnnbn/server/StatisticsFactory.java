@@ -2,12 +2,12 @@ package cz.nkp.urnnbn.server;
 
 import java.util.Random;
 
-public class AssignmentsFactory {
+public class StatisticsFactory {
 
 	private static Random random = new Random();
 
-	public static Assignments buildLinearAssignment(int yearStart, int yearEnd, int initialVolume, int monthlyIncreas) {
-		Assignments result = new Assignments();
+	public static Statistics buildLinearAssignment(int yearStart, int yearEnd, int initialVolume, int monthlyIncreas) {
+		Statistics result = new Statistics();
 		int current = initialVolume;
 		int totalIncrease = 0;
 		for (int year = yearStart; year <= yearEnd; year++) {
@@ -20,12 +20,12 @@ public class AssignmentsFactory {
 		return result;
 	}
 
-	public static Assignments buildRandomAssignment(int yearStart, int yearEnd, int min, int max, float yearlyGrowthRatio) {
-		Assignments result = new Assignments();
+	public static Statistics buildRandomStatistics(int yearStart, int yearEnd, int monthlyMin, int monthlyMax, float yearlyGrowthRatio) {
+		Statistics result = new Statistics();
 		float currentYearlyGrowthRatio = 1;
 		for (int year = yearStart; year <= yearEnd; year++) {
 			for (int month = 1; month <= 12; month++) {
-				int value = Math.max(0, (int) ((random.nextInt(max - min) + min) * currentYearlyGrowthRatio));
+				int value = Math.max(0, (int) ((random.nextInt(monthlyMax - monthlyMin) + monthlyMin) * currentYearlyGrowthRatio));
 				result.setAssignments(year, month, value);
 			}
 			currentYearlyGrowthRatio *= yearlyGrowthRatio;
@@ -33,8 +33,8 @@ public class AssignmentsFactory {
 		return result;
 	}
 
-	public static Assignments buildStaticPartOfYearAssignment(int year, int monthStart, int monthEnd, int volume) {
-		Assignments result = new Assignments();
+	public static Statistics buildStaticPartOfYearAssignment(int year, int monthStart, int monthEnd, int volume) {
+		Statistics result = new Statistics();
 		for (int month = monthStart; month <= monthEnd; month++) {
 			result.setAssignments(year, month, volume);
 		}

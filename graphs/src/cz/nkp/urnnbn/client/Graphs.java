@@ -24,6 +24,7 @@ import cz.nkp.urnnbn.client.charts.widgets.RegistrarStatisticsWidget;
 import cz.nkp.urnnbn.client.charts.widgets.RegistrarsStatisticsWidget;
 import cz.nkp.urnnbn.client.charts.widgets.StringSelectionHandler;
 import cz.nkp.urnnbn.shared.charts.Registrar;
+import cz.nkp.urnnbn.shared.charts.Statistic;
 
 public class Graphs implements EntryPoint {
 
@@ -43,8 +44,10 @@ public class Graphs implements EntryPoint {
 	private RegistrarsStatisticsWidget assignmentsGlobalWidget;
 	private RegistrarStatisticsWidget assignmentsRegistrarWidget;
 
-	// random registrar
+	// random registrar widgets
+	private VerticalPanel randomRegistrarPanel;
 	private RegistrarStatisticsWidget randomRegistrarAssignmentsWidget;
+	private RegistrarStatisticsWidget randomRegistrarResolvationsWidget;
 
 	@Override
 	public void onModuleLoad() {
@@ -66,6 +69,13 @@ public class Graphs implements EntryPoint {
 
 		// URN:NB resolvations
 		tabPanel.add(new Label("todo: resolvation statistics"), "resolvations");
+
+		// random registrar
+		ScrollPanel randomRegistrarContainer = new ScrollPanel();
+		tabPanel.add(randomRegistrarContainer, "random registrar");
+		randomRegistrarPanel = new VerticalPanel();
+		randomRegistrarPanel.setWidth("100%");
+		randomRegistrarContainer.add(randomRegistrarPanel);
 
 		initData();
 	}
@@ -98,7 +108,8 @@ public class Graphs implements EntryPoint {
 								LOGGER.info("chart api loaded");
 								StringSelectionHandler registrarSelectionHandler = buildRegistrarSelectionHandler();
 								// assignments
-								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, registrarSelectionHandler);
+								assignmentsGlobalWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNEMNTS,
+										registrarSelectionHandler);
 								assignmentsPanel.add(assignmentsGlobalWidget);
 
 								// resolvations
@@ -107,9 +118,18 @@ public class Graphs implements EntryPoint {
 								// random registrar
 								Set<Registrar> singleRegistrarSet = new HashSet<>();
 								singleRegistrarSet.add((Registrar) registrars.toArray()[0]);
-								randomRegistrarAssignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet);
+								// assignments
+								randomRegistrarAssignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
+										Statistic.Type.URN_NBN_ASSIGNEMNTS);
 								randomRegistrarAssignmentsWidget.setWidth("100%");
-								tabPanel.add(randomRegistrarAssignmentsWidget, "random registrar");
+								randomRegistrarPanel.add(randomRegistrarAssignmentsWidget);
+								// resolvations
+								randomRegistrarResolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet,
+										Statistic.Type.URN_NBN_RESOLVATIONS);
+								randomRegistrarResolvationsWidget.setWidth("100%");
+								randomRegistrarPanel.add(randomRegistrarResolvationsWidget);
+
+								// tabPanel.add(randomRegistrarAssignmentsWidget, "random registrar");
 							}
 						});
 					}
@@ -145,10 +165,11 @@ public class Graphs implements EntryPoint {
 
 	private void setAssignmentsRegistrar(Registrar registrar) {
 		if (assignmentsRegistrarWidget == null) {
-			assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars);
+			assignmentsRegistrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_ASSIGNEMNTS);
 			assignmentsPanel.add(assignmentsRegistrarWidget);
 		}
 		assignmentsRegistrarWidget.setRegistrar(registrar);
+
 	}
 
 }

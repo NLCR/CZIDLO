@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
+import cz.nkp.urnnbn.shared.charts.Statistic.Option;
+import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
 public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
@@ -32,27 +34,30 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	// fixed data
 	private final List<Integer> years;
 	private final List<Integer> months = initMonths();
+	private final List<Registrar> registrars;
+	private final Type statisticType;
 
 	// data
-	private List<Registrar> registrars;
 	private Registrar selectedRegistrar;
 	private Map<Integer, Map<Integer, Integer>> registrarData; // year -> month -> statistics
 	private Integer selectedYear = null;
 
 	// widgets
-	private final Label title;
+	private final Label titleLabel;
+	private final Label registrarNameLabel;
 	private final ListBox registrarsListbox;
 
 	private final ListBox timePeriods;
 	private final RadioButton stateAll;
 	private final RadioButton stateActiveOnly;
 	private final RadioButton stateDeactivatedOnly;
-	private final SingleItemColumnChart assignmentsColumnChart;
+	private final SingleItemColumnChart columnChart;
 	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
-	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars) {
-		this.registrars = toListSortedByName(registrars);
+	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType) {
 		this.years = years;
+		this.registrars = toListSortedByName(registrars);
+		this.statisticType = statisticType;
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -61,18 +66,24 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		// container.setWidth("1000px");
 		RootLayoutPanel.get().add(container);
 
+		// title
+		titleLabel = new Label(buildTitle());
+		titleLabel.setStyleName("czidloChartTitle");
+		container.add(titleLabel);
+
 		// header
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(5);// TODO: should be in css
-		header.setStyleName("GraphHeader");
+		header.setStyleName("czidloChartHeader");
 		container.add(header);
 
 		if (registrars.isEmpty() || registrars.size() == 1) {
 			registrarsListbox = null;
-			title = new Label();
-			header.add(title);
+			registrarNameLabel = new Label();
+			registrarNameLabel.setStyleName("czidloChartRegistrarTitle");
+			header.add(registrarNameLabel);
 		} else {
-			title = null;
+			registrarNameLabel = null;
 			registrarsListbox = createRegistrarsListBox();
 			header.add(registrarsListbox);
 		}
@@ -84,22 +95,28 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		header.add(headerYears);
 
 		// urn state filter
-		// TODO: i18n
-		stateAll = createUrnStateRadibutton("všechno", true);
-		stateActiveOnly = createUrnStateRadibutton("jen aktivní", false);
-		stateDeactivatedOnly = createUrnStateRadibutton("jen deaktivované", false);
-		HorizontalPanel urnStateFilterPanel = new HorizontalPanel();
-		urnStateFilterPanel.add(stateAll);
-		urnStateFilterPanel.add(stateActiveOnly);
-		urnStateFilterPanel.add(stateDeactivatedOnly);
-		header.add(urnStateFilterPanel);
+		if (statisticType == Type.URN_NBN_ASSIGNEMNTS) {
+			// TODO: i18n
+			stateAll = createUrnStateRadibutton("všechno", true);
+			stateActiveOnly = createUrnStateRadibutton("jen aktivní", false);
+			stateDeactivatedOnly = createUrnStateRadibutton("jen deaktivované", false);
+			HorizontalPanel urnStateFilterPanel = new HorizontalPanel();
+			urnStateFilterPanel.add(stateAll);
+			urnStateFilterPanel.add(stateActiveOnly);
+			urnStateFilterPanel.add(stateDeactivatedOnly);
+			header.add(urnStateFilterPanel);
+		} else {
+			stateAll = null;
+			stateActiveOnly = null;
+			stateDeactivatedOnly = null;
+		}
 
 		IntegerSelectionHandler yearSelectionHandler = createYearSelectionHandler();
 
 		// column chart
-		assignmentsColumnChart = new SingleItemColumnChart();
-		assignmentsColumnChart.setYearSelectionHandler(yearSelectionHandler);
-		container.add(assignmentsColumnChart);
+		columnChart = new SingleItemColumnChart();
+		columnChart.setYearSelectionHandler(yearSelectionHandler);
+		container.add(columnChart);
 
 		// area chart
 		areaChart = new SingleRegistrarAccumulatedAreaChart();
@@ -110,6 +127,18 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		setStyleName("RegistrarAssignmentsGraph");
 		if (!registrars.isEmpty()) {
 			setRegistrar(this.registrars.get(0));
+		}
+	}
+
+	private String buildTitle() {
+		// TODO: i18n
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			return "Statistiky přiřazení URN:NBN podle registrátora";
+		case URN_NBN_RESOLVATIONS:
+			return "Statistiky rezolvování URN:NBN podle registrátora";
+		default:
+			return "";
 		}
 	}
 
@@ -212,15 +241,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
 	private void loadData(final Registrar registrar, final Integer year) {
 		if (registrar != null) {
-			boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
-			boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
-
-			Statistic.Type type = Statistic.Type.URN_NBN_ASSIGNEMNTS;
-			HashMap<Statistic.Option, Serializable> options = new HashMap<>();
-			options.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE, includeActive);
-			options.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED, includeDeactivated);
-
-			service.getStatistics(registrar.getCode(), type, options, new AsyncCallback<Map<Integer, Map<Integer, Integer>>>() {
+			service.getStatistics(registrar.getCode(), statisticType, buildOptions(), new AsyncCallback<Map<Integer, Map<Integer, Integer>>>() {
 
 				@Override
 				public void onSuccess(Map<Integer, Map<Integer, Integer>> result) {
@@ -238,46 +259,112 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		}
 	}
 
+	private HashMap<Option, Serializable> buildOptions() {
+		HashMap<Statistic.Option, Serializable> result = new HashMap<>();
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			boolean includeActive = stateAll.getValue() || stateActiveOnly.getValue();
+			boolean includeDeactivated = stateAll.getValue() || stateDeactivatedOnly.getValue();
+			result.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_ACTIVE, includeActive);
+			result.put(Statistic.Option.URN_NBN_ASSIGNEMNTS_INCLUDE_DEACTIVATED, includeDeactivated);
+			break;
+		case URN_NBN_RESOLVATIONS:
+			// TODO: options if needed
+			break;
+
+		}
+		return result;
+	}
+
 	private void redrawCharts() {
 		if (registrarData != null) {
 			Map<Integer, Integer> periodData = extractPeriodData();
 			Integer volumeBeforeFirstPeriod = extractVolumeBeforeFirstPeriod();
-			if (assignmentsColumnChart != null) {
+			if (columnChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
 				// TODO: i18n
-				String title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear
-						: "Počet přiřazení URN:NBN přes jednotlivé roky";
-
-				if (stateActiveOnly.getValue()) {
-					title += " (jen aktivní)";
-				} else if (stateDeactivatedOnly.getValue()) {
-					title += " (jen deaktivované)";
-				}
-				String valueDesc = selectedRegistrar != null ? getRegistrarName(selectedRegistrar.getCode()) : "celkově";
+				String chartTitle = buildColumnChartTitle();
+				String valueDesc = selectedRegistrar != null ? getRegistrarName(selectedRegistrar.getCode()) : "";
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Nových přiřazení";
+				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
-				assignmentsColumnChart.setDataAndDraw(keys, periodData, title, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
+				columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc);
 			}
 			if (areaChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
 				// TODO: i18n
-				String title = selectedYear != null ? "Měsíční vývoj objemu přiřazených URN:NBN v roce " + selectedYear
-						: "Roční vývoj objemu přiřazených URN:NBN";
-				if (stateActiveOnly.getValue()) {
-					title += " (jen aktivní)";
-				} else if (stateDeactivatedOnly.getValue()) {
-					title += " (jen deaktivované)";
-				}
+				String title = buildAreaChartTitle();
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
-				String yAxisLabel = "Počet URN:NBN";
+				String yAxisLabel = buildAreaChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				// String valueLabel = selectedRegistrar.getCode();
 				String valueLabel = getRegistrarName(selectedRegistrar.getCode());
 				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, valueLabel, columnLabels);
 				areaChart.draw();
 			}
 		}
+	}
+
+	private String buildColumnChartYAxisLabel() {
+		// TODO: i18n
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			return "Nových přiřazení";
+		case URN_NBN_RESOLVATIONS:
+			return "Nových rezolvování";
+		default:
+			return "";
+		}
+	}
+
+	private String buildAreaChartYAxisLabel() {
+		// TODO: i18n
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			return "Počet přiřazených URN:NBN";
+		case URN_NBN_RESOLVATIONS:
+			return "Agregovaný počet rezolvování";
+		default:
+			return "";
+		}
+	}
+
+	private String buildAreaChartTitle() {
+		// TODO: i18n
+		String title = "";
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			title = selectedYear != null ? "Měsíční vývoj počtu přiřazených URN:NBN v roce " + selectedYear : "Roční vývoj počtu přiřazených URN:NBN";
+			if (stateActiveOnly.getValue()) {
+				title += " (jen aktivní)";
+			} else if (stateDeactivatedOnly.getValue()) {
+				title += " (jen deaktivované)";
+			}
+			break;
+		case URN_NBN_RESOLVATIONS:
+			title = selectedYear != null ? "Měsíční vývoj agregovaného počtu rezolvování URN:NBN v roce " + selectedYear
+					: "Roční vývoj agregovaného počtu rezolvování URN:NBN";
+			break;
+		}
+		return title;
+	}
+
+	private String buildColumnChartTitle() {
+		// TODO: i18n
+		String title = "";
+		switch (statisticType) {
+		case URN_NBN_ASSIGNEMNTS:
+			title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear : "Počet přiřazení URN:NBN přes jednotlivé roky";
+			if (stateActiveOnly.getValue()) {
+				title += " (jen aktivní)";
+			} else if (stateDeactivatedOnly.getValue()) {
+				title += " (jen deaktivované)";
+			}
+			break;
+		case URN_NBN_RESOLVATIONS:
+			title = selectedYear != null ? "Počet rezolvování URN:NBN v roce " + selectedYear : "Počet rezolvování URN:NBN přes jednotlivé roky";
+			break;
+		}
+		return title;
 	}
 
 	private String getRegistrarName(String code) {
@@ -325,8 +412,8 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 
 	public void setRegistrar(Registrar newRegistrar) {
 		String registrarName = newRegistrar != null ? newRegistrar.getName() : null;
-		if (title != null) {
-			title.setText(registrarName);
+		if (registrarNameLabel != null) {
+			registrarNameLabel.setText(registrarName);
 		}
 		if (registrarsListbox != null) {
 			for (int i = 0; i < registrars.size(); i++) {

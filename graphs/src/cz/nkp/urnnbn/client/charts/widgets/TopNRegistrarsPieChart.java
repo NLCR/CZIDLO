@@ -98,7 +98,7 @@ public class TopNRegistrarsPieChart extends Composite {
 		}
 		PieChartOptions options = PieChartOptions.create();
 		options.setTitle(title);
-		options.setIs3D(true);
+		//options.setIs3D(true);
 		chart.draw(pieNewData, options);
 	}
 
