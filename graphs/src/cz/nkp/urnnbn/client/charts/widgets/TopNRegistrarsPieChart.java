@@ -15,6 +15,8 @@ import com.googlecode.gwt.charts.client.corechart.PieChartOptions;
 import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 
+import cz.nkp.urnnbn.client.charts.Utils;
+
 public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
@@ -23,11 +25,9 @@ public class TopNRegistrarsPieChart extends Composite {
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
-	private Map<String, String> registraNames = null;
+	private Map<String, String> registrarNames = null;
 	// labels
 	private String title;
-	// colors
-	private String[] colors;
 	// widgets
 	private final PieChart chart;
 	// callbacks
@@ -48,25 +48,24 @@ public class TopNRegistrarsPieChart extends Composite {
 						} else {
 							int position = row;
 							String registrarCode = topNRecords.get(position - 1).getCode();
-							String color = colors != null ? colors[position] : null;
-							registrarSelectionHandler.onSelected(registrarCode, color);
+							registrarSelectionHandler.onSelected(registrarCode);
 						}
 					}
 				}
 			}
+
 		});
 
 		initWidget(chart);
 	}
 
 	public void setDataAndDraw(int totalAssignments, Map<String, Integer> assignmentsByRegistrar, String title, Map<String, String> registraNames,
-			String[] colors) {
+			String neutralValueColor, Map<String, String> registrarColorMap) {
 		this.topNRecords = extractTopn(assignmentsByRegistrar, MAX_REGISTRARS);
 		this.remainingAmount = extractOtherAmount(topNRecords, totalAssignments);
 		this.title = title;
-		this.registraNames = registraNames;
-		this.colors = colors;
-		draw();
+		this.registrarNames = registraNames;
+		draw(neutralValueColor, registrarColorMap);
 	}
 
 	private int extractOtherAmount(List<RegistrarWithStatistic> data, int totalAssignments) {
@@ -91,23 +90,27 @@ public class TopNRegistrarsPieChart extends Composite {
 		}
 	}
 
-	private void draw() {
+	private void draw(String neutralValueColor, Map<String, String> registrarColorMap) {
 		DataTable pieNewData = DataTable.create();
 		// TODO: i18n
 		pieNewData.addColumn(ColumnType.STRING, "registrar");
 		pieNewData.addColumn(ColumnType.NUMBER, "statistics");
+		List<String> colors = new ArrayList<>();
+		// others
 		pieNewData.addRow("Ostatní", remainingAmount);
+		colors.add(neutralValueColor);
+		// registrars
 		for (RegistrarWithStatistic registrar : topNRecords) {
 			// String label = registraNames == null ? registrar.getCode() : registrar.getCode() + " - " + registraNames.get(registrar.getCode());
-			String label = registraNames == null ? registrar.getCode() : registraNames.get(registrar.getCode());
+			String label = registrarNames == null ? registrar.getCode() : registrarNames.get(registrar.getCode());
 			pieNewData.addRow(label, registrar.getData());
+			colors.add(Utils.getRegistrarColor(registrar.getCode(), neutralValueColor, registrarColorMap));
 		}
 		PieChartOptions options = PieChartOptions.create();
 		options.setTitle(title);
-		if (colors != null) {
-			options.setColors(colors);
+		if (!Utils.containsNullValue(colors)) {
+			options.setColors((colors.toArray(new String[colors.size()])));
 		}
-		// options.setIs3D(true);
 		chart.draw(pieNewData, options);
 	}
 

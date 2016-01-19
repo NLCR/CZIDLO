@@ -20,6 +20,7 @@ public class ResolvationsWidget extends Composite {
 	// data
 	private final List<Integer> years;
 	private final Set<Registrar> registrars;
+	// private String valueColor;
 
 	// widgets
 	private VerticalPanel container;
@@ -37,7 +38,9 @@ public class ResolvationsWidget extends Composite {
 		// TODO: i18n
 		container = new VerticalPanel();
 		container.setWidth("100%");
-		summaryWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, buildRegistrarSelectionHandler());
+		// TODO
+		summaryWidget = new RegistrarsStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, null, null,
+				buildRegistrarSelectionHandler(), null);
 		container.add(summaryWidget);
 		assignmentsScrollContainer.add(container);
 		initWidget(assignmentsScrollContainer);
@@ -47,19 +50,19 @@ public class ResolvationsWidget extends Composite {
 		return new RegistrarSelectionHandler() {
 
 			@Override
-			public void onSelected(String code, String color) {
+			public void onSelected(String code) {
 				for (Registrar registrar : registrars) {
 					if (registrar.getCode().equals(code)) {
-						setRegistrar(registrar, color);
+						setRegistrar(registrar);
 					}
 				}
 			}
 		};
 	}
 
-	private void setRegistrar(Registrar registrar, String color) {
+	private void setRegistrar(Registrar registrar) {
 		if (registrarWidget == null) {
-			registrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
+			registrarWidget = new RegistrarStatisticsWidget(years, registrars, Statistic.Type.URN_NBN_RESOLVATIONS, null);
 			container.add(registrarWidget);
 		}
 		registrarWidget.setRegistrar(registrar);

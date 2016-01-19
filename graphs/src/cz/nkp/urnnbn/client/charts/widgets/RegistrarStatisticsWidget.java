@@ -36,15 +36,13 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 	private final List<Registrar> registrars;
 	private final Type statisticType;
-	private final Map<String, String> colors;
-	private final String defaultColor;
+	private final String chartValueColorDefault;
 
 	// data
 	private Registrar selectedRegistrar;
 	private Map<Integer, Map<Integer, Integer>> registrarData; // year -> month -> statistics
 	private Integer selectedYear = null;
-	// private String currentColor;
-	// colors
+	private Map<String, String> chartValueColorMap;
 
 	// widgets
 	private final VerticalPanel container;
@@ -59,13 +57,12 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	private final SingleItemColumnChart columnChart;
 	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
-	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, Map<String, String> colors,
-			String defaultColor) {
+	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String chartValueColorDefault) {
 		this.years = years;
 		this.registrars = toListSortedByName(registrars);
 		this.statisticType = statisticType;
-		this.colors = colors;
-		this.defaultColor = defaultColor;
+		// this.colors = colors;
+		this.chartValueColorDefault = chartValueColorDefault;
 		// this.singlevalueGraphColor = buildSinglevalueGraphColor();
 
 		// container
@@ -329,7 +326,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
-				columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc, getCurrentColor());
+				columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc, getCurrentGraphValueColor());
 			}
 			if (areaChart != null) {
 				List<Integer> keys = selectedYear != null ? months : years;
@@ -340,22 +337,26 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
 				String valueLabel = getRegistrarName(selectedRegistrar.getCode());
 				areaChart.setDataAndDraw(keys, volumeBeforeFirstPeriod, periodData, title, xAxisLabel, yAxisLabel, valueLabel, columnLabels,
-						getCurrentColor());
+						getCurrentGraphValueColor());
 				areaChart.draw();
 			}
 		}
 	}
 
-	private String getCurrentColor() {
+	private String getCurrentGraphValueColor() {
 		if (selectedRegistrar != null) {
-			if (colors != null) {
-				String colorByRegistrar = colors.get(selectedRegistrar.getCode());
+			if (chartValueColorMap != null) {
+				String registarCode = selectedRegistrar.getCode();
+				String colorByRegistrar = chartValueColorMap.get(registarCode);
+				LOGGER.info("registarar: " + registarCode + ", color: " + colorByRegistrar);
 				if (colorByRegistrar != null) {
 					return colorByRegistrar;
 				}
+			} else {
+				LOGGER.info("color map is null");
 			}
 		}
-		return defaultColor;
+		return chartValueColorDefault;
 	}
 
 	private String buildColumnChartYAxisLabel() {
@@ -479,5 +480,16 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		selectedRegistrar = newRegistrar;
 		loadData(selectedRegistrar, selectedYear);
 	}
+
+	public void setRegistrarColorMap(Map<String, String> colorMap) {
+		LOGGER.warning("setChartValueColorMap: " + colorMap);
+		this.chartValueColorMap = colorMap;
+	}
+
+	public void redraw() {
+		redrawCharts();
+	}
+
+	
 
 }

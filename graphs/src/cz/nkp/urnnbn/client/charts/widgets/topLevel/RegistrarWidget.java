@@ -41,11 +41,13 @@ public class RegistrarWidget extends Composite {
 		Set<Registrar> singleRegistrarSet = new HashSet<>();
 		singleRegistrarSet.add(registrar);
 		// assignments
-		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS, null, null);
+		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
+				ColorConstants.ASSIGNMENTS_VALUE_NEUTRAL);
 		assignmentsWidget.setWidth("100%");
 		container.add(assignmentsWidget);
 		// resolvations
-		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS, null, null);
+		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
+				ColorConstants.RESOLVATIONS_VALUE_NEUTRAL);
 		resolvationsWidget.setWidth("100%");
 		container.add(resolvationsWidget);
 		initWidget(scrollContainer);

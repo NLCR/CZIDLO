@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cz.nkp.urnnbn.client.charts.widgets.RegistrarWithStatistic;
+
 public class Utils {
 
 	public static Map<Integer, Integer> accumulate(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData) {
@@ -90,6 +92,25 @@ public class Utils {
 		List<String> list = new ArrayList<>(set.size());
 		list.addAll(set);
 		return list;
+	}
+
+	public static boolean containsNullValue(List<String> colors) {
+		for (String color : colors) {
+			if (color == null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String getRegistrarColor(String registrarCode, String neutralValueColor, Map<String, String> registrarColorMap) {
+		if (registrarColorMap != null) {
+			String color = registrarColorMap.get(registrarCode);
+			if (color != null) {
+				return color;
+			}
+		}
+		return neutralValueColor;
 	}
 
 }

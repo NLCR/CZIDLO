@@ -36,8 +36,6 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	private String xAxisLabel;
 	private String yAxisLabel;
 	private Map<Integer, String> columnLabels;
-	// colors
-	private String[] colors;
 	// widgets
 	private AreaChart chart;
 	// callbacks
@@ -59,9 +57,9 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 						if (column >= 2) {
 							int position = column - 1;
 							String registrarCode = topNRegistrarCodes.get(position - 1);
-							String color = colors != null ? colors[position] : null;
+							// String color = colors != null ? colors[position] : null;
 							// String code = topNRegistrarCodes.get(column - 2);
-							registrarSelectionHandler.onSelected(registrarCode, color);
+							registrarSelectionHandler.onSelected(registrarCode);
 						}
 					}
 				}
@@ -72,7 +70,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 
 	public void setDataAndDraw(List<Integer> periods, Map<String, String> registrarNames, Map<String, Integer> volumeBeforeFirstPeriod,
 			Map<Integer, Map<String, Integer>> volumePerPeriod, String title, String xAxisLabel, String yAxisLabel,
-			Map<Integer, String> columnLabels, String[] colors) {
+			Map<Integer, String> columnLabels, String neutralGraphValueColor, Map<String, String> registrarColorMap) {
 		this.periods = periods;
 		this.registrarNames = registrarNames;
 		this.topNRegistrarCodes = extractTopRegistrarCodes(volumePerPeriod, volumeBeforeFirstPeriod);
@@ -82,8 +80,7 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.columnLabels = columnLabels;
-		this.colors = colors;
-		draw();
+		draw(neutralGraphValueColor, registrarColorMap);
 	}
 
 	private Map<Integer, Integer> extractAndAccumulateRemainingData(List<Integer> periods, List<String> topNRegistrarCodes,
@@ -114,17 +111,21 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		return result;
 	}
 
-	private void draw() {
-		// Prepare the data
+	private void draw(String neutralValueColor, Map<String, String> registrarColorMap) {
 		DataTable dataTable = DataTable.create();
 		dataTable.addColumn(ColumnType.STRING, "Period");
+		List<String> colors = new ArrayList<>();
+		// others
 		dataTable.addColumn(ColumnType.NUMBER, "Ostatní dohromady");
+		colors.add(neutralValueColor);
+		// total
 		for (int i = 0; i < topNRegistrarCodes.size(); i++) {
 			String registrarCode = topNRegistrarCodes.get(i);
 			// String label = registrarNames == null ? registrarCode : registrarCode + " - " + registrarNames.get(registrarCode);
 			// String label = registrarNames == null ? registrarCode : registrarCode + "-" + registrarNames.get(registrarCode);
 			String label = registrarNames == null ? registrarCode : registrarNames.get(registrarCode);
 			dataTable.addColumn(ColumnType.NUMBER, label);
+			colors.add(Utils.getRegistrarColor(registrarCode, neutralValueColor, registrarColorMap));
 		}
 
 		dataTable.addRows(periods.size());
@@ -157,12 +158,10 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
-		if (colors != null) {
-			options.setColors(colors);
+		if (!Utils.containsNullValue(colors)) {
+			options.setColors((colors.toArray(new String[colors.size()])));
 		}
-		// options.setColors("#9B0B00", "#C50E00", "#FE1300", "#FF4739");
 
-		// Draw the chart
 		chart.draw(dataTable, options);
 	}
 
@@ -202,4 +201,5 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	public void setRegistrarSelectionHandler(RegistrarSelectionHandler registrarSelectionHandler) {
 		this.registrarSelectionHandler = registrarSelectionHandler;
 	}
+
 }

@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.charts.widgets;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.gwt.dev.shell.log.SwingTreeLogger.LogEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -34,13 +37,18 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 	private Map<String, String> registraNames = null;
 	private final Type statisticType;
-	private final String singlevalueGraphColor;
-	private final String[] multivaluedGraphColors;
+	// private final String singlevalueGraphColor;
+	// private final String[] multivaluedGraphColors;
+	private final String[] graphValueColors;
+	private final String neutralGraphValueColor;
+	// private final LifecycleHandler lifecycleHandler;
+	private final RegistrarColorMapChangeListener registrarColorMapChangeListener;
 
 	// data
 	private Map<Integer, Map<Integer, Map<String, Integer>>> data; // year -> month -> registrar_code -> statistics
 	private Integer selectedYear = null;
 	private String selectedRegistrarColor;
+	private Map<String, String> registrarColorMap;
 
 	// widgets
 	private final Label titleLabel;
@@ -52,13 +60,21 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsPieChart pieChart;
 	private final TopNRegistrarsAccumulatedAreaChart areaChart;
 
-	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType,
-			RegistrarSelectionHandler registrarSelectionHandler) {
+	// public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String[] graphValueColors,
+	// String neutralGraphValueColor, RegistrarSelectionHandler registrarSelectionHandler, LifecycleHandler lifecycleHandler) {
+	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String[] graphValueColors,
+			String neutralGraphValueColor, RegistrarSelectionHandler registrarSelectionHandler,
+			RegistrarColorMapChangeListener registrarColorMapChangeListener) {
+
 		this.years = years;
 		this.registraNames = extractRegistrarNames(registrars);
 		this.statisticType = statisticType;
-		this.singlevalueGraphColor = buildSingleValueGraphColor();
-		this.multivaluedGraphColors = buildMultivaluedGraphColors();
+		this.graphValueColors = graphValueColors;
+		this.neutralGraphValueColor = neutralGraphValueColor;
+		this.registrarColorMapChangeListener = registrarColorMapChangeListener;
+		// this.lifecycleHandler = lifecycleHandler;
+		// this.singlevalueGraphColor = buildSingleValueGraphColor();
+		// this.multivaluedGraphColors = buildMultivaluedGraphColors();
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -299,6 +315,9 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 			Set<String> registrarCodes = extractRegistrarCodes(data);
 			Map<Integer, Map<String, Integer>> currentData = selectedYear != null ? data.get(selectedYear) : aggregateYearlyData(registrarCodes);
 			List<Integer> periods = selectedYear != null ? months : years;
+			int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
+			Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
+			this.registrarColorMap = buildRegistarColorMap(volumeByRegistrar);
 			if (columnChart != null) {
 				Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
 				// TODO: i18n
@@ -307,15 +326,15 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				//String color = buildSelectedRegistrarColor();
-				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, null);
+				// String color = buildSelectedRegistrarColor();
+				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, neutralGraphValueColor);
 			}
 			if (pieChart != null) {
-				int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
-				Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
+
 				// TODO: i18n
 				String title = buildiPieChartTitle();
-				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, multivaluedGraphColors);
+				// pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, multivaluedGraphColors);
+				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, neutralGraphValueColor, registrarColorMap);
 			}
 			if (areaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
@@ -325,10 +344,43 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildAreChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
+				// areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
+				// multivaluedGraphColors);
+				// TODO
 				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
-						multivaluedGraphColors);
+						neutralGraphValueColor, registrarColorMap);
+			}
+			if (registrarColorMapChangeListener != null) {
+				registrarColorMapChangeListener.onChanged(registrarColorMap);
+			}
+			// if (lifecycleHandler != null) {
+			// lifecycleHandler.onAfterDrawn();
+			// }
+		}
+	}
+
+	private Map<String, String> buildRegistarColorMap(Map<String, Integer> volumeByRegistrar) {
+		Map<String, String> result = new HashMap<>();
+		if (graphValueColors != null) {
+			List<RegistrarWithStatistic> list = new ArrayList<>();
+			for (String code : volumeByRegistrar.keySet()) {
+				list.add(new RegistrarWithStatistic(code, volumeByRegistrar.get(code)));
+			}
+
+			Collections.sort(list);
+			LOGGER.severe("size: " + list.size());
+			LOGGER.severe(list.toString());
+			for (int i = 0; i < list.size(); i++) {
+				if (i < graphValueColors.length) {
+					String code = list.get(i).getCode();
+					String color = graphValueColors[i];
+					result.put(code, color);
+				}
 			}
 		}
+		LOGGER.severe("result size: " + result.size());
+		LOGGER.severe(result.toString());
+		return result;
 	}
 
 	private String buildAreChartYAxisLabel() {
@@ -500,5 +552,9 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		}
 		return result;
 	}
+
+	// public Map<String, String> getRegistrarColorMap() {
+	// return registrarColorMap;
+	// }
 
 }

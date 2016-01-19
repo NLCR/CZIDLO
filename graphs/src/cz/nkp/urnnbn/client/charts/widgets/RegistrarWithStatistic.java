@@ -22,4 +22,8 @@ public class RegistrarWithStatistic implements Comparable<RegistrarWithStatistic
 		// decreasing order
 		return -data.compareTo(other.data);
 	}
+
+	public String toString() {
+		return code + ":" + data;
+	}
 }
