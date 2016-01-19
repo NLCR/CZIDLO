@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.google.gwt.dev.shell.log.SwingTreeLogger.LogEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -28,7 +27,7 @@ import cz.nkp.urnnbn.shared.charts.Statistic;
 import cz.nkp.urnnbn.shared.charts.Statistic.Option;
 import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
-public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
+public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 
 	private static final Logger LOGGER = Logger.getLogger(RegistrarsStatisticsWidget.class.getSimpleName());
 
@@ -37,17 +36,13 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final List<Integer> months = initMonths();
 	private Map<String, String> registraNames = null;
 	private final Type statisticType;
-	// private final String singlevalueGraphColor;
-	// private final String[] multivaluedGraphColors;
 	private final String[] graphValueColors;
 	private final String neutralGraphValueColor;
-	// private final LifecycleHandler lifecycleHandler;
 	private final RegistrarColorMapChangeListener registrarColorMapChangeListener;
 
 	// data
 	private Map<Integer, Map<Integer, Map<String, Integer>>> data; // year -> month -> registrar_code -> statistics
 	private Integer selectedYear = null;
-	private String selectedRegistrarColor;
 	private Map<String, String> registrarColorMap;
 
 	// widgets
@@ -60,8 +55,6 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 	private final TopNRegistrarsPieChart pieChart;
 	private final TopNRegistrarsAccumulatedAreaChart areaChart;
 
-	// public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String[] graphValueColors,
-	// String neutralGraphValueColor, RegistrarSelectionHandler registrarSelectionHandler, LifecycleHandler lifecycleHandler) {
 	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String[] graphValueColors,
 			String neutralGraphValueColor, RegistrarSelectionHandler registrarSelectionHandler,
 			RegistrarColorMapChangeListener registrarColorMapChangeListener) {
@@ -72,9 +65,6 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		this.graphValueColors = graphValueColors;
 		this.neutralGraphValueColor = neutralGraphValueColor;
 		this.registrarColorMapChangeListener = registrarColorMapChangeListener;
-		// this.lifecycleHandler = lifecycleHandler;
-		// this.singlevalueGraphColor = buildSingleValueGraphColor();
-		// this.multivaluedGraphColors = buildMultivaluedGraphColors();
 
 		// container
 		VerticalPanel container = new VerticalPanel();
@@ -144,36 +134,6 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 			return "czidloChartRegistrarsAssignments";
 		case URN_NBN_RESOLVATIONS:
 			return "czidloChartRegistrarsResolvations";
-		default:
-			return null;
-		}
-	}
-
-	private String buildSingleValueGraphColor() {
-		switch (statisticType) {
-		case URN_NBN_ASSIGNMENTS:
-			// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
-			// primary-2
-			return "FE1300";
-		case URN_NBN_RESOLVATIONS:
-			// http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi
-			// primary-2
-			return "#017883";
-		default:
-			return null;
-		}
-	}
-
-	private String[] buildMultivaluedGraphColors() {
-		switch (statisticType) {
-		case URN_NBN_ASSIGNMENTS:
-			// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
-			// primary-0, complement-2, secondery2-2, secondery-2
-			return new String[] { "#FF6F63", "#00C222", "#03899C", "#FE7A00" };
-		case URN_NBN_RESOLVATIONS:
-			// http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi
-			// primary-0, complement-2, secondery2-2, secondery-2
-			return new String[] { "#1EA6B3", "#D76500", "#D7B500", "#2E0A94" };
 		default:
 			return null;
 		}
@@ -326,14 +286,10 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				// String color = buildSelectedRegistrarColor();
 				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, neutralGraphValueColor);
 			}
 			if (pieChart != null) {
-
-				// TODO: i18n
 				String title = buildiPieChartTitle();
-				// pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, multivaluedGraphColors);
 				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, neutralGraphValueColor, registrarColorMap);
 			}
 			if (areaChart != null) {
@@ -344,18 +300,12 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildAreChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				// areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
-				// multivaluedGraphColors);
-				// TODO
 				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
 						neutralGraphValueColor, registrarColorMap);
 			}
 			if (registrarColorMapChangeListener != null) {
 				registrarColorMapChangeListener.onChanged(registrarColorMap);
 			}
-			// if (lifecycleHandler != null) {
-			// lifecycleHandler.onAfterDrawn();
-			// }
 		}
 	}
 
@@ -552,9 +502,5 @@ public class RegistrarsStatisticsWidget extends TopLevelStatisticsWidget {
 		}
 		return result;
 	}
-
-	// public Map<String, String> getRegistrarColorMap() {
-	// return registrarColorMap;
-	// }
 
 }

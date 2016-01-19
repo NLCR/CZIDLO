@@ -55,7 +55,6 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 			}
 		});
 		initWidget(chart);
-		// setStyleName("RegistrarAssignmentsGraph");
 	}
 
 	public void setDataAndDraw(List<Integer> periods, Integer volumeBeforeFistPeriod, Map<Integer, Integer> currentData, String title,

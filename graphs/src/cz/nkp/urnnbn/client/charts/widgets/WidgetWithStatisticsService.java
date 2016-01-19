@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Composite;
 import cz.nkp.urnnbn.client.charts.StatisticsService;
 import cz.nkp.urnnbn.client.charts.StatisticsServiceAsync;
 
-public class TopLevelStatisticsWidget extends Composite {
+public class WidgetWithStatisticsService extends Composite {
 
 	final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
 

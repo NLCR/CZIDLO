@@ -27,7 +27,7 @@ import cz.nkp.urnnbn.shared.charts.Statistic;
 import cz.nkp.urnnbn.shared.charts.Statistic.Option;
 import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
-public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
+public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 
 	private static final Logger LOGGER = Logger.getLogger(RegistrarStatisticsWidget.class.getSimpleName());
 
@@ -61,9 +61,7 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 		this.years = years;
 		this.registrars = toListSortedByName(registrars);
 		this.statisticType = statisticType;
-		// this.colors = colors;
 		this.chartValueColorDefault = chartValueColorDefault;
-		// this.singlevalueGraphColor = buildSinglevalueGraphColor();
 
 		// container
 		container = new VerticalPanel();
@@ -144,27 +142,6 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 			return "czidloChartRegistrarResolvations";
 		default:
 			return "";
-		}
-	}
-
-	private String buildSinglevalueGraphColor() {
-		// http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs
-		// primary-2
-		return "FE1300";
-
-	}
-
-	private String[] buildChartsColors() {
-		switch (statisticType) {
-		case URN_NBN_ASSIGNMENTS:
-			return new String[] { "#fe1100" };
-			// return new String[] { "#e0440e", "#ee693e", "#ec8f6e", "#f3b49f", "#f6c7b6" };
-		case URN_NBN_RESOLVATIONS:
-
-			return new String[] { "#017783" };
-			// return new String[] { "#e0440e", "#ee693e", "#ec8f6e", "#f3b49f", "#f6c7b6" };
-		default:
-			return null;
 		}
 	}
 
@@ -489,7 +466,5 @@ public class RegistrarStatisticsWidget extends TopLevelStatisticsWidget {
 	public void redraw() {
 		redrawCharts();
 	}
-
-	
 
 }
