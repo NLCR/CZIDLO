@@ -13,7 +13,6 @@ import cz.nkp.urnnbn.client.charts.widgets.RegistrarSelectionHandler;
 import cz.nkp.urnnbn.client.charts.widgets.RegistrarStatisticsWidget;
 import cz.nkp.urnnbn.client.charts.widgets.RegistrarsStatisticsWidget;
 import cz.nkp.urnnbn.shared.charts.Registrar;
-import cz.nkp.urnnbn.shared.charts.Statistic;
 import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
 public abstract class TopLevelRegistrarsWidget extends Composite {

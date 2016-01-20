@@ -71,8 +71,6 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 		// container
 		VerticalPanel container = new VerticalPanel();
 		container.setSpacing(5);// TODO: should be in css
-		// container.setWidth("100%");
-		// container.setWidth("1000px");
 		RootLayoutPanel.get().add(container);
 
 		// title
@@ -82,7 +80,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 
 		// header
 		VerticalPanel header = new VerticalPanel();
-		header.setSpacing(5);// TODO: should be in css
+		header.setSpacing(10);// TODO: should be in css
 		header.setStyleName("czidloChartHeader");
 		container.add(header);
 

@@ -35,7 +35,7 @@ public class RegistrarWidget extends Composite {
 	private void initWidgets() {
 		ScrollPanel scrollContainer = new ScrollPanel();
 		container = new VerticalPanel();
-		container.setWidth("100%");
+		//container.setWidth("100%");
 		scrollContainer.add(container);
 
 		Set<Registrar> singleRegistrarSet = new HashSet<>();
@@ -43,12 +43,12 @@ public class RegistrarWidget extends Composite {
 		// assignments
 		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
 				ColorConstants.ASSIGNMENTS_VALUE_ALL);
-		assignmentsWidget.setWidth("100%");
+		//assignmentsWidget.setWidth("100%");
 		container.add(assignmentsWidget);
 		// resolvations
 		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
 				ColorConstants.RESOLVATIONS_VALUE_ALL);
-		resolvationsWidget.setWidth("100%");
+		//resolvationsWidget.setWidth("100%");
 		container.add(resolvationsWidget);
 		initWidget(scrollContainer);
 	}

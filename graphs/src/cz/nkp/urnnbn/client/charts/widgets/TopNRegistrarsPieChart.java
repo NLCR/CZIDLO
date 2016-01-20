@@ -20,7 +20,11 @@ import cz.nkp.urnnbn.client.charts.Utils;
 public class TopNRegistrarsPieChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
+
+	// fixed data
 	private static final int MAX_REGISTRARS = 3;
+	private static final int WIDTH = 1000;
+	private static final int HEIGHT = 300;
 
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
@@ -106,11 +110,15 @@ public class TopNRegistrarsPieChart extends Composite {
 			pieNewData.addRow(label, registrar.getData());
 			colors.add(Utils.getRegistrarColor(registrar.getCode(), neutralValueColor, registrarColorMap));
 		}
+
 		PieChartOptions options = PieChartOptions.create();
+		options.setWidth(WIDTH);
+		options.setHeight(HEIGHT);
 		options.setTitle(title);
 		if (!Utils.containsNullValue(colors)) {
 			options.setColors((colors.toArray(new String[colors.size()])));
 		}
+
 		chart.draw(pieNewData, options);
 	}
 

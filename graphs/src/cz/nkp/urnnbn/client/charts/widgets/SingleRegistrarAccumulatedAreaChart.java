@@ -18,6 +18,9 @@ import cz.nkp.urnnbn.client.charts.Utils;
 
 public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
+	private static final int WIDTH = 1000;
+	private static final int HEIGHT = 300;
+	
 	// data
 	private List<Integer> periods;
 	private Map<Integer, Integer> dataAccumulated; // period -> registrar_code -> registrars_volume_for_period_(accumulated)
@@ -90,6 +93,8 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
 		// Set options
 		AreaChartOptions options = AreaChartOptions.create();
+		options.setWidth(WIDTH);
+		options.setHeight(HEIGHT);
 		options.setTitle(title);
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));
