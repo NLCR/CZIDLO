@@ -35,4 +35,9 @@ public class AssignmentsWidget extends TopLevelRegistrarsWidget {
 		return ColorConstants.ASSIGNMENTS_VALUE_ALL;
 	}
 
+	@Override
+	String getContainerStyleName() {
+		return "czidloChartAssignmentsSummary";
+	}
+
 }

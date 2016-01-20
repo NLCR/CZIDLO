@@ -31,37 +31,40 @@ h1 {
 	margin: 15px 6px 6px;
 }
 
-.czidloChartRegistrar {
-	margin: 10px;
+.czidloChartTitle {
+	font-size: large;
+	padding: 10px;
+}
+
+.czidloChartHeader {
+	background-color: #ffffff;
+	width: 100%;
 }
 
 .czidloChartRegistrars {
 	margin: 10px;
 }
 
-.czidloChartHeader {
-	/**background-color: #cceedd;**/
-	background-color: #ffffff;
-	width: 100%;
-	/** margin: 5px;**/
-}
-
-.czidloChartTitle {
-	/**background-color: #cceedd;**/ /**background-color: #cceeaa;**/
-	/**width: 1000px;**/
-	font-size: large;
-	margin: 5px;
-	/** margin: 5px;**/
+.czidloChartRegistrar {
+	margin: 10px;
 }
 
 .czidloChartRegistrarTitle {
-	/**background-color: #cceedd;**/ /**background-color: #cceeaa;**/
-	/**width: 1000px;**/
 	font-size: larger;
 	margin: 3px;
-	/** margin: 5px;**/
 }
 
-.test {
-	background-color: #aaeecc;
+.czidloChartAssignmentsSummary {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.czidloChartResolvationsSummary {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.czidloChartRegistrarSummary {
+	margin-left: auto;
+	margin-right: auto;
 }

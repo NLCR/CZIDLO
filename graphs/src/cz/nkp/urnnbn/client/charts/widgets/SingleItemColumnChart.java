@@ -18,13 +18,16 @@ import com.googlecode.gwt.charts.client.options.VAxis;
 public class SingleItemColumnChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(SingleItemColumnChart.class.getSimpleName());
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 300;
-	
+
+	// fixed data
+	private final int width;
+	private final int height;
+
 	// data
 	private List<Integer> periods;
 	private Map<Integer, Integer> data; // period -> volume_per_period
 	private String valueColor;
+
 	// labels
 	private String title;
 	private String valueDescription;
@@ -37,7 +40,9 @@ public class SingleItemColumnChart extends Composite {
 	// callbacks
 	private IntegerSelectionHandler yearSelectionHandler;
 
-	public SingleItemColumnChart() {
+	public SingleItemColumnChart(int width, int height) {
+		this.width = width;
+		this.height = height;
 		chart = new ColumnChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -101,15 +106,15 @@ public class SingleItemColumnChart extends Composite {
 
 		// Set options
 		ColumnChartOptions options = ColumnChartOptions.create();
-		options.setWidth(WIDTH);
-		options.setHeight(HEIGHT);
+		options.setWidth(width);
+		options.setHeight(height);
 		options.setTitle(title);
 		options.setHAxis(HAxis.create(xAxisLabel));
 		options.setVAxis(VAxis.create(yAxisLabel));
 		if (valueColor != null) {
 			options.setColors(new String[] { valueColor });
 		}
-		
+
 		// Draw the chart
 		chart.draw(dataTable, options);
 	}

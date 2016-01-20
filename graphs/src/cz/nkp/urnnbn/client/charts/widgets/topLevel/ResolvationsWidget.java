@@ -33,5 +33,10 @@ public class ResolvationsWidget extends TopLevelRegistrarsWidget {
 	String getGraphValueColorAll() {
 		return ColorConstants.RESOLVATIONS_VALUE_ALL;
 	}
+	
+	@Override
+	String getContainerStyleName() {
+		return "czidloChartResolvationsSummary";
+	}
 
 }

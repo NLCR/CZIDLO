@@ -23,9 +23,10 @@ public class TopNRegistrarsPieChart extends Composite {
 
 	// fixed data
 	private static final int MAX_REGISTRARS = 3;
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 300;
 
+	// fixed data
+	private final int width;
+	private final int height;
 	// data
 	private List<RegistrarWithStatistic> topNRecords = null;
 	private int remainingAmount = 0;
@@ -37,7 +38,9 @@ public class TopNRegistrarsPieChart extends Composite {
 	// callbacks
 	private RegistrarSelectionHandler registrarSelectionHandler;
 
-	public TopNRegistrarsPieChart() {
+	public TopNRegistrarsPieChart(int width, int height) {
+		this.width = width;
+		this.height = height;
 		chart = new PieChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -112,8 +115,8 @@ public class TopNRegistrarsPieChart extends Composite {
 		}
 
 		PieChartOptions options = PieChartOptions.create();
-		options.setWidth(WIDTH);
-		options.setHeight(HEIGHT);
+		options.setWidth(width);
+		options.setHeight(height);
 		options.setTitle(title);
 		if (!Utils.containsNullValue(colors)) {
 			options.setColors((colors.toArray(new String[colors.size()])));

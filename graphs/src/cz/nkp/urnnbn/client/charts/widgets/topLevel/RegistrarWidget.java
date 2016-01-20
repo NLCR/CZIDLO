@@ -35,20 +35,20 @@ public class RegistrarWidget extends Composite {
 	private void initWidgets() {
 		ScrollPanel scrollContainer = new ScrollPanel();
 		container = new VerticalPanel();
-		//container.setWidth("100%");
 		scrollContainer.add(container);
+		container.setStyleName("czidloChartRegistrarSummary");
 
 		Set<Registrar> singleRegistrarSet = new HashSet<>();
 		singleRegistrarSet.add(registrar);
+		int totalWidth = 1400;
+		int widgetHeight = 250;
 		// assignments
 		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
-				ColorConstants.ASSIGNMENTS_VALUE_ALL);
-		//assignmentsWidget.setWidth("100%");
+				ColorConstants.ASSIGNMENTS_VALUE_ALL, totalWidth, widgetHeight);
 		container.add(assignmentsWidget);
 		// resolvations
 		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
-				ColorConstants.RESOLVATIONS_VALUE_ALL);
-		//resolvationsWidget.setWidth("100%");
+				ColorConstants.RESOLVATIONS_VALUE_ALL, totalWidth, widgetHeight);
 		container.add(resolvationsWidget);
 		initWidget(scrollContainer);
 	}

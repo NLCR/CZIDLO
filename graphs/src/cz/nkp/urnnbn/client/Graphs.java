@@ -46,6 +46,7 @@ public class Graphs implements EntryPoint {
 		Window.setMargin("0px");
 		tabPanel = new TabLayoutPanel(1.5, Unit.EM);
 		RootLayoutPanel.get().add(tabPanel);
+		tabPanel.getElement().getStyle().setBackgroundColor("#eeeeee");
 		initData();
 	}
 

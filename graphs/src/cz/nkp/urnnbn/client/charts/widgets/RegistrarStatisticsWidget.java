@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -31,6 +32,7 @@ import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 
 	private static final Logger LOGGER = Logger.getLogger(RegistrarStatisticsWidget.class.getSimpleName());
+	private static final int WIDGET_SEPARATOR_SIZE = 10;
 
 	// fixed data
 	private final List<Integer> years;
@@ -38,6 +40,8 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 	private final List<Registrar> registrars;
 	private final Type statisticType;
 	private final String chartValueColorDefault;
+	private final int totalWidth;
+	private final int widgetHeight;
 
 	// data
 	private Registrar selectedRegistrar;
@@ -46,7 +50,6 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 	private Map<String, String> chartValueColorMap;
 
 	// widgets
-	private final VerticalPanel container;
 	private final Label titleLabel;
 	private final Label registrarNameLabel;
 	private final ListBox registrarsListbox;
@@ -58,15 +61,18 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 	private final SingleItemColumnChart columnChart;
 	private final SingleRegistrarAccumulatedAreaChart areaChart;
 
-	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String chartValueColorDefault) {
+	public RegistrarStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String chartValueColorDefault,
+			int totalWidth, int widgetHeight) {
 		this.years = years;
 		this.registrars = toListSortedByName(registrars);
 		this.statisticType = statisticType;
 		this.chartValueColorDefault = chartValueColorDefault;
+		this.totalWidth = totalWidth;
+		this.widgetHeight = widgetHeight;
 
 		// container
-		container = new VerticalPanel();
-		container.setSpacing(5); // TODO: should be in css
+		VerticalPanel container = new VerticalPanel();
+		container.getElement().getStyle().setPadding(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		RootLayoutPanel.get().add(container);
 
 		// title
@@ -76,6 +82,7 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 
 		// header
 		VerticalPanel header = new VerticalPanel();
+		header.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		header.setSpacing(10);// TODO: should be in css
 		header.setStyleName("czidloChartHeader");
 		container.add(header);
@@ -115,14 +122,17 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 		}
 
 		IntegerSelectionHandler yearSelectionHandler = createYearSelectionHandler();
+		int widgetWidth = totalWidth - 2 * WIDGET_SEPARATOR_SIZE;
 
 		// column chart
-		columnChart = new SingleItemColumnChart();
+		columnChart = new SingleItemColumnChart(widgetWidth, widgetHeight);
+		columnChart.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		columnChart.setYearSelectionHandler(yearSelectionHandler);
 		container.add(columnChart);
 
 		// area chart
-		areaChart = new SingleRegistrarAccumulatedAreaChart();
+		areaChart = new SingleRegistrarAccumulatedAreaChart(widgetWidth, widgetHeight);
+		areaChart.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		areaChart.setYearSelectionHandler(yearSelectionHandler);
 		container.add(areaChart);
 

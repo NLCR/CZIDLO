@@ -38,7 +38,7 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 	private void initWidgets() {
 		ScrollPanel assignmentsScrollContainer = new ScrollPanel();
 		container = new VerticalPanel();
-		container.setWidth("100%");
+		container.setStyleName(getContainerStyleName());
 		summaryWidget = new RegistrarsStatisticsWidget(years, registrars, getStatisticsType(),//
 				getGraphValueColors(), getGraphValueColorOther(), getGraphValueColorAll(),//
 				buildRegistrarSelectionHandler(), buildRegistrarColorMapChangeListener());
@@ -67,9 +67,6 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 
 			@Override
 			public void onSelected(String code) {
-				// LOGGER.info("onSelected");
-				// TODO
-
 				for (Registrar registrar : registrars) {
 					if (registrar.getCode().equals(code)) {
 						setRegistrar(registrar);
@@ -81,7 +78,11 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 
 	private void setRegistrar(Registrar registrar) {
 		if (registrarWidget == null) {
-			registrarWidget = new RegistrarStatisticsWidget(years, registrars, getStatisticsType(), getGraphValueColorOther());
+			int widgetHeight = 300;
+			int totalWidth = RegistrarsStatisticsWidget.LEFT_PANEL_WIDTH + RegistrarsStatisticsWidget.RIGHT_PANEL_WIDTH + 3
+					* RegistrarsStatisticsWidget.WIDGET_SEPARATOR_SIZE;
+			registrarWidget = new RegistrarStatisticsWidget(years, registrars, getStatisticsType(), getGraphValueColorOther(), totalWidth,
+					widgetHeight);
 			registrarWidget.setRegistrarColorMap(registrarColorMapUntilRegistrarWidgetInitialized);
 			container.add(registrarWidget);
 		}
@@ -95,5 +96,7 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 	abstract String getGraphValueColorOther();
 
 	abstract String getGraphValueColorAll();
+
+	abstract String getContainerStyleName();
 
 }

@@ -24,9 +24,10 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 
 	private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
 	private static final int MAX_REGISTRARS = 3;
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 300;
 
+	// fixed data
+	private final int width;
+	private final int height;
 	// data
 	private List<Integer> periods;
 	private Map<String, String> registrarNames;
@@ -43,7 +44,9 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 	// callbacks
 	private RegistrarSelectionHandler registrarSelectionHandler;
 
-	public TopNRegistrarsAccumulatedAreaChart() {
+	public TopNRegistrarsAccumulatedAreaChart(int width, int height) {
+		this.width = width;
+		this.height = height;
 		chart = new AreaChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -153,8 +156,8 @@ public class TopNRegistrarsAccumulatedAreaChart extends Composite {
 
 		// Set options
 		AreaChartOptions options = AreaChartOptions.create();
-		options.setWidth(WIDTH);
-		options.setHeight(HEIGHT);
+		options.setWidth(width);
+		options.setHeight(height);
 		options.setTitle(title);
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));

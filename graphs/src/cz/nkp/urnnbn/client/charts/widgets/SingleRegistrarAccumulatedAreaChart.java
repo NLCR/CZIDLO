@@ -18,12 +18,14 @@ import cz.nkp.urnnbn.client.charts.Utils;
 
 public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
-	private static final int WIDTH = 1000;
-	private static final int HEIGHT = 300;
-	
+	// fixed data
+	private final int width;
+	private final int height;
+
 	// data
 	private List<Integer> periods;
 	private Map<Integer, Integer> dataAccumulated; // period -> registrar_code -> registrars_volume_for_period_(accumulated)
+
 	// labels
 	private String title;
 	private String xAxisLabel;
@@ -38,7 +40,9 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 	// callbacks
 	private IntegerSelectionHandler yearSelectionHandler;
 
-	public SingleRegistrarAccumulatedAreaChart() {
+	public SingleRegistrarAccumulatedAreaChart(int width, int height) {
+		this.width = width;
+		this.height = height;
 		chart = new AreaChart();
 		chart.addSelectHandler(new SelectHandler() {
 
@@ -93,8 +97,8 @@ public class SingleRegistrarAccumulatedAreaChart extends Composite {
 
 		// Set options
 		AreaChartOptions options = AreaChartOptions.create();
-		options.setWidth(WIDTH);
-		options.setHeight(HEIGHT);
+		options.setWidth(width);
+		options.setHeight(height);
 		options.setTitle(title);
 		options.setIsStacked(true);
 		options.setHAxis(HAxis.create(xAxisLabel));

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -31,11 +32,16 @@ import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 
 	private static final Logger LOGGER = Logger.getLogger(RegistrarsStatisticsWidget.class.getSimpleName());
+	public static final int WIDGET_SEPARATOR_SIZE = 10;
+	public static final int LEFT_PANEL_WIDTH = 1000;
+	public static final int LEFT_PANEL_WIDGET_HEIGHT = 300;
+	public static final int RIGHT_PANEL_WIDTH = 500;
+	public static final int RIGHT_PANEL_WIDGET_HEIGHT = 2 * LEFT_PANEL_WIDGET_HEIGHT + WIDGET_SEPARATOR_SIZE;
 
 	// fixed data
 	private final List<Integer> years;
 	private final List<Integer> months = initMonths();
-	private Map<String, String> registraNames = null;
+	private final Map<String, String> registrarNames;
 	private final Type statisticType;
 	private final String[] graphValueColors;
 	private final String graphValueColorOther;
@@ -61,7 +67,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 			String graphValueColorOther, String graphValueColorAll, RegistrarSelectionHandler registrarSelectionHandler,
 			RegistrarColorMapChangeListener registrarColorMapChangeListener) {
 		this.years = years;
-		this.registraNames = extractRegistrarNames(registrars);
+		this.registrarNames = extractRegistrarNames(registrars);
 		this.statisticType = statisticType;
 		this.graphValueColors = graphValueColors;
 		this.graphValueColorOther = graphValueColorOther;
@@ -70,7 +76,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 
 		// container
 		VerticalPanel container = new VerticalPanel();
-		container.setSpacing(5);// TODO: should be in css
+		container.getElement().getStyle().setPadding(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		RootLayoutPanel.get().add(container);
 
 		// title
@@ -81,6 +87,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 		// header
 		VerticalPanel header = new VerticalPanel();
 		header.setSpacing(10);// TODO: should be in css
+		header.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		header.setStyleName("czidloChartHeader");
 		container.add(header);
 
@@ -107,25 +114,36 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 			stateDeactivatedOnly = null;
 		}
 
-		// registrar ratio chart
-		pieChart = new TopNRegistrarsPieChart();
-		pieChart.setRegistrarSelectionHandler(registrarSelectionHandler);
-		container.add(pieChart);
+		// content
+		HorizontalPanel contentPanel = new HorizontalPanel();
+		contentPanel.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
+		container.add(contentPanel);
+
+		// left panel
+		VerticalPanel leftPanel = new VerticalPanel();
+		contentPanel.add(leftPanel);
 
 		// assignments per period chart
-		columnChart = new SingleItemColumnChart();
+		columnChart = new SingleItemColumnChart(LEFT_PANEL_WIDTH, LEFT_PANEL_WIDGET_HEIGHT);
 		columnChart.setYearSelectionHandler(createYearSelectionHandler());
-		container.add(columnChart);
+		leftPanel.add(columnChart);
 
 		// registrar accumulated volume area chart
-		areaChart = new TopNRegistrarsAccumulatedAreaChart();
+		areaChart = new TopNRegistrarsAccumulatedAreaChart(LEFT_PANEL_WIDTH, LEFT_PANEL_WIDGET_HEIGHT);
+		areaChart.getElement().getStyle().setMarginTop(WIDGET_SEPARATOR_SIZE, Unit.PX);
 		areaChart.setRegistrarSelectionHandler(registrarSelectionHandler);
-		container.add(areaChart);
+		leftPanel.add(areaChart);
+
+		// right panel
+		// registrar ratio chart
+		pieChart = new TopNRegistrarsPieChart(RIGHT_PANEL_WIDTH, RIGHT_PANEL_WIDGET_HEIGHT);
+		pieChart.getElement().getStyle().setMarginLeft(WIDGET_SEPARATOR_SIZE, Unit.PX);
+		pieChart.setRegistrarSelectionHandler(registrarSelectionHandler);
+		contentPanel.add(pieChart);
 
 		initWidget(container);
 		setStyleName("czidloChartRegistrars");
 		container.getElement().getStyle().setBackgroundColor(getBackgroundColor());
-
 		loadData(selectedYear);
 	}
 
@@ -291,7 +309,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 			}
 			if (pieChart != null) {
 				String title = buildiPieChartTitle();
-				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, graphValueColorOther, registrarColorMap);
+				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registrarNames, graphValueColorOther, registrarColorMap);
 			}
 			if (areaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
@@ -301,7 +319,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildAreChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
+				areaChart.setDataAndDraw(periods, registrarNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
 						graphValueColorOther, registrarColorMap);
 			}
 			if (registrarColorMapChangeListener != null) {
