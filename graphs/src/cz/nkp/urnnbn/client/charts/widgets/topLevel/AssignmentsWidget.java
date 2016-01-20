@@ -21,13 +21,18 @@ public class AssignmentsWidget extends TopLevelRegistrarsWidget {
 	}
 
 	@Override
-	String getGraphValueColorNeutral() {
-		return ColorConstants.ASSIGNMENTS_VALUE_NEUTRAL;
+	String[] getGraphValueColors() {
+		return new String[] { ColorConstants.ASSIGNMENTS_VALUE_1, ColorConstants.ASSIGNMENTS_VALUE_2, ColorConstants.ASSIGNMENTS_VALUE_3 };
 	}
 
 	@Override
-	String[] getGraphValueColors() {
-		return new String[] { ColorConstants.ASSIGNMENTS_VALUE_1, ColorConstants.ASSIGNMENTS_VALUE_2, ColorConstants.ASSIGNMENTS_VALUE_3 };
+	String getGraphValueColorOther() {
+		return ColorConstants.ASSIGNMENTS_VALUE_OTHER;
+	}
+
+	@Override
+	String getGraphValueColorAll() {
+		return ColorConstants.ASSIGNMENTS_VALUE_ALL;
 	}
 
 }

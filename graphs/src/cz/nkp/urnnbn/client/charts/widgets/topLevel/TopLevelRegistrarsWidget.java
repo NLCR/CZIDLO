@@ -40,7 +40,8 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 		ScrollPanel assignmentsScrollContainer = new ScrollPanel();
 		container = new VerticalPanel();
 		container.setWidth("100%");
-		summaryWidget = new RegistrarsStatisticsWidget(years, registrars, getStatisticsType(), getGraphValueColors(), getGraphValueColorNeutral(),
+		summaryWidget = new RegistrarsStatisticsWidget(years, registrars, getStatisticsType(),//
+				getGraphValueColors(), getGraphValueColorOther(), getGraphValueColorAll(),//
 				buildRegistrarSelectionHandler(), buildRegistrarColorMapChangeListener());
 		container.add(summaryWidget);
 		assignmentsScrollContainer.add(container);
@@ -81,7 +82,7 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 
 	private void setRegistrar(Registrar registrar) {
 		if (registrarWidget == null) {
-			registrarWidget = new RegistrarStatisticsWidget(years, registrars, getStatisticsType(), getGraphValueColorNeutral());
+			registrarWidget = new RegistrarStatisticsWidget(years, registrars, getStatisticsType(), getGraphValueColorOther());
 			registrarWidget.setRegistrarColorMap(registrarColorMapUntilRegistrarWidgetInitialized);
 			container.add(registrarWidget);
 		}
@@ -90,8 +91,10 @@ public abstract class TopLevelRegistrarsWidget extends Composite {
 
 	abstract Type getStatisticsType();
 
-	abstract String getGraphValueColorNeutral();
-
 	abstract String[] getGraphValueColors();
+
+	abstract String getGraphValueColorOther();
+
+	abstract String getGraphValueColorAll();
 
 }

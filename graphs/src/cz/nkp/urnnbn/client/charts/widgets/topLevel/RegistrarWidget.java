@@ -42,12 +42,12 @@ public class RegistrarWidget extends Composite {
 		singleRegistrarSet.add(registrar);
 		// assignments
 		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
-				ColorConstants.ASSIGNMENTS_VALUE_NEUTRAL);
+				ColorConstants.ASSIGNMENTS_VALUE_ALL);
 		assignmentsWidget.setWidth("100%");
 		container.add(assignmentsWidget);
 		// resolvations
 		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
-				ColorConstants.RESOLVATIONS_VALUE_NEUTRAL);
+				ColorConstants.RESOLVATIONS_VALUE_ALL);
 		resolvationsWidget.setWidth("100%");
 		container.add(resolvationsWidget);
 		initWidget(scrollContainer);

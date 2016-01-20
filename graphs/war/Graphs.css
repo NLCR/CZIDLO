@@ -31,27 +31,11 @@ h1 {
 	margin: 15px 6px 6px;
 }
 
-.czidloChartRegistrarAssignments {
-	/** primary-0 from http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs **/
-	background-color: #FF6F63;
+.czidloChartRegistrar {
 	margin: 10px;
 }
 
-.czidloChartRegistrarResolvations {
-	/** primary-0 from http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi **/
-	background-color: #1EA6B3;
-	margin: 10px;
-}
-
-.czidloChartRegistrarsAssignments {
-	/** primary-0 from http://paletton.com/#uid=7030u0kw0vSjzD3oSy0y9oLDhjs **/
-	background-color: #FF6F63;
-	margin: 10px;
-}
-
-.czidloChartRegistrarsResolvations {
-	/** primary-0 from http://paletton.com/#uid=73k0X0kHRr1r0CGEE-YLClVQkgi **/
-	background-color: #1EA6B3;
+.czidloChartRegistrars {
 	margin: 10px;
 }
 

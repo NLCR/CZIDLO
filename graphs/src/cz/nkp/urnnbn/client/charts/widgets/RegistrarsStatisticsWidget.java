@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.ColorConstants;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
 import cz.nkp.urnnbn.shared.charts.Statistic.Option;
@@ -37,7 +38,8 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 	private Map<String, String> registraNames = null;
 	private final Type statisticType;
 	private final String[] graphValueColors;
-	private final String neutralGraphValueColor;
+	private final String graphValueColorOther;
+	private final String graphValueColorAll;
 	private final RegistrarColorMapChangeListener registrarColorMapChangeListener;
 
 	// data
@@ -56,14 +58,14 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 	private final TopNRegistrarsAccumulatedAreaChart areaChart;
 
 	public RegistrarsStatisticsWidget(List<Integer> years, Set<Registrar> registrars, Type statisticType, String[] graphValueColors,
-			String neutralGraphValueColor, RegistrarSelectionHandler registrarSelectionHandler,
+			String graphValueColorOther, String graphValueColorAll, RegistrarSelectionHandler registrarSelectionHandler,
 			RegistrarColorMapChangeListener registrarColorMapChangeListener) {
-
 		this.years = years;
 		this.registraNames = extractRegistrarNames(registrars);
 		this.statisticType = statisticType;
 		this.graphValueColors = graphValueColors;
-		this.neutralGraphValueColor = neutralGraphValueColor;
+		this.graphValueColorOther = graphValueColorOther;
+		this.graphValueColorAll = graphValueColorAll;
 		this.registrarColorMapChangeListener = registrarColorMapChangeListener;
 
 		// container
@@ -123,19 +125,20 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 		container.add(areaChart);
 
 		initWidget(container);
-		setStyleName(buildStyleName());
+		setStyleName("czidloChartRegistrars");
+		container.getElement().getStyle().setBackgroundColor(getBackgroundColor());
 
 		loadData(selectedYear);
 	}
 
-	private String buildStyleName() {
+	private String getBackgroundColor() {
 		switch (statisticType) {
 		case URN_NBN_ASSIGNMENTS:
-			return "czidloChartRegistrarsAssignments";
+			return ColorConstants.ASSIGNMENTS_BACKGROUND;
 		case URN_NBN_RESOLVATIONS:
-			return "czidloChartRegistrarsResolvations";
+			return ColorConstants.RESOLVATIONS_BACKGROUND;
 		default:
-			return null;
+			return "#ffffff";
 		}
 	}
 
@@ -286,11 +289,11 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 				String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
 				String yAxisLabel = buildColumnChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
-				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, neutralGraphValueColor);
+				columnChart.setDataAndDraw(periods, aggregatedData, title, valueLabel, xAxisLabel, yAxisLabel, columnLabels, graphValueColorAll);
 			}
 			if (pieChart != null) {
 				String title = buildiPieChartTitle();
-				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, neutralGraphValueColor, registrarColorMap);
+				pieChart.setDataAndDraw(totalVolume, volumeByRegistrar, title, registraNames, graphValueColorOther, registrarColorMap);
 			}
 			if (areaChart != null) {
 				Map<String, Integer> volumesBeforeFistPeriod = selectedYear != null ? aggregateYearlyData(registrarCodes).get(selectedYear - 1)
@@ -301,7 +304,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 				String yAxisLabel = buildAreChartYAxisLabel();
 				Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
 				areaChart.setDataAndDraw(periods, registraNames, volumesBeforeFistPeriod, currentData, title, xAxisLabel, yAxisLabel, columnLabels,
-						neutralGraphValueColor, registrarColorMap);
+						graphValueColorOther, registrarColorMap);
 			}
 			if (registrarColorMapChangeListener != null) {
 				registrarColorMapChangeListener.onChanged(registrarColorMap);
@@ -318,8 +321,6 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 			}
 
 			Collections.sort(list);
-			LOGGER.severe("size: " + list.size());
-			LOGGER.severe(list.toString());
 			for (int i = 0; i < list.size(); i++) {
 				if (i < graphValueColors.length) {
 					String code = list.get(i).getCode();
@@ -328,8 +329,6 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
 				}
 			}
 		}
-		LOGGER.severe("result size: " + result.size());
-		LOGGER.severe(result.toString());
 		return result;
 	}
 

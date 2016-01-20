@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.ColorConstants;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
 import cz.nkp.urnnbn.shared.charts.Statistic.Option;
@@ -128,20 +129,21 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 		container.add(areaChart);
 
 		initWidget(container);
-		setStyleName(buildStyleName());
+		setStyleName("czidloChartRegistrar");
+		container.getElement().getStyle().setBackgroundColor(getBackgroundColor());
 		if (!registrars.isEmpty()) {
 			setRegistrar(this.registrars.get(0));
 		}
 	}
 
-	private String buildStyleName() {
+	private String getBackgroundColor() {
 		switch (statisticType) {
 		case URN_NBN_ASSIGNMENTS:
-			return "czidloChartRegistrarAssignments";
+			return ColorConstants.ASSIGNMENTS_BACKGROUND;
 		case URN_NBN_RESOLVATIONS:
-			return "czidloChartRegistrarResolvations";
+			return ColorConstants.RESOLVATIONS_BACKGROUND;
 		default:
-			return "";
+			return "#ffffff";
 		}
 	}
 
@@ -325,12 +327,9 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 			if (chartValueColorMap != null) {
 				String registarCode = selectedRegistrar.getCode();
 				String colorByRegistrar = chartValueColorMap.get(registarCode);
-				LOGGER.info("registarar: " + registarCode + ", color: " + colorByRegistrar);
 				if (colorByRegistrar != null) {
 					return colorByRegistrar;
 				}
-			} else {
-				LOGGER.info("color map is null");
 			}
 		}
 		return chartValueColorDefault;
@@ -459,7 +458,6 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 	}
 
 	public void setRegistrarColorMap(Map<String, String> colorMap) {
-		LOGGER.warning("setChartValueColorMap: " + colorMap);
 		this.chartValueColorMap = colorMap;
 	}
 

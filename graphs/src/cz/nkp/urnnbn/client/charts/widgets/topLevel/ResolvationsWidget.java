@@ -20,12 +20,18 @@ public class ResolvationsWidget extends TopLevelRegistrarsWidget {
 	}
 
 	@Override
-	String getGraphValueColorNeutral() {
-		return ColorConstants.RESOLVATIONS_VALUE_NEUTRAL;
-	}
-
-	@Override
 	String[] getGraphValueColors() {
 		return new String[] { ColorConstants.RESOLVATIONS_VALUE_1, ColorConstants.RESOLVATIONS_VALUE_2, ColorConstants.RESOLVATIONS_VALUE_3 };
 	}
+
+	@Override
+	String getGraphValueColorOther() {
+		return ColorConstants.RESOLVATIONS_VALUE_OTHER;
+	}
+
+	@Override
+	String getGraphValueColorAll() {
+		return ColorConstants.RESOLVATIONS_VALUE_ALL;
+	}
+
 }
