@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>cz.nkp.urnnbn</groupId>
+		<artifactId>web</artifactId>
+		<version>4.3.alpha</version>
+	</parent>
+
+	<artifactId>web_client</artifactId>
+	<name>CZIDLO - web (client)</name>
+	<packaging>war</packaging>
+
+	<properties>
+		<gwtquery.version>1.0.6</gwtquery.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>web_shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>web_server</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<!-- see https://vaadin.com/forum#!/thread/9316748 -->
+				<exclusion>
+					<artifactId>asm</artifactId>
+					<groupId>asm</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>asm-attrs</artifactId>
+					<groupId>asm</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.allen-sauer.gwt.dnd</groupId>
+			<artifactId>gwt-dnd</artifactId>
+			<!-- In version 3.2.3 this happens: https://github.com/fredsa/gwt-dnd/issues/180 -->
+			<!-- <version>3.2.3</version> -->
+			<version>3.3.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<!-- for smartgwt:5.1p -->
+			<!-- 1. download smartgwt.jar from http://www.smartclient.com/builds/SmartGWT/5.1p/LGPL/2016-01-21 
+				(or newer build) -->
+			<!-- 3. install to local repository: mvn install:install-file -Dfile=./smartgwt.jar 
+				-DgroupId=com.smartgwt -DartifactId=smartgwt -Dversion=5.1p -Dpackaging=jar -->
+			<!-- Maven Central and other repositories contain very old versions -->
+			<groupId>com.smartgwt</groupId>
+			<artifactId>smartgwt</artifactId>
+			<version>5.1p</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.gwtquery.bundles</groupId>
+			<artifactId>gquery-dnd-bundle</artifactId>
+			<version>${gwtquery.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<!-- Generate compiled stuff in the folder used for developing mode -->
+		<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+
+		<plugins>
+
+			<!-- GWT Maven Plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<!-- <goal>test</goal> -->
+						</goals>
+					</execution>
+				</executions>
+				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin 
+					documentation at codehaus.org -->
+				<configuration>
+					<runTarget>index.html</runTarget>
+					<draftCompile>true</draftCompile>
+					<hostedWebapp>${webappDirectory}</hostedWebapp>
+					<noServer>true</noServer>
+					<port>${tomcat.webport}</port>
+					<runTarget>${tomcat.context}</runTarget>
+				</configuration>
+			</plugin>
+
+			<!-- Copy static web files before executing gwt:run -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>exploded</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<webappDirectory>${webappDirectory}</webappDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,19 @@
+mvn clean install package
+mvn clean install package -Dmaven.test.skip=true
+
+Prepinace
+---------
+-e - full stack trace
+-Dgwt.compiler.strict=true - do not use, this breaks even working demo from https://github.com/steinsag/gwt-maven-example
+
+
+GWT Super DevMode (https://github.com/steinsag/gwt-maven-example)
+----------------------------------------------------------------
+in web directory:
+mvn clean install
+mvn tomcat7:run-war-only &
+mvn gwt:run -pl web_client  
+
+
+
+

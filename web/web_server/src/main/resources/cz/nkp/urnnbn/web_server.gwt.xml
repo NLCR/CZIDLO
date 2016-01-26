@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <module rename-to='web-server'> -->
+<module>
+	<inherits name="com.google.gwt.user.User" />
+
+	<!-- <inherits name="cz.nkp.urnnbn.web.web-shared"/> -->
+	<inherits name="cz.nkp.urnnbn.web_shared" />
+	<!-- <inherits name="cz.nkp.urnnbn.blabla" /> -->
+	<!-- <inherits name="web-shared" /> -->
+
+	<source path="server" />
+
+
+	<!-- https://code.google.com/p/smartgwt/issues/detail?id=758 -->
+	<!-- <inherits name="com.smartgwt.SmartGwtNoScript" /> -->
+</module>

@@ -2,76 +2,62 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>cz.nkp.urnnbn</groupId>
+
+	<parent>
+		<groupId>cz.nkp.urnnbn</groupId>
+		<artifactId>czidlo</artifactId>
+		<version>4.3.alpha</version>
+	</parent>
+
 	<artifactId>web</artifactId>
-	<version>4.3.alpha</version>
-	<packaging>war</packaging>
 	<name>CZIDLO - web</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>web_shared</module>
+		<module>web_server</module>
+		<module>web_client</module>
+	</modules>
 
 	<properties>
-		<gwtVersion>2.5.1</gwtVersion>
+		<gwtVersion>2.7.0</gwtVersion>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<apache.commons-io.version>2.3</apache.commons-io.version>
-		<spring.version>3.2.2.RELEASE</spring.version>
-		<apache.commons-collections.version>3.2.1</apache.commons-collections.version>
-		<smartgwt.version>2.5</smartgwt.version>
+		<tomcat.webport>8082</tomcat.webport>
+		<tomcat.ajpport>8182</tomcat.ajpport>
+		<tomcat.context>/web</tomcat.context>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>plugins</id>
-			<url>http://gwtquery-plugins.googlecode.com/svn/mavenrepo</url>
-		</repository>
-		<repository>
-			<id>smartgwt</id>
-			<url>http://www.smartclient.com/maven2</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
+
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
 			<version>${gwtVersion}</version>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>${gwtVersion}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.googlecode.gwtquery.bundles</groupId>
-			<artifactId>gquery-dnd-bundle</artifactId>
-			<version>1.0.6</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.allen-sauer.gwt.dnd</groupId>
-			<artifactId>gwt-dnd</artifactId>
-			<version>3.2.3</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.smartgwt</groupId>
-			<artifactId>smartgwt</artifactId>
-			<version>${smartgwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.0.0.GA</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
@@ -79,130 +65,64 @@
 			<classifier>sources</classifier>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>web-common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>processManager</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.gwtupload</groupId>
-			<artifactId>gwtupload</artifactId>
-			<version>0.6.4</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>${apache.commons-io.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>${apache.commons-collections.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>2.1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>saxon-dom</artifactId>
-			<version>8.7</version>
-		</dependency>
-		<!-- For jetty JNDI Resource used in hosted mode -->
-		<!-- http://stackoverflow.com/questions/17592108/gwt-jetty-version-in-dev-mode -->
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-naming</artifactId>
-			<version>6.1.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty-plus</artifactId>
-			<version>6.1.11</version>
-		</dependency>
+
 	</dependencies>
 
 	<build>
-		<!-- Generate compiled stuff in the folder used for developing mode -->
-		<outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+
+		<!-- https://github.com/steinsag/gwt-maven-example -->
+		<defaultGoal>clean install  tomcat7:run-war-only</defaultGoal>
 
 		<plugins>
-			<!-- GWT Maven Plugin -->
+
+			<!-- todo: just temporarily -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-dependency-plugin</artifactId> -->
+			<!-- <version>2.2</version> -->
+			<!-- </plugin> -->
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwtVersion}</version>
-				<executions>
-					<execution>
-						<goals>
-							<!-- <goal>compile-report</goal> -->
-							<goal>compile</goal>
-							<goal>test</goal>
-							<!-- <goal>i18n</goal> -->
-							<!-- <goal>generateAsync</goal> -->
-						</goals>
-					</execution>
-				</executions>
-				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin 
-					documentation at codehaus.org -->
 				<configuration>
-					<runTarget>/</runTarget>
-					<hostedWebapp>${webappDirectory}</hostedWebapp>
-					<!-- <i18nMessagesBundle>cz.xrosecky.gwt.client.Messages</i18nMessagesBundle> -->
+					<!-- for Super Dev Mode, otherwise java.lang.outofmemoryerror -->
+					<extraJvmArgs>-Xmx2048M -Xms1024M -Xss1024k</extraJvmArgs>
 				</configuration>
 			</plugin>
-
-			<!-- Copy static web files before executing gwt:run -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.1.1</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>exploded</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<webappDirectory>${webappDirectory}</webappDirectory>
-				</configuration>
+				<version>2.3</version>
 			</plugin>
-
 			<plugin>
-				<!-- Without this maven compiler sometimes uses java 1.3. See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>2.5.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
+					<!-- <source>1.5</source> -->
+					<!-- <target>1.5</target> -->
+					<!-- <fork>true</fork> -->
+					<!-- <meminitial>1024m</meminitial> -->
+					<!-- <maxmem>2024m</maxmem> -->
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<path>${tomcat.context}</path>
+					<port>${tomcat.webport}</port>
+					<ajpPort>${tomcat.ajpport}</ajpPort>
+					<systemProperties>
+						<JAVA_OPTS>-XX:MaxPermSize=256m</JAVA_OPTS>
+					</systemProperties>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

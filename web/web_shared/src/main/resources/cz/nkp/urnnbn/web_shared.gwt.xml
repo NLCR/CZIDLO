@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <module rename-to='web_shared'> -->
+<module>
+	<inherits name="com.google.gwt.user.User" />
+
+	<source path="client" />
+	<source path="shared" />
+
+	<!-- https://code.google.com/p/smartgwt/issues/detail?id=758 -->
+	<!-- <inherits name="com.smartgwt.SmartGwtNoScript" /> -->
+</module>

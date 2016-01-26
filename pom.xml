@@ -45,17 +45,17 @@
         <module>core</module>  
 <!--        <module>gdrive</module>   -->
         <module>oaiAdapter</module> 
-        <module>oaiPmhProvider</module>   
         <module>persistence</module>  
         <module>processManager</module>   
         <module>api</module>    
         <module>services</module>   
-        <module>web-common</module>   
         <module>xml</module>  
-        <module>web</module>    
-        <module>processDataServer</module>     
 <!--        <module>legacyRecordsImport</module>   -->
         <module>databaseUpgrader</module>   
+        <module>web-common</module>   
+        <module>web</module>    
+        <module>processDataServer</module>     
+        <module>oaiPmhProvider</module>   
 
     </modules>
 

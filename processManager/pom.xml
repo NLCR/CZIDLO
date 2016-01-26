@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.nkp.urnnbn</groupId>
 	<artifactId>processManager</artifactId>
-        <version>4.3.alpha</version>
+	<version>4.3.alpha</version>
 	<packaging>jar</packaging>
 	<name>CZIDLO - processManager</name>
 
@@ -50,6 +50,18 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>3.3.2.GA</version>
 		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.hibernate</groupId> -->
+		<!-- <artifactId>hibernate</artifactId> -->
+		<!-- <version>3.5.4.Final</version> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.hibernate</groupId> -->
+		<!-- <artifactId>hibernate-entitymanager</artifactId> -->
+		<!-- <version>3.5.4.Final</version> -->
+		<!-- </dependency> -->
+
 		<dependency>
 			<groupId>javax.sql</groupId>
 			<artifactId>jdbc-stdext</artifactId>
@@ -93,8 +105,8 @@
 			<version>1.6.1</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-simple</artifactId> <version>1.6.1</version> 
-			</dependency> -->
+		<!-- <dependency> <groupId>org.slf4j</groupId> <artifactId>slf4j-simple</artifactId> 
+			<version>1.6.1</version> </dependency> -->
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
