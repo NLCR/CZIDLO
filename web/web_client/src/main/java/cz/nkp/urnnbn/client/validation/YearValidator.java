@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class YearValidator extends RegExpValidator {
 
@@ -8,8 +8,6 @@ public class YearValidator extends RegExpValidator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationInvalidYear();
+		return messages.validationInvalidYear();
 	}
 }

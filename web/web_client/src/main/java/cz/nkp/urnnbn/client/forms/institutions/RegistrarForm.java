@@ -7,8 +7,8 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.LabelField;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.shared.validation.IntegerValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.IntegerValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class RegistrarForm extends Form {
 

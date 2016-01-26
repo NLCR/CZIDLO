@@ -5,7 +5,7 @@ import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
-import cz.nkp.urnnbn.shared.validation.PositiveIntegerValidator;
+import cz.nkp.urnnbn.client.validation.PositiveIntegerValidator;
 
 public class ArchiverVisibilityAndOrderForm extends Form {
 

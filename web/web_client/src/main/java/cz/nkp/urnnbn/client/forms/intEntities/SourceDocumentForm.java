@@ -6,11 +6,11 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.PublicationDTO;
 import cz.nkp.urnnbn.shared.dto.ie.SourceDocumentDTO;
-import cz.nkp.urnnbn.shared.validation.CcnbValidator;
-import cz.nkp.urnnbn.shared.validation.IsbnValidator;
-import cz.nkp.urnnbn.shared.validation.IssnValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
-import cz.nkp.urnnbn.shared.validation.YearValidator;
+import cz.nkp.urnnbn.client.validation.CcnbValidator;
+import cz.nkp.urnnbn.client.validation.IsbnValidator;
+import cz.nkp.urnnbn.client.validation.IssnValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.YearValidator;
 
 public class SourceDocumentForm extends Form {
 

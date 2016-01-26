@@ -6,9 +6,9 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ie.PeriodicalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
-import cz.nkp.urnnbn.shared.validation.CcnbValidator;
-import cz.nkp.urnnbn.shared.validation.IssnValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.CcnbValidator;
+import cz.nkp.urnnbn.client.validation.IssnValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class PeriodicalForm extends PublishableEntityForm {
 

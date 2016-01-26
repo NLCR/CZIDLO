@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class PositiveIntegerValidator extends Validator {
 
@@ -14,8 +14,6 @@ public class PositiveIntegerValidator extends Validator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationNotPositiveInteger();
+		return messages.validationNotPositiveInteger();
 	}
 }

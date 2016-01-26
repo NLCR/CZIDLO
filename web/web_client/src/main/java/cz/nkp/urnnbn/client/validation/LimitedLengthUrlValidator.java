@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class LimitedLengthUrlValidator extends Validator {
 
@@ -29,8 +29,6 @@ public class LimitedLengthUrlValidator extends Validator {
 		int length = value == null ? 0 : value.length();
 		int diff = length - maxLength;
 		int overLength = diff > 0 ? diff : 0;
-		// TODO
-		return "TODO";
-		// return messages.validationNotLimitedLengthUrl(maxLength, overLength);
+		return messages.validationNotLimitedLengthUrl(maxLength, overLength);
 	}
 }

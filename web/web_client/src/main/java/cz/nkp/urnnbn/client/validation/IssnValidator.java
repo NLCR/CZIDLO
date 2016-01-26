@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class IssnValidator extends RegExpValidator {
 
@@ -8,9 +8,7 @@ public class IssnValidator extends RegExpValidator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationInvalidIssn();
+		return messages.validationInvalidIssn();
 	}
 
 }

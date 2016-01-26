@@ -5,8 +5,8 @@ import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.CatalogDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthUrlValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthUrlValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class CatalogForm extends Form {
 

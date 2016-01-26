@@ -7,7 +7,7 @@ import cz.nkp.urnnbn.client.forms.PrimaryOriginatorField;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorType;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public abstract class IntelectualEntityForm extends Form {
 

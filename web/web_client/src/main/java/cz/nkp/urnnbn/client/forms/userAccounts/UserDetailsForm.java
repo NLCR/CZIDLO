@@ -8,10 +8,10 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO.ROLE;
-import cz.nkp.urnnbn.shared.validation.EmailValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
-import cz.nkp.urnnbn.shared.validation.PasswordValidator;
-import cz.nkp.urnnbn.shared.validation.Validator;
+import cz.nkp.urnnbn.client.validation.EmailValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.PasswordValidator;
+import cz.nkp.urnnbn.client.validation.Validator;
 
 public class UserDetailsForm extends Form {
 

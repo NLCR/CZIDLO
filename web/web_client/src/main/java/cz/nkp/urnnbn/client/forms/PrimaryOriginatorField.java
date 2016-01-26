@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorType;
-import cz.nkp.urnnbn.shared.validation.Validator;
+import cz.nkp.urnnbn.client.validation.Validator;
 
 public class PrimaryOriginatorField extends Field {
 

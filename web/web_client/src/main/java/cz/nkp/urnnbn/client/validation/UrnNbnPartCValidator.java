@@ -1,5 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
-
+package cz.nkp.urnnbn.client.validation;
 
 public class UrnNbnPartCValidator extends RegExpValidator {
 
@@ -9,9 +8,7 @@ public class UrnNbnPartCValidator extends RegExpValidator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationInvalidUrnNbnPartC();
+		return messages.validationInvalidUrnNbnPartC();
 	}
 
 }

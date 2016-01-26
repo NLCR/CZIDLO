@@ -7,9 +7,9 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.IntegerInputValueField;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
-import cz.nkp.urnnbn.shared.validation.PositiveIntegerValidator;
-import cz.nkp.urnnbn.shared.validation.PositiveRealNumberValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.PositiveIntegerValidator;
+import cz.nkp.urnnbn.client.validation.PositiveRealNumberValidator;
 
 public class TechnicalMetadataForm extends Form {
 

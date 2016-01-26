@@ -6,7 +6,7 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
-import cz.nkp.urnnbn.shared.validation.UrnNbnPartCValidator;
+import cz.nkp.urnnbn.client.validation.UrnNbnPartCValidator;
 
 public class UrnNbnForm extends Form {
 

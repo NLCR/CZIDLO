@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.client.forms;
 
-import cz.nkp.urnnbn.shared.validation.Validator;
+import cz.nkp.urnnbn.client.validation.Validator;
 
 public class DoubleInputValueField extends TextInputValueField {
 

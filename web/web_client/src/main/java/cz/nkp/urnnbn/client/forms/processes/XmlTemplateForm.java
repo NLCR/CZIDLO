@@ -5,7 +5,7 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class XmlTemplateForm extends Form {
 

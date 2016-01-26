@@ -8,8 +8,8 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthUrlValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthUrlValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class DigitalInstanceForm extends Form {
 

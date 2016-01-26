@@ -4,7 +4,7 @@ import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class DeactivateUrnNbnForm extends Form {
 

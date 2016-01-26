@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class DigitalDocumentForm extends Form {
 

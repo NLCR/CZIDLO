@@ -6,7 +6,7 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class AnalyticalForm extends IntelectualEntityForm {
 

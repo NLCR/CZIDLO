@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class LimitedLengthValidator extends Validator {
 
@@ -9,11 +9,11 @@ public class LimitedLengthValidator extends Validator {
 		this.minLength = minLength;
 		this.maxLength = maxLength;
 	}
-	
+
 	public LimitedLengthValidator(int maxLength) {
-		this(0,maxLength);
+		this(0, maxLength);
 	}
-		
+
 	@Override
 	public boolean isValid(String value) {
 		return value != null && value.length() >= minLength && value.length() <= maxLength;
@@ -22,8 +22,6 @@ public class LimitedLengthValidator extends Validator {
 	@Override
 	public String localizedErrorMessage(String value) {
 		int length = value == null ? 0 : value.length();
-		// TODO
-		return "TODO";
-		// return messages.validationTooLong(length, minLength, maxLength);
+		return messages.validationTooLong(length, minLength, maxLength);
 	}
 }

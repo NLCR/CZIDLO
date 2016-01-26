@@ -1,15 +1,15 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 import com.google.gwt.i18n.shared.DateTimeFormat;
 
 public class DateTimeValidator extends Validator {
 
 	protected DateTimeFormat dateFormat;
-	
+
 	public DateTimeValidator(String format) {
 		dateFormat = DateTimeFormat.getFormat(format);
 	}
-	
+
 	@Override
 	public boolean isValid(String value) {
 		try {
@@ -22,10 +22,7 @@ public class DateTimeValidator extends Validator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO Auto-generated method stub
-		return null;
+		return "TODO: invalid dateTime format";
 	}
 
-	
-	
 }

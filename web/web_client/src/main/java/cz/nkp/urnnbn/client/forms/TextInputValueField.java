@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import cz.nkp.urnnbn.shared.validation.Validator;
+import cz.nkp.urnnbn.client.validation.Validator;
 
 public class TextInputValueField extends Field {
 

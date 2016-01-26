@@ -27,7 +27,7 @@ import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
-import cz.nkp.urnnbn.shared.validation.DateTimeValidator;
+import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 
 public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDialogBox {
 

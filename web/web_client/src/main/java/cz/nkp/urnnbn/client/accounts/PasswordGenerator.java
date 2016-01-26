@@ -2,7 +2,7 @@ package cz.nkp.urnnbn.client.accounts;
 
 import java.util.Random;
 
-import cz.nkp.urnnbn.shared.validation.PasswordValidator;
+import cz.nkp.urnnbn.client.validation.PasswordValidator;
 
 public class PasswordGenerator {
 

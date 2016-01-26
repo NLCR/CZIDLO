@@ -1,14 +1,13 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 import com.google.gwt.core.client.GWT;
 
 // TODO
-//import cz.nkp.urnnbn.client.i18n.MessagesImpl;
+import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 
 public abstract class Validator {
 
-	// TODO
-	//MessagesImpl messages = GWT.create(MessagesImpl.class);
+	MessagesImpl messages = GWT.create(MessagesImpl.class);
 
 	public abstract boolean isValid(String value);
 

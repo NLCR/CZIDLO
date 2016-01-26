@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class PasswordValidator extends Validator {
 
@@ -29,9 +29,7 @@ public class PasswordValidator extends Validator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationInvalidPassword(minLength, maxLength);
+		return messages.validationInvalidPassword(minLength, maxLength);
 	}
 
 	public int getMinLength() {

@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.shared.validation;
+package cz.nkp.urnnbn.client.validation;
 
 public class EmailValidator extends RegExpValidator {
 
@@ -8,8 +8,6 @@ public class EmailValidator extends RegExpValidator {
 
 	@Override
 	public String localizedErrorMessage(String value) {
-		// TODO
-		return "TODO";
-		// return messages.validationInvalidEmail();
+		return messages.validationInvalidEmail();
 	}
 }

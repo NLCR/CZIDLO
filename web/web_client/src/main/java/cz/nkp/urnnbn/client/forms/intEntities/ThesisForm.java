@@ -6,8 +6,8 @@ import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
 import cz.nkp.urnnbn.shared.dto.ie.ThesisDTO;
-import cz.nkp.urnnbn.shared.validation.CcnbValidator;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.CcnbValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class ThesisForm extends PublishableEntityForm {
 

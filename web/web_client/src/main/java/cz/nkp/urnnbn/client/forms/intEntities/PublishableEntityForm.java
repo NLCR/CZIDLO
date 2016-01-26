@@ -6,8 +6,8 @@ import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.PublicationDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PublishableEntityDTO;
-import cz.nkp.urnnbn.shared.validation.LimitedLengthValidator;
-import cz.nkp.urnnbn.shared.validation.YearValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.client.validation.YearValidator;
 
 public abstract class PublishableEntityForm extends IntelectualEntityForm {
 
