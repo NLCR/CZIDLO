@@ -24,6 +24,7 @@
 
 	<inherits name='gwtquery.plugins.droppable.Droppable' />
 	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />
+	<inherits name="com.googlecode.gwt.charts.Charts" />
 
 
 	<!-- <inherits name='com.smartgwt.tools.SmartGwtTools' /> -->
@@ -77,8 +78,10 @@
 	<inherits name="gwtupload.GWTUpload" />
 	<!-- Load dynamically predefined styles in the library when the application 
 		starts -->
-	<!-- FIXME: not being loaded -->
+	<!-- FIXME: not being loaded so find Upload.css or remove this -->
 	<stylesheet src="Upload.css" />
+	<!-- doesn't work in super dev mode -->
+	<stylesheet src="czidlo.css" />
 
 
 	<!-- Specify the app entry point class. -->

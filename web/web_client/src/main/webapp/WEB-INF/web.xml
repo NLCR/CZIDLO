@@ -61,6 +61,9 @@
 
 	<!-- SERVICES -->
 
+	<!-- TODO: removew /web or replace with /api -->
+	<!-- http://127.0.0.1:8082/web/web/institutions -> http://127.0.0.1:8082/web/api/institutions -->
+
 	<servlet>
 		<servlet-name>searchService</servlet-name>
 		<servlet-class>cz.nkp.urnnbn.server.services.SearchServiceImpl</servlet-class>
@@ -149,6 +152,16 @@
 	<servlet-mapping>
 		<servlet-name>staticContent</servlet-name>
 		<url-pattern>/web/staticContent</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>statisticsServlet</servlet-name>
+		<servlet-class>cz.nkp.urnnbn.server.StatisticsServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>statisticsServlet</servlet-name>
+		<url-pattern>/web/statistics</url-pattern>
 	</servlet-mapping>
 
 

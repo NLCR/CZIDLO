@@ -63,6 +63,7 @@ public class TabsPanel extends Composite {
 	private void initTabs() {
 		// mainResources.tabStyles().ensureInjected();
 		tabLayoutPanel = new TabLayoutPanel(1.5, Unit.EM);
+		//tabLayoutPanel.setHeight("300px");
 		// TODO: znovu povolit animaci, jakmile bude vyresen bug "kyvadlo"
 		// tabLayoutPanel.setAnimationDuration(500);
 		// tabLayoutPanel.setAnimationVertical(false);
@@ -119,6 +120,9 @@ public class TabsPanel extends Composite {
 
 		// institutions panel
 		builder.appendPanel(new InstitutionsAdminstrationPanel(this), constants.tabInstitutionsLabel());
+
+		// TODO: i18n
+		builder.appendPanel(new StatisticsTab(this), "Statistics");
 
 		// insert record panel
 		if (activeUser.isLoggedUser()) {

@@ -1,0 +1,74 @@
+@CHARSET "UTF-8";
+
+.czidloChartTitle {
+	font-size: large;
+	padding: 10px;
+}
+
+.czidloChartHeader {
+	background-color: #ffffff;
+	width: 100%;
+}
+
+.czidloChartRegistrars {
+	margin: 10px;
+}
+
+.czidloChartRegistrar {
+	margin: 10px;
+}
+
+.czidloChartRegistrarTitle {
+	font-size: larger;
+	margin: 3px;
+}
+
+.czidloChartAssignmentsSummary {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.czidloChartResolvationsSummary {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.czidloChartRegistrarSummary {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* TABS */
+
+/* the tab bar element */
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+	/* 	background: red !important; *
+	 /* 	color: maroon; */
+}
+
+/* an individual tab */
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+	background: #d0e4f6 !important;
+}
+
+/* an individual tab (selected) */
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+	background: #92c1f0 !important;
+}
+
+/* an element nested in each tab (useful for styling) */
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabInner {
+	/* 	background: blue !important; */ /* 	font-size: medium; */
+	
+}
+
+/* container for content widgets */
+.gwt-TabLayoutPanelContentContainer {
+	border-color: #92c1f0 !important;
+}
+
+/* applied to all child content widgets */
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+	/* 	background: orange !important; */
+	border-color: #92c1f0 !important;
+}
