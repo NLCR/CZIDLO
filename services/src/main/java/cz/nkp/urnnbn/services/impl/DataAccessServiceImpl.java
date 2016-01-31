@@ -7,8 +7,10 @@ package cz.nkp.urnnbn.services.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -32,6 +34,7 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -623,6 +626,96 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 
 	private List<UrnNbn> findChangedUrnNbns(Registrar registrar, DateTime from, DateTime until) throws DatabaseException {
 		return factory.urnDao().getUrnNbnsByRegistrarCodeAndTimestamps(registrar.getCode(), from, until);
+	}
+
+	@Override
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(int yearFrom, int yearTo, boolean includeActive,
+			boolean includeDeactivated) {
+		try {
+			List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
+			List<Statistic> data = factory.urnDao().getUrnNbnRegistrationStatistics(includeActive, includeDeactivated);
+			Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
+			for (Registrar registrar : registrars) {
+				Map<Integer, Map<Integer, Integer>> registrarData = filterAndFill(data, registrar.getCode().toString(), yearFrom, yearTo);
+				result.put(registrar.getCode().toString(), registrarData);
+			}
+			return result;
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo,
+			boolean includeActive, boolean includeDeactivated) {
+		try {
+			List<Statistic> data = factory.urnDao().getUrnNbnAssignmentStatistics(registrarCode, includeActive, includeDeactivated);
+			return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics(int yearFrom, int yearTo) {
+		try {
+			List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
+			// TODO: implement properly
+			List<Statistic> data = new ArrayList<Statistic>();
+			// factory.urnDao().getUrnNbnRegistrationStatistics(includeActive, includeDeactivated);
+			Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
+			for (Registrar registrar : registrars) {
+				Map<Integer, Map<Integer, Integer>> registrarData = filterAndFill(data, registrar.getCode().toString(), yearFrom, yearTo);
+				result.put(registrar.getCode().toString(), registrarData);
+			}
+			return result;
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo) {
+		// TODO: implement properly
+		// try {
+		List<Statistic> data = new ArrayList<Statistic>();
+		// factory.urnDao().getUrnNbnRegistrationStatistics(registrarCode, includeActive, includeDeactivated);
+		return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
+		// } catch (DatabaseException ex) {
+		// throw new RuntimeException(ex);
+		// }
+	}
+
+	private Map<Integer, Map<Integer, Integer>> filterAndFill(List<Statistic> data, String registrarCode, int yearFrom, int yearTo) {
+		Map<Integer, Map<Integer, Integer>> result = new HashMap<>();
+		for (Statistic record : data) {
+			if (registrarCode.equals(record.getRegistrarCode())) {
+				Map<Integer, Integer> monthValueMap = result.get(record.getYear());
+				if (monthValueMap == null) {
+					monthValueMap = new HashMap<>();
+					result.put(record.getYear(), monthValueMap);
+				}
+				monthValueMap.put(record.getMonth(), record.getVolume());
+			}
+		}
+		addZeroValues(result, yearFrom, yearTo);
+		return result;
+	}
+
+	private void addZeroValues(Map<Integer, Map<Integer, Integer>> data, int yearFrom, int yearTo) {
+		for (int year = yearFrom; year <= yearTo; year++) {
+			Map<Integer, Integer> monthValueMap = data.get(year);
+			if (monthValueMap == null) {
+				monthValueMap = new HashMap<>();
+				data.put(year, monthValueMap);
+			}
+			for (int month = 1; month <= 12; month++) {
+				Integer value = monthValueMap.get(month);
+				if (value == null) {
+					monthValueMap.put(month, Integer.valueOf(0));
+				}
+			}
+		}
 	}
 
 }

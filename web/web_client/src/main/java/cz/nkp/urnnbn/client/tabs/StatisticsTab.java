@@ -1,15 +1,14 @@
 package cz.nkp.urnnbn.client.tabs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
@@ -17,15 +16,19 @@ import com.googlecode.gwt.charts.client.ChartPackage;
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.AssignmentsWidget;
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.ResolvationsWidget;
+import cz.nkp.urnnbn.client.services.InstitutionsService;
+import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.client.services.StatisticsService;
 import cz.nkp.urnnbn.client.services.StatisticsServiceAsync;
 import cz.nkp.urnnbn.shared.charts.Registrar;
+import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class StatisticsTab extends SingleTabContentPanel {
 
 	private static final Logger LOGGER = Logger.getLogger(StatisticsTab.class.getSimpleName());
 
-	private final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
+	private final StatisticsServiceAsync statisticsService = GWT.create(StatisticsService.class);
+	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
 
 	// data
 	private List<Integer> years;
@@ -61,7 +64,7 @@ public class StatisticsTab extends SingleTabContentPanel {
 
 	private void load() {
 		// years
-		service.getAvailableYearsSorted(new AsyncCallback<List<Integer>>() {
+		statisticsService.getAvailableYearsSorted(new AsyncCallback<List<Integer>>() {
 
 			@Override
 			public void onSuccess(List<Integer> result) {
@@ -70,12 +73,23 @@ public class StatisticsTab extends SingleTabContentPanel {
 			}
 
 			private void initRegistrarsAndChartLoader() {
-				service.getRegistrars(new AsyncCallback<Set<Registrar>>() {
+				institutionsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
 					@Override
-					public void onSuccess(Set<Registrar> result) {
-						registrars = result;
+					public void onSuccess(ArrayList<RegistrarDTO> result) {
+						registrars = toRegistrars(result);
 						initChartLoader();
+					}
+
+					private Set<Registrar> toRegistrars(ArrayList<RegistrarDTO> data) {
+						Set<Registrar> result = new HashSet<>();
+						for (RegistrarDTO dto : data) {
+							Registrar registrar = new Registrar();
+							registrar.setCode(dto.getCode());
+							registrar.setName(dto.getName());
+							result.add(registrar);
+						}
+						return result;
 					}
 
 					private void initChartLoader() {
@@ -110,7 +124,9 @@ public class StatisticsTab extends SingleTabContentPanel {
 
 					@Override
 					public void onFailure(Throwable caught) {
+						// TODO: error dialog
 						LOGGER.severe(caught.getMessage());
+
 					}
 				});
 
@@ -118,7 +134,9 @@ public class StatisticsTab extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// TODO: error dialog
 				LOGGER.severe(caught.getMessage());
+
 			}
 		});
 

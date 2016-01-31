@@ -2,6 +2,8 @@ package cz.nkp.urnnbn.shared.dto;
 
 import java.io.Serializable;
 
+import cz.nkp.urnnbn.shared.charts.Registrar;
+
 public class RegistrarDTO extends ArchiverDTO implements Serializable {
 
 	private static final long serialVersionUID = -546318886531924354L;
@@ -41,4 +43,30 @@ public class RegistrarDTO extends ArchiverDTO implements Serializable {
 	public void setRegModeByReservationAllowed(boolean regModeByReservationAllowed) {
 		this.regModeByReservationAllowed = regModeByReservationAllowed;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RegistrarDTO other = (RegistrarDTO) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		return true;
+	}
+
 }

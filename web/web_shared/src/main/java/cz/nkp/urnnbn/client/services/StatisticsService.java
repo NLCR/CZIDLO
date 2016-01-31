@@ -4,13 +4,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic;
+import cz.nkp.urnnbn.shared.exceptions.ServerException;
 
 /**
  * The client-side stub for the RPC service.
@@ -18,9 +17,7 @@ import cz.nkp.urnnbn.shared.charts.Statistic;
 @RemoteServiceRelativePath("statistics")
 public interface StatisticsService extends RemoteService {
 
-	List<Integer> getAvailableYearsSorted();
-
-	Set<Registrar> getRegistrars();
+	List<Integer> getAvailableYearsSorted() throws ServerException;
 
 	/**
 	 * 
@@ -28,15 +25,17 @@ public interface StatisticsService extends RemoteService {
 	 * @param options
 	 * @return registrar_code -> year -> month -> value
 	 */
-	Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options);
+	Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
+			throws ServerException;
 
 	/**
 	 * 
 	 * @param registrarCode
 	 * @param type
 	 * @param options
-	 * @returnyear -> month -> value
+	 * @return year -> month -> value
 	 */
-	Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type, HashMap<Statistic.Option, Serializable> options);
+	Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
+			throws ServerException;
 
 }

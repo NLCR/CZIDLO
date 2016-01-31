@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -44,8 +45,7 @@ public interface DataAccessService extends BusinessService {
 
 	static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-	public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode,
-			boolean withPredecessorsAndSuccessors);
+	public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors);
 
 	public DigitalDocument digDocByInternalId(long digDocId);
 
@@ -66,12 +66,11 @@ public interface DataAccessService extends BusinessService {
 
 	public List<IntelectualEntity> entitiesByIdValue(String value);
 
-	//public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
+	// public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
 
 	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit);
-	
+
 	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value);
-	
 
 	public List<IntelectualEntity> entitiesByIdValues(List<Long> ids);
 
@@ -109,6 +108,50 @@ public interface DataAccessService extends BusinessService {
 	public List<DigitalInstance> digInstancesByDigDocId(long digDocId);
 
 	public DigitalLibrary libraryByInternalId(long libraryId);
+
+	/**
+	 * Returns urn:nbn assignment statistics for all registrars for every year and month in range yearFrom - yearTo
+	 * 
+	 * @param yearFrom
+	 * @param yearTo
+	 * @param includeActive
+	 * @param includeDeactivated
+	 * @return registrar_code -> year -> month -> value
+	 */
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(int yearFrom, int yearTo, boolean includeActive,
+			boolean includeDeactivated);
+
+	/**
+	 * Returns urn:nbn assignment statistics for registrar for every year and month in range yearFrom - yearTo
+	 * 
+	 * @param registrarCode
+	 * @param yearFrom
+	 * @param yearTo
+	 * @param includeActive
+	 * @param includeDeactivated
+	 * @return year -> month -> value
+	 */
+	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo,
+			boolean includeActive, boolean includeDeactivated);
+
+	/**
+	 * Returns urn:nbn resolvation statistics for all registrars for every year and month in range yearFrom - yearTo
+	 * 
+	 * @param yearFrom
+	 * @param yearTo
+	 * @return registrar_code -> year -> month -> value
+	 */
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics(int yearFrom, int yearTo);
+
+	/**
+	 * Returns urn:nbn resolvation statistics for registrar for every year and month in range yearFrom - yearTo
+	 * 
+	 * @param registrarCode
+	 * @param yearFrom
+	 * @param yearTo
+	 * @return year -> month -> value
+	 */
+	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo);
 
 	/**
 	 * 

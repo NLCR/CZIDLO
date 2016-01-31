@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.client.charts.widgets.topLevel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -16,6 +17,8 @@ import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.charts.Statistic.Type;
 
 public abstract class TopLevelRegistrarsWidget extends Composite {
+
+	private static final Logger LOGGER = Logger.getLogger(TopLevelRegistrarsWidget.class.getSimpleName());
 
 	// fixed data
 	private final List<Integer> years;
