@@ -33,7 +33,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestam
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalDocumentRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -170,7 +170,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 	public List<Long> getDigDocDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
 		try {
 			StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
-			DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+			DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
 			return (List<Long>) runInTransaction(operation);
 		} catch (PersistenceException ex) {
 			// cannot happen
@@ -186,7 +186,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
 		StatementWrapper statement = new SelectSingleAttrByLongStringString(RegistrarScopeIdentifierDAO.TABLE_NAME,
 				RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, RegistrarScopeIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
 				RegistrarScopeIdentifierDAO.ATTR_TYPE, id.getType().toString(), RegistrarScopeIdentifierDAO.ATTR_VALUE, id.getValue());
-		DaoOperation operation = new SingleResultOperation(statement, new singleLongRT());
+		DaoOperation operation = new SingleResultOperation(statement, new SingleLongRT());
 		try {
 			return (Long) runInTransaction(operation);
 		} catch (RecordNotFoundException e) {

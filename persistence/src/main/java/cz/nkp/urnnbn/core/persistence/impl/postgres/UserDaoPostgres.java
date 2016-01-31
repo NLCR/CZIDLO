@@ -27,7 +27,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLong;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateUser;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UserRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -136,7 +136,7 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
 		try {
 			StatementWrapper st = new SelectSingleAttrByLong(TABLE_USER_REGISTRAR_NAME, USER_REGISTRAR_ATTR_REGISTRAR_ID, registrarId,
 					USER_REGISTRAR_ATTR_USER_ID);
-			DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+			DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
 			return (List<Long>) runInTransaction(operation);
 		} catch (RecordNotFoundException ex) {
 			throw ex;

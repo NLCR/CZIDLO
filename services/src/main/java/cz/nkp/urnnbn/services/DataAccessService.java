@@ -110,6 +110,12 @@ public interface DataAccessService extends BusinessService {
 	public DigitalLibrary libraryByInternalId(long libraryId);
 
 	/**
+	 * 
+	 * @return first year that some urn:nbn has been assigned or null.
+	 */
+	public Integer getStatisticsFirstAvailableYear();
+
+	/**
 	 * Returns urn:nbn assignment statistics for all registrars for every year and month in range yearFrom - yearTo
 	 * 
 	 * @param yearFrom

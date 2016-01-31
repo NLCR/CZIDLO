@@ -28,7 +28,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectEntitiesDbIdListById
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntityRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -97,7 +97,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
                     IntEntIdentifierDAO.ATTR_IE_ID,
                     IntEntIdentifierDAO.ATTR_TYPE, type.name(),
                     IntEntIdentifierDAO.ATTR_VALUE, idValue);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
@@ -115,7 +115,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
                     IntEntIdentifierDAO.ATTR_VALUE,
                     idValue,
                     IntEntIdentifierDAO.ATTR_IE_ID);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
@@ -129,7 +129,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, Integer offset, Integer limit) throws DatabaseException {
         try {
             StatementWrapper st = new SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch(query, offset, limit);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
@@ -143,7 +143,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
             StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //cannot happen
@@ -157,7 +157,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     @Override
     public Long getEntitiesCount() throws DatabaseException {
         StatementWrapper statement = new SelectCount(TABLE_NAME);
-        DaoOperation operation = new SingleResultOperation(statement, new singleLongRT());
+        DaoOperation operation = new SingleResultOperation(statement, new SingleLongRT());
         try {
             return (Long) runInTransaction(operation);
         } catch (PersistenceException ex) {

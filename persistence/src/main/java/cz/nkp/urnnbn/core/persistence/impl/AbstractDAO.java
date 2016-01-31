@@ -33,7 +33,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRecordTimestamp;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -312,7 +312,7 @@ public abstract class AbstractDAO {
     public List<Long> getIdListOfAllRecords(String tableName, String idAttributeName) throws DatabaseException {
         try {
             StatementWrapper st = new SelectIdentifiersAll(tableName, idAttributeName);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //should never happen
@@ -326,7 +326,7 @@ public abstract class AbstractDAO {
     public Long getAllRecordsCount(String tableName) throws DatabaseException {
         try {
             StatementWrapper st = new SelectCount(tableName);
-            DaoOperation operation = new SingleResultOperation(st, new singleLongRT());
+            DaoOperation operation = new SingleResultOperation(st, new SingleLongRT());
             return (Long) runInTransaction(operation);
         } catch (PersistenceException ex) {
             //should never happen

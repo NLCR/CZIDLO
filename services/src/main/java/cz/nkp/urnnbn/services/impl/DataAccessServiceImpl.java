@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -640,6 +641,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 				result.put(registrar.getCode().toString(), registrarData);
 			}
 			return result;
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public Integer getStatisticsFirstAvailableYear() {
+		try {
+			return factory.urnDao().getAssignmentsFirstYear();
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
 		}

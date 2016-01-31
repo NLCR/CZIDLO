@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.core.persistence.impl.operations;
 
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +44,7 @@ public abstract class OperationUtils {
 
 	public static List<Long> resultSet2ListOfLong(ResultSet resultSet) throws SQLException {
 		List<Long> result = new ArrayList<Long>();
-		ResultsetTransformer transformer = new singleLongRT();
+		ResultsetTransformer transformer = new SingleLongRT();
 		while (resultSet.next()) {
 			Long id = (Long) transformer.transform(resultSet);
 			result.add(id);

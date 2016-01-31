@@ -19,9 +19,21 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @SuppressWarnings("serial")
 public class StatisticsServiceImpl extends AbstractService implements StatisticsService {
 
+	private Integer firstYear = null;
+
 	private int getFirstYear() {
-		// TODO: from configuration or database
-		return 2012;
+		try {
+			if (firstYear == null) {
+				firstYear = readService.getStatisticsFirstAvailableYear();
+			}
+			if (firstYear != null) {
+				return firstYear;
+			} else {
+				return Calendar.getInstance().get(Calendar.YEAR);
+			}
+		} catch (Throwable e) {
+			return Calendar.getInstance().get(Calendar.YEAR);
+		}
 	}
 
 	private int getLastYear() {

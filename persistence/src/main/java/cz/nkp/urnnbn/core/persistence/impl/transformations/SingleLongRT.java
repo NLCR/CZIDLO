@@ -11,7 +11,7 @@ import java.sql.SQLException;
  *
  * @author Martin Řehánek
  */
-public class singleLongRT implements ResultsetTransformer {
+public class SingleLongRT implements ResultsetTransformer {
 
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {

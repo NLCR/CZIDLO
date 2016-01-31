@@ -100,4 +100,6 @@ public interface UrnNbnDAO {
 	// only for tests
 	public void deleteAllPredecessors() throws DatabaseException;
 
+	public Integer getAssignmentsFirstYear() throws DatabaseException;
+
 }

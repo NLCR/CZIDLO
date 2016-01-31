@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,12 +48,14 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringStri
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectMinDateStatement;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleTimestampRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.StatisticsRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ThreeStringsRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
 
 /**
  * 
@@ -248,7 +251,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 		StatementWrapper st = new SelectCountBy4Strings(SUCCESSOR_TABLE_NAME, ATTR_PRECESSOR_REGISTRAR_CODE, precessor.getRegistrarCode().toString(),
 				ATTR_PRECESSOR_DOCUMENT_CODE, precessor.getDocumentCode(), ATTR_SUCCESSOR_REGISTRAR_CODE, successor.getRegistrarCode().toString(),
 				ATTR_SUCCESSOR_DOCUMENT_CODE, successor.getDocumentCode());
-		DaoOperation op = new SingleResultOperation(st, new singleLongRT());
+		DaoOperation op = new SingleResultOperation(st, new SingleLongRT());
 		try {
 			Long records = (Long) runInTransaction(op);
 			return records > 0;
@@ -371,6 +374,25 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 		}
 	}
 
+	@Override
+	public Integer getAssignmentsFirstYear() throws DatabaseException {
+		try {
+			SelectMinDateStatement statement = new SelectMinDateStatement(UrnNbnDAO.TABLE_NAME, UrnNbnDAO.ATTR_REGISTERED);
+			DaoOperation operation = new SingleResultOperation(statement, new SingleTimestampRT());
+			Timestamp timeStamp = (Timestamp) runInTransaction(operation);
+			if (timeStamp != null) {
+				return Integer.valueOf(timeStamp.getYear() + 1900);
+			} else {
+				return null;
+			}
+		} catch (PersistenceException ex) {
+			logger.severe(ex.getMessage());
+			throw new DatabaseException(ex);
+		} catch (SQLException ex) {
+			throw new DatabaseException(ex);
+		}
+	}
+
 	public List<Statistic> getUrnNbnAssignmentStatistics(RegistrarCode registrarCode, boolean includeActive, boolean includeDeactivated)
 			throws DatabaseException {
 		try {
@@ -391,4 +413,5 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 	public List<Statistic> getUrnNbnRegistrationStatistics(boolean includeActive, boolean includeDeactivated) throws DatabaseException {
 		return getUrnNbnAssignmentStatistics(null, includeActive, includeDeactivated);
 	}
+
 }

@@ -34,7 +34,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.singleLongRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -149,7 +149,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     }
 
     public List<Long> getAllRegistrarsId() throws DatabaseException {
-        return (List<Long>) getAllRecords(TABLE_NAME, new singleLongRT());
+        return (List<Long>) getAllRecords(TABLE_NAME, new SingleLongRT());
     }
 
     public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException {
@@ -159,7 +159,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
                     UserDAO.TABLE_USER_REGISTRAR_NAME,
                     UserDAO.USER_REGISTRAR_ATTR_USER_ID, userId,
                     UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID);
-            DaoOperation operation = new MultipleResultsOperation(st, new singleLongRT());
+            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             List<Long> identifiers = (List<Long>) runInTransaction(operation);
             List<Registrar> result = new ArrayList<Registrar>(identifiers.size());
             for (Long id : identifiers) {
