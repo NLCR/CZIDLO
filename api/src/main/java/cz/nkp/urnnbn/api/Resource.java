@@ -17,6 +17,7 @@ import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.Services;
+import cz.nkp.urnnbn.services.StatisticService;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
 import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
 import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
@@ -26,11 +27,13 @@ import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.ValidatingXmlLoader;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
@@ -61,6 +64,10 @@ public class Resource {
 
     protected DataUpdateService dataUpdateService() {
         return Services.instanceOf().dataUpdateService();
+    }
+    
+    protected StatisticService statisticService(){
+        return Services.instanceOf().statisticService();
     }
 
     protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {

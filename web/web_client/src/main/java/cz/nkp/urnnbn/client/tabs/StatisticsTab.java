@@ -18,8 +18,8 @@ import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.ResolvationsWidget;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
-import cz.nkp.urnnbn.client.services.StatisticsService;
-import cz.nkp.urnnbn.client.services.StatisticsServiceAsync;
+import cz.nkp.urnnbn.client.services.GwtStatisticsService;
+import cz.nkp.urnnbn.client.services.GwtStatisticsServiceAsync;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
@@ -27,7 +27,7 @@ public class StatisticsTab extends SingleTabContentPanel {
 
 	private static final Logger LOGGER = Logger.getLogger(StatisticsTab.class.getSimpleName());
 
-	private final StatisticsServiceAsync statisticsService = GWT.create(StatisticsService.class);
+	private final GwtStatisticsServiceAsync statisticsService = GWT.create(GwtStatisticsService.class);
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
 
 	// data

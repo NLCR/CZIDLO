@@ -35,7 +35,7 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
 	}
 
 	@Override
-	public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException {
+    public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException {
 		// checking disabled (optimization)
 		// checkRecordNotExists(log);
 		DaoOperation operation = new NoResultOperation(buildInsertStatement(statistic));
@@ -64,7 +64,10 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
 		DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnResolvationStatisticRT());
 		try {
 			return (Statistic) runInTransaction(operation);
+		} catch (RecordNotFoundException e) {
+			throw e;
 		} catch (PersistenceException ex) {
+			// throw new RecordNotFoundException(TABLE_NAME);
 			throw new DatabaseException(ex);
 		} catch (SQLException ex) {
 			throw new DatabaseException(ex);
@@ -144,7 +147,7 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
 						+ "," + ATTR_YEAR//
 						+ "," + ATTR_MONTH//
 						+ "," + ATTR_RESOLVATIONS//
-						+ ") values(?,?,?,?,?,?,?)";
+						+ ") values(?,?,?,?)";
 			}
 
 			@Override

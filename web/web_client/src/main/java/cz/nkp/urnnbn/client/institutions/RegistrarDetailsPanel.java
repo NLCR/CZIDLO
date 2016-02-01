@@ -26,8 +26,8 @@ import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InstitutionsPanelCss;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
-import cz.nkp.urnnbn.client.services.StatisticsService;
-import cz.nkp.urnnbn.client.services.StatisticsServiceAsync;
+import cz.nkp.urnnbn.client.services.GwtStatisticsService;
+import cz.nkp.urnnbn.client.services.GwtStatisticsServiceAsync;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.dto.CatalogDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
@@ -41,7 +41,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
-	private final StatisticsServiceAsync statisticsService = GWT.create(StatisticsService.class);
+	private final GwtStatisticsServiceAsync statisticsService = GWT.create(GwtStatisticsService.class);
 
 	private final UserDTO user;
 	private RegistrarDTO registrar;

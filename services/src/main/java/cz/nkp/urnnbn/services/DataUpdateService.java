@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.services;
 
+import java.util.Collection;
+
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.Content;
@@ -31,51 +33,33 @@ import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
-import java.util.Collection;
-
 /**
  *
  * @author Martin Řehánek
  */
 public interface DataUpdateService extends BusinessService {
 
-    public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws
-            UnknownUserException, AccessException,
+    public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
 
-    public void updateDigitalDocument(DigitalDocument doc, String login) throws
-            UnknownUserException, AccessException,
-            UnknownDigDocException;
+    public void updateDigitalDocument(DigitalDocument doc, String login) throws UnknownUserException, AccessException, UnknownDigDocException;
 
-    public void updateDigitalInstance(DigitalInstance instance, String login) throws
-            UnknownUserException, AccessException,
-            UnknownDigInstException;
+    public void updateDigitalInstance(DigitalInstance instance, String login) throws UnknownUserException, AccessException, UnknownDigInstException;
 
-    public void updateRegistrar(Registrar registrar, String login) throws
-            UnknownUserException, AccessException,
-            UnknownRegistrarException;
+    public void updateRegistrar(Registrar registrar, String login) throws UnknownUserException, AccessException, UnknownRegistrarException;
 
-    public void updateArchiver(Archiver archiver, String login) throws
-            UnknownUserException, NotAdminException,
-            UnknownArchiverException;
+    public void updateArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException, UnknownArchiverException;
 
-    public void updateDigitalLibrary(DigitalLibrary library, String login) throws
-            UnknownUserException, AccessException,
-            UnknownDigLibException;
+    public void updateDigitalLibrary(DigitalLibrary library, String login) throws UnknownUserException, AccessException, UnknownDigLibException;
 
-    public void updateCatalog(Catalog catalog, String login) throws
-            UnknownUserException, AccessException,
-            UnknownCatalogException;
+    public void updateCatalog(Catalog catalog, String login) throws UnknownUserException, AccessException, UnknownCatalogException;
 
-    public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, String login) throws
-            UnknownUserException, NotAdminException,
-            UnknownIntelectualEntity, IdentifierConflictException;
+    public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
+            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity,
+            IdentifierConflictException;
 
-    public void updateUser(User user, String login) throws
-            UnknownUserException, NotAdminException;
+    public void updateUser(User user, String login) throws UnknownUserException, NotAdminException;
 
-    public void updateContent(Content content, String login) throws
-            UnknownUserException, NotAdminException,
-            ContentNotFoundException;
+    public void updateContent(Content content, String login) throws UnknownUserException, NotAdminException, ContentNotFoundException;
 
 }

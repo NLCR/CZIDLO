@@ -8,12 +8,12 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
-import cz.nkp.urnnbn.client.services.StatisticsService;
-import cz.nkp.urnnbn.client.services.StatisticsServiceAsync;
+import cz.nkp.urnnbn.client.services.GwtStatisticsService;
+import cz.nkp.urnnbn.client.services.GwtStatisticsServiceAsync;
 
 public class WidgetWithStatisticsService extends Composite {
 
-	final StatisticsServiceAsync service = GWT.create(StatisticsService.class);
+	final GwtStatisticsServiceAsync service = GWT.create(GwtStatisticsService.class);
 
 	protected List<Integer> initMonths() {
 		List<Integer> result = new ArrayList<>();

@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import cz.nkp.urnnbn.shared.charts.Statistic;
 
-public interface StatisticsServiceAsync {
+public interface GwtStatisticsServiceAsync {
 
 	void getAvailableYearsSorted(AsyncCallback<List<Integer>> callback);
 

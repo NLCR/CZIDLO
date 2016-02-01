@@ -15,7 +15,7 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
  * The client-side stub for the RPC service.
  */
 @RemoteServiceRelativePath("statistics")
-public interface StatisticsService extends RemoteService {
+public interface GwtStatisticsService extends RemoteService {
 
 	List<Integer> getAvailableYearsSorted() throws ServerException;
 

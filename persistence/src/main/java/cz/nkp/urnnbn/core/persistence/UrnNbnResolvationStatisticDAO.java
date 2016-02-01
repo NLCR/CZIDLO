@@ -15,7 +15,7 @@ public interface UrnNbnResolvationStatisticDAO {
 	public String ATTR_MONTH = "month";
 	public String ATTR_RESOLVATIONS = "resolvations";
 
-	public void insertStatistic(Statistic log) throws DatabaseException, AlreadyPresentException;
+	public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException;
 
 	public Statistic getStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException;
 
@@ -23,6 +23,6 @@ public interface UrnNbnResolvationStatisticDAO {
 
 	public List<Statistic> listStatistics() throws DatabaseException;
 
-	public void updateStatistic(Statistic log) throws DatabaseException, RecordNotFoundException;
+	public void updateStatistic(Statistic statistic) throws DatabaseException, RecordNotFoundException;
 
 }

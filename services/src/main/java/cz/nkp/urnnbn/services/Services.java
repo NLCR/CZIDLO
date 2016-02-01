@@ -10,7 +10,9 @@ import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataImportServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataRemoveServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
+import cz.nkp.urnnbn.services.impl.StatisticServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
+
 import java.util.logging.Logger;
 
 /**
@@ -30,9 +32,10 @@ public class Services {
     private DataUpdateService dataUpdate;
     private UrnNbnReservationService urnReservation;
     private AuthenticationService authenticationService;
+    private StatisticService statisticService;
 
     private Services(DatabaseConnector connector, Integer urnNbnReservationMaxSize) {
-    	this.connector = connector;
+        this.connector = connector;
         if (urnNbnReservationMaxSize == null) {
             this.urnNbnReservationMaxSize = DEFAULT_MAX_URN_RESERVATION_SIZE;
         } else {
@@ -41,12 +44,12 @@ public class Services {
     }
 
     public static void init(DatabaseConnector con, Integer urnNbnReservationMaxSize) {
-    	logger.info("Initializing");
+        logger.info("Initializing");
         instance = new Services(con, urnNbnReservationMaxSize);
     }
 
     public static void init(DatabaseConnector con) {
-    	logger.info("Initializing");
+        logger.info("Initializing");
         instance = new Services(con, null);
     }
 
@@ -97,5 +100,12 @@ public class Services {
             authenticationService = new AuthenticationServiceImpl(connector);
         }
         return authenticationService;
+    }
+
+    public StatisticService statisticService() {
+        if (statisticService == null) {
+            statisticService = new StatisticServiceImpl(connector);
+        }
+        return statisticService;
     }
 }

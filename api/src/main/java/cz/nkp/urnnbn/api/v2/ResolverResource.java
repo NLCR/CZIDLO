@@ -4,6 +4,12 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
+import java.util.logging.Level;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
+
 import cz.nkp.urnnbn.api.AbstractResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.Resource;
@@ -14,10 +20,6 @@ import cz.nkp.urnnbn.api.v3.exceptions.UnknownUrnException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import java.util.logging.Level;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 
 /**
  * REST Web Service
@@ -32,22 +34,25 @@ public class ResolverResource extends AbstractResource {
         try {
             try {
                 UrnNbn urnParsed = Parser.parseUrn(urnPar);
-                UrnNbnWithStatus fetched = dataAccessService()
-                        .urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
+                UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(),
+                        urnParsed.getDocumentCode(), true);
                 switch (fetched.getStatus()) {
-                    case DEACTIVATED:
-                    case ACTIVE:
-                        DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
-                        if (doc == null) {
-                            throw new UnknownDigitalDocumentException(fetched.getUrn());
-                        }
-                        return new DigitalDocumentResource(doc, fetched.getUrn());
-                    case FREE:
-                        throw new UnknownUrnException(urnParsed);
-                    case RESERVED:
+                case DEACTIVATED:
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                    if (doc == null) {
                         throw new UnknownDigitalDocumentException(fetched.getUrn());
-                    default:
-                        throw new RuntimeException();
+                    } else {
+                        // update resolvations statistics
+                        statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
+                        return new DigitalDocumentResource(doc, fetched.getUrn());
+                    }
+                case FREE:
+                    throw new UnknownUrnException(urnParsed);
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(fetched.getUrn());
+                default:
+                    throw new RuntimeException();
                 }
             } catch (WebApplicationException e) {
                 throw e;

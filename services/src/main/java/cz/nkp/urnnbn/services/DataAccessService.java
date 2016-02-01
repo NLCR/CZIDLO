@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -43,163 +42,112 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
  */
 public interface DataAccessService extends BusinessService {
 
-	static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
+    static final Logger logger = Logger.getLogger(DataAccessService.class.getName());
 
-	public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors);
+    public UrnNbnWithStatus urnByRegistrarCodeAndDocumentCode(RegistrarCode registrarCode, String documentCode, boolean withPredecessorsAndSuccessors);
 
-	public DigitalDocument digDocByInternalId(long digDocId);
+    public DigitalDocument digDocByInternalId(long digDocId);
 
-	public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors);
+    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors);
 
-	public List<RegistrarScopeIdentifier> registrarScopeIdentifiers(long digDocId);
+    public List<RegistrarScopeIdentifier> registrarScopeIdentifiers(long digDocId);
 
-	public RegistrarScopeIdentifier registrarScopeIdentifier(long digDocId, RegistrarScopeIdType type)
-			throws RegistrarScopeIdentifierNotDefinedException;
+    public RegistrarScopeIdentifier registrarScopeIdentifier(long digDocId, RegistrarScopeIdType type)
+            throws RegistrarScopeIdentifierNotDefinedException;
 
-	public Registrar registrarById(long id);
+    public Registrar registrarById(long id);
 
-	public Archiver archiverById(long id);
+    public Archiver archiverById(long id);
 
-	public List<Archiver> archivers();
+    public List<Archiver> archivers();
 
-	public IntelectualEntity entityById(long id);
+    public IntelectualEntity entityById(long id);
 
-	public List<IntelectualEntity> entitiesByIdValue(String value);
+    public List<IntelectualEntity> entitiesByIdValue(String value);
 
-	// public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
+    // public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value);
 
-	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit);
+    public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit);
 
-	public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value);
+    public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value);
 
-	public List<IntelectualEntity> entitiesByIdValues(List<Long> ids);
+    public List<IntelectualEntity> entitiesByIdValues(List<Long> ids);
 
-	public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId);
+    public List<IntEntIdentifier> intEntIdentifiersByIntEntId(long intEntId);
 
-	// pokud nenajde, vrati null
-	public Publication publicationByIntEntId(long intEntId);
+    // pokud nenajde, vrati null
+    public Publication publicationByIntEntId(long intEntId);
 
-	// pokud nenajde, vrati null
-	public Originator originatorByIntEntId(long intEntId);
+    // pokud nenajde, vrati null
+    public Originator originatorByIntEntId(long intEntId);
 
-	// pokud nenajde, vrati null
-	public SourceDocument sourceDocumentByIntEntId(long intEntId);
+    // pokud nenajde, vrati null
+    public SourceDocument sourceDocumentByIntEntId(long intEntId);
 
-	public Registrar registrarByCode(RegistrarCode code);
+    public Registrar registrarByCode(RegistrarCode code);
 
-	public List<DigitalLibrary> librariesByRegistrarId(long registrarId);
+    public List<DigitalLibrary> librariesByRegistrarId(long registrarId);
 
-	public List<Catalog> catalogsByRegistrarId(long registrarId);
+    public List<Catalog> catalogsByRegistrarId(long registrarId);
 
-	public List<Catalog> catalogs();
+    public List<Catalog> catalogs();
 
-	public List<Registrar> registrars();
+    public List<Registrar> registrars();
 
-	public int digitalDocumentsCount(long registrarId);
+    public int digitalDocumentsCount(long registrarId);
 
-	public DigitalDocument digDocByIdentifier(RegistrarScopeIdentifier id);
+    public DigitalDocument digDocByIdentifier(RegistrarScopeIdentifier id);
 
-	public List<DigitalDocument> digDocsOfIntEnt(long intEntId);
+    public List<DigitalDocument> digDocsOfIntEnt(long intEntId);
 
-	public long digitalInstancesCount();
+    public long digitalInstancesCount();
 
-	public DigitalInstance digInstanceByInternalId(long id);
+    public DigitalInstance digInstanceByInternalId(long id);
 
-	public List<DigitalInstance> digInstancesByDigDocId(long digDocId);
+    public List<DigitalInstance> digInstancesByDigDocId(long digDocId);
 
-	public DigitalLibrary libraryByInternalId(long libraryId);
+    public DigitalLibrary libraryByInternalId(long libraryId);
 
-	/**
-	 * Returns urn:nbn assignment statistics for all registrars. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
-	 * <current_year;current_year> if no urn:nbn assigned yet.
-	 * 
-	 * @param includeActive
-	 *            if URN:NBNs that are currently active should be included
-	 * @param includeDeactivated
-	 *            if URN:NBNs that are now deactivated should be included
-	 * @return registrar_code -> year -> month -> asignments_in_year_and_month
-	 */
-	// TODO: zbavit se tady roku
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(boolean includeActive, boolean includeDeactivated);
+    /**
+     * 
+     * @param login
+     *            login of user performing this operation
+     * @param includePasswords
+     * @return
+     * @throws UnknownUserException
+     * @throws NotAdminException
+     */
+    public List<User> users(String login) throws UnknownUserException, NotAdminException;
 
-	/**
-	 * Returns urn:nbn assignment statistics for specified registrar. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
-	 * <current_year;current_year> if no urn:nbn assigned yet.
-	 * 
-	 * @param registrarCode
-	 * @param includeActive
-	 *            if URN:NBNs that are currently active should be included
-	 * @param includeDeactivated
-	 *            if URN:NBNs that are now deactivated should be included
-	 * @return year -> month -> asignments_in_year_and_month
-	 */
-	// TODO: zbavit se tady roku
-	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated);
+    /**
+     * 
+     * @param login
+     *            login of user that is being lookuped
+     * @param includePassword
+     * @return
+     * @throws UnknownUserException
+     */
+    public User userByLogin(String login) throws UnknownUserException;
 
-	/**
-	 * Returns urn:nbn resolvation statistics for all registrars. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
-	 * <current_year;current_year> if no urn:nbn assigned yet.
-	 * 
-	 * @return registrar_code -> year -> month -> resolvations_in_year_and_month
-	 */
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics();
+    /**
+     * 
+     * @param userId
+     * @param login
+     *            login of user performing this operation
+     * @return
+     * @throws UnknownUserException
+     * @throws NotAdminException
+     */
+    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException;
 
-	/**
-	 * Returns urn:nbn resolvation statistics for specified registrar. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
-	 * <current_year;current_year> if no urn:nbn assigned yet.
-	 * 
-	 * @param registrarCode
-	 * @return year -> month -> resolvations_in_year_and_month
-	 */
-	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(String registrarCode);
+    public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until);
 
-	/**
-	 * 
-	 * @param login
-	 *            login of user performing this operation
-	 * @param includePasswords
-	 * @return
-	 * @throws UnknownUserException
-	 * @throws NotAdminException
-	 */
-	public List<User> users(String login) throws UnknownUserException, NotAdminException;
+    public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until);
 
-	/**
-	 * 
-	 * @param login
-	 *            login of user that is being lookuped
-	 * @param includePassword
-	 * @return
-	 * @throws UnknownUserException
-	 */
-	public User userByLogin(String login) throws UnknownUserException;
+    public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
 
-	/**
-	 * 
-	 * @param userId
-	 * @param login
-	 *            login of user performing this operation
-	 * @return
-	 * @throws UnknownUserException
-	 * @throws NotAdminException
-	 */
-	public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException;
+    public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
 
-	public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until);
-
-	public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until);
-
-	public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
-
-	public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
-
-	public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances);
-
-	/**
-	 * @return first year that some urn:nbn has been assigned or null.
-	 */
-	public int getStatisticsFirstYear();
-
-	public int getStatisticsLastYear();
+    public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances);
 
 }
