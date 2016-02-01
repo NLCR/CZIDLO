@@ -4,409 +4,439 @@ import com.google.gwt.i18n.client.Constants;
 
 public interface ConstantsImpl extends Constants {
 
-	String headerSubtitle();
+    String headerSubtitle();
 
-	String version();
+    String version();
 
-	String localeCz();
+    String localeCz();
 
-	String localeEn();
+    String localeEn();
 
-	String loginButton();
+    String loginButton();
 
-	String logoutButton();
+    String logoutButton();
 
-	String tabInfoLabel();
+    String tabInfoLabel();
 
-	String tabRulesLabel();
+    String tabRulesLabel();
 
-	String tabSearchLabel();
+    String tabSearchLabel();
 
-	String tabDataInputLabel();
+    String tabDataInputLabel();
 
-	String tabInstitutionsLabel();
+    String tabInstitutionsLabel();
 
-	String tabAccountManagementLabel();
+    String tabAccountManagementLabel();
 
-	String tabOaiAdapterLabel();
+    String tabOaiAdapterLabel();
 
-	String tabHelpLabel();
+    String tabHelpLabel();
 
-	String tabProcessesLabel();
+    String tabProcessesLabel();
 
-	String tabLogsLabel();
+    String tabLogsLabel();
 
-	// presunout
+    // presunout
 
-	String tabSearchSearchButtonLabel();
+    String tabSearchSearchButtonLabel();
 
-	String monograph();
+    String monograph();
 
-	String monographVolume();
+    String monographVolume();
 
-	String periodical();
+    String periodical();
 
-	String periodicalVolume();
+    String periodicalVolume();
 
-	String periodicalIssue();
+    String periodicalIssue();
 
-	String otherEntity();
+    String otherEntity();
 
-	String analytical();
+    String analytical();
 
-	String thesis();
+    String thesis();
 
-	String created();
+    String created();
 
-	String modified();
+    String modified();
 
-	String deactivated();
+    String deactivated();
 
-	String documentType();
+    String documentType();
 
-	String digitalBorn();
+    String digitalBorn();
 
-	String originatorAuthor();
+    String originatorAuthor();
 
-	String originatorCorporation();
+    String originatorCorporation();
 
-	String originatorEvent();
+    String originatorEvent();
 
-	String otherOriginator();
+    String otherOriginator();
 
-	String publisher();
+    String publisher();
 
-	String publicationPlace();
+    String publicationPlace();
 
-	String publicationYear();
+    String publicationYear();
 
-	String title();
+    String title();
 
-	String subTitle();
+    String subTitle();
 
-	String ccnb();
+    String ccnb();
 
-	String isbn();
+    String isbn();
 
-	String issn();
+    String issn();
 
-	String otherId();
+    String otherId();
 
-	String monographTitle();
+    String monographTitle();
 
-	String monographVolumeTitle();
+    String monographVolumeTitle();
 
-	String periodicalTitle();
+    String periodicalTitle();
 
-	String periodicalVolumeTitle();
+    String periodicalVolumeTitle();
 
-	String periodicalIssueTitle();
+    String periodicalIssueTitle();
 
-	String thesisInstitution();
+    String thesisInstitution();
 
-	String sourceDoc();
+    String sourceDoc();
 
-	String volumeTitle();
+    String volumeTitle();
 
-	String issueTitle();
+    String issueTitle();
 
-	String registrar();
+    String registrar();
 
-	String archiver();
+    String archiver();
 
-	String digitalDocument();
+    String digitalDocument();
 
-	String digitalDocuments();
+    String digitalDocuments();
 
-	String urnNbn();
+    String urnNbn();
 
-	String registrarScopeIdentifiers();
+    String registrarScopeIdentifiers();
 
-	String identifier();
+    String identifier();
 
-	String idType();
+    String idType();
 
-	String idValue();
+    String idValue();
 
-	String financed();
+    String financed();
 
-	String contractNumber();
+    String contractNumber();
 
-	String technicalMetadata();
+    String technicalMetadata();
 
-	String format();
+    String format();
 
-	String formatVersion();
+    String formatVersion();
 
-	String extent();
+    String extent();
 
-	String resolution();
+    String resolution();
 
-	String dpi();
+    String dpi();
 
-	String compressionAlgorithm();
+    String compressionAlgorithm();
 
-	String compressionRatio();
+    String compressionRatio();
 
-	String colorModel();
+    String colorModel();
 
-	String colorDepth();
+    String colorDepth();
 
-	String bits();
+    String bits();
 
-	String iccProfile();
+    String iccProfile();
 
-	String pictureSize();
+    String pictureSize();
 
-	String pixels();
+    String pixels();
 
-	String identifiers();
+    String identifiers();
 
-	String accessibility();
+    String accessibility();
 
-	String deactivatedDigitalInstance();
+    String deactivatedDigitalInstance();
 
-	String digitalLibrary();
+    String digitalLibrary();
 
-	String url();
+    String url();
 
-	String contains();
+    String contains();
 
-	String archives();
+    String archives();
 
-	String registrarList();
+    String registrarList();
 
-	String archiverList();
+    String archiverList();
 
-	String digitalLibraryList();
+    String digitalLibraryList();
 
-	String catalogList();
+    String catalogList();
 
-	String details();
+    String details();
 
-	String description();
+    String description();
 
-	String close();
+    String close();
 
-	String delete();
+    String delete();
 
-	String deactivate();
+    String deactivate();
 
-	String add();
+    String add();
 
-	String insert();
+    String insert();
 
-	String recordInsertion();
+    String recordInsertion();
 
-	String recordAdjustment();
+    String recordAdjustment();
 
-	String save();
+    String save();
 
-	String edit();
+    String edit();
 
-	String editOrderAndVisibility();
+    String editOrderAndVisibility();
 
-	String code();
+    String code();
 
-	String urlPrefix();
+    String urlPrefix();
 
-	String catalog();
+    String catalog();
 
-	String id();
+    String id();
 
-	String moveOn();
+    String moveOn();
 
-	String intEntityType();
+    String intEntityType();
 
-	String yes();
+    String yes();
 
-	String no();
+    String no();
 
-	String selectRegistrarCode();
+    String selectRegistrarCode();
 
-	String userAccount();
+    String userAccount();
 
-	String user();
+    String user();
 
-	String login();
+    String login();
 
-	String password();
+    String password();
 
-	String email();
+    String email();
 
-	String administrator();
+    String administrator();
 
-	String userAccountList();
+    String userAccountList();
 
-	String urnNbnWillBeInserted();
+    String urnNbnWillBeInserted();
 
-	String back();
+    String back();
 
-	String assignedOrConfirmed();
+    String assignedOrConfirmed();
 
-	String digitalInstance();
+    String digitalInstance();
 
-	String digitalInstances();
+    String digitalInstances();
 
-	String insertNewRecord();
+    String insertNewRecord();
 
-	String insertDigitalInstance();
+    String insertDigitalInstance();
 
-	String showInCatalog();
+    String showInCatalog();
 
-	String orderAndVisibility();
+    String orderAndVisibility();
 
-	// URN:NBN registration modes
+    // URN:NBN registration modes
 
-	String allowedRegistrationModes();
+    String allowedRegistrationModes();
 
-	String urnNbnRegistrationMode();
+    String urnNbnRegistrationMode();
 
-	String modeByRegistrar();
+    String modeByRegistrar();
 
-	String modeByResolver();
+    String modeByResolver();
 
-	String modeByReservation();
+    String modeByReservation();
 
-	String inactiveDD();
+    String inactiveDD();
 
-	String showRecord();
+    String showRecord();
 
-	String showRecordInXml();
+    String showRecordInXml();
 
-	String timestampReserved();
+    String timestampReserved();
 
-	String timestampRegistered();
+    String timestampRegistered();
 
-	String timestampDeactivated();
+    String timestampDeactivated();
 
-	String note();
+    String note();
 
-	String inPixels();
+    String inPixels();
 
-	String inBits();
+    String inBits();
 
-	String inDpi();
+    String inDpi();
 
-	String picsHeight();
+    String picsHeight();
 
-	String picsWidth();
+    String picsWidth();
 
-	String verticalResolution();
+    String verticalResolution();
 
-	String horizontalResolution();
+    String horizontalResolution();
 
-	String anotherArchiver();
+    String anotherArchiver();
 
-	String processList();
+    String processList();
 
-	String processListShowMyOnlyButton();
+    String processListShowMyOnlyButton();
 
-	String processPlanning();
+    String processPlanning();
 
-	String REGISTRARS_URN_NBN_CSV_EXPORT();
+    String REGISTRARS_URN_NBN_CSV_EXPORT();
 
-	String OAI_ADAPTER();
+    String OAI_ADAPTER();
 
-	String scheduleProcess();
+    String scheduleProcess();
 
-	String xsltFile();
+    String xsltFile();
 
-	String uploadXslTemplate();
+    String uploadXslTemplate();
 
-	String upload();
+    String upload();
 
-	String DIGITAL_DOCUMENT_REGISTRATION();
+    String DIGITAL_DOCUMENT_REGISTRATION();
 
-	String DIGITAL_INSTANCE_IMPORT();
+    String DIGITAL_INSTANCE_IMPORT();
 
-	String processId();
+    String processId();
 
-	String processType();
+    String processType();
 
-	String processStatus();
+    String processStatus();
 
-	String processPlanned();
+    String processPlanned();
 
-	String processStarted();
+    String processStarted();
 
-	String processFinished();
+    String processFinished();
 
-	String processDownloadOutput();
+    String processDownloadOutput();
 
-	String processShowLog();
+    String processShowLog();
 
-	String processCancel();
+    String processCancel();
 
-	String processStop();
+    String processStop();
 
-	String processDelete();
+    String processDelete();
 
-	String processUrnNbnExportRegistrar();
+    String processUrnNbnExportRegistrar();
 
-	String processOaiAdapterRegistrar();
+    String processOaiAdapterRegistrar();
 
-	String processOaiAdapterRegistrationMode();
+    String processOaiAdapterRegistrationMode();
 
-	String processOaiAdapterOaiBaseUrl();
+    String processOaiAdapterOaiBaseUrl();
 
-	String processOaiAdapterOaiMetadataPrefix();
+    String processOaiAdapterOaiMetadataPrefix();
 
-	String processOaiAdapterOaiSet();
+    String processOaiAdapterOaiSet();
 
-	String processOaiAdapterDdRegistrationTransformation();
+    String processOaiAdapterDdRegistrationTransformation();
 
-	String processOaiAdapterDiImportTransformation();
+    String processOaiAdapterDiImportTransformation();
 
-	String processOaiAdapterTransformationsDDRegistrationTitle();
+    String processOaiAdapterTransformationsDDRegistrationTitle();
 
-	String processOaiAdapterTransformationsDIImportTitle();
+    String processOaiAdapterTransformationsDIImportTitle();
 
-	String processOaiAdapterTransformationList();
+    String processOaiAdapterTransformationList();
 
-	String processOaiAdapterTransformationUpload();
+    String processOaiAdapterTransformationUpload();
 
-	String processOaiAdapterTransformationTitle();
+    String processOaiAdapterTransformationTitle();
 
-	String processOaiAdapterTransformationDescription();
+    String processOaiAdapterTransformationDescription();
 
-	String processOaiAdapterTransformationCreated();
+    String processOaiAdapterTransformationCreated();
 
-	String processOaiAdapterTransformationXslt();
+    String processOaiAdapterTransformationXslt();
 
-	// logs
-	String logsTabProcessListHeading();
+    // logs
+    String logsTabProcessListHeading();
 
-	String logsTabDownloadLogFile();
+    String logsTabDownloadLogFile();
 
-	String order();
+    String order();
 
-	String hidden();
+    String hidden();
 
-	String absenceOfIdentifiers();
+    String absenceOfIdentifiers();
 
-	String includeNumberOfDigitalInstances();
+    String includeNumberOfDigitalInstances();
 
-	String activityFlag();
+    String activityFlag();
 
-	// editable-content panels
+    // editable-content panels
 
-	String loading();
+    String loading();
 
-	String cancel();
+    String cancel();
 
-	// processes
+    // processes
 
-	String activityAll();
+    String activityAll();
 
-	String activityActiveOnly();
+    String activityActiveOnly();
 
-	String activityDeactivatedOnly();
+    String activityDeactivatedOnly();
 
-	String urnNbnDeactivationDialogTitle();
-	
-	String predecessors();
+    String urnNbnDeactivationDialogTitle();
 
-	String successors();
+    String predecessors();
+
+    String successors();
+
+    String month1();
+
+    String month2();
+
+    String month3();
+
+    String month4();
+
+    String month5();
+
+    String month6();
+
+    String month7();
+
+    String month8();
+
+    String month9();
+
+    String month10();
+
+    String month11();
+
+    String month12();
+    
+    String chartsStateAll();
+    
+    String chartsStateActiveOnly();
+    
+    String chartsStateDeactivatedOnly();
 
 }
