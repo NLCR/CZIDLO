@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.client.institutions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -16,12 +17,18 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.googlecode.gwt.charts.client.ChartLoader;
+import com.googlecode.gwt.charts.client.ChartPackage;
 
+import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InstitutionsPanelCss;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
+import cz.nkp.urnnbn.client.services.StatisticsService;
+import cz.nkp.urnnbn.client.services.StatisticsServiceAsync;
+import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.dto.CatalogDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
@@ -29,16 +36,20 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class RegistrarDetailsPanel extends VerticalPanel {
 
-	private static final Logger logger = Logger.getLogger(RegistrarDetailsPanel.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RegistrarDetailsPanel.class.getName());
 	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
 	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
 	private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
 	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
+	private final StatisticsServiceAsync statisticsService = GWT.create(StatisticsService.class);
+
 	private final UserDTO user;
 	private RegistrarDTO registrar;
 	private InstitutionsAdminstrationPanel superPanel;
 	private ArrayList<DigitalLibraryDTO> libraries = new ArrayList<DigitalLibraryDTO>();
 	private ArrayList<CatalogDTO> catalogs = new ArrayList<CatalogDTO>();
+	private List<Integer> yearsSorted;
+	private boolean chartLoaderInitialized = false;
 
 	public RegistrarDetailsPanel(InstitutionsAdminstrationPanel superPanel, UserDTO user, RegistrarDTO registrar) {
 		this.superPanel = superPanel;
@@ -49,10 +60,12 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 	public void onLoad() {
 		loadLibraries();
 		loadCatalogs();
+		loadYears();
+		initChartLoader();
 		reload();
 	}
 
-	public void reload(RegistrarDTO registrar) {
+	public void init(RegistrarDTO registrar) {
 		this.registrar = registrar;
 		reload();
 	}
@@ -63,6 +76,16 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 		add(registrarDetailsPanel());
 		add(digitalLibrariesPanel());
 		add(catalogsPanel());
+		if (yearsSorted != null && chartLoaderInitialized) {
+			add(new RegistrarWidget(yearsSorted, toRegistrar(registrar)));
+		}
+	}
+
+	private Registrar toRegistrar(RegistrarDTO registrar2) {
+		Registrar result = new Registrar();
+		result.setCode(registrar2.getCode());
+		result.setName(registrar2.getName());
+		return result;
 	}
 
 	public Long getRegistrarId() {
@@ -112,7 +135,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe("Error loading digital libraries: " + caught.getMessage());
+				LOGGER.severe("Error loading digital libraries: " + caught.getMessage());
 			}
 		});
 	}
@@ -128,9 +151,41 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.severe("Error loading catalogs: " + caught.getMessage());
+				LOGGER.severe("Error loading catalogs: " + caught.getMessage());
 			}
 		});
+	}
+
+	private void loadYears() {
+		statisticsService.getAvailableYearsSorted(new AsyncCallback<List<Integer>>() {
+
+			@Override
+			public void onSuccess(List<Integer> result) {
+				yearsSorted = result;
+				reload();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				LOGGER.severe("Error loading chart years: " + caught.getMessage());
+			}
+		});
+	}
+
+	private void initChartLoader() {
+		if (!chartLoaderInitialized) {
+			ChartLoader chartLoader = new ChartLoader(ChartPackage.CORECHART);
+			chartLoader.loadApi(new Runnable() {
+
+				@Override
+				public void run() {
+					chartLoaderInitialized = true;
+					reload();
+				}
+			});
+		} else {
+			reload();
+		}
 	}
 
 	private VerticalPanel registrarDetailsPanel() {
@@ -236,8 +291,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(
-						RegistrarDetailsPanel.this, registrar);
+				EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(RegistrarDetailsPanel.this, registrar);
 				dialogBox.center();
 				dialogBox.show();
 			}
@@ -301,8 +355,7 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							Window.alert(messages.digitalLibraryCannotBeDeleted(lib.getName()) + ": "
-									+ caught.getMessage());
+							Window.alert(messages.digitalLibraryCannotBeDeleted(lib.getName()) + ": " + caught.getMessage());
 						}
 					});
 				}

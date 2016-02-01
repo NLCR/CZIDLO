@@ -57,7 +57,7 @@ public class EditRegistrarDialogBox extends AbstractDialogBox {
 
 						@Override
 						public void onSuccess(Void result) {
-							superPanel.reload(registrarForm.getDto());
+							superPanel.init(registrarForm.getDto());
 							EditRegistrarDialogBox.this.hide();
 						}
 

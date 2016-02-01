@@ -36,22 +36,15 @@ public class StatisticsTab extends SingleTabContentPanel {
 	private boolean loaded = false;
 
 	// widgets
-	// private LayoutPanel container;
 	private TabLayoutPanel tabPanel;
 	private AssignmentsWidget assignmentsWidget;
 	private ResolvationsWidget resolvationsWidget;
-	private RegistrarWidget registrarWidget;
 
 	public StatisticsTab(TabsPanel superPanel) {
 		super(superPanel);
-		// container = new LayoutPanel();
-		// container.setHeight("1000px");
-
 		tabPanel = new TabLayoutPanel(1.5, Unit.EM);
 		tabPanel.setHeight("800px");
 		// tabPanel.setHeight("100%");
-		// container.add(tabPanel);
-		// add(container);
 		add(tabPanel);
 	}
 
@@ -107,26 +100,13 @@ public class StatisticsTab extends SingleTabContentPanel {
 								// resolvations tab
 								resolvationsWidget = new ResolvationsWidget(years, registrars);
 								tabPanel.add(resolvationsWidget, "Rezolvování");
-								// random registrar tab
-								// Registrar randomRegistrar = getRandomRegistrar();
-								// registrarWidget = new RegistrarWidget(years, randomRegistrar);
-								// tabPanel.add(registrarWidget, randomRegistrar.getName());
 							}
-
-							// private Registrar getRandomRegistrar() {
-							// List<Registrar> list = new ArrayList<>();
-							// list.addAll(registrars);
-							// int position = new Random().nextInt(list.size());
-							// return list.get(position);
-							// }
 						});
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO: error dialog
-						LOGGER.severe(caught.getMessage());
-
+						LOGGER.severe("Error loading registrars: " + caught.getMessage());
 					}
 				});
 
@@ -134,9 +114,7 @@ public class StatisticsTab extends SingleTabContentPanel {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO: error dialog
-				LOGGER.severe(caught.getMessage());
-
+				LOGGER.severe("Error loading years for statistics: " + caught.getMessage());
 			}
 		});
 

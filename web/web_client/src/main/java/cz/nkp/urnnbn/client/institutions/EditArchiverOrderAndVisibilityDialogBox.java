@@ -59,7 +59,7 @@ public class EditArchiverOrderAndVisibilityDialogBox extends AbstractDialogBox {
 						public void onSuccess(Void result) {
 							ArchiverDTO archiver = archiverForm.getDto();
 							if (archiver instanceof RegistrarDTO) {
-								superPanel.reload((RegistrarDTO) archiverForm.getDto());
+								superPanel.init((RegistrarDTO) archiverForm.getDto());
 							}
 							EditArchiverOrderAndVisibilityDialogBox.this.hide();
 						}
