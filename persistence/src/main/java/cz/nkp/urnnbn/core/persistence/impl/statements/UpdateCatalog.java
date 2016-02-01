@@ -26,12 +26,8 @@ public class UpdateCatalog implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + CatalogDAO.TABLE_NAME + " SET "
-                + CatalogDAO.ATTR_UPDATED + "=?,"
-                + CatalogDAO.ATTR_NAME + "=?,"
-                + CatalogDAO.ATTR_DESC + "=?,"
-                + CatalogDAO.ATTR_URL_PREFIX + "=?"
-                + " WHERE " + CatalogDAO.ATTR_ID + "=?";
+        return "UPDATE " + CatalogDAO.TABLE_NAME + " SET " + CatalogDAO.ATTR_UPDATED + "=?," + CatalogDAO.ATTR_NAME + "=?," + CatalogDAO.ATTR_DESC
+                + "=?," + CatalogDAO.ATTR_URL_PREFIX + "=?" + " WHERE " + CatalogDAO.ATTR_ID + "=?";
     }
 
     @Override
@@ -43,7 +39,7 @@ public class UpdateCatalog implements StatementWrapper {
             st.setString(4, catalog.getUrlPrefix());
             st.setLong(5, catalog.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

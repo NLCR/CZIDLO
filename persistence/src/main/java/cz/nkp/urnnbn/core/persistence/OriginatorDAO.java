@@ -23,9 +23,11 @@ public interface OriginatorDAO {
     /**
      * 
      * @param originator
-     * @throws DatabaseException 
-     * @throws RecordNotFoundException if IntelectualEntity referenced in originator doesn't exist
-     * @throws AlreadyPresentException if Originator with same intEntId is present
+     * @throws DatabaseException
+     * @throws RecordNotFoundException
+     *             if IntelectualEntity referenced in originator doesn't exist
+     * @throws AlreadyPresentException
+     *             if Originator with same intEntId is present
      */
     public void insertOriginator(Originator originator) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 

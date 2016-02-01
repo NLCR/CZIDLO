@@ -27,14 +27,8 @@ public class InsertCatalog implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + CatalogDAO.TABLE_NAME
-                + "(" + CatalogDAO.ATTR_ID
-                + "," + CatalogDAO.ATTR_REG_ID
-                + "," + CatalogDAO.ATTR_CREATED
-                + "," + CatalogDAO.ATTR_UPDATED
-                + "," + CatalogDAO.ATTR_NAME
-                + "," + CatalogDAO.ATTR_DESC
-                + "," + CatalogDAO.ATTR_URL_PREFIX
+        return "INSERT into " + CatalogDAO.TABLE_NAME + "(" + CatalogDAO.ATTR_ID + "," + CatalogDAO.ATTR_REG_ID + "," + CatalogDAO.ATTR_CREATED + ","
+                + CatalogDAO.ATTR_UPDATED + "," + CatalogDAO.ATTR_NAME + "," + CatalogDAO.ATTR_DESC + "," + CatalogDAO.ATTR_URL_PREFIX
                 + ") values(?,?,?,?,?,?,?)";
     }
 
@@ -50,7 +44,7 @@ public class InsertCatalog implements StatementWrapper {
             st.setString(6, catalog.getDescription());
             st.setString(7, catalog.getUrlPrefix());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

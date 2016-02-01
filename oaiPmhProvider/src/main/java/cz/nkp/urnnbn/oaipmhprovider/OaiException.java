@@ -15,7 +15,9 @@ public class OaiException extends Exception {
 
     /**
      * Constructs an instance of <code>OaiException</code> with the specified detail message.
-     * @param msg the detail message.
+     * 
+     * @param msg
+     *            the detail message.
      */
     public OaiException(ErrorCode code, String msg) {
         super(msg);

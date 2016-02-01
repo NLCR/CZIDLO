@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
 public class InvalidQueryParamValueException extends ApiV3Exception {
 
     public InvalidQueryParamValueException(String paramName, String paramValue, String message) {
-        super(Status.BAD_REQUEST, "INVALID_QUERY_PARAM_VALUE",
-                "Invalid value '" + paramValue + "' of query parameter '" + paramName + "': " + message);
+        super(Status.BAD_REQUEST, "INVALID_QUERY_PARAM_VALUE", "Invalid value '" + paramValue + "' of query parameter '" + paramName + "': "
+                + message);
     }
 }

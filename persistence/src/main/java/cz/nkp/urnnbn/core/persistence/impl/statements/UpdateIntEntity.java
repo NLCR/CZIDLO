@@ -26,13 +26,9 @@ public class UpdateIntEntity implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + IntelectualEntityDAO.TABLE_NAME + " SET "
-                + IntelectualEntityDAO.ATTR_UPDATED + "=?,"
-                + IntelectualEntityDAO.ATTR_DOC_TYPE + "=?,"
-                + IntelectualEntityDAO.ATTR_DIGITAL_BORN + "=?,"
-                + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR + "=?,"
-                + IntelectualEntityDAO.ATTR_DEG_AW_INST + "=?"
-                + " WHERE " + IntelectualEntityDAO.ATTR_ID + "=?";
+        return "UPDATE " + IntelectualEntityDAO.TABLE_NAME + " SET " + IntelectualEntityDAO.ATTR_UPDATED + "=?," + IntelectualEntityDAO.ATTR_DOC_TYPE
+                + "=?," + IntelectualEntityDAO.ATTR_DIGITAL_BORN + "=?," + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR + "=?,"
+                + IntelectualEntityDAO.ATTR_DEG_AW_INST + "=?" + " WHERE " + IntelectualEntityDAO.ATTR_ID + "=?";
     }
 
     @Override
@@ -45,7 +41,7 @@ public class UpdateIntEntity implements StatementWrapper {
             st.setString(5, entity.getDegreeAwardingInstitution());
             st.setLong(6, entity.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

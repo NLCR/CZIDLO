@@ -40,8 +40,8 @@ public class TestJob implements InterruptableJob {
     private static final int cycles = 3;
     private static final int sleepMillis = 1000;
     private String jobId = null;
-    //private Logger logger = null;
-    //Logger.getLogger(App.class.getName());
+    // private Logger logger = null;
+    // Logger.getLogger(App.class.getName());
     private Logger logger;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -49,18 +49,18 @@ public class TestJob implements InterruptableJob {
         jobId = data.getString("id");
         createAppender(new File("/home/martin/tmp/quartzTestLogs"), jobId);
         logger = LoggerFactory.getLogger("TestJob." + jobId);
-        //logger = Logger.getLogger("TestJob." + jobId);
+        // logger = Logger.getLogger("TestJob." + jobId);
         out("executing");
-//        err("executing");
+        // err("executing");
         for (int i = 0; i < cycles; i++) {
             out("iteration " + i);
-            //          err("iteration " + i);
-            //logger.log(Level.INFO, "iteration {0}", i);
+            // err("iteration " + i);
+            // logger.log(Level.INFO, "iteration {0}", i);
             logger.info("iteration " + i);
             sleep(sleepMillis);
         }
         out("finished");
-        //    err("finished");
+        // err("finished");
         context.setResult("OK");
     }
 
@@ -76,7 +76,7 @@ public class TestJob implements InterruptableJob {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException ex) {
-//            logger.log(Level.SEVERE, null, ex);
+            // logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -89,23 +89,23 @@ public class TestJob implements InterruptableJob {
         fa.setAppend(true);
         fa.activateOptions();
 
-        //add appender to any Logger (here is root)
+        // add appender to any Logger (here is root)
         org.apache.log4j.Logger.getRootLogger().addAppender(fa);
     }
 
     public void interrupt() throws UnableToInterruptJobException {
-        //See the org.quartz.InterruptableJob interface, and the Scheduler.interrupt(String, String) method.
-//        TODO: ulozit stav do databaze (KILLED)
-//        dalsi info ruzne:
-        //priorita - resi se jen pro ruzny cas, proto budu muset delat sam
-        //misfire - trigger nemohl odpalit (napr malo vlaken) http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-04
-        //listeneres - asi delat listeners na joby - pred nahozenim, po konci http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-07
-        //jak potom rozlisovat u jobu finished a failed? Ze by taky souborem?
-        
-        //po startu zjistim stavy procesu v databazi
-        //ty, co maji stav RUNNING, zmenim na failed
-        //ty, co maji stav scheduled pridam do fronty naplanovanych
+        // See the org.quartz.InterruptableJob interface, and the Scheduler.interrupt(String, String) method.
+        // TODO: ulozit stav do databaze (KILLED)
+        // dalsi info ruzne:
+        // priorita - resi se jen pro ruzny cas, proto budu muset delat sam
+        // misfire - trigger nemohl odpalit (napr malo vlaken) http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-04
+        // listeneres - asi delat listeners na joby - pred nahozenim, po konci
+        // http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-07
+        // jak potom rozlisovat u jobu finished a failed? Ze by taky souborem?
+
+        // po startu zjistim stavy procesu v databazi
+        // ty, co maji stav RUNNING, zmenim na failed
+        // ty, co maji stav scheduled pridam do fronty naplanovanych
     }
-    
-    
+
 }

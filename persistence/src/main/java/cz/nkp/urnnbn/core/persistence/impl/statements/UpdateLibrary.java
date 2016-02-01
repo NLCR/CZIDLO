@@ -26,12 +26,8 @@ public class UpdateLibrary implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + DigitalLibraryDAO.TABLE_NAME + " SET "
-                + DigitalLibraryDAO.ATTR_UPDATED + "=?,"
-                + DigitalLibraryDAO.ATTR_NAME + "=?,"
-                + DigitalLibraryDAO.ATTR_DESCRIPTION + "=?,"
-                + DigitalLibraryDAO.ATTR_URL + "=?"
-                + " WHERE " + DigitalLibraryDAO.ATTR_ID + "=?";
+        return "UPDATE " + DigitalLibraryDAO.TABLE_NAME + " SET " + DigitalLibraryDAO.ATTR_UPDATED + "=?," + DigitalLibraryDAO.ATTR_NAME + "=?,"
+                + DigitalLibraryDAO.ATTR_DESCRIPTION + "=?," + DigitalLibraryDAO.ATTR_URL + "=?" + " WHERE " + DigitalLibraryDAO.ATTR_ID + "=?";
     }
 
     @Override
@@ -43,7 +39,7 @@ public class UpdateLibrary implements StatementWrapper {
             st.setString(4, library.getUrl());
             st.setLong(5, library.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

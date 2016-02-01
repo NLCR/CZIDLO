@@ -12,9 +12,9 @@ import javax.ws.rs.core.Response.Status;
  */
 public class MethodForbiddenException extends ApiV3Exception {
 
-	private static final long serialVersionUID = -5047481327211239231L;
+    private static final long serialVersionUID = -5047481327211239231L;
 
-	public MethodForbiddenException() {
-		super(Status.FORBIDDEN, "FORBIDDEN", "This method is (temporarily) not allowed");
-	}
+    public MethodForbiddenException() {
+        super(Status.FORBIDDEN, "FORBIDDEN", "This method is (temporarily) not allowed");
+    }
 }

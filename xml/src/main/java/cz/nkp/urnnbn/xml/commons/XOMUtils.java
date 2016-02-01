@@ -25,8 +25,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * TODO: poresit, jestli je to dobre s tema vyjimkama (validity vs parsing)
- * TODO: unit tests
+ * TODO: poresit, jestli je to dobre s tema vyjimkama (validity vs parsing) TODO: unit tests
  *
  * @author Martin Řehánek
  */
@@ -63,8 +62,10 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlFile File containing xml to be validated and returned
-     * @param xsdFile xsd file
+     * @param xmlFile
+     *            File containing xml to be validated and returned
+     * @param xsdFile
+     *            xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
@@ -76,8 +77,10 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlString String containing xml to be validated and returned
-     * @param xsdFile xsd file
+     * @param xmlString
+     *            String containing xml to be validated and returned
+     * @param xsdFile
+     *            xsd file
      * @return valid document
      * @throws ValidityException
      * @throws ParsingException
@@ -89,8 +92,10 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlFile File containing xml to be validated and returned
-     * @param xsdUrl url of the schema
+     * @param xmlFile
+     *            File containing xml to be validated and returned
+     * @param xsdUrl
+     *            url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -102,8 +107,10 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlString String containing xml to be validated and returned
-     * @param xsdUrl url of the schema
+     * @param xmlString
+     *            String containing xml to be validated and returned
+     * @param xsdUrl
+     *            url of the schema
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -115,8 +122,10 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlString String containing xml to be validated and returned
-     * @param xsdString String containing xsd
+     * @param xmlString
+     *            String containing xml to be validated and returned
+     * @param xsdString
+     *            String containing xsd
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -128,7 +137,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlFile File containing xml to be validated and returned
+     * @param xmlFile
+     *            File containing xml to be validated and returned
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -140,7 +150,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xml String containing xml to be validated and returned
+     * @param xml
+     *            String containing xml to be validated and returned
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -152,7 +163,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xml InputStream that document can be read from
+     * @param xml
+     *            InputStream that document can be read from
      * @return valid document
      * @throws ParsingException
      * @throws ValidityException
@@ -164,7 +176,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlFile File containing document to be read
+     * @param xmlFile
+     *            File containing document to be read
      * @return
      * @throws ParsingException
      * @throws IOException
@@ -175,7 +188,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlString String containing document to be read
+     * @param xmlString
+     *            String containing document to be read
      * @return
      * @throws ParsingException
      * @throws IOException
@@ -186,7 +200,8 @@ public class XOMUtils {
 
     /**
      *
-     * @param xmlStream InputStream that document can be read from
+     * @param xmlStream
+     *            InputStream that document can be read from
      * @return
      * @throws ParsingException
      * @throws IOException
@@ -195,7 +210,8 @@ public class XOMUtils {
         return new NonvalidatingXmlLoader().loadDocument(xmlStream);
     }
 
-    public static Document transformDocument(String inputXml, String xslt) throws ParsingException, ValidityException, IOException, XMLException, XSLException {
+    public static Document transformDocument(String inputXml, String xslt) throws ParsingException, ValidityException, IOException, XMLException,
+            XSLException {
         XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
         return transformer.transform(inputXml);
     }

@@ -21,7 +21,8 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-/**s
+/**
+ * s
  *
  * @author Martin Řehánek
  */
@@ -33,10 +34,7 @@ public class SelectCountByStringString implements StatementWrapper {
     private final String whereAttr2Name;
     private final String whereAttr2Value;
 
-    public SelectCountByStringString(
-            String tableName,
-            String whereAttr1Name, String whereAttr1Value,
-            String whereAttr2Name, String whereAttr2Value) {
+    public SelectCountByStringString(String tableName, String whereAttr1Name, String whereAttr1Value, String whereAttr2Name, String whereAttr2Value) {
         this.tableName = tableName;
         this.whereAttr1Name = whereAttr1Name;
         this.whereAttr1Value = whereAttr1Value;
@@ -46,9 +44,7 @@ public class SelectCountByStringString implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT count(*) from " + tableName
-                + " WHERE " + whereAttr1Name + "=?"
-                + " AND " + whereAttr2Name + "=?";
+        return "SELECT count(*) from " + tableName + " WHERE " + whereAttr1Name + "=?" + " AND " + whereAttr2Name + "=?";
     }
 
     @Override
@@ -57,7 +53,7 @@ public class SelectCountByStringString implements StatementWrapper {
             st.setString(1, whereAttr1Value);
             st.setString(2, whereAttr2Value);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

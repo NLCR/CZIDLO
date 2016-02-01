@@ -61,17 +61,17 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
         DaoOperation operation = new DaoOperation() {
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                //get new id
+                // get new id
                 StatementWrapper newId = new SelectNewIdFromSequence(ArchiverDAO.SEQ_NAME);
                 PreparedStatement newIdSt = OperationUtils.preparedStatementFromWrapper(connection, newId);
                 ResultSet idResultSet = newIdSt.executeQuery();
                 Long id = OperationUtils.resultSet2Long(idResultSet);
-                //insert with id into Archiver table
+                // insert with id into Archiver table
                 registrar.setId(id);
                 StatementWrapper insertArch = new InsertArchiver(registrar);
                 PreparedStatement insertArchSt = OperationUtils.preparedStatementFromWrapper(connection, insertArch);
                 insertArchSt.executeUpdate();
-                //insert with id into Registrar table
+                // insert with id into Registrar table
                 StatementWrapper insertReg = new InsertRegistrar(registrar);
                 PreparedStatement insertRegSt = OperationUtils.preparedStatementFromWrapper(connection, insertReg);
                 insertRegSt.executeUpdate();
@@ -82,7 +82,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             Long id = (Long) runInTransaction(operation);
             return id;
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -112,7 +112,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
                 logger.log(Level.WARNING, "No such registrar with code {0}", code);
                 throw (RecordNotFoundException) e;
             } else {
-                //should never happen
+                // should never happen
                 logger.log(Level.SEVERE, "Exception unexpected here", e);
                 return null;
             }
@@ -128,7 +128,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
 
     @Override
     public Registrar getRegistrarById(long id) throws DatabaseException, RecordNotFoundException {
-        //pozor, dve operace nejsou v transakci. Pro tenhle pripady by to nemelo vadit
+        // pozor, dve operace nejsou v transakci. Pro tenhle pripady by to nemelo vadit
         Registrar registrar = (Registrar) getRecordById(TABLE_NAME, ATTR_ID, id, new RegistrarRT());
         addDataFromArchiver(registrar);
         return registrar;
@@ -141,7 +141,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             try {
                 addDataFromArchiver(registrar);
             } catch (RecordNotFoundException ex) {
-                //shouldn't happen
+                // shouldn't happen
                 logger.log(Level.SEVERE, ex.getMessage());
             }
         }
@@ -155,9 +155,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(UserDAO.TABLE_NAME, UserDAO.ATTR_ID, userId);
         try {
-            StatementWrapper st = new SelectSingleAttrByLong(
-                    UserDAO.TABLE_USER_REGISTRAR_NAME,
-                    UserDAO.USER_REGISTRAR_ATTR_USER_ID, userId,
+            StatementWrapper st = new SelectSingleAttrByLong(UserDAO.TABLE_USER_REGISTRAR_NAME, UserDAO.USER_REGISTRAR_ATTR_USER_ID, userId,
                     UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             List<Long> identifiers = (List<Long>) runInTransaction(operation);
@@ -167,7 +165,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
             }
             return result;
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -189,7 +187,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
     @Override
     public void deleteRegistrar(long id) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         checkRecordExists(TABLE_NAME, ATTR_ID, id);
-        //delete archiver - registrar is deleted in cascade
+        // delete archiver - registrar is deleted in cascade
         deleteRecordsById(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id, true);
     }
 
@@ -198,13 +196,13 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
         DaoOperation operation = new DaoOperation() {
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                //get all identifiers from registrars
+                // get all identifiers from registrars
                 StatementWrapper getIdsWrapper = new SelectIdentifiersAll(TABLE_NAME, ATTR_ID);
                 PreparedStatement getIdsStatement = connection.prepareStatement(getIdsWrapper.preparedStatement());
                 ResultSet idResultSet = getIdsStatement.executeQuery();
                 List<Long> idList = OperationUtils.resultSet2ListOfLong(idResultSet);
                 for (Long id : idList) {
-                    //delete archivers - registrars are deleted in cascade
+                    // delete archivers - registrars are deleted in cascade
                     StatementWrapper delArchWrapper = new DeleteRecordsByLongAttr(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, id);
                     PreparedStatement delArchSt = OperationUtils.preparedStatementFromWrapper(connection, delArchWrapper);
                     delArchSt.executeUpdate();
@@ -215,7 +213,7 @@ public class RegistrarDaoPostgres extends AbstractDAO implements RegistrarDAO {
         try {
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             throw new DatabaseException(ex);

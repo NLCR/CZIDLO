@@ -78,7 +78,7 @@ public abstract class AbstractDAO {
             } else {
                 throw ex;
             }
-            //throw new DatabaseException(ex);
+            // throw new DatabaseException(ex);
         } finally {
             logger.fine("releasing connection");
             connector.releaseConnection(connection);
@@ -102,14 +102,14 @@ public abstract class AbstractDAO {
         checkRecordExists(statement, tableName);
     }
 
-    protected void checkRecordExists(String tableName, String firstAttrName, String firstAttrValue, String secondAttrName, String secondAttrValue) throws DatabaseException, RecordNotFoundException {
+    protected void checkRecordExists(String tableName, String firstAttrName, String firstAttrValue, String secondAttrName, String secondAttrValue)
+            throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectCountByStringString(tableName, firstAttrName, firstAttrValue, secondAttrName, secondAttrValue);
         checkRecordExists(statement, tableName);
     }
 
-    protected void checkRecordExists(String tableName,
-            String longAttrName, Long longAttrValue,
-            String stringAttrName, String stringAttrValue) throws DatabaseException, RecordNotFoundException {
+    protected void checkRecordExists(String tableName, String longAttrName, Long longAttrValue, String stringAttrName, String stringAttrValue)
+            throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectCountByStringLong(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
         checkRecordExists(statement, tableName);
     }
@@ -133,7 +133,7 @@ public abstract class AbstractDAO {
             Integer count = (Integer) runInTransaction(recordCount);
             return (count != 0);
         } catch (PersistenceException e) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", e);
             throw new DatabaseException(e);
         } catch (SQLException ex) {
@@ -141,21 +141,18 @@ public abstract class AbstractDAO {
         }
     }
 
-    protected Long insertRecordWithIdFromSequence(
-            final IdentifiableByLongAttribute dto,
-            final String tableName,
-            final String sequence,
+    protected Long insertRecordWithIdFromSequence(final IdentifiableByLongAttribute dto, final String tableName, final String sequence,
             final StatementWrapper insertSt) throws DatabaseException, RecordNotFoundException {
         DaoOperation operation = new DaoOperation() {
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                //get new id from sequence
+                // get new id from sequence
                 StatementWrapper newId = new SelectNewIdFromSequence(sequence);
                 PreparedStatement newIdSt = connection.prepareStatement(newId.preparedStatement());
                 newId.populate(newIdSt);
                 ResultSet idResultSet = newIdSt.executeQuery();
                 Long id = OperationUtils.resultSet2Long(idResultSet);
-                //insert record with id from sequence
+                // insert record with id from sequence
                 dto.setId(id);
                 PreparedStatement insert = OperationUtils.preparedStatementFromWrapper(connection, insertSt);
                 insert.executeUpdate();
@@ -166,11 +163,11 @@ public abstract class AbstractDAO {
             Long id = (Long) runInTransaction(operation);
             return id;
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[] { tableName, dto.getId() });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -180,11 +177,13 @@ public abstract class AbstractDAO {
         }
     }
 
-    public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer) throws DatabaseException, RecordNotFoundException {
+    public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer) throws DatabaseException,
+            RecordNotFoundException {
         return getRecordById(tableName, idAttrName, idValue, transformer, true);
     }
 
-    public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer, boolean logMissing) throws DatabaseException, RecordNotFoundException {
+    public Object getRecordById(String tableName, String idAttrName, long idValue, ResultsetTransformer transformer, boolean logMissing)
+            throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectAllAttrsByLongAttr(tableName, idAttrName, idValue);
         DaoOperation operation = new SingleResultOperation(statement, transformer);
         try {
@@ -196,7 +195,7 @@ public abstract class AbstractDAO {
                 }
                 throw (RecordNotFoundException) e;
             } else {
-                //should never happen
+                // should never happen
                 logger.log(Level.SEVERE, "Exception unexpected here", e);
                 return null;
             }
@@ -206,28 +205,29 @@ public abstract class AbstractDAO {
     }
 
     /**
-     * Only for table that has single value PK of type long. We must know the
-     * value of PK in advanced so this metod mostly used for cases when PK is FK
-     * to another table.
+     * Only for table that has single value PK of type long. We must know the value of PK in advanced so this metod mostly used for cases when PK is
+     * FK to another table.
      *
      * @param dto
      * @param tableName
      * @param idAttrName
      * @param st
      * @throws DatabaseException
-     * @throws AlreadyPresentException if such PK value already exists
-     * @throws RecordNotFoundException if some referenced record doesn't exist
-     * in another table
+     * @throws AlreadyPresentException
+     *             if such PK value already exists
+     * @throws RecordNotFoundException
+     *             if some referenced record doesn't exist in another table
      */
-    public void insertRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper st) throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
+    public void insertRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper st)
+            throws DatabaseException, AlreadyPresentException, RecordNotFoundException {
         DaoOperation operation = new NoResultOperation(st);
         try {
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot insert {0} {1}", new Object[] { tableName, dto.getId() });
             if ("23505".equals(ex.getSQLState())) {
                 IdPart param = new IdPart(idAttrName, Long.toString(dto.getId()));
                 throw new AlreadyPresentException(param);
@@ -248,25 +248,26 @@ public abstract class AbstractDAO {
      * @param idAttrName
      * @param updateSt
      * @throws DatabaseException
-     * @throws RecordNotFoundException if some referenced record doesn't exist
-     * in another table
+     * @throws RecordNotFoundException
+     *             if some referenced record doesn't exist in another table
      */
-    public void updateRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper updateSt) throws DatabaseException, RecordNotFoundException {
-        //metoda checkRecordExists se musi zavolat, protoze jinak update nevrati
-        //pocet zmenenych radku. Jde to delat nejak nestandardne pro oracle i postgres
-        //no ale jednodussi asi bude zjistit touhle metodou, jestli existuje
-        //to, ze checkovani neni v transakci nevadi
-        //pokud by byl zaznam smazany po tom, c projde checkRecordExists, tak proste update projde
-        //ale zadny zaznam nezmeni
+    public void updateRecordWithLongPK(IdentifiableByLongAttribute dto, String tableName, String idAttrName, StatementWrapper updateSt)
+            throws DatabaseException, RecordNotFoundException {
+        // metoda checkRecordExists se musi zavolat, protoze jinak update nevrati
+        // pocet zmenenych radku. Jde to delat nejak nestandardne pro oracle i postgres
+        // no ale jednodussi asi bude zjistit touhle metodou, jestli existuje
+        // to, ze checkovani neni v transakci nevadi
+        // pokud by byl zaznam smazany po tom, c projde checkRecordExists, tak proste update projde
+        // ale zadny zaznam nezmeni
         checkRecordExists(tableName, idAttrName, dto.getId());
         try {
             DaoOperation operation = new NoResultOperation(updateSt);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, dto.getId()});
+            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[] { tableName, dto.getId() });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -284,22 +285,20 @@ public abstract class AbstractDAO {
      * @param idAttrName
      * @param updateSt
      * @throws DatabaseException
-     * @throws RecordNotFoundException if some referenced record doesn't exist
-     * in another table
+     * @throws RecordNotFoundException
+     *             if some referenced record doesn't exist in another table
      */
-    public void updateRecordTimestamp(
-            String tableName,
-            String idAttrName, Long idAttrValue,
-            String timeStampAttr) throws DatabaseException, RecordNotFoundException {
+    public void updateRecordTimestamp(String tableName, String idAttrName, Long idAttrValue, String timeStampAttr) throws DatabaseException,
+            RecordNotFoundException {
         checkRecordExists(tableName, idAttrName, idAttrValue);
         try {
             DaoOperation operation = new NoResultOperation(new UpdateRecordTimestamp(tableName, idAttrName, idAttrValue, timeStampAttr));
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[]{tableName, idAttrValue});
+            logger.log(Level.SEVERE, "Cannot update {0} {1}", new Object[] { tableName, idAttrValue });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -315,7 +314,7 @@ public abstract class AbstractDAO {
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -329,7 +328,7 @@ public abstract class AbstractDAO {
             DaoOperation operation = new SingleResultOperation(st, new SingleLongRT());
             return (Long) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -343,7 +342,7 @@ public abstract class AbstractDAO {
             DaoOperation operation = new MultipleResultsOperation(st, transformer);
             return runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -351,7 +350,8 @@ public abstract class AbstractDAO {
         }
     }
 
-    public void deleteRecordsById(String tableName, String idAttrName, long idValue, boolean mustExist) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+    public void deleteRecordsById(String tableName, String idAttrName, long idValue, boolean mustExist) throws DatabaseException,
+            RecordNotFoundException, RecordReferencedException {
         if (mustExist) {
             checkRecordExists(tableName, idAttrName, idValue);
         }
@@ -360,10 +360,10 @@ public abstract class AbstractDAO {
             DaoOperation operation = new NoResultOperation(st);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot delete from {0} where {1}={2}", new Object[]{tableName, idAttrName, idValue});
+            logger.log(Level.SEVERE, "Cannot delete from {0} where {1}={2}", new Object[] { tableName, idAttrName, idValue });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -373,29 +373,21 @@ public abstract class AbstractDAO {
         }
     }
 
-    public void deleteRecordsByLongAndString(
-            String tableName,
-            String longAttrName, long longAttrValue,
-            String stringAttrName, String stringAttrValue,
-            boolean mustExist) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+    public void deleteRecordsByLongAndString(String tableName, String longAttrName, long longAttrValue, String stringAttrName,
+            String stringAttrValue, boolean mustExist) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         if (mustExist) {
             checkRecordExists(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
         }
         try {
-            StatementWrapper st = new DeleteRecordsByLongAndStringAttr(
-                    tableName,
-                    longAttrName, longAttrValue,
-                    stringAttrName, stringAttrValue);
+            StatementWrapper st = new DeleteRecordsByLongAndStringAttr(tableName, longAttrName, longAttrValue, stringAttrName, stringAttrValue);
             DaoOperation operation = new NoResultOperation(st);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot delete from {0} where "
-                    + "{1}={2} and {3}={4}",
-                    new Object[]{tableName,
-                longAttrName, longAttrValue, stringAttrName, stringAttrValue});
+            logger.log(Level.SEVERE, "Cannot delete from {0} where " + "{1}={2} and {3}={4}", new Object[] { tableName, longAttrName, longAttrValue,
+                    stringAttrName, stringAttrValue });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -405,25 +397,18 @@ public abstract class AbstractDAO {
         }
     }
 
-    public void deleteRecordsByLongAndLong(
-            String tableName,
-            String firstAttrName, long firstAttrValue,
-            String secondAttrName, long secondAttrValue) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+    public void deleteRecordsByLongAndLong(String tableName, String firstAttrName, long firstAttrValue, String secondAttrName, long secondAttrValue)
+            throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         try {
-            StatementWrapper st = new DeleteRecordsByLongAndLongAttr(
-                    tableName,
-                    firstAttrName, firstAttrValue,
-                    secondAttrName, secondAttrValue);
+            StatementWrapper st = new DeleteRecordsByLongAndLongAttr(tableName, firstAttrName, firstAttrValue, secondAttrName, secondAttrValue);
             DaoOperation operation = new NoResultOperation(st);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot delete from {0} where "
-                    + "{1}={2} and {3}={4}",
-                    new Object[]{tableName,
-                firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
+            logger.log(Level.SEVERE, "Cannot delete from {0} where " + "{1}={2} and {3}={4}", new Object[] { tableName, firstAttrName,
+                    firstAttrValue, secondAttrName, secondAttrValue });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -433,25 +418,18 @@ public abstract class AbstractDAO {
         }
     }
 
-    public void deleteRecordsByStringAndString(
-            String tableName,
-            String firstAttrName, String firstAttrValue,
-            String secondAttrName, String secondAttrValue) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
+    public void deleteRecordsByStringAndString(String tableName, String firstAttrName, String firstAttrValue, String secondAttrName,
+            String secondAttrValue) throws DatabaseException, RecordNotFoundException, RecordReferencedException {
         try {
-            StatementWrapper st = new DeleteByStringString(
-                    tableName,
-                    firstAttrName, firstAttrValue,
-                    secondAttrName, secondAttrValue);
+            StatementWrapper st = new DeleteByStringString(tableName, firstAttrName, firstAttrValue, secondAttrName, secondAttrValue);
             DaoOperation operation = new NoResultOperation(st);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot delete from {0} "
-                    + "where {1}={2} and {3}={4}",
-                    new Object[]{tableName,
-                firstAttrName, firstAttrValue, secondAttrName, secondAttrValue});
+            logger.log(Level.SEVERE, "Cannot delete from {0} " + "where {1}={2} and {3}={4}", new Object[] { tableName, firstAttrName,
+                    firstAttrValue, secondAttrName, secondAttrValue });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Record is referenced from another table", ex);
                 throw new RecordReferencedException();
@@ -467,7 +445,7 @@ public abstract class AbstractDAO {
             DaoOperation operation = new NoResultOperation(st);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot delete all records from {0}", tableName);

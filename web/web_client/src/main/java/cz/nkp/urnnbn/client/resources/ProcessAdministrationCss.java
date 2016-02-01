@@ -4,8 +4,8 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface ProcessAdministrationCss extends CssResource {
 
-	public String processListHeading();
+    public String processListHeading();
 
-	public String planProcessHeading();
+    public String planProcessHeading();
 
 }

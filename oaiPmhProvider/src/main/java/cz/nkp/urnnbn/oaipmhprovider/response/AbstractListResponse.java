@@ -41,13 +41,13 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
 
     @Override
     String[] getRequiredArguments() {
-        String[] result = {METADATA_PREFIX};
+        String[] result = { METADATA_PREFIX };
         return result;
     }
 
     @Override
     String[] getOptionalArguments() {
-        String[] result = {FROM, UNTIL, SET};
+        String[] result = { FROM, UNTIL, SET };
         return result;
     }
 
@@ -73,16 +73,16 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
         MetadataFormat format = Parser.parseMetadataPrefix(metadataPrefix);
         ListConditions conditions = getCriteria();
         logger.log(Level.FINE, "getting records from repository");
-        //Set<Record> records = getRecords(format, conditions);
+        // Set<Record> records = getRecords(format, conditions);
         Set<Record> identifiers = getRecordsWithCriteria(format, conditions);
         logger.log(Level.FINE, "building ListRequest");
-        //CompleteList request = new CompleteList(records);
+        // CompleteList request = new CompleteList(records);
         CompleteList request = new CompleteList(identifiers);
         logger.log(Level.FINE, "creating RequestSequence");
         ListPart part = new ListPart(request, 0, getResultPartsManager().returnedRecords());
-        //logger.log(Level.INFO, "creating new resumptionToken");
+        // logger.log(Level.INFO, "creating new resumptionToken");
         String resumptionToken = getResultPartsManager().registerNextResultPart(part);
-        //logger.log(Level.INFO, "resumptionToken: {0}", resumptionToken);
+        // logger.log(Level.INFO, "resumptionToken: {0}", resumptionToken);
         createResponse(part, resumptionToken);
     }
 
@@ -99,11 +99,8 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
         DateStamp until = conditions.getUntil();
         Set<Record> records = getRecordsWithCriteria(format, setSpec, from, until);
         if (records.isEmpty()) {
-            throw new OaiException(ErrorCode.noRecordsMatch,
-                    " no records for format: " + format.toString()
-                    + ", setSpec: " + setSpec
-                    + ", from: " + from
-                    + ", until: " + until);
+            throw new OaiException(ErrorCode.noRecordsMatch, " no records for format: " + format.toString() + ", setSpec: " + setSpec + ", from: "
+                    + from + ", until: " + until);
         }
         return records;
     }
@@ -130,9 +127,9 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
         for (Record record : part.getRecords()) {
             appendRecordDataToRoot(record);
         }
-//        for (Identifier item : part.getRecords()) {
-//            appendDataToRoot(item);
-//        }
+        // for (Identifier item : part.getRecords()) {
+        // appendDataToRoot(item);
+        // }
         int completeSize = part.getCompleteListSize();
         int cursor = part.cursor();
         DateTime validUntil = part.getValidUntil();
@@ -141,7 +138,7 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
 
     abstract ResumptionTokenManager getResultPartsManager();
 
-    //abstract void appendDataToRoot(Identifier itemId) throws IOException;
-    
+    // abstract void appendDataToRoot(Identifier itemId) throws IOException;
+
     abstract void appendRecordDataToRoot(Record record) throws IOException;
 }

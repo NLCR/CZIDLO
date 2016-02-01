@@ -35,7 +35,8 @@ public class XsltXmlTransformer {
 
     /**
      *
-     * @param xsltDocument XSLT document in string
+     * @param xsltDocument
+     *            XSLT document in string
      * @throws ParsingException
      * @throws XSLException
      * @throws IOException
@@ -46,7 +47,8 @@ public class XsltXmlTransformer {
 
     /**
      *
-     * @param xsltDocument XSLT document
+     * @param xsltDocument
+     *            XSLT document
      * @throws XSLException
      */
     public XsltXmlTransformer(Document xsltDocument) throws XSLException {
@@ -56,7 +58,8 @@ public class XsltXmlTransformer {
     /**
      * Transforms source xml document into another xml document/
      *
-     * @param souceDoc source document
+     * @param souceDoc
+     *            source document
      * @return
      * @throws XSLException
      */
@@ -67,7 +70,8 @@ public class XsltXmlTransformer {
 
     /**
      *
-     * @param souceDoc source document in string
+     * @param souceDoc
+     *            source document in string
      * @return
      * @throws XSLException
      */

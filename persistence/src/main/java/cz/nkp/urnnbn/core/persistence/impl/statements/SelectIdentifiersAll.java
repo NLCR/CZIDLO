@@ -12,8 +12,8 @@ import java.sql.PreparedStatement;
  *
  * @author Martin Řehánek
  */
-public class SelectIdentifiersAll implements StatementWrapper{
-    
+public class SelectIdentifiersAll implements StatementWrapper {
+
     private final String tableName;
     private final String attrName;
 
@@ -21,7 +21,6 @@ public class SelectIdentifiersAll implements StatementWrapper{
         this.tableName = tableName;
         this.attrName = attrName;
     }
-    
 
     @Override
     public String preparedStatement() {
@@ -30,6 +29,6 @@ public class SelectIdentifiersAll implements StatementWrapper{
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
-        //nothing to populate
+        // nothing to populate
     }
 }

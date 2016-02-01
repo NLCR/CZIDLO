@@ -21,11 +21,10 @@ public class IntelectualEntityMerger {
 
     /**
      * @param ie
-     * @return Intelectual entity that will be used instead of this intelectual entity
-     * or null if no such entity is found
+     * @return Intelectual entity that will be used instead of this intelectual entity or null if no such entity is found
      */
     public IntelectualEntity getIntEntForMergingOrNull(IntelectualEntity ie) {
         return null;
-        //TODO: implement
+        // TODO: implement
     }
 }

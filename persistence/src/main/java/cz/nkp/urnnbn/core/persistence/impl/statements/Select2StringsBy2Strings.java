@@ -35,7 +35,8 @@ public class Select2StringsBy2Strings implements StatementWrapper {
     private final String firstResultName;
     private final String secondResultName;
 
-    public Select2StringsBy2Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName, String secondStringAttrValue, String firstResultName, String secondResultName) {
+    public Select2StringsBy2Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName,
+            String secondStringAttrValue, String firstResultName, String secondResultName) {
         this.tableName = tableName;
         this.firstStringAttrName = firstStringAttrName;
         this.firstStringAttrValue = firstStringAttrValue;
@@ -47,10 +48,7 @@ public class Select2StringsBy2Strings implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT " + firstResultName + "," + secondResultName
-                + " from " + tableName
-                + " WHERE "
-                + firstStringAttrName + "=? AND "
+        return "SELECT " + firstResultName + "," + secondResultName + " from " + tableName + " WHERE " + firstStringAttrName + "=? AND "
                 + secondStringAttrName + "=?";
     }
 
@@ -60,7 +58,7 @@ public class Select2StringsBy2Strings implements StatementWrapper {
             st.setString(1, firstStringAttrValue);
             st.setString(2, secondStringAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

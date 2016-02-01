@@ -35,18 +35,18 @@ public class UrnNbnDocumentCodeTest extends TestCase {
 
     public void testValueOf_illegalLength() {
         try {
-            //too long
+            // too long
             UrnNbnDocumentCode.valueOf("0a0a0a0");
             fail();
         } catch (RuntimeException e) {
-            //ok
+            // ok
         }
         try {
-            //too short
+            // too short
             UrnNbnDocumentCode.valueOf("0a0a0");
             fail();
         } catch (RuntimeException e) {
-            //ok
+            // ok
         }
     }
 
@@ -55,19 +55,19 @@ public class UrnNbnDocumentCodeTest extends TestCase {
             UrnNbnDocumentCode.valueOf("0a0:0a0");
             fail();
         } catch (RuntimeException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbnDocumentCode.valueOf("0a0a0+0");
             fail();
         } catch (RuntimeException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbnDocumentCode.valueOf("_a0a0d0");
             fail();
         } catch (RuntimeException e) {
-            //ok
+            // ok
         }
     }
 
@@ -93,29 +93,21 @@ public class UrnNbnDocumentCodeTest extends TestCase {
      * Test of getNext method, of class UrnNbnDocumentCode.
      */
     public void testGetNext() {
-        //+0
-        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(0).toString(),
-                UrnNbnDocumentCode.valueOf("0a0a0a").toString());
-        //+0
-        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(0).toString(),
-                UrnNbnDocumentCode.valueOf("zzzzzz").toString());
-        //+3
-        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(3).toString(),
-                UrnNbnDocumentCode.valueOf("0a0a0d").toString());
-        //+36
-        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(36).toString(),
-                UrnNbnDocumentCode.valueOf("0a0a1a").toString());
-        //+37
-        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(37).toString(),
-                UrnNbnDocumentCode.valueOf("0a0a1b").toString());
-        //+36^2
-        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(36 * 36).toString(),
-                UrnNbnDocumentCode.valueOf("0a0b0a").toString());
-        //+1 with overflow
-        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(1).toString(),
-                UrnNbnDocumentCode.valueOf("000000").toString());
-        //+10 with overflow
-        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(10).toString(),
-                UrnNbnDocumentCode.valueOf("000009").toString());
+        // +0
+        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(0).toString(), UrnNbnDocumentCode.valueOf("0a0a0a").toString());
+        // +0
+        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(0).toString(), UrnNbnDocumentCode.valueOf("zzzzzz").toString());
+        // +3
+        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(3).toString(), UrnNbnDocumentCode.valueOf("0a0a0d").toString());
+        // +36
+        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(36).toString(), UrnNbnDocumentCode.valueOf("0a0a1a").toString());
+        // +37
+        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(37).toString(), UrnNbnDocumentCode.valueOf("0a0a1b").toString());
+        // +36^2
+        assertEquals(UrnNbnDocumentCode.valueOf("0a0a0a").getNext(36 * 36).toString(), UrnNbnDocumentCode.valueOf("0a0b0a").toString());
+        // +1 with overflow
+        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(1).toString(), UrnNbnDocumentCode.valueOf("000000").toString());
+        // +10 with overflow
+        assertEquals(UrnNbnDocumentCode.valueOf("zzzzzz").getNext(10).toString(), UrnNbnDocumentCode.valueOf("000009").toString());
     }
 }

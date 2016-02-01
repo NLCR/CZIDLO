@@ -24,10 +24,10 @@ public class ListConditions {
         try {
             return DateStamp.parse(value);
         } catch (Throwable e) {
-            throw new OaiException(ErrorCode.badArgument, "cannot parse argument "
-                    + name + ": '" + value + "'");
+            throw new OaiException(ErrorCode.badArgument, "cannot parse argument " + name + ": '" + value + "'");
         }
     }
+
     private final String setSpec;
     private final DateStamp from;
     private final DateStamp until;

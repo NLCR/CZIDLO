@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Identifiers of imported intelectual entity and digital instance records are
- * stored here to be used in possible rollback.
+ * Identifiers of imported intelectual entity and digital instance records are stored here to be used in possible rollback.
  *
  * @author Martin Řehánek
  */
@@ -55,7 +54,7 @@ public class RollbackRecord {
     }
 
     public List<UrnNbn> getPredecessorsDeactivated() {
-        return predecessorsDeactivated == null ? Collections.<UrnNbn>emptyList() : predecessorsDeactivated;
+        return predecessorsDeactivated == null ? Collections.<UrnNbn> emptyList() : predecessorsDeactivated;
     }
 
     public void setPredecessorsDeactivated(List<UrnNbn> predecessorsDeactivated) {

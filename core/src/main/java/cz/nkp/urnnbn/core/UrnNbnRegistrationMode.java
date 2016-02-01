@@ -22,6 +22,6 @@ package cz.nkp.urnnbn.core;
  */
 public enum UrnNbnRegistrationMode {
 
-	//TODO: vyhledove prejmenovat BY_RESOLVER. Resolver je jen sluzba (soucast api), melo by tam byt BY_CZIDLO/BY_CENTRAL_AUTHORITY, nebo tak nejak.
+    // TODO: vyhledove prejmenovat BY_RESOLVER. Resolver je jen sluzba (soucast api), melo by tam byt BY_CZIDLO/BY_CENTRAL_AUTHORITY, nebo tak nejak.
     BY_RESOLVER, BY_REGISTRAR, BY_RESERVATION;
 }

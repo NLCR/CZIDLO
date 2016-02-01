@@ -41,14 +41,9 @@ public class Refiner {
         if (importChildren.size() > 0) {
             Element entityElement = importChildren.get(0);
             String entityName = entityElement.getLocalName();
-            if ("monograph".equals(entityName)
-                    || "monographVolume".equals(entityName)
-                    || "periodical".equals(entityName)
-                    || "periodicalVolume".equals(entityName)
-                    || "periodicalIssue".equals(entityName)
-                    || "analytical".equals(entityName)
-                    || "thesis".equals(entityName)
-                    || "otherEntity".equals(entityName)) {
+            if ("monograph".equals(entityName) || "monographVolume".equals(entityName) || "periodical".equals(entityName)
+                    || "periodicalVolume".equals(entityName) || "periodicalIssue".equals(entityName) || "analytical".equals(entityName)
+                    || "thesis".equals(entityName) || "otherEntity".equals(entityName)) {
                 Refiner.parseEntityElement(entityElement);
             }
         }
@@ -64,11 +59,14 @@ public class Refiner {
             Refiner.parseTitleInfoElement(titleInfoElement);
         }
         Refiner.parseAndMatch(entityElement, "ccnb", "cnb\\d{9}|CNB\\d{9}");
-        Refiner.parseAndMatch(entityElement, "isbn", "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]");
+        Refiner.parseAndMatch(
+                entityElement,
+                "isbn",
+                "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]");
         Refiner.parseAndMatch(entityElement, "issn", "\\d{4}-\\d{3}[0-9Xx]{1}");
         Refiner.parseAndCut(entityElement, "otherId", 50, 1);
         Refiner.parseAndCut(entityElement, "documentType", 50, 0);
-        //TODO:primaryOriginator
+        // TODO:primaryOriginator
         Refiner.parseAndCut(entityElement, "otherOriginator", 50, 0);
         Refiner.parseAndMatch(entityElement, "digitalBorn", "true|false|0|1");
         Refiner.parseAndCut(entityElement, "degreeAwardingInstitution", 50, 0);
@@ -109,8 +107,8 @@ public class Refiner {
         if (urnNbnElement != null) {
             Refiner.parseUrnNbnElement(urnNbnElement);
         }
-        //Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}"); 
-        //TODO: registrarScopeIdentifiers
+        // Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}");
+        // TODO: registrarScopeIdentifiers
         Refiner.parseAndCut(digitalDocumentElement, "financed", 100, 1);
         Element technicalMetadataElement = digitalDocumentElement.getFirstChildElement("technicalMetadata", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (technicalMetadataElement != null) {

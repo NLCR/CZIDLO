@@ -9,7 +9,7 @@ package cz.nkp.urnnbn.oaiadapter.utils;
  * @author hanis
  */
 public class ImportParsingException extends Exception {
-    
+
     public ImportParsingException() {
     }
 

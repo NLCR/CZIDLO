@@ -8,18 +8,18 @@ import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
 
 public class DtoToUrnNbnTransformer {
 
-	private final UrnNbnDTO original;
+    private final UrnNbnDTO original;
 
-	public DtoToUrnNbnTransformer(UrnNbnDTO original) {
-		this.original = original;
-	}
+    public DtoToUrnNbnTransformer(UrnNbnDTO original) {
+        this.original = original;
+    }
 
-	public UrnNbn transform() {
-		return new UrnNbn(RegistrarCode.valueOf(original.getRegistrarCode()), original.getDocumentCode(), original.getDigdocId(),
-				toDateTimeOrNull(original.getReserved()), original.getDeactivationNote());
-	}
+    public UrnNbn transform() {
+        return new UrnNbn(RegistrarCode.valueOf(original.getRegistrarCode()), original.getDocumentCode(), original.getDigdocId(),
+                toDateTimeOrNull(original.getReserved()), original.getDeactivationNote());
+    }
 
-	private DateTime toDateTimeOrNull(String datetimeString) {
-		return datetimeString == null? null :DateTime.parse(datetimeString);
-	}
+    private DateTime toDateTimeOrNull(String datetimeString) {
+        return datetimeString == null ? null : DateTime.parse(datetimeString);
+    }
 }

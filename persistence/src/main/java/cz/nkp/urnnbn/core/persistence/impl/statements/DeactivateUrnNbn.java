@@ -41,11 +41,9 @@ public class DeactivateUrnNbn implements StatementWrapper {
     }
 
     public String preparedStatement() {
-        return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET "
-                + UrnNbnDAO.ATTR_DEACTIVATED + "=?,"
-                + UrnNbnDAO.ATTR_ACTIVE + "=?,"
-                + UrnNbnDAO.ATTR_DEACTIVATION_NOTE + "=?"
-                + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE + "=?";
+        return "UPDATE " + UrnNbnDAO.TABLE_NAME + " SET " + UrnNbnDAO.ATTR_DEACTIVATED + "=?," + UrnNbnDAO.ATTR_ACTIVE + "=?,"
+                + UrnNbnDAO.ATTR_DEACTIVATION_NOTE + "=?" + " WHERE " + UrnNbnDAO.ATTR_REGISTRAR_CODE + "=?" + " AND " + UrnNbnDAO.ATTR_DOCUMENT_CODE
+                + "=?";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
@@ -56,7 +54,7 @@ public class DeactivateUrnNbn implements StatementWrapper {
             st.setString(4, registrarCode.toString());
             st.setString(5, documentCode);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -34,7 +34,7 @@ public class Configuration {
     private static Integer maxRunningAdminProcesses;
     private static Integer maxRunningUserProcesses;
     private static String czidloApiBaseUrl;
-    //configuration for processes
+    // configuration for processes
     private static String digDocRegistrationXsdUrl;
     private static String digInstImportXsdUrl;
 
@@ -51,7 +51,7 @@ public class Configuration {
         jobsDir = loader.loadDir(PropertyKeys.JOBS_DATA_DIR);
         maxRunningAdminProcesses = loader.loadInt(PropertyKeys.MAX_ADMIN_JOBS);
         maxRunningUserProcesses = loader.loadInt(PropertyKeys.MAX_USER_JOBS);
-        //oai adapter
+        // oai adapter
         digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
         digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
         czidloApiBaseUrl = loader.loadString(DefinedProperties.CZIDLO_API_BASE_URL);

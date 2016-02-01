@@ -110,6 +110,7 @@ public class RegistrarScopeIdentifier {
 
     @Override
     public String toString() {
-        return "RegistrarScopeIdentifier{" + "digDocId=" + digDocId + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", type=" + type + ", value=" + value + '}';
+        return "RegistrarScopeIdentifier{" + "digDocId=" + digDocId + ", registrarId=" + registrarId + ", created=" + created + ", modified="
+                + modified + ", type=" + type + ", value=" + value + '}';
     }
 }

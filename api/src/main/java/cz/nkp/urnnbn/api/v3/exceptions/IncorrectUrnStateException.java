@@ -9,10 +9,9 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
  */
 public class IncorrectUrnStateException extends ApiV3Exception {
 
-	private static final long serialVersionUID = -3179637427845166321L;
+    private static final long serialVersionUID = -3179637427845166321L;
 
-	public IncorrectUrnStateException(UrnNbnWithStatus urnNbnWithStatus) {
-		super(Status.FORBIDDEN, "INCORRECT_URN_NBN_STATE", urnNbnWithStatus.getUrn().toString() + ": "
-				+ urnNbnWithStatus.getStatus().toString());
-	}
+    public IncorrectUrnStateException(UrnNbnWithStatus urnNbnWithStatus) {
+        super(Status.FORBIDDEN, "INCORRECT_URN_NBN_STATE", urnNbnWithStatus.getUrn().toString() + ": " + urnNbnWithStatus.getStatus().toString());
+    }
 }

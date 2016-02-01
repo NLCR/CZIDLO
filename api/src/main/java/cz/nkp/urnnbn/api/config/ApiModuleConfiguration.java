@@ -30,21 +30,21 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationDefaultSize;
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
-    //API V3
+    // API V3
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV3;
     private Document digDocRegistrationXsdV3;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV3;
     private Document digInstImportXsdV3;
     private Document responseV3Xsd;
-    //API V2
+    // API V2
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV2;
     private Document digDocRegistrationXsdV2;
     private ValidatingXmlLoader digInstImportDataValidatingLoaderV2;
     private Document digInstImportXsdV2;
-    //API V2 requests -> API V3 requests transformations
+    // API V2 requests -> API V3 requests transformations
     private XsltXmlTransformer digInstImportV2ToV3DataTransformer;
     private XsltXmlTransformer digDocRegistrationV2ToV3DataTransformer;
-    //API V3 responses -> API V2 responses transformations
+    // API V3 responses -> API V2 responses transformations
     private XsltXmlTransformer errorResponseV3ToV2Transformer;
     private XsltXmlTransformer deactivateDigInstResponseV3ToV2Transformer;
     private XsltXmlTransformer deleteRegScopeIdResponseV3ToV2Transformer;
@@ -73,7 +73,8 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
 
     /**
      *
-     * @param properties InputStream containing properties
+     * @param properties
+     *            InputStream containing properties
      * @throws IOException
      */
     @Override
@@ -85,7 +86,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
     }
 
-    //API V3
+    // API V3
     void initDigDocRegistrationXsdV3(InputStream in) throws ParsingException, ValidityException, IOException {
         digDocRegistrationXsdV3 = XOMUtils.loadDocumentWithoutValidation(in);
         digDocRegistrationDataValidatingLoaderV3 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV3.toXML());
@@ -100,7 +101,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         this.responseV3Xsd = XOMUtils.loadDocumentWithoutValidation(in);
     }
 
-    //API V2
+    // API V2
     void initDigDocRegistrationXsdV2(InputStream in) throws ParsingException, ValidityException, IOException {
         digDocRegistrationXsdV2 = XOMUtils.loadDocumentWithoutValidation(in);
         digDocRegistrationDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV2.toXML());
@@ -111,7 +112,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         digInstImportDataValidatingLoaderV2 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV2.toXML());
     }
 
-    //API V2 requests -> API V3 requests transformations
+    // API V2 requests -> API V3 requests transformations
     void initDigDocRegistrationV2ToV3DataTransformer(InputStream in) throws ParsingException, IOException, XSLException {
         this.digDocRegistrationV2ToV3DataTransformer = transformerFromXmlFromInputStream(in);
     }
@@ -120,7 +121,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         this.digInstImportV2ToV3DataTransformer = transformerFromXmlFromInputStream(in);
     }
 
-    //API V3 responses -> API V2 responses transformations
+    // API V3 responses -> API V2 responses transformations
     void initErrorResponseV3ToV2Transformer(InputStream in) throws ParsingException, IOException, XSLException {
         this.errorResponseV3ToV2Transformer = transformerFromXmlFromInputStream(in);
     }

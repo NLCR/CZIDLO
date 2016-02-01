@@ -25,11 +25,8 @@ public class InsertIntEntIdentifier implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + IntEntIdentifierDAO.TABLE_NAME
-                + "(" + IntEntIdentifierDAO.ATTR_IE_ID
-                + "," + IntEntIdentifierDAO.ATTR_TYPE
-                + "," + IntEntIdentifierDAO.ATTR_VALUE
-                + ") values(?,?,?)";
+        return "INSERT into " + IntEntIdentifierDAO.TABLE_NAME + "(" + IntEntIdentifierDAO.ATTR_IE_ID + "," + IntEntIdentifierDAO.ATTR_TYPE + ","
+                + IntEntIdentifierDAO.ATTR_VALUE + ") values(?,?,?)";
     }
 
     @Override
@@ -39,7 +36,7 @@ public class InsertIntEntIdentifier implements StatementWrapper {
             st.setString(2, identifier.getType().name());
             st.setString(3, identifier.getValue());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

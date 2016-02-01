@@ -32,8 +32,7 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         if (resultSet.wasNull()) {
             instance.setLibraryId(null);
         }
-        instance.setCreated(DateTimeUtils.timestampToDatetime(
-                resultSet.getTimestamp(DigitalInstanceDAO.ATTR_CREATED)));
+        instance.setCreated(DateTimeUtils.timestampToDatetime(resultSet.getTimestamp(DigitalInstanceDAO.ATTR_CREATED)));
         Timestamp updatedTs = resultSet.getTimestamp(DigitalInstanceDAO.ATTR_DEACTIVATED);
         if (!resultSet.wasNull()) {
             instance.setDeactivated(DateTimeUtils.timestampToDatetime(updatedTs));

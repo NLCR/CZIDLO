@@ -30,7 +30,7 @@ public class GetRecord extends OaiVerbResponse {
 
     @Override
     String[] getRequiredArguments() {
-        String[] result = {IDENTIFIER, METADATA_PREFIX};
+        String[] result = { IDENTIFIER, METADATA_PREFIX };
         return result;
     }
 

@@ -12,29 +12,29 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public abstract class SingleTabContentPanel extends ScrollPanel {
 
-	private final TabsPanel superPanel;
-	protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	protected final MessagesImpl messages = GWT.create(MessagesImpl.class);
-	
-	public SingleTabContentPanel(TabsPanel superPanel) {
-		super();
-		this.superPanel = superPanel;
-	}
+    private final TabsPanel superPanel;
+    protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    protected final MessagesImpl messages = GWT.create(MessagesImpl.class);
 
-	public boolean userManagesRegistrar(RegistrarDTO registrar) {
-		return getActiveUser().isLoggedUser() && superPanel.getRegistrarsManagedByUser().contains(registrar);
-	}
+    public SingleTabContentPanel(TabsPanel superPanel) {
+        super();
+        this.superPanel = superPanel;
+    }
 
-	public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() {
-		return superPanel.getRegistrarsManagedByUser();
-	}
+    public boolean userManagesRegistrar(RegistrarDTO registrar) {
+        return getActiveUser().isLoggedUser() && superPanel.getRegistrarsManagedByUser().contains(registrar);
+    }
 
-	public UserDTO getActiveUser() {
-		return superPanel.getActiveUser();
-	}
-	
-	public abstract void onSelection();
-	
-	public abstract void onDeselectionSelection();
-	
+    public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() {
+        return superPanel.getRegistrarsManagedByUser();
+    }
+
+    public UserDTO getActiveUser() {
+        return superPanel.getActiveUser();
+    }
+
+    public abstract void onSelection();
+
+    public abstract void onDeselectionSelection();
+
 }

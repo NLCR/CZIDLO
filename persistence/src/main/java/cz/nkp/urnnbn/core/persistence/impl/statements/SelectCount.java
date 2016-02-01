@@ -26,6 +26,6 @@ public class SelectCount implements StatementWrapper {
 
     @Override
     public void populate(PreparedStatement st) {
-        //nothing to populate
+        // nothing to populate
     }
 }

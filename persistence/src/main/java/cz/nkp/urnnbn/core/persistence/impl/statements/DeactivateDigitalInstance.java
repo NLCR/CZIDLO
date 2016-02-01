@@ -24,11 +24,8 @@ public class DeactivateDigitalInstance implements StatementWrapper {
     }
 
     public String preparedStatement() {
-        return "UPDATE " + DigitalInstanceDAO.TABLE_NAME
-                + " SET "
-                + DigitalInstanceDAO.ATTR_ACTIVE + "=?,"
-                + DigitalInstanceDAO.ATTR_DEACTIVATED + "=?"
-                + " WHERE " + DigitalInstanceDAO.ATTR_ID + "=?";
+        return "UPDATE " + DigitalInstanceDAO.TABLE_NAME + " SET " + DigitalInstanceDAO.ATTR_ACTIVE + "=?," + DigitalInstanceDAO.ATTR_DEACTIVATED
+                + "=?" + " WHERE " + DigitalInstanceDAO.ATTR_ID + "=?";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
@@ -37,7 +34,7 @@ public class DeactivateDigitalInstance implements StatementWrapper {
             st.setTimestamp(2, DateTimeUtils.nowTs());
             st.setLong(3, digitalInstanceId);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

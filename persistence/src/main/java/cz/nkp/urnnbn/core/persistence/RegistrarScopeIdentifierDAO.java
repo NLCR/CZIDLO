@@ -32,11 +32,14 @@ public interface RegistrarScopeIdentifierDAO {
 
     /**
      * 
-     * @param digDocId id of digital document
-     * @param type type of registrar-scope identifier
+     * @param digDocId
+     *            id of digital document
+     * @param type
+     *            type of registrar-scope identifier
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document or registrar-scope identifier doesn't exist
+     * @throws RecordNotFoundException
+     *             if digital document or registrar-scope identifier doesn't exist
      */
     public RegistrarScopeIdentifier getRegistrarScopeId(Long digDocId, RegistrarScopeIdType type) throws DatabaseException, RecordNotFoundException;
 
@@ -49,8 +52,9 @@ public interface RegistrarScopeIdentifierDAO {
      * @param digDocDbId
      * @param idType
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document with id digDocDbId doesn't exist 
-     * or the identifier for digital document with id digDocDbId and type idType doesn't exist
+     * @throws RecordNotFoundException
+     *             if digital document with id digDocDbId doesn't exist or the identifier for digital document with id digDocDbId and type idType
+     *             doesn't exist
      */
     public void deleteRegistrarScopeId(long digDocDbId, RegistrarScopeIdType idType) throws DatabaseException, RecordNotFoundException;
 
@@ -58,7 +62,8 @@ public interface RegistrarScopeIdentifierDAO {
      * 
      * @param digDocDbId
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document with id digDocDbId doesn't exist
+     * @throws RecordNotFoundException
+     *             if digital document with id digDocDbId doesn't exist
      */
     public void deleteRegistrarScopeIds(long digDocDbId) throws DatabaseException, RecordNotFoundException;
 }

@@ -23,17 +23,17 @@ import nu.xom.xslt.XSLException;
 public class Main {
 
     public static void main(String[] args) {
-        //xpathTest();
-        //xsltTest();
-        //transformationTest();
-        
+        // xpathTest();
+        // xsltTest();
+        // transformationTest();
+
         validateXmlExamples();
         testApiV2Responses();
         testApiV2ErrorResponses();
     }
 
     private static void validateXmlExamples() {
-        //TODO: move to the test class, rootDirs should be relative
+        // TODO: move to the test class, rootDirs should be relative
         validateDigDocRegistrationApiV3Examples();
         validateDigitalInstanceImportApiV3Examples();
         validateResponseExamples();
@@ -70,22 +70,22 @@ public class Main {
     private static void validateResponseExamples() {
         File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
         String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
-        //import digital instance
+        // import digital instance
         validate(rootDir + "importDigitalInstance.xml", xsd);
         validate(rootDir + "importDigitalInstance-minimal.xml", xsd);
-        //reserve 
+        // reserve
         validate(rootDir + "reserveUrnNbns.xml", xsd);
-        //get reservations
+        // get reservations
         validate(rootDir + "getUrnNbnReservations.xml", xsd);
-        //get registrars
+        // get registrars
         validate(rootDir + "getRegistrars.xml", xsd);
         validate(rootDir + "getRegistrarsWithLibrariesAndCatalogs.xml", xsd);
-        //get registrar
+        // get registrar
         validate(rootDir + "getRegistrar.xml", xsd);
         validate(rootDir + "getRegistrarsWithoutLibrariesAndCatalogs.xml", xsd);
-        //get digital documents
+        // get digital documents
         validate(rootDir + "getDigitalDocuments.xml", xsd);
-        //get digital document
+        // get digital document
         validate(rootDir + "getDigDoc/getDigDoc-MONOGRAPH.xml", xsd);
         validate(rootDir + "getDigDoc/getDigDoc-MONOGRAPH_VOLUME.xml", xsd);
         validate(rootDir + "getDigDoc/getDigDoc-PERIODICAL.xml", xsd);
@@ -94,21 +94,21 @@ public class Main {
         validate(rootDir + "getDigDoc/getDigDoc-ANALYTICAL.xml", xsd);
         validate(rootDir + "getDigDoc/getDigDoc-THESIS.xml", xsd);
         validate(rootDir + "getDigDoc/getDigDoc-OTHER.xml", xsd);
-        //get digital instances of digital document
+        // get digital instances of digital document
         validate(rootDir + "getDigitalInstancesOfDigDoc.xml", xsd);
-        //get registrar scope identifiers of digital document
+        // get registrar scope identifiers of digital document
         validate(rootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsd);
-        //delete all registrar-scope identifiers of digital document
+        // delete all registrar-scope identifiers of digital document
         validate(rootDir + "deleteRegistrarScopeIdentifiersOfDigDoc.xml", xsd);
-        //get registrar-scope identifier value
+        // get registrar-scope identifier value
         validate(rootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsd);
-        //set registrar-scope identifier value
+        // set registrar-scope identifier value
         validate(rootDir + "postRegistrarScopeIdentifier-insert.xml", xsd);
         validate(rootDir + "postRegistrarScopeIdentifier-update.xml", xsd);
-        //delete registrar-scope identifier
+        // delete registrar-scope identifier
         validate(rootDir + "deleteRegistrarScopeIdentifier.xml", xsd);
 
-        //get urn:nbn
+        // get urn:nbn
         validate(rootDir + "getUrnNbn/free.xml", xsd);
         validate(rootDir + "getUrnNbn/reserved.xml", xsd);
         validate(rootDir + "getUrnNbn/active.xml", xsd);
@@ -116,16 +116,16 @@ public class Main {
         validate(rootDir + "getUrnNbn/deactivated.xml", xsd);
         validate(rootDir + "getUrnNbn/deactivated-formalyReserved.xml", xsd);
 
-        //get all digital instances
+        // get all digital instances
         validate(rootDir + "getAllDigitalInstances.xml", xsd);
-        //get digital instance
+        // get digital instance
         validate(rootDir + "getDigitalInstanceById.xml", xsd);
         validate(rootDir + "getDigitalInstanceById-deactivated.xml", xsd);
-        //deactivate digital instance
+        // deactivate digital instance
         validate(rootDir + "deactivateDigitalInstance.xml", xsd);
         validate(rootDir + "deactivateDigitalInstance-minimal.xml", xsd);
 
-        //response to registerDD
+        // response to registerDD
         validate(rootDir + "registerDigitalDocument/byResolver.xml", xsd);
         validate(rootDir + "registerDigitalDocument/byRegistrar.xml", xsd);
         validate(rootDir + "registerDigitalDocument/byReservation.xml", xsd);
@@ -292,7 +292,7 @@ public class Main {
             Document srcDoc = XOMUtils.loadDocumentWithoutValidation(inFile);
             Document xslt = XOMUtils.loadDocumentWithoutValidation(xsltFile);
             XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
-            //String transformed = transformer.transformToString(srcDoc);
+            // String transformed = transformer.transformToString(srcDoc);
             String transformed = transformer.transform(srcDoc).toXML();
             System.err.println("transformed: " + transformed);
         } catch (XSLException ex) {
@@ -315,7 +315,7 @@ public class Main {
             transform(xmlRootDir + "getUrnNbnReservations.xml", xsltRootDir + "getUrnNbnReservations.xsl", "v2");
             transform(xmlRootDir + "reserveUrnNbns.xml", xsltRootDir + "reserveUrnNbnBlock.xsl", "v2");
             transform(xmlRootDir + "getDigitalDocuments.xml", xsltRootDir + "getDigitalDocuments.xsl", "v2");
-            
+
             transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
             transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH_VOLUME.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
             transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
@@ -324,7 +324,7 @@ public class Main {
             transform(xmlRootDir + "getDigDoc/getDigDoc-ANALYTICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
             transform(xmlRootDir + "getDigDoc/getDigDoc-THESIS.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
             transform(xmlRootDir + "getDigDoc/getDigDoc-OTHER.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            
+
             transform(xmlRootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifiers.xsl", "v2");
             transform(xmlRootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifierValue.xsl", "v2");
             transform(xmlRootDir + "deleteRegistrarScopeIdentifier.xml", xsltRootDir + "deleteRegistrarScopeIdentifier.xsl", "v2");

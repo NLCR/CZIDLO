@@ -31,45 +31,45 @@ import javax.ws.rs.core.Context;
 @Path("/urnnbn")
 public class UrnNbnResource extends AbstractUrnNbnResource {
 
-	@GET
-	@Path("{urn}")
-	@Produces("text/xml")
-	@Override
-	public String getUrnNbnXmlRecord(@PathParam("urn") String urnNbnString) {
-		try {
-			UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
-			return new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
-		} catch (WebApplicationException e) {
-			throw e;
-		} catch (Throwable e) {
-			logger.log(Level.SEVERE, e.getMessage());
-			throw new InternalException(e);
-		}
-	}
+    @GET
+    @Path("{urn}")
+    @Produces("text/xml")
+    @Override
+    public String getUrnNbnXmlRecord(@PathParam("urn") String urnNbnString) {
+        try {
+            UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
+            return new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
 
-	@DELETE
-	@Path("{urn}")
-	@Produces("text/xml")
-	public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urn") String urnNbnString, @QueryParam("note") String note) {
-		try {
-			checkServerNotReadOnly();
-			UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
-			switch (urnNbnWithStatus.getStatus()) {
-			case ACTIVE:
-				String login = req.getRemoteUser();
-				dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
-				UrnNbnWithStatus deactivated = getUrnNbnWithStatus(urnNbnWithStatus.getUrn());
-				return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
-			default:
-				throw new IncorrectUrnStateException(urnNbnWithStatus);
-			}
-		} catch (WebApplicationException e) {
-			throw e;
-		} catch (AccessException e) {
-			throw new NotAuthorizedException(e.getMessage());
-		} catch (Throwable e) {
-			logger.log(Level.SEVERE, e.getMessage());
-			throw new InternalException(e);
-		}
-	}
+    @DELETE
+    @Path("{urn}")
+    @Produces("text/xml")
+    public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urn") String urnNbnString, @QueryParam("note") String note) {
+        try {
+            checkServerNotReadOnly();
+            UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
+            switch (urnNbnWithStatus.getStatus()) {
+            case ACTIVE:
+                String login = req.getRemoteUser();
+                dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
+                UrnNbnWithStatus deactivated = getUrnNbnWithStatus(urnNbnWithStatus.getUrn());
+                return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
+            default:
+                throw new IncorrectUrnStateException(urnNbnWithStatus);
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (AccessException e) {
+            throw new NotAuthorizedException(e.getMessage());
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
 }

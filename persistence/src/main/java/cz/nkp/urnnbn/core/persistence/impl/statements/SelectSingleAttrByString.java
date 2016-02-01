@@ -29,9 +29,7 @@ public class SelectSingleAttrByString implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT " + selectAttrName
-                + " from " + tableName
-                + " WHERE " + whereAttrName + "=?";
+        return "SELECT " + selectAttrName + " from " + tableName + " WHERE " + whereAttrName + "=?";
     }
 
     @Override
@@ -39,7 +37,7 @@ public class SelectSingleAttrByString implements StatementWrapper {
         try {
             st.setString(1, whereAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

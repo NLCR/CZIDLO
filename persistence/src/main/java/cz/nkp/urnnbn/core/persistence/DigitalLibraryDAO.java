@@ -36,9 +36,10 @@ public interface DigitalLibraryDAO {
 
     /**
      * Digital library data will be updated. I.e. not id nor registrarId
+     * 
      * @param library
      * @throws DatabaseException
-     * @throws RecordNotFoundException 
+     * @throws RecordNotFoundException
      */
     public void updateLibrary(DigitalLibrary library) throws DatabaseException, RecordNotFoundException;
 

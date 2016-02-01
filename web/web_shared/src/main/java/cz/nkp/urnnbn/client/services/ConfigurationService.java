@@ -8,5 +8,5 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 
 @RemoteServiceRelativePath("conf")
 public interface ConfigurationService extends RemoteService {
-	ConfigurationData getConfiguration() throws ServerException;
+    ConfigurationData getConfiguration() throws ServerException;
 }

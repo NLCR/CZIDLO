@@ -7,10 +7,10 @@ import cz.nkp.urnnbn.client.resources.Resources;
 
 public class InstitutionsResources {
 
-	static InstitutionsPanelCss loadCss() {
-		Resources resources = GWT.create(Resources.class);
-		InstitutionsPanelCss result = resources.InstitutionsPanelCss();
-		result.ensureInjected();
-		return result;
-	}
+    static InstitutionsPanelCss loadCss() {
+        Resources resources = GWT.create(Resources.class);
+        InstitutionsPanelCss result = resources.InstitutionsPanelCss();
+        result.ensureInjected();
+        return result;
+    }
 }

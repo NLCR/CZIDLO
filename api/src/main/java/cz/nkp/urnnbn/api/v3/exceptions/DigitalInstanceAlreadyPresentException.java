@@ -16,6 +16,6 @@ public class DigitalInstanceAlreadyPresentException extends ApiV3Exception {
     public DigitalInstanceAlreadyPresentException(DigitalInstance instance) {
         super(Response.Status.FORBIDDEN, "DIGITAL_INSTANCE_ALREADY_PRESENT",
                 "Digital instance for this digital document is already present in digital library with id=" + instance.getLibraryId()
-                + " (digital instance with id=" + instance.getId() + ")");
+                        + " (digital instance with id=" + instance.getId() + ")");
     }
 }

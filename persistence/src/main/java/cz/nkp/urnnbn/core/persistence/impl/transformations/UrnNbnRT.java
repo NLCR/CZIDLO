@@ -31,11 +31,8 @@ public class UrnNbnRT implements ResultsetTransformer {
         String documentCode = resultSet.getString(UrnNbnDAO.ATTR_DOCUMENT_CODE);
         boolean active = resultSet.getBoolean(UrnNbnDAO.ATTR_ACTIVE);
         String deactivationNote = resultSet.getString(UrnNbnDAO.ATTR_DEACTIVATION_NOTE);
-        return new UrnNbn(registrarCode, documentCode, digDocId,
-                reserved == null ? null : DateTimeUtils.timestampToDatetime(reserved),
-                registered == null ? null : DateTimeUtils.timestampToDatetime(registered),
-                deactivated == null ? null : DateTimeUtils.timestampToDatetime(deactivated),
-                active,
-                deactivationNote);
+        return new UrnNbn(registrarCode, documentCode, digDocId, reserved == null ? null : DateTimeUtils.timestampToDatetime(reserved),
+                registered == null ? null : DateTimeUtils.timestampToDatetime(registered), deactivated == null ? null
+                        : DateTimeUtils.timestampToDatetime(deactivated), active, deactivationNote);
     }
 }

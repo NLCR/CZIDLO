@@ -9,8 +9,8 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @RemoteServiceRelativePath("staticContent")
 public interface StaticContentService extends RemoteService {
 
-	public ContentDTO getContentByNameAndLanguage(String name, String language) throws ServerException;
+    public ContentDTO getContentByNameAndLanguage(String name, String language) throws ServerException;
 
-	public void update(ContentDTO content) throws ServerException;
+    public void update(ContentDTO content) throws ServerException;
 
 }

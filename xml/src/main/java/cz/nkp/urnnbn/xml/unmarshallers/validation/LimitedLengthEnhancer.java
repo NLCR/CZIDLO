@@ -24,59 +24,59 @@ import java.util.logging.Logger;
  */
 public class LimitedLengthEnhancer implements ElementContentEnhancer {
 
-	private static final Logger logger = Logger.getLogger(LimitedLengthEnhancer.class.getName());
-	public static final String SUFFIX = " ...";
-	private final int minLength;
-	private final int maxLength;
+    private static final Logger logger = Logger.getLogger(LimitedLengthEnhancer.class.getName());
+    public static final String SUFFIX = " ...";
+    private final int minLength;
+    private final int maxLength;
 
-	public LimitedLengthEnhancer(int minLength, int maxLength) {
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-		if (minLength < 1) {
-			throw new IllegalArgumentException("minLength (" + minLength + ") must be positive");
-		}
-		if (maxLength < 1) {
-			throw new IllegalArgumentException("maxLength (" + maxLength + ") must be positive");
-		}
-		if (minLength > maxLength) {
-			throw new IllegalArgumentException("minLength (" + minLength + ") > maxLength (" + maxLength + ")");
-		}
-		if (maxLength <= SUFFIX.length()) {
-			throw new IllegalArgumentException("maxLength (" + maxLength + ") too short, must be at least " + SUFFIX.length());
-		}
-	}
+    public LimitedLengthEnhancer(int minLength, int maxLength) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+        if (minLength < 1) {
+            throw new IllegalArgumentException("minLength (" + minLength + ") must be positive");
+        }
+        if (maxLength < 1) {
+            throw new IllegalArgumentException("maxLength (" + maxLength + ") must be positive");
+        }
+        if (minLength > maxLength) {
+            throw new IllegalArgumentException("minLength (" + minLength + ") > maxLength (" + maxLength + ")");
+        }
+        if (maxLength <= SUFFIX.length()) {
+            throw new IllegalArgumentException("maxLength (" + maxLength + ") too short, must be at least " + SUFFIX.length());
+        }
+    }
 
-	public LimitedLengthEnhancer(int maxLength) {
-		this(1, maxLength);
-	}
+    public LimitedLengthEnhancer(int maxLength) {
+        this(1, maxLength);
+    }
 
-	@Override
-	public String toEnhancedValueOrNull(String original) {
-		if (original == null || original.isEmpty() || containsOnlyWhiteSpaces(original)) {
-			return null;
-		}
-		if (original.length() < minLength) {
-			logger.warning("to short string '" + original + "', dropping");
-			return null;
-		} else if (original.length() > maxLength) {
-			logger.warning("to long string '" + original + "', shortening");
-			return shorten(original);
-		} else { // length OK
-			return original;
-		}
-	}
+    @Override
+    public String toEnhancedValueOrNull(String original) {
+        if (original == null || original.isEmpty() || containsOnlyWhiteSpaces(original)) {
+            return null;
+        }
+        if (original.length() < minLength) {
+            logger.warning("to short string '" + original + "', dropping");
+            return null;
+        } else if (original.length() > maxLength) {
+            logger.warning("to long string '" + original + "', shortening");
+            return shorten(original);
+        } else { // length OK
+            return original;
+        }
+    }
 
-	private boolean containsOnlyWhiteSpaces(String original) {
-		for (int i = 0; i < original.length(); i++) {
-			if (!Character.isWhitespace(original.charAt(i))) {
-				return false;
-			}
-		}
-		return true;
-	}
+    private boolean containsOnlyWhiteSpaces(String original) {
+        for (int i = 0; i < original.length(); i++) {
+            if (!Character.isWhitespace(original.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	private String shorten(String original) {
-		int stringLength = maxLength - SUFFIX.length();
-		return original.substring(0, stringLength) + SUFFIX;
-	}
+    private String shorten(String original) {
+        int stringLength = maxLength - SUFFIX.length();
+        return original.substring(0, stringLength) + SUFFIX;
+    }
 }

@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
  *
  * @author Martin Řehánek
  */
-public class UrnNbnIdentifier  {
+public class UrnNbnIdentifier {
 
     private final UrnNbn urnNbn;
 
@@ -20,7 +20,7 @@ public class UrnNbnIdentifier  {
     }
 
     public UrnNbnIdentifier(UrnNbn urnNbn) {
-        if (urnNbn == null){
+        if (urnNbn == null) {
             throw new NullPointerException("urnNbn");
         }
         this.urnNbn = urnNbn;

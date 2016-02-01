@@ -43,13 +43,13 @@ public class UrlValidatorTest extends TestCase {
             new UrlValidator(-1);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             new UrlValidator(0);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -60,7 +60,7 @@ public class UrlValidatorTest extends TestCase {
         assertNull(enhancer.toEnhancedValueOrNull("ttp://7890"));
         assertNull(enhancer.toEnhancedValueOrNull("httpss://0"));
         assertNull(enhancer.toEnhancedValueOrNull("ftp://7890"));
-        
+
         assertNull(enhancer.toEnhancedValueOrNull("http://8901"));
         assertNull(enhancer.toEnhancedValueOrNull("https://901"));
         assertNull(enhancer.toEnhancedValueOrNull("HTTP://8901"));

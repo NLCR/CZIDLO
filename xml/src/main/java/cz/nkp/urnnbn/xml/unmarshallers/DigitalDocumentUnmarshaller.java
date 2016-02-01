@@ -56,13 +56,13 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
     private void loadTechnicalMetadataToDocument(DigitalDocument digDoc) {
         Element root = selectSingleElementOrNull("technicalMetadata", digDocEl);
         if (root != null) {
-            //format
+            // format
             digDoc.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(20)));
             Element formatEl = selectSingleElementOrNull("format", root);
             digDoc.setFormatVersion(attributeContentOrNull("version", formatEl, new LimitedLengthEnhancer(10)));
-            //extent
+            // extent
             digDoc.setExtent(elementContentOrNull("extent", root, new LimitedLengthEnhancer(200)));
-            //resolution
+            // resolution
             Element resolutionEl = selectSingleElementOrNull("resolution", root);
             if (resolutionEl != null) {
                 String resWidthStr = elementContentOrNull("horizontal", resolutionEl, null);
@@ -74,14 +74,14 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                     digDoc.setResolutionVertical(Integer.valueOf(resHeightStr));
                 }
             }
-            //compression
+            // compression
             digDoc.setCompression(elementContentOrNull("compression", root, new LimitedLengthEnhancer(50)));
             Element compressionEl = selectSingleElementOrNull("compression", root);
             String compressionRatioStr = attributeContentOrNull("ratio", compressionEl, null);
             if (compressionRatioStr != null) {
                 digDoc.setCompressionRatio(Double.valueOf(compressionRatioStr));
             }
-            //color
+            // color
             Element colorEl = selectSingleElementOrNull("color", root);
             if (colorEl != null) {
                 digDoc.setColorModel(elementContentOrNull("model", colorEl, new LimitedLengthEnhancer(20)));
@@ -90,9 +90,9 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                     digDoc.setColorDepth(Integer.valueOf(colorDepthStr));
                 }
             }
-            //ICC profile
+            // ICC profile
             digDoc.setIccProfile(elementContentOrNull("iccProfile", root, new LimitedLengthEnhancer(50)));
-            //picture size
+            // picture size
             Element pictureEl = selectSingleElementOrNull("pictureSize", root);
             if (pictureEl != null) {
                 String picWidthStr = elementContentOrNull("width", pictureEl, null);
@@ -114,11 +114,11 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
     List<RegistrarScopeIdentifier> getRegistrarScopeIdentifiers() {
         Element identifiersEl = (Element) selectSingleElementOrNull("registrarScopeIdentifiers", digDocEl);
         if (identifiersEl == null) {
-            return Collections.<RegistrarScopeIdentifier>emptyList();
+            return Collections.<RegistrarScopeIdentifier> emptyList();
         } else {
             Nodes nodes = selectNodes(new Xpath(prefixed("id")), identifiersEl);
             if (nodes.size() == 0) {
-                return Collections.<RegistrarScopeIdentifier>emptyList();
+                return Collections.<RegistrarScopeIdentifier> emptyList();
             } else {
                 List<RegistrarScopeIdentifier> result = new ArrayList<RegistrarScopeIdentifier>(nodes.size());
                 for (int i = 0; i < nodes.size(); i++) {
@@ -166,7 +166,7 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                 return result;
             }
         }
-        return Collections.<UrnNbnWithStatus>emptyList();
+        return Collections.<UrnNbnWithStatus> emptyList();
     }
 
     private Element urnNbnElement() {

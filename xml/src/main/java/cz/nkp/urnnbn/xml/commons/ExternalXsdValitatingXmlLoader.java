@@ -56,13 +56,13 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
     private static XMLReader readerValidatingByXsdFromFile(File schema) throws ValidityException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-//            SAXParserFactory factory = SAXParserFactory.newInstance(
-//                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
-//                    Thread.currentThread().getContextClassLoader());
+            // SAXParserFactory factory = SAXParserFactory.newInstance(
+            // "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+            // Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(schema)}));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(schema) }));
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new XOMUtils.MyErrorHandler());
@@ -85,13 +85,13 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
     private static XMLReader readerValidatingByXsdFromInputStream(InputStream in) throws ValidityException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-//            SAXParserFactory factory = SAXParserFactory.newInstance(
-//                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
-//                    Thread.currentThread().getContextClassLoader());
+            // SAXParserFactory factory = SAXParserFactory.newInstance(
+            // "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+            // Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(in)}));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(in) }));
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new XOMUtils.MyErrorHandler());
@@ -114,13 +114,13 @@ public class ExternalXsdValitatingXmlLoader extends ValidatingXmlLoader {
     private static XMLReader readerValidatingByXsdFromString(String schema) throws ValidityException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-//            SAXParserFactory factory = SAXParserFactory.newInstance(
-//                    "org.apache.xerces.jaxp.SAXParserFactoryImpl",
-//                    Thread.currentThread().getContextClassLoader());
+            // SAXParserFactory factory = SAXParserFactory.newInstance(
+            // "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+            // Thread.currentThread().getContextClassLoader());
             factory.setValidating(false);
             factory.setNamespaceAware(true);
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-            factory.setSchema(schemaFactory.newSchema(new Source[]{new StreamSource(new StringReader(schema))}));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(new StringReader(schema)) }));
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new XOMUtils.MyErrorHandler());

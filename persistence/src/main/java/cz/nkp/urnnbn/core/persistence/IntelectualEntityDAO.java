@@ -36,21 +36,23 @@ public interface IntelectualEntityDAO {
 
     /**
      * Finds intelectual entities that have ieIdentifier of specified type with specified value
+     * 
      * @param type
      * @param idValue
      * @return list of intelectual entity db id
-     * @throws DatabaseException 
+     * @throws DatabaseException
      */
     public List<Long> getEntitiesDbIdListByIdentifier(IntEntIdType type, String idValue) throws DatabaseException;
 
     /**
      * Finds intelectual entities that have ieIdentifier of anye type with specified value
+     * 
      * @param idValue
      * @return
-     * @throws DatabaseException 
+     * @throws DatabaseException
      */
     public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException;
-    
+
     public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, Integer offset, Integer limit) throws DatabaseException;
 
     public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException;

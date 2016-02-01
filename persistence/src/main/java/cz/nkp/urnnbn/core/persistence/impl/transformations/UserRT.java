@@ -17,25 +17,25 @@ import java.sql.Timestamp;
  */
 public class UserRT implements ResultsetTransformer {
 
-	@Override
-	public User transform(ResultSet resultSet) throws SQLException {
-		User user = new User();
-		user.setId(resultSet.getLong(UserDAO.ATTR_ID));
-		if (resultSet.wasNull()) {
-			user.setId(null);
-		}
-		Timestamp created = resultSet.getTimestamp(UserDAO.ATTR_CREATED);
-		user.setCreated(DateTimeUtils.timestampToDatetime(created));
-		Timestamp updated = resultSet.getTimestamp(UserDAO.ATTR_UPDATED);
-		user.setModified(DateTimeUtils.timestampToDatetime(updated));
-		user.setLogin(resultSet.getString(UserDAO.ATTR_LOGIN));
-		user.setPasswordSalt(resultSet.getString(UserDAO.ATTR_PASS_SALT));
-		user.setPasswordHash(resultSet.getString(UserDAO.ATTR_PASS_HASH));
-		user.setAdmin(resultSet.getBoolean(UserDAO.ATTR_IS_ADMIN));
-		if (resultSet.wasNull()) {
-			user.setAdmin(null);
-		}
-		user.setEmail(resultSet.getString(UserDAO.ATTR_EMAIL));
-		return user;
-	}
+    @Override
+    public User transform(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getLong(UserDAO.ATTR_ID));
+        if (resultSet.wasNull()) {
+            user.setId(null);
+        }
+        Timestamp created = resultSet.getTimestamp(UserDAO.ATTR_CREATED);
+        user.setCreated(DateTimeUtils.timestampToDatetime(created));
+        Timestamp updated = resultSet.getTimestamp(UserDAO.ATTR_UPDATED);
+        user.setModified(DateTimeUtils.timestampToDatetime(updated));
+        user.setLogin(resultSet.getString(UserDAO.ATTR_LOGIN));
+        user.setPasswordSalt(resultSet.getString(UserDAO.ATTR_PASS_SALT));
+        user.setPasswordHash(resultSet.getString(UserDAO.ATTR_PASS_HASH));
+        user.setAdmin(resultSet.getBoolean(UserDAO.ATTR_IS_ADMIN));
+        if (resultSet.wasNull()) {
+            user.setAdmin(null);
+        }
+        user.setEmail(resultSet.getString(UserDAO.ATTR_EMAIL));
+        return user;
+    }
 }

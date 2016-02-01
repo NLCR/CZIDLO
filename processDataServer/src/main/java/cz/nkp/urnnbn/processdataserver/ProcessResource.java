@@ -78,7 +78,7 @@ public class ProcessResource {
     public Response getProcessOutput() {
         try {
             ProcessOutputFileInfo outputFileInfo = new ProcessOutputFileInfo(process.getType());
-            //System.err.println("ouptput file: " + outputFileInfo.getFilename() + ", mimeType: \"" + outputFileInfo.getMimetype() + "\"");
+            // System.err.println("ouptput file: " + outputFileInfo.getFilename() + ", mimeType: \"" + outputFileInfo.getMimetype() + "\"");
             File file = getProcessResultManager().getProcessOutputFile(process.getId(), outputFileInfo.getFilename());
             ResponseBuilder builder = Response.ok(file, outputFileInfo.getMimetype());
             builder.header("Content-Disposition", "attachment; filename=\"" + outputFileInfo.getFilename() + "\"");
@@ -102,23 +102,23 @@ public class ProcessResource {
 
         private String getMimetype() {
             switch (type) {
-                case REGISTRARS_URN_NBN_CSV_EXPORT:
-                    return "text/csv; charset=UTF-8";
-                case OAI_ADAPTER:
-                    return "text/plain; charset=UTF-8";
-                default:
-                    throw new RuntimeException("MIME type of process ouptput for process type " + type + " not defined");
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return "text/csv; charset=UTF-8";
+            case OAI_ADAPTER:
+                return "text/plain; charset=UTF-8";
+            default:
+                throw new RuntimeException("MIME type of process ouptput for process type " + type + " not defined");
             }
         }
 
         private String getFilename() {
             switch (type) {
-                case REGISTRARS_URN_NBN_CSV_EXPORT:
-                    return UrnNbnCsvExportJob.CSV_EXPORT_FILE_NAME;
-                case OAI_ADAPTER:
-                    return OaiAdapterJob.PARAM_REPORT_FILE;
-                default:
-                    throw new RuntimeException("Filename of process ouptput for process type " + type + " not defined");
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return UrnNbnCsvExportJob.CSV_EXPORT_FILE_NAME;
+            case OAI_ADAPTER:
+                return OaiAdapterJob.PARAM_REPORT_FILE;
+            default:
+                throw new RuntimeException("Filename of process ouptput for process type " + type + " not defined");
             }
         }
     }

@@ -24,8 +24,7 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 
 /**
- * TODO: remove absolute paths
- * TODO: move to module api
+ * TODO: remove absolute paths TODO: move to module api
  *
  * @author Martin Řehánek
  */

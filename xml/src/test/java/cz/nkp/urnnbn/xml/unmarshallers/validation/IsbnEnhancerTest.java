@@ -56,7 +56,7 @@ public class IsbnEnhancerTest extends TestCase {
     public void testEnhancePreficies() {
         ElementContentEnhancer enhancer = new IsbnEnhancer();
 
-        //ISBN
+        // ISBN
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN 3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN 3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN 377054739X"));
@@ -69,7 +69,7 @@ public class IsbnEnhancerTest extends TestCase {
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 978 3 7705 4739 5"));
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN 9783770547395"));
 
-        //ISBN:
+        // ISBN:
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN:3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN:3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN:377054739X"));
@@ -82,7 +82,7 @@ public class IsbnEnhancerTest extends TestCase {
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:978 3 7705 4739 5"));
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN:9783770547395"));
 
-        //ISBN:_
+        // ISBN:_
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN: 3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN: 3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("ISBN: 377054739X"));
@@ -95,7 +95,7 @@ public class IsbnEnhancerTest extends TestCase {
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 978 3 7705 4739 5"));
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("ISBN: 9783770547395"));
 
-        //isbn
+        // isbn
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn 3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn 3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn 377054739X"));
@@ -108,7 +108,7 @@ public class IsbnEnhancerTest extends TestCase {
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 978 3 7705 4739 5"));
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn 9783770547395"));
 
-        //isbn:
+        // isbn:
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn:3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn:3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn:377054739X"));
@@ -121,7 +121,7 @@ public class IsbnEnhancerTest extends TestCase {
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:978 3 7705 4739 5"));
         assertEquals("9783770547395", enhancer.toEnhancedValueOrNull("isbn:9783770547395"));
 
-        //isbn:_
+        // isbn:_
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn: 3-7705-4739-X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn: 3 7705 4739 X"));
         assertEquals("377054739X", enhancer.toEnhancedValueOrNull("isbn: 377054739X"));
@@ -226,11 +226,11 @@ public class IsbnEnhancerTest extends TestCase {
         assertNotNull(enhancer.toEnhancedValueOrNull("ISBN 0 571 08989 5"));
         assertNotNull(enhancer.toEnhancedValueOrNull("isbn 0-671657-15-1"));
     }
-    
+
     /**
      * https://github.com/NLCR/CZIDLO/issues/57
      */
-    public void testIssue57(){
+    public void testIssue57() {
         ElementContentEnhancer enhancer = new IsbnEnhancer();
         assertEquals("9780123747204", enhancer.toEnhancedValueOrNull("978-0-12-374720-4"));
         assertEquals("0521472997", enhancer.toEnhancedValueOrNull("0 521 47299 7"));

@@ -11,31 +11,31 @@ import cz.nkp.urnnbn.client.validation.YearValidator;
 
 public abstract class PublishableEntityForm extends IntelectualEntityForm {
 
-	public PublishableEntityForm(PrimaryOriginatorDTO originatorDto) {
-		super(originatorDto);
-	}
+    public PublishableEntityForm(PrimaryOriginatorDTO originatorDto) {
+        super(originatorDto);
+    }
 
-	void addPublicationFieldsToFormFields(FormFields result, PublishableEntityDTO dto) {
-		PublicationDTO publication = dto.getPublication() != null ? dto.getPublication() : new PublicationDTO();
-		Field publisher = new TextInputValueField(new LimitedLengthValidator(50), constants.publisher(), publication.getPublisher(), false);
-		result.addField("publisher", publisher);
-		Field pubPlace = new TextInputValueField(new LimitedLengthValidator(50), constants.publicationPlace(),
-				publication.getPublicationPlace(), false);
-		result.addField("pubPlace", pubPlace);
-		Field pubYear = new TextInputValueField(new YearValidator(), constants.publicationYear(), publication.getPublicationYear(), false);
-		result.addField("pubYear", pubYear);
-	}
+    void addPublicationFieldsToFormFields(FormFields result, PublishableEntityDTO dto) {
+        PublicationDTO publication = dto.getPublication() != null ? dto.getPublication() : new PublicationDTO();
+        Field publisher = new TextInputValueField(new LimitedLengthValidator(50), constants.publisher(), publication.getPublisher(), false);
+        result.addField("publisher", publisher);
+        Field pubPlace = new TextInputValueField(new LimitedLengthValidator(50), constants.publicationPlace(), publication.getPublicationPlace(),
+                false);
+        result.addField("pubPlace", pubPlace);
+        Field pubYear = new TextInputValueField(new YearValidator(), constants.publicationYear(), publication.getPublicationYear(), false);
+        result.addField("pubYear", pubYear);
+    }
 
-	void setPublicationDataFromFormFields(PublishableEntityDTO result) {
-		PublicationDTO publication = new PublicationDTO();
-		publication.setPublisher((String) fields.getFieldByKey("publisher").getInsertedValue());
-		publication.setPublicationPlace((String) fields.getFieldByKey("pubPlace").getInsertedValue());
-		String yearStr = (String) fields.getFieldByKey("pubYear").getInsertedValue();
-		if (yearStr != null) {
-			publication.setPublicationYear(Integer.valueOf(yearStr));
-		}
-		if (!publication.isEmpty()) {
-			result.setPublication(publication);
-		}
-	}
+    void setPublicationDataFromFormFields(PublishableEntityDTO result) {
+        PublicationDTO publication = new PublicationDTO();
+        publication.setPublisher((String) fields.getFieldByKey("publisher").getInsertedValue());
+        publication.setPublicationPlace((String) fields.getFieldByKey("pubPlace").getInsertedValue());
+        String yearStr = (String) fields.getFieldByKey("pubYear").getInsertedValue();
+        if (yearStr != null) {
+            publication.setPublicationYear(Integer.valueOf(yearStr));
+        }
+        if (!publication.isEmpty()) {
+            result.setPublication(publication);
+        }
+    }
 }

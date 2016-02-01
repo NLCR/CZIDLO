@@ -17,66 +17,66 @@ import java.util.logging.Logger;
  */
 public enum MetadataFormat {
 
-	OAI_DC {
+    OAI_DC {
 
-		@Override
-		public URL getSchemaUrl() {
-			return url("http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
-		}
+        @Override
+        public URL getSchemaUrl() {
+            return url("http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+        }
 
-		@Override
-		public String getNamespaceUri() {
-			return Namespaces.OAI_DC.getURI();
-		}
+        @Override
+        public String getNamespaceUri() {
+            return Namespaces.OAI_DC.getURI();
+        }
 
-		@Override
-		public String toString() {
-			return "oai_dc";
-		}
-	},
-	CZIDLO {
+        @Override
+        public String toString() {
+            return "oai_dc";
+        }
+    },
+    CZIDLO {
 
-		@Override
-		public URL getSchemaUrl() {
-			try {
-				return new URL("http://resolver.nkp.cz/api/v3/response.xsd");
-			} catch (MalformedURLException ex) {
-				Logger.getLogger(MetadataFormat.class.getName()).log(Level.SEVERE, null, ex);
-				return null;
-			}
-		}
+        @Override
+        public URL getSchemaUrl() {
+            try {
+                return new URL("http://resolver.nkp.cz/api/v3/response.xsd");
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(MetadataFormat.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }
 
-		@Override
-		public String getNamespaceUri() {
-			return Namespaces.CZIDLO.getURI();
-		}
+        @Override
+        public String getNamespaceUri() {
+            return Namespaces.CZIDLO.getURI();
+        }
 
-		@Override
-		public String toString() {
-			return "czidlo";
-		}
-	};
+        @Override
+        public String toString() {
+            return "czidlo";
+        }
+    };
 
-	public static MetadataFormat parseString(String string) {
-		for (MetadataFormat format : MetadataFormat.values()) {
-			if (format.toString().equals(string)) {
-				return format;
-			}
-		}
-		throw new IllegalArgumentException("no such metadata format '" + string + "'");
-	}
+    public static MetadataFormat parseString(String string) {
+        for (MetadataFormat format : MetadataFormat.values()) {
+            if (format.toString().equals(string)) {
+                return format;
+            }
+        }
+        throw new IllegalArgumentException("no such metadata format '" + string + "'");
+    }
 
-	public abstract URL getSchemaUrl();
+    public abstract URL getSchemaUrl();
 
-	public abstract String getNamespaceUri();
+    public abstract String getNamespaceUri();
 
-	protected URL url(String string) {
-		try {
-			return new URL(string);
-		} catch (MalformedURLException ex) {
-			// should never happen
-			Logger.getLogger(MetadataFormat.class.getName()).log(Level.SEVERE, null, ex);
-			return null;
-		}
-	}
+    protected URL url(String string) {
+        try {
+            return new URL(string);
+        } catch (MalformedURLException ex) {
+            // should never happen
+            Logger.getLogger(MetadataFormat.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }

@@ -28,25 +28,25 @@ public class PostgresSimpleConnector implements PostgresConnector {
     private String jdbcUrl;
 
     /**
-     * Should only be used by connetor factory. Otherwise multiple instances can alloc
-     * multiple connections/pools
+     * Should only be used by connetor factory. Otherwise multiple instances can alloc multiple connections/pools
+     * 
      * @param host
      * @param database
      * @param login
-     * @param password 
+     * @param password
      */
     public PostgresSimpleConnector(String host, String database, String login, String password) {
         this(host, database, DEFAULT_PORT, login, password);
     }
 
     /**
-     * Should only be used by connetor factory. Otherwise multiple instances can alloc
-     * multiple connections/pools
+     * Should only be used by connetor factory. Otherwise multiple instances can alloc multiple connections/pools
+     * 
      * @param host
      * @param database
      * @param port
      * @param login
-     * @param password 
+     * @param password
      */
     public PostgresSimpleConnector(String host, String database, int port, String login, String password) {
         this.host = host;
@@ -67,7 +67,7 @@ public class PostgresSimpleConnector implements PostgresConnector {
             logger.log(Level.SEVERE, "Driver {0} not found", DRIVER_CLASS);
             throw new DatabaseException(ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot obtain connection from {0}: {1}", new Object[]{url, ex.getMessage()});
+            logger.log(Level.SEVERE, "Cannot obtain connection from {0}: {1}", new Object[] { url, ex.getMessage() });
             throw new DatabaseException(ex);
         }
     }

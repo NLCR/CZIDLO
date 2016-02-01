@@ -23,27 +23,26 @@ package cz.nkp.urnnbn.processmanager.persistence;
 public class UnknownRecordException extends Exception {
 
     /**
-     * Creates a new instance of
-     * <code>UnknownRecordException</code> without detail message.
+     * Creates a new instance of <code>UnknownRecordException</code> without detail message.
      */
     public UnknownRecordException() {
     }
 
     /**
-     * Constructs an instance of
-     * <code>UnknownRecordException</code> with the specified detail message.
+     * Constructs an instance of <code>UnknownRecordException</code> with the specified detail message.
      *
-     * @param msg the detail message.
+     * @param msg
+     *            the detail message.
      */
     public UnknownRecordException(String msg) {
         super(msg);
     }
 
     /**
-     * Creates a new instance of
-     * <code>UnknownRecordException</code> without cause exception.
+     * Creates a new instance of <code>UnknownRecordException</code> without cause exception.
      *
-     * @param cause cause
+     * @param cause
+     *            cause
      */
     public UnknownRecordException(Throwable cause) {
         super(cause);

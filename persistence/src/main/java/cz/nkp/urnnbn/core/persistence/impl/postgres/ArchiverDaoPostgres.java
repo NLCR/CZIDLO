@@ -35,7 +35,7 @@ public class ArchiverDaoPostgres extends AbstractDAO implements ArchiverDAO {
         try {
             return insertRecordWithIdFromSequence(archiver, TABLE_NAME, SEQ_NAME, new InsertArchiver(archiver));
         } catch (RecordNotFoundException ex) {
-            //should never happen since Archiver doesn't have foreign key attributes
+            // should never happen since Archiver doesn't have foreign key attributes
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         }

@@ -28,7 +28,8 @@ public class IntEntIdsSynchronizationPlan {
     private List<IntEntIdentifier> toInsert = new ArrayList<IntEntIdentifier>();
     private List<IntEntIdentifier> toUpdate = new ArrayList<IntEntIdentifier>();
 
-    IntEntIdsSynchronizationPlan(Collection<IntEntIdentifier> identifiers, Long entityId, IntEntIdentifierDAO dao) throws UnknownIntelectualEntity, DatabaseException {
+    IntEntIdsSynchronizationPlan(Collection<IntEntIdentifier> identifiers, Long entityId, IntEntIdentifierDAO dao) throws UnknownIntelectualEntity,
+            DatabaseException {
         this.dao = dao;
         Map<IntEntIdType, IntEntIdentifier> idsFromDatabase = intEntIdentifiersFromDatabase(entityId);
         for (IntEntIdentifier id : identifiers) {
@@ -38,13 +39,13 @@ public class IntEntIdsSynchronizationPlan {
             } else if (!id.getValue().equals(fromDb.getValue())) {
                 toUpdate.add(id);
             } else {
-                //nothing - identifier value not changed
+                // nothing - identifier value not changed
             }
         }
         if (idsFromDatabase.size() != identifiers.size()) {
             toDelete = identifiersToDelete(idsFromDatabase.values(), toMap(identifiers));
         } else {
-            toDelete = Collections.<IntEntIdentifier>emptyList();
+            toDelete = Collections.<IntEntIdentifier> emptyList();
         }
     }
 

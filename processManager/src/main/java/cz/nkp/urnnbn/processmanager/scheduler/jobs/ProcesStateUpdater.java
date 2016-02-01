@@ -29,59 +29,59 @@ import java.util.logging.Logger;
  */
 public class ProcesStateUpdater {
 
-	private final Long processId;
+    private final Long processId;
 
-	public ProcesStateUpdater(Long processId) {
-		this.processId = processId;
-	}
+    public ProcesStateUpdater(Long processId) {
+        this.processId = processId;
+    }
 
-	public void updateProcessStateToKilled() {
-		updateProcessStatToFinished(ProcessState.KILLED);
-	}
+    public void updateProcessStateToKilled() {
+        updateProcessStatToFinished(ProcessState.KILLED);
+    }
 
-	public void updateProcessStateToFinished() {
-		updateProcessStatToFinished(ProcessState.FINISHED);
-	}
+    public void updateProcessStateToFinished() {
+        updateProcessStatToFinished(ProcessState.FINISHED);
+    }
 
-	public void updateProcessStateToFailed() {
-		updateProcessStatToFinished(ProcessState.FAILED);
-	}
+    public void updateProcessStateToFailed() {
+        updateProcessStatToFinished(ProcessState.FAILED);
+    }
 
-	public void updateProcessStatToFinished(ProcessState state) {
-		try {
-			cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
-			process.setState(state);
-			process.setFinished(new Date());
-			ProcessDAOImpl.instanceOf().updateProcess(process);
-		} catch (UnknownRecordException ex) {
-			// TODO:logovat, ale stejne, jako u ostatnich procesu
-			System.err.println("cannot set process state to " + state + " - process (id=" + processId + ") not found");
-			Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
+    public void updateProcessStatToFinished(ProcessState state) {
+        try {
+            cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
+            process.setState(state);
+            process.setFinished(new Date());
+            ProcessDAOImpl.instanceOf().updateProcess(process);
+        } catch (UnknownRecordException ex) {
+            // TODO:logovat, ale stejne, jako u ostatnich procesu
+            System.err.println("cannot set process state to " + state + " - process (id=" + processId + ") not found");
+            Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-	public void updateProcessStateToRunning() {
-		try {
-			cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
-			process.setState(ProcessState.RUNNING);
-			process.setStarted(new Date());
-			ProcessDAOImpl.instanceOf().updateProcess(process);
-		} catch (UnknownRecordException ex) {
-			// TODO:logovat, ale stejne, jako u ostatnich procesu
-			System.err.println("cannot set process state to " + ProcessState.RUNNING + " - process (id=" + processId + ") not found");
-			Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
+    public void updateProcessStateToRunning() {
+        try {
+            cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
+            process.setState(ProcessState.RUNNING);
+            process.setStarted(new Date());
+            ProcessDAOImpl.instanceOf().updateProcess(process);
+        } catch (UnknownRecordException ex) {
+            // TODO:logovat, ale stejne, jako u ostatnich procesu
+            System.err.println("cannot set process state to " + ProcessState.RUNNING + " - process (id=" + processId + ") not found");
+            Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-	public void upadateProcessStateToCanceled() {
-		try {
-			cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
-			process.setState(ProcessState.CANCELED);
-			ProcessDAOImpl.instanceOf().updateProcess(process);
-		} catch (UnknownRecordException ex) {
-			// TODO:logovat, ale stejne, jako u ostatnich procesu
-			System.err.println("cannot set process state to " + ProcessState.CANCELED + " - process (id=" + processId + ") not found");
-			Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
+    public void upadateProcessStateToCanceled() {
+        try {
+            cz.nkp.urnnbn.processmanager.core.Process process = ProcessDAOImpl.instanceOf().getProcess(processId);
+            process.setState(ProcessState.CANCELED);
+            ProcessDAOImpl.instanceOf().updateProcess(process);
+        } catch (UnknownRecordException ex) {
+            // TODO:logovat, ale stejne, jako u ostatnich procesu
+            System.err.println("cannot set process state to " + ProcessState.CANCELED + " - process (id=" + processId + ") not found");
+            Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

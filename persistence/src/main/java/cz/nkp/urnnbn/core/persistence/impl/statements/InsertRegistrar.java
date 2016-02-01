@@ -26,13 +26,9 @@ public class InsertRegistrar implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + RegistrarDAO.TABLE_NAME
-                + "(" + RegistrarDAO.ATTR_ID
-                + "," + RegistrarDAO.ATTR_CODE
-                + "," + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_REGISTRAR
-                + "," + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESOLVER
-                + "," + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION
-                + ") values(?,?,?,?,?)";
+        return "INSERT into " + RegistrarDAO.TABLE_NAME + "(" + RegistrarDAO.ATTR_ID + "," + RegistrarDAO.ATTR_CODE + ","
+                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_REGISTRAR + "," + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESOLVER + ","
+                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION + ") values(?,?,?,?,?)";
     }
 
     @Override
@@ -44,7 +40,7 @@ public class InsertRegistrar implements StatementWrapper {
             st.setBoolean(4, registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
             st.setBoolean(5, registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

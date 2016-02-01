@@ -31,7 +31,7 @@ public class AbstractDAO {
     protected SessionFactory factory = initFactory();
 
     private SessionFactory initFactory() {
-        //return new Configuration().configure().buildSessionFactory();
+        // return new Configuration().configure().buildSessionFactory();
         return new AnnotationConfiguration().configure().buildSessionFactory();
     }
 }

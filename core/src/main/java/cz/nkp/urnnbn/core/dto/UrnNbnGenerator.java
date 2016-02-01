@@ -11,7 +11,7 @@ package cz.nkp.urnnbn.core.dto;
 public class UrnNbnGenerator {
 
     private Long registrarId;
-    private String lastDocumentCode = "zzzzzz";//so that first one used will be "000000"
+    private String lastDocumentCode = "zzzzzz";// so that first one used will be "000000"
 
     public String getLastDocumentCode() {
         return lastDocumentCode;

@@ -17,94 +17,92 @@ import com.allen_sauer.gwt.dnd.client.util.WidgetLocation;
  * Allows one or more table rows to be dropped into an existing table.
  */
 public class FlexTableRowDropController extends AbstractPositioningDropController {
-	
-	private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
 
-	  private FlexTable flexTable;
+    private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
 
-	  private InsertPanel flexTableRowsAsIndexPanel = new InsertPanel() {
+    private FlexTable flexTable;
 
-	    @Override
-	    public void add(Widget w) {
-	      throw new UnsupportedOperationException();
-	    }
+    private InsertPanel flexTableRowsAsIndexPanel = new InsertPanel() {
 
-	    @Override
-	    public Widget getWidget(int index) {
-	      return flexTable.getWidget(index, 0);
-	    }
+        @Override
+        public void add(Widget w) {
+            throw new UnsupportedOperationException();
+        }
 
-	    @Override
-	    public int getWidgetCount() {
-	      return flexTable.getRowCount();
-	    }
+        @Override
+        public Widget getWidget(int index) {
+            return flexTable.getWidget(index, 0);
+        }
 
-	    @Override
-	    public int getWidgetIndex(Widget child) {
-	      throw new UnsupportedOperationException();
-	    }
+        @Override
+        public int getWidgetCount() {
+            return flexTable.getRowCount();
+        }
 
-	    @Override
-	    public void insert(Widget w, int beforeIndex) {
-	      throw new UnsupportedOperationException();
-	    }
+        @Override
+        public int getWidgetIndex(Widget child) {
+            throw new UnsupportedOperationException();
+        }
 
-	    @Override
-	    public boolean remove(int index) {
-	      throw new UnsupportedOperationException();
-	    }
-	  };
+        @Override
+        public void insert(Widget w, int beforeIndex) {
+            throw new UnsupportedOperationException();
+        }
 
-	  private Widget positioner = null;
+        @Override
+        public boolean remove(int index) {
+            throw new UnsupportedOperationException();
+        }
+    };
 
-	  private int targetRow;
+    private Widget positioner = null;
 
-	  public FlexTableRowDropController(FlexTable flexTable) {
-	    super(flexTable);
-	    this.flexTable = flexTable;
-	  }
+    private int targetRow;
 
-	  @Override
-	  public void onDrop(DragContext context) {
-	    FlexTableRowDragController trDragController = (FlexTableRowDragController) context.dragController;
-	    FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable,
-	        trDragController.getDragRow(), targetRow + 1);
-	    super.onDrop(context);
-	  }
+    public FlexTableRowDropController(FlexTable flexTable) {
+        super(flexTable);
+        this.flexTable = flexTable;
+    }
 
-	  @Override
-	  public void onEnter(DragContext context) {
-	    super.onEnter(context);
-	    positioner = newPositioner(context);
-	  }
+    @Override
+    public void onDrop(DragContext context) {
+        FlexTableRowDragController trDragController = (FlexTableRowDragController) context.dragController;
+        FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable, trDragController.getDragRow(), targetRow + 1);
+        super.onDrop(context);
+    }
 
-	  @Override
-	  public void onLeave(DragContext context) {
-	    positioner.removeFromParent();
-	    positioner = null;
-	    super.onLeave(context);
-	  }
+    @Override
+    public void onEnter(DragContext context) {
+        super.onEnter(context);
+        positioner = newPositioner(context);
+    }
 
-	  @Override
-	  public void onMove(DragContext context) {
-	    super.onMove(context);
-	    targetRow = DOMUtil.findIntersect(flexTableRowsAsIndexPanel, new CoordinateLocation(
-	        context.mouseX, context.mouseY), LocationWidgetComparator.BOTTOM_HALF_COMPARATOR) - 1;
+    @Override
+    public void onLeave(DragContext context) {
+        positioner.removeFromParent();
+        positioner = null;
+        super.onLeave(context);
+    }
 
-	    if (flexTable.getRowCount() > 0) {
-	      Widget w = flexTable.getWidget(targetRow == -1 ? 0 : targetRow, 0);
-	      Location widgetLocation = new WidgetLocation(w, context.boundaryPanel);
-	      Location tableLocation = new WidgetLocation(flexTable, context.boundaryPanel);
-	      context.boundaryPanel.add(positioner, tableLocation.getLeft(), widgetLocation.getTop()
-	          + (targetRow == -1 ? 0 : w.getOffsetHeight()));
-	    }
-	  }
+    @Override
+    public void onMove(DragContext context) {
+        super.onMove(context);
+        targetRow = DOMUtil.findIntersect(flexTableRowsAsIndexPanel, new CoordinateLocation(context.mouseX, context.mouseY),
+                LocationWidgetComparator.BOTTOM_HALF_COMPARATOR) - 1;
 
-	  Widget newPositioner(DragContext context) {
-	    Widget p = new SimplePanel();
-	    p.addStyleName(CSS_DEMO_TABLE_POSITIONER);
-	    p.setPixelSize(flexTable.getOffsetWidth(), 1);
-	    return p;
-	  }
+        if (flexTable.getRowCount() > 0) {
+            Widget w = flexTable.getWidget(targetRow == -1 ? 0 : targetRow, 0);
+            Location widgetLocation = new WidgetLocation(w, context.boundaryPanel);
+            Location tableLocation = new WidgetLocation(flexTable, context.boundaryPanel);
+            context.boundaryPanel.add(positioner, tableLocation.getLeft(), widgetLocation.getTop() + (targetRow == -1 ? 0 : w.getOffsetHeight()));
+        }
+    }
+
+    Widget newPositioner(DragContext context) {
+        Widget p = new SimplePanel();
+        p.addStyleName(CSS_DEMO_TABLE_POSITIONER);
+        p.setPixelSize(flexTable.getOffsetWidth(), 1);
+        return p;
+    }
 
 }

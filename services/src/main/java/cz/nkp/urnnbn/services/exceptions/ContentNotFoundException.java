@@ -12,8 +12,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
  */
 public class ContentNotFoundException extends Exception {
 
-	public ContentNotFoundException(String language, String name, RecordNotFoundException ex) {
-		super(String.format("Content with language='%s' and name='%s' not found", language, name), ex);
-	}
+    public ContentNotFoundException(String language, String name, RecordNotFoundException ex) {
+        super(String.format("Content with language='%s' and name='%s' not found", language, name), ex);
+    }
 
 }

@@ -27,7 +27,7 @@ public interface DigitalDocumentDAO {
     //
     public String ATTR_CREATED = "created";
     public String ATTR_UPDATED = "modified";
-    //TODO: updated/created by USER_ID
+    // TODO: updated/created by USER_ID
     //
     public String ATTR_EXTENT = "extent";
     public String ATTR_FINANCED = "financedFrom";
@@ -50,8 +50,8 @@ public interface DigitalDocumentDAO {
      * @param representation
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if registrar, archiver or intelectual
-     * entity not found
+     * @throws RecordNotFoundException
+     *             if registrar, archiver or intelectual entity not found
      */
     public Long insertDocument(DigitalDocument doc) throws DatabaseException, RecordNotFoundException;
 
@@ -62,8 +62,8 @@ public interface DigitalDocumentDAO {
      * @param id
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if registrar or digital document is
-     * doesn't exist
+     * @throws RecordNotFoundException
+     *             if registrar or digital document is doesn't exist
      */
     public Long getDigDocIdByRegistrarScopeId(RegistrarScopeIdentifier id) throws DatabaseException, RecordNotFoundException;
 
@@ -78,9 +78,11 @@ public interface DigitalDocumentDAO {
      * @param until
      * @return
      * @throws DatabaseException
-     * @throws RecordNotFoundException if registrar doesn't exist
+     * @throws RecordNotFoundException
+     *             if registrar doesn't exist
      */
-    public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException, RecordNotFoundException;
+    public List<DigitalDocument> getDigDocsByRegistrarIdAndTimestamps(long registrarId, DateTime from, DateTime until) throws DatabaseException,
+            RecordNotFoundException;
 
     public List<DigitalDocument> getDigDocsByTimestamps(DateTime from, DateTime until) throws DatabaseException;
 
@@ -88,10 +90,11 @@ public interface DigitalDocumentDAO {
 
     /**
      *
-     * @param document digital document to be updated
+     * @param document
+     *            digital document to be updated
      * @throws DatabaseException
-     * @throws RecordNotFoundException if digital document with id obtained from
-     * document doesn't exist
+     * @throws RecordNotFoundException
+     *             if digital document with id obtained from document doesn't exist
      */
     public void updateDocument(DigitalDocument document) throws DatabaseException, RecordNotFoundException;
 

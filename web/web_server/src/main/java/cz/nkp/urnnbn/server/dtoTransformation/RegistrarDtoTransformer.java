@@ -6,27 +6,27 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class RegistrarDtoTransformer extends DtoTransformer {
 
-	private final Registrar original;
+    private final Registrar original;
 
-	public RegistrarDtoTransformer(Registrar registrar) {
-		this.original = registrar;
-	}
+    public RegistrarDtoTransformer(Registrar registrar) {
+        this.original = registrar;
+    }
 
-	public RegistrarDTO transform() {
-		RegistrarDTO result = new RegistrarDTO();
-		result.setId(original.getId());
-		result.setCreated(dateTimeToStringOrNull(original.getCreated()));
-		result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
-		result.setModified(dateTimeToStringOrNull(original.getModified()));
-		result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
-		result.setCode(original.getCode().toString());
-		result.setName(original.getName());
-		result.setDescription(original.getDescription());
-		result.setRegModeByRegistrarAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
-		result.setRegModeByResolverAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
-		result.setRegModeByReservationAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
-		result.setOrder(original.getOrder());
-		result.setHidden(original.isHidden());
-		return result;
-	}
+    public RegistrarDTO transform() {
+        RegistrarDTO result = new RegistrarDTO();
+        result.setId(original.getId());
+        result.setCreated(dateTimeToStringOrNull(original.getCreated()));
+        result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
+        result.setModified(dateTimeToStringOrNull(original.getModified()));
+        result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
+        result.setCode(original.getCode().toString());
+        result.setName(original.getName());
+        result.setDescription(original.getDescription());
+        result.setRegModeByRegistrarAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
+        result.setRegModeByResolverAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
+        result.setRegModeByReservationAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
+        result.setOrder(original.getOrder());
+        result.setHidden(original.isHidden());
+        return result;
+    }
 }

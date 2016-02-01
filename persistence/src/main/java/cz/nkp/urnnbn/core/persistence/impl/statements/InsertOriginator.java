@@ -25,11 +25,8 @@ public class InsertOriginator implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + OriginatorDAO.TABLE_NAME
-                + "(" + OriginatorDAO.ATTR_INT_ENT_ID
-                + "," + OriginatorDAO.ATTR_TYPE
-                + "," + OriginatorDAO.ATTR_VALUE
-                + ") values(?,?,?)";
+        return "INSERT into " + OriginatorDAO.TABLE_NAME + "(" + OriginatorDAO.ATTR_INT_ENT_ID + "," + OriginatorDAO.ATTR_TYPE + ","
+                + OriginatorDAO.ATTR_VALUE + ") values(?,?,?)";
     }
 
     @Override
@@ -39,7 +36,7 @@ public class InsertOriginator implements StatementWrapper {
             st.setString(2, originator.getType().name());
             st.setString(3, originator.getValue());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

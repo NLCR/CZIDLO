@@ -23,121 +23,121 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 public class TransformationsListPanel extends ScrollPanel {
 
-	private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
-	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
-	private final List<XmlTransformationDTO> transformations;
-	private final XmlTransformationsPanel superPanel;
+    private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
+    private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    private final MessagesImpl messages = GWT.create(MessagesImpl.class);
+    private final List<XmlTransformationDTO> transformations;
+    private final XmlTransformationsPanel superPanel;
 
-	public TransformationsListPanel(XmlTransformationsPanel superPanel, List<XmlTransformationDTO> transformations) {
-		super();
-		this.superPanel = superPanel;
-		this.transformations = transformations;
-		setWidth("600px");
-		setHeight("100px");
-		add(contentPanel());
-	}
+    public TransformationsListPanel(XmlTransformationsPanel superPanel, List<XmlTransformationDTO> transformations) {
+        super();
+        this.superPanel = superPanel;
+        this.transformations = transformations;
+        setWidth("600px");
+        setHeight("100px");
+        add(contentPanel());
+    }
 
-	private Widget contentPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.add(transformationsListHeader());
-		for (XmlTransformationDTO transformation : transformations) {
-			result.add(transforamtionWidget(transformation));
-		}
-		return result;
-	}
+    private Widget contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.add(transformationsListHeader());
+        for (XmlTransformationDTO transformation : transformations) {
+            result.add(transforamtionWidget(transformation));
+        }
+        return result;
+    }
 
-	private Widget transformationsListHeader() {
-		HorizontalPanel panel = new HorizontalPanel();
-		panel.setWidth("500px");
+    private Widget transformationsListHeader() {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setWidth("500px");
 
-		// title
-		Widget titelLabel = headerFormated(constants.processOaiAdapterTransformationTitle());
-		panel.add(titelLabel);
-		panel.setCellWidth(titelLabel, "20%");
+        // title
+        Widget titelLabel = headerFormated(constants.processOaiAdapterTransformationTitle());
+        panel.add(titelLabel);
+        panel.setCellWidth(titelLabel, "20%");
 
-		// description
-		Widget descriptionLabel = headerFormated(constants.processOaiAdapterTransformationDescription());
-		panel.add(descriptionLabel);
-		panel.setCellWidth(descriptionLabel, "35%");
+        // description
+        Widget descriptionLabel = headerFormated(constants.processOaiAdapterTransformationDescription());
+        panel.add(descriptionLabel);
+        panel.setCellWidth(descriptionLabel, "35%");
 
-		// created
-		Widget createdLabel = headerFormated(constants.processOaiAdapterTransformationCreated());
-		panel.add(createdLabel);
-		panel.setCellWidth(createdLabel, "30%");
+        // created
+        Widget createdLabel = headerFormated(constants.processOaiAdapterTransformationCreated());
+        panel.add(createdLabel);
+        panel.setCellWidth(createdLabel, "30%");
 
-		// delete button
-		Widget deleteButtonLabel = headerFormated("");
-		panel.add(deleteButtonLabel);
-		panel.setCellWidth(deleteButtonLabel, "15%");
+        // delete button
+        Widget deleteButtonLabel = headerFormated("");
+        panel.add(deleteButtonLabel);
+        panel.setCellWidth(deleteButtonLabel, "15%");
 
-		return panel;
-	}
+        return panel;
+    }
 
-	private Widget headerFormated(String string) {
-		return new HTML("<div style=\"color:grey\">" + string + "</style>");
-	}
+    private Widget headerFormated(String string) {
+        return new HTML("<div style=\"color:grey\">" + string + "</style>");
+    }
 
-	private Widget transforamtionWidget(XmlTransformationDTO transformation) {
-		HorizontalPanel panel = new HorizontalPanel();
-		panel.setWidth("500px");
-		// panel.setWidth("100%");
+    private Widget transforamtionWidget(XmlTransformationDTO transformation) {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setWidth("500px");
+        // panel.setWidth("100%");
 
-		// name
-		Widget nameLabel = new Label(transformation.getName());
-		panel.add(nameLabel);
-		panel.setCellWidth(nameLabel, "20%");
+        // name
+        Widget nameLabel = new Label(transformation.getName());
+        panel.add(nameLabel);
+        panel.setCellWidth(nameLabel, "20%");
 
-		// description
-		Widget descriptionLabel = new Label(transformation.getDescription());
-		panel.add(descriptionLabel);
-		panel.setCellWidth(descriptionLabel, "35%");
+        // description
+        Widget descriptionLabel = new Label(transformation.getDescription());
+        panel.add(descriptionLabel);
+        panel.setCellWidth(descriptionLabel, "35%");
 
-		// created
-		Label createdLabel = new Label(transformation.getCreated());
-		panel.add(createdLabel);
-		panel.setCellWidth(createdLabel, "30%");
+        // created
+        Label createdLabel = new Label(transformation.getCreated());
+        panel.add(createdLabel);
+        panel.setCellWidth(createdLabel, "30%");
 
-		// // TODO: just for testing
-		// // type
-		// Label typeLabel = new Label(transformation.getType().toString());
-		// panel.add(typeLabel);
-		// panel.setCellWidth(typeLabel, "10%");
+        // // TODO: just for testing
+        // // type
+        // Label typeLabel = new Label(transformation.getType().toString());
+        // panel.add(typeLabel);
+        // panel.setCellWidth(typeLabel, "10%");
 
-		// //TODO: implement if required
-		// download template button
-		// Widget downloadTemplateButton =
-		// downloadTemplateButton(transformation);
-		// panel.add(downloadTemplateButton);
-		// panel.setCellWidth(downloadTemplateButton, "15%");
+        // //TODO: implement if required
+        // download template button
+        // Widget downloadTemplateButton =
+        // downloadTemplateButton(transformation);
+        // panel.add(downloadTemplateButton);
+        // panel.setCellWidth(downloadTemplateButton, "15%");
 
-		// remove button
-		Widget removeButton = removeButton(transformation);
-		panel.add(removeButton);
-		panel.setCellWidth(removeButton, "15%");
+        // remove button
+        Widget removeButton = removeButton(transformation);
+        panel.add(removeButton);
+        panel.setCellWidth(removeButton, "15%");
 
-		return panel;
-	}
+        return panel;
+    }
 
-	private Widget removeButton(final XmlTransformationDTO transformation) {
-		return new Button(constants.delete(), new ClickHandler() {
+    private Widget removeButton(final XmlTransformationDTO transformation) {
+        return new Button(constants.delete(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				processService.deleteXmlTransformation(transformation, new AsyncCallback<Void>() {
+            @Override
+            public void onClick(ClickEvent event) {
+                processService.deleteXmlTransformation(transformation, new AsyncCallback<Void>() {
 
-					@Override
-					public void onSuccess(Void result) {
-						superPanel.reloadTransformations();
-					}
+                    @Override
+                    public void onSuccess(Void result) {
+                        superPanel.reloadTransformations();
+                    }
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(messages.serverError(caught.getMessage()));
-					}
-				});
-			}
-		});
-	}
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert(messages.serverError(caught.getMessage()));
+                    }
+                });
+            }
+        });
+    }
 
 }

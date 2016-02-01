@@ -31,7 +31,7 @@ public class SelectNewIdFromSequence implements StatementWrapper {
         try {
             st.setString(1, sequenceName);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -45,21 +45,21 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
 
     @Override
     public Long insertLibrary(final DigitalLibrary library) throws DatabaseException, RecordNotFoundException {
-        //TODO: operace kontroly pritomonosti id neni v transakci s vkladanim!
-        //v tom to pripade nevadi
+        // TODO: operace kontroly pritomonosti id neni v transakci s vkladanim!
+        // v tom to pripade nevadi
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, library.getRegistrarId());
         DaoOperation operation = new DaoOperation() {
 
             @Override
             public Object run(Connection connection) throws SQLException, PersistenceException {
-                //get new id
+                // get new id
                 StatementWrapper newId = new SelectNewIdFromSequence(SEQ_NAME);
                 PreparedStatement newIdSt = OperationUtils.preparedStatementFromWrapper(connection, newId);
                 ResultSet idResultSet = newIdSt.executeQuery();
                 Long id = OperationUtils.resultSet2Long(idResultSet);
-                //set id
+                // set id
                 library.setId(id);
-                //insert
+                // insert
                 StatementWrapper insert = new InsertDigitalLibrary(library);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
                 insertSt.executeUpdate();
@@ -70,7 +70,7 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
             Long id = (Long) runInTransaction(operation);
             return id;
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -97,7 +97,7 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalLibraryRT());
             return (List<DigitalLibrary>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -112,7 +112,7 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
             DaoOperation operation = new NoResultOperation(new UpdateLibrary(library));
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {

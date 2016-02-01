@@ -6,8 +6,8 @@ import cz.nkp.urnnbn.shared.dto.ContentDTO;
 
 public interface StaticContentServiceAsync {
 
-	void getContentByNameAndLanguage(String language, String name, AsyncCallback<ContentDTO> callback);
+    void getContentByNameAndLanguage(String language, String name, AsyncCallback<ContentDTO> callback);
 
-	void update(ContentDTO content, AsyncCallback<Void> callback);
+    void update(ContentDTO content, AsyncCallback<Void> callback);
 
 }

@@ -22,10 +22,8 @@ public class SelectIdentifiersByStringString implements StatementWrapper {
     private final String whereAttrName2;
     private final String whereAttrValue2;
 
-    public SelectIdentifiersByStringString(
-            String tableName, String idAttrName,
-            String whereAttrName1, String whereAttrValue1,
-            String whereAttrName2, String whereAttrValue2) {
+    public SelectIdentifiersByStringString(String tableName, String idAttrName, String whereAttrName1, String whereAttrValue1, String whereAttrName2,
+            String whereAttrValue2) {
         this.tableName = tableName;
         this.idAttrName = idAttrName;
         this.whereAttrName1 = whereAttrName1;
@@ -36,10 +34,7 @@ public class SelectIdentifiersByStringString implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT " + idAttrName + " from " + tableName
-                + " WHERE "
-                + whereAttrName1 + "=? AND "
-                + whereAttrName2 + "=?";
+        return "SELECT " + idAttrName + " from " + tableName + " WHERE " + whereAttrName1 + "=? AND " + whereAttrName2 + "=?";
     }
 
     @Override
@@ -48,7 +43,7 @@ public class SelectIdentifiersByStringString implements StatementWrapper {
             st.setString(1, whereAttrValue1);
             st.setString(2, whereAttrValue2);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -22,10 +22,5 @@ package cz.nkp.urnnbn.processmanager.core;
  */
 public enum ProcessState {
 
-    SCHEDULED,
-    CANCELED,
-    RUNNING,
-    FINISHED,
-    FAILED,
-    KILLED
+    SCHEDULED, CANCELED, RUNNING, FINISHED, FAILED, KILLED
 }

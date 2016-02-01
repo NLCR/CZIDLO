@@ -41,25 +41,25 @@ public class XmlTransformation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    
+
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Column(name = "description", nullable = true)
     private String description;
-    
+
     @Column(name = "owner", nullable = false)
     private String ownerLogin;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private XmlTransformationType type;
-    
+
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     @Column(name = "created", nullable = false)
     private Date created;
-    
-    @Column( name = "xslt", nullable = false)
+
+    @Column(name = "xslt", nullable = false)
     @Lob
     private String xslt;
 
@@ -86,7 +86,7 @@ public class XmlTransformation implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getOwnerLogin() {
         return ownerLogin;
     }

@@ -14,8 +14,7 @@ import javax.ws.rs.core.Response;
 public class DigitalInstanceAlreadyDeactivatedException extends ApiV3Exception {
 
     public DigitalInstanceAlreadyDeactivatedException(DigitalInstance instance) {
-        super(Response.Status.FORBIDDEN, "ALREADY_DEACTIVATED",
-                "Digital instance with id " + instance.getId()
-                + " has already been deactivated (" + instance.getDeactivated().toString() + ")");
+        super(Response.Status.FORBIDDEN, "ALREADY_DEACTIVATED", "Digital instance with id " + instance.getId() + " has already been deactivated ("
+                + instance.getDeactivated().toString() + ")");
     }
 }

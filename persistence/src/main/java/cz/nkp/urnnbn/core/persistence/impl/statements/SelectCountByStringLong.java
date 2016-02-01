@@ -31,9 +31,7 @@ public class SelectCountByStringLong implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT count(*) FROM " + tableName + " WHERE "
-                + longAttrName + "=? AND "
-                + stringAttrName + "=?";
+        return "SELECT count(*) FROM " + tableName + " WHERE " + longAttrName + "=? AND " + stringAttrName + "=?";
     }
 
     @Override
@@ -42,7 +40,7 @@ public class SelectCountByStringLong implements StatementWrapper {
             st.setLong(1, longAttrValue);
             st.setString(2, stringAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

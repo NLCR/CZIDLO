@@ -78,18 +78,17 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
     @PUT
     @Path("/{idType}")
     @Produces("application/xml")
-    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req,
-            @PathParam("idType") String idTypeStr, String value) {
+    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String value) {
         try {
             checkServerNotReadOnly();
             String login = req.getRemoteUser();
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
             RegistrarScopeIdentifier oldId = presentIdentifierOrNull(idType);
-            if (oldId == null) { //insert new value
+            if (oldId == null) { // insert new value
                 RegistrarScopeIdentifier newId = addNewIdentifier(idType, value, login);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
                 return Response.created(null).entity(responseXml).build();
-            } else { //update value
+            } else { // update value
                 RegistrarScopeIdentifier newId = updateIdentifier(login, idType, value);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                 return Response.ok().entity(responseXml).build();
@@ -105,8 +104,7 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
     @DELETE
     @Path("/{idType}")
     @Produces("application/xml")
-    public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req,
-            @PathParam("idType") String idTypeStr) {
+    public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
         try {
             checkServerNotReadOnly();
             String login = req.getRemoteUser();

@@ -50,7 +50,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         session.save(newTransformation);
         session.getTransaction().commit();
         session.close();
-        //logger.log(Level.INFO, "saved {0}", newTransformation);
+        // logger.log(Level.INFO, "saved {0}", newTransformation);
         return newTransformation;
     }
 
@@ -61,7 +61,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
         session.getTransaction().commit();
         session.close();
         if (result != null) {
-            //logger.log(Level.INFO, "fetched {0}", result);
+            // logger.log(Level.INFO, "fetched {0}", result);
             return result;
         } else {
             throw new UnknownRecordException(XmlTransformation.class.getName() + " with id " + transformationId);
@@ -107,7 +107,7 @@ public class XmlTransformationDAOImpl extends AbstractDAO implements XmlTransfor
             session.beginTransaction();
             session.delete(transformation);
             session.getTransaction().commit();
-            //logger.log(Level.INFO, "deleted {0}", process);
+            // logger.log(Level.INFO, "deleted {0}", process);
         } catch (StaleStateException ex) {
             logger.log(Level.WARNING, "trying to delete non-existing transformation {0}", transformation);
             session.getTransaction().rollback();

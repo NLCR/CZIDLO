@@ -24,12 +24,8 @@ public class InsertContent implements StatementWrapper {
     }
 
     public String preparedStatement() {
-        return "INSERT into " + ContentDAO.TABLE_NAME
-                + "(" + ContentDAO.ATTR_ID
-                + "," + ContentDAO.ATTR_LANG
-                + "," + ContentDAO.ATTR_NAME
-                + "," + ContentDAO.ATTR_CONTENT
-                + ") values(?, ?, ?, ?)";
+        return "INSERT into " + ContentDAO.TABLE_NAME + "(" + ContentDAO.ATTR_ID + "," + ContentDAO.ATTR_LANG + "," + ContentDAO.ATTR_NAME + ","
+                + ContentDAO.ATTR_CONTENT + ") values(?, ?, ?, ?)";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
@@ -39,7 +35,7 @@ public class InsertContent implements StatementWrapper {
             st.setString(3, content.getName());
             st.setString(4, content.getContent());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -35,7 +35,7 @@ public class ElementAppender {
             headerEl.addAttribute("status", "deleted");
         }
         Element identifierEl = headerEl.addElement("identifier");
-        //identifierEl.addText(record.getId().toString());
+        // identifierEl.addText(record.getId().toString());
         identifierEl.addText(record.getId().toString());
 
         Element datestampEl = headerEl.addElement("datestamp");
@@ -74,16 +74,16 @@ public class ElementAppender {
             System.err.println("record==null");
         } else if (record.getMetadata() == null) {
             System.err.println("record.getMetadata() == null");
-        }else if (record.getMetadata().getRootElement() == null){
+        } else if (record.getMetadata().getRootElement() == null) {
             System.err.println("record.getMetadata().getRootElement() == null");
         }
         metadataEl.add(record.getMetadata().getRootElement().detach());
         Element metadataRootEl = (Element) metadataRootElPath.selectSingleNode(metadataEl);
         if (metadataRootEl != null) {
             String schemaLocation = getAndDetachSchemaLocation(metadataRootEl, record.getMetadataFormat());
-            //add xsi redefinition
+            // add xsi redefinition
             metadataRootEl.add(xsi2);
-            //add schema location
+            // add schema location
             if (schemaLocation != null) {
                 metadataRootEl.addAttribute(new QName("schemaLocation", xsi2), schemaLocation);
             }
@@ -95,13 +95,13 @@ public class ElementAppender {
         if (schemaAttr == null) {
             return null;
         } else {
-            //TODO: povolit, az se ozve clovek z EOD
-            //take schema presunout z iris na oai.mzk.cz
-//            String result = metadataFormat == MetadataFormat.marc21
-//                    ? MARC_ALEPH_SCHEMA_LOCATION
-//                    : schemaAttr.getText();
+            // TODO: povolit, az se ozve clovek z EOD
+            // take schema presunout z iris na oai.mzk.cz
+            // String result = metadataFormat == MetadataFormat.marc21
+            // ? MARC_ALEPH_SCHEMA_LOCATION
+            // : schemaAttr.getText();
             String result = schemaAttr.getText();
-            schemaAttr.detach();//bez toho by se nove schemLocation namapovalo na xsi a ne xsi2
+            schemaAttr.detach();// bez toho by se nove schemLocation namapovalo na xsi a ne xsi2
             return result;
         }
     }

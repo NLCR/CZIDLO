@@ -39,29 +39,31 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
 
     private static final Logger logger = Logger.getLogger(IntelectualEntityBuilder.class.getName());
 
-    public static IntelectualEntityBuilder instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub, Originator originator, SourceDocument srcDoc) {
+    public static IntelectualEntityBuilder instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub,
+            Originator originator, SourceDocument srcDoc) {
         EntityType entityType = entity.getEntityType();
         switch (entityType) {
-            case MONOGRAPH:
-                return new MonographBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case MONOGRAPH_VOLUME:
-                return new MonographVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case PERIODICAL:
-                return new PeriodicalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case PERIODICAL_VOLUME:
-                return new PeriodicalVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case PERIODICAL_ISSUE:
-                return new PeriodicalIssueBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case THESIS:
-                return new ThesisBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case ANALYTICAL:
-                return new AnalyticalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            case OTHER:
-                return new OtherEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-            default:
-                throw new RuntimeException();
+        case MONOGRAPH:
+            return new MonographBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case MONOGRAPH_VOLUME:
+            return new MonographVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case PERIODICAL:
+            return new PeriodicalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case PERIODICAL_VOLUME:
+            return new PeriodicalVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case PERIODICAL_ISSUE:
+            return new PeriodicalIssueBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case THESIS:
+            return new ThesisBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case ANALYTICAL:
+            return new AnalyticalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        case OTHER:
+            return new OtherEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+        default:
+            throw new RuntimeException();
         }
     }
+
     protected final IntelectualEntity entity;
     protected final List<IntEntIdentifier> identifiers;
     protected final Publication publication;
@@ -69,7 +71,8 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
     protected final SourceDocument srcDoc;
     private final Map<IntEntIdType, String> intEntIdMap = new EnumMap<IntEntIdType, String>(IntEntIdType.class);
 
-    public IntelectualEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public IntelectualEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         this.entity = entity;
         this.identifiers = identifiers;
         this.publication = publication;
@@ -111,7 +114,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
             originatorEl.addAttribute(type);
             originatorEl.appendChild(originator.getValue());
         } else {
-            //logger.log(Level.WARNING, "empty value of \"originator\" for entity {0}", entity.getId());
+            // logger.log(Level.WARNING, "empty value of \"originator\" for entity {0}", entity.getId());
         }
     }
 
@@ -159,7 +162,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
                 Element idElement = appendElement(root, elementName);
                 idElement.appendChild(value);
             } else if (mandatory) {
-                logger.log(Level.WARNING, "empty value of mandatory identifier {0} for entity {1}", new Object[]{type.toString(), entity.getId()});
+                logger.log(Level.WARNING, "empty value of mandatory identifier {0} for entity {1}", new Object[] { type.toString(), entity.getId() });
             }
         }
     }

@@ -63,7 +63,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
             entityDao.getEntityByDbId(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -72,13 +72,13 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
      */
     public void testGetEntityByIdentifier() throws Exception {
         IntelectualEntity entity = entityPersisted();
-        //ISBN
+        // ISBN
         IntEntIdentifier isbn = new IntEntIdentifier();
         isbn.setIntEntDbId(entity.getId());
         isbn.setType(IntEntIdType.ISBN);
         isbn.setValue("isbnValue");
         intEntIdDao.insertIntEntId(isbn);
-        //find by ISBN
+        // find by ISBN
         List<Long> foundIds = entityDao.getEntitiesDbIdListByIdentifier(IntEntIdType.ISBN, isbn.getValue());
         assertEquals(1, foundIds.size());
         List<IntelectualEntity> foundEntities = new ArrayList<IntelectualEntity>(foundIds.size());
@@ -93,14 +93,14 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
      */
     public void testGetEntityByIdentifierValue() throws Exception {
         String value = "something";
-        //ISBN
+        // ISBN
         IntelectualEntity entity1 = entityPersisted();
         IntEntIdentifier isbn = new IntEntIdentifier();
         isbn.setIntEntDbId(entity1.getId());
         isbn.setType(IntEntIdType.ISBN);
         isbn.setValue(value);
         intEntIdDao.insertIntEntId(isbn);
-        //CCNB
+        // CCNB
         IntelectualEntity entity2 = entityPersisted();
         IntEntIdentifier ccnb = new IntEntIdentifier();
         ccnb.setIntEntDbId(entity2.getId());
@@ -108,7 +108,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         ccnb.setValue(value);
         intEntIdDao.insertIntEntId(ccnb);
 
-        //find by the value
+        // find by the value
         List<Long> foundIds = entityDao.getEntitiesDbIdListByIdentifierValue(value);
         assertEquals(2, foundIds.size());
         assertTrue(foundIds.contains(entity1.getId()));
@@ -122,7 +122,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testGetEntitiesDbIdListByTimestamps_from_until() throws Exception {
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
         IntelectualEntity firstEnt = entityPersisted();
@@ -132,45 +132,45 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity secondEnt = entityPersisted();
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before-before
+        // before-before
         List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(before, before);
         assertTrue(idList.isEmpty());
-        //before-first
+        // before-first
         idList = entityDao.getEntitiesDbIdListByTimestamps(before, firstEnt.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
-        //before-between
+        // before-between
         idList = entityDao.getEntitiesDbIdListByTimestamps(before, between);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
-        //before-second
+        // before-second
         idList = entityDao.getEntitiesDbIdListByTimestamps(before, secondEnt.getModified());
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
         assertTrue(idList.contains(secondEnt.getId()));
-        //before-after
+        // before-after
         idList = entityDao.getEntitiesDbIdListByTimestamps(before, after);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
         assertTrue(idList.contains(secondEnt.getId()));
-        //between-between
+        // between-between
         idList = entityDao.getEntitiesDbIdListByTimestamps(between, between);
         assertTrue(idList.isEmpty());
-        //between-second
+        // between-second
         idList = entityDao.getEntitiesDbIdListByTimestamps(between, secondEnt.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(secondEnt.getId()));
-        //betwen-after
+        // betwen-after
         idList = entityDao.getEntitiesDbIdListByTimestamps(between, after);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(secondEnt.getId()));
-        //after-after
+        // after-after
         idList = entityDao.getEntitiesDbIdListByTimestamps(after, after);
         assertTrue(idList.isEmpty());
     }
 
     public void testGetEntitiesDbIdListByTimestamps_from_only() throws Exception {
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
         IntelectualEntity firstEnt = entityPersisted();
@@ -180,31 +180,31 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity secondEnt = entityPersisted();
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before
+        // before
         List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(before, null);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
         assertTrue(idList.contains(secondEnt.getId()));
-        //firstEnt
+        // firstEnt
         idList = entityDao.getEntitiesDbIdListByTimestamps(firstEnt.getModified(), null);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
         assertTrue(idList.contains(secondEnt.getId()));
-        //betwen
+        // betwen
         idList = entityDao.getEntitiesDbIdListByTimestamps(between, null);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(secondEnt.getId()));
-        //secondEnt
+        // secondEnt
         idList = entityDao.getEntitiesDbIdListByTimestamps(secondEnt.getModified(), null);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(secondEnt.getId()));
-        //after
+        // after
         idList = entityDao.getEntitiesDbIdListByTimestamps(after, null);
         assertTrue(idList.isEmpty());
     }
 
     public void testGetEntitiesDbIdListByTimestamps_until_only() throws Exception {
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
         IntelectualEntity firstEnt = entityPersisted();
@@ -214,23 +214,23 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
         IntelectualEntity secondEnt = entityPersisted();
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before
+        // before
         List<Long> idList = entityDao.getEntitiesDbIdListByTimestamps(null, before);
         assertTrue(idList.isEmpty());
-        //firstEnt
+        // firstEnt
         idList = entityDao.getEntitiesDbIdListByTimestamps(null, firstEnt.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
-        //betwen
+        // betwen
         idList = entityDao.getEntitiesDbIdListByTimestamps(null, between);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
-        //secondEnt
+        // secondEnt
         idList = entityDao.getEntitiesDbIdListByTimestamps(null, secondEnt.getModified());
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
         assertTrue(idList.contains(secondEnt.getId()));
-        //after
+        // after
         idList = entityDao.getEntitiesDbIdListByTimestamps(null, after);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(firstEnt.getId()));
@@ -269,60 +269,60 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
      * Test of deleteEntity method, of class IntelectualEntityDaoPostgres.
      */
     public void testDeleteEntity() throws Exception {
-        //insert entity
+        // insert entity
         IntelectualEntity entity = builder.intEntityWithoutId();
         long entityId = entityDao.insertIntelectualEntity(entity);
-        //insert publication
+        // insert publication
         Publication publication = builder.publicationWithoutId();
         publication.setIntEntId(entity.getId());
         publicationDao.insertPublication(publication);
-        //insert identifier
+        // insert identifier
         IntEntIdentifier entIdentifier = builder.intEntIdentifier(entity.getId());
         intEntIdDao.insertIntEntId(entIdentifier);
-        //insert originator
+        // insert originator
         Originator originator = builder.originatorWithoutId();
         originator.setIntEntId(entityId);
         originatorDao.insertOriginator(originator);
-        //insert source document
+        // insert source document
         SourceDocument srcDoc = builder.sourceDocumentWithoutId();
         srcDoc.setIntEntId(entityId);
         srcDocDao.insertSrcDoc(srcDoc);
-        //delete entity
+        // delete entity
         entityDao.deleteEntity(entityId);
-        //try to fetch entity after deleted
+        // try to fetch entity after deleted
         try {
             entityDao.getEntityByDbId(entityId);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //try to fetch identifiers after deleted
+        // try to fetch identifiers after deleted
         try {
             intEntIdDao.getIdList(entityId);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //try to fetch publication after deleted
+        // try to fetch publication after deleted
         try {
             publicationDao.getPublicationById(entityId);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //try to fetch originator
+        // try to fetch originator
         try {
             originatorDao.getOriginatorById(entityId);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //try to fetch source document
+        // try to fetch source document
         try {
             srcDocDao.getSrcDocById(entityId);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -331,7 +331,7 @@ public class IntelectualEntityDaoPostgresTest extends AbstractDaoTest {
             entityDao.deleteEntity(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 

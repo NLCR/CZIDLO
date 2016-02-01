@@ -11,42 +11,42 @@ import com.google.gwt.user.client.ui.TreeItem;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 
 public class TreeBuilder {
-	protected final SearchPanelCss css = SearchPanelResources.css();
-	final SearchPanel superPanel;
+    protected final SearchPanelCss css = SearchPanelResources.css();
+    final SearchPanel superPanel;
 
-	public TreeBuilder(SearchPanel superPanel) {
-		this.superPanel = superPanel;
-	}
+    public TreeBuilder(SearchPanel superPanel) {
+        this.superPanel = superPanel;
+    }
 
-	void addLabeledRowIfValueNotNull(String label, Object value, TreeItem root, String spanClass) {
-		if (value != null) {
-			HTML row = new HTML("<span class=\"" + spanClass + "\">" + label + ": </span>" + value);
-			row.getElement().addClassName(css.searchTreeItem());
-			root.addItem(row);
-		}
-	}
+    void addLabeledRowIfValueNotNull(String label, Object value, TreeItem root, String spanClass) {
+        if (value != null) {
+            HTML row = new HTML("<span class=\"" + spanClass + "\">" + label + ": </span>" + value);
+            row.getElement().addClassName(css.searchTreeItem());
+            root.addItem(row);
+        }
+    }
 
-	void addLabeledRowAndButtonIfValueNotNull(String label, Object value, TreeItem root, String spanClass, Button button, String buttonStyle) {
-		if (value != null) {
-			HorizontalPanel panel = new HorizontalPanel();
-			HTML labelHtml = new HTML("<span><span class=\"" + spanClass + "\">" + label + ": </span>" + value.toString() + "&nbsp;</span>");
-			labelHtml.getElement().addClassName(css.searchTreeItem());
-			panel.add(labelHtml);
-			panel.add(button);
-			button.addStyleName(buttonStyle);
-			root.addItem(panel);
-		}
-	}
+    void addLabeledRowAndButtonIfValueNotNull(String label, Object value, TreeItem root, String spanClass, Button button, String buttonStyle) {
+        if (value != null) {
+            HorizontalPanel panel = new HorizontalPanel();
+            HTML labelHtml = new HTML("<span><span class=\"" + spanClass + "\">" + label + ": </span>" + value.toString() + "&nbsp;</span>");
+            labelHtml.getElement().addClassName(css.searchTreeItem());
+            panel.add(labelHtml);
+            panel.add(button);
+            button.addStyleName(buttonStyle);
+            root.addItem(panel);
+        }
+    }
 
-	Button openUrlButton(String label, final String url) {
-		Button result = new Button(label, new ClickHandler() {
+    Button openUrlButton(String label, final String url) {
+        Button result = new Button(label, new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.open(url, "_blank", "");
-			}
-		});
-		result.addStyleName(css.treeButton());
-		return result;
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(url, "_blank", "");
+            }
+        });
+        result.addStyleName(css.treeButton());
+        return result;
+    }
 }

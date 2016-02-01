@@ -58,13 +58,13 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
 
             @Override
             public Object run(Connection connection) throws DatabaseException, SQLException {
-                //get new id
+                // get new id
                 StatementWrapper newId = new SelectNewIdFromSequence(SEQ_NAME);
                 PreparedStatement newIdSt = connection.prepareStatement(newId.preparedStatement());
                 newId.populate(newIdSt);
                 ResultSet idResultSet = newIdSt.executeQuery();
                 Long id = OperationUtils.resultSet2Long(idResultSet);
-                //insert with id
+                // insert with id
                 entity.setId(id);
                 StatementWrapper insert = new InsertIntelectualEntity(entity);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
@@ -76,7 +76,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
             Long id = (Long) runInTransaction(operation);
             return id;
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -92,15 +92,12 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
     @Override
     public List<Long> getEntitiesDbIdListByIdentifier(IntEntIdType type, String idValue) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectIdentifiersByStringString(
-                    IntEntIdentifierDAO.TABLE_NAME,
-                    IntEntIdentifierDAO.ATTR_IE_ID,
-                    IntEntIdentifierDAO.ATTR_TYPE, type.name(),
-                    IntEntIdentifierDAO.ATTR_VALUE, idValue);
+            StatementWrapper st = new SelectIdentifiersByStringString(IntEntIdentifierDAO.TABLE_NAME, IntEntIdentifierDAO.ATTR_IE_ID,
+                    IntEntIdentifierDAO.ATTR_TYPE, type.name(), IntEntIdentifierDAO.ATTR_VALUE, idValue);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -110,29 +107,26 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
 
     public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectSingleAttrByString(
-                    IntEntIdentifierDAO.TABLE_NAME,
-                    IntEntIdentifierDAO.ATTR_VALUE,
-                    idValue,
+            StatementWrapper st = new SelectSingleAttrByString(IntEntIdentifierDAO.TABLE_NAME, IntEntIdentifierDAO.ATTR_VALUE, idValue,
                     IntEntIdentifierDAO.ATTR_IE_ID);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
     }
-    
+
     public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, Integer offset, Integer limit) throws DatabaseException {
         try {
             StatementWrapper st = new SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch(query, offset, limit);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -146,7 +140,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -161,7 +155,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
         try {
             return (Long) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {

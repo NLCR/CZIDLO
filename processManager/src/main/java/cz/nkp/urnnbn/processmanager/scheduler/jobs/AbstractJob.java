@@ -70,13 +70,13 @@ public abstract class AbstractJob implements InterruptableJob {
         fa.setFile(ProcessFileUtils.buildLogFile(processId).getAbsolutePath());
         fa.setLayout(new PatternLayout("%d %-5p [%c{1}] %m%n"));
         fa.setThreshold(org.apache.log4j.Level.DEBUG);
-        //fa.setThreshold(org.apache.log4j.Level.INFO);
+        // fa.setThreshold(org.apache.log4j.Level.INFO);
         fa.setAppend(true);
         fa.activateOptions();
-        //add appender to any Logger (here is root)
-        //org.apache.log4j.Logger.getRootLogger().addAppender(fa);
+        // add appender to any Logger (here is root)
+        // org.apache.log4j.Logger.getRootLogger().addAppender(fa);
         logger.addAppender(fa);
-        //logger.info("apender added");
+        // logger.info("apender added");
     }
 
     protected File createWriteableProcessFile(String filename) throws IOException {
@@ -87,7 +87,7 @@ public abstract class AbstractJob implements InterruptableJob {
         return new FileOutputStream(file);
     }
 
-    //just for testing
+    // just for testing
     protected void sleep(long millis) {
         try {
             Thread.sleep(millis);

@@ -10,7 +10,5 @@ package cz.nkp.urnnbn.core;
  */
 public enum OriginType {
 
-    AUTHOR,
-    EVENT,
-    CORPORATION
+    AUTHOR, EVENT, CORPORATION
 }

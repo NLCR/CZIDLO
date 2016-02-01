@@ -19,16 +19,17 @@ public class RecordNotFoundException extends PersistenceException {
 
     public RecordNotFoundException() {
     }
-//    private final String tableName;
-//    private final Object identifier;
-//
-//    /**
-//     * Creates a new instance of <code>RecordNotFoundException</code> without detail message.
-//     */
-//    public RecordNotFoundException(String tableName, Object identifier) {
-//        this.tableName = tableName;
-//        this.identifier = identifier;
-//    }
+
+    // private final String tableName;
+    // private final Object identifier;
+    //
+    // /**
+    // * Creates a new instance of <code>RecordNotFoundException</code> without detail message.
+    // */
+    // public RecordNotFoundException(String tableName, Object identifier) {
+    // this.tableName = tableName;
+    // this.identifier = identifier;
+    // }
 
     public String getTableName() {
         return tableName;

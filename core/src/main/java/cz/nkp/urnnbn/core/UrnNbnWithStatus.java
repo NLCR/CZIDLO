@@ -14,11 +14,9 @@ public class UrnNbnWithStatus {
 
     public static enum Status {
 
-        FREE,
-        RESERVED,
-        ACTIVE,
-        DEACTIVATED
+        FREE, RESERVED, ACTIVE, DEACTIVATED
     }
+
     private final UrnNbn urn;
     private final Status status;
     private final String note;

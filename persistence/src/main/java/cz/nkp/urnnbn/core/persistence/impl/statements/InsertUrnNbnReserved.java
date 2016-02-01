@@ -29,11 +29,8 @@ public class InsertUrnNbnReserved implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UrnNbnReservedDAO.TABLE_NAME
-                + "(" + UrnNbnReservedDAO.ATTR_REGISTRAR_ID
-                + "," + UrnNbnReservedDAO.ATTR_REGISTRAR_CODE
-                + "," + UrnNbnReservedDAO.ATTR_DOCUMENT_CODE
-                + "," + UrnNbnReservedDAO.ATTR_CREATED
+        return "INSERT into " + UrnNbnReservedDAO.TABLE_NAME + "(" + UrnNbnReservedDAO.ATTR_REGISTRAR_ID + ","
+                + UrnNbnReservedDAO.ATTR_REGISTRAR_CODE + "," + UrnNbnReservedDAO.ATTR_DOCUMENT_CODE + "," + UrnNbnReservedDAO.ATTR_CREATED
                 + ") values(?,?,?,?)";
     }
 
@@ -46,7 +43,7 @@ public class InsertUrnNbnReserved implements StatementWrapper {
             Timestamp now = DateTimeUtils.nowTs();
             st.setTimestamp(4, now);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

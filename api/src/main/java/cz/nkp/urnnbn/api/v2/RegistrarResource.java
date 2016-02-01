@@ -44,9 +44,7 @@ public class RegistrarResource extends AbstractRegistrarResource {
 
     @GET
     @Produces("application/xml")
-    public String getRegistrarXmlRecord(
-            @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
-            @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+    public String getRegistrarXmlRecord(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         try {
             try {
                 boolean addDigitalLibraries = true;

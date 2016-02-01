@@ -97,8 +97,7 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public Response addNewDigitalInstance(
-            @Context HttpServletRequest req, String content) {
+    public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
         try {
             try {
                 checkServerNotReadOnly();

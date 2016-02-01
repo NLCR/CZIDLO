@@ -26,12 +26,9 @@ public class UpdateRegistrarScopeIdentifier implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + RegistrarScopeIdentifierDAO.TABLE_NAME + " SET "
-                + RegistrarScopeIdentifierDAO.ATTR_UPDATED + "=?,"
-                + RegistrarScopeIdentifierDAO.ATTR_VALUE + "=?"
-                + " WHERE " + RegistrarScopeIdentifierDAO.ATTR_REG_ID + "=?"
-                + " AND " + RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID + "=?"
-                + " AND " + RegistrarScopeIdentifierDAO.ATTR_TYPE + "=?";
+        return "UPDATE " + RegistrarScopeIdentifierDAO.TABLE_NAME + " SET " + RegistrarScopeIdentifierDAO.ATTR_UPDATED + "=?,"
+                + RegistrarScopeIdentifierDAO.ATTR_VALUE + "=?" + " WHERE " + RegistrarScopeIdentifierDAO.ATTR_REG_ID + "=?" + " AND "
+                + RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID + "=?" + " AND " + RegistrarScopeIdentifierDAO.ATTR_TYPE + "=?";
     }
 
     @Override
@@ -43,7 +40,7 @@ public class UpdateRegistrarScopeIdentifier implements StatementWrapper {
             st.setLong(4, id.getDigDocId());
             st.setString(5, id.getType().toString());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

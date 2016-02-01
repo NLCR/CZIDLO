@@ -30,9 +30,7 @@ public class UpdateRecordTimestamp extends AbstractStatement implements Statemen
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + tableName + " SET "
-                + timestampAttrName + "=?"
-                + " WHERE " + idAttrName + "=?";
+        return "UPDATE " + tableName + " SET " + timestampAttrName + "=?" + " WHERE " + idAttrName + "=?";
     }
 
     @Override
@@ -41,7 +39,7 @@ public class UpdateRecordTimestamp extends AbstractStatement implements Statemen
             st.setTimestamp(1, DateTimeUtils.nowTs());
             st.setLong(2, idAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -4,57 +4,57 @@ import java.io.Serializable;
 
 public class ConfigurationData implements Serializable {
 
-	private static final long serialVersionUID = -7688213096753239846L;
-	private boolean showAlephLinks;
-	private String alephUrl;
-	private String alephBase;
-	private String countryCode;
-	private String loginPage;
+    private static final long serialVersionUID = -7688213096753239846L;
+    private boolean showAlephLinks;
+    private String alephUrl;
+    private String alephBase;
+    private String countryCode;
+    private String loginPage;
 
-	public boolean showAlephLinks() {
-		return showAlephLinks;
-	}
+    public boolean showAlephLinks() {
+        return showAlephLinks;
+    }
 
-	public void setShowAlephLinks(boolean showAlephLinks) {
-		this.showAlephLinks = showAlephLinks;
-	}
+    public void setShowAlephLinks(boolean showAlephLinks) {
+        this.showAlephLinks = showAlephLinks;
+    }
 
-	public String getAlephUrl() {
-		return alephUrl;
-	}
+    public String getAlephUrl() {
+        return alephUrl;
+    }
 
-	public void setAlephUrl(String alephUrl) {
-		this.alephUrl = alephUrl;
-	}
+    public void setAlephUrl(String alephUrl) {
+        this.alephUrl = alephUrl;
+    }
 
-	public String getAlephBase() {
-		return alephBase;
-	}
+    public String getAlephBase() {
+        return alephBase;
+    }
 
-	public void setAlephBase(String alephBase) {
-		this.alephBase = alephBase;
-	}
+    public void setAlephBase(String alephBase) {
+        this.alephBase = alephBase;
+    }
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+    public String getCountryCode() {
+        return countryCode;
+    }
 
-	public void setLoginPage(String loginPage) {
-		this.loginPage = loginPage;
-	}
+    public void setLoginPage(String loginPage) {
+        this.loginPage = loginPage;
+    }
 
-	public String getLoginPage() {
-		return loginPage;
-	}
+    public String getLoginPage() {
+        return loginPage;
+    }
 
-	@Override
-	public String toString() {
-		return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase="
-				+ alephBase + ", countryCode=" + countryCode + ", loginPage=" + loginPage + "]";
-	}
+    @Override
+    public String toString() {
+        return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase=" + alephBase + ", countryCode="
+                + countryCode + ", loginPage=" + loginPage + "]";
+    }
 
 }

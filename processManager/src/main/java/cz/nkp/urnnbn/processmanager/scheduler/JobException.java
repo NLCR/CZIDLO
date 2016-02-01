@@ -23,17 +23,16 @@ package cz.nkp.urnnbn.processmanager.scheduler;
 public class JobException extends Exception {
 
     /**
-     * Creates a new instance of
-     * <code>JobException</code> without detail message.
+     * Creates a new instance of <code>JobException</code> without detail message.
      */
     public JobException() {
     }
 
     /**
-     * Constructs an instance of
-     * <code>JobException</code> with the specified detail message.
+     * Constructs an instance of <code>JobException</code> with the specified detail message.
      *
-     * @param msg the detail message.
+     * @param msg
+     *            the detail message.
      */
     public JobException(String msg) {
         super(msg);

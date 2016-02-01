@@ -41,13 +41,9 @@ public class InsertUrnNbnPredecessor implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UrnNbnDAO.SUCCESSOR_TABLE_NAME
-                + "(" + UrnNbnDAO.ATTR_PRECESSOR_REGISTRAR_CODE
-                + "," + UrnNbnDAO.ATTR_PRECESSOR_DOCUMENT_CODE
-                + "," + UrnNbnDAO.ATTR_SUCCESSOR_REGISTRAR_CODE
-                + "," + UrnNbnDAO.ATTR_SUCCESSOR_DOCUMENT_CODE
-                + "," + UrnNbnDAO.ATTR_NOTE
-                + ") values(?,?,?,?,?)";
+        return "INSERT into " + UrnNbnDAO.SUCCESSOR_TABLE_NAME + "(" + UrnNbnDAO.ATTR_PRECESSOR_REGISTRAR_CODE + ","
+                + UrnNbnDAO.ATTR_PRECESSOR_DOCUMENT_CODE + "," + UrnNbnDAO.ATTR_SUCCESSOR_REGISTRAR_CODE + ","
+                + UrnNbnDAO.ATTR_SUCCESSOR_DOCUMENT_CODE + "," + UrnNbnDAO.ATTR_NOTE + ") values(?,?,?,?,?)";
     }
 
     @Override
@@ -59,7 +55,7 @@ public class InsertUrnNbnPredecessor implements StatementWrapper {
             st.setString(4, successor.getDocumentCode());
             st.setString(5, note);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

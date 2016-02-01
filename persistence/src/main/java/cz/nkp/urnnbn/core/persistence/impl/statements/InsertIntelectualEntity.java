@@ -27,16 +27,10 @@ public class InsertIntelectualEntity implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + IntelectualEntityDAO.TABLE_NAME
-                + "(" + IntelectualEntityDAO.ATTR_ID
-                + "," + IntelectualEntityDAO.ATTR_ENTITY_TYPE
-                + "," + IntelectualEntityDAO.ATTR_CREATED
-                + "," + IntelectualEntityDAO.ATTR_UPDATED
-                + "," + IntelectualEntityDAO.ATTR_DOC_TYPE
-                + "," + IntelectualEntityDAO.ATTR_DIGITAL_BORN
-                + "," + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR
-                + "," + IntelectualEntityDAO.ATTR_DEG_AW_INST
-                + ") values(?,?,?,?,?,?,?,?)";
+        return "INSERT into " + IntelectualEntityDAO.TABLE_NAME + "(" + IntelectualEntityDAO.ATTR_ID + "," + IntelectualEntityDAO.ATTR_ENTITY_TYPE
+                + "," + IntelectualEntityDAO.ATTR_CREATED + "," + IntelectualEntityDAO.ATTR_UPDATED + "," + IntelectualEntityDAO.ATTR_DOC_TYPE + ","
+                + IntelectualEntityDAO.ATTR_DIGITAL_BORN + "," + IntelectualEntityDAO.ATTR_OTHER_ORIGINATOR + ","
+                + IntelectualEntityDAO.ATTR_DEG_AW_INST + ") values(?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -52,7 +46,7 @@ public class InsertIntelectualEntity implements StatementWrapper {
             st.setString(7, entity.getOtherOriginator());
             st.setString(8, entity.getDegreeAwardingInstitution());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

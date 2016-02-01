@@ -49,7 +49,7 @@ public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
         session.save(newProcess);
         session.getTransaction().commit();
         session.close();
-        //logger.log(Level.INFO, "saved {0}", newProcess);
+        // logger.log(Level.INFO, "saved {0}", newProcess);
         return newProcess;
     }
 
@@ -60,7 +60,7 @@ public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
         session.getTransaction().commit();
         session.close();
         if (result != null) {
-            //logger.log(Level.INFO, "fetched {0}", result);
+            // logger.log(Level.INFO, "fetched {0}", result);
             return result;
         } else {
             throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
@@ -102,7 +102,7 @@ public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
     public List<Process> getProcessesOfUser(String userLogin) {
         Session session = factory.openSession();
         session.beginTransaction();
-        //Query query = session.createQuery("select p from Process p where p.");
+        // Query query = session.createQuery("select p from Process p where p.");
         Query query = session.createQuery("from Process where ownerLogin = :login");
         query.setParameter("login", userLogin);
         List<Process> results = query.list();
@@ -129,7 +129,7 @@ public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
             session.beginTransaction();
             session.update(process);
             session.getTransaction().commit();
-            //logger.log(Level.INFO, "updated {0}", process);
+            // logger.log(Level.INFO, "updated {0}", process);
         } catch (StaleStateException ex) {
             logger.log(Level.WARNING, "trying to update non-existing process {0}", process);
             session.getTransaction().rollback();
@@ -145,7 +145,7 @@ public class ProcessDAOImpl extends AbstractDAO implements ProcessDAO {
             session.beginTransaction();
             session.delete(process);
             session.getTransaction().commit();
-            //logger.log(Level.INFO, "deleted {0}", process);
+            // logger.log(Level.INFO, "deleted {0}", process);
         } catch (StaleStateException ex) {
             logger.log(Level.WARNING, "trying to delete non-existing process {0}", process);
             session.getTransaction().rollback();

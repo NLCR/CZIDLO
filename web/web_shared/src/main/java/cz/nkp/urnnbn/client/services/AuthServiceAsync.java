@@ -6,6 +6,6 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public interface AuthServiceAsync {
 
-	void getLoggedUser(AsyncCallback<UserDTO> callback);
+    void getLoggedUser(AsyncCallback<UserDTO> callback);
 
 }

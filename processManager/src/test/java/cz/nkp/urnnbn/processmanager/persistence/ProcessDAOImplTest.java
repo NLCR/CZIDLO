@@ -42,7 +42,7 @@ public class ProcessDAOImplTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         dao = ProcessDAOImpl.instanceOf();
-        //dao = new ProcessDAOImpl();
+        // dao = new ProcessDAOImpl();
         loginGenerator = new LoginGenerator();
         List<Process> processes = dao.getProcesses();
         for (Process process : processes) {
@@ -175,20 +175,20 @@ public class ProcessDAOImplTest extends TestCase {
     }
 
     public void testGetDeletedProcess() {
-        //insert
+        // insert
         Process saved = dao.saveProcess(buildProcess());
-        //delete
+        // delete
         try {
             dao.deleteProcess(saved);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //get deleted
+        // get deleted
         try {
             dao.getProcess(saved.getId());
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
@@ -197,16 +197,16 @@ public class ProcessDAOImplTest extends TestCase {
             dao.getProcess(Long.MAX_VALUE);
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
     public void testGetProcesses() {
-        //insert
+        // insert
         Process first = dao.saveProcess(buildProcess());
         Process second = dao.saveProcess(buildProcess());
         Process third = dao.saveProcess(buildProcess());
-        //fetch
+        // fetch
         List<Process> allProcesses = dao.getProcesses();
         assertEquals(3, allProcesses.size());
         assertTrue(allProcesses.contains(first));
@@ -215,7 +215,7 @@ public class ProcessDAOImplTest extends TestCase {
     }
 
     public void testGetProcessesByState() {
-        //insert
+        // insert
         Process scheduled1 = buildScheduledProcess();
         dao.saveProcess(scheduled1);
         Process scheduled2 = buildScheduledProcess();
@@ -223,7 +223,7 @@ public class ProcessDAOImplTest extends TestCase {
         Process running = buildProcess();
         running.setState(ProcessState.RUNNING);
         dao.saveProcess(running);
-        //fetch
+        // fetch
         List<Process> processesOfUser = dao.getProcessesByState(ProcessState.SCHEDULED);
         assertEquals(2, processesOfUser.size());
         assertTrue(processesOfUser.contains(scheduled1));
@@ -232,14 +232,14 @@ public class ProcessDAOImplTest extends TestCase {
     }
 
     public void testGetProcessesScheduledAfterDate() {
-        //insert
+        // insert
         Process before1 = dao.saveProcess(buildScheduledProcess());
         Process before2 = dao.saveProcess(buildScheduledProcess());
         Date date = new Date();
         sleep(1000);
         Process after1 = dao.saveProcess(buildScheduledProcess());
         Process after2 = dao.saveProcess(buildScheduledProcess());
-        //fetch
+        // fetch
         List<Process> processesOfUser = dao.getProcessesScheduledAfter(date);
         assertEquals(2, processesOfUser.size());
         assertFalse(processesOfUser.contains(before1));
@@ -250,13 +250,13 @@ public class ProcessDAOImplTest extends TestCase {
 
     public void testGetProcessesOfUser() {
         String user = loginGenerator.getUniqueLogin();
-        //insert
+        // insert
         Process first = buildProcess(user);
         dao.saveProcess(first);
         Process second = buildProcess(user);
         dao.saveProcess(second);
         Process ofOtherUser = dao.saveProcess(buildProcess());
-        //fetch
+        // fetch
         List<Process> processesOfUser = dao.getProcessesOfUser(user);
         assertEquals(2, processesOfUser.size());
         assertTrue(processesOfUser.contains(first));
@@ -267,14 +267,14 @@ public class ProcessDAOImplTest extends TestCase {
     public void testGetProcessesOfUserScheduledAfterDate() {
         String user1 = loginGenerator.getUniqueLogin();
         String user2 = loginGenerator.getUniqueLogin();
-        //insert
+        // insert
         Process beforeUser1 = dao.saveProcess(buildScheduledProcess(user1));
         Process beforeUser2 = dao.saveProcess(buildScheduledProcess(user2));
         Date date = new Date();
         sleep(1000);
         Process afterUser1 = dao.saveProcess(buildScheduledProcess(user1));
         Process afterUser2 = dao.saveProcess(buildScheduledProcess(user2));
-        //get
+        // get
         List<Process> processesOfUser1 = dao.getProcessesOfUserScheduledAfter(user1, date);
         assertEquals(1, processesOfUser1.size());
         assertTrue(processesOfUser1.contains(afterUser1));
@@ -288,9 +288,9 @@ public class ProcessDAOImplTest extends TestCase {
      * Test of updateProcess method, of class ProcessDAOImpl.
      */
     public void testUpdateProcess() {
-        //insert
+        // insert
         Process process = dao.saveProcess(buildProcess());
-        //update
+        // update
         ProcessState newState = process.getState() == ProcessState.SCHEDULED ? ProcessState.RUNNING : ProcessState.SCHEDULED;
         process.setState(newState);
         process.setScheduled(new Date());
@@ -299,7 +299,7 @@ public class ProcessDAOImplTest extends TestCase {
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //fetch
+        // fetch
         try {
             Process fetched = dao.getProcess(process.getId());
             assertEquals(newState, fetched.getState());
@@ -310,15 +310,15 @@ public class ProcessDAOImplTest extends TestCase {
     }
 
     public void testUpdateDeletedProcess() {
-        //insert
+        // insert
         Process process = dao.saveProcess(buildProcess());
-        //delete
+        // delete
         try {
             dao.deleteProcess(process);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //update
+        // update
         ProcessState newState = process.getState() == ProcessState.SCHEDULED ? ProcessState.RUNNING : ProcessState.SCHEDULED;
         process.setState(newState);
         process.setScheduled(new Date());
@@ -326,7 +326,7 @@ public class ProcessDAOImplTest extends TestCase {
             dao.updateProcess(process);
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
@@ -334,38 +334,38 @@ public class ProcessDAOImplTest extends TestCase {
      * Test of deleteProcess method, of class ProcessDAOImpl.
      */
     public void testDeleteProcess() {
-        //insert
+        // insert
         Process process = dao.saveProcess(buildProcess());
-        //delete
+        // delete
         try {
             dao.deleteProcess(process);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //fetch
+        // fetch
         try {
             dao.getProcess(process.getId());
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteDeletedProcess() {
-        //insert
+        // insert
         Process process = dao.saveProcess(buildProcess());
-        //delete
+        // delete
         try {
             dao.deleteProcess(process);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //delete again
+        // delete again
         try {
             dao.deleteProcess(process);
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 }

@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class IntEntIdentifierRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         IntEntIdentifier identifier = new IntEntIdentifier();

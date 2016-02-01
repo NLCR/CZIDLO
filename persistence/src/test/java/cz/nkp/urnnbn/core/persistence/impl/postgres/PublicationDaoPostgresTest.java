@@ -47,7 +47,7 @@ public class PublicationDaoPostgresTest extends AbstractDaoTest {
             publicationDao.insertPublication(publication);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -87,7 +87,7 @@ public class PublicationDaoPostgresTest extends AbstractDaoTest {
             publicationDao.getPublicationById(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -108,7 +108,7 @@ public class PublicationDaoPostgresTest extends AbstractDaoTest {
         assertEquals(updated.getPublisher(), fetched.getPublisher());
         assertEquals(updated.getPlace(), fetched.getPlace());
         assertEquals(updated.getYear(), fetched.getYear());
-        
+
         assertFalse(original.getPublisher().equals(fetched.getPublisher()));
         assertFalse(original.getPlace().equals(fetched.getPlace()));
         assertFalse(original.getYear().equals(fetched.getYear()));

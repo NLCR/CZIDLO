@@ -26,8 +26,9 @@ public class UrnNbnFinder {
 
     /**
      * This class find urn:nbn that is not yet assigned nor reserved
+     * 
      * @param factory
-     * @param registrar 
+     * @param registrar
      */
     public UrnNbnFinder(DAOFactory factory, Registrar registrar) {
         this.factory = factory;
@@ -35,9 +36,10 @@ public class UrnNbnFinder {
     }
 
     /**
-     * TODO: mozna optimalizovat, aby se po kazdem nalezenem urn:nbn nemuselo zapisovat do tabulky
-     * to by ale pripadne mohlo vyrobit nekonzistenci - jeste rozmyslet
-     * @return 
+     * TODO: mozna optimalizovat, aby se po kazdem nalezenem urn:nbn nemuselo zapisovat do tabulky to by ale pripadne mohlo vyrobit nekonzistenci -
+     * jeste rozmyslet
+     * 
+     * @return
      */
     UrnNbn findNewUrnNbn() throws DatabaseException {
         UrnNbnGenerator search = getSearchOrInsertNew();
@@ -50,7 +52,7 @@ public class UrnNbnFinder {
         try {
             return factory.urnSearchDao().getGeneratorByRegistrarId(registrar.getId());
         } catch (RecordNotFoundException ex) {
-            //ok, so new search will be inserted
+            // ok, so new search will be inserted
             try {
                 logger.log(Level.SEVERE, "no urnNbnGenerator found for registrar with code {0}, inserting", registrar.getCode());
                 UrnNbnGenerator search = new UrnNbnGenerator();
@@ -87,7 +89,7 @@ public class UrnNbnFinder {
                 return new UrnNbn(registrar.getCode(), tested.toString(), null, null);
             } else {
                 int newStep = increaseStep(step, iterationFromLastStepIncrease);
-                if (newStep != step) {//step has been increased
+                if (newStep != step) {// step has been increased
                     iterationFromLastStepIncrease = 0;
                     step = newStep;
                 }
@@ -105,7 +107,7 @@ public class UrnNbnFinder {
         }
     }
 
-    //TODO: tohle jeste poradne rozmyslet.
+    // TODO: tohle jeste poradne rozmyslet.
     private int increaseStep(int step, int iterationFromLastStepIncrease) {
         if (iterationFromLastStepIncrease < 5) {
             return step;

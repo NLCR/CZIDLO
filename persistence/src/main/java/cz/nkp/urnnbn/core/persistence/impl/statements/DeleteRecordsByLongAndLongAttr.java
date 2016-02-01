@@ -31,9 +31,7 @@ public class DeleteRecordsByLongAndLongAttr implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "DELETE from " + tableName + " WHERE "
-                + firstAttrName + "=? AND "
-                + secondAttrName + "=?";
+        return "DELETE from " + tableName + " WHERE " + firstAttrName + "=? AND " + secondAttrName + "=?";
     }
 
     @Override
@@ -42,7 +40,7 @@ public class DeleteRecordsByLongAndLongAttr implements StatementWrapper {
             st.setLong(1, firstAttrValue);
             st.setLong(2, secondAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -26,5 +26,5 @@ public class ContentRT implements ResultsetTransformer {
         content.setName(resultSet.getString(ContentDAO.ATTR_NAME));
         return content;
     }
-    
+
 }

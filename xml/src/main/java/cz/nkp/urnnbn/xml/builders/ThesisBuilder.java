@@ -31,7 +31,8 @@ import nu.xom.Element;
  */
 class ThesisBuilder extends IntelectualEntityBuilder {
 
-    public ThesisBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public ThesisBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 

@@ -26,10 +26,7 @@ public class UpdateUser implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + UserDAO.TABLE_NAME + " SET "
-                + UserDAO.ATTR_EMAIL + "=?,"
-                + UserDAO.ATTR_IS_ADMIN + "=?,"
-                + UserDAO.ATTR_UPDATED + "=?"
+        return "UPDATE " + UserDAO.TABLE_NAME + " SET " + UserDAO.ATTR_EMAIL + "=?," + UserDAO.ATTR_IS_ADMIN + "=?," + UserDAO.ATTR_UPDATED + "=?"
                 + " WHERE " + UserDAO.ATTR_ID + "=?";
     }
 
@@ -41,7 +38,7 @@ public class UpdateUser implements StatementWrapper {
             st.setTimestamp(3, DateTimeUtils.nowTs());
             st.setLong(4, user.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

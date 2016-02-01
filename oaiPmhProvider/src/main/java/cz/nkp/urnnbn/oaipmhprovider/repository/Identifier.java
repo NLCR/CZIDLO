@@ -13,6 +13,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 public class Identifier {
 
     private final UrnNbn urnNbn;
+
     public Identifier(UrnNbn urnNbn) {
         if (urnNbn == null) {
             throw new NullPointerException("urnNbn");
@@ -23,15 +24,15 @@ public class Identifier {
     public static Identifier instanceOf(String stringValue) {
         return new Identifier(UrnNbn.valueOf(stringValue));
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return urnNbn.toString();
     }
 
-//
-//    public UrnNbn getUrnNbn() {
-//        return urnNbn;
-//    }
-//
+    //
+    // public UrnNbn getUrnNbn() {
+    // return urnNbn;
+    // }
+    //
 }

@@ -14,53 +14,45 @@ import cz.nkp.urnnbn.core.dto.User;
  *
  * @author Martin Řehánek
  */
-public interface AccountService extends BusinessService{
+public interface AccountService extends BusinessService {
 
     /**
      * Creates new registrar account.
+     * 
      * @param registrar
-     * @param registrarAdmin User that will register digitalized documents 
-     * for this registrar (instititution)
-     * @param applicationAdminId Id of user to perform this operation.
-     * Only admin is allowed to create new archivers.
+     * @param registrarAdmin
+     *            User that will register digitalized documents for this registrar (instititution)
+     * @param applicationAdminId
+     *            Id of user to perform this operation. Only admin is allowed to create new archivers.
      */
-    public void createRegistrar(
-            Registrar registrar,
-            User registrarAdmin,
-            long applicationAdminId);
+    public void createRegistrar(Registrar registrar, User registrarAdmin, long applicationAdminId);
 
     /**
      * Creates new archiver that will be available to any institution.
+     * 
      * @param archiver
-     * @param userId Id of User to perform this operation.
-     * Only admin is allowed to create new archivers.
+     * @param userId
+     *            Id of User to perform this operation. Only admin is allowed to create new archivers.
      */
-    public void createArchiver(
-            Archiver archiver,
-            long userId);
+    public void createArchiver(Archiver archiver, long userId);
 
     /**
      * Creates new catalog for registrar.
+     * 
      * @param catalog
-     * @param registrarId 
-     * @param user Id of user to perform this operation.
-     * Only adminstrator of this organization or application admininstrator
-     * are allowed to do that.
+     * @param registrarId
+     * @param user
+     *            Id of user to perform this operation. Only adminstrator of this organization or application admininstrator are allowed to do that.
      */
-    public void createCatalog(
-            Catalog catalog,
-            long registrarId,
-            long userId);
+    public void createCatalog(Catalog catalog, long registrarId, long userId);
 
     /**
      * Creates new digital library for registrar.
+     * 
      * @param library
-     * @param registrarId Id of user to perform this operation.
-     * Only adminstrator of this organization or application admininstrator
-     * are allowed to do that.
+     * @param registrarId
+     *            Id of user to perform this operation. Only adminstrator of this organization or application admininstrator are allowed to do that.
      */
-    public void createDigitalLibrary(
-            DigitalLibrary library,
-            long registrarId);
-//TODO: read operations
+    public void createDigitalLibrary(DigitalLibrary library, long registrarId);
+    // TODO: read operations
 }

@@ -5,24 +5,24 @@ import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 
 public class ArchiverDtoTransformer extends DtoTransformer {
 
-	private final Archiver original;
+    private final Archiver original;
 
-	public ArchiverDtoTransformer(Archiver archiver) {
-		this.original = archiver;
-	}
+    public ArchiverDtoTransformer(Archiver archiver) {
+        this.original = archiver;
+    }
 
-	@Override
-	public ArchiverDTO transform() {
-		ArchiverDTO result = new ArchiverDTO();
-		result.setId(original.getId());
-		result.setCreated(dateTimeToStringOrNull(original.getCreated()));
-		result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
-		result.setModified(dateTimeToStringOrNull(original.getModified()));
-		result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
-		result.setName(original.getName());
-		result.setDescription(original.getDescription());
-		result.setOrder(original.getOrder());
-		result.setHidden(original.isHidden());
-		return result;
-	}
+    @Override
+    public ArchiverDTO transform() {
+        ArchiverDTO result = new ArchiverDTO();
+        result.setId(original.getId());
+        result.setCreated(dateTimeToStringOrNull(original.getCreated()));
+        result.setCreatedMillis(datetTimeToMillisOrNull(original.getCreated()));
+        result.setModified(dateTimeToStringOrNull(original.getModified()));
+        result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
+        result.setName(original.getName());
+        result.setDescription(original.getDescription());
+        result.setOrder(original.getOrder());
+        result.setHidden(original.isHidden());
+        return result;
+    }
 }

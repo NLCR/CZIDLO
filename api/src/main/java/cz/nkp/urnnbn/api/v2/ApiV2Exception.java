@@ -29,8 +29,7 @@ import javax.ws.rs.core.Response;
 public class ApiV2Exception extends WebApplicationException {
 
     /**
-     * Creates a new instance of
-     * <code>ApiV2Exception</code> without detail message.
+     * Creates a new instance of <code>ApiV2Exception</code> without detail message.
      */
     public ApiV2Exception(ApiV3Exception e) {
         super(buildResponse(e.getStatus(), e.getErrorCode(), e.getErrorMessage()));

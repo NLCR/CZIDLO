@@ -16,8 +16,7 @@ import java.sql.SQLException;
  * @author xrosecky
  */
 public class UpdateContent implements StatementWrapper {
-    
-    
+
     private final Content content;
 
     public UpdateContent(Content content) {
@@ -25,11 +24,8 @@ public class UpdateContent implements StatementWrapper {
     }
 
     public String preparedStatement() {
-          return "UPDATE " + ContentDAO.TABLE_NAME + " SET "
-                + ContentDAO.ATTR_LANG + "=?,"
-                + ContentDAO.ATTR_NAME + "=?,"
-                + ContentDAO.ATTR_CONTENT + "=?"
-                + " WHERE " + ContentDAO.ATTR_ID + "=?";
+        return "UPDATE " + ContentDAO.TABLE_NAME + " SET " + ContentDAO.ATTR_LANG + "=?," + ContentDAO.ATTR_NAME + "=?," + ContentDAO.ATTR_CONTENT
+                + "=?" + " WHERE " + ContentDAO.ATTR_ID + "=?";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
@@ -39,12 +35,9 @@ public class UpdateContent implements StatementWrapper {
             st.setString(3, content.getContent());
             st.setLong(4, content.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }
-    
-    
 
-    
 }

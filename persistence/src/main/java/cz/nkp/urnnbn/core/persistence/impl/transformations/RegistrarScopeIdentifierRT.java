@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class RegistrarScopeIdentifierRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         RegistrarScopeIdentifier identifier = new RegistrarScopeIdentifier();

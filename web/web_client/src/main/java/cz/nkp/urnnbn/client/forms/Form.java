@@ -9,56 +9,57 @@ import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 
 public abstract class Form extends VerticalPanel {
-	protected ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	protected FormFields fields;
+    protected ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    protected FormFields fields;
 
-	public Form() {}
+    public Form() {
+    }
 
-	// must be called by subclass once data is initialized in subclass
-	// constructor
-	protected void initForm() {
-		fields = buildFields();
-		renderForm();
-	}
+    // must be called by subclass once data is initialized in subclass
+    // constructor
+    protected void initForm() {
+        fields = buildFields();
+        renderForm();
+    }
 
-	public abstract FormFields buildFields();
+    public abstract FormFields buildFields();
 
-	void renderForm() {
-		for (int i = 0; i < fields.size(); i++) {
-			add(fieldPanel(fields.getFieldByPosition(i)));
-		}
-	}
+    void renderForm() {
+        for (int i = 0; i < fields.size(); i++) {
+            add(fieldPanel(fields.getFieldByPosition(i)));
+        }
+    }
 
-	private Widget fieldPanel(Field field) {
-		HorizontalPanel result = new HorizontalPanel();
-		Widget labelWidget = field.getLabelWidget();
-		if (labelWidget != null) {
-			result.add(labelWidget);
-		}
-		// TODO: odsazeni resit stylem
-		result.add(new HTML("&nbsp"));
-		Widget content = field.getContentWidget();
-		if (content != null) {
-			result.add(field.getContentWidget());
-		}
-		return result;
-	}
+    private Widget fieldPanel(Field field) {
+        HorizontalPanel result = new HorizontalPanel();
+        Widget labelWidget = field.getLabelWidget();
+        if (labelWidget != null) {
+            result.add(labelWidget);
+        }
+        // TODO: odsazeni resit stylem
+        result.add(new HTML("&nbsp"));
+        Widget content = field.getContentWidget();
+        if (content != null) {
+            result.add(field.getContentWidget());
+        }
+        return result;
+    }
 
-	public void frost() {
-		for (int i = 0; i < fields.size(); i++) {
-			fields.getFieldByPosition(i).disable();
-		}
-	}
+    public void frost() {
+        for (int i = 0; i < fields.size(); i++) {
+            fields.getFieldByPosition(i).disable();
+        }
+    }
 
-	public boolean isFilledCorrectly() {
-		boolean result = true;
-		for (int i = 0; i < fields.size(); i++) {
-			if (!fields.getFieldByPosition(i).validValueInserted()) {
-				result = false;
-			}
-		}
-		return result;
-	}
+    public boolean isFilledCorrectly() {
+        boolean result = true;
+        for (int i = 0; i < fields.size(); i++) {
+            if (!fields.getFieldByPosition(i).validValueInserted()) {
+                result = false;
+            }
+        }
+        return result;
+    }
 
-	public abstract Object getDto();
+    public abstract Object getDto();
 }

@@ -122,20 +122,20 @@ public class XmlTransformationDAOImplTest extends TestCase {
     }
 
     public void testGetDeletedTransformation() {
-        //insert
+        // insert
         XmlTransformation saved = dao.saveTransformation(buildTransformation());
-        //delete
+        // delete
         try {
             dao.deleteTransformation(saved);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //get deleted
+        // get deleted
         try {
             dao.getTransformation(saved.getId());
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
@@ -144,16 +144,16 @@ public class XmlTransformationDAOImplTest extends TestCase {
             dao.getTransformation(Long.MAX_VALUE);
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
     public void testGetTransformations() {
-        //insert
+        // insert
         XmlTransformation first = dao.saveTransformation(buildTransformation());
         XmlTransformation second = dao.saveTransformation(buildTransformation());
         XmlTransformation third = dao.saveTransformation(buildTransformation());
-        //fetch
+        // fetch
         List<XmlTransformation> allTransformations = dao.getTransformations();
         assertEquals(3, allTransformations.size());
         assertTrue(allTransformations.contains(first));
@@ -163,13 +163,13 @@ public class XmlTransformationDAOImplTest extends TestCase {
 
     public void testGetTransformationsOfUser() {
         String user = loginGenerator.getUniqueLogin();
-        //insert
+        // insert
         XmlTransformation first = buildTransformation(user);
         dao.saveTransformation(first);
         XmlTransformation second = buildTransformation(user);
         dao.saveTransformation(second);
         XmlTransformation ofOtherUser = dao.saveTransformation(buildTransformation());
-        //fetch
+        // fetch
         List<XmlTransformation> transformationsOfUser = dao.getTransformationsOfUser(user);
         assertEquals(2, transformationsOfUser.size());
         assertTrue(transformationsOfUser.contains(first));
@@ -179,7 +179,7 @@ public class XmlTransformationDAOImplTest extends TestCase {
 
     public void testGetTransformationsOfUserAndByType() {
         String user = loginGenerator.getUniqueLogin();
-        //insert
+        // insert
         XmlTransformation shouldBeReturned = buildTransformation(user);
         shouldBeReturned.setType(XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
         dao.saveTransformation(shouldBeReturned);
@@ -187,8 +187,9 @@ public class XmlTransformationDAOImplTest extends TestCase {
         differentType.setType(XmlTransformationType.DIGITAL_INSTANCE_IMPORT);
         dao.saveTransformation(differentType);
         XmlTransformation ofOtherUser = dao.saveTransformation(buildTransformation());
-        //fetch
-        List<XmlTransformation> transformationsOfUser = dao.getTransformationsOfUserAndByType(user, XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
+        // fetch
+        List<XmlTransformation> transformationsOfUser = dao.getTransformationsOfUserAndByType(user,
+                XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION);
         assertEquals(1, transformationsOfUser.size());
         assertTrue(transformationsOfUser.contains(shouldBeReturned));
         assertFalse(transformationsOfUser.contains(differentType));
@@ -196,52 +197,52 @@ public class XmlTransformationDAOImplTest extends TestCase {
     }
 
     public void testDeleteTransformation() {
-        //insert
+        // insert
         XmlTransformation transformation = dao.saveTransformation(buildTransformation());
-        //delete
+        // delete
         try {
             dao.deleteTransformation(transformation);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //fetch
+        // fetch
         try {
             dao.getTransformation(transformation.getId());
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteTransformationById() {
-        //insert
+        // insert
         XmlTransformation transformation = dao.saveTransformation(buildTransformation());
-        //delete
+        // delete
         dao.deleteTransformation(transformation.getId());
-        //fetch
+        // fetch
         try {
             dao.getTransformation(transformation.getId());
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteDeletedTransformation() {
-        //insert
+        // insert
         XmlTransformation transformations = dao.saveTransformation(buildTransformation());
-        //delete
+        // delete
         try {
             dao.deleteTransformation(transformations);
         } catch (UnknownRecordException ex) {
             throw new RuntimeException(ex);
         }
-        //delete again
+        // delete again
         try {
             dao.deleteTransformation(transformations);
             fail();
         } catch (UnknownRecordException ex) {
-            //ok
+            // ok
         }
     }
 }

@@ -27,6 +27,6 @@ public class SelectAllAttrs implements StatementWrapper {
 
     @Override
     public void populate(PreparedStatement st) {
-        //nothing to populate
+        // nothing to populate
     }
 }

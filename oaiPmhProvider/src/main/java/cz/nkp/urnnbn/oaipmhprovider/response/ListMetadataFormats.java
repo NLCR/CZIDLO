@@ -37,7 +37,7 @@ public class ListMetadataFormats extends OaiVerbResponse {
 
     @Override
     String[] getOptionalArguments() {
-        String[] result = {IDENTIFIER};
+        String[] result = { IDENTIFIER };
         return result;
     }
 

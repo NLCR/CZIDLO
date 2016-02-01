@@ -26,138 +26,138 @@ import cz.nkp.urnnbn.shared.dto.ContentDTO;
 
 public class EditableContentPanel extends SingleTabContentPanel {
 
-	private static final Logger logger = Logger.getLogger(EditableContentPanel.class.getName());
-	private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
+    private static final Logger logger = Logger.getLogger(EditableContentPanel.class.getName());
+    private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
 
-	private final String name;
-	private ContentDTO content = null;
-	private VerticalPanel contentPanel = null;
-	private RichTextEditor editor = null;
-	private Button editButton = null;
-	private HorizontalPanel saveAndCancelButtonsPanel;
+    private final String name;
+    private ContentDTO content = null;
+    private VerticalPanel contentPanel = null;
+    private RichTextEditor editor = null;
+    private Button editButton = null;
+    private HorizontalPanel saveAndCancelButtonsPanel;
 
-	public EditableContentPanel(TabsPanel tabsPanel, String name) {
-		super(tabsPanel);
-		this.name = name;
-	}
+    public EditableContentPanel(TabsPanel tabsPanel, String name) {
+        super(tabsPanel);
+        this.name = name;
+    }
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		if (getActiveUser().isSuperAdmin()) {
-			editButton = initEditButton();
-			saveAndCancelButtonsPanel = initSaveAndCancelButtonsPanel();
-			editor = initContentEdit();
-		}
-		contentPanel = new VerticalPanel();
-		contentPanel.add(new HTML(constants.loading() + "..."));
-		add(contentPanel);
-	}
+    @Override
+    protected void onLoad() {
+        super.onLoad();
+        if (getActiveUser().isSuperAdmin()) {
+            editButton = initEditButton();
+            saveAndCancelButtonsPanel = initSaveAndCancelButtonsPanel();
+            editor = initContentEdit();
+        }
+        contentPanel = new VerticalPanel();
+        contentPanel.add(new HTML(constants.loading() + "..."));
+        add(contentPanel);
+    }
 
-	private HorizontalPanel initSaveAndCancelButtonsPanel() {
-		HorizontalPanel panel = new HorizontalPanel();
-		panel.add(saveButton());
-		panel.add(cancelButton());
-		return panel;
-	}
+    private HorizontalPanel initSaveAndCancelButtonsPanel() {
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.add(saveButton());
+        panel.add(cancelButton());
+        return panel;
+    }
 
-	private Button saveButton() {
-		Button result = new Button(constants.save());
-		result.addClickHandler(new ClickHandler() {
+    private Button saveButton() {
+        Button result = new Button(constants.save());
+        result.addClickHandler(new ClickHandler() {
 
-			public void onClick(ClickEvent arg0) {
-				content.setContent(editor.getValue());
-				saveContent();
-			}
-		});
-		return result;
-	}
+            public void onClick(ClickEvent arg0) {
+                content.setContent(editor.getValue());
+                saveContent();
+            }
+        });
+        return result;
+    }
 
-	private Button cancelButton() {
-		Button result = new Button(constants.cancel());
-		result.addClickHandler(new ClickHandler() {
+    private Button cancelButton() {
+        Button result = new Button(constants.cancel());
+        result.addClickHandler(new ClickHandler() {
 
-			public void onClick(ClickEvent arg0) {
-				contentPanel.clear();
-				contentPanel.add(new HTML(content.getContent()));
-				contentPanel.add(editButton);
-			}
-		});
-		return result;
+            public void onClick(ClickEvent arg0) {
+                contentPanel.clear();
+                contentPanel.add(new HTML(content.getContent()));
+                contentPanel.add(editButton);
+            }
+        });
+        return result;
 
-	}
+    }
 
-	public void saveContent() {
-		staticContentService.update(content, new AsyncCallback<Void>() {
+    public void saveContent() {
+        staticContentService.update(content, new AsyncCallback<Void>() {
 
-			public void onFailure(Throwable caught) {
-				Window.alert(messages.serverError(caught.getMessage()));
-			}
+            public void onFailure(Throwable caught) {
+                Window.alert(messages.serverError(caught.getMessage()));
+            }
 
-			public void onSuccess(Void result) {
-				contentPanel.clear();
-				contentPanel.add(new HTML(content.getContent()));
-				contentPanel.add(editButton);
-			}
-		});
-	}
+            public void onSuccess(Void result) {
+                contentPanel.clear();
+                contentPanel.add(new HTML(content.getContent()));
+                contentPanel.add(editButton);
+            }
+        });
+    }
 
-	private RichTextEditor initContentEdit() {
-		RichTextEditor result = new RichTextEditor();
-		result.setHeight("350px");
-		result.setWidth("900px");
-		result.setBorder("2px solid");
-		return result;
-	}
+    private RichTextEditor initContentEdit() {
+        RichTextEditor result = new RichTextEditor();
+        result.setHeight("350px");
+        result.setWidth("900px");
+        result.setBorder("2px solid");
+        return result;
+    }
 
-	private Button initEditButton() {
-		Button result = new Button(constants.edit());
-		result.addClickHandler(new ClickHandler() {
+    private Button initEditButton() {
+        Button result = new Button(constants.edit());
+        result.addClickHandler(new ClickHandler() {
 
-			public void onClick(ClickEvent arg0) {
-				contentPanel.clear();
-				// In Chrome/Chromium RichTextEditor.setValue(html) works just once (other times
-				// sets "") so I have to
-				// create other instance
-				editor = initContentEdit();
-				contentPanel.add(editor);
-				editor.setValue(content.getContent());
-				contentPanel.add(saveAndCancelButtonsPanel);
-			}
+            public void onClick(ClickEvent arg0) {
+                contentPanel.clear();
+                // In Chrome/Chromium RichTextEditor.setValue(html) works just once (other times
+                // sets "") so I have to
+                // create other instance
+                editor = initContentEdit();
+                contentPanel.add(editor);
+                editor.setValue(content.getContent());
+                contentPanel.add(saveAndCancelButtonsPanel);
+            }
 
-		});
-		return result;
-	}
+        });
+        return result;
+    }
 
-	public void loadContent() {
-		String languageCode = LocaleInfo.getCurrentLocale().getLocaleName();
-		staticContentService.getContentByNameAndLanguage(name, languageCode, new AsyncCallback<ContentDTO>() {
+    public void loadContent() {
+        String languageCode = LocaleInfo.getCurrentLocale().getLocaleName();
+        staticContentService.getContentByNameAndLanguage(name, languageCode, new AsyncCallback<ContentDTO>() {
 
-			public void onFailure(Throwable error) {
-				logger.severe(error.getMessage());
-				contentPanel.clear();
-			}
+            public void onFailure(Throwable error) {
+                logger.severe(error.getMessage());
+                contentPanel.clear();
+            }
 
-			public void onSuccess(ContentDTO result) {
-				content = result;
-				contentPanel.clear();
-				contentPanel.add(new HTML(content.getContent()));
-				if (getActiveUser().isSuperAdmin()) {
-					contentPanel.add(editButton);
-				}
-			}
-		});
-	}
+            public void onSuccess(ContentDTO result) {
+                content = result;
+                contentPanel.clear();
+                contentPanel.add(new HTML(content.getContent()));
+                if (getActiveUser().isSuperAdmin()) {
+                    contentPanel.add(editButton);
+                }
+            }
+        });
+    }
 
-	@Override
-	public void onSelection() {
-		if (content == null) {
-			loadContent();
-		}
-	}
+    @Override
+    public void onSelection() {
+        if (content == null) {
+            loadContent();
+        }
+    }
 
-	@Override
-	public void onDeselectionSelection() {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void onDeselectionSelection() {
+        // TODO Auto-generated method stub
+    }
 }

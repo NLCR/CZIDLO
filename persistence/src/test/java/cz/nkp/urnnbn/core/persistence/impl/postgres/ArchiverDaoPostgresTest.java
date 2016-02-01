@@ -44,12 +44,12 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
         Archiver archiver = builder.archiverWithoutId();
         archiver.setId(ILLEGAL_ID);
         long assignedId = archiverDao.insertArchiver(archiver);
-        //id in archiver has not been used
+        // id in archiver has not been used
         assertFalse(archiver.getId() == ILLEGAL_ID);
-        //new id propagated to dto
+        // new id propagated to dto
         assertTrue(archiver.getId() == assignedId);
 
-        //trying to force same id to another entity
+        // trying to force same id to another entity
         Archiver second = builder.archiverWithoutId();
         archiver.setId(assignedId);
         long secondAssignedId = archiverDao.insertArchiver(second);
@@ -75,7 +75,7 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
             archiverDao.getArchiverById(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -97,7 +97,7 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
         Archiver updated = new Archiver(original);
         updated.setName("Narodni knihovna v Praze");
         archiverDao.updateArchiver(updated);
-        //get by id
+        // get by id
         Archiver returned = archiverDao.getArchiverById(original.getId());
         assertEquals(updated.getName(), returned.getName());
         assertFalse(original.getName().equals(returned.getName()));
@@ -110,7 +110,7 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
             archiverDao.updateArchiver(archiver);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -122,7 +122,7 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
             archiverDao.getArchiverById(id);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -131,24 +131,24 @@ public class ArchiverDaoPostgresTest extends AbstractDaoTest {
             archiverDao.deleteArchiver(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
     public void testDeleteArchiverArchivingDocument() throws Exception {
-        //insert archiver
+        // insert archiver
         Archiver archiver = builder.archiverWithoutId();
         archiver.setId(archiverDao.insertArchiver(archiver));
-        //insert document archived by the archiver
+        // insert document archived by the archiver
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         documentPersisted(registrar.getId(), archiver.getId(), entity.getId());
-        //try and delete archiver
+        // try and delete archiver
         try {
             archiverDao.deleteArchiver(archiver.getId());
             fail();
         } catch (RecordReferencedException e) {
-            //OK
+            // OK
         }
     }
 

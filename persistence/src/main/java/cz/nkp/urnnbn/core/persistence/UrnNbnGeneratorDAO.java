@@ -24,6 +24,6 @@ public interface UrnNbnGeneratorDAO {
     public UrnNbnGenerator getGeneratorByRegistrarId(long registrarId) throws DatabaseException, RecordNotFoundException;
 
     public void updateGenerator(UrnNbnGenerator search) throws DatabaseException, RecordNotFoundException;
-    //mazani by melo byt kaskadove pri smazani registratora
-    //TODO: zkontrolovat, jestli to tak funguje
+    // mazani by melo byt kaskadove pri smazani registratora
+    // TODO: zkontrolovat, jestli to tak funguje
 }

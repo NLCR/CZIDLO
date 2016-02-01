@@ -11,15 +11,13 @@ import java.sql.PreparedStatement;
  *
  * @author Martin Řehánek
  */
-public class DeleteAllRecords implements StatementWrapper{
-    
+public class DeleteAllRecords implements StatementWrapper {
+
     private final String tableName;
 
     public DeleteAllRecords(String tableName) {
         this.tableName = tableName;
     }
-    
-    
 
     @Override
     public String preparedStatement() {
@@ -27,9 +25,8 @@ public class DeleteAllRecords implements StatementWrapper{
     }
 
     @Override
-    public void populate(PreparedStatement st){
-        //nothing to populate
+    public void populate(PreparedStatement st) {
+        // nothing to populate
     }
-    
-    
+
 }

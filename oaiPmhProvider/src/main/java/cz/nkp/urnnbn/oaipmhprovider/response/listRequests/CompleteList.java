@@ -35,9 +35,8 @@ public class CompleteList {
         if (maxLength <= 0) {
             throw new IllegalArgumentException("maxLength must be positive");
         }
-        int realEnd = (start + maxLength) > records.size()
-                ? records.size() //all remaining
-                : (start + maxLength); //another part
+        int realEnd = (start + maxLength) > records.size() ? records.size() // all remaining
+                : (start + maxLength); // another part
         return records.subList(start, realEnd);
     }
 }

@@ -15,48 +15,48 @@ import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorType;
 
 public class TestDialogBox extends DialogBox {
 
-	private AnalyticalForm analyticalForm;
-	private SourceDocumentForm srcDocForm;
+    private AnalyticalForm analyticalForm;
+    private SourceDocumentForm srcDocForm;
 
-	public TestDialogBox() {
-		setPopupPosition(5, 5);
-		VerticalPanel vertical = new VerticalPanel();
-		add(vertical);
-		// vertical.add(new MonographForm().getGrid());
-		AnalyticalDTO dto = new AnalyticalDTO();
-		dto.setTitle("clanek");
-		dto.setSubTitle("aneb blabla");
-		PrimaryOriginatorDTO originator = new PrimaryOriginatorDTO();
-		originator.setType(PrimaryOriginatorType.EVENT);
-		originator.setValue("OH Soci");
-		// vertical.add(new MonographForm());
-		analyticalForm = new AnalyticalForm(dto, originator);
-		vertical.add(analyticalForm);
-		vertical.add(new Label("zdrojovy dokument"));
-		srcDocForm = new SourceDocumentForm();
-		vertical.add(srcDocForm);
-		vertical.add(validateButton());
-		vertical.add(closeButton());
-	}
+    public TestDialogBox() {
+        setPopupPosition(5, 5);
+        VerticalPanel vertical = new VerticalPanel();
+        add(vertical);
+        // vertical.add(new MonographForm().getGrid());
+        AnalyticalDTO dto = new AnalyticalDTO();
+        dto.setTitle("clanek");
+        dto.setSubTitle("aneb blabla");
+        PrimaryOriginatorDTO originator = new PrimaryOriginatorDTO();
+        originator.setType(PrimaryOriginatorType.EVENT);
+        originator.setValue("OH Soci");
+        // vertical.add(new MonographForm());
+        analyticalForm = new AnalyticalForm(dto, originator);
+        vertical.add(analyticalForm);
+        vertical.add(new Label("zdrojovy dokument"));
+        srcDocForm = new SourceDocumentForm();
+        vertical.add(srcDocForm);
+        vertical.add(validateButton());
+        vertical.add(closeButton());
+    }
 
-	private Button validateButton() {
-		return new Button("validate", new ClickHandler() {
+    private Button validateButton() {
+        return new Button("validate", new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				analyticalForm.isFilledCorrectly();
-				srcDocForm.isFilledCorrectly();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                analyticalForm.isFilledCorrectly();
+                srcDocForm.isFilledCorrectly();
+            }
+        });
+    }
 
-	private Button closeButton() {
-		return new Button("close", new ClickHandler() {
+    private Button closeButton() {
+        return new Button("close", new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				TestDialogBox.this.hide();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                TestDialogBox.this.hide();
+            }
+        });
+    }
 }

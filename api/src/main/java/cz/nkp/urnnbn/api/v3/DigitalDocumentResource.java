@@ -42,11 +42,9 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
 
     @GET
     @Produces("application/xml")
-    public Response resolve(
-            @DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
+    public Response resolve(@DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
             @DefaultValue("html") @QueryParam(PARAM_FORMAT) String formatStr,
-            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr,
-            @Context HttpServletRequest request) {
+            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr, @Context HttpServletRequest request) {
         try {
             Action action = Parser.parseAction(actionStr, PARAM_ACTION);
             ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);

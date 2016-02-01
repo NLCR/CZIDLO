@@ -35,7 +35,9 @@ public class DigitalDocumentBuilder extends XmlBuilder {
     private final ArchiverBuilder archiverBuilder;
     private final IntelectualEntityBuilder entityBuilder;
 
-    public DigitalDocumentBuilder(DigitalDocument doc, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder, DigitalInstancesBuilder instancesBuilder, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder, IntelectualEntityBuilder entityBuilder) {
+    public DigitalDocumentBuilder(DigitalDocument doc, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder,
+            DigitalInstancesBuilder instancesBuilder, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder,
+            IntelectualEntityBuilder entityBuilder) {
         this.doc = doc;
         this.urn = urn;
         this.identifiersBuilder = identifiersBuilder;
@@ -66,7 +68,7 @@ public class DigitalDocumentBuilder extends XmlBuilder {
 
     private void appendTechnicalMetadata(Element root) {
         Element technicalEl = appendElement(root, "technicalMetadata");
-        //format
+        // format
         String format = doc.getFormat();
         String formatVersion = doc.getFormatVersion();
         if (format != null || formatVersion != null) {
@@ -78,9 +80,9 @@ public class DigitalDocumentBuilder extends XmlBuilder {
                 formatEl.addAttribute(new Attribute("version", formatVersion));
             }
         }
-        //extent
+        // extent
         appendElementWithContentIfNotNull(technicalEl, doc.getExtent(), "extent");
-        //resolution
+        // resolution
         Integer resolutionHorizontal = doc.getResolutionHorizontal();
         Integer resolutionVertical = doc.getResolutionVertical();
         if (resolutionHorizontal != null || resolutionVertical != null) {
@@ -88,7 +90,7 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             appendElementWithContentIfNotNull(resolutionEl, resolutionHorizontal, "horizontal");
             appendElementWithContentIfNotNull(resolutionEl, resolutionVertical, "vertical");
         }
-        //compression
+        // compression
         String compression = doc.getCompression();
         Double compressionRatio = doc.getCompressionRatio();
         if (compression != null || compressionRatio != null) {
@@ -101,7 +103,7 @@ public class DigitalDocumentBuilder extends XmlBuilder {
                 compressionEl.addAttribute(ratio);
             }
         }
-        //color
+        // color
         String colorModel = doc.getColorModel();
         Integer colorDepth = doc.getColorDepth();
         if (colorModel != null || colorDepth != null) {
@@ -109,9 +111,9 @@ public class DigitalDocumentBuilder extends XmlBuilder {
             appendElementWithContentIfNotNull(colorEl, colorModel, "model");
             appendElementWithContentIfNotNull(colorEl, colorDepth, "depth");
         }
-        //iccProfile
+        // iccProfile
         appendElementWithContentIfNotNull(technicalEl, doc.getIccProfile(), "iccProfile");
-        //picture size
+        // picture size
         Integer pictureWidth = doc.getPictureWidth();
         Integer pictureHeight = doc.getPictureHeight();
         if (pictureWidth != null || pictureHeight != null) {

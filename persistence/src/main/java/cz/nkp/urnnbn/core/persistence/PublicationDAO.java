@@ -25,8 +25,10 @@ public interface PublicationDAO {
      * 
      * @param publication
      * @throws DatabaseException
-     * @throws AlreadyPresentException if publication with same intEntityId exists
-     * @throws RecordNotFoundException if Intelectual entity referenced in publication doesn't exist
+     * @throws AlreadyPresentException
+     *             if publication with same intEntityId exists
+     * @throws RecordNotFoundException
+     *             if Intelectual entity referenced in publication doesn't exist
      */
     public void insertPublication(Publication publication) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 

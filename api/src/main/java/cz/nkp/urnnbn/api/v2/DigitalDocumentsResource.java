@@ -85,7 +85,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
                 Document apiV3Request = ApiModuleConfiguration.instanceOf().getDigDocRegistrationV2ToV3DataTransformer().transform(apiV2Request);
                 String apiV3Response = registerDigitalDocumentByApiV3(apiV3Request, login, registrar.getCode());
                 XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getRegisterDigDocResponseV3ToV2Transformer();
-                String response = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response); 
+                String response = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
                 return Response.created(null).entity(response).build();
             } catch (ValidityException ex) {
                 throw new InvalidDataException(ex);
@@ -107,12 +107,11 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentsResource {
      */
     @Path("id/{idType}/{idValue}")
     @Override
-    public DigitalDocumentResource getDigitalDocumentResource(
-            @PathParam("idType") String idTypeStr,
-            @PathParam("idValue") String idValue) {
+    public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValue) {
         try {
             try {
-                logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
+                logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
+                        idValue, registrar.getCode() });
                 DigitalDocument digitalDocument = getDigitalDocument(idTypeStr, idValue);
                 UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
                 return new DigitalDocumentResource(digitalDocument, urn);

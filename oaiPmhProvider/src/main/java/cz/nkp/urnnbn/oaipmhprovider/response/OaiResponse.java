@@ -60,11 +60,11 @@ public class OaiResponse {
         this(null, params);
     }
 
-    protected void buildOaiHeader() throws IOException{
+    protected void buildOaiHeader() throws IOException {
         doc = DocumentHelper.createDocument();
-        Element oaiPmh = doc.addElement(new QName("OAI-PMH",oai));
+        Element oaiPmh = doc.addElement(new QName("OAI-PMH", oai));
         oaiPmh.addAttribute(new QName("schemaLocation", xsi), "http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd");
-        Element responseDate = oaiPmh.addElement(new QName("responseDate",oai));
+        Element responseDate = oaiPmh.addElement(new QName("responseDate", oai));
         responseDate.addText(buildResponseDate());
         buildRequestEl(oaiPmh);
     }
@@ -74,11 +74,11 @@ public class OaiResponse {
     }
 
     private void buildRequestEl(Element oaiPmh) throws IOException {
-        Element requestEl = oaiPmh.addElement(new QName("request",oai));
+        Element requestEl = oaiPmh.addElement(new QName("request", oai));
         if (verbStr != null) {
             requestEl.addAttribute("verb", verbStr);
         }
-        //addOtherParameters(requestEl);
+        // addOtherParameters(requestEl);
         requestEl.addText(getBaseUrl());
     }
 
@@ -92,7 +92,7 @@ public class OaiResponse {
     }
 
     boolean isAllowed(String attribute) {
-        String[] allowedAttributes = {"identifier", "metadataPrefix", "from", "until", "set", "resumptionToken"};
+        String[] allowedAttributes = { "identifier", "metadataPrefix", "from", "until", "set", "resumptionToken" };
         for (String allowedAttribute : allowedAttributes) {
             if (allowedAttribute.equals(attribute)) {
                 return true;

@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.IntEntIdType;
  *
  * @author Martin Řehánek
  */
-    public class IntEntIdentifier {
+public class IntEntIdentifier {
 
     private Long intEntDbId;
     private IntEntIdType type;

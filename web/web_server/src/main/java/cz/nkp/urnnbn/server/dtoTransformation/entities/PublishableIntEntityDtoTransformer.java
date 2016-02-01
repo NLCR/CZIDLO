@@ -14,23 +14,23 @@ import cz.nkp.urnnbn.shared.dto.ie.PublishableEntityDTO;
 
 public abstract class PublishableIntEntityDtoTransformer extends EntityDtoTransformer {
 
-	public PublishableIntEntityDtoTransformer(IntelectualEntity entity, List<IntEntIdentifier> enityIds, Publication publication,
-			Originator originator, ArrayList<DigitalDocumentDTO> docs) {
-		super(entity, enityIds, publication, originator, null, docs);
-	}
+    public PublishableIntEntityDtoTransformer(IntelectualEntity entity, List<IntEntIdentifier> enityIds, Publication publication,
+            Originator originator, ArrayList<DigitalDocumentDTO> docs) {
+        super(entity, enityIds, publication, originator, null, docs);
+    }
 
-	@Override
-	final IntelectualEntityDTO intEntToDto() {
-		PublishableEntityDTO result = publishableEntityDto();
-		if (publication != null) {
-			PublicationDTO publicationDto = new PublicationDTO();
-			publicationDto.setPublisher(publication.getPublisher());
-			publicationDto.setPublicationPlace(publication.getPlace());
-			publicationDto.setPublicationYear(publication.getYear());
-			result.setPublication(publicationDto);
-		}
-		return result;
-	}
+    @Override
+    final IntelectualEntityDTO intEntToDto() {
+        PublishableEntityDTO result = publishableEntityDto();
+        if (publication != null) {
+            PublicationDTO publicationDto = new PublicationDTO();
+            publicationDto.setPublisher(publication.getPublisher());
+            publicationDto.setPublicationPlace(publication.getPlace());
+            publicationDto.setPublicationYear(publication.getYear());
+            result.setPublication(publicationDto);
+        }
+        return result;
+    }
 
-	abstract PublishableEntityDTO publishableEntityDto();
+    abstract PublishableEntityDTO publishableEntityDto();
 }

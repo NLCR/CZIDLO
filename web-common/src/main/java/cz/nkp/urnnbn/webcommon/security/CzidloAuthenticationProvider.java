@@ -26,35 +26,35 @@ import cz.nkp.urnnbn.services.Services;
  */
 public class CzidloAuthenticationProvider implements AuthenticationProvider {
 
-	private static final Logger logger = Logger.getLogger(CzidloAuthenticationProvider.class.getName());
-	static final List<GrantedAuthority> ADMIN = new ArrayList<GrantedAuthority>();
-	static final List<GrantedAuthority> USER = new ArrayList<GrantedAuthority>();
+    private static final Logger logger = Logger.getLogger(CzidloAuthenticationProvider.class.getName());
+    static final List<GrantedAuthority> ADMIN = new ArrayList<GrantedAuthority>();
+    static final List<GrantedAuthority> USER = new ArrayList<GrantedAuthority>();
 
-	static {
-		ADMIN.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-		USER.add(new GrantedAuthorityImpl("ROLE_USER"));
-	}
+    static {
+        ADMIN.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
+        USER.add(new GrantedAuthorityImpl("ROLE_USER"));
+    }
 
-	@Override
-	public Authentication authenticate(Authentication auth) throws AuthenticationException {
-		String login = ((String) auth.getPrincipal());
-		String password = ((String) auth.getCredentials());
-		AuthenticationService ser = Services.instanceOf().authenticationService();
-		User autheticated = ser.autheticatedUserOrNull(login, password);
-		if (autheticated == null) {
-			throw new BadCredentialsException("Bad Credentials");
-		} else {
-			MemoryPasswordsStorage.instanceOf().storePassword(login, password);
-		}
-		if (autheticated.isAdmin()) {
-			return new UsernamePasswordAuthenticationToken(auth.getName(), auth.getCredentials(), ADMIN);
-		} else {
-			return new UsernamePasswordAuthenticationToken(auth.getName(), auth.getCredentials(), USER);
-		}
-	}
+    @Override
+    public Authentication authenticate(Authentication auth) throws AuthenticationException {
+        String login = ((String) auth.getPrincipal());
+        String password = ((String) auth.getCredentials());
+        AuthenticationService ser = Services.instanceOf().authenticationService();
+        User autheticated = ser.autheticatedUserOrNull(login, password);
+        if (autheticated == null) {
+            throw new BadCredentialsException("Bad Credentials");
+        } else {
+            MemoryPasswordsStorage.instanceOf().storePassword(login, password);
+        }
+        if (autheticated.isAdmin()) {
+            return new UsernamePasswordAuthenticationToken(auth.getName(), auth.getCredentials(), ADMIN);
+        } else {
+            return new UsernamePasswordAuthenticationToken(auth.getName(), auth.getCredentials(), USER);
+        }
+    }
 
-	@Override
-	public boolean supports(Class<?> type) {
-		return true;
-	}
+    @Override
+    public boolean supports(Class<?> type) {
+        return true;
+    }
 }

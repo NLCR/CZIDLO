@@ -56,7 +56,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.insertUrnNbn(urn);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -88,7 +88,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.insertUrnNbnPredecessor(predecessor, successor, "test");
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
 
         urnDao.insertUrnNbn(predecessor);
@@ -96,7 +96,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.insertUrnNbnPredecessor(predecessor, successor, "test");
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
 
         urnDao.insertUrnNbn(successor);
@@ -105,7 +105,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.insertUrnNbnPredecessor(predecessor, successor, "test");
             fail();
         } catch (AlreadyPresentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -135,13 +135,12 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         try {
             urnDao.getUrnNbnByDigDocId(ILLEGAL_ID);
         } catch (RecordNotFoundException ex) {
-            //ok
+            // ok
         }
     }
 
     /**
-     * Test of getUrnNbnByRegistrarCodeAndDocumentCode method, of class
-     * UrnNbnDaoPostgres.
+     * Test of getUrnNbnByRegistrarCodeAndDocumentCode method, of class UrnNbnDaoPostgres.
      */
     public void testGetUrnNbnByRegistrarCodeAndDocumentCode_ok() throws Exception {
         String documentCode = "123456";
@@ -173,10 +172,10 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(RegistrarCode.valueOf("NOT99"), documentCode);
             fail();
         } catch (RecordNotFoundException ex) {
-            //ok
+            // ok
         }
     }
-    
+
     public void testGetUrnNbnPreviouslyReserved() throws Exception {
         String documentCode = "123456";
         Registrar registrar = registrarPersisted();
@@ -194,11 +193,11 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDocumentCode());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDigDocId());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getReserved());
-        //assertEquals(reservedTs, fetchedByRegistrarCodeDocumentCode.getReserved());
+        // assertEquals(reservedTs, fetchedByRegistrarCodeDocumentCode.getReserved());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getRegistered());
         assertNull(fetchedByRegistrarCodeDocumentCode.getDeactivated());
         assertEquals(inserted, fetchedByRegistrarCodeDocumentCode);
-        
+
         UrnNbn fetchedByDigDocId = urnDao.getUrnNbnByDigDocId(doc.getId());
         assertNotNull(fetchedByDigDocId);
         assertNotNull(fetchedByDigDocId.getRegistered());
@@ -206,15 +205,15 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByDigDocId.getDocumentCode());
         assertNotNull(fetchedByDigDocId.getDigDocId());
         assertNotNull(fetchedByDigDocId.getReserved());
-        //assertEquals(reservedTs, fetchedByDigDocId.getReserved());
+        // assertEquals(reservedTs, fetchedByDigDocId.getReserved());
         assertNotNull(fetchedByDigDocId.getRegistered());
         assertNull(fetchedByDigDocId.getDeactivated());
         assertEquals(inserted, fetchedByDigDocId);
     }
-    
+
     public void testGetUrnNbnDeactivated() throws Exception {
         String documentCode = "123456";
-        String deactivationNote="fadfadfadf";
+        String deactivationNote = "fadfadfadf";
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
@@ -231,12 +230,12 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDocumentCode());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDigDocId());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getReserved());
-        //assertEquals(reservedTs, fetchedByRegistrarCodeDocumentCode.getReserved());
+        // assertEquals(reservedTs, fetchedByRegistrarCodeDocumentCode.getReserved());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getRegistered());
         assertNotNull(fetchedByRegistrarCodeDocumentCode.getDeactivated());
         assertEquals(inserted, fetchedByRegistrarCodeDocumentCode);
         assertEquals(deactivationNote, fetchedByRegistrarCodeDocumentCode.getDeactivationNote());
-        
+
         UrnNbn fetchedByDigDocId = urnDao.getUrnNbnByDigDocId(doc.getId());
         assertNotNull(fetchedByDigDocId);
         assertNotNull(fetchedByDigDocId.getRegistered());
@@ -244,13 +243,12 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         assertNotNull(fetchedByDigDocId.getDocumentCode());
         assertNotNull(fetchedByDigDocId.getDigDocId());
         assertNotNull(fetchedByDigDocId.getReserved());
-        //assertEquals(reservedTs, fetchedByDigDocId.getReserved());
+        // assertEquals(reservedTs, fetchedByDigDocId.getReserved());
         assertNotNull(fetchedByDigDocId.getRegistered());
         assertNotNull(fetchedByDigDocId.getDeactivated());
         assertEquals(inserted, fetchedByDigDocId);
         assertEquals(deactivationNote, fetchedByDigDocId.getDeactivationNote());
     }
-    
 
     public void testGetUrnNbnByRegistrarCodeAndDocumentCode_unknownDocumentCode() throws Exception {
         String documentCode = "123456";
@@ -263,7 +261,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
             urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(registrar.getCode(), "NOT_USED");
             fail();
         } catch (RecordNotFoundException ex) {
-            //ok
+            // ok
         }
     }
 
@@ -391,12 +389,12 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         urnDao.insertUrnNbn(inserted);
         UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(fetched.isActive());
-        //deactivation
+        // deactivation
         String deactivationNote = "fasdfasdfasdfa";
         urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode(), deactivationNote);
         UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivated.isActive());
-        //another deactivation
+        // another deactivation
         UrnNbn deactivatedAgain = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivatedAgain.isActive());
         assertEquals(deactivationNote, deactivatedAgain.getDeactivationNote());
@@ -409,11 +407,11 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         urnDao.insertUrnNbn(inserted);
         UrnNbn fetched = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(fetched.isActive());
-        //deactivation
+        // deactivation
         urnDao.deactivateUrnNbn(inserted.getRegistrarCode(), inserted.getDocumentCode(), "deactivated because of something");
         UrnNbn deactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertFalse(deactivated.isActive());
-        //reactivation
+        // reactivation
         urnDao.reactivateUrnNbn(deactivated.getRegistrarCode(), deactivated.getDocumentCode());
         UrnNbn reactivated = urnDao.getUrnNbnByRegistrarCodeAndDocumentCode(inserted.getRegistrarCode(), inserted.getDocumentCode());
         assertTrue(reactivated.isActive());
@@ -431,7 +429,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         try {
             urnDao.getUrnNbnByDigDocId(registrar.getId());
         } catch (RecordNotFoundException ex) {
-            //ok
+            // ok
         }
     }
 
@@ -449,7 +447,7 @@ public class UrnNbnDaoPostgresTest extends AbstractDaoTest {
         try {
             urnDao.getUrnNbnByDigDocId(registrar.getId());
         } catch (RecordNotFoundException ex) {
-            //ok
+            // ok
         }
     }
 

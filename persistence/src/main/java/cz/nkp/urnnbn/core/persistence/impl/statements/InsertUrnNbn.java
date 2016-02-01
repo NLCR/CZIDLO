@@ -26,15 +26,9 @@ public class InsertUrnNbn implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UrnNbnDAO.TABLE_NAME
-                + "(" + UrnNbnDAO.ATTR_DIG_DOC_ID
-                + "," + UrnNbnDAO.ATTR_RESERVED
-                + "," + UrnNbnDAO.ATTR_REGISTERED
-                + "," + UrnNbnDAO.ATTR_DEACTIVATED
-                + "," + UrnNbnDAO.ATTR_REGISTRAR_CODE
-                + "," + UrnNbnDAO.ATTR_DOCUMENT_CODE
-                + "," + UrnNbnDAO.ATTR_ACTIVE
-                + ") values(?,?,?,?,?,?,?)";
+        return "INSERT into " + UrnNbnDAO.TABLE_NAME + "(" + UrnNbnDAO.ATTR_DIG_DOC_ID + "," + UrnNbnDAO.ATTR_RESERVED + ","
+                + UrnNbnDAO.ATTR_REGISTERED + "," + UrnNbnDAO.ATTR_DEACTIVATED + "," + UrnNbnDAO.ATTR_REGISTRAR_CODE + ","
+                + UrnNbnDAO.ATTR_DOCUMENT_CODE + "," + UrnNbnDAO.ATTR_ACTIVE + ") values(?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -52,7 +46,7 @@ public class InsertUrnNbn implements StatementWrapper {
             st.setString(6, urn.getDocumentCode());
             st.setBoolean(7, true);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

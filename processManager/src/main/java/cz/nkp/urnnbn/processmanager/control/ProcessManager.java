@@ -30,20 +30,22 @@ import java.util.List;
 public interface ProcessManager {
 
     /**
-     * Closes opened resources of process manager and shuts down the process
-     * manager.
+     * Closes opened resources of process manager and shuts down the process manager.
      *
-     * @param waitForJobsToFinish If true, process manager is closed after all
-     * jobs finish. Otherwise still running jobs are killed.
+     * @param waitForJobsToFinish
+     *            If true, process manager is closed after all jobs finish. Otherwise still running jobs are killed.
      */
     public void shutdown(boolean waitForJobsToFinish);
 
     /**
      * Creates and schedules the process.
      *
-     * @param userLogin login of user scheduling the process
-     * @param type type of process
-     * @param processParams parameters of the process
+     * @param userLogin
+     *            login of user scheduling the process
+     * @param type
+     *            type of process
+     * @param processParams
+     *            parameters of the process
      * @return instance of scheduled process
      */
     public Process scheduleNewProcess(String login, ProcessType type, String[] processParams);
@@ -54,9 +56,10 @@ public interface ProcessManager {
      * @param login
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
      */
     public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException;
 
@@ -65,7 +68,8 @@ public interface ProcessManager {
      *
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
+     * @throws UnknownRecordException
+     *             If no such process exists
      */
     public Process getProcess(Long processId) throws UnknownRecordException;
 
@@ -85,10 +89,12 @@ public interface ProcessManager {
      * @param login
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is not in RUNNING state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
+     * @throws InvalidStateException
+     *             If process is not in RUNNING state
      */
     public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
@@ -99,7 +105,8 @@ public interface ProcessManager {
      * @return
      * @throws UnknownRecordException
      * @throws AccessRightException
-     * @throws InvalidStateException If proces is not in SCHEDULED state
+     * @throws InvalidStateException
+     *             If proces is not in SCHEDULED state
      */
     public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
@@ -108,10 +115,12 @@ public interface ProcessManager {
      *
      * @param login
      * @param processId
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is in RUNNING or SCHEDULED state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
+     * @throws InvalidStateException
+     *             If process is in RUNNING or SCHEDULED state
      */
     public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 }

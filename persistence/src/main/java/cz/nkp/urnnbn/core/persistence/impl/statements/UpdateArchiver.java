@@ -26,13 +26,9 @@ public class UpdateArchiver implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + ArchiverDAO.TABLE_NAME + " SET "
-                + ArchiverDAO.ATTR_UPDATED + "=?,"
-                + ArchiverDAO.ATTR_NAME + "=?,"
-                + ArchiverDAO.ATTR_DESCRIPTION + "=?,"
-                + ArchiverDAO.ATTR_ORDER + "=?,"
-                + ArchiverDAO.ATTR_HIDDEN + "=?"
-                + " WHERE " + ArchiverDAO.ATTR_ID + "=?";
+        return "UPDATE " + ArchiverDAO.TABLE_NAME + " SET " + ArchiverDAO.ATTR_UPDATED + "=?," + ArchiverDAO.ATTR_NAME + "=?,"
+                + ArchiverDAO.ATTR_DESCRIPTION + "=?," + ArchiverDAO.ATTR_ORDER + "=?," + ArchiverDAO.ATTR_HIDDEN + "=?" + " WHERE "
+                + ArchiverDAO.ATTR_ID + "=?";
     }
 
     @Override
@@ -49,7 +45,7 @@ public class UpdateArchiver implements StatementWrapper {
             st.setBoolean(5, archiver.isHidden());
             st.setLong(6, archiver.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -26,14 +26,9 @@ public class InsertDigitalInstance implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + DigitalInstanceDAO.TABLE_NAME
-                + "(" + DigitalInstanceDAO.ATTR_ID
-                + "," + DigitalInstanceDAO.ATTR_DIG_DOC_ID
-                + "," + DigitalInstanceDAO.ATTR_LIB_ID
-                + "," + DigitalInstanceDAO.ATTR_URL
-                + "," + DigitalInstanceDAO.ATTR_PUBLISHED
-                + "," + DigitalInstanceDAO.ATTR_ACCESS
-                + ") values(?,?,?,?,?)";
+        return "INSERT into " + DigitalInstanceDAO.TABLE_NAME + "(" + DigitalInstanceDAO.ATTR_ID + "," + DigitalInstanceDAO.ATTR_DIG_DOC_ID + ","
+                + DigitalInstanceDAO.ATTR_LIB_ID + "," + DigitalInstanceDAO.ATTR_URL + "," + DigitalInstanceDAO.ATTR_PUBLISHED + ","
+                + DigitalInstanceDAO.ATTR_ACCESS + ") values(?,?,?,?,?)";
     }
 
     @Override
@@ -46,7 +41,7 @@ public class InsertDigitalInstance implements StatementWrapper {
             st.setTimestamp(5, DateTimeUtils.nowTs());
             st.setString(6, i.getAccessibility());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

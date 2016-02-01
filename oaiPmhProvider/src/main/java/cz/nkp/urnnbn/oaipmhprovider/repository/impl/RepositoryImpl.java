@@ -54,7 +54,7 @@ public class RepositoryImpl implements Repository {
         } else {
             Registrar registrar = registrarFromSetSpec(setSpec);
             if (registrar == null) {
-                return Collections.<UrnNbn>emptySet();
+                return Collections.<UrnNbn> emptySet();
             } else {
                 return backend.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(registrar, fromDt, untilDt);
             }
@@ -74,21 +74,22 @@ public class RepositoryImpl implements Repository {
     @Override
     public Record getRecord(Identifier id, MetadataFormat format, boolean validate) {
         UrnNbn urnNbn = UrnNbn.valueOf(id.toString());
-        UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
+                urnNbn.getDocumentCode(), true);
         switch (fetechedUrn.getStatus()) {
-            case DEACTIVATED:
-                //TODO: before implementng deletedRecord will even deactivated dig docs available
-                //TODO: potentially return another implementation subclass of Record like DeletedRecord
-                //return null;
-                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
-            case ACTIVE:
-                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
-            case FREE:
-                return null;
-            case RESERVED:
-                return null;
-            default:
-                return null;
+        case DEACTIVATED:
+            // TODO: before implementng deletedRecord will even deactivated dig docs available
+            // TODO: potentially return another implementation subclass of Record like DeletedRecord
+            // return null;
+            return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
+        case ACTIVE:
+            return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
+        case FREE:
+            return null;
+        case RESERVED:
+            return null;
+        default:
+            return null;
         }
     }
 

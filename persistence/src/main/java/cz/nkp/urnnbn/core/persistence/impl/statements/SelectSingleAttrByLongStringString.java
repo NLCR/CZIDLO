@@ -24,7 +24,8 @@ public class SelectSingleAttrByLongStringString implements StatementWrapper {
     private final String whereAttr3Name;
     private final String whereAttr3Value;
 
-    public SelectSingleAttrByLongStringString(String tableName, String selectAttrName, String whereAttr1Name, long whereAttr1Value, String whereAttr2Name, String wherAttr2Value, String whereAttr3Name, String wherAttr3Value) {
+    public SelectSingleAttrByLongStringString(String tableName, String selectAttrName, String whereAttr1Name, long whereAttr1Value,
+            String whereAttr2Name, String wherAttr2Value, String whereAttr3Name, String wherAttr3Value) {
         this.tableName = tableName;
         this.selectAttrName = selectAttrName;
         this.whereAttr1Name = whereAttr1Name;
@@ -37,11 +38,8 @@ public class SelectSingleAttrByLongStringString implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT " + selectAttrName
-                + " from " + tableName
-                + " WHERE " + whereAttr1Name + "=?"
-                + " AND " + whereAttr2Name + "=?"
-                + " AND " + whereAttr3Name + "=?";
+        return "SELECT " + selectAttrName + " from " + tableName + " WHERE " + whereAttr1Name + "=?" + " AND " + whereAttr2Name + "=?" + " AND "
+                + whereAttr3Name + "=?";
     }
 
     @Override
@@ -51,7 +49,7 @@ public class SelectSingleAttrByLongStringString implements StatementWrapper {
             st.setString(2, whereAttr2Value);
             st.setString(3, whereAttr3Value);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

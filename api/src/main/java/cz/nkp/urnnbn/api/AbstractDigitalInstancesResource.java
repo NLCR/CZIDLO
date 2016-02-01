@@ -88,8 +88,8 @@ public abstract class AbstractDigitalInstancesResource extends Resource {
             DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digitalInstance, login);
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digitalInstance.getLibraryId());
             return builder.buildDocumentWithResponseHeader().toXML();
-//            String responseXml = builder.buildDocumentWithResponseHeader().toXML();
-//            return Response.created(null).entity(responseXml).build();
+            // String responseXml = builder.buildDocumentWithResponseHeader().toXML();
+            // return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (AccessException ex) {
@@ -97,7 +97,7 @@ public abstract class AbstractDigitalInstancesResource extends Resource {
         } catch (UnknownDigLibException ex) {
             throw new UnknownDigitalLibraryException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         }

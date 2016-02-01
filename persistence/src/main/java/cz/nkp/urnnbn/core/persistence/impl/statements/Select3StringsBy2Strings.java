@@ -36,7 +36,8 @@ public class Select3StringsBy2Strings implements StatementWrapper {
     private final String secondResultName;
     private final String thirdResultName;
 
-    public Select3StringsBy2Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName, String secondStringAttrValue, String firstResultName, String secondResultName, String thirdResultName) {
+    public Select3StringsBy2Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName,
+            String secondStringAttrValue, String firstResultName, String secondResultName, String thirdResultName) {
         this.tableName = tableName;
         this.firstStringAttrName = firstStringAttrName;
         this.firstStringAttrValue = firstStringAttrValue;
@@ -49,11 +50,8 @@ public class Select3StringsBy2Strings implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT " + firstResultName + "," + secondResultName + "," + thirdResultName
-                + " from " + tableName
-                + " WHERE "
-                + firstStringAttrName + "=? AND "
-                + secondStringAttrName + "=?";
+        return "SELECT " + firstResultName + "," + secondResultName + "," + thirdResultName + " from " + tableName + " WHERE " + firstStringAttrName
+                + "=? AND " + secondStringAttrName + "=?";
     }
 
     @Override
@@ -62,7 +60,7 @@ public class Select3StringsBy2Strings implements StatementWrapper {
             st.setString(1, firstStringAttrValue);
             st.setString(2, secondStringAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

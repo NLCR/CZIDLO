@@ -27,28 +27,14 @@ public class InsertDigitalDocument extends AbstractStatement implements Statemen
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + DigitalDocumentDAO.TABLE_NAME
-                + "(" + DigitalDocumentDAO.ATTR_ID
-                + "," + DigitalDocumentDAO.ATTR_INT_ENT_ID
-                + "," + DigitalDocumentDAO.ATTR_REGISTRAR_ID
-                + "," + DigitalDocumentDAO.ATTR_ARCHIVER_ID
-                + "," + DigitalDocumentDAO.ATTR_CREATED
-                + "," + DigitalDocumentDAO.ATTR_UPDATED
-                + "," + DigitalDocumentDAO.ATTR_FINANCED
-                + "," + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER
-                + "," + DigitalDocumentDAO.ATTR_FORMAT
-                + "," + DigitalDocumentDAO.ATTR_FORMAT_VERSION
-                + "," + DigitalDocumentDAO.ATTR_EXTENT
-                + "," + DigitalDocumentDAO.ATTR_RES_HORIZONTAL
-                + "," + DigitalDocumentDAO.ATTR_RES_VERTICAL
-                + "," + DigitalDocumentDAO.ATTR_COMPRESSION
-                + "," + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO
-                + "," + DigitalDocumentDAO.ATTR_COLOR_MODEL
-                + "," + DigitalDocumentDAO.ATTR_COLOR_DEPTH
-                + "," + DigitalDocumentDAO.ATTR_ICC_PROFILE
-                + "," + DigitalDocumentDAO.ATTR_PIC_WIDTH
-                + "," + DigitalDocumentDAO.ATTR_PIC_HEIGHT
-                + ") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT into " + DigitalDocumentDAO.TABLE_NAME + "(" + DigitalDocumentDAO.ATTR_ID + "," + DigitalDocumentDAO.ATTR_INT_ENT_ID + ","
+                + DigitalDocumentDAO.ATTR_REGISTRAR_ID + "," + DigitalDocumentDAO.ATTR_ARCHIVER_ID + "," + DigitalDocumentDAO.ATTR_CREATED + ","
+                + DigitalDocumentDAO.ATTR_UPDATED + "," + DigitalDocumentDAO.ATTR_FINANCED + "," + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER + ","
+                + DigitalDocumentDAO.ATTR_FORMAT + "," + DigitalDocumentDAO.ATTR_FORMAT_VERSION + "," + DigitalDocumentDAO.ATTR_EXTENT + ","
+                + DigitalDocumentDAO.ATTR_RES_HORIZONTAL + "," + DigitalDocumentDAO.ATTR_RES_VERTICAL + "," + DigitalDocumentDAO.ATTR_COMPRESSION
+                + "," + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO + "," + DigitalDocumentDAO.ATTR_COLOR_MODEL + ","
+                + DigitalDocumentDAO.ATTR_COLOR_DEPTH + "," + DigitalDocumentDAO.ATTR_ICC_PROFILE + "," + DigitalDocumentDAO.ATTR_PIC_WIDTH + ","
+                + DigitalDocumentDAO.ATTR_PIC_HEIGHT + ") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -76,7 +62,7 @@ public class InsertDigitalDocument extends AbstractStatement implements Statemen
             setIntOrNull(st, 19, digDocument.getPictureWidth());
             setIntOrNull(st, 20, digDocument.getPictureHeight());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

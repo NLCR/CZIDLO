@@ -93,21 +93,20 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
     @PUT
     @Path("/{idType}")
     @Produces("application/xml")
-    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req,
-            @PathParam("idType") String idTypeStr, String value) {
+    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String value) {
         try {
             try {
                 checkServerNotReadOnly();
                 String login = req.getRemoteUser();
                 RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
                 RegistrarScopeIdentifier oldId = presentIdentifierOrNull(idType);
-                if (oldId == null) { //insert new value
+                if (oldId == null) { // insert new value
                     RegistrarScopeIdentifier newId = addNewIdentifier(idType, value, login);
                     String apiV3Response = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
                     XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getSetOrUpdateRegScopeIdResponseV3ToV2Transformer();
                     String transformedResponse = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
                     return Response.created(null).entity(transformedResponse).build();
-                } else { //update value
+                } else { // update value
                     RegistrarScopeIdentifier newId = updateIdentifier(login, idType, value);
                     String apiV3Response = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                     XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getSetOrUpdateRegScopeIdResponseV3ToV2Transformer();
@@ -128,8 +127,7 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
     @DELETE
     @Path("/{idType}")
     @Produces("application/xml")
-    public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req,
-            @PathParam("idType") String idTypeStr) {
+    public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
         try {
             try {
                 checkServerNotReadOnly();

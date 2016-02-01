@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -74,8 +74,7 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public Response addNewDigitalInstance(
-            @Context HttpServletRequest req, String content) {
+    public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
         try {
             checkServerNotReadOnly();
             if (digDoc == null) {
@@ -84,7 +83,7 @@ public class DigitalInstancesResource extends AbstractDigitalInstancesResource {
             String login = req.getRemoteUser();
             Document requestXmlData = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV3().loadDocument(content);
             DigitalInstance digitalInstance = digitalInstanceFromApiV3Document(requestXmlData);
-            String response=  super.addNewDigitalInstanceWithApiV3Response(digitalInstance, login);
+            String response = super.addNewDigitalInstanceWithApiV3Response(digitalInstance, login);
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);

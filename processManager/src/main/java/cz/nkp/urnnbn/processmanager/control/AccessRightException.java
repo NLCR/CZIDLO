@@ -33,17 +33,16 @@ public class AccessRightException extends Exception {
     }
 
     /**
-     * Creates a new instance of
-     * <code>AccessRightException</code> without detail message.
+     * Creates a new instance of <code>AccessRightException</code> without detail message.
      */
     public AccessRightException() {
     }
 
     /**
-     * Constructs an instance of
-     * <code>AccessRightException</code> with the specified detail message.
+     * Constructs an instance of <code>AccessRightException</code> with the specified detail message.
      *
-     * @param msg the detail message.
+     * @param msg
+     *            the detail message.
      */
     public AccessRightException(String msg) {
         super(msg);

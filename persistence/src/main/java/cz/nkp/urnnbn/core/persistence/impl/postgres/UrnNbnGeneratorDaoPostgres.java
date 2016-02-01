@@ -44,14 +44,14 @@ public class UrnNbnGeneratorDaoPostgres extends AbstractDAO implements UrnNbnGen
         try {
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't insert {0} {1}", new Object[]{TABLE_NAME, generator.toString()});
+            logger.log(Level.SEVERE, "Couldn't insert {0} {1}", new Object[] { TABLE_NAME, generator.toString() });
             if ("23505".equals(ex.getSQLState())) {
                 IdPart registrarId = new IdPart(ATTR_REGISTRAR_ID, generator.getRegistrarId().toString());
                 IdPart documentCode = new IdPart(ATTR_LAST_DOCUMENT_CODE, generator.getLastDocumentCode());
-                throw new AlreadyPresentException(new IdPart[]{registrarId, documentCode});
+                throw new AlreadyPresentException(new IdPart[] { registrarId, documentCode });
             } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -72,7 +72,7 @@ public class UrnNbnGeneratorDaoPostgres extends AbstractDAO implements UrnNbnGen
                 logger.log(Level.SEVERE, "No urn:nbn generator for registrar with id {0}", registrarId);
                 throw (RecordNotFoundException) e;
             } else {
-                //should never happen
+                // should never happen
                 logger.log(Level.SEVERE, "Exception unexpected here", e);
                 return null;
             }
@@ -89,7 +89,7 @@ public class UrnNbnGeneratorDaoPostgres extends AbstractDAO implements UrnNbnGen
             DaoOperation operation = new NoResultOperation(updateSt);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {

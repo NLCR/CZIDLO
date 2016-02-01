@@ -31,7 +31,8 @@ import nu.xom.Element;
  */
 class OtherEntityBuilder extends IntelectualEntityBuilder {
 
-    public OtherEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public OtherEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 

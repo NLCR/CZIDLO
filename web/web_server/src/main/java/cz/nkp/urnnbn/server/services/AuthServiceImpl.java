@@ -9,16 +9,16 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 
 public class AuthServiceImpl extends AbstractService implements AuthService {
 
-	private static final long serialVersionUID = 4860344375822437178L;
-	private static final Logger logger = Logger.getLogger(AuthServiceImpl.class.getName());
+    private static final long serialVersionUID = 4860344375822437178L;
+    private static final Logger logger = Logger.getLogger(AuthServiceImpl.class.getName());
 
-	@Override
-	public UserDTO getLoggedUser() throws ServerException {
-		try {
-			return super.getActiveUser();
-		} catch (Throwable e) {
-			logger.log(Level.SEVERE, null, e);
-			throw new ServerException(e.getMessage());
-		}
-	}
+    @Override
+    public UserDTO getLoggedUser() throws ServerException {
+        try {
+            return super.getActiveUser();
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, null, e);
+            throw new ServerException(e.getMessage());
+        }
+    }
 }

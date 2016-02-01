@@ -40,7 +40,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         try {
             return insertRecordWithIdFromSequence(content, TABLE_NAME, SEQ_NAME, new InsertContent(content));
         } catch (RecordNotFoundException ex) {
-            //should never happen since Archiver doesn't have foreign key attributes
+            // should never happen since Archiver doesn't have foreign key attributes
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         }
@@ -56,7 +56,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         try {
             deleteRecordsById(TABLE_NAME, ATTR_ID, contentId, true);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }
@@ -69,10 +69,10 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
             return (Content) runInTransaction(operation);
         } catch (PersistenceException e) {
             if (e instanceof RecordNotFoundException) {
-                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[]{lang, name});
+                logger.log(Level.WARNING, "No such content with lang {0} and name {1}", new Object[] { lang, name });
                 throw (RecordNotFoundException) e;
             } else {
-                //should never happen
+                // should never happen
                 logger.log(Level.SEVERE, "Exception unexpected here", e);
                 return null;
             }
@@ -86,7 +86,7 @@ public class ContentDaoPostgres extends AbstractDAO implements ContentDAO {
         try {
             deleteAllRecords(TABLE_NAME);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }

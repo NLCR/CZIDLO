@@ -120,6 +120,7 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
 
     @Override
     public String toString() {
-        return "DigitalInstance{" + "id=" + id + ", digDocId=" + digDocId + ", libraryId=" + libraryId + ", created=" + created + ", deactivated=" + deactivated + ", active=" + active + ", url=" + url + ", format=" + format + ", accessibility=" + accessibility + '}';
+        return "DigitalInstance{" + "id=" + id + ", digDocId=" + digDocId + ", libraryId=" + libraryId + ", created=" + created + ", deactivated="
+                + deactivated + ", active=" + active + ", url=" + url + ", format=" + format + ", accessibility=" + accessibility + '}';
     }
 }

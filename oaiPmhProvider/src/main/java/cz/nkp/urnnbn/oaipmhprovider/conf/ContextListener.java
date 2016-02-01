@@ -18,39 +18,39 @@ import javax.servlet.ServletContextListener;
  */
 public class ContextListener implements ServletContextListener {
 
-	private static final String WEB_APP_NAME = "oaiPmhProvider";
-	private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
-	private static final String PROPERTIES_FILE = "oaiPmhProvider.properties";
-	private static final String CZIDLO_TO_OAIDC_XSLT = "czidloToOaiDc.xsl";
+    private static final String WEB_APP_NAME = "oaiPmhProvider";
+    private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
+    private static final String PROPERTIES_FILE = "oaiPmhProvider.properties";
+    private static final String CZIDLO_TO_OAIDC_XSLT = "czidloToOaiDc.xsl";
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		loadPropertiesFile();
-		loadCzidloToOaidcXslt();
-	}
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        loadPropertiesFile();
+        loadCzidloToOaidcXslt();
+    }
 
-	private void loadPropertiesFile() {
-		new ResourceUtilizer(logger) {
-			@Override
-			public void processResource(InputStream in) throws Exception {
-				PropertyLoader loader = new PropertyLoader(in);
-				OaiPmhConfiguration.instanceOf().initialize(WEB_APP_NAME, loader);
-				XmlModuleConfiguration.instanceOf().initialize(loader);
-			}
-		}.run(PROPERTIES_FILE);
-	}
+    private void loadPropertiesFile() {
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                PropertyLoader loader = new PropertyLoader(in);
+                OaiPmhConfiguration.instanceOf().initialize(WEB_APP_NAME, loader);
+                XmlModuleConfiguration.instanceOf().initialize(loader);
+            }
+        }.run(PROPERTIES_FILE);
+    }
 
-	private void loadCzidloToOaidcXslt() {
-		new ResourceUtilizer(logger) {
-			@Override
-			public void processResource(InputStream in) throws Exception {
-				OaiPmhConfiguration.instanceOf().initCzidloToOaidcTemplate(in);
-			}
-		}.run(CZIDLO_TO_OAIDC_XSLT);
-	}
+    private void loadCzidloToOaidcXslt() {
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                OaiPmhConfiguration.instanceOf().initCzidloToOaidcTemplate(in);
+            }
+        }.run(CZIDLO_TO_OAIDC_XSLT);
+    }
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		// nothing
-	}
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // nothing
+    }
 }

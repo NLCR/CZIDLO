@@ -26,10 +26,8 @@ public class InsertUserRegistrar implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UserDAO.TABLE_USER_REGISTRAR_NAME
-                + "(" + UserDAO.USER_REGISTRAR_ATTR_USER_ID
-                + "," + UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID
-                + ") values(?,?)";
+        return "INSERT into " + UserDAO.TABLE_USER_REGISTRAR_NAME + "(" + UserDAO.USER_REGISTRAR_ATTR_USER_ID + ","
+                + UserDAO.USER_REGISTRAR_ATTR_REGISTRAR_ID + ") values(?,?)";
     }
 
     @Override
@@ -38,7 +36,7 @@ public class InsertUserRegistrar implements StatementWrapper {
             st.setLong(1, userId);
             st.setLong(2, registrarId);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

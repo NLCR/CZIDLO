@@ -2,24 +2,24 @@ package cz.nkp.urnnbn.client.tabs;
 
 public class TestTab extends SingleTabContentPanel {
 
-	public TestTab(TabsPanel superPanel) {
-		super(superPanel);
-	}
+    public TestTab(TabsPanel superPanel) {
+        super(superPanel);
+    }
 
-	@Override
-	public void onSelection() {
-	}
+    @Override
+    public void onSelection() {
+    }
 
-	@Override
-	public void onDeselectionSelection() {
-	}
+    @Override
+    public void onDeselectionSelection() {
+    }
 
-	public void onLoad() {
-		reload();
-	}
+    public void onLoad() {
+        reload();
+    }
 
-	private void reload() {
+    private void reload() {
 
-	}
+    }
 
 }

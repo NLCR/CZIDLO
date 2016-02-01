@@ -16,19 +16,19 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @RemoteServiceRelativePath("data")
 public interface DataService extends RemoteService {
 
-	void updateDigitalDocument(DigitalDocumentDTO doc, TechnicalMetadataDTO technical) throws ServerException;
+    void updateDigitalDocument(DigitalDocumentDTO doc, TechnicalMetadataDTO technical) throws ServerException;
 
-	void updateIntelectualEntity(IntelectualEntityDTO entity) throws ServerException;
+    void updateIntelectualEntity(IntelectualEntityDTO entity) throws ServerException;
 
-	UrnNbnDTO saveRecord(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
-			ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException;
+    UrnNbnDTO saveRecord(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
+            ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException;
 
-	DigitalInstanceDTO saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn) throws ServerException;
+    DigitalInstanceDTO saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn) throws ServerException;
 
-	void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException;
+    void deactivateDigitalInstance(DigitalInstanceDTO instance) throws ServerException;
 
-	void deactivateUrnNbn(UrnNbnDTO urnNbn) throws ServerException;
-	
-	void updateDigitalInstance(UrnNbnDTO urnNbn, DigitalInstanceDTO instance) throws ServerException;
+    void deactivateUrnNbn(UrnNbnDTO urnNbn) throws ServerException;
+
+    void updateDigitalInstance(UrnNbnDTO urnNbn, DigitalInstanceDTO instance) throws ServerException;
 
 }

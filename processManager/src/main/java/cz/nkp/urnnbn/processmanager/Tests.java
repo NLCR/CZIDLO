@@ -61,7 +61,7 @@ public class Tests {
     public static void createAndUpdateObject(SessionFactory factory) {
         String login = "createAndUpdate";
 
-        //create
+        // create
         Process process = getScheduledProcess(login);
         System.out.println("before persistence: " + process);
         Session saveSession = factory.openSession();
@@ -71,9 +71,9 @@ public class Tests {
         saveSession.close();
         System.out.println("after persistence: " + process);
 
-        //update
+        // update
         process.setState(ProcessState.RUNNING);
-        //process.setJobId(randomPositiveLong());
+        // process.setJobId(randomPositiveLong());
         process.setStarted(plusRandomSeconds(new Date()));
         Session updateSession = factory.openSession();
         updateSession.beginTransaction();
@@ -86,7 +86,7 @@ public class Tests {
     public static void createAndDeleteObject(SessionFactory factory) {
         String login = "createAndDelete";
 
-        //create
+        // create
         Process process = getScheduledProcess(login);
         Session saveSession = factory.openSession();
         saveSession.beginTransaction();
@@ -94,7 +94,7 @@ public class Tests {
         saveSession.getTransaction().commit();
         saveSession.close();
 
-        //delete
+        // delete
         process.setState(ProcessState.RUNNING);
         process.setStarted(plusRandomSeconds(new Date()));
         Session updateSession = factory.openSession();
@@ -105,8 +105,8 @@ public class Tests {
     }
 
     public static SessionFactory initFactory() {
-        //return new AnnotationConfiguration().configure().buildSessionFactory();
-        //return new Configuration().configure().buildSessionFactory();
+        // return new AnnotationConfiguration().configure().buildSessionFactory();
+        // return new Configuration().configure().buildSessionFactory();
         return new AnnotationConfiguration().configure().buildSessionFactory();
     }
 
@@ -114,7 +114,7 @@ public class Tests {
         Process process = new Process();
         process.setType(ProcessType.TEST);
         process.setOwnerLogin(login);
-        //process.setJobId(randomPositiveLong());
+        // process.setJobId(randomPositiveLong());
         process.setScheduled(plusRandomSeconds(new Date()));
         process.setState(ProcessState.SCHEDULED);
         return process;
@@ -122,7 +122,7 @@ public class Tests {
 
     private static Process getStartedProcess(String login) {
         Process process = getScheduledProcess(login);
-        //process.setJobId(randomPositiveLong());
+        // process.setJobId(randomPositiveLong());
         process.setStarted(plusFiveSeconds(process.getScheduled()));
         process.setState(ProcessState.RUNNING);
         return process;
@@ -139,7 +139,7 @@ public class Tests {
         Process process = getStartedProcess(login);
         process.setFinished(plusFiveSeconds(process.getStarted()));
         process.setState(ProcessState.FAILED);
-        //TODO: jak to bude opravdu s cas. znamkama?
+        // TODO: jak to bude opravdu s cas. znamkama?
         process.setFinished(null);
         return process;
     }

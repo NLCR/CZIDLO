@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 
 /**
  *
- * @author Martin Řehánek 
+ * @author Martin Řehánek
  */
 public class SecurityListener implements ApplicationListener<ApplicationEvent> {
 
@@ -26,22 +26,23 @@ public class SecurityListener implements ApplicationListener<ApplicationEvent> {
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof AbstractAuthenticationEvent) {
-          Authentication authentication = ((AbstractAuthenticationEvent) event).getAuthentication();
+            Authentication authentication = ((AbstractAuthenticationEvent) event).getAuthentication();
             if (event instanceof AbstractAuthenticationFailureEvent) {
-                logger.log(Level.WARNING, "{0}: login={1}: {2}", new Object[]{event.getClass().getSimpleName(), authentication.getName(), authentication.getDetails().toString()});
+                logger.log(Level.WARNING, "{0}: login={1}: {2}", new Object[] { event.getClass().getSimpleName(), authentication.getName(),
+                        authentication.getDetails().toString() });
             } else {
-                logger.log(Level.FINE, "{0}: login={1}", new Object[]{event.getClass().getSimpleName(), authentication.getName()});
+                logger.log(Level.FINE, "{0}: login={1}", new Object[] { event.getClass().getSimpleName(), authentication.getName() });
             }
         } else if (event instanceof AbstractAuthorizationEvent) {
             Object source = ((AbstractAuthorizationEvent) event).getSource();
             if (event instanceof AuthorizationFailureEvent) {
                 String login = ((AuthorizationFailureEvent) event).getAuthentication().getName();
-                logger.log(Level.WARNING, "{0}: login={1}: {2}", new Object[]{event.getClass().getSimpleName(), login, source.toString()});
+                logger.log(Level.WARNING, "{0}: login={1}: {2}", new Object[] { event.getClass().getSimpleName(), login, source.toString() });
             } else if (event instanceof AuthorizedEvent) {
                 String login = ((AuthorizedEvent) event).getAuthentication().getName();
-                logger.log(Level.FINE, "{0}: login={1}: {2}", new Object[]{event.getClass().getSimpleName(), login, source.toString()});
+                logger.log(Level.FINE, "{0}: login={1}: {2}", new Object[] { event.getClass().getSimpleName(), login, source.toString() });
             } else {
-                logger.log(Level.FINE, "{0}: {1}", new Object[]{event.getClass().getSimpleName(), source.toString()});
+                logger.log(Level.FINE, "{0}: {1}", new Object[] { event.getClass().getSimpleName(), source.toString() });
             }
         }
     }

@@ -31,9 +31,10 @@ public interface AuthorizingProcessDAO extends ProcessDAO {
      * @param login
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
      */
     public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException;
 }

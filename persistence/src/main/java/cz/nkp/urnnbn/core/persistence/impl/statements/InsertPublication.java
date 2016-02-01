@@ -25,12 +25,8 @@ public class InsertPublication extends AbstractStatement implements StatementWra
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + PublicationDAO.TABLE_NAME
-                + "(" + PublicationDAO.ATTR_INT_ENT_ID
-                + "," + PublicationDAO.ATTR_YEAR
-                + "," + PublicationDAO.ATTR_PLACE
-                + "," + PublicationDAO.ATTR_PUBLISHER
-                + ") values(?,?,?,?)";
+        return "INSERT into " + PublicationDAO.TABLE_NAME + "(" + PublicationDAO.ATTR_INT_ENT_ID + "," + PublicationDAO.ATTR_YEAR + ","
+                + PublicationDAO.ATTR_PLACE + "," + PublicationDAO.ATTR_PUBLISHER + ") values(?,?,?,?)";
     }
 
     @Override
@@ -41,7 +37,7 @@ public class InsertPublication extends AbstractStatement implements StatementWra
             st.setString(3, publication.getPlace());
             st.setString(4, publication.getPublisher());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

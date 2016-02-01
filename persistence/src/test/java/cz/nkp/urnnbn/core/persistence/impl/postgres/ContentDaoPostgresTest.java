@@ -37,13 +37,13 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testGetContentByNameAndLanguage() throws Exception {
-        //insert
+        // insert
         Content insertedCzInfo = new Content();
         insertedCzInfo.setLanguage("cz");
         insertedCzInfo.setName("info");
         insertedCzInfo.setContent("hello, world!");
         contentDao.insertContent(insertedCzInfo);
-        //fetch
+        // fetch
         Content fetchedCzInfo = contentDao.getContentByNameAndLanguage(insertedCzInfo.getName(), insertedCzInfo.getLanguage());
         assertNotNull(fetchedCzInfo);
         assertEquals(insertedCzInfo, fetchedCzInfo);
@@ -51,13 +51,13 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
         assertEquals(insertedCzInfo.getContent(), fetchedCzInfo.getContent());
         assertEquals(insertedCzInfo.getLanguage(), fetchedCzInfo.getLanguage());
         assertEquals(insertedCzInfo.getName(), fetchedCzInfo.getName());
-        //insert
+        // insert
         Content insertedDeSomething = new Content();
         insertedDeSomething.setLanguage("de");
         insertedDeSomething.setName("somethingElse");
         insertedDeSomething.setContent("hello, world!");
         contentDao.insertContent(insertedDeSomething);
-        //fetch
+        // fetch
         Content fetchedDeSomething = contentDao.getContentByNameAndLanguage(insertedDeSomething.getName(), insertedDeSomething.getLanguage());
         assertNotNull(fetchedDeSomething);
         assertEquals(insertedDeSomething, fetchedDeSomething);
@@ -68,67 +68,67 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testGetContentByNameAndLanguageUnknownName() throws Exception {
-        //tables are empty before each test - that is ensured by AbstractDaoTest.setUp() and .tearDown()
-        //insert
+        // tables are empty before each test - that is ensured by AbstractDaoTest.setUp() and .tearDown()
+        // insert
         Content inserted = new Content();
         inserted.setLanguage("cz");
         inserted.setName("info");
         inserted.setContent("hello, world!");
         contentDao.insertContent(inserted);
-        //fetch
+        // fetch
         try {
             contentDao.getContentByNameAndLanguage("some other name", inserted.getLanguage());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok   
+            // ok
         }
         try {
             contentDao.getContentByNameAndLanguage(null, inserted.getLanguage());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok   
+            // ok
         }
 
     }
 
     public void testGetContentByNameAndLanguageUnknownLanguage() throws Exception {
-        //insert
+        // insert
         Content inserted = new Content();
         inserted.setLanguage("cz");
         inserted.setName("info");
         inserted.setContent("hello, world!");
         contentDao.insertContent(inserted);
-        //fetch
+        // fetch
         try {
             contentDao.getContentByNameAndLanguage(inserted.getName(), "some other language");
             fail();
         } catch (RecordNotFoundException e) {
-            //ok   
+            // ok
         }
         try {
             contentDao.getContentByNameAndLanguage(inserted.getName(), null);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok   
+            // ok
         }
     }
 
     public void testUpdateContent() throws Exception {
-        //insert
+        // insert
         Content inserted = new Content();
         inserted.setLanguage("cz");
         inserted.setName("info");
         inserted.setContent("hello, world!");
         contentDao.insertContent(inserted);
-        //update
+        // update
         Content updated = new Content();
         updated.setId(inserted.getId());
         updated.setLanguage("de");
         updated.setName("conditions");
         updated.setContent("so long, world!");
-        //update
+        // update
         contentDao.updateContent(updated);
-        //fetch
+        // fetch
         Content fetched = contentDao.getContentByNameAndLanguage(updated.getName(), updated.getLanguage());
         assertEquals(updated, fetched);
         assertEquals(updated.getId(), fetched.getId());
@@ -138,48 +138,48 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testUpdateNonexistingContent() throws Exception {
-        //update
+        // update
         Content updated = new Content();
         updated.setId(ILLEGAL_ID);
         updated.setLanguage("de");
         updated.setName("conditions");
         updated.setContent("so long, world!");
-        //update
+        // update
         try {
             contentDao.updateContent(updated);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteContent() throws Exception {
-        //insert
+        // insert
         Content inserted = new Content();
         inserted.setLanguage("cz");
         inserted.setName("info");
         inserted.setContent("hello, world!");
         inserted.setId(contentDao.insertContent(inserted));
-        //delete
+        // delete
         contentDao.deleteContent(inserted.getId());
-        //fetch
+        // fetch
         try {
             contentDao.getContentByNameAndLanguage(inserted.getName(), inserted.getLanguage());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok, already deleted
+            // ok, already deleted
         }
-        //delete again
+        // delete again
         try {
             contentDao.deleteContent(inserted.getId());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok, already deleted
+            // ok, already deleted
         }
     }
 
     public void testDeleteAllContent() throws Exception {
-        //insert
+        // insert
         Content first = new Content();
         first.setLanguage("cz");
         first.setName("info");
@@ -191,18 +191,18 @@ public class ContentDaoPostgresTest extends AbstractDaoTest {
         second.setContent("hello, world!");
         second.setId(contentDao.insertContent(second));
         contentDao.deleteAllContent();
-        //fetch
+        // fetch
         try {
             contentDao.getContentByNameAndLanguage(second.getName(), second.getLanguage());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok, already deleted
+            // ok, already deleted
         }
         try {
             contentDao.getContentByNameAndLanguage(first.getName(), first.getLanguage());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok, already deleted
+            // ok, already deleted
         }
     }
 }

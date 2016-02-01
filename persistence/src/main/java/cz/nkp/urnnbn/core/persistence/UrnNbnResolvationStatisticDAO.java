@@ -9,20 +9,20 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 
 public interface UrnNbnResolvationStatisticDAO {
 
-	public String TABLE_NAME = "UrnNbnResolvationStatistic";
-	public String ATTR_REGISTRAR_CODE = "registrarCode";
-	public String ATTR_YEAR = "year";
-	public String ATTR_MONTH = "month";
-	public String ATTR_RESOLVATIONS = "resolvations";
+    public String TABLE_NAME = "UrnNbnResolvationStatistic";
+    public String ATTR_REGISTRAR_CODE = "registrarCode";
+    public String ATTR_YEAR = "year";
+    public String ATTR_MONTH = "month";
+    public String ATTR_RESOLVATIONS = "resolvations";
 
-	public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException;
+    public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException;
 
-	public Statistic getStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException;
+    public Statistic getStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException;
 
-	public List<Statistic> listStatistics(String registrarCode) throws DatabaseException;
+    public List<Statistic> listStatistics(String registrarCode) throws DatabaseException;
 
-	public List<Statistic> listStatistics() throws DatabaseException;
+    public List<Statistic> listStatistics() throws DatabaseException;
 
-	public void updateStatistic(Statistic statistic) throws DatabaseException, RecordNotFoundException;
+    public void updateStatistic(Statistic statistic) throws DatabaseException, RecordNotFoundException;
 
 }

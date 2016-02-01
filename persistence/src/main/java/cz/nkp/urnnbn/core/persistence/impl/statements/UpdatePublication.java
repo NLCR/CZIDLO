@@ -25,11 +25,8 @@ public class UpdatePublication extends AbstractStatement implements StatementWra
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + PublicationDAO.TABLE_NAME + " SET "
-                + PublicationDAO.ATTR_PLACE + "=?,"
-                + PublicationDAO.ATTR_PUBLISHER + "=?,"
-                + PublicationDAO.ATTR_YEAR + "=?"
-                + " WHERE " + PublicationDAO.ATTR_INT_ENT_ID + "=?";
+        return "UPDATE " + PublicationDAO.TABLE_NAME + " SET " + PublicationDAO.ATTR_PLACE + "=?," + PublicationDAO.ATTR_PUBLISHER + "=?,"
+                + PublicationDAO.ATTR_YEAR + "=?" + " WHERE " + PublicationDAO.ATTR_INT_ENT_ID + "=?";
     }
 
     @Override
@@ -40,7 +37,7 @@ public class UpdatePublication extends AbstractStatement implements StatementWra
             setIntOrNull(st, 3, publication.getYear());
             st.setLong(4, publication.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

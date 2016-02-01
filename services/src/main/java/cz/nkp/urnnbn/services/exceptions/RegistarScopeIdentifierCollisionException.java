@@ -14,8 +14,7 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 public class RegistarScopeIdentifierCollisionException extends Exception {
 
     public RegistarScopeIdentifierCollisionException(Registrar registrar, RegistrarScopeIdentifier id) {
-        super("digital document with registrar-scope identifier of type '" + id.getType()
-                + "' and value '" + id.getValue()
+        super("digital document with registrar-scope identifier of type '" + id.getType() + "' and value '" + id.getValue()
                 + "' already registered by registrar with code " + registrar.getCode());
     }
 }

@@ -10,14 +10,14 @@ package cz.nkp.urnnbn.oaiadapter.czidlo;
  */
 public class CzidloConnectionException extends Exception {
 
-	CzidloConnectionException() {
-	}
+    CzidloConnectionException() {
+    }
 
-	CzidloConnectionException(String msg) {
-		super(msg);
-	}
+    CzidloConnectionException(String msg) {
+        super(msg);
+    }
 
-	CzidloConnectionException(Throwable cause) {
+    CzidloConnectionException(Throwable cause) {
         super(cause);
     }
 }

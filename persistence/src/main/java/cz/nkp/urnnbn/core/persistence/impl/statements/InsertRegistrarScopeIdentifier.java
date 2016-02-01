@@ -27,14 +27,10 @@ public class InsertRegistrarScopeIdentifier implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + RegistrarScopeIdentifierDAO.TABLE_NAME
-                + "(" + RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID
-                + "," + RegistrarScopeIdentifierDAO.ATTR_REG_ID
-                + "," + RegistrarScopeIdentifierDAO.ATTR_CREATED
-                + "," + RegistrarScopeIdentifierDAO.ATTR_UPDATED
-                + "," + RegistrarScopeIdentifierDAO.ATTR_TYPE
-                + "," + RegistrarScopeIdentifierDAO.ATTR_VALUE
-                + ") values(?,?,?,?,?,?)";
+        return "INSERT into " + RegistrarScopeIdentifierDAO.TABLE_NAME + "(" + RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID + ","
+                + RegistrarScopeIdentifierDAO.ATTR_REG_ID + "," + RegistrarScopeIdentifierDAO.ATTR_CREATED + ","
+                + RegistrarScopeIdentifierDAO.ATTR_UPDATED + "," + RegistrarScopeIdentifierDAO.ATTR_TYPE + ","
+                + RegistrarScopeIdentifierDAO.ATTR_VALUE + ") values(?,?,?,?,?,?)";
     }
 
     @Override
@@ -48,7 +44,7 @@ public class InsertRegistrarScopeIdentifier implements StatementWrapper {
             st.setString(5, identifier.getType().toString());
             st.setString(6, identifier.getValue());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -25,10 +25,8 @@ public class UpdateOriginator implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + OriginatorDAO.TABLE_NAME + " SET "
-                + OriginatorDAO.ATTR_TYPE + "=?,"
-                + OriginatorDAO.ATTR_VALUE + "=?"
-                + " WHERE " + OriginatorDAO.ATTR_INT_ENT_ID + "=?";
+        return "UPDATE " + OriginatorDAO.TABLE_NAME + " SET " + OriginatorDAO.ATTR_TYPE + "=?," + OriginatorDAO.ATTR_VALUE + "=?" + " WHERE "
+                + OriginatorDAO.ATTR_INT_ENT_ID + "=?";
     }
 
     @Override
@@ -38,7 +36,7 @@ public class UpdateOriginator implements StatementWrapper {
             st.setString(2, originator.getValue());
             st.setLong(3, originator.getIntEntId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

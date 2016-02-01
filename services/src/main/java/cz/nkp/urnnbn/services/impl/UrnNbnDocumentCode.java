@@ -16,8 +16,9 @@ public class UrnNbnDocumentCode {
 
     public static final BigInteger INTERNAL_VALUE_MIN = new BigInteger("0");
     public static final BigInteger INTERNAL_VALUE_MAX = new BigInteger("2176782335");
-    public static char[] NUMERALS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-    //there are 36 numerals on 6 positions. I. e. maximal value is 36^6 - 1
+    public static char[] NUMERALS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+    // there are 36 numerals on 6 positions. I. e. maximal value is 36^6 - 1
     private static final BigInteger CODE_MOD_BASE = new BigInteger("2176782336");
     private static final int CODE_LENGTH = 6;
     private static final BigInteger RADIX = BigInteger.valueOf(36);
@@ -50,7 +51,7 @@ public class UrnNbnDocumentCode {
             int positionInString = CODE_LENGTH - order - 1;
             char digit = stringValue.charAt(positionInString);
             checkCharIsAllowed(digit);
-            BigInteger digitValue = valueMap.get(digit); //0-35
+            BigInteger digitValue = valueMap.get(digit); // 0-35
             BigInteger valueAtPosition = digitValue.multiply(RADIX.pow(order));
             result = result.add(valueAtPosition);
         }
@@ -65,7 +66,7 @@ public class UrnNbnDocumentCode {
 
     public String toString() {
         int[] valuesAtPositions = toValuesAtPositions(internalValue, RADIX, CODE_LENGTH);
-        //printIntArray(valuesAtPositions);
+        // printIntArray(valuesAtPositions);
         StringBuilder result = new StringBuilder(CODE_LENGTH);
         for (int i = 0; i < valuesAtPositions.length; i++) {
             result.append(NUMERALS[valuesAtPositions[i]]);
@@ -74,12 +75,12 @@ public class UrnNbnDocumentCode {
     }
 
     /**
-     * For number 123 would be produced this result (for radix=10 and resultSize=6):
-     * [0,0,0,1,2,3]
+     * For number 123 would be produced this result (for radix=10 and resultSize=6): [0,0,0,1,2,3]
+     * 
      * @param num
      * @param radix
      * @param resultSize
-     * @return 
+     * @return
      */
     private int[] toValuesAtPositions(BigInteger num, BigInteger radix, int resultSize) {
         int[] values = new int[resultSize];
@@ -95,7 +96,8 @@ public class UrnNbnDocumentCode {
 
     /**
      * only for testing
-     * @return 
+     * 
+     * @return
      */
     public BigInteger internalValue() {
         return internalValue;
@@ -103,8 +105,9 @@ public class UrnNbnDocumentCode {
 
     /**
      * definition of urnNbnDocumentCode plus number
+     * 
      * @param step
-     * @return 
+     * @return
      */
     public UrnNbnDocumentCode getNext(int step) {
         BigInteger plusStep = addStep(step);

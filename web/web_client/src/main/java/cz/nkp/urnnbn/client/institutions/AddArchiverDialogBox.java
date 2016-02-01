@@ -19,65 +19,65 @@ import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 
 public class AddArchiverDialogBox extends AbstractDialogBox {
 
-	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
-	private final InstitutionListPanel superPanel;
-	private final ArchiverForm archiverForm = new ArchiverForm();
-	private final Label errorLabel = errorLabel(320);
+    private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
+    private final InstitutionListPanel superPanel;
+    private final ArchiverForm archiverForm = new ArchiverForm();
+    private final Label errorLabel = errorLabel(320);
 
-	public AddArchiverDialogBox(InstitutionListPanel superPanel) {
-		this.superPanel = superPanel;
-		setText(constants.archiver() + " - " + constants.recordInsertion());
-		setAnimationEnabled(true);
-		setWidget(contentPanel());
-		center();
-	}
+    public AddArchiverDialogBox(InstitutionListPanel superPanel) {
+        this.superPanel = superPanel;
+        setText(constants.archiver() + " - " + constants.recordInsertion());
+        setAnimationEnabled(true);
+        setWidget(contentPanel());
+        center();
+    }
 
-	private Widget contentPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.add(archiverForm);
-		result.add(buttons());
-		result.add(errorLabel);
-		return result;
-	}
+    private Widget contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.add(archiverForm);
+        result.add(buttons());
+        result.add(errorLabel);
+        return result;
+    }
 
-	private Panel buttons() {
-		HorizontalPanel result = new HorizontalPanel();
-		result.add(saveButton());
-		result.add(closeButton());
-		return result;
-	}
+    private Panel buttons() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.add(saveButton());
+        result.add(closeButton());
+        return result;
+    }
 
-	private Button saveButton() {
-		return new Button(constants.insert(), new ClickHandler() {
+    private Button saveButton() {
+        return new Button(constants.insert(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				if (archiverForm.isFilledCorrectly()) {
-					institutionsService.saveArchiver(archiverForm.getDto(), new AsyncCallback<ArchiverDTO>() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (archiverForm.isFilledCorrectly()) {
+                    institutionsService.saveArchiver(archiverForm.getDto(), new AsyncCallback<ArchiverDTO>() {
 
-						@Override
-						public void onSuccess(ArchiverDTO result) {
-							superPanel.loadArchivers();
-							AddArchiverDialogBox.this.hide();
-						}
+                        @Override
+                        public void onSuccess(ArchiverDTO result) {
+                            superPanel.loadArchivers();
+                            AddArchiverDialogBox.this.hide();
+                        }
 
-						@Override
-						public void onFailure(Throwable caught) {
-							errorLabel.setText(messages.serverError(caught.getMessage()));
-						}
-					});
-				}
-			}
-		});
-	}
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(messages.serverError(caught.getMessage()));
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	private Button closeButton() {
-		return new Button(constants.close(), new ClickHandler() {
+    private Button closeButton() {
+        return new Button(constants.close(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				AddArchiverDialogBox.this.hide();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                AddArchiverDialogBox.this.hide();
+            }
+        });
+    }
 }

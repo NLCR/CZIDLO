@@ -9,7 +9,7 @@ package cz.nkp.urnnbn.oaiadapter;
  * @author hanis
  */
 public class TemplateException extends Exception {
-    
+
     public TemplateException() {
     }
 
@@ -17,6 +17,4 @@ public class TemplateException extends Exception {
         super(msg);
     }
 
-    
-    
 }

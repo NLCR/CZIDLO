@@ -47,7 +47,8 @@ public class ArgumentsChecker {
     private void checkNoOtherArgumentsButExclusive() throws OaiException {
         for (String argument : allArguments.keySet()) {
             if (!exclusiveArgument.equals(argument)) {
-                throw new OaiException(ErrorCode.badArgument, "Exclusive argument '" + exclusiveArgument + "' present. No other arguments (apart from verb) allowed");
+                throw new OaiException(ErrorCode.badArgument, "Exclusive argument '" + exclusiveArgument
+                        + "' present. No other arguments (apart from verb) allowed");
             }
         }
     }
@@ -71,7 +72,7 @@ public class ArgumentsChecker {
     private void checkOnlyRequiredOrOptionalArgumentsPresent() throws OaiException {
         for (String argument : allArguments.keySet()) {
             if (arrayContains(requiredArguments, argument)) {
-                //do nothing. Already checked for single value
+                // do nothing. Already checked for single value
             } else if (arrayContains(optionalArguments, argument)) {
                 checkIfSingleValue(argument);
             } else {

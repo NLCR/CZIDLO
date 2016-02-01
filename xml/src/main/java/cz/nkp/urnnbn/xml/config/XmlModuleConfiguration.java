@@ -40,7 +40,8 @@ public class XmlModuleConfiguration {
 
     /**
      *
-     * @param properties InputStream containing properties
+     * @param properties
+     *            InputStream containing properties
      * @throws IOException
      */
     public void initialize(PropertyLoader loader) throws IOException {

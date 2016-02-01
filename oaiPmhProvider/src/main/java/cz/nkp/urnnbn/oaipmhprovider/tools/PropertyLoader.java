@@ -44,7 +44,8 @@ public class PropertyLoader {
     /**
      *
      * @param key
-     * @param mustExist if true exception is thrown in case that file doesn't exist
+     * @param mustExist
+     *            if true exception is thrown in case that file doesn't exist
      * @return
      */
     public File loadFile(String key, boolean mustExist) {

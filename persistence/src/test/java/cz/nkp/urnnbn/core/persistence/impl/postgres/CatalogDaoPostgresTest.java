@@ -46,7 +46,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
             catalogDao.insertCatalog(catalog);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -67,7 +67,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         try {
             catalogDao.getCatalogById(ILLEGAL_ID);
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -76,19 +76,19 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
      */
     public void testGetCatalogsByRegistrarId() throws Exception {
         Registrar registrar = registrarPersisted();
-        //first catalog
+        // first catalog
         Catalog first = builder.catalogWithoutIdAndRegistrarId();
         first.setRegistrarId(registrar.getId());
         catalogDao.insertCatalog(first);
-        //second catalog
+        // second catalog
         Catalog second = builder.catalogWithoutIdAndRegistrarId();
         second.setRegistrarId(registrar.getId());
         catalogDao.insertCatalog(second);
-        //third catalog (but of another registrar)
+        // third catalog (but of another registrar)
         Catalog third = builder.catalogWithoutIdAndRegistrarId();
         third.setRegistrarId(registrarPersisted().getId());
         catalogDao.insertCatalog(third);
-        //get catalogs of registrar
+        // get catalogs of registrar
         List<Catalog> catalogs = catalogDao.getCatalogs(registrar.getId());
         assertEquals(2, catalogs.size());
         assertTrue(catalogs.contains(first));
@@ -99,13 +99,13 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
     public void testGetCatalogs() throws Exception {
         assertTrue(catalogDao.getCatalogs().isEmpty());
 
-        //first catalog
+        // first catalog
         Catalog first = builder.catalogWithoutIdAndRegistrarId();
         first.setRegistrarId(registrarPersisted().getId());
         catalogDao.insertCatalog(first);
         assertEquals(1, catalogDao.getCatalogs().size());
 
-        //second catalog
+        // second catalog
         Catalog second = builder.catalogWithoutIdAndRegistrarId();
         second.setRegistrarId(registrarPersisted().getId());
         catalogDao.insertCatalog(second);
@@ -123,7 +123,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
             catalogDao.getCatalogs(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -156,7 +156,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
         catalogDao.updateCatalog(updated);
         Catalog fetched = catalogDao.getCatalogById(inserted.getId());
         assertEquals(fetched, inserted);
-        assertFalse(fetched.getRegistrarId()==updated.getRegistrarId());
+        assertFalse(fetched.getRegistrarId() == updated.getRegistrarId());
     }
 
     /**
@@ -172,7 +172,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
             catalogDao.getCatalogById(catalog.getId());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -181,7 +181,7 @@ public class CatalogDaoPostgresTest extends AbstractDaoTest {
             catalogDao.deleteCatalog(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 }

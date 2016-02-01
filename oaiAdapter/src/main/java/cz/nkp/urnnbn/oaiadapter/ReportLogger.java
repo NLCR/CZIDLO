@@ -13,23 +13,23 @@ import java.io.PrintStream;
  */
 public class ReportLogger {
 
-	private PrintStream stream;
+    private PrintStream stream;
 
-	public ReportLogger(OutputStream outputStream) {
-		this.stream = new PrintStream(outputStream);
-	}
+    public ReportLogger(OutputStream outputStream) {
+        this.stream = new PrintStream(outputStream);
+    }
 
-	public void report(String message) {
-		stream.println(message);
-	}
+    public void report(String message) {
+        stream.println(message);
+    }
 
-	public void report(String message, Throwable e) {
-		stream.print(message);
-		e.printStackTrace(stream);
-	}
+    public void report(String message, Throwable e) {
+        stream.print(message);
+        e.printStackTrace(stream);
+    }
 
-	public void close() {
-		stream.close();
-	}
+    public void close() {
+        stream.close();
+    }
 
 }

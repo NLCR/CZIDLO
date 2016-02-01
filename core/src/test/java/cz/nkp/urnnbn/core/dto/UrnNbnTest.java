@@ -77,13 +77,13 @@ public class UrnNbnTest extends TestCase {
             UrnNbn.valueOf("ur:nbn:cz:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urnnbn:cz:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -93,13 +93,13 @@ public class UrnNbnTest extends TestCase {
             UrnNbn.valueOf("urn:nbn:czz:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:c:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -109,25 +109,25 @@ public class UrnNbnTest extends TestCase {
             UrnNbn.valueOf("urn:nbn:cz:a-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:1-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:abcd001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:aba0001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -137,13 +137,13 @@ public class UrnNbnTest extends TestCase {
             UrnNbn.valueOf("urn:nbn:cz:aba001-1234567");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:aba001-12345");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -153,19 +153,19 @@ public class UrnNbnTest extends TestCase {
             UrnNbn.valueOf("urn-nbn:cz:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn-cz:aba001-123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             UrnNbn.valueOf("urn:nbn:cz:aba001:123456");
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
     }
 }

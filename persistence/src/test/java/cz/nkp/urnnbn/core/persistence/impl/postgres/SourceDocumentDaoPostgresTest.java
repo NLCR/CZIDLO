@@ -47,7 +47,7 @@ public class SourceDocumentDaoPostgresTest extends AbstractDaoTest {
             srcDocDao.insertSrcDoc(doc);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -86,7 +86,7 @@ public class SourceDocumentDaoPostgresTest extends AbstractDaoTest {
             srcDocDao.getSrcDocById(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -113,18 +113,18 @@ public class SourceDocumentDaoPostgresTest extends AbstractDaoTest {
         SourceDocument inserted = builder.sourceDocumentWithoutId();
         inserted.setIntEntId(entity.getId());
         srcDocDao.insertSrcDoc(inserted);
-        //change id
+        // change id
         SourceDocument updated = new SourceDocument(inserted);
         updated.setTitle("Something else");
         updated.setPublicationYear(2010);
         updated.setOtherId("uuid:123");
         updated.setIntEntId(ILLEGAL_ID);
-        //update
+        // update
         try {
             srcDocDao.updateSrcDoc(updated);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 }

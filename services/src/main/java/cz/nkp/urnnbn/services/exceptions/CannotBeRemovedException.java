@@ -18,7 +18,9 @@ public class CannotBeRemovedException extends Exception {
 
     /**
      * Constructs an instance of <code>CannotBeRemovedException</code> with the specified detail message.
-     * @param msg the detail message.
+     * 
+     * @param msg
+     *            the detail message.
      */
     public CannotBeRemovedException(String msg) {
         super(msg);

@@ -26,8 +26,7 @@ public interface RegistrarDAO {
     public String ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION = "allowedRegistrationModeByReservation";
 
     /**
-     * Should not use id from registrar but instead create new by means of
-     * database
+     * Should not use id from registrar but instead create new by means of database
      *
      * @param archiver
      * @return id created
@@ -45,7 +44,7 @@ public interface RegistrarDAO {
 
     public List<Registrar> getRegistrarsManagedByUser(long userId) throws DatabaseException, RecordNotFoundException;
 
-    //urnRegistrarCode won't be updated
+    // urnRegistrarCode won't be updated
     public void updateRegistrar(Registrar registrar) throws DatabaseException, RecordNotFoundException;
 
     public void activateRegistrar(long id) throws DatabaseException, RecordNotFoundException;

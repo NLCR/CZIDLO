@@ -65,8 +65,8 @@ public class Resource {
     protected DataUpdateService dataUpdateService() {
         return Services.instanceOf().dataUpdateService();
     }
-    
-    protected StatisticService statisticService(){
+
+    protected StatisticService statisticService() {
         return Services.instanceOf().statisticService();
     }
 
@@ -80,10 +80,8 @@ public class Resource {
     }
 
     protected RegistrarBuilder registrarBuilder(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) {
-        DigitalLibrariesBuilder libBuilder = withDigitalLibraries
-                ? librariesBuilder(registrar) : null;
-        CatalogsBuilder catBuilder = withCatalogs
-                ? catalogsBuilder(registrar) : null;
+        DigitalLibrariesBuilder libBuilder = withDigitalLibraries ? librariesBuilder(registrar) : null;
+        CatalogsBuilder catBuilder = withCatalogs ? catalogsBuilder(registrar) : null;
         return new RegistrarBuilder(registrar, libBuilder, catBuilder);
     }
 

@@ -70,41 +70,41 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
 
     public Response resolve(Action action, ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         // for deactivated URN:NBNs the redirection is impossible
-        if (!urn.isActive()) { //error if force to redirect
+        if (!urn.isActive()) { // error if force to redirect
             if (action == Action.REDIRECT) {
                 throw new UrnNbnDeactivated(urn);
-            } else if (action == Action.DECIDE) { //otherwise it is decided to show the recored
+            } else if (action == Action.DECIDE) { // otherwise it is decided to show the recored
                 action = Action.SHOW;
             }
         }
         switch (action) {
-            case DECIDE:
-                //pokud se najde vhodna digitalni instance, je presmerovano
-                //preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
-                //jinak se pouzije jakakoliv jina (aktivni) digitalni instance
-                //pokud neni digitalni instance nalezena, zobrazi se zaznam DD
-                URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-                if (digitalInstance != null) {
-                    return redirectResponse(digitalInstance);
-                } else {
-                    return showRecordResponse(format, request, withDigitalInstances);
-                }
-            case REDIRECT:
-                URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
-                if (uriByReferer != null) {
-                    return redirectResponse(uriByReferer);
-                } else {
-                    URI anyInstanceUri = getAnyActiveDigInstanceUri();
-                    if (anyInstanceUri != null) {
-                        return redirectResponse(anyInstanceUri);
-                    } else {// no digital instance found
-                        throw new UnknownDigitalInstanceException();
-                    }
-                }
-            case SHOW:
+        case DECIDE:
+            // pokud se najde vhodna digitalni instance, je presmerovano
+            // preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
+            // jinak se pouzije jakakoliv jina (aktivni) digitalni instance
+            // pokud neni digitalni instance nalezena, zobrazi se zaznam DD
+            URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+            if (digitalInstance != null) {
+                return redirectResponse(digitalInstance);
+            } else {
                 return showRecordResponse(format, request, withDigitalInstances);
-            default:
-                return recordXmlResponse(withDigitalInstances);
+            }
+        case REDIRECT:
+            URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+            if (uriByReferer != null) {
+                return redirectResponse(uriByReferer);
+            } else {
+                URI anyInstanceUri = getAnyActiveDigInstanceUri();
+                if (anyInstanceUri != null) {
+                    return redirectResponse(anyInstanceUri);
+                } else {// no digital instance found
+                    throw new UnknownDigitalInstanceException();
+                }
+            }
+        case SHOW:
+            return showRecordResponse(format, request, withDigitalInstances);
+        default:
+            return recordXmlResponse(withDigitalInstances);
         }
     }
 
@@ -122,9 +122,9 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
         try {
             List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(doc.getId());
             DigitalInstance instanceByReferer = digInstanceByReferer(allDigitalInstanceds, refererUrl);
-            if (instanceByReferer != null) { //prefered uri found
+            if (instanceByReferer != null) { // prefered uri found
                 return toUri(instanceByReferer.getUrl());
-            } else { //return any uri
+            } else { // return any uri
                 for (DigitalInstance instance : allDigitalInstanceds) {
                     if (instance.isActive()) {
                         return toUri(instance.getUrl());
@@ -142,17 +142,17 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
         if (refererUrl == null || refererUrl.isEmpty()) {
             return null;
         }
-        //vsechny katalogy 
+        // vsechny katalogy
         List<Catalog> catalogs = dataAccessService().catalogs();
-        //vsechny katalogy, u kterych se shoduje prefix
+        // vsechny katalogy, u kterych se shoduje prefix
         List<Catalog> matching = catalogsWithMatchingReferer(catalogs, refererUrl);
         for (Catalog catalog : matching) {
-            //digitalni knihovny vlastnene stejnym registratorem, jako katalog
+            // digitalni knihovny vlastnene stejnym registratorem, jako katalog
             List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(catalog.getRegistrarId());
             for (DigitalLibrary library : libraries) {
-                //instance DD
+                // instance DD
                 for (DigitalInstance instance : allInstances) {
-                    //instance je ve vhodne knihovne a je aktivni
+                    // instance je ve vhodne knihovne a je aktivni
                     if (instance.getLibraryId() == library.getId() && instance.isActive()) {
                         return instance;
                     }
@@ -189,12 +189,12 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
 
     private Response showRecordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         switch (format) {
-            case HTML:
-                return redirectResponse(webModuleUri(request));
-            case XML:
-                return recordXmlResponse(withDigitalInstances);
-            default:
-                throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
+        case HTML:
+            return redirectResponse(webModuleUri(request));
+        case XML:
+            return recordXmlResponse(withDigitalInstances);
+        default:
+            throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
         }
     }
 
@@ -203,10 +203,8 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
     }
 
     /**
-     * Redirects to web interface. It is allways redirected to
-     * http://SERVER_NAME/WEB_MODULE_CONTEXT?q=URN where SERVER_NAME is same as
-     * the one in request, WEB_MODULE_CONTEXT is "web" in default. Web server
-     * should perform redirection to HTTPS if desirable.
+     * Redirects to web interface. It is allways redirected to http://SERVER_NAME/WEB_MODULE_CONTEXT?q=URN where SERVER_NAME is same as the one in
+     * request, WEB_MODULE_CONTEXT is "web" in default. Web server should perform redirection to HTTPS if desirable.
      *
      * @param request
      * @return
@@ -222,12 +220,8 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
     protected abstract Response recordXmlResponse(boolean withDigitalInstances);
 
     protected final DigitalDocumentBuilder digitalDocumentBuilder(boolean withDigitalInstances) {
-        return new DigitalDocumentBuilder(doc, urn,
-                registrarScopeIdentifiersBuilder(doc.getId()),
-                withDigitalInstances ? instancesBuilder() : null,
-                registrarBuilder(),
-                archiverBuilder(),
-                entityBuilder());
+        return new DigitalDocumentBuilder(doc, urn, registrarScopeIdentifiersBuilder(doc.getId()), withDigitalInstances ? instancesBuilder() : null,
+                registrarBuilder(), archiverBuilder(), entityBuilder());
     }
 
     private DigitalInstancesBuilder instancesBuilder() {

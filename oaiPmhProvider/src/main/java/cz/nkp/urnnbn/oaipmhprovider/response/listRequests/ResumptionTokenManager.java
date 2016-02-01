@@ -20,7 +20,7 @@ public class ResumptionTokenManager {
     private static final Logger logger = Logger.getLogger(ResumptionTokenManager.class.getName());
     private static ResumptionTokenManager listIdentifiersInst;
     private static ResumptionTokenManager listRecordsInst;
-    //instance data
+    // instance data
     private final Map<String, ListPart> resumptionTokens = new HashMap<String, ListPart>();
     private int returnRecords = 5;
 
@@ -57,7 +57,8 @@ public class ResumptionTokenManager {
         for (ListPart requestSequence : resumptionTokens.values()) {
             if (timeToDie(requestSequence)) {
                 String uuid = uuidFromResultPart(requestSequence);
-                logger.log(Level.INFO, "Removing resumption token {0} which was valid until {1}", new Object[]{uuid, requestSequence.getValidUntil().toString()});
+                logger.log(Level.INFO, "Removing resumption token {0} which was valid until {1}", new Object[] { uuid,
+                        requestSequence.getValidUntil().toString() });
                 resumptionTokens.values().remove(requestSequence);
             }
         }

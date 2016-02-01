@@ -17,6 +17,7 @@ import org.dom4j.QName;
 
 /**
  * TODO: implement resumption tokens for sets
+ * 
  * @author Martin Řehánek (rehan at mzk.cz)
  */
 public class ListSets extends OaiVerbResponse {
@@ -61,16 +62,17 @@ public class ListSets extends OaiVerbResponse {
         setSpec.addText(set.getSetSpec());
         Element setName = setEl.addElement("setName");
         setName.addText(set.getSetName());
-        //addSetDescription(setEl, set);
+        // addSetDescription(setEl, set);
     }
 
     private void addSetDescription(Element setEl, OaiSet set) {
         Element setDescriptionEl = setEl.addElement("setDescription");
         Element dcEl = setDescriptionEl.addElement(new QName("dc", oai_dc));
-        dcEl.addAttribute(new QName("schemaLocation", xsi), "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
+        dcEl.addAttribute(new QName("schemaLocation", xsi),
+                "http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd");
         Element description = dcEl.addElement(new QName("description", dc));
         description.addText("TODO");
-        //description.addText("This set contains " + set.getSize() + " items");
+        // description.addText("This set contains " + set.getSize() + " items");
     }
 
     private void loadResumptionToken() throws OaiException {

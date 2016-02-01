@@ -18,82 +18,82 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 
 public class UploadXmlTemplateDialogBox extends AbstractDialogBox {
 
-	private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
-	private final XmlTransformationsPanel superPanel;
-	private final XmlTemplateForm xmlTemplateForm;
+    private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
+    private final XmlTransformationsPanel superPanel;
+    private final XmlTemplateForm xmlTemplateForm;
 
-	private final Label errorLabel = errorLabel(320);
+    private final Label errorLabel = errorLabel(320);
 
-	public UploadXmlTemplateDialogBox(XmlTransformationsPanel superPanel, XmlTransformationDTOType type) {
-		this.superPanel = superPanel;
-		setText(title(type));
-		xmlTemplateForm = new XmlTemplateForm(type);
-		setAnimationEnabled(true);
-		setWidget(contentPanel());
-		center();
-	}
+    public UploadXmlTemplateDialogBox(XmlTransformationsPanel superPanel, XmlTransformationDTOType type) {
+        this.superPanel = superPanel;
+        setText(title(type));
+        xmlTemplateForm = new XmlTemplateForm(type);
+        setAnimationEnabled(true);
+        setWidget(contentPanel());
+        center();
+    }
 
-	private String title(XmlTransformationDTOType type) {
-		String typeStr = null;
-		switch (type) {
-		case DIGITAL_DOCUMENT_REGISTRATION:
-			typeStr = constants.DIGITAL_DOCUMENT_REGISTRATION();
-			break;
-		case DIGITAL_INSTANCE_IMPORT:
-			typeStr = constants.DIGITAL_INSTANCE_IMPORT();
-			break;
-		}
-		return constants.uploadXslTemplate() + " (" + typeStr + ")";
-	}
+    private String title(XmlTransformationDTOType type) {
+        String typeStr = null;
+        switch (type) {
+        case DIGITAL_DOCUMENT_REGISTRATION:
+            typeStr = constants.DIGITAL_DOCUMENT_REGISTRATION();
+            break;
+        case DIGITAL_INSTANCE_IMPORT:
+            typeStr = constants.DIGITAL_INSTANCE_IMPORT();
+            break;
+        }
+        return constants.uploadXslTemplate() + " (" + typeStr + ")";
+    }
 
-	private Panel contentPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.add(xmlTemplateForm);
-		result.add(buttonsPanel());
-		result.add(errorLabel);
-		return result;
-	}
+    private Panel contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.add(xmlTemplateForm);
+        result.add(buttonsPanel());
+        result.add(errorLabel);
+        return result;
+    }
 
-	private Panel buttonsPanel() {
-		HorizontalPanel result = new HorizontalPanel();
-		result.setSpacing(10);
-		result.add(uploadTemplateButton());
-		result.add(closeButton());
-		return result;
-	}
+    private Panel buttonsPanel() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.setSpacing(10);
+        result.add(uploadTemplateButton());
+        result.add(closeButton());
+        return result;
+    }
 
-	private Button uploadTemplateButton() {
-		return new Button(constants.upload(), new ClickHandler() {
+    private Button uploadTemplateButton() {
+        return new Button(constants.upload(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				if (xmlTemplateForm.isFilledCorrectly()) {
-					processService.createXmlTransformation(xmlTemplateForm.getDto(), new AsyncCallback<Void>() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (xmlTemplateForm.isFilledCorrectly()) {
+                    processService.createXmlTransformation(xmlTemplateForm.getDto(), new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							UploadXmlTemplateDialogBox.this.hide();
-							superPanel.reloadTransformations();
-						}
+                        @Override
+                        public void onSuccess(Void result) {
+                            UploadXmlTemplateDialogBox.this.hide();
+                            superPanel.reloadTransformations();
+                        }
 
-						@Override
-						public void onFailure(Throwable caught) {
-							errorLabel.setText(caught.getMessage());
-						}
-					});
-				} 
-			}
-		});
-	}
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(caught.getMessage());
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	private Button closeButton() {
-		return new Button(constants.close(), new ClickHandler() {
+    private Button closeButton() {
+        return new Button(constants.close(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				UploadXmlTemplateDialogBox.this.hide();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                UploadXmlTemplateDialogBox.this.hide();
+            }
+        });
+    }
 
 }

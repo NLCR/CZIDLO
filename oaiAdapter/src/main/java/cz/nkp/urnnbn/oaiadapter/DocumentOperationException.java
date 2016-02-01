@@ -9,7 +9,7 @@ package cz.nkp.urnnbn.oaiadapter;
  * @author hanis
  */
 public class DocumentOperationException extends Exception {
-    
+
     public DocumentOperationException() {
     }
 
@@ -17,5 +17,4 @@ public class DocumentOperationException extends Exception {
         super(msg);
     }
 
-    
 }

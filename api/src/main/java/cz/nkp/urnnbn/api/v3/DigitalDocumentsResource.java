@@ -62,8 +62,8 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @Produces("application/xml")
     public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
         try {
-        	checkServerNotReadOnly();
-        	String login = req.getRemoteUser();
+            checkServerNotReadOnly();
+            String login = req.getRemoteUser();
             String response = registerDigitalDocumentByApiV3(content, login, registrar.getCode());
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
@@ -83,11 +83,10 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
      */
     @Path("registrarScopeIdentifier/{idType}/{idValue}")
     @Override
-    public DigitalDocumentResource getDigitalDocumentResource(
-            @PathParam("idType") String idTypeStr,
-            @PathParam("idValue") String idValue) {
+    public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValue) {
         try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr, idValue, registrar.getCode()});
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr, idValue,
+                    registrar.getCode() });
             DigitalDocument digitalDocument = super.getDigitalDocument(idTypeStr, idValue);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return new DigitalDocumentResource(digitalDocument, urn);

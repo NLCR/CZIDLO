@@ -37,7 +37,9 @@ public class SelectCountBy4Strings implements StatementWrapper {
     private final String fourthStringAttrName;
     private final String fourthStringAttrValue;
 
-    public SelectCountBy4Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName, String secondStringAttrValue, String thirdStringAttrName, String thirdStringAttrValue, String fourthStringAttrName, String fourthStringAttrValue) {
+    public SelectCountBy4Strings(String tableName, String firstStringAttrName, String firstStringAttrValue, String secondStringAttrName,
+            String secondStringAttrValue, String thirdStringAttrName, String thirdStringAttrValue, String fourthStringAttrName,
+            String fourthStringAttrValue) {
         this.tableName = tableName;
         this.firstStringAttrName = firstStringAttrName;
         this.firstStringAttrValue = firstStringAttrValue;
@@ -51,11 +53,8 @@ public class SelectCountBy4Strings implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT count(*) FROM " + tableName + " WHERE "
-                + firstStringAttrName + "=? AND "
-                + secondStringAttrName + "=? AND "
-                + thirdStringAttrName + "=? AND "
-                + fourthStringAttrName + "=?";
+        return "SELECT count(*) FROM " + tableName + " WHERE " + firstStringAttrName + "=? AND " + secondStringAttrName + "=? AND "
+                + thirdStringAttrName + "=? AND " + fourthStringAttrName + "=?";
     }
 
     @Override
@@ -66,7 +65,7 @@ public class SelectCountBy4Strings implements StatementWrapper {
             st.setString(3, thirdStringAttrValue);
             st.setString(4, fourthStringAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

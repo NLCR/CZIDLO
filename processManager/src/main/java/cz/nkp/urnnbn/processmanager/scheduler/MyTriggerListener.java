@@ -33,27 +33,27 @@ public class MyTriggerListener implements TriggerListener {
 
     public void triggerFired(Trigger trigger, JobExecutionContext context) {
         String key = trigger.getKey().toString();
-        //String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
+        // String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
         System.err.println("trigger " + key + " fired");
     }
 
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
         String key = trigger.getKey().toString();
-        //String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
+        // String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
         System.err.println("trigger " + key + " veto");
-        //tady rozhodnu po spusteni triggeru nad jobDetail, jestli vetovat. Asi vzdycky false
+        // tady rozhodnu po spusteni triggeru nad jobDetail, jestli vetovat. Asi vzdycky false
         return false;
     }
 
     public void triggerMisfired(Trigger trigger) {
         String key = trigger.getKey().toString();
-        //String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
+        // String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
         System.err.println("trigger " + key + " misfiered");
     }
 
     public void triggerComplete(Trigger trigger, JobExecutionContext context, CompletedExecutionInstruction triggerInstructionCode) {
         String key = trigger.getKey().toString();
-        //String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
+        // String jobId = (String) context.getJobDetail().getJobDataMap().get("id");
         System.err.println("trigger " + key + " completed");
     }
 }

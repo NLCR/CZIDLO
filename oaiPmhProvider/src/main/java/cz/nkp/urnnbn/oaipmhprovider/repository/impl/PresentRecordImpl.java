@@ -58,7 +58,8 @@ public class PresentRecordImpl implements PresentRecord {
     private final MetadataFormat format;
     private Document content = null;
 
-    public PresentRecordImpl(Registrar registrar, UrnNbn urnNbn, DateStamp lastUpdated, MetadataFormat format, Services backend) throws DocumentException {
+    public PresentRecordImpl(Registrar registrar, UrnNbn urnNbn, DateStamp lastUpdated, MetadataFormat format, Services backend)
+            throws DocumentException {
         this.registrar = registrar;
         this.urnNbn = urnNbn;
         this.lastUpdated = lastUpdated;
@@ -106,12 +107,12 @@ public class PresentRecordImpl implements PresentRecord {
             DigitalDocumentBuilder digDocBuilder = digDocBuilder(urnNbn.getDigDocId());
             String metadataInResolverFormat = digDocBuilder.buildDocumentWithoutResponseHeader().toXML();
             switch (format) {
-                case CZIDLO:
-                    return Dom4jUtils.loadDocument(metadataInResolverFormat, false);
-                case OAI_DC:
-                    return transformToOaiDc(metadataInResolverFormat);
-                default:
-                    return null;
+            case CZIDLO:
+                return Dom4jUtils.loadDocument(metadataInResolverFormat, false);
+            case OAI_DC:
+                return transformToOaiDc(metadataInResolverFormat);
+            default:
+                return null;
             }
         } catch (DocumentException ex) {
             Logger.getLogger(PresentRecordBuilder.class.getName()).log(Level.SEVERE, null, ex);
@@ -129,7 +130,8 @@ public class PresentRecordImpl implements PresentRecord {
         DigitalInstancesBuilder digitalInstancesBuilder = digitalInstancesBuilder(digDocId);
         RegistrarBuilder registrarBuilder = new RegistrarBuilder(registrar, null, null);
         ArchiverBuilder archiverBuilder = archiverBuilder(digDoc.getArchiverId());
-        return new DigitalDocumentBuilder(digDoc, urnNbn, registrarScopeIdsBuilder, digitalInstancesBuilder, registrarBuilder, archiverBuilder, intEntBuilder);
+        return new DigitalDocumentBuilder(digDoc, urnNbn, registrarScopeIdsBuilder, digitalInstancesBuilder, registrarBuilder, archiverBuilder,
+                intEntBuilder);
     }
 
     private IntelectualEntityBuilder intEntBuilder(Long entityId) throws DatabaseException {

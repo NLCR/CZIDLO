@@ -95,13 +95,13 @@ public abstract class XmlBuilder {
     final void appendTimestamps(Element rootElement, IdentifiableWithDatestamps entity, String entityName) {
         DateTime created = entity.getCreated();
         if (created == null) {
-            logger.log(Level.WARNING, "empty value of \"created\" for {0}  with id {1}", new Object[]{entityName, entity.getId()});
+            logger.log(Level.WARNING, "empty value of \"created\" for {0}  with id {1}", new Object[] { entityName, entity.getId() });
         } else {
             appendElementWithContentIfNotNull(rootElement, entity.getCreated(), "created");
         }
         DateTime modified = entity.getModified();
         if (modified == null) {
-            logger.log(Level.WARNING, "empty value of \"modified\" for {0}  with id {1}", new Object[]{entityName, entity.getId()});
+            logger.log(Level.WARNING, "empty value of \"modified\" for {0}  with id {1}", new Object[] { entityName, entity.getId() });
         } else if (!modified.equals(created)) {
             appendElementWithContentIfNotNull(rootElement, entity.getModified(), "modified");
         }

@@ -30,24 +30,24 @@ import org.apache.log4j.PatternLayout;
  */
 public class AdminLogger {
 
-	private static Logger logger;
-	private static File logFile;
+    private static Logger logger;
+    private static File logFile;
 
-	public static void initializeLogger(String loggerName, String loggerFileName) throws IOException {
-		logFile = new File(loggerFileName);
-		AdminLogger.logger = Logger.getLogger(loggerName);
-		// Layout layout = new PatternLayout("%-5p [%d{dd. MM. yyyy HH:mm:ss}] %c: %m%n");
-		Layout layout = new PatternLayout("[%d{dd.MM.yyyy, HH:mm:ss}] %c: %m%n");
-		Appender appender = new FileAppender(layout, loggerFileName, true);
-		logger.removeAllAppenders();
-		logger.addAppender(appender);
-	}
+    public static void initializeLogger(String loggerName, String loggerFileName) throws IOException {
+        logFile = new File(loggerFileName);
+        AdminLogger.logger = Logger.getLogger(loggerName);
+        // Layout layout = new PatternLayout("%-5p [%d{dd. MM. yyyy HH:mm:ss}] %c: %m%n");
+        Layout layout = new PatternLayout("[%d{dd.MM.yyyy, HH:mm:ss}] %c: %m%n");
+        Appender appender = new FileAppender(layout, loggerFileName, true);
+        logger.removeAllAppenders();
+        logger.addAppender(appender);
+    }
 
-	public static Logger getLogger() {
-		return logger;
-	}
+    public static Logger getLogger() {
+        return logger;
+    }
 
-	public static File getLogFile() {
-		return logFile;
-	}
+    public static File getLogFile() {
+        return logFile;
+    }
 }

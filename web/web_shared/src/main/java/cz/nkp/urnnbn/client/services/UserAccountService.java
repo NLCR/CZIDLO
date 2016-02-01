@@ -12,22 +12,22 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @RemoteServiceRelativePath("users")
 public interface UserAccountService extends RemoteService {
 
-	UserDTO insertUser(UserDTO user) throws ServerException;
+    UserDTO insertUser(UserDTO user) throws ServerException;
 
-	void insertRegistrarRight(long userId, long registrarId) throws ServerException;
+    void insertRegistrarRight(long userId, long registrarId) throws ServerException;
 
-	ArrayList<UserDTO> getAllUsers() throws ServerException;
+    ArrayList<UserDTO> getAllUsers() throws ServerException;
 
-	ArrayList<RegistrarDTO> getRegistrarsManagedByUser(Long userId) throws ServerException;
+    ArrayList<RegistrarDTO> getRegistrarsManagedByUser(Long userId) throws ServerException;
 
-	ArrayList<RegistrarDTO> getRegistrarsManagedByUser() throws ServerException;
-	
-	ArrayList<RegistrarDTO> getAllRegistrars() throws ServerException;
-	
-	void updateUser(UserDTO user) throws ServerException;
+    ArrayList<RegistrarDTO> getRegistrarsManagedByUser() throws ServerException;
 
-	void deleteUser(Long userId) throws ServerException;
+    ArrayList<RegistrarDTO> getAllRegistrars() throws ServerException;
 
-	void deleteRegistrarRight(long userId, long registrarId) throws ServerException;
+    void updateUser(UserDTO user) throws ServerException;
+
+    void deleteUser(Long userId) throws ServerException;
+
+    void deleteRegistrarRight(long userId, long registrarId) throws ServerException;
 
 }

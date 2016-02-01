@@ -74,7 +74,7 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
         try {
             System.err.println("isReserved: " + urn);
             factory.urnReservedDao().getUrn(urn.getRegistrarCode(), urn.getDocumentCode());
-            //when RecordNotFound is not thrown the urn:nbn is reserved
+            // when RecordNotFound is not thrown the urn:nbn is reserved
             return true;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -84,8 +84,8 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
         }
     }
 
-    //POZOR: nekdy vraci null. jeste rozmyslet, jak se tady zachovat
-    //nejspis nakonec budou orm vyjimky nehlidane
+    // POZOR: nekdy vraci null. jeste rozmyslet, jak se tady zachovat
+    // nejspis nakonec budou orm vyjimky nehlidane
     private UrnNbn findAndSaveNewUrnNbn(Registrar registrar) throws DatabaseException {
         UrnNbnFinder finder = new UrnNbnFinder(factory, registrar);
         UrnNbn found = finder.findNewUrnNbn();
@@ -93,11 +93,11 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
             factory.urnReservedDao().insertUrnNbn(found, registrar.getId());
             return found;
         } catch (AlreadyPresentException ex) {
-            //should never happend
+            // should never happend
             logger.log(Level.SEVERE, null, ex);
             return null;
         } catch (RecordNotFoundException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
             return null;
         }

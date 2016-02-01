@@ -17,10 +17,11 @@ public class PersistenceException extends Exception {
     public PersistenceException() {
     }
 
-
     /**
      * Constructs an instance of <code>PersistenceException</code> with the specified detail message.
-     * @param msg the detail message.
+     * 
+     * @param msg
+     *            the detail message.
      */
     public PersistenceException(String msg) {
         super(msg);

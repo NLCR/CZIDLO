@@ -48,24 +48,24 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
     static IntelectualEntityUnmarshaller instanceOf(Element entityEl) {
         EntityType type = intelectualEntityType(entityEl);
         switch (type) {
-            case MONOGRAPH:
-                return new MonographUnmarshaller(entityEl);
-            case MONOGRAPH_VOLUME:
-                return new MonographVolumeUnmarshaller(entityEl);
-            case PERIODICAL:
-                return new PeriodicalUnmarshaller(entityEl);
-            case PERIODICAL_VOLUME:
-                return new PeriodicalVolumeUnmarshaller(entityEl);
-            case PERIODICAL_ISSUE:
-                return new PeriodicalIssueUnmarshaller(entityEl);
-            case ANALYTICAL:
-                return new AnalyticalUnmarshaller(entityEl);
-            case THESIS:
-                return new ThesisUnmarshaller(entityEl);
-            case OTHER:
-                return new OtherEntityUnmarshaller(entityEl);
-            default:
-                throw new RuntimeException();
+        case MONOGRAPH:
+            return new MonographUnmarshaller(entityEl);
+        case MONOGRAPH_VOLUME:
+            return new MonographVolumeUnmarshaller(entityEl);
+        case PERIODICAL:
+            return new PeriodicalUnmarshaller(entityEl);
+        case PERIODICAL_VOLUME:
+            return new PeriodicalVolumeUnmarshaller(entityEl);
+        case PERIODICAL_ISSUE:
+            return new PeriodicalIssueUnmarshaller(entityEl);
+        case ANALYTICAL:
+            return new AnalyticalUnmarshaller(entityEl);
+        case THESIS:
+            return new ThesisUnmarshaller(entityEl);
+        case OTHER:
+            return new OtherEntityUnmarshaller(entityEl);
+        default:
+            throw new RuntimeException();
         }
     }
 

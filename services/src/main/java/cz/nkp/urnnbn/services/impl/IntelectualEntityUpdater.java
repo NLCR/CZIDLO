@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -32,7 +32,8 @@ public class IntelectualEntityUpdater {
         this.daoFactory = daoFactory;
     }
 
-    void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers) throws UnknownIntelectualEntity, IdentifierConflictException {
+    void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers)
+            throws UnknownIntelectualEntity, IdentifierConflictException {
         try {
             synchronizeIdentifiers(identifiers, entity.getId());
             updateEntity(entity);
@@ -55,14 +56,14 @@ public class IntelectualEntityUpdater {
     private void synchronizeOriginator(Originator originator, Long entityId) throws DatabaseException, UnknownIntelectualEntity {
         if (originator != null) {
             if (daoFactory.originatorDao().originatorExists(originator.getId())) {
-                //update
+                // update
                 try {
                     daoFactory.originatorDao().updateOriginator(originator);
                 } catch (RecordNotFoundException ex) {
                     logger.log(Level.SEVERE, null, ex);
                 }
             } else {
-                //insert 
+                // insert
                 try {
                     daoFactory.originatorDao().insertOriginator(originator);
                 } catch (RecordNotFoundException ex) {
@@ -72,7 +73,7 @@ public class IntelectualEntityUpdater {
                 }
             }
         } else {
-            //delete
+            // delete
             daoFactory.originatorDao().removeOriginator(entityId);
         }
     }
@@ -80,7 +81,7 @@ public class IntelectualEntityUpdater {
     private void synchronizePublication(Publication publication, Long entityId) throws DatabaseException, UnknownIntelectualEntity {
         if (publication != null) {
             if (daoFactory.publicationDao().publicationExists(entityId)) {
-                //update
+                // update
                 try {
                     logger.log(Level.FINE, "updating {0}", publication);
                     daoFactory.publicationDao().updatePublication(publication);
@@ -88,7 +89,7 @@ public class IntelectualEntityUpdater {
                     logger.log(Level.SEVERE, null, ex);
                 }
             } else {
-                //insert
+                // insert
                 try {
                     logger.log(Level.FINE, "inserting {0}", publication);
                     daoFactory.publicationDao().insertPublication(publication);
@@ -99,7 +100,7 @@ public class IntelectualEntityUpdater {
                 }
             }
         } else {
-            //delete
+            // delete
             logger.log(Level.FINE, "deleting publication {0}", entityId);
             daoFactory.publicationDao().removePublication(entityId);
         }
@@ -108,7 +109,7 @@ public class IntelectualEntityUpdater {
     private void synchronizeSrcDoc(SourceDocument srcDoc, Long entityId) throws DatabaseException, UnknownIntelectualEntity {
         if (srcDoc != null) {
             if (daoFactory.srcDocDao().srcDocExists(entityId)) {
-                //update
+                // update
                 try {
                     logger.log(Level.FINE, "updating {0}", srcDoc);
                     daoFactory.srcDocDao().updateSrcDoc(srcDoc);
@@ -116,7 +117,7 @@ public class IntelectualEntityUpdater {
                     logger.log(Level.SEVERE, null, ex);
                 }
             } else {
-                //insert
+                // insert
                 try {
                     logger.log(Level.FINE, "inserting {0}", srcDoc);
                     daoFactory.srcDocDao().insertSrcDoc(srcDoc);
@@ -129,10 +130,11 @@ public class IntelectualEntityUpdater {
         }
     }
 
-    private void synchronizeIdentifiers(Collection<IntEntIdentifier> identifiers, Long entityId) throws UnknownIntelectualEntity, DatabaseException, IdentifierConflictException {
+    private void synchronizeIdentifiers(Collection<IntEntIdentifier> identifiers, Long entityId) throws UnknownIntelectualEntity, DatabaseException,
+            IdentifierConflictException {
         if (identifiers != null) {
             IntEntIdsSynchronizationPlan plan = new IntEntIdsSynchronizationPlan(identifiers, entityId, daoFactory.intEntIdentifierDao());
-            //insert identifiers
+            // insert identifiers
             for (IntEntIdentifier id : plan.toInsert()) {
                 try {
                     logger.log(Level.FINE, "inserting {0}", id);
@@ -143,7 +145,7 @@ public class IntelectualEntityUpdater {
                     throw new IdentifierConflictException(id.getType().toString(), id.getValue());
                 }
             }
-            //update identifier values
+            // update identifier values
             for (IntEntIdentifier id : plan.toUpdate()) {
                 try {
                     logger.log(Level.FINE, "updating {0}", id);
@@ -152,7 +154,7 @@ public class IntelectualEntityUpdater {
                     throw new UnknownIntelectualEntity(entityId);
                 }
             }
-            //delete identifiers
+            // delete identifiers
             for (IntEntIdentifier id : plan.toDelete()) {
                 try {
                     logger.log(Level.FINE, "deleting {0}", id);

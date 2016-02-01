@@ -10,12 +10,5 @@ package cz.nkp.urnnbn.oaipmhprovider;
  */
 public enum ErrorCode {
 
-    badArgument,
-    badResumptionToken,
-    badVerb,
-    cannotDisseminateFormat,
-    idDoesNotExist,
-    noRecordsMatch,
-    noMetadataFormats,
-    noSetHierarchy
+    badArgument, badResumptionToken, badVerb, cannotDisseminateFormat, idDoesNotExist, noRecordsMatch, noMetadataFormats, noSetHierarchy
 }

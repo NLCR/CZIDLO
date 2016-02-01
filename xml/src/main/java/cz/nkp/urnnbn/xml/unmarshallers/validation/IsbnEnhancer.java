@@ -26,53 +26,53 @@ import org.apache.commons.validator.routines.ISBNValidator;
  */
 public class IsbnEnhancer implements ElementContentEnhancer {
 
-	private static final Logger logger = Logger.getLogger(IsbnEnhancer.class.getName());
+    private static final Logger logger = Logger.getLogger(IsbnEnhancer.class.getName());
 
-	private static final char[] SEPARATORS = { '-', ' ' };
-	private static final String[] PREFICIES = { "ISBN ", "ISBN: ", "ISBN:" };
-	private ISBNValidator validator = new ISBNValidator(true);
+    private static final char[] SEPARATORS = { '-', ' ' };
+    private static final String[] PREFICIES = { "ISBN ", "ISBN: ", "ISBN:" };
+    private ISBNValidator validator = new ISBNValidator(true);
 
-	@Override
-	public String toEnhancedValueOrNull(String originalContent) {
-		if (originalContent == null || originalContent.isEmpty()) {
-			return null;
-		} else {
-			String withoutPrefixAndSepatators = removeSeparators(removePrefix(originalContent.toUpperCase()));
-			if (validator.isValid(withoutPrefixAndSepatators)) {
-				return withoutPrefixAndSepatators;
-			} else {
-				logger.warning("invalid ISBN '" + originalContent + "', dropping");
-				return null;
-			}
-		}
-	}
+    @Override
+    public String toEnhancedValueOrNull(String originalContent) {
+        if (originalContent == null || originalContent.isEmpty()) {
+            return null;
+        } else {
+            String withoutPrefixAndSepatators = removeSeparators(removePrefix(originalContent.toUpperCase()));
+            if (validator.isValid(withoutPrefixAndSepatators)) {
+                return withoutPrefixAndSepatators;
+            } else {
+                logger.warning("invalid ISBN '" + originalContent + "', dropping");
+                return null;
+            }
+        }
+    }
 
-	private String removePrefix(String original) {
-		for (String prefix : PREFICIES) {
-			if (original.startsWith(prefix)) {
-				return original.substring(prefix.length());
-			}
-		}
-		return original;
-	}
+    private String removePrefix(String original) {
+        for (String prefix : PREFICIES) {
+            if (original.startsWith(prefix)) {
+                return original.substring(prefix.length());
+            }
+        }
+        return original;
+    }
 
-	private String removeSeparators(String original) {
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < original.length(); i++) {
-			char character = original.charAt(i);
-			if (!isSeparator(character)) {
-				result.append(character);
-			}
-		}
-		return result.toString();
-	}
+    private String removeSeparators(String original) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < original.length(); i++) {
+            char character = original.charAt(i);
+            if (!isSeparator(character)) {
+                result.append(character);
+            }
+        }
+        return result.toString();
+    }
 
-	private boolean isSeparator(char character) {
-		for (char separator : SEPARATORS) {
-			if (character == separator) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isSeparator(char character) {
+        for (char separator : SEPARATORS) {
+            if (character == separator) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -25,10 +25,8 @@ public class InsertUrnNbnGenerator implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UrnNbnGeneratorDAO.TABLE_NAME
-                + "(" + UrnNbnGeneratorDAO.ATTR_REGISTRAR_ID
-                + "," + UrnNbnGeneratorDAO.ATTR_LAST_DOCUMENT_CODE
-                + ") values(?,?)";
+        return "INSERT into " + UrnNbnGeneratorDAO.TABLE_NAME + "(" + UrnNbnGeneratorDAO.ATTR_REGISTRAR_ID + ","
+                + UrnNbnGeneratorDAO.ATTR_LAST_DOCUMENT_CODE + ") values(?,?)";
     }
 
     @Override
@@ -37,7 +35,7 @@ public class InsertUrnNbnGenerator implements StatementWrapper {
             st.setLong(1, search.getRegistrarId());
             st.setString(2, search.getLastDocumentCode());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.services;
 
 /**
  * This is only marker interface that tags the service classes
+ * 
  * @author Martin Řehánek
  */
 public interface BusinessService {

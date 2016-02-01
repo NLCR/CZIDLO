@@ -34,9 +34,7 @@ public class UserResource {
         } else {
             username = principal.toString();
         }
-        //pokud nebude prihlasen, bude tam 'anonymousUser'
-        return "<user>"
-                + "<login>" + username + "</login>"
-                + "</user>";
+        // pokud nebude prihlasen, bude tam 'anonymousUser'
+        return "<user>" + "<login>" + username + "</login>" + "</user>";
     }
 }

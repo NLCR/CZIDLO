@@ -31,7 +31,8 @@ import nu.xom.Element;
  */
 class PeriodicalIssueBuilder extends IntelectualEntityBuilder {
 
-    public PeriodicalIssueBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public PeriodicalIssueBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 

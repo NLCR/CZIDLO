@@ -47,7 +47,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = builder.registrarWithoutId();
         long id = registrarDao.insertRegistrar(registrar);
         assertTrue(id != ILLEGAL_ID);
-        //check if there exists Archiver with such id
+        // check if there exists Archiver with such id
         try {
             archiverDao.getArchiverById(id);
         } catch (RecordNotFoundException e) {
@@ -59,12 +59,12 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = builder.registrarWithoutId();
         registrar.setId(ILLEGAL_ID);
         long assignedId = registrarDao.insertRegistrar(registrar);
-        //id in archiver has not been used
+        // id in archiver has not been used
         assertFalse(registrar.getId() == ILLEGAL_ID);
-        //new id propagated to dto
+        // new id propagated to dto
         assertTrue(registrar.getId() == assignedId);
 
-        //trying to force same id to another entity
+        // trying to force same id to another entity
         Registrar second = builder.registrarWithoutId();
 
         registrar.setId(assignedId);
@@ -104,7 +104,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.getRegistrarByCode(code);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -125,7 +125,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.getRegistrarById(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -134,7 +134,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.getRegistrarsManagedByUser(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -153,7 +153,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         assertTrue(registrars.contains(second));
         assertTrue(registrars.contains(third));
         assertEquals(3, registrars.size());
-        //also archivers should be created
+        // also archivers should be created
         List<Long> archiverIdList = archiverDao.getAllArchiversId();
         assertTrue(archiverIdList.contains(first.getId()));
         assertTrue(archiverIdList.contains(second.getId()));
@@ -168,7 +168,6 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             Boolean allowed = first.isRegistrationModeAllowed(mode);
             assertFalse(allowed);
         }
-
 
         Registrar second = builder.registrarWithoutId();
         second.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR, true);
@@ -205,7 +204,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         updated.setName(original.getName() + " - changed");
         updated.setDescription(original.getDescription() + " - changed");
         registrarDao.updateRegistrar(updated);
-        //get by id
+        // get by id
         Archiver returned = registrarDao.getRegistrarById(original.getId());
         assertEquals(updated, returned);
         assertFalse(original.getName().equals(returned.getName()));
@@ -213,18 +212,18 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testUpdateRegistrar_tryUpdatingUrnRegistrarCode() throws Exception {
-        //insert first registrar
+        // insert first registrar
         Registrar first = builder.registrarWithoutId();
         first.setCode(RegistrarCode.valueOf("boa001"));
         registrarDao.insertRegistrar(first);
-        //insert second registrar
+        // insert second registrar
         Registrar second = builder.registrarWithoutId();
         second.setCode(RegistrarCode.valueOf("boa002"));
         registrarDao.insertRegistrar(second);
-        //update second registrar to cause collision
+        // update second registrar to cause collision
         second.setCode(RegistrarCode.valueOf("boa001"));
         registrarDao.updateRegistrar(second);
-        //fetch second registrar that has been updated
+        // fetch second registrar that has been updated
         Registrar fetchedSecond = registrarDao.getRegistrarById(second.getId());
         assertEquals(RegistrarCode.valueOf("boa002"), fetchedSecond.getCode());
     }
@@ -236,39 +235,39 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.updateRegistrar(registrar);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
     public void testUpdateAllowedModes() throws Exception {
-        //insert registrar with all modes disabled
+        // insert registrar with all modes disabled
         Registrar inserted = builder.registrarWithoutId();
         inserted.setId(registrarDao.insertRegistrar(inserted));
-        //check the database
+        // check the database
         Registrar fetched = registrarDao.getRegistrarByCode(inserted.getCode());
         for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
             Boolean allowed = fetched.isRegistrationModeAllowed(mode);
             assertFalse(allowed);
         }
 
-        //enable all modes and update
+        // enable all modes and update
         for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
             fetched.setRegistrationModeAllowed(mode, true);
         }
         registrarDao.updateRegistrar(fetched);
-        //check the database
+        // check the database
         Registrar afterUpdate = registrarDao.getRegistrarById(fetched.getId());
         for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
             Boolean allowed = afterUpdate.isRegistrationModeAllowed(mode);
             assertTrue(allowed);
         }
 
-        //disable all modes againd and update
+        // disable all modes againd and update
         for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
             afterUpdate.setRegistrationModeAllowed(mode, false);
         }
         registrarDao.updateRegistrar(afterUpdate);
-        //check the database
+        // check the database
         Registrar afterSecondUpdate = registrarDao.getRegistrarById(afterUpdate.getId());
         for (UrnNbnRegistrationMode mode : UrnNbnRegistrationMode.values()) {
             Boolean allowed = afterSecondUpdate.isRegistrationModeAllowed(mode);
@@ -286,7 +285,7 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         User admin2 = userPersisted();
         userDao.insertAdministrationRight(registrar.getId(), admin1.getId());
         registrarDao.deleteRegistrar(registrar.getId());
-        //users no longer manage the removed registrar
+        // users no longer manage the removed registrar
         List<Registrar> admin1Registrars = registrarDao.getRegistrarsManagedByUser(admin1.getId());
         assertFalse(admin1Registrars.contains(registrar));
         List<Registrar> admin2Registrars = registrarDao.getRegistrarsManagedByUser(admin2.getId());
@@ -302,66 +301,66 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
             registrarDao.deleteRegistrar(registrarId);
             fail();
         } catch (RecordReferencedException e) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteRegistrar_getDeleted() throws Exception {
         Registrar registrar = builder.registrarWithoutId();
         long id = registrarDao.insertRegistrar(registrar);
-        //add catalog
+        // add catalog
         Catalog catalog = builder.catalogWithoutIdAndRegistrarId();
         catalog.setRegistrarId(id);
         Long catalogId = catalogDao.insertCatalog(catalog);
-        //add digital library
+        // add digital library
         DigitalLibrary lib = builder.digLibraryWithoutIdAndRegistrarId();
         lib.setRegistrarId(id);
         Long libId = libraryDao.insertLibrary(lib);
-        //add urnNbnBooking
+        // add urnNbnBooking
         UrnNbnGenerator search = new UrnNbnGenerator();
         search.setRegistrarId(registrar.getId());
         urnGeneratorDao.insertGenerator(search);
 
-        //DELETE registrar
+        // DELETE registrar
         registrarDao.deleteRegistrar(id);
         try {
             registrarDao.getRegistrarById(id);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //also archiver should be deleted
+        // also archiver should be deleted
         try {
             archiverDao.getArchiverById(id);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
-        //also catalog should be deleted
+        // also catalog should be deleted
         try {
             catalogDao.getCatalogById(catalogId);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
-        //also library should be deleted
+        // also library should be deleted
         try {
             libraryDao.getLibraries(id);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
-        //also urn:nbn booking should be deleted
+        // also urn:nbn booking should be deleted
         try {
             urnGeneratorDao.getGeneratorByRegistrarId(registrar.getId());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
     public void testDeleteAllRegistrars() throws Exception {
-        //registrar with 2 admins
+        // registrar with 2 admins
         Registrar registrarWithTwoAdmins = builder.registrarWithoutId();
         long id = registrarDao.insertRegistrar(registrarWithTwoAdmins);
         registrarWithTwoAdmins.setId(id);
@@ -370,14 +369,14 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         userDao.insertAdministrationRight(registrarWithTwoAdmins.getId(), admin1.getId());
         userDao.insertAdministrationRight(registrarWithTwoAdmins.getId(), admin2.getId());
 
-        //registrar with single admin
+        // registrar with single admin
         Registrar registrarWithSingleAdmin = builder.registrarWithoutId();
         id = registrarDao.insertRegistrar(registrarWithSingleAdmin);
         registrarWithSingleAdmin.setId(id);
         User admin3 = userPersisted();
         userDao.insertAdministrationRight(registrarWithSingleAdmin.getId(), admin3.getId());
 
-        //registrar without admin
+        // registrar without admin
         Registrar registrarWithoutAdmin = builder.registrarWithoutId();
         id = registrarDao.insertRegistrar(registrarWithoutAdmin);
         registrarWithoutAdmin.setId(id);
@@ -385,19 +384,19 @@ public class RegistrarDaoPostgresTest extends AbstractDaoTest {
         List<Registrar> idList = registrarDao.getAllRegistrars();
         assertTrue(idList.isEmpty());
 
-        //registrars should be deleted
+        // registrars should be deleted
         List<Registrar> registrars = registrarDao.getAllRegistrars();
         assertFalse(registrars.contains(registrarWithTwoAdmins));
         assertFalse(registrars.contains(registrarWithSingleAdmin));
         assertFalse(registrars.contains(registrarWithoutAdmin));
 
-        //also given archivers should be deleted
+        // also given archivers should be deleted
         List<Long> archiverIdList = archiverDao.getAllArchiversId();
         assertFalse(archiverIdList.contains(registrarWithTwoAdmins.getId()));
         assertFalse(archiverIdList.contains(registrarWithSingleAdmin.getId()));
         assertFalse(archiverIdList.contains(registrarWithoutAdmin.getId()));
 
-        //users formaly administrating the registrars should not be deleted
+        // users formaly administrating the registrars should not be deleted
         List<Long> usersIds = userDao.getAllUsersId();
         assertTrue(usersIds.contains(admin1.getId()));
         assertTrue(usersIds.contains(admin2.getId()));

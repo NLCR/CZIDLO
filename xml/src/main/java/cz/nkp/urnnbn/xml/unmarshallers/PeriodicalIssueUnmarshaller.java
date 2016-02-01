@@ -43,7 +43,8 @@ public class PeriodicalIssueUnmarshaller extends IntelectualEntityUnmarshaller {
             logger.severe("missing element titleInfo");
         } else {
             appendId(result, identifierByElementName(titleInfoElement, "periodicalTitle", IntEntIdType.TITLE, true, new LimitedLengthEnhancer(100)));
-            appendId(result, identifierByElementName(titleInfoElement, "volumeTitle", IntEntIdType.VOLUME_TITLE, false, new LimitedLengthEnhancer(50)));
+            appendId(result,
+                    identifierByElementName(titleInfoElement, "volumeTitle", IntEntIdType.VOLUME_TITLE, false, new LimitedLengthEnhancer(50)));
             appendId(result, identifierByElementName(titleInfoElement, "issueTitle", IntEntIdType.ISSUE_TITLE, true, new LimitedLengthEnhancer(50)));
         }
         appendId(result, identifierByElementName(entityEl, "ccnb", IntEntIdType.CCNB, false, new CcnbEnhancer()));

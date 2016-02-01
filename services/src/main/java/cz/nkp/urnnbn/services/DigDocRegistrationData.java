@@ -107,7 +107,7 @@ public class DigDocRegistrationData {
     }
 
     public List<UrnNbnWithStatus> getPredecessors() {
-        return predecessors == null ? Collections.<UrnNbnWithStatus>emptyList() : predecessors;
+        return predecessors == null ? Collections.<UrnNbnWithStatus> emptyList() : predecessors;
     }
 
     public void setPredecessors(List<UrnNbnWithStatus> predecessors) {

@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 @RemoteServiceRelativePath("logs")
 public interface LogsService extends RemoteService {
 
-	long getAdminLogLastUpdatedTime() throws ServerException, SessionExpirationException;
+    long getAdminLogLastUpdatedTime() throws ServerException, SessionExpirationException;
 
-	List<String> getAdminLogs() throws ServerException, SessionExpirationException;
+    List<String> getAdminLogs() throws ServerException, SessionExpirationException;
 }

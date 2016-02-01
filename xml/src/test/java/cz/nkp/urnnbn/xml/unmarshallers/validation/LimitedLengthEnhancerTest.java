@@ -43,19 +43,19 @@ public class LimitedLengthEnhancerTest extends TestCase {
             new LimitedLengthEnhancer(-1);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             new LimitedLengthEnhancer(0);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             new LimitedLengthEnhancer(LimitedLengthEnhancer.SUFFIX.length());
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         new LimitedLengthEnhancer(LimitedLengthEnhancer.SUFFIX.length() + 1);
     }
@@ -66,19 +66,19 @@ public class LimitedLengthEnhancerTest extends TestCase {
             new LimitedLengthEnhancer(-1, maxLengthCorrect);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             new LimitedLengthEnhancer(0, maxLengthCorrect);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         try {
             new LimitedLengthEnhancer(maxLengthCorrect + 1, maxLengthCorrect);
             fail();
         } catch (IllegalArgumentException e) {
-            //ok
+            // ok
         }
         new LimitedLengthEnhancer(maxLengthCorrect, maxLengthCorrect);
     }

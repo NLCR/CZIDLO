@@ -24,10 +24,8 @@ public class UpdateIntEntIdentifier implements StatementWrapper {
     }
 
     public String preparedStatement() {
-        return "UPDATE " + IntEntIdentifierDAO.TABLE_NAME + " SET "
-                + IntEntIdentifierDAO.ATTR_VALUE + "=?"
-                + " WHERE " + IntEntIdentifierDAO.ATTR_IE_ID + "=?"
-                + " AND " + IntEntIdentifierDAO.ATTR_TYPE + "=?";
+        return "UPDATE " + IntEntIdentifierDAO.TABLE_NAME + " SET " + IntEntIdentifierDAO.ATTR_VALUE + "=?" + " WHERE "
+                + IntEntIdentifierDAO.ATTR_IE_ID + "=?" + " AND " + IntEntIdentifierDAO.ATTR_TYPE + "=?";
     }
 
     public void populate(PreparedStatement st) throws SyntaxException {
@@ -36,7 +34,7 @@ public class UpdateIntEntIdentifier implements StatementWrapper {
             st.setLong(2, identifier.getIntEntDbId());
             st.setString(3, identifier.getType().name());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

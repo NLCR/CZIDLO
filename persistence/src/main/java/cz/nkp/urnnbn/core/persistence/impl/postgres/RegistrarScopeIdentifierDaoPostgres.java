@@ -48,7 +48,8 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
     }
 
     @Override
-    public void insertRegistrarScopeId(final RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public void insertRegistrarScopeId(final RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException,
+            AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, identifier.getDigDocId());
         DaoOperation operation = new DaoOperation() {
@@ -64,13 +65,13 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
         try {
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
                 IdPart intEntId = new IdPart(RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, Long.toString(identifier.getDigDocId()));
                 IdPart type = new IdPart(RegistrarScopeIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
-                throw new AlreadyPresentException(new IdPart[]{intEntId, type});
+                throw new AlreadyPresentException(new IdPart[] { intEntId, type });
             } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -88,7 +89,7 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
             DaoOperation operation = new MultipleResultsOperation(st, new RegistrarScopeIdentifierRT());
             return (List<RegistrarScopeIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -112,7 +113,7 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
             DaoOperation operation = new MultipleResultsOperation(st, new RegistrarScopeIdentifierRT());
             return (List<RegistrarScopeIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -121,7 +122,8 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
     }
 
     @Override
-    public void updateRegistrarScopeIdValue(RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException, AlreadyPresentException {
+    public void updateRegistrarScopeIdValue(RegistrarScopeIdentifier identifier) throws DatabaseException, RecordNotFoundException,
+            AlreadyPresentException {
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, identifier.getRegistrarId());
         checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, identifier.getDigDocId());
         try {
@@ -129,16 +131,17 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
             DaoOperation operation = new NoResultOperation(updateSt);
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0}, digDocId:{1}, type:{2}", new Object[]{identifier.getRegistrarId(), identifier.getDigDocId(), identifier.getType().toString()});
+            logger.log(Level.SEVERE, "Couldn't update " + TABLE_NAME + "registrarId: {0}, digDocId:{1}, type:{2}",
+                    new Object[] { identifier.getRegistrarId(), identifier.getDigDocId(), identifier.getType().toString() });
             System.err.println("state:" + ex.getSQLState());
             if ("23505".equals(ex.getSQLState())) {
                 IdPart intEntId = new IdPart(RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, Long.toString(identifier.getDigDocId()));
                 IdPart type = new IdPart(RegistrarScopeIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
-                throw new AlreadyPresentException(new IdPart[]{intEntId, type});
+                throw new AlreadyPresentException(new IdPart[] { intEntId, type });
             } else if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -154,7 +157,7 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
             checkRecordExists(DigitalDocumentDAO.TABLE_NAME, DigitalDocumentDAO.ATTR_ID, digDocDbId);
             deleteRecordsByLongAndString(TABLE_NAME, ATTR_DIG_DOC_ID, digDocDbId, ATTR_TYPE, type.toString(), true);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }
@@ -165,10 +168,10 @@ public class RegistrarScopeIdentifierDaoPostgres extends AbstractDAO implements 
         try {
             deleteRecordsById(TABLE_NAME, ATTR_DIG_DOC_ID, digDocDbId, false);
         } catch (RecordNotFoundException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }

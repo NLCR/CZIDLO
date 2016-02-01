@@ -9,14 +9,14 @@ import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public abstract class AbstractScheduleProcessDialogBox extends AbstractDialogBox {
-	protected static final char SEPARATOR = ':'; 
-	protected final ProcessServiceAsync processService = GWT.create(ProcessService.class);
-	protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	protected final UserDTO user;
+    protected static final char SEPARATOR = ':';
+    protected final ProcessServiceAsync processService = GWT.create(ProcessService.class);
+    protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    protected final UserDTO user;
 
-	public AbstractScheduleProcessDialogBox(UserDTO user) {
-		super();
-		this.user = user;
-	}
+    public AbstractScheduleProcessDialogBox(UserDTO user) {
+        super();
+        this.user = user;
+    }
 
 }

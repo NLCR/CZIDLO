@@ -26,24 +26,14 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + DigitalDocumentDAO.TABLE_NAME + " SET "
-                + DigitalDocumentDAO.ATTR_UPDATED + "=?,"
-                + DigitalDocumentDAO.ATTR_FINANCED + "=?,"
-                + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER + "=?,"
-                + DigitalDocumentDAO.ATTR_FORMAT + "=?,"
-                + DigitalDocumentDAO.ATTR_FORMAT_VERSION + "=?,"
-                + DigitalDocumentDAO.ATTR_EXTENT + "=?,"
-                + DigitalDocumentDAO.ATTR_RES_HORIZONTAL + "=?,"
-                + DigitalDocumentDAO.ATTR_RES_VERTICAL + "=?,"
-                + DigitalDocumentDAO.ATTR_COMPRESSION + "=?,"
-                + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO + "=?,"
-                + DigitalDocumentDAO.ATTR_COLOR_MODEL + "=?,"
-                + DigitalDocumentDAO.ATTR_COLOR_DEPTH + "=?,"
-                + DigitalDocumentDAO.ATTR_ICC_PROFILE + "=?,"
-                + DigitalDocumentDAO.ATTR_PIC_WIDTH + "=?,"
-                + DigitalDocumentDAO.ATTR_PIC_HEIGHT + "=?,"
-                + DigitalDocumentDAO.ATTR_ARCHIVER_ID + "=?"
-                + " WHERE " + DigitalDocumentDAO.ATTR_ID + "=?";
+        return "UPDATE " + DigitalDocumentDAO.TABLE_NAME + " SET " + DigitalDocumentDAO.ATTR_UPDATED + "=?," + DigitalDocumentDAO.ATTR_FINANCED
+                + "=?," + DigitalDocumentDAO.ATTR_CONTRACT_NUMBER + "=?," + DigitalDocumentDAO.ATTR_FORMAT + "=?,"
+                + DigitalDocumentDAO.ATTR_FORMAT_VERSION + "=?," + DigitalDocumentDAO.ATTR_EXTENT + "=?," + DigitalDocumentDAO.ATTR_RES_HORIZONTAL
+                + "=?," + DigitalDocumentDAO.ATTR_RES_VERTICAL + "=?," + DigitalDocumentDAO.ATTR_COMPRESSION + "=?,"
+                + DigitalDocumentDAO.ATTR_COMPRESSION_RATIO + "=?," + DigitalDocumentDAO.ATTR_COLOR_MODEL + "=?,"
+                + DigitalDocumentDAO.ATTR_COLOR_DEPTH + "=?," + DigitalDocumentDAO.ATTR_ICC_PROFILE + "=?," + DigitalDocumentDAO.ATTR_PIC_WIDTH
+                + "=?," + DigitalDocumentDAO.ATTR_PIC_HEIGHT + "=?," + DigitalDocumentDAO.ATTR_ARCHIVER_ID + "=?" + " WHERE "
+                + DigitalDocumentDAO.ATTR_ID + "=?";
     }
 
     @Override
@@ -64,11 +54,11 @@ public class UpdateDigitalDocument extends AbstractStatement implements Statemen
             st.setString(13, doc.getIccProfile());
             setIntOrNull(st, 14, doc.getPictureWidth());
             setIntOrNull(st, 15, doc.getPictureHeight());
-            Long archiverId = doc.getArchiverId() != null? doc.getArchiverId() : doc.getRegistrarId();
+            Long archiverId = doc.getArchiverId() != null ? doc.getArchiverId() : doc.getRegistrarId();
             st.setLong(16, archiverId);
             st.setLong(17, doc.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

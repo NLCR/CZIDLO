@@ -50,7 +50,8 @@ public abstract class AbstractUrnNbnReservationsResource extends Resource {
     private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
         int maxPrintSize = ApiModuleConfiguration.instanceOf().getMaxReservedSizeToPrint();
         if (reservedUrnNbnList.size() > maxPrintSize) {
-            return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList.subList(0, maxPrintSize));
+            return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(),
+                    reservedUrnNbnList.subList(0, maxPrintSize));
         } else {
             return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(), reservedUrnNbnList);
         }

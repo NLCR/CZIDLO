@@ -432,11 +432,11 @@ public interface ConstantsImpl extends Constants {
     String month11();
 
     String month12();
-    
+
     String chartsStateAll();
-    
+
     String chartsStateActiveOnly();
-    
+
     String chartsStateDeactivatedOnly();
 
 }

@@ -18,68 +18,68 @@ import cz.nkp.urnnbn.shared.dto.CatalogDTO;
 
 public class AddCatalogDialogBox extends AbstractDialogBox {
 
-	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
-	private final RegistrarDetailsPanel superPanel;
-	private final CatalogForm catalogForm = new CatalogForm();
-	private final Label errorLabel = errorLabel(320);
+    private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
+    private final RegistrarDetailsPanel superPanel;
+    private final CatalogForm catalogForm = new CatalogForm();
+    private final Label errorLabel = errorLabel(320);
 
-	public AddCatalogDialogBox(RegistrarDetailsPanel superPanel) {
-		this.superPanel = superPanel;
-		setText(constants.catalog() + " - " + constants.recordInsertion());
-		setAnimationEnabled(true);
-		setWidget(contentPanel());
-		center();
-	}
+    public AddCatalogDialogBox(RegistrarDetailsPanel superPanel) {
+        this.superPanel = superPanel;
+        setText(constants.catalog() + " - " + constants.recordInsertion());
+        setAnimationEnabled(true);
+        setWidget(contentPanel());
+        center();
+    }
 
-	private Panel contentPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.add(catalogForm);
-		result.add(buttons());
-		result.add(errorLabel);
-		return result;
-	}
+    private Panel contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.add(catalogForm);
+        result.add(buttons());
+        result.add(errorLabel);
+        return result;
+    }
 
-	private Panel buttons() {
-		HorizontalPanel result = new HorizontalPanel();
-		result.add(saveButton());
-		result.add(closeButton());
-		return result;
-	}
+    private Panel buttons() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.add(saveButton());
+        result.add(closeButton());
+        return result;
+    }
 
-	private Button saveButton() {
-		return new Button(constants.insert(), new ClickHandler() {
+    private Button saveButton() {
+        return new Button(constants.insert(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				if (catalogForm.isFilledCorrectly()) {
-					CatalogDTO dtoFromForm = catalogForm.getDto();
-					dtoFromForm.setRegistrarId(superPanel.getRegistrarId());
-					institutionsService.saveCatalog(dtoFromForm, new AsyncCallback<CatalogDTO>() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (catalogForm.isFilledCorrectly()) {
+                    CatalogDTO dtoFromForm = catalogForm.getDto();
+                    dtoFromForm.setRegistrarId(superPanel.getRegistrarId());
+                    institutionsService.saveCatalog(dtoFromForm, new AsyncCallback<CatalogDTO>() {
 
-						@Override
-						public void onSuccess(CatalogDTO result) {
-							superPanel.addCatalog(result);
-							AddCatalogDialogBox.this.hide();
-						}
+                        @Override
+                        public void onSuccess(CatalogDTO result) {
+                            superPanel.addCatalog(result);
+                            AddCatalogDialogBox.this.hide();
+                        }
 
-						@Override
-						public void onFailure(Throwable caught) {
-							errorLabel.setText(messages.serverError(caught.getMessage()));
-						}
-					});
-				}
-			}
-		});
-	}
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(messages.serverError(caught.getMessage()));
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	private Button closeButton() {
-		return new Button(constants.close(), new ClickHandler() {
+    private Button closeButton() {
+        return new Button(constants.close(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				AddCatalogDialogBox.this.hide();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                AddCatalogDialogBox.this.hide();
+            }
+        });
+    }
 
 }

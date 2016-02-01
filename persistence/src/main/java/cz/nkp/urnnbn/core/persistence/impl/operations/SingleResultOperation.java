@@ -34,7 +34,8 @@ public class SingleResultOperation implements DaoOperation {
         return getSingleResult(resultSet, transformer);
     }
 
-    private Object getSingleResult(ResultSet resultSet, ResultsetTransformer transformer) throws SQLException, RecordNotFoundException, MultipleRecordsException {
+    private Object getSingleResult(ResultSet resultSet, ResultsetTransformer transformer) throws SQLException, RecordNotFoundException,
+            MultipleRecordsException {
         Object result = null;
         int found = 0;
         while (resultSet.next()) {

@@ -27,96 +27,96 @@ import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
  */
 public class ResultsPage extends ScrollPanel {
 
-	private static final Logger logger = Logger.getLogger(ResultsPage.class.getName());
-	private static final int MAX_ENTITIES_TO_EXPAND = 3;
-	private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
+    private static final Logger logger = Logger.getLogger(ResultsPage.class.getName());
+    private static final int MAX_ENTITIES_TO_EXPAND = 3;
+    private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
 
-	private final MessagesImpl messages = GWT.create(MessagesImpl.class);
-	private final SearchServiceAsync searchService = GWT.create(SearchService.class);
-	private final SearchPanelCss css = SearchPanelResources.css();
+    private final MessagesImpl messages = GWT.create(MessagesImpl.class);
+    private final SearchServiceAsync searchService = GWT.create(SearchService.class);
+    private final SearchPanelCss css = SearchPanelResources.css();
 
-	private final SearchPanel searchPanel;
-	private final UserDTO user;
-	private final ArrayList<Long> intEntIdentifiers;
-	private ArrayList<IntelectualEntityDTO> entities;
-	private boolean dataLoaded = false;
+    private final SearchPanel searchPanel;
+    private final UserDTO user;
+    private final ArrayList<Long> intEntIdentifiers;
+    private ArrayList<IntelectualEntityDTO> entities;
+    private boolean dataLoaded = false;
 
-	public ResultsPage(SearchPanel searchPanel, UserDTO user, ArrayList<Long> intEntIdentifiers) {
-		super();
-		this.searchPanel = searchPanel;
-		this.user = user;
-		this.intEntIdentifiers = intEntIdentifiers;
-	}
+    public ResultsPage(SearchPanel searchPanel, UserDTO user, ArrayList<Long> intEntIdentifiers) {
+        super();
+        this.searchPanel = searchPanel;
+        this.user = user;
+        this.intEntIdentifiers = intEntIdentifiers;
+    }
 
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-	}
+    @Override
+    protected void onLoad() {
+        super.onLoad();
+    }
 
-	public void onSelected() {
-		if (!dataLoaded) {
-			loadData();
-		}
-	}
+    public void onSelected() {
+        if (!dataLoaded) {
+            loadData();
+        }
+    }
 
-	private void showData() {
-		clear();
-		VerticalPanel contentPanel = new VerticalPanel();
-		boolean expand = entities.size() <= MAX_ENTITIES_TO_EXPAND;
-		for (IntelectualEntityDTO entity : entities) {
-			Tree entityTree = new Tree();
-			entityTree.setAnimationEnabled(true);
-			TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, user, searchPanel);
-			entityItem.setState(expand);
-			entityTree.addItem(entityItem);
-			if (entity.getDocuments() != null) {
-				appendDocuments(entityItem, entity.getDocuments());
-			}
-			contentPanel.add(entityTree);
-		}
-		add(contentPanel);
-	}
+    private void showData() {
+        clear();
+        VerticalPanel contentPanel = new VerticalPanel();
+        boolean expand = entities.size() <= MAX_ENTITIES_TO_EXPAND;
+        for (IntelectualEntityDTO entity : entities) {
+            Tree entityTree = new Tree();
+            entityTree.setAnimationEnabled(true);
+            TreeItem entityItem = EntityTreeItemBuilder.getItem(entity, user, searchPanel);
+            entityItem.setState(expand);
+            entityTree.addItem(entityItem);
+            if (entity.getDocuments() != null) {
+                appendDocuments(entityItem, entity.getDocuments());
+            }
+            contentPanel.add(entityTree);
+        }
+        add(contentPanel);
+    }
 
-	private void loadData() {
-		showProcessingWheel();
-		searchService.getIntelectualEntities(intEntIdentifiers, new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
+    private void loadData() {
+        showProcessingWheel();
+        searchService.getIntelectualEntities(intEntIdentifiers, new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
 
-			@Override
-			public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
-				entities = result;
-				dataLoaded = true;
-				showData();
-			}
+            @Override
+            public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
+                entities = result;
+                dataLoaded = true;
+                showData();
+            }
 
-			@Override
-			public void onFailure(Throwable caught) {
-				Window.alert(messages.serverError(caught.getMessage()));
-				clear();
-			}
-		});
+            @Override
+            public void onFailure(Throwable caught) {
+                Window.alert(messages.serverError(caught.getMessage()));
+                clear();
+            }
+        });
 
-	}
+    }
 
-	private void showProcessingWheel() {
-		clear();
-		add(processingWheelPanel());
-	}
+    private void showProcessingWheel() {
+        clear();
+        add(processingWheelPanel());
+    }
 
-	private Panel processingWheelPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.setStyleName(css.paginationProcessWheelPanel());
-		Image booksImg = new Image("img/ajax-loader.gif");
-		result.add(booksImg);
-		return result;
-	}
+    private Panel processingWheelPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.setStyleName(css.paginationProcessWheelPanel());
+        Image booksImg = new Image("img/ajax-loader.gif");
+        result.add(booksImg);
+        return result;
+    }
 
-	private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {
-		boolean expand = documents.size() <= MAX_DOCUMENTS_TO_EXPAND;
-		for (DigitalDocumentDTO doc : documents) {
-			DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, searchPanel);
-			TreeItem documentItem = builder.getItem();
-			entityItem.addItem(documentItem);
-			documentItem.setState(expand);
-		}
-	}
+    private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {
+        boolean expand = documents.size() <= MAX_DOCUMENTS_TO_EXPAND;
+        for (DigitalDocumentDTO doc : documents) {
+            DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, searchPanel);
+            TreeItem documentItem = builder.getItem();
+            entityItem.addItem(documentItem);
+            documentItem.setState(expand);
+        }
+    }
 }

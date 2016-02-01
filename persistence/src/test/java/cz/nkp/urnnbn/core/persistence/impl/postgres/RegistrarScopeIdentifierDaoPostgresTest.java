@@ -40,14 +40,14 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier id = builder.registrarScopeIdentifierWithoutIds();
         id.setType(RegistrarScopeIdType.valueOf("K4_pid"));
         id.setValue("uuid:123");
         id.setDigDocId(doc.getId());
         id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(id);
-        //insert another typ of identifiere
+        // insert another typ of identifiere
         RegistrarScopeIdentifier id2 = builder.registrarScopeIdentifierWithoutIds();
         id2.setType(RegistrarScopeIdType.valueOf("signatura"));
         id2.setValue("nevim,neco");
@@ -69,7 +69,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
             registrarScopeIdDao.insertRegistrarScopeId(id);
             fail();
         } catch (NullPointerException e) {
-            //ok
+            // ok
         }
 
     }
@@ -114,20 +114,20 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
             registrarScopeIdDao.insertRegistrarScopeId(identifier);
             fail();
         } catch (AlreadyPresentException e) {
-            //ok
+            // ok
         }
     }
 
     public void testInsertDigDocId_insertTwiceSameIdTypeAndValueForSameRegistrar() throws Exception {
         Registrar registrar = registrarPersisted();
-        //first digDoc & id
+        // first digDoc & id
         IntelectualEntity entity1 = entityPersisted();
         DigitalDocument doc1 = documentPersisted(registrar.getId(), entity1.getId());
         RegistrarScopeIdentifier id1 = builder.registrarScopeIdentifierWithoutIds();
         id1.setDigDocId(doc1.getId());
         id1.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(id1);
-        //second digDoc & digDocId
+        // second digDoc & digDocId
         IntelectualEntity entity2 = entityPersisted();
         DigitalDocument doc2 = documentPersisted(registrar.getId(), entity2.getId());
         RegistrarScopeIdentifier id2 = builder.registrarScopeIdentifierWithoutIds();
@@ -138,7 +138,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
             registrarScopeIdDao.insertRegistrarScopeId(id2);
             fail();
         } catch (AlreadyPresentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -146,23 +146,23 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //first the id list should be empty
+        // first the id list should be empty
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).isEmpty());
-        //insert id OAI
+        // insert id OAI
         RegistrarScopeIdentifier oaiId = new RegistrarScopeIdentifier();
         oaiId.setType(RegistrarScopeIdType.valueOf("oai"));
         oaiId.setValue("123");
         oaiId.setDigDocId(doc.getId());
         oaiId.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(oaiId);
-        //insert id K4_pid
+        // insert id K4_pid
         RegistrarScopeIdentifier k4pid = new RegistrarScopeIdentifier();
         k4pid.setType(RegistrarScopeIdType.valueOf("K4_pid"));
         k4pid.setValue("uuid:3456");
         k4pid.setDigDocId(doc.getId());
         k4pid.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(k4pid);
-        //get ids
+        // get ids
         List<RegistrarScopeIdentifier> idList = registrarScopeIdDao.getRegistrarScopeIds(doc.getId());
         assertEquals(2, idList.size());
         assertTrue(idList.contains(oaiId));
@@ -187,53 +187,53 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Long registrarId = registrarPersisted().getId();
         Long digDocId = documentPersisted(registrarId, entityPersisted().getId()).getId();
         RegistrarScopeIdentifier second = registrarScopeIdPersisted(registrarId, digDocId, "second");
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
-        //first
+        // first
         RegistrarScopeIdentifier first = registrarScopeIdPersisted(registrarId, digDocId, "first");
         Thread.sleep(1000);
         DateTime between = new DateTime();
         Thread.sleep(1000);
-        //second
+        // second
         second.setValue("newValue");
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before-before
+        // before-before
         List<RegistrarScopeIdentifier> idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, before);
         assertTrue(idList.isEmpty());
-        //before-first
+        // before-first
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, first.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(first));
-        //before-between
+        // before-between
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, between);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(first));
-        //before-second
+        // before-second
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, second.getModified());
         assertEquals(2, idList.size());
         assertTrue(idList.contains(first));
         assertTrue(idList.contains(second));
-        //before-after
+        // before-after
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, after);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(first));
         assertTrue(idList.contains(second));
-        //between-between
+        // between-between
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(between, between);
         assertTrue(idList.isEmpty());
-        //between-second
+        // between-second
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(between, second.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(second));
-        //betwen-after
+        // betwen-after
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(between, after);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(second));
-        //after-after
+        // after-after
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(after, after);
         assertTrue(idList.isEmpty());
     }
@@ -242,30 +242,30 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Long registrarId = registrarPersisted().getId();
         Long digDocId = documentPersisted(registrarId, entityPersisted().getId()).getId();
         RegistrarScopeIdentifier second = registrarScopeIdPersisted(registrarId, digDocId, "second");
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
-        //first
+        // first
         RegistrarScopeIdentifier first = registrarScopeIdPersisted(registrarId, digDocId, "first");
         Thread.sleep(1000);
         DateTime between = new DateTime();
         Thread.sleep(1000);
-        //second
+        // second
         second.setValue("newValue");
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before
+        // before
         List<RegistrarScopeIdentifier> idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(before, null);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(first));
         assertTrue(idList.contains(second));
-        //betwen
+        // betwen
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(between, null);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(second));
-        //after
+        // after
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(after, null);
         assertTrue(idList.isEmpty());
     }
@@ -274,37 +274,37 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Long registrarId = registrarPersisted().getId();
         Long digDocId = documentPersisted(registrarId, entityPersisted().getId()).getId();
         RegistrarScopeIdentifier second = registrarScopeIdPersisted(registrarId, digDocId, "second");
-        //before - firstEnt - between - secondEnt - after
+        // before - firstEnt - between - secondEnt - after
         DateTime before = new DateTime();
         Thread.sleep(1000);
-        //first
+        // first
         RegistrarScopeIdentifier first = registrarScopeIdPersisted(registrarId, digDocId, "first");
         Thread.sleep(1000);
         DateTime between = new DateTime();
         Thread.sleep(1000);
-        //second
+        // second
         second.setValue("newValue");
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
         DateTime after = new DateTime();
-        //before
+        // before
         List<RegistrarScopeIdentifier> idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(null, before);
         assertTrue(idList.isEmpty());
-        //first
+        // first
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(null, first.getModified());
         assertEquals(1, idList.size());
         assertTrue(idList.contains(first));
-        //between
+        // between
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(null, between);
         assertEquals(1, idList.size());
         assertTrue(idList.contains(first));
-        //second
+        // second
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(null, second.getModified());
         assertEquals(2, idList.size());
         assertTrue(idList.contains(first));
         assertTrue(idList.contains(second));
-        //after
+        // after
         idList = registrarScopeIdDao.getRegistrarScopeIdsByTimestamps(null, after);
         assertEquals(2, idList.size());
         assertTrue(idList.contains(first));
@@ -315,18 +315,18 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setType(RegistrarScopeIdType.valueOf("my_Id"));
         inserted.setValue("oldValue");
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
-        //update
+        // update
         RegistrarScopeIdentifier updated = new RegistrarScopeIdentifier(inserted);
         updated.setValue("newValue");
         registrarScopeIdDao.updateRegistrarScopeIdValue(updated);
-        //fetch
+        // fetch
         RegistrarScopeIdentifier fetched = registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).get(0);
         assertEquals(updated.getValue(), fetched.getValue());
         assertFalse(inserted.getValue().equals(fetched.getValue()));
@@ -336,10 +336,10 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         RegistrarScopeIdType idType = RegistrarScopeIdType.valueOf("some_id_type");
         String collidingValue = "collision";
-        //first digDoc
+        // first digDoc
         IntelectualEntity entity1 = entityPersisted();
         DigitalDocument doc1 = documentPersisted(registrar.getId(), entity1.getId());
-        //identifier of first digDoc
+        // identifier of first digDoc
         RegistrarScopeIdentifier digDoc1Id = builder.registrarScopeIdentifierWithoutIds();
         digDoc1Id.setType(idType);
         digDoc1Id.setValue(collidingValue);
@@ -347,24 +347,24 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         digDoc1Id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(digDoc1Id);
 
-        //second digDoc
+        // second digDoc
         IntelectualEntity entity2 = entityPersisted();
         DigitalDocument doc2 = documentPersisted(registrar.getId(), entity2.getId());
-        //insert identifier to digDoc2
+        // insert identifier to digDoc2
         RegistrarScopeIdentifier digDoc2Id = builder.registrarScopeIdentifierWithoutIds();
         digDoc2Id.setType(idType);
         digDoc2Id.setValue("okValue");
         digDoc2Id.setDigDocId(doc2.getId());
         digDoc2Id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(digDoc2Id);
-        //update
+        // update
         RegistrarScopeIdentifier updated = new RegistrarScopeIdentifier(digDoc2Id);
         updated.setValue(collidingValue);
         try {
             registrarScopeIdDao.updateRegistrarScopeIdValue(updated);
             fail();
         } catch (AlreadyPresentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -372,12 +372,12 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
-        //set incorrect registrar id and update
+        // set incorrect registrar id and update
         RegistrarScopeIdentifier updated = new RegistrarScopeIdentifier(inserted);
         updated.setRegistrarId(ILLEGAL_ID);
         try {
@@ -386,7 +386,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         } catch (RecordNotFoundException e) {
             assertEquals(RegistrarDAO.TABLE_NAME, e.getTableName());
         }
-        //set incorrect digDocId and update
+        // set incorrect digDocId and update
         updated.setRegistrarId(registrar.getId());
         updated.setDigDocId(ILLEGAL_ID);
         try {
@@ -401,13 +401,13 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).contains(inserted));
-        //delete
+        // delete
         registrarScopeIdDao.deleteRegistrarScopeId(doc.getId(), inserted.getType());
         assertFalse(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).contains(inserted));
     }
@@ -416,18 +416,18 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).contains(inserted));
-        //delete
+        // delete
         try {
             registrarScopeIdDao.deleteRegistrarScopeId(ILLEGAL_ID, inserted.getType());
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -435,19 +435,19 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //insert identifier
+        // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).contains(inserted));
-        //delete
+        // delete
         try {
             RegistrarScopeIdType otherType = RegistrarScopeIdType.valueOf("otherType");
             registrarScopeIdDao.deleteRegistrarScopeId(doc.getId(), otherType);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -455,23 +455,23 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         Registrar registrar = registrarPersisted();
         IntelectualEntity entity = entityPersisted();
         DigitalDocument doc = documentPersisted(registrar.getId(), entity.getId());
-        //first the id list should be empty
+        // first the id list should be empty
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).isEmpty());
-        //insert id OAI
+        // insert id OAI
         RegistrarScopeIdentifier idOai = new RegistrarScopeIdentifier();
         idOai.setType(RegistrarScopeIdType.valueOf("oai"));
         idOai.setValue("123");
         idOai.setDigDocId(doc.getId());
         idOai.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(idOai);
-        //insert id OTHER
+        // insert id OTHER
         RegistrarScopeIdentifier idOther = new RegistrarScopeIdentifier();
         idOther.setType(RegistrarScopeIdType.valueOf("K4_pid"));
         idOther.setValue("uuid:3456");
         idOther.setDigDocId(doc.getId());
         idOther.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(idOther);
-        //get ids
+        // get ids
         assertEquals(2, registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).size());
         registrarScopeIdDao.deleteRegistrarScopeIds(doc.getId());
         assertTrue(registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).isEmpty());

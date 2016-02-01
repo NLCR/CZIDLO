@@ -26,21 +26,20 @@ import java.io.FileInputStream;
 public interface JobScheduler {
 
     /**
-     * Creates and runs job from given process. Assings the OS specific jobId to
-     * the process.
+     * Creates and runs job from given process. Assings the OS specific jobId to the process.
      *
-     * @param process process to be run. Must have proces id set
+     * @param process
+     *            process to be run. Must have proces id set
      * @return OS specific id of the running job
      * @throws JobException
      */
     public Long runJob(Process process) throws JobException;
-    
-    
+
     /**
-     * Kills job representing this process. If this method finishes without
-     * throwing exception, the job and process can now be considered finished.
+     * Kills job representing this process. If this method finishes without throwing exception, the job and process can now be considered finished.
      *
-     * @param processId OS specific recyclable job id
+     * @param processId
+     *            OS specific recyclable job id
      * @throws JobException
      */
     public void killJob(Long processId) throws JobException;
@@ -48,41 +47,44 @@ public interface JobScheduler {
     /**
      * Informs whether job of process is running.
      *
-     * @param jobId OS specific recyclable job id
+     * @param jobId
+     *            OS specific recyclable job id
      * @return true if OS job representing the process is running
      * @throws JobException
      */
     public boolean jobIsRunning(Long jobId) throws JobException;
 
     /**
-     * Informs whether job of process finished correctly provided it is no
-     * longer running.
+     * Informs whether job of process finished correctly provided it is no longer running.
      *
-     * @param process process with it's jobId set
-     * @param jobId OS specific recyclable job id
-     * @param processId persistent process id
-     * @return true if no longer running OS job representing the process
-     * finished it's execution as expected
+     * @param process
+     *            process with it's jobId set
+     * @param jobId
+     *            OS specific recyclable job id
+     * @param processId
+     *            persistent process id
+     * @return true if no longer running OS job representing the process finished it's execution as expected
      * @throws JobException
      */
     public boolean jobFinishedCorrectly(Long jobId, Long processId) throws JobException;
 
     /**
-     * Opens job file and returns it's FileInputStream. The stream has to be
-     * closed by client after reading is finished.
+     * Opens job file and returns it's FileInputStream. The stream has to be closed by client after reading is finished.
      *
-     * @param processId persistent process id 
-     * @param filename name of file in directory dedicated to process
+     * @param processId
+     *            persistent process id
+     * @param filename
+     *            name of file in directory dedicated to process
      * @return
      * @throws JobException
      */
     public FileInputStream jobFileInputStream(Long processId, String filename) throws JobException;
 
     /**
-     * Reinitializes the scheduler - removes data of all previously run
-     * processes.
+     * Reinitializes the scheduler - removes data of all previously run processes.
      *
-     * @throws JobException in case of error while cleaning scheduler data.
+     * @throws JobException
+     *             in case of error while cleaning scheduler data.
      */
     public void reinitializeScheduler() throws JobException;
 }

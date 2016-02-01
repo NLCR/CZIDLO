@@ -24,8 +24,7 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 
 /**
- * TODO: remove absolute paths
- * TODO: move to module api
+ * TODO: remove absolute paths TODO: move to module api
  *
  * @author Martin Řehánek
  */
@@ -53,64 +52,64 @@ public class ImportExamples extends TestCase {
         String xmlString = toXmlString(importExamplesDir, "monograph.xml");
         System.err.println("file: " + xmlString);
         Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-        //Document doc = XOMUtils.loadDocumentValidByInternalXsd(xmlString);
+        // Document doc = XOMUtils.loadDocumentValidByInternalXsd(xmlString);
         assertNotNull(doc);
     }
 
-//    public void testValidateMonographWithUrnImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "monograph-withUrnNbn.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidateMonographVolumeImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "monographVolume.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidatePeriodicalImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "periodical.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidatePeriodicalVolumeImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "periodicalVolume.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidatePeriodicalIssueImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "periodicalIssue.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidateThesisImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "thesis.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidateAnalyticalImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "analytical.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidateOtherEntity_mapImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "otherEntity-map.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
-//    public void testValidateOtherEntity_musicSheetImport() throws Exception {
-//        String xmlString = toXmlString(importExamplesDir, "otherEntity-musicSheet.xml");
-//        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-//        assertNotNull(doc);
-//    }
-//
+    // public void testValidateMonographWithUrnImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "monograph-withUrnNbn.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidateMonographVolumeImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "monographVolume.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidatePeriodicalImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "periodical.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidatePeriodicalVolumeImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "periodicalVolume.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidatePeriodicalIssueImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "periodicalIssue.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidateThesisImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "thesis.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidateAnalyticalImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "analytical.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidateOtherEntity_mapImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "otherEntity-map.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
+    // public void testValidateOtherEntity_musicSheetImport() throws Exception {
+    // String xmlString = toXmlString(importExamplesDir, "otherEntity-musicSheet.xml");
+    // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+    // assertNotNull(doc);
+    // }
+    //
     private String toXmlString(File rootDir, String filename) throws ParsingException, IOException {
         File file = new File(rootDir.getAbsolutePath() + File.separator + filename);
         return XOMUtils.loadDocumentWithoutValidation(file).toXML();

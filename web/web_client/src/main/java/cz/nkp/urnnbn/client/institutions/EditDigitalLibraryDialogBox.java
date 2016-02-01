@@ -18,67 +18,67 @@ import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 
 public class EditDigitalLibraryDialogBox extends AbstractDialogBox {
 
-	private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
-	private final RegistrarDetailsPanel superPanel;
-	private final Label errorLabel = errorLabel(320);
-	private DigitalLibraryForm libraryForm;
+    private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
+    private final RegistrarDetailsPanel superPanel;
+    private final Label errorLabel = errorLabel(320);
+    private DigitalLibraryForm libraryForm;
 
-	public EditDigitalLibraryDialogBox(RegistrarDetailsPanel superPanel, DigitalLibraryDTO library) {
-		this.superPanel = superPanel;
-		this.libraryForm = new DigitalLibraryForm(library);
-		setText(constants.digitalLibrary() + " - " + constants.recordAdjustment());
-		setAnimationEnabled(true);
-		setWidget(contentPanel());
-		center();
-	}
+    public EditDigitalLibraryDialogBox(RegistrarDetailsPanel superPanel, DigitalLibraryDTO library) {
+        this.superPanel = superPanel;
+        this.libraryForm = new DigitalLibraryForm(library);
+        setText(constants.digitalLibrary() + " - " + constants.recordAdjustment());
+        setAnimationEnabled(true);
+        setWidget(contentPanel());
+        center();
+    }
 
-	private Panel contentPanel() {
-		VerticalPanel result = new VerticalPanel();
-		result.add(libraryForm);
-		result.add(errorLabel);
-		result.add(buttons());
-		return result;
-	}
+    private Panel contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.add(libraryForm);
+        result.add(errorLabel);
+        result.add(buttons());
+        return result;
+    }
 
-	private Panel buttons() {
-		HorizontalPanel buttons = new HorizontalPanel();
-		buttons.add(saveButton());
-		buttons.add(closeButtion());
-		return buttons;
-	}
+    private Panel buttons() {
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.add(saveButton());
+        buttons.add(closeButtion());
+        return buttons;
+    }
 
-	private Button saveButton() {
-		return new Button(constants.save(), new ClickHandler() {
+    private Button saveButton() {
+        return new Button(constants.save(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				if (libraryForm.isFilledCorrectly()) {
-					institutionsService.updateDigitalLibrary(libraryForm.getDto(), new AsyncCallback<Void>() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (libraryForm.isFilledCorrectly()) {
+                    institutionsService.updateDigitalLibrary(libraryForm.getDto(), new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							superPanel.updateLibrary(libraryForm.getDto());
-							EditDigitalLibraryDialogBox.this.hide();
-						}
+                        @Override
+                        public void onSuccess(Void result) {
+                            superPanel.updateLibrary(libraryForm.getDto());
+                            EditDigitalLibraryDialogBox.this.hide();
+                        }
 
-						@Override
-						public void onFailure(Throwable caught) {
-							errorLabel.setText(messages.serverError(caught.getMessage()));
-						}
-					});
-				}
-			}
-		});
-	}
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(messages.serverError(caught.getMessage()));
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	private Button closeButtion() {
-		return new Button(constants.close(), new ClickHandler() {
+    private Button closeButtion() {
+        return new Button(constants.close(), new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				EditDigitalLibraryDialogBox.this.hide();
-			}
-		});
-	}
+            @Override
+            public void onClick(ClickEvent event) {
+                EditDigitalLibraryDialogBox.this.hide();
+            }
+        });
+    }
 
 }

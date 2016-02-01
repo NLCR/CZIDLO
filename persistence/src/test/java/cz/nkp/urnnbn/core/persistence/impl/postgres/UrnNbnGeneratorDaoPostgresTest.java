@@ -51,7 +51,7 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
             urnGeneratorDao.insertGenerator(second);
             fail();
         } catch (AlreadyPresentException e) {
-            //ok
+            // ok
         }
     }
 
@@ -62,7 +62,7 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
             urnGeneratorDao.insertGenerator(generator);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -70,12 +70,12 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
      * Test of getGeneratorByRegistrarId method, of class UrnNbnBookingDaoPostgres.
      */
     public void testGetGeneratorByCode() throws Exception {
-        //insert
+        // insert
         Registrar registrar = registrarPersisted();
         UrnNbnGenerator generator = new UrnNbnGenerator();
         generator.setRegistrarId(registrar.getId());
         urnGeneratorDao.insertGenerator(generator);
-        //get
+        // get
         UrnNbnGenerator fetched = urnGeneratorDao.getGeneratorByRegistrarId(registrar.getId());
         assertNotNull(fetched);
         assertNotNull(fetched.getRegistrarId());
@@ -84,12 +84,12 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
     }
 
     public void testGetGeneratorByCode_unknownCode() throws Exception {
-        //get
+        // get
         try {
             urnGeneratorDao.getGeneratorByRegistrarId(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -97,20 +97,20 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
      * Test of updateGenerator method, of class UrnNbnBookingDaoPostgres.
      */
     public void testUpdateUrnNbnGenerator() throws Exception {
-        //insert
+        // insert
         Registrar registrar = registrarPersisted();
         UrnNbnGenerator inserted = new UrnNbnGenerator();
         inserted.setRegistrarId(registrar.getId());
         urnGeneratorDao.insertGenerator(inserted);
-        //fetch
+        // fetch
         UrnNbnGenerator fetched = urnGeneratorDao.getGeneratorByRegistrarId(registrar.getId());
         assertEquals(inserted, fetched);
-        //update
+        // update
         UrnNbnGenerator updated = new UrnNbnGenerator();
         updated.setRegistrarId(registrar.getId());
         updated.setLastDocumentCode("   5");
         urnGeneratorDao.updateGenerator(updated);
-        //fetch
+        // fetch
         UrnNbnGenerator updatedAndFetched = urnGeneratorDao.getGeneratorByRegistrarId(registrar.getId());
         assertEquals(updatedAndFetched, updated);
         assertFalse(updatedAndFetched.equals(inserted));
@@ -124,7 +124,7 @@ public class UrnNbnGeneratorDaoPostgresTest extends AbstractDaoTest {
             urnGeneratorDao.updateGenerator(generator);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 }

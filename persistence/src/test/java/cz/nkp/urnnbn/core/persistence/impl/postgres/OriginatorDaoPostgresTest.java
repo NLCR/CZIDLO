@@ -48,7 +48,7 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
             originatorDao.insertOriginator(orig);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 
@@ -87,7 +87,7 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
             originatorDao.getOriginatorById(ILLEGAL_ID);
             fail();
         } catch (RecordNotFoundException e) {
-            //OK
+            // OK
         }
     }
 
@@ -99,14 +99,14 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
         Originator inserted = builder.originatorWithoutId();
         inserted.setIntEntId(entity.getId());
         originatorDao.insertOriginator(inserted);
-        //update only value
+        // update only value
         Originator valueUpdated = new Originator(inserted);
         valueUpdated.setValue(inserted.getValue() + "-new");
         originatorDao.updateOriginator(valueUpdated);
         Originator fetchedValueUpdated = originatorDao.getOriginatorById(inserted.getId());
         assertEquals(valueUpdated.getValue(), fetchedValueUpdated.getValue());
         assertFalse(inserted.getValue().equals(fetchedValueUpdated.getValue()));
-        //update type and value
+        // update type and value
         Originator updated = new Originator(inserted);
         updated.setType(inserted.getType() == OriginType.AUTHOR ? OriginType.CORPORATION : OriginType.AUTHOR);
         updated.setValue(inserted.getValue() + "-another");
@@ -121,15 +121,15 @@ public class OriginatorDaoPostgresTest extends AbstractDaoTest {
         Originator inserted = builder.originatorWithoutId();
         inserted.setIntEntId(entity.getId());
         originatorDao.insertOriginator(inserted);
-        //change id
+        // change id
         Originator updated = new Originator(inserted);
         updated.setIntEntId(ILLEGAL_ID);
-        //update 
+        // update
         try {
             originatorDao.updateOriginator(updated);
             fail();
         } catch (RecordNotFoundException e) {
-            //ok
+            // ok
         }
     }
 }

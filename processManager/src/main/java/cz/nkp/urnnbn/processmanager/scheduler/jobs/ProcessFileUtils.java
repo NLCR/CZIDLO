@@ -63,7 +63,7 @@ public class ProcessFileUtils {
         File rootDir = buildProcessDir(processId);
         System.err.println("initializing process " + rootDir.getAbsolutePath());
         if (rootDir.exists()) {
-            //  System.err.println("process dir exists, deleting");
+            // System.err.println("process dir exists, deleting");
             File failedToDelete = deleteFileRecursive(rootDir);
             if (failedToDelete != null) {
                 throw new IllegalStateException("cannot remove file " + failedToDelete.getAbsolutePath());
@@ -78,8 +78,7 @@ public class ProcessFileUtils {
     /**
      *
      * @param rootFile
-     * @return File that could not be deleted, null if everything has been
-     * deleted correcty
+     * @return File that could not be deleted, null if everything has been deleted correcty
      */
     private static File deleteFileRecursive(File rootFile) {
         if (rootFile.isDirectory()) {
@@ -102,7 +101,7 @@ public class ProcessFileUtils {
      */
     public static File deleteProcessDir(Long processId) {
         File processDir = buildProcessDir(processId);
-       // System.err.println("deleting " + processDir.getAbsolutePath());
+        // System.err.println("deleting " + processDir.getAbsolutePath());
         return deleteFileRecursive(processDir);
     }
 }

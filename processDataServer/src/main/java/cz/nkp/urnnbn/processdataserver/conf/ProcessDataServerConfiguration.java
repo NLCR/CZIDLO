@@ -35,7 +35,7 @@ public class ProcessDataServerConfiguration extends ApplicationConfiguration {
 
     @Override
     public void initialize(String appName, cz.nkp.urnnbn.utils.PropertyLoader loader) throws IOException {
-        //super.initialize(appName, loader);
+        // super.initialize(appName, loader);
         logger.log(Level.INFO, "Initializing {0}", ProcessDataServerConfiguration.class.getName());
         Configuration.init(loader);
         adminLogFile = loader.loadString(PropertyKeys.ADMIN_LOG_FILE);

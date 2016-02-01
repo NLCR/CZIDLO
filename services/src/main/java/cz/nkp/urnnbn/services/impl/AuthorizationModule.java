@@ -33,11 +33,14 @@ public class AuthorizationModule {
     /**
      * Verifies that user has access_right to registar.
      *
-     * @param registrarId internal id of registar
-     * @param login login of user that is supposed to have access right to
-     * registrar
-     * @throws AccessException if access right of user to registar doesn't exist
-     * @throws UnknownUserException if no such user with this login exists
+     * @param registrarId
+     *            internal id of registar
+     * @param login
+     *            login of user that is supposed to have access right to registrar
+     * @throws AccessException
+     *             if access right of user to registar doesn't exist
+     * @throws UnknownUserException
+     *             if no such user with this login exists
      */
     public void checkAccessRights(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
@@ -53,11 +56,14 @@ public class AuthorizationModule {
     /**
      * Verifies that user has access_right to registar or is administrator.
      *
-     * @param registrarId internal id of registar
-     * @param login login of user that is supposed to have access right to
-     * registrar
-     * @throws AccessException if access right of user to registar doesn't exist
-     * @throws UnknownUserException if no such user with this login exists
+     * @param registrarId
+     *            internal id of registar
+     * @param login
+     *            login of user that is supposed to have access right to registrar
+     * @throws AccessException
+     *             if access right of user to registar doesn't exist
+     * @throws UnknownUserException
+     *             if no such user with this login exists
      */
     public void checkAccessRightsOrAdmin(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
@@ -75,11 +81,14 @@ public class AuthorizationModule {
     /**
      * Verifies that user has access_right to registar.
      *
-     * @param registrarCode code of registrar
-     * @param login login of user that is supposed to have access right to
-     * registrar
-     * @throws AccessException if access right of user to registar doesn't exist
-     * @throws UnknownUserException if no such user with this login exists
+     * @param registrarCode
+     *            code of registrar
+     * @param login
+     *            login of user that is supposed to have access right to registrar
+     * @throws AccessException
+     *             if access right of user to registar doesn't exist
+     * @throws UnknownUserException
+     *             if no such user with this login exists
      */
     public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {

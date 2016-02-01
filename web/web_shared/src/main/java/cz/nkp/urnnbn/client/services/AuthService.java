@@ -8,5 +8,5 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 
 @RemoteServiceRelativePath("auth")
 public interface AuthService extends RemoteService {
-	UserDTO getLoggedUser() throws ServerException;
+    UserDTO getLoggedUser() throws ServerException;
 }

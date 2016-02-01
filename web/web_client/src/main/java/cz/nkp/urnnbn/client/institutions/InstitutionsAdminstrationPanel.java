@@ -12,45 +12,45 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class InstitutionsAdminstrationPanel extends SingleTabContentPanel {
 
-	private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-	private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	private Panel activePanel;
+    private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
+    private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    private Panel activePanel;
 
-	public InstitutionsAdminstrationPanel(TabsPanel superPanel) {
-		super(superPanel);
-	}
+    public InstitutionsAdminstrationPanel(TabsPanel superPanel) {
+        super(superPanel);
+    }
 
-	public void onLoad() {
-		showInstitutions();
-	}
+    public void onLoad() {
+        showInstitutions();
+    }
 
-	public void showInstitutions() {
-		detachActivePanel();
-		activePanel = new InstitutionListPanel(this, getActiveUser());
-		add(activePanel);
-	}
+    public void showInstitutions() {
+        detachActivePanel();
+        activePanel = new InstitutionListPanel(this, getActiveUser());
+        add(activePanel);
+    }
 
-	public void showRegistrarDetails(RegistrarDTO registrar) {
-		detachActivePanel();
-		activePanel = new RegistrarDetailsPanel(this, getActiveUser(), registrar);
-		add(activePanel);
-	}
+    public void showRegistrarDetails(RegistrarDTO registrar) {
+        detachActivePanel();
+        activePanel = new RegistrarDetailsPanel(this, getActiveUser(), registrar);
+        add(activePanel);
+    }
 
-	private void detachActivePanel() {
-		if (activePanel != null) {
-			activePanel.removeFromParent();
-		}
-		clear();
-	}
+    private void detachActivePanel() {
+        if (activePanel != null) {
+            activePanel.removeFromParent();
+        }
+        clear();
+    }
 
-	@Override
-	public void onSelection() {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void onSelection() {
+        // TODO Auto-generated method stub
+    }
 
-	@Override
-	public void onDeselectionSelection() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void onDeselectionSelection() {
+        // TODO Auto-generated method stub
+
+    }
 }

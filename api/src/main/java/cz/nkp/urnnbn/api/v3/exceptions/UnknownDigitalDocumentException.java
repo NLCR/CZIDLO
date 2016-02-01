@@ -18,19 +18,15 @@ public class UnknownDigitalDocumentException extends ApiV3Exception {
     private static final String errorCode = "UNKNOWN_DIGITAL_DOCUMENT";
 
     public UnknownDigitalDocumentException(UrnNbn urn) {
-        super(Status.NOT_FOUND, errorCode,
-                "There is no digital document with urn '" + urn + "'");
+        super(Status.NOT_FOUND, errorCode, "There is no digital document with urn '" + urn + "'");
     }
 
     public UnknownDigitalDocumentException(long digDocId) {
-        super(Status.NOT_FOUND, errorCode,
-                "There is no digital document with internal id '" + digDocId + "'");
+        super(Status.NOT_FOUND, errorCode, "There is no digital document with internal id '" + digDocId + "'");
     }
 
     public UnknownDigitalDocumentException(RegistrarCode code, RegistrarScopeIdType idType, String idValue) {
-        super(Status.NOT_FOUND, errorCode,
-                "Registrar with code " + code
-                + " doesn't register digital document with identifier of type '" + idType.toString()
-                + "' and value '" + idValue + "'");
+        super(Status.NOT_FOUND, errorCode, "Registrar with code " + code + " doesn't register digital document with identifier of type '"
+                + idType.toString() + "' and value '" + idValue + "'");
     }
 }

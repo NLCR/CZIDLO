@@ -17,9 +17,9 @@ public interface StatementWrapper {
     public String preparedStatement();
 
     /**
-     * TODO: nepouzivat tam, kde se da pouzit OperationUtils.preparedStatementFromWrapper
-     * zadne argumenty krome preparedStatement se v metode populate nepredavaji
-     * vsechno v konstruktoru
+     * TODO: nepouzivat tam, kde se da pouzit OperationUtils.preparedStatementFromWrapper zadne argumenty krome preparedStatement se v metode populate
+     * nepredavaji vsechno v konstruktoru
+     * 
      * @param st
      * @throws SQLException
      */

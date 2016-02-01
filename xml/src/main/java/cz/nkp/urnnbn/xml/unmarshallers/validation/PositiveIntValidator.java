@@ -24,24 +24,24 @@ import java.util.logging.Logger;
  */
 public class PositiveIntValidator implements ElementContentEnhancer {
 
-	private static final Logger logger = Logger.getLogger(PositiveIntValidator.class.getName());
+    private static final Logger logger = Logger.getLogger(PositiveIntValidator.class.getName());
 
-	@Override
-	public String toEnhancedValueOrNull(String originalContent) {
-		if (originalContent == null || originalContent.isEmpty()) {
-			return null;
-		}
-		try {
-			int intValue = Integer.parseInt(originalContent);
-			if (intValue > 0) {
-				return originalContent;
-			} else {
-				logger.warning("not positive number '" + originalContent + "', dropping");
-				return null;
-			}
-		} catch (NumberFormatException e) {
-			logger.warning("not a number '" + originalContent + "', dropping");
-			return null;
-		}
-	}
+    @Override
+    public String toEnhancedValueOrNull(String originalContent) {
+        if (originalContent == null || originalContent.isEmpty()) {
+            return null;
+        }
+        try {
+            int intValue = Integer.parseInt(originalContent);
+            if (intValue > 0) {
+                return originalContent;
+            } else {
+                logger.warning("not positive number '" + originalContent + "', dropping");
+                return null;
+            }
+        } catch (NumberFormatException e) {
+            logger.warning("not a number '" + originalContent + "', dropping");
+            return null;
+        }
+    }
 }

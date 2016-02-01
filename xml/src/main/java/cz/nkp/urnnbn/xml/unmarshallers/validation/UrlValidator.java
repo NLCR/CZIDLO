@@ -24,32 +24,32 @@ import java.util.logging.Logger;
  */
 public class UrlValidator implements ElementContentEnhancer {
 
-	private static final Logger logger = Logger.getLogger(UrlValidator.class.getName());
-	private static final String[] PREFICIES = { "HTTP://", "HTTPS://", "http://", "https://" };
-	private final int maxLength;
+    private static final Logger logger = Logger.getLogger(UrlValidator.class.getName());
+    private static final String[] PREFICIES = { "HTTP://", "HTTPS://", "http://", "https://" };
+    private final int maxLength;
 
-	public UrlValidator(int maxLength) {
-		this.maxLength = maxLength;
-		if (maxLength < 1) {
-			throw new IllegalArgumentException("maxLength (" + maxLength + ") must be positive");
-		}
-	}
+    public UrlValidator(int maxLength) {
+        this.maxLength = maxLength;
+        if (maxLength < 1) {
+            throw new IllegalArgumentException("maxLength (" + maxLength + ") must be positive");
+        }
+    }
 
-	@Override
-	public String toEnhancedValueOrNull(String originalContent) {
-		if (originalContent == null || originalContent.isEmpty()) {
-			return null;
-		}
-		if (originalContent.length() > maxLength) {
-			logger.warning("to long URL '" + originalContent + "', dropping");
-			return null;
-		}
-		for (String prefix : PREFICIES) {
-			if (originalContent.startsWith(prefix)) {
-				return originalContent;
-			}
-		}
-		logger.warning("invalid URL '" + originalContent + "', dropping");
-		return null;
-	}
+    @Override
+    public String toEnhancedValueOrNull(String originalContent) {
+        if (originalContent == null || originalContent.isEmpty()) {
+            return null;
+        }
+        if (originalContent.length() > maxLength) {
+            logger.warning("to long URL '" + originalContent + "', dropping");
+            return null;
+        }
+        for (String prefix : PREFICIES) {
+            if (originalContent.startsWith(prefix)) {
+                return originalContent;
+            }
+        }
+        logger.warning("invalid URL '" + originalContent + "', dropping");
+        return null;
+    }
 }

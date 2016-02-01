@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 /**
  * Transforms ResultSet into DTO object
+ * 
  * @author Martin Řehánek
  */
 public interface ResultsetTransformer {

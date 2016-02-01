@@ -31,7 +31,8 @@ import nu.xom.Element;
  */
 class MonographVolumeBuilder extends IntelectualEntityBuilder {
 
-    public MonographVolumeBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public MonographVolumeBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 

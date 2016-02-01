@@ -10,6 +10,5 @@ package cz.nkp.urnnbn.oaipmhprovider.response.listRequests;
  */
 public enum ListRequestType {
 
-    LIST_RECORDS,
-    LIST_IDENTIFIERS;
+    LIST_RECORDS, LIST_IDENTIFIERS;
 }

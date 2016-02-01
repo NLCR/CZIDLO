@@ -5,13 +5,12 @@
 package cz.nkp.urnnbn.oaipmhprovider.conf;
 
 /**
- * Properties for module oaiPmhProvider. All the keyas are prefixed by
- * "provider".
+ * Properties for module oaiPmhProvider. All the keyas are prefixed by "provider".
  * 
  * @author Martin Řehánek
  */
 public class PropertyKeys {
-    
+
     protected static final String REPOSITORY_NAME = "provider.repositoryName";
     protected static final String BASE_URL = "provider.baseUrl";
     protected static final String WEB_URL = "provider.webUrl";

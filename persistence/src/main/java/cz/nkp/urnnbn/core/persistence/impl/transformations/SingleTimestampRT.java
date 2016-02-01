@@ -6,14 +6,14 @@ import java.sql.Timestamp;
 
 public class SingleTimestampRT implements ResultsetTransformer {
 
-	@Override
-	public Object transform(ResultSet resultSet) throws SQLException {
-		Timestamp result = resultSet.getTimestamp(1);
-		if (resultSet.wasNull()) {
-			return null;
-		} else {
-			return result;
-		}
-	}
+    @Override
+    public Object transform(ResultSet resultSet) throws SQLException {
+        Timestamp result = resultSet.getTimestamp(1);
+        if (resultSet.wasNull()) {
+            return null;
+        } else {
+            return result;
+        }
+    }
 
 }

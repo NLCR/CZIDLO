@@ -27,15 +27,9 @@ public class InsertDigitalLibrary implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + DigitalLibraryDAO.TABLE_NAME
-                + "(" + DigitalLibraryDAO.ATTR_ID
-                + "," + DigitalLibraryDAO.ATTR_REGISTRAR_ID
-                + "," + DigitalLibraryDAO.ATTR_CREATED
-                + "," + DigitalLibraryDAO.ATTR_UPDATED
-                + "," + DigitalLibraryDAO.ATTR_NAME
-                + "," + DigitalLibraryDAO.ATTR_DESCRIPTION
-                + "," + DigitalLibraryDAO.ATTR_URL
-                + ") values(?,?,?,?,?,?,?)";
+        return "INSERT into " + DigitalLibraryDAO.TABLE_NAME + "(" + DigitalLibraryDAO.ATTR_ID + "," + DigitalLibraryDAO.ATTR_REGISTRAR_ID + ","
+                + DigitalLibraryDAO.ATTR_CREATED + "," + DigitalLibraryDAO.ATTR_UPDATED + "," + DigitalLibraryDAO.ATTR_NAME + ","
+                + DigitalLibraryDAO.ATTR_DESCRIPTION + "," + DigitalLibraryDAO.ATTR_URL + ") values(?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -50,7 +44,7 @@ public class InsertDigitalLibrary implements StatementWrapper {
             st.setString(6, library.getDescription());
             st.setString(7, library.getUrl());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -31,9 +31,7 @@ public class DeleteByStringString implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "DELETE from " + tableName + " WHERE "
-                + firstAttrName + "=? AND "
-                + secondAttrName + "=?";
+        return "DELETE from " + tableName + " WHERE " + firstAttrName + "=? AND " + secondAttrName + "=?";
     }
 
     @Override
@@ -42,7 +40,7 @@ public class DeleteByStringString implements StatementWrapper {
             st.setString(1, firstAttrValue);
             st.setString(2, secondAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
 

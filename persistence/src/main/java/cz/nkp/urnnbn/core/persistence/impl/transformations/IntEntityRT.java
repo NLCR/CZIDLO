@@ -17,7 +17,7 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class IntEntityRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         IntelectualEntity entity = new IntelectualEntity();
@@ -25,16 +25,16 @@ public class IntEntityRT implements ResultsetTransformer {
         if (resultSet.wasNull()) {
             entity.setId(null);
         }
-        //entity type
+        // entity type
         String entityType = resultSet.getString(IntelectualEntityDAO.ATTR_ENTITY_TYPE);
         entity.setEntityType(EntityType.valueOf(entityType));
-        //created
+        // created
         Timestamp created = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_CREATED);
         entity.setCreated(DateTimeUtils.timestampToDatetime(created));
-        //updated
+        // updated
         Timestamp updated = resultSet.getTimestamp(IntelectualEntityDAO.ATTR_UPDATED);
         entity.setModified(DateTimeUtils.timestampToDatetime(updated));
-        //other attribures
+        // other attribures
         entity.setDocumentType(resultSet.getString(IntelectualEntityDAO.ATTR_DOC_TYPE));
         entity.setDigitalBorn(resultSet.getBoolean(IntelectualEntityDAO.ATTR_DIGITAL_BORN));
         if (resultSet.wasNull()) {

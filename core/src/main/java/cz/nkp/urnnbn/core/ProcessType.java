@@ -17,24 +17,21 @@
 package cz.nkp.urnnbn.core;
 
 /**
- * Enumerates types of implemented processes. Add new value here if adding new
- * process type. It may seem more appropriate for this class to be present in module jobs.
- * But that would cause cyclic dependency services->jobs->services
+ * Enumerates types of implemented processes. Add new value here if adding new process type. It may seem more appropriate for this class to be present
+ * in module jobs. But that would cause cyclic dependency services->jobs->services
  *
  * @author Martin Řehánek
  */
 public enum ProcessType {
 
     /**
-     * Exports list of records owned by registrar in csv format. Such record
-     * contains only aggregate title and urn:nbn. Agregate title means
-     * combination of title, subtitle, volume title and issue title according to
-     * what is available for given type of intelectual entity.
+     * Exports list of records owned by registrar in csv format. Such record contains only aggregate title and urn:nbn. Agregate title means
+     * combination of title, subtitle, volume title and issue title according to what is available for given type of intelectual entity.
      */
     REGISTRARS_URN_NBN_CSV_EXPORT,
     /**
-     * Harvests external OAI-PMH repository, transforms records into xmls
-     * for digital-document-registration and digital-instance-import/update data and realizes registers those operations.
+     * Harvests external OAI-PMH repository, transforms records into xmls for digital-document-registration and digital-instance-import/update data
+     * and realizes registers those operations.
      */
     OAI_ADAPTER,
     /**

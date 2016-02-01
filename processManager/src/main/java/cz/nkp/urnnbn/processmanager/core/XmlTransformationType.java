@@ -22,6 +22,5 @@ package cz.nkp.urnnbn.processmanager.core;
  */
 public enum XmlTransformationType {
 
-    DIGITAL_DOCUMENT_REGISTRATION,
-    DIGITAL_INSTANCE_IMPORT
+    DIGITAL_DOCUMENT_REGISTRATION, DIGITAL_INSTANCE_IMPORT
 }

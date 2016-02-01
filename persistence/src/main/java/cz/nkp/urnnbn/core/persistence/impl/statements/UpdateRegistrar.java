@@ -39,10 +39,8 @@ public class UpdateRegistrar implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + RegistrarDAO.TABLE_NAME + " SET "
-                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_REGISTRAR + "=?,"
-                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESOLVER + "=?,"
-                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION + "=?"
+        return "UPDATE " + RegistrarDAO.TABLE_NAME + " SET " + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_REGISTRAR + "=?,"
+                + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESOLVER + "=?," + RegistrarDAO.ATTR_ALLOWED_REGISTRATION_MODE_BY_RESERVATION + "=?"
                 + " WHERE " + ArchiverDAO.ATTR_ID + "=?";
     }
 
@@ -54,7 +52,7 @@ public class UpdateRegistrar implements StatementWrapper {
             st.setBoolean(3, registrar.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
             st.setLong(4, registrar.getId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

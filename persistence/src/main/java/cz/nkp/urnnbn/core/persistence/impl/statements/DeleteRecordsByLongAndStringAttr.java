@@ -21,10 +21,7 @@ public class DeleteRecordsByLongAndStringAttr implements StatementWrapper {
     private final String stringAttrName;
     private final String stringAttrValue;
 
-    public DeleteRecordsByLongAndStringAttr(
-            String tableName,
-            String longAttrName, long longAttrValue,
-            String stringAttrName, String stringAttrValue) {
+    public DeleteRecordsByLongAndStringAttr(String tableName, String longAttrName, long longAttrValue, String stringAttrName, String stringAttrValue) {
         this.tableName = tableName;
         this.longAttrName = longAttrName;
         this.longAttrValue = longAttrValue;
@@ -34,9 +31,7 @@ public class DeleteRecordsByLongAndStringAttr implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "DELETE from " + tableName + " WHERE "
-                + longAttrName + "=? AND "
-                + stringAttrName + "=?";
+        return "DELETE from " + tableName + " WHERE " + longAttrName + "=? AND " + stringAttrName + "=?";
     }
 
     @Override
@@ -45,7 +40,7 @@ public class DeleteRecordsByLongAndStringAttr implements StatementWrapper {
             st.setLong(1, longAttrValue);
             st.setString(2, stringAttrValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

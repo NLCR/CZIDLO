@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author Martin Řehánek
- * @deprecated 
+ * @deprecated
  */
 public class TransformerFactory {
 

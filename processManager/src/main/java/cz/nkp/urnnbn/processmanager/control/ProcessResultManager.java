@@ -31,11 +31,12 @@ public interface ProcessResultManager {
      * @param login
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is in SCHEDULED or CANCELED
-     * state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
+     * @throws InvalidStateException
+     *             If process is in SCHEDULED or CANCELED state
      */
     @Deprecated
     public File getProcessLogFile(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
@@ -45,9 +46,10 @@ public interface ProcessResultManager {
      *
      * @param processId
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws InvalidStateException If process is in SCHEDULED or CANCELED
-     * state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws InvalidStateException
+     *             If process is in SCHEDULED or CANCELED state
      */
     public File getProcessLogFile(Long processId) throws UnknownRecordException, InvalidStateException;
 
@@ -58,12 +60,15 @@ public interface ProcessResultManager {
      * @param processId
      * @param filename
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws AccessRightException If user is not admin nor creator of the
-     * process
-     * @throws InvalidStateException If process is not in FINISHED state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws AccessRightException
+     *             If user is not admin nor creator of the process
+     * @throws InvalidStateException
+     *             If process is not in FINISHED state
      */
-    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException;
+    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException,
+            InvalidStateException;
 
     /**
      * Returns output process output file.
@@ -71,8 +76,10 @@ public interface ProcessResultManager {
      * @param processId
      * @param filename
      * @return
-     * @throws UnknownRecordException If no such process exists
-     * @throws InvalidStateException If process is not in FINISHED state
+     * @throws UnknownRecordException
+     *             If no such process exists
+     * @throws InvalidStateException
+     *             If process is not in FINISHED state
      */
     public File getProcessOutputFile(Long processId, String filename) throws UnknownRecordException, InvalidStateException;
 }

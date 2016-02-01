@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class SourceDocumentRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         SourceDocument doc = new SourceDocument();

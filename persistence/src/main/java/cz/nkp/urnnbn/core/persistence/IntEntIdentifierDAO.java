@@ -26,8 +26,10 @@ public interface IntEntIdentifierDAO {
      * 
      * @param id
      * @throws DatabaseException
-     * @throws RecordNotFoundException if intelectual entity with given dbId doesn't exist
-     * @throws AlreadyPresentException if IntEntIdentifier with same type and value already exists 
+     * @throws RecordNotFoundException
+     *             if intelectual entity with given dbId doesn't exist
+     * @throws AlreadyPresentException
+     *             if IntEntIdentifier with same type and value already exists
      */
     public void insertIntEntId(IntEntIdentifier id) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
@@ -37,7 +39,8 @@ public interface IntEntIdentifierDAO {
      * 
      * @param id
      * @throws DatabaseException
-     * @throws RecordNotFoundException if intelectual entity with given dbId doesn't exist
+     * @throws RecordNotFoundException
+     *             if intelectual entity with given dbId doesn't exist
      */
     public void updateIntEntIdValue(IntEntIdentifier id) throws DatabaseException, RecordNotFoundException;
 
@@ -46,7 +49,8 @@ public interface IntEntIdentifierDAO {
      * @param intEntDbId
      * @param type
      * @throws DatabaseException
-     * @throws RecordNotFoundException if intelectual entity with given dbId doesn't exist
+     * @throws RecordNotFoundException
+     *             if intelectual entity with given dbId doesn't exist
      */
     public void deleteIntEntIdentifier(long intEntDbId, IntEntIdType type) throws DatabaseException, RecordNotFoundException;
 

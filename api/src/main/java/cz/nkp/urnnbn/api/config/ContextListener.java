@@ -21,17 +21,17 @@ public class ContextListener implements ServletContextListener {
     private static final String WEB_APP_NAME = "API";
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
-    //API v3
+    // API v3
     private static final String REGISTER_DD_XSD_V3 = "v3/registerDigitalDocument.xsd";
     private static final String IMPORT_DI_XSD_V3 = "v3/importDigitalInstance.xsd";
     private static final String API_RESPONSE_V3 = "v3/response.xsd";
-    //API v2
+    // API v2
     private static final String REGISTER_DD_XSD_V2 = "v2/request/registerDigitalDocument.xsd";
     private static final String IMPORT_DI_XSD_V2 = "v2/request/importDigitalInstance.xsd";
-    //API V2 requests -> API V3 requests transformations
+    // API V2 requests -> API V3 requests transformations
     private static final String REGISTER_DIG_DOC_V2_TO_V3_XSLT = "v2/request/digDocRegistrationV2ToV3.xsl";
     private static final String IMPORT_DI_V2_TO_V3_XSLT = "v2/request/digInstImportV2ToV3.xsl";
-    //API V3 responses -> API V2 responses transformations
+    // API V3 responses -> API V2 responses transformations
     private static final String ERROR_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/error.xsl";
     private static final String DEACTIVATE_DIG_INST_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/deactivateDigitalInstance.xsl";
     private static final String DELETE_REG_SCOPE_ID_V3_TO_V2_XSLT = "v2/response/v3ToV2Transformation/deleteRegistrarScopeIdentifier.xsl";
@@ -256,6 +256,6 @@ public class ContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        //nothing
+        // nothing
     }
 }

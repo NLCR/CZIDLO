@@ -70,7 +70,7 @@ public enum IntEntIdType {
         }
     };
 
-    //TODO: tohle asi nepatri sem, ale do presenteru
+    // TODO: tohle asi nepatri sem, ale do presenteru
     public static List<IntEntIdType> searchableIds() {
         List<IntEntIdType> result = new ArrayList<IntEntIdType>();
         result.add(CCNB);
@@ -89,29 +89,29 @@ public enum IntEntIdType {
         result.add(CCNB);
         result.add(OTHER);
         switch (type) {
-            case MONOGRAPH:
-                result.add(ISBN);
-                return result;
-            case PERIODICAL:
-                result.add(ISSN);
-                return result;
-            case PERIODICAL_VOLUME:
-                result.add(ISSN);
-                result.add(VOLUME_TITLE);
-                return result;
-            case PERIODICAL_ISSUE:
-                result.add(ISSN);
-                result.add(VOLUME_TITLE);
-                result.add(ISSUE_TITLE);
-                return result;
-            case THESIS:
-                return result;
-            case ANALYTICAL:
-                result.add(ISBN);
-                result.add(ISSN);
-                return result;
-            default:
-                return result;
+        case MONOGRAPH:
+            result.add(ISBN);
+            return result;
+        case PERIODICAL:
+            result.add(ISSN);
+            return result;
+        case PERIODICAL_VOLUME:
+            result.add(ISSN);
+            result.add(VOLUME_TITLE);
+            return result;
+        case PERIODICAL_ISSUE:
+            result.add(ISSN);
+            result.add(VOLUME_TITLE);
+            result.add(ISSUE_TITLE);
+            return result;
+        case THESIS:
+            return result;
+        case ANALYTICAL:
+            result.add(ISBN);
+            result.add(ISSN);
+            return result;
+        default:
+            return result;
         }
     }
 }

@@ -1,5 +1,5 @@
 package cz.nkp.urnnbn.shared.dto.process;
 
 public enum ProcessDTOType {
-	REGISTRARS_URN_NBN_CSV_EXPORT, OAI_ADAPTER, TEST
+    REGISTRARS_URN_NBN_CSV_EXPORT, OAI_ADAPTER, TEST
 }

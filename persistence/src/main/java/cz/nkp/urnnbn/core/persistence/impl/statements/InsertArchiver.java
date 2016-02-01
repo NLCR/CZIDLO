@@ -27,14 +27,8 @@ public class InsertArchiver implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + ArchiverDAO.TABLE_NAME
-                + "(" + ArchiverDAO.ATTR_ID
-                + "," + ArchiverDAO.ATTR_CREATED
-                + "," + ArchiverDAO.ATTR_UPDATED
-                + "," + ArchiverDAO.ATTR_NAME
-                + "," + ArchiverDAO.ATTR_DESCRIPTION
-                + "," + ArchiverDAO.ATTR_ORDER
-                + "," + ArchiverDAO.ATTR_HIDDEN
+        return "INSERT into " + ArchiverDAO.TABLE_NAME + "(" + ArchiverDAO.ATTR_ID + "," + ArchiverDAO.ATTR_CREATED + "," + ArchiverDAO.ATTR_UPDATED
+                + "," + ArchiverDAO.ATTR_NAME + "," + ArchiverDAO.ATTR_DESCRIPTION + "," + ArchiverDAO.ATTR_ORDER + "," + ArchiverDAO.ATTR_HIDDEN
                 + ") values(?,?,?,?,?,?,?)";
     }
 
@@ -54,7 +48,7 @@ public class InsertArchiver implements StatementWrapper {
             }
             st.setBoolean(7, archiver.isHidden());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

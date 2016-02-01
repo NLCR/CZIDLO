@@ -16,7 +16,7 @@ import java.sql.Timestamp;
  * @author Martin Řehánek
  */
 public class DigitalDocumentRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         DigitalDocument doc = new DigitalDocument();

@@ -32,8 +32,10 @@ public interface SourceDocumentDAO {
      * 
      * @param srcDoce
      * @throws DatabaseException
-     * @throws AlreadyPresentException if SourceDocument with same intEntityId exists
-     * @throws RecordNotFoundException if IntelectualEntity referenced in srcDoc doesn't exist
+     * @throws AlreadyPresentException
+     *             if SourceDocument with same intEntityId exists
+     * @throws RecordNotFoundException
+     *             if IntelectualEntity referenced in srcDoc doesn't exist
      */
     public void insertSrcDoc(SourceDocument srcDoc) throws DatabaseException, AlreadyPresentException, RecordNotFoundException;
 

@@ -34,25 +34,25 @@ public class RegistrarScopeIdTypeTest extends TestCase {
             RegistrarScopeIdType.valueOf(null);
             fail();
         } catch (NullPointerException e) {
-            //null
+            // null
         }
         try {
             RegistrarScopeIdType.valueOf("a");
             fail();
         } catch (IllegalArgumentException e) {
-            //too short
+            // too short
         }
         try {
             RegistrarScopeIdType.valueOf("incredibly_long_identifier_type");
             fail();
         } catch (IllegalArgumentException e) {
-            //too long
+            // too long
         }
         try {
             RegistrarScopeIdType.valueOf("incorrect+char");
             fail();
         } catch (IllegalArgumentException e) {
-            //contains illegal character
+            // contains illegal character
         }
     }
 

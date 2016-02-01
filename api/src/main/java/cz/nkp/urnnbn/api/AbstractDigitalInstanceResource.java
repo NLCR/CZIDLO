@@ -92,7 +92,7 @@ public abstract class AbstractDigitalInstanceResource extends Resource {
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownDigInstException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex);
         }

@@ -56,7 +56,7 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
             DaoOperation operation = new MultipleResultsOperation(st, new CatalogRT());
             return (List<Catalog>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -73,7 +73,7 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
             DaoOperation operation = new MultipleResultsOperation(st, new CatalogRT());
             return (List<Catalog>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -91,7 +91,7 @@ public class CatalogDaoPostgres extends AbstractDAO implements CatalogDAO {
         try {
             deleteRecordsById(TABLE_NAME, ATTR_ID, catalogId, true);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }

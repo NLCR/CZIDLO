@@ -41,12 +41,12 @@ class DocumentLoader {
             parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             parser.setFeature("http://xml.org/sax/features/validation", false);
             SAXReader reader = new SAXReader(parser);
-//            SAXReader reader = new SAXReader("org.apache.xerces.parsers.SAXParser");
-//            reader.setIncludeExternalDTDDeclarations(false);
-//            reader.setIncludeInternalDTDDeclarations(false);
-//
-//            reader.setFeature("http://xml.org/sax/features/validation", false);
-//            reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+            // SAXReader reader = new SAXReader("org.apache.xerces.parsers.SAXParser");
+            // reader.setIncludeExternalDTDDeclarations(false);
+            // reader.setIncludeInternalDTDDeclarations(false);
+            //
+            // reader.setFeature("http://xml.org/sax/features/validation", false);
+            // reader.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
             return reader.read(in);
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(DocumentLoader.class.getName()).log(Level.SEVERE, null, ex);

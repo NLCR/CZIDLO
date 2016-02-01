@@ -8,7 +8,7 @@ package cz.nkp.urnnbn.services.exceptions;
  *
  * @author Martin Řehánek
  */
-public class RegistrarCollisionException extends Exception{
+public class RegistrarCollisionException extends Exception {
 
     private final String registrarCode;
 

@@ -84,15 +84,15 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
@@ -108,15 +108,15 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            //should never happen here
+            // should never happen here
             logger.log(Level.SEVERE, null, ex);
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
@@ -143,7 +143,7 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         } catch (RegistrarScopeIdentifierNotDefinedException ex) {
@@ -161,7 +161,7 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         }

@@ -48,7 +48,7 @@ public class UrnNbn {
      * @param registrarCode
      * @param documentCode
      * @param digDocId
-     * @param deactivationNote 
+     * @param deactivationNote
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, String deactivationNote) {
         this.registrarCode = registrarCode;
@@ -69,8 +69,7 @@ public class UrnNbn {
     }
 
     /**
-     * This constructor should be used when data is loaded from database in
-     * order to be presented
+     * This constructor should be used when data is loaded from database in order to be presented
      *
      * @param registrarCode
      * @param documentCode
@@ -81,7 +80,8 @@ public class UrnNbn {
      * @param active
      * @param deactivationNote
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated, boolean active, String deactivationNote) {
+    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated,
+            boolean active, String deactivationNote) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;
@@ -130,7 +130,7 @@ public class UrnNbn {
     }
 
     public static UrnNbn valueOf(String string) {
-        //urn:nbn:cz:aba001-123456
+        // urn:nbn:cz:aba001-123456
         Matcher matcher = getUrnNbnPattern().matcher(string);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("'" + string + "' doesn't match " + getUrnNbnPattern());

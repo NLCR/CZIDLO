@@ -17,25 +17,25 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @RemoteServiceRelativePath("statistics")
 public interface GwtStatisticsService extends RemoteService {
 
-	List<Integer> getAvailableYearsSorted() throws ServerException;
+    List<Integer> getAvailableYearsSorted() throws ServerException;
 
-	/**
-	 * 
-	 * @param type
-	 * @param options
-	 * @return registrar_code -> year -> month -> value
-	 */
-	Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
-			throws ServerException;
+    /**
+     * 
+     * @param type
+     * @param options
+     * @return registrar_code -> year -> month -> value
+     */
+    Map<String, Map<Integer, Map<Integer, Integer>>> getStatistics(Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
+            throws ServerException;
 
-	/**
-	 * 
-	 * @param registrarCode
-	 * @param type
-	 * @param options
-	 * @return year -> month -> value
-	 */
-	Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
-			throws ServerException;
+    /**
+     * 
+     * @param registrarCode
+     * @param type
+     * @param options
+     * @return year -> month -> value
+     */
+    Map<Integer, Map<Integer, Integer>> getStatistics(String registrarCode, Statistic.Type type, HashMap<Statistic.Option, Serializable> options)
+            throws ServerException;
 
 }

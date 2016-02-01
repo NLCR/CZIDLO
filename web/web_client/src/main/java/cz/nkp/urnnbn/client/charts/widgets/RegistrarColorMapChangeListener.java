@@ -4,6 +4,6 @@ import java.util.Map;
 
 public interface RegistrarColorMapChangeListener {
 
-	public void onChanged(Map<String, String> map);
+    public void onChanged(Map<String, String> map);
 
 }

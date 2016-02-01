@@ -115,6 +115,7 @@ public class Catalog implements IdentifiableWithDatestamps {
 
     @Override
     public String toString() {
-        return "Catalog{" + "id=" + id + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", name=" + name + ", description=" + description + ", urlPrefix=" + urlPrefix + '}';
+        return "Catalog{" + "id=" + id + ", registrarId=" + registrarId + ", created=" + created + ", modified=" + modified + ", name=" + name
+                + ", description=" + description + ", urlPrefix=" + urlPrefix + '}';
     }
 }

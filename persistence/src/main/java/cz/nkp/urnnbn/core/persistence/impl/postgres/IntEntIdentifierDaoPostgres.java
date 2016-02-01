@@ -60,13 +60,13 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
         try {
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
         } catch (SQLException ex) {
             if ("23505".equals(ex.getSQLState())) {
                 IdPart intEntId = new IdPart(IntEntIdentifierDAO.ATTR_IE_ID, Long.toString(identifier.getIntEntDbId()));
                 IdPart type = new IdPart(IntEntIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
-                throw new AlreadyPresentException(new IdPart[]{intEntId, type});
+                throw new AlreadyPresentException(new IdPart[] { intEntId, type });
             } else {
                 throw new DatabaseException(ex);
             }
@@ -81,7 +81,7 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
             DaoOperation operation = new MultipleResultsOperation(st, new IntEntIdentifierRT());
             return (List<IntEntIdentifier>) runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //cannot happen
+            // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return null;
         } catch (SQLException ex) {
@@ -96,11 +96,11 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
             DaoOperation operation = new NoResultOperation(new UpdateIntEntIdentifier(id));
             runInTransaction(operation);
         } catch (PersistenceException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot update {0}", new Object[]{IntelectualEntityDAO.TABLE_NAME, id});
+            logger.log(Level.SEVERE, "Cannot update {0}", new Object[] { IntelectualEntityDAO.TABLE_NAME, id });
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();
@@ -114,11 +114,9 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
     public void deleteIntEntIdentifier(long intEntDbId, IntEntIdType type) throws DatabaseException, RecordNotFoundException {
         try {
             checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, intEntDbId);
-            deleteRecordsByLongAndString(TABLE_NAME,
-                    IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId,
-                    IntEntIdentifierDAO.ATTR_TYPE, type.name(), false);
+            deleteRecordsByLongAndString(TABLE_NAME, IntEntIdentifierDAO.ATTR_IE_ID, intEntDbId, IntEntIdentifierDAO.ATTR_TYPE, type.name(), false);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }
@@ -129,10 +127,10 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
         try {
             deleteRecordsById(TABLE_NAME, ATTR_IE_ID, intEntDbId, false);
         } catch (RecordNotFoundException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         } catch (RecordReferencedException ex) {
-            //should never happen
+            // should never happen
             logger.log(Level.SEVERE, null, ex);
         }
     }

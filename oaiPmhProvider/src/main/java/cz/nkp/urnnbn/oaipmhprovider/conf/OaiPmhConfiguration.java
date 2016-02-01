@@ -39,7 +39,8 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
 
     /**
      *
-     * @param properties InputStream containing properties
+     * @param properties
+     *            InputStream containing properties
      * @throws IOException
      */
     @Override
@@ -51,7 +52,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
         baseUrl = loader.loadString(PropertyKeys.BASE_URL);
         webUrl = loader.loadString(PropertyKeys.WEB_URL);
         earliestDatestamp = loader.loadString(PropertyKeys.EARLIEST_DATESTAMP);
-        //adminEmail = loader.loadString(PropertyKeys.ADMIN_EMAIL);
+        // adminEmail = loader.loadString(PropertyKeys.ADMIN_EMAIL);
         listIdentifiersMaxSize = loader.loadInt(PropertyKeys.LIST_IDENTIFIERS_MAX_SIZE);
         listRecordsMaxSize = loader.loadInt(PropertyKeys.LIST_RECORDS_MAX_SIZE);
         listRequestsMinutesValid = loader.loadInt(PropertyKeys.LIST_REQUESTS_MINUTES_VALID);

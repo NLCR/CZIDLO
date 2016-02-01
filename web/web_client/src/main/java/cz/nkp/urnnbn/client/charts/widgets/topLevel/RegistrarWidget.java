@@ -15,42 +15,42 @@ import cz.nkp.urnnbn.shared.charts.Statistic;
 
 public class RegistrarWidget extends Composite {
 
-	private static final Logger LOGGER = Logger.getLogger(RegistrarWidget.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(RegistrarWidget.class.getSimpleName());
 
-	// data
-	private final List<Integer> years;
-	private final Registrar registrar;
+    // data
+    private final List<Integer> years;
+    private final Registrar registrar;
 
-	// widgets
-	private VerticalPanel container;
-	private RegistrarStatisticsWidget assignmentsWidget;
-	private RegistrarStatisticsWidget resolvationsWidget;
+    // widgets
+    private VerticalPanel container;
+    private RegistrarStatisticsWidget assignmentsWidget;
+    private RegistrarStatisticsWidget resolvationsWidget;
 
-	public RegistrarWidget(List<Integer> years, Registrar registrar) {
-		this.years = years;
-		this.registrar = registrar;
-		initWidgets();
-	}
+    public RegistrarWidget(List<Integer> years, Registrar registrar) {
+        this.years = years;
+        this.registrar = registrar;
+        initWidgets();
+    }
 
-	private void initWidgets() {
-		ScrollPanel scrollContainer = new ScrollPanel();
-		container = new VerticalPanel();
-		scrollContainer.add(container);
-		container.setStyleName("czidloChartRegistrarSummary");
+    private void initWidgets() {
+        ScrollPanel scrollContainer = new ScrollPanel();
+        container = new VerticalPanel();
+        scrollContainer.add(container);
+        container.setStyleName("czidloChartRegistrarSummary");
 
-		Set<Registrar> singleRegistrarSet = new HashSet<>();
-		singleRegistrarSet.add(registrar);
-		int totalWidth = 1400;
-		int widgetHeight = 250;
-		// assignments
-		assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
-				ColorConstants.ASSIGNMENTS_VALUE_ALL, totalWidth, widgetHeight);
-		container.add(assignmentsWidget);
-		// resolvations
-		resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
-				ColorConstants.RESOLVATIONS_VALUE_ALL, totalWidth, widgetHeight);
-		container.add(resolvationsWidget);
-		initWidget(scrollContainer);
-	}
+        Set<Registrar> singleRegistrarSet = new HashSet<>();
+        singleRegistrarSet.add(registrar);
+        int totalWidth = 1400;
+        int widgetHeight = 250;
+        // assignments
+        assignmentsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_ASSIGNMENTS,
+                ColorConstants.ASSIGNMENTS_VALUE_ALL, totalWidth, widgetHeight);
+        container.add(assignmentsWidget);
+        // resolvations
+        resolvationsWidget = new RegistrarStatisticsWidget(years, singleRegistrarSet, Statistic.Type.URN_NBN_RESOLVATIONS,
+                ColorConstants.RESOLVATIONS_VALUE_ALL, totalWidth, widgetHeight);
+        container.add(resolvationsWidget);
+        initWidget(scrollContainer);
+    }
 
 }

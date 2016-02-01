@@ -10,7 +10,5 @@ package cz.nkp.urnnbn.api;
  */
 public enum Action {
 
-    REDIRECT,
-    SHOW,
-    DECIDE
+    REDIRECT, SHOW, DECIDE
 }

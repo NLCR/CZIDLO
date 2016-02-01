@@ -27,8 +27,7 @@ public class SelectCountByLong implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT count(*) FROM " + tableName
-                + " WHERE " + attributeName + "=?";
+        return "SELECT count(*) FROM " + tableName + " WHERE " + attributeName + "=?";
     }
 
     @Override
@@ -36,7 +35,7 @@ public class SelectCountByLong implements StatementWrapper {
         try {
             st.setLong(1, idValue);
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

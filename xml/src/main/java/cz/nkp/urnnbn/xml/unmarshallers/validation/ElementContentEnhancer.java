@@ -23,14 +23,12 @@ package cz.nkp.urnnbn.xml.unmarshallers.validation;
 public interface ElementContentEnhancer {
 
     /**
-     * Tries to enhance value from original content of element so that it is
-     * valid. For instance if there is length limitation the enhancer cuts the
-     * original String to demanded length. If there is no way to construct valid
-     * value, null is returned.
+     * Tries to enhance value from original content of element so that it is valid. For instance if there is length limitation the enhancer cuts the
+     * original String to demanded length. If there is no way to construct valid value, null is returned.
      *
-     * @param originalContent original content of element
-     * @return enhanced value or null if there cannot be obtained valid enhanced
-     * value from iriginal content.
+     * @param originalContent
+     *            original content of element
+     * @return enhanced value or null if there cannot be obtained valid enhanced value from iriginal content.
      */
     String toEnhancedValueOrNull(String originalContent);
 }

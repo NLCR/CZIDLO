@@ -28,6 +28,7 @@ public interface ArchiverDAO {
 
     /**
      * Should not use id from archiver but instead create new by means of database
+     * 
      * @param archiver
      * @return id created
      * @throws DatabaseException

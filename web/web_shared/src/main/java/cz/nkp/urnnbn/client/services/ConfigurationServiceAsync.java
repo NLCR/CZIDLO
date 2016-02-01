@@ -6,6 +6,6 @@ import cz.nkp.urnnbn.shared.ConfigurationData;
 
 public interface ConfigurationServiceAsync {
 
-	void getConfiguration(AsyncCallback<ConfigurationData> callback);
+    void getConfiguration(AsyncCallback<ConfigurationData> callback);
 
 }

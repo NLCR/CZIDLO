@@ -29,106 +29,106 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
  */
 public class Main implements EntryPoint {
 
-	private static final Logger logger = Logger.getLogger(Main.class.getName());
-	private static final String APP_VERSION = Czidlo.VERSION;
-	private Resources resources = GWT.create(Resources.class);
-	private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-	private DockLayoutPanel mainPanel;
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final String APP_VERSION = Czidlo.VERSION;
+    private Resources resources = GWT.create(Resources.class);
+    private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    private DockLayoutPanel mainPanel;
 
-	public void onModuleLoad() {
-		AuthServiceAsync service = GWT.create(AuthService.class);
-		service.getLoggedUser(new AsyncCallback<UserDTO>() {
-			public void onFailure(Throwable caught) {
-				logger.severe("Error obtaining user credentials: " + caught.getMessage());
-			}
+    public void onModuleLoad() {
+        AuthServiceAsync service = GWT.create(AuthService.class);
+        service.getLoggedUser(new AsyncCallback<UserDTO>() {
+            public void onFailure(Throwable caught) {
+                logger.severe("Error obtaining user credentials: " + caught.getMessage());
+            }
 
-			public void onSuccess(UserDTO user) {
-				// HEADER
-				Panel headerPanel = headerPanel(user);
-				mainPanel.addNorth(headerPanel, 100);
-				// CONTENT
-				TabsPanel content = new TabsPanel(user);
-				mainPanel.add(content);
-			}
-		});
-		resources.MainCss().ensureInjected();
-		// MAIN PANEL
-		mainPanel = new DockLayoutPanel(Unit.PX);
-		mainPanel.setSize("450", "350");
-		RootLayoutPanel.get().add(mainPanel);
-		// FOOTER
-		HorizontalPanel footerPanel = footerPanel();
-		mainPanel.addSouth(footerPanel, 50);
-	}
+            public void onSuccess(UserDTO user) {
+                // HEADER
+                Panel headerPanel = headerPanel(user);
+                mainPanel.addNorth(headerPanel, 100);
+                // CONTENT
+                TabsPanel content = new TabsPanel(user);
+                mainPanel.add(content);
+            }
+        });
+        resources.MainCss().ensureInjected();
+        // MAIN PANEL
+        mainPanel = new DockLayoutPanel(Unit.PX);
+        mainPanel.setSize("450", "350");
+        RootLayoutPanel.get().add(mainPanel);
+        // FOOTER
+        HorizontalPanel footerPanel = footerPanel();
+        mainPanel.addSouth(footerPanel, 50);
+    }
 
-	private Panel headerPanel(UserDTO user) {
-		DockLayoutPanel headerPanel = new DockLayoutPanel(Unit.PX);
-		headerPanel.setWidth("100%");
-		headerPanel.addWest(leftHeaderPanel(), 1000);
-		headerPanel.addEast(new UserPanel(user), 80);
-		return headerPanel;
-	}
+    private Panel headerPanel(UserDTO user) {
+        DockLayoutPanel headerPanel = new DockLayoutPanel(Unit.PX);
+        headerPanel.setWidth("100%");
+        headerPanel.addWest(leftHeaderPanel(), 1000);
+        headerPanel.addEast(new UserPanel(user), 80);
+        return headerPanel;
+    }
 
-	private Widget leftHeaderPanel() {
-		VerticalPanel result = new VerticalPanel();
-		HorizontalPanel firstRowPanel = new HorizontalPanel();
-		firstRowPanel.add(applicationName());
-		firstRowPanel.add(applicationDescription());
-		result.add(firstRowPanel);
-		result.add(applicationVersion());
-		result.addStyleName(resources.MainCss().leftHeader());
-		return result;
-	}
+    private Widget leftHeaderPanel() {
+        VerticalPanel result = new VerticalPanel();
+        HorizontalPanel firstRowPanel = new HorizontalPanel();
+        firstRowPanel.add(applicationName());
+        firstRowPanel.add(applicationDescription());
+        result.add(firstRowPanel);
+        result.add(applicationVersion());
+        result.addStyleName(resources.MainCss().leftHeader());
+        return result;
+    }
 
-	private Widget applicationName() {
-		Widget name = new HTML("CZIDLO");
-		name.addStyleName(resources.MainCss().appName());
-		return name;
-	}
+    private Widget applicationName() {
+        Widget name = new HTML("CZIDLO");
+        name.addStyleName(resources.MainCss().appName());
+        return name;
+    }
 
-	private Widget applicationDescription() {
-		Widget description = new HTML("(CZech IDentification and LOcalization tool)");
-		description.addStyleName(resources.MainCss().appDescription());
-		return description;
-	}
+    private Widget applicationDescription() {
+        Widget description = new HTML("(CZech IDentification and LOcalization tool)");
+        description.addStyleName(resources.MainCss().appDescription());
+        return description;
+    }
 
-	private Widget applicationVersion() {
-		Widget version = new HTML(constants.version() + " " + APP_VERSION);
-		version.addStyleName(resources.MainCss().appVersion());
-		return version;
-	}
+    private Widget applicationVersion() {
+        Widget version = new HTML(constants.version() + " " + APP_VERSION);
+        version.addStyleName(resources.MainCss().appVersion());
+        return version;
+    }
 
-	private HorizontalPanel footerPanel() {
-		HorizontalPanel footerPanel = new HorizontalPanel();
-		footerPanel.addStyleName(resources.MainCss().footerPanel());
-		footerPanel.setWidth("100%");
-		footerPanel.setHeight("100%");
-		footerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		footerPanel.setBorderWidth(0);
+    private HorizontalPanel footerPanel() {
+        HorizontalPanel footerPanel = new HorizontalPanel();
+        footerPanel.addStyleName(resources.MainCss().footerPanel());
+        footerPanel.setWidth("100%");
+        footerPanel.setHeight("100%");
+        footerPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        footerPanel.setBorderWidth(0);
 
-		// // logo NDK
-		// Image logoNDK = new Image("img/logo_ndk.jpg");
-		// footerPanel.add(logoNDK);
+        // // logo NDK
+        // Image logoNDK = new Image("img/logo_ndk.jpg");
+        // footerPanel.add(logoNDK);
 
-		// logo NKP
-		Image logoNKP = new Image("img/logo_nkp.jpg");
-		footerPanel.add(logoNKP);
+        // logo NKP
+        Image logoNKP = new Image("img/logo_nkp.jpg");
+        footerPanel.add(logoNKP);
 
-		// // logo MZK
-		// Image logoMZK = new Image("img/logo_mzk.jpg");
-		// footerPanel.add(logoMZK);
+        // // logo MZK
+        // Image logoMZK = new Image("img/logo_mzk.jpg");
+        // footerPanel.add(logoMZK);
 
-		// // logo IOP
-		// Image logoIOP = new Image("img/logo_iop.jpg");
-		// footerPanel.add(logoIOP);
+        // // logo IOP
+        // Image logoIOP = new Image("img/logo_iop.jpg");
+        // footerPanel.add(logoIOP);
 
-		// logo MK
-		Image logoMK = new Image("img/logo_mk.jpg");
-		footerPanel.add(logoMK);
+        // logo MK
+        Image logoMK = new Image("img/logo_mk.jpg");
+        footerPanel.add(logoMK);
 
-		// Hyperlink link = new Hyperlink();
-		// link.getElement().getFirstChild().appendChild(logoMK.getElement());
+        // Hyperlink link = new Hyperlink();
+        // link.getElement().getFirstChild().appendChild(logoMK.getElement());
 
-		return footerPanel;
-	}
+        return footerPanel;
+    }
 }

@@ -31,7 +31,8 @@ import nu.xom.Element;
  */
 class PeriodicalVolumeBuilder extends IntelectualEntityBuilder {
 
-    public PeriodicalVolumeBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
+    public PeriodicalVolumeBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+            SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 

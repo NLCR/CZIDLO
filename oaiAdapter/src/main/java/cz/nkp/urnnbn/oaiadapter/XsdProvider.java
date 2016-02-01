@@ -28,38 +28,38 @@ import java.net.URLConnection;
  */
 public class XsdProvider {
 
-	private final String digDocRegistrationDataXsd;
-	private final String digInstImportDataXsd;
+    private final String digDocRegistrationDataXsd;
+    private final String digInstImportDataXsd;
 
-	public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
-		digDocRegistrationDataXsd = loadXsdFromUrl(digDocRegistrationDataXsdUrl);
-		digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
-	}
+    public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
+        digDocRegistrationDataXsd = loadXsdFromUrl(digDocRegistrationDataXsdUrl);
+        digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
+    }
 
-	//TODO: use cz.nkp.urnnbn.oaiadapter.utils.getDocument instead (dev certificate, etc)
-	private String loadXsdFromUrl(URL xsd) throws IOException {
-		URLConnection connection = xsd.openConnection();
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			StringBuilder response = new StringBuilder();
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			return response.toString();
-		} finally {
-			if (in != null) {
-				in.close();
-			}
-		}
-	}
+    // TODO: use cz.nkp.urnnbn.oaiadapter.utils.getDocument instead (dev certificate, etc)
+    private String loadXsdFromUrl(URL xsd) throws IOException {
+        URLConnection connection = xsd.openConnection();
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            return response.toString();
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
 
-	public String getDigitalDocumentRegistrationDataXsd() {
-		return digDocRegistrationDataXsd;
-	}
+    public String getDigitalDocumentRegistrationDataXsd() {
+        return digDocRegistrationDataXsd;
+    }
 
-	public String getDigitalInstanceImportDataXsd() {
-		return digInstImportDataXsd;
-	}
+    public String getDigitalInstanceImportDataXsd() {
+        return digInstImportDataXsd;
+    }
 }

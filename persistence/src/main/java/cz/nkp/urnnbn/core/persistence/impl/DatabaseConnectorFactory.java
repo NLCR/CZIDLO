@@ -26,9 +26,11 @@ public class DatabaseConnectorFactory {
     /**
      * Returns database connector form properties file.
      *
-     * @param properties Properties file
+     * @param properties
+     *            Properties file
      * @return DatabaseConnector object
-     * @throws IOException when reading configuration properties file failes.
+     * @throws IOException
+     *             when reading configuration properties file failes.
      */
     public static DatabaseConnector getConnector(File properties) throws IOException {
         PropertyLoader loader = new PropertyLoader(properties);
@@ -69,8 +71,7 @@ public class DatabaseConnectorFactory {
 
     /**
      *
-     * @return connector using resource (possibly pool) defined in application
-     * context
+     * @return connector using resource (possibly pool) defined in application context
      */
     public static DatabaseConnector getJndiPoolledConnector() {
         logger.log(Level.INFO, "initializing {0} from jndi", DatabaseConnector.class.getName());
@@ -79,17 +80,11 @@ public class DatabaseConnectorFactory {
 
     /**
      *
-     * @return connector with hardcoded configuration from class
-     * DevelDatabaseConfig
+     * @return connector with hardcoded configuration from class DevelDatabaseConfig
      */
     public static DatabaseConnector getDevelConnector() {
         logger.log(Level.INFO, "initializing {0} from devel configuration", DatabaseConnector.class.getName());
-        return getConnector(
-                DevelDatabaseConfig.DRIVER,
-                DevelDatabaseConfig.HOST,
-                DevelDatabaseConfig.DATABASE,
-                DevelDatabaseConfig.PORT,
-                DevelDatabaseConfig.LOGIN,
-                DevelDatabaseConfig.PASSWORD);
+        return getConnector(DevelDatabaseConfig.DRIVER, DevelDatabaseConfig.HOST, DevelDatabaseConfig.DATABASE, DevelDatabaseConfig.PORT,
+                DevelDatabaseConfig.LOGIN, DevelDatabaseConfig.PASSWORD);
     }
 }

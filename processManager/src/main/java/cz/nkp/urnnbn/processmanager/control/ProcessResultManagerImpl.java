@@ -58,7 +58,8 @@ public class ProcessResultManagerImpl implements ProcessResultManager {
     }
 
     @Override
-    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public File getProcessOutputFile(String login, Long processId, String filename) throws UnknownRecordException, AccessRightException,
+            InvalidStateException {
         cz.nkp.urnnbn.processmanager.core.Process process = processDao.getProcess(login, processId);
         if (process.getState() != ProcessState.FINISHED) {
             throw new InvalidStateException(processId, process.getState());

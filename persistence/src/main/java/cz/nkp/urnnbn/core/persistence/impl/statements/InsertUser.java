@@ -27,16 +27,9 @@ public class InsertUser implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + UserDAO.TABLE_NAME
-                + "(" + UserDAO.ATTR_ID
-                + "," + UserDAO.ATTR_CREATED
-                + "," + UserDAO.ATTR_UPDATED
-                + "," + UserDAO.ATTR_LOGIN
-                + "," + UserDAO.ATTR_PASS_SALT
-                + "," + UserDAO.ATTR_PASS_HASH
-                + "," + UserDAO.ATTR_IS_ADMIN
-                + "," + UserDAO.ATTR_EMAIL
-                + ") values(?,?,?,?,?,?,?,?)";
+        return "INSERT into " + UserDAO.TABLE_NAME + "(" + UserDAO.ATTR_ID + "," + UserDAO.ATTR_CREATED + "," + UserDAO.ATTR_UPDATED + ","
+                + UserDAO.ATTR_LOGIN + "," + UserDAO.ATTR_PASS_SALT + "," + UserDAO.ATTR_PASS_HASH + "," + UserDAO.ATTR_IS_ADMIN + ","
+                + UserDAO.ATTR_EMAIL + ") values(?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -52,7 +45,7 @@ public class InsertUser implements StatementWrapper {
             st.setBoolean(7, user.isAdmin());
             st.setString(8, user.getEmail());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

@@ -37,6 +37,6 @@ public interface XmlTransformationDAO {
     public List<XmlTransformation> getTransformationsOfUserAndByType(String userLogin, XmlTransformationType type);
 
     public void deleteTransformation(XmlTransformation transformation) throws UnknownRecordException;
-    
+
     public void deleteTransformation(Long transformationId);
 }

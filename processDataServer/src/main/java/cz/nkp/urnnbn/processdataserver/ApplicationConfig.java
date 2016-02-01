@@ -39,5 +39,5 @@ public class ApplicationConfig extends Application {
         resources.add(cz.nkp.urnnbn.processdataserver.ProcessesResource.class);
         return resources;
     }
-    
+
 }

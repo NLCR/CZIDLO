@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @author Martin Řehánek
  */
 public class OriginatorRT implements ResultsetTransformer {
-    
+
     @Override
     public Object transform(ResultSet resultSet) throws SQLException {
         Originator originator = new Originator();

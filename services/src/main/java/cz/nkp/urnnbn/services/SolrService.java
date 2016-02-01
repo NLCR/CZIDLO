@@ -8,7 +8,7 @@ package cz.nkp.urnnbn.services;
  *
  * @author Martin Řehánek
  */
-public interface SolrService extends BusinessService{
-    //TODO: indexovani pri importu, editaci, odstraneni
-    //dale vyhledavanai podel isbn atd.
+public interface SolrService extends BusinessService {
+    // TODO: indexovani pri importu, editaci, odstraneni
+    // dale vyhledavanai podel isbn atd.
 }

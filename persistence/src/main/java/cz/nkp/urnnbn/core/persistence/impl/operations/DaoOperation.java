@@ -15,6 +15,6 @@ import java.sql.SQLException;
  */
 public interface DaoOperation {
 
-	public Object run(Connection connection) throws SQLException, DatabaseException, PersistenceException;
+    public Object run(Connection connection) throws SQLException, DatabaseException, PersistenceException;
 
 }

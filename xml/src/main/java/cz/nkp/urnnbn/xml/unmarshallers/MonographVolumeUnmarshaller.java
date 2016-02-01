@@ -43,7 +43,8 @@ public class MonographVolumeUnmarshaller extends IntelectualEntityUnmarshaller {
             logger.severe("missing element titleInfo");
         } else {
             appendId(result, identifierByElementName(titleInfoElement, "monographTitle", IntEntIdType.TITLE, true, new LimitedLengthEnhancer(100)));
-            appendId(result, identifierByElementName(titleInfoElement, "volumeTitle", IntEntIdType.VOLUME_TITLE, false, new LimitedLengthEnhancer(50)));
+            appendId(result,
+                    identifierByElementName(titleInfoElement, "volumeTitle", IntEntIdType.VOLUME_TITLE, false, new LimitedLengthEnhancer(50)));
         }
         appendId(result, identifierByElementName(entityEl, "ccnb", IntEntIdType.CCNB, false, new CcnbEnhancer()));
         appendId(result, identifierByElementName(entityEl, "isbn", IntEntIdType.ISBN, false, new IsbnEnhancer()));

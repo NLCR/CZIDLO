@@ -11,13 +11,13 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 @RemoteServiceRelativePath("search")
 public interface SearchService extends RemoteService {
 
-	// ArrayList<IntelectualEntityDTO> getSearchResults(String request) throws ServerException;
+    // ArrayList<IntelectualEntityDTO> getSearchResults(String request) throws ServerException;
 
-	public IntelectualEntityDTO searchByUrnNbn(String request) throws ServerException;
+    public IntelectualEntityDTO searchByUrnNbn(String request) throws ServerException;
 
-	ArrayList<Long> getIntEntIdentifiersBySearch(String request) throws ServerException;
+    ArrayList<Long> getIntEntIdentifiersBySearch(String request) throws ServerException;
 
-	ArrayList<IntelectualEntityDTO> getIntelectualEntities(ArrayList<Long> identifiers) throws ServerException;
+    ArrayList<IntelectualEntityDTO> getIntelectualEntities(ArrayList<Long> identifiers) throws ServerException;
 
-	IntelectualEntityDTO getIntelectualEntity(Long intEntId) throws ServerException;
+    IntelectualEntityDTO getIntelectualEntity(Long intEntId) throws ServerException;
 }

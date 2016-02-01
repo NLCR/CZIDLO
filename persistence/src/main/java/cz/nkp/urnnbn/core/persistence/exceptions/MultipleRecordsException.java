@@ -17,10 +17,11 @@ public class MultipleRecordsException extends PersistenceException {
     public MultipleRecordsException() {
     }
 
-
     /**
      * Constructs an instance of <code>MultipleRecordsException</code> with the specified detail message.
-     * @param msg the detail message.
+     * 
+     * @param msg
+     *            the detail message.
      */
     public MultipleRecordsException(String msg) {
         super(msg);

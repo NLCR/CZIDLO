@@ -19,26 +19,26 @@ import java.util.List;
  */
 public class MultipleResultsOperation implements DaoOperation {
 
-	private final StatementWrapper statement;
-	private final ResultsetTransformer transformer;
+    private final StatementWrapper statement;
+    private final ResultsetTransformer transformer;
 
-	public MultipleResultsOperation(StatementWrapper statement, ResultsetTransformer transformer) {
-		this.statement = statement;
-		this.transformer = transformer;
-	}
+    public MultipleResultsOperation(StatementWrapper statement, ResultsetTransformer transformer) {
+        this.statement = statement;
+        this.transformer = transformer;
+    }
 
-	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object run(Connection connection) throws SQLException {
-		PreparedStatement st = OperationUtils.preparedStatementFromWrapper(connection, statement);
-		ResultSet resultSet = st.executeQuery();
-		List operationResult = new ArrayList();
-		// int resultCounter = 0;
-		while (resultSet.next()) {
-			// resultCounter++;
-			operationResult.add(transformer.transform(resultSet));
-		}
-		// System.out.println("results:" + resultCounter);
-		return operationResult;
-	}
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public Object run(Connection connection) throws SQLException {
+        PreparedStatement st = OperationUtils.preparedStatementFromWrapper(connection, statement);
+        ResultSet resultSet = st.executeQuery();
+        List operationResult = new ArrayList();
+        // int resultCounter = 0;
+        while (resultSet.next()) {
+            // resultCounter++;
+            operationResult.add(transformer.transform(resultSet));
+        }
+        // System.out.println("results:" + resultCounter);
+        return operationResult;
+    }
 }

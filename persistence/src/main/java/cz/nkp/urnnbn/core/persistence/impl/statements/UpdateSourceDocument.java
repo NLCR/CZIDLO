@@ -25,18 +25,11 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + SourceDocumentDAO.TABLE_NAME + " SET "
-                + SourceDocumentDAO.ATTR_TITLE + "=?,"
-                + SourceDocumentDAO.ATTR_VOLUME_TITLE + "=?,"
-                + SourceDocumentDAO.ATTR_ISSUE_TITLE + "=?,"
-                + SourceDocumentDAO.ATTR_CCNB + "=?,"
-                + SourceDocumentDAO.ATTR_ISBN + "=?,"
-                + SourceDocumentDAO.ATTR_ISSN + "=?,"
-                + SourceDocumentDAO.ATTR_OTHER_ID + "=?,"
-                + SourceDocumentDAO.ATTR_PUB_PLACE + "=?,"
-                + SourceDocumentDAO.ATTR_PUBLISHER + "=?,"
-                + SourceDocumentDAO.ATTR_PUB_YEAR + "=?"
-                + " WHERE " + SourceDocumentDAO.ATTR_INT_ENT_ID + "=?";
+        return "UPDATE " + SourceDocumentDAO.TABLE_NAME + " SET " + SourceDocumentDAO.ATTR_TITLE + "=?," + SourceDocumentDAO.ATTR_VOLUME_TITLE
+                + "=?," + SourceDocumentDAO.ATTR_ISSUE_TITLE + "=?," + SourceDocumentDAO.ATTR_CCNB + "=?," + SourceDocumentDAO.ATTR_ISBN + "=?,"
+                + SourceDocumentDAO.ATTR_ISSN + "=?," + SourceDocumentDAO.ATTR_OTHER_ID + "=?," + SourceDocumentDAO.ATTR_PUB_PLACE + "=?,"
+                + SourceDocumentDAO.ATTR_PUBLISHER + "=?," + SourceDocumentDAO.ATTR_PUB_YEAR + "=?" + " WHERE " + SourceDocumentDAO.ATTR_INT_ENT_ID
+                + "=?";
     }
 
     @Override
@@ -54,7 +47,7 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
             setIntOrNull(st, 10, srcDoc.getPublicationYear());
             st.setLong(11, srcDoc.getIntEntId());
         } catch (SQLException e) {
-            //chyba je v prepared statementu nebo v tranfsformaci resultSetu
+            // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }

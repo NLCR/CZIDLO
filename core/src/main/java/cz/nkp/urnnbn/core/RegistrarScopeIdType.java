@@ -12,7 +12,7 @@ public class RegistrarScopeIdType {
 
     private static final int MIN_LENGTH = 2;
     private static final int MAX_LENGTH = 20;
-    private static char[] SPECIAL_CHARACTERS_ALLOWED = {'_', '-', ':'};
+    private static char[] SPECIAL_CHARACTERS_ALLOWED = { '_', '-', ':' };
     private String value;
 
     private RegistrarScopeIdType(String value) {

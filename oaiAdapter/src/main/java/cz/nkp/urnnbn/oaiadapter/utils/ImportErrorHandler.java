@@ -12,8 +12,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author hanis
  */
-    
-    
+
 public class ImportErrorHandler implements ErrorHandler {
 
     public void warning(SAXParseException e) {
@@ -27,5 +26,5 @@ public class ImportErrorHandler implements ErrorHandler {
     public void fatalError(SAXParseException e) throws SAXException {
         throw e;
     }
-    
-}    
+
+}

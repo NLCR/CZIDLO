@@ -26,9 +26,7 @@ import java.util.List;
  * @author Martin Řehánek
  */
 public interface ProcessDAO {
-    
-    
-    
+
     /**
      * Persists the preocess.
      *
@@ -40,9 +38,11 @@ public interface ProcessDAO {
     /**
      * Returns process by id or null.
      *
-     * @param processId process id (primary key)
-     * @return Process 
-     * @throws UnknownRecordException if no such process exists
+     * @param processId
+     *            process id (primary key)
+     * @return Process
+     * @throws UnknownRecordException
+     *             if no such process exists
      */
     public Process getProcess(Long processId) throws UnknownRecordException;
 
@@ -52,13 +52,14 @@ public interface ProcessDAO {
      * @return all processes
      */
     public List<Process> getProcesses();
-    
+
     public List<Process> getProcessesByState(ProcessState state);
 
     /**
      * Returns list of processes with timestamp SCHEDULED after this date.
      *
-     * @param date all returned process have SCHEDULED date after this
+     * @param date
+     *            all returned process have SCHEDULED date after this
      * @return list of processes with timestamp SCHEDULED after this date
      */
     public List<Process> getProcessesScheduledAfter(Date date);
@@ -66,34 +67,38 @@ public interface ProcessDAO {
     /**
      * List of process of given user.
      *
-     * @param userLogin login of the user
+     * @param userLogin
+     *            login of the user
      * @return list of processes of given user
      */
     public List<Process> getProcessesOfUser(String userLogin);
 
     /**
-     * Returns list of processes that belong to given user with timestamp
-     * SCHEDULED after this date.
+     * Returns list of processes that belong to given user with timestamp SCHEDULED after this date.
      *
-     * @param userLogin login of user that processes belong to
-     * @param date all returned process have SCHEDULED date after this
-     * @return list of processes belonging to given user with timestamp
-     * SCHEDULED after this date
+     * @param userLogin
+     *            login of user that processes belong to
+     * @param date
+     *            all returned process have SCHEDULED date after this
+     * @return list of processes belonging to given user with timestamp SCHEDULED after this date
      */
     public List<Process> getProcessesOfUserScheduledAfter(String userLogin, Date date);
 
     /**
      * Updates process in database.
      *
-     * @param updated process to be updated
-     * @throws UnknownRecordException if the process doesn't exist
+     * @param updated
+     *            process to be updated
+     * @throws UnknownRecordException
+     *             if the process doesn't exist
      */
     public void updateProcess(Process updated) throws UnknownRecordException;
 
     /**
      *
      * @param process
-     * @throws UnknownRecordException if the process doesn't exist
+     * @throws UnknownRecordException
+     *             if the process doesn't exist
      */
     public void deleteProcess(Process process) throws UnknownRecordException;
 }
