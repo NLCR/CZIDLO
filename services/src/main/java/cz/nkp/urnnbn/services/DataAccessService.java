@@ -110,54 +110,48 @@ public interface DataAccessService extends BusinessService {
 	public DigitalLibrary libraryByInternalId(long libraryId);
 
 	/**
+	 * Returns urn:nbn assignment statistics for all registrars. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
+	 * <current_year;current_year> if no urn:nbn assigned yet.
 	 * 
-	 * @return first year that some urn:nbn has been assigned or null.
-	 */
-	public Integer getStatisticsFirstAvailableYear();
-
-	/**
-	 * Returns urn:nbn assignment statistics for all registrars for every year and month in range yearFrom - yearTo
-	 * 
-	 * @param yearFrom
-	 * @param yearTo
 	 * @param includeActive
+	 *            if URN:NBNs that are currently active should be included
 	 * @param includeDeactivated
-	 * @return registrar_code -> year -> month -> value
+	 *            if URN:NBNs that are now deactivated should be included
+	 * @return registrar_code -> year -> month -> asignments_in_year_and_month
 	 */
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(int yearFrom, int yearTo, boolean includeActive,
-			boolean includeDeactivated);
+	// TODO: zbavit se tady roku
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(boolean includeActive, boolean includeDeactivated);
 
 	/**
-	 * Returns urn:nbn assignment statistics for registrar for every year and month in range yearFrom - yearTo
+	 * Returns urn:nbn assignment statistics for specified registrar. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
+	 * <current_year;current_year> if no urn:nbn assigned yet.
 	 * 
 	 * @param registrarCode
-	 * @param yearFrom
-	 * @param yearTo
 	 * @param includeActive
+	 *            if URN:NBNs that are currently active should be included
 	 * @param includeDeactivated
-	 * @return year -> month -> value
+	 *            if URN:NBNs that are now deactivated should be included
+	 * @return year -> month -> asignments_in_year_and_month
 	 */
-	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo,
-			boolean includeActive, boolean includeDeactivated);
+	// TODO: zbavit se tady roku
+	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated);
 
 	/**
-	 * Returns urn:nbn resolvation statistics for all registrars for every year and month in range yearFrom - yearTo
+	 * Returns urn:nbn resolvation statistics for all registrars. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
+	 * <current_year;current_year> if no urn:nbn assigned yet.
 	 * 
-	 * @param yearFrom
-	 * @param yearTo
-	 * @return registrar_code -> year -> month -> value
+	 * @return registrar_code -> year -> month -> resolvations_in_year_and_month
 	 */
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics(int yearFrom, int yearTo);
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics();
 
 	/**
-	 * Returns urn:nbn resolvation statistics for registrar for every year and month in range yearFrom - yearTo
+	 * Returns urn:nbn resolvation statistics for specified registrar. Years are limited by first_year_any_urn:nbn_was_assigned and current_year. Or
+	 * <current_year;current_year> if no urn:nbn assigned yet.
 	 * 
 	 * @param registrarCode
-	 * @param yearFrom
-	 * @param yearTo
-	 * @return year -> month -> value
+	 * @return year -> month -> resolvations_in_year_and_month
 	 */
-	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo);
+	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(String registrarCode);
 
 	/**
 	 * 
@@ -200,5 +194,12 @@ public interface DataAccessService extends BusinessService {
 	public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
 
 	public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances);
+
+	/**
+	 * @return first year that some urn:nbn has been assigned or null.
+	 */
+	public int getStatisticsFirstYear();
+
+	public int getStatisticsLastYear();
 
 }

@@ -75,7 +75,7 @@ public interface UrnNbnDAO {
 
 	public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) throws DatabaseException;
 
-	public List<Statistic> getUrnNbnAssignmentStatistics(RegistrarCode registrarCode, boolean includeActive, boolean includeDeactivated)
+	public List<Statistic> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated)
 			throws DatabaseException;
 
 	public List<Statistic> getUrnNbnRegistrationStatistics(boolean includeActive, boolean includeDeactivated) throws DatabaseException;

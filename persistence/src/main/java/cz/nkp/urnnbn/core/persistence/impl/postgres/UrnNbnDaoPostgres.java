@@ -393,7 +393,8 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 		}
 	}
 
-	public List<Statistic> getUrnNbnAssignmentStatistics(RegistrarCode registrarCode, boolean includeActive, boolean includeDeactivated)
+	@Override
+	public List<Statistic> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated)
 			throws DatabaseException {
 		try {
 			String registarCodeStr = registrarCode == null ? null : registrarCode.toString();

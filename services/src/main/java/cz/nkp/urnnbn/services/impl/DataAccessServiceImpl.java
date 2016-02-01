@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.services.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +52,8 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
  * @author Martin Řehánek
  */
 public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAccessService {
+
+	private Integer statisticsFirstYearCached = null;
 
 	public DataAccessServiceImpl(DatabaseConnector con) {
 		super(con);
@@ -629,11 +632,12 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 	}
 
 	@Override
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(int yearFrom, int yearTo, boolean includeActive,
-			boolean includeDeactivated) {
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnAssignmentStatistics(boolean includeActive, boolean includeDeactivated) {
 		try {
 			List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
 			List<Statistic> data = factory.urnDao().getUrnNbnRegistrationStatistics(includeActive, includeDeactivated);
+			int yearFrom = getStatisticsFirstYear();
+			int yearTo = getStatisticsLastYear();
 			Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
 			for (Registrar registrar : registrars) {
 				Map<Integer, Map<Integer, Integer>> registrarData = filterAndFill(data, registrar.getCode().toString(), yearFrom, yearTo);
@@ -646,19 +650,11 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 	}
 
 	@Override
-	public Integer getStatisticsFirstAvailableYear() {
-		try {
-			return factory.urnDao().getAssignmentsFirstYear();
-		} catch (DatabaseException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	@Override
-	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo,
-			boolean includeActive, boolean includeDeactivated) {
+	public Map<Integer, Map<Integer, Integer>> urnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
 		try {
 			List<Statistic> data = factory.urnDao().getUrnNbnAssignmentStatistics(registrarCode, includeActive, includeDeactivated);
+			int yearFrom = getStatisticsFirstYear();
+			int yearTo = getStatisticsLastYear();
 			return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
 		} catch (DatabaseException ex) {
 			throw new RuntimeException(ex);
@@ -666,12 +662,12 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 	}
 
 	@Override
-	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics(int yearFrom, int yearTo) {
+	public Map<String, Map<Integer, Map<Integer, Integer>>> urnNbnResolvationStatistics() {
 		try {
 			List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
-			// TODO: implement properly
-			List<Statistic> data = new ArrayList<Statistic>();
-			// factory.urnDao().getUrnNbnRegistrationStatistics(includeActive, includeDeactivated);
+			List<Statistic> data = factory.urnNbnResolvationStatisticDao().listStatistics();
+			int yearFrom = getStatisticsFirstYear();
+			int yearTo = getStatisticsLastYear();
 			Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
 			for (Registrar registrar : registrars) {
 				Map<Integer, Map<Integer, Integer>> registrarData = filterAndFill(data, registrar.getCode().toString(), yearFrom, yearTo);
@@ -684,15 +680,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 	}
 
 	@Override
-	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(RegistrarCode registrarCode, int yearFrom, int yearTo) {
-		// TODO: implement properly
-		// try {
-		List<Statistic> data = new ArrayList<Statistic>();
-		// factory.urnDao().getUrnNbnRegistrationStatistics(registrarCode, includeActive, includeDeactivated);
-		return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
-		// } catch (DatabaseException ex) {
-		// throw new RuntimeException(ex);
-		// }
+	public Map<Integer, Map<Integer, Integer>> urnNbnResolvationStatistics(String registrarCode) {
+		try {
+			List<Statistic> data = factory.urnNbnResolvationStatisticDao().listStatistics(registrarCode);
+			int yearFrom = getStatisticsFirstYear();
+			int yearTo = getStatisticsLastYear();
+			return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	private Map<Integer, Map<Integer, Integer>> filterAndFill(List<Statistic> data, String registrarCode, int yearFrom, int yearTo) {
@@ -725,6 +721,27 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 				}
 			}
 		}
+	}
+
+	@Override
+	public int getStatisticsFirstYear() {
+		try {
+			if (statisticsFirstYearCached == null) {
+				statisticsFirstYearCached = factory.urnDao().getAssignmentsFirstYear();
+				if (statisticsFirstYearCached == null) { // still null, i.e. error or no data in database
+					return getStatisticsLastYear();
+				}
+			}
+			return statisticsFirstYearCached;
+		} catch (DatabaseException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	@Override
+	public int getStatisticsLastYear() {
+		// current year
+		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 
 }
