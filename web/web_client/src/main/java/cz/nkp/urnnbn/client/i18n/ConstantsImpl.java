@@ -439,4 +439,54 @@ public interface ConstantsImpl extends Constants {
 
     String chartsStateDeactivatedOnly();
 
+    // String charts();
+
+    String chartsSummaryAssignmentStatisticsTitle();
+
+    String chartsSummaryResolvationStatisticsTitle();
+
+    String chartsValueTotal();
+
+    String chartsYear();
+
+    String chartsMonthInYear();
+
+    String chartsYLabelNewAssignments();
+
+    String chartsYLabelNewResolvations();
+
+    String chartYLabelAggregatedAssignments();
+
+    String chartYLabelAggregatedResolvations();
+
+    String chartsAggregatedAssignmentsMonthlyTitle();
+
+    String chartsAggregatedAssignmentsYearlyTitle();
+
+    String chartsAggregatedResolvationsMonthlyTitle();
+
+    String chartsAggregatedResolvationsYearlyTitle();
+
+    String chartsAssignmentsMonthlyTitle();
+
+    String chartsAssignmentsYearlyTitle();
+
+    String chartsResolvationsMonthlyTitle();
+
+    String chartsResolvationsYearlyTitle();
+
+    String chartsAssignmentRatioInYear();
+
+    String chartsAssignmentRatioTotal();
+
+    String chartsResolvationRatioInYear();
+
+    String chartsResolvationRatioTotal();
+
+    String chartsRegistrarAssignmentsTitle();
+
+    String chartsRegistrarResolvationsTitle();
+
+    String chartsWholeSpan();
+
 }

@@ -155,12 +155,11 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
     }
 
     private String buildTitle() {
-        // TODO: i18n
         switch (statisticType) {
         case URN_NBN_ASSIGNMENTS:
-            return "Statistiky přiřazení URN:NBN podle registrátora";
+            return constants.chartsRegistrarAssignmentsTitle();
         case URN_NBN_RESOLVATIONS:
-            return "Statistiky rezolvování URN:NBN podle registrátora";
+            return constants.chartsRegistrarResolvationsTitle();
         default:
             return "";
         }
@@ -202,7 +201,7 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
 
     private ListBox createTimePeriods() {
         ListBox result = new ListBox();
-        result.addItem("celé období");
+        result.addItem(constants.chartsWholeSpan());
         for (Integer year : years) {
             result.addItem(year.toString());
         }
@@ -307,19 +306,17 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
             Integer volumeBeforeFirstPeriod = extractVolumeBeforeFirstPeriod();
             if (columnChart != null) {
                 List<Integer> keys = selectedYear != null ? months : years;
-                // TODO: i18n
                 String chartTitle = buildColumnChartTitle();
                 String valueDesc = selectedRegistrar != null ? getRegistrarName(selectedRegistrar.getCode()) : "";
-                String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
+                String xAxisLabel = selectedYear != null ? constants.chartsMonthInYear() + " " + selectedYear : constants.chartsYear();
                 String yAxisLabel = buildColumnChartYAxisLabel();
                 Map<Integer, String> columnDesc = selectedYear == null ? null : getMonthLabels();
                 columnChart.setDataAndDraw(keys, periodData, chartTitle, valueDesc, xAxisLabel, yAxisLabel, columnDesc, getCurrentGraphValueColor());
             }
             if (areaChart != null) {
                 List<Integer> keys = selectedYear != null ? months : years;
-                // TODO: i18n
                 String title = buildAreaChartTitle();
-                String xAxisLabel = selectedYear != null ? "měsíc v roce " + selectedYear : "rok";
+                String xAxisLabel = selectedYear != null ? constants.chartsMonthInYear() + " " + selectedYear : constants.chartsYear();
                 String yAxisLabel = buildAreaChartYAxisLabel();
                 Map<Integer, String> columnLabels = selectedYear == null ? null : getMonthLabels();
                 String valueLabel = getRegistrarName(selectedRegistrar.getCode());
@@ -344,35 +341,33 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
     }
 
     private String buildColumnChartYAxisLabel() {
-        // TODO: i18n
         switch (statisticType) {
         case URN_NBN_ASSIGNMENTS:
-            return "Nových přiřazení";
+            return constants.chartsYLabelNewAssignments();
         case URN_NBN_RESOLVATIONS:
-            return "Nových rezolvování";
+            return constants.chartsYLabelNewResolvations();
         default:
             return "";
         }
     }
 
     private String buildAreaChartYAxisLabel() {
-        // TODO: i18n
         switch (statisticType) {
         case URN_NBN_ASSIGNMENTS:
-            return "Počet přiřazených URN:NBN";
+            return constants.chartYLabelAggregatedAssignments();
         case URN_NBN_RESOLVATIONS:
-            return "Agregovaný počet rezolvování";
+            return constants.chartYLabelAggregatedResolvations();
         default:
             return "";
         }
     }
 
     private String buildAreaChartTitle() {
-        // TODO: i18n
         String title = "";
         switch (statisticType) {
         case URN_NBN_ASSIGNMENTS:
-            title = selectedYear != null ? "Měsíční vývoj počtu přiřazených URN:NBN v roce " + selectedYear : "Roční vývoj počtu přiřazených URN:NBN";
+            title = selectedYear != null ? constants.chartsAggregatedAssignmentsMonthlyTitle() + " " + selectedYear : constants
+                    .chartsAggregatedAssignmentsYearlyTitle();
             if (stateActiveOnly.getValue()) {
                 title += " (" + constants.chartsStateActiveOnly() + ")";
             } else if (stateDeactivatedOnly.getValue()) {
@@ -380,19 +375,18 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
             }
             break;
         case URN_NBN_RESOLVATIONS:
-            title = selectedYear != null ? "Měsíční vývoj agregovaného počtu rezolvování URN:NBN v roce " + selectedYear
-                    : "Roční vývoj agregovaného počtu rezolvování URN:NBN";
+            title = selectedYear != null ? constants.chartsAggregatedResolvationsMonthlyTitle() + " " + selectedYear : constants
+                    .chartsAggregatedResolvationsYearlyTitle();
             break;
         }
         return title;
     }
 
     private String buildColumnChartTitle() {
-        // TODO: i18n
         String title = "";
         switch (statisticType) {
         case URN_NBN_ASSIGNMENTS:
-            title = selectedYear != null ? "Počet přiřazení URN:NBN v roce " + selectedYear : "Počet přiřazení URN:NBN přes jednotlivé roky";
+            title = selectedYear != null ? constants.chartsAssignmentsMonthlyTitle() + " " + selectedYear : constants.chartsAssignmentsYearlyTitle();
             if (stateActiveOnly.getValue()) {
                 title += " (" + constants.chartsStateActiveOnly() + ")";
             } else if (stateDeactivatedOnly.getValue()) {
@@ -400,7 +394,8 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
             }
             break;
         case URN_NBN_RESOLVATIONS:
-            title = selectedYear != null ? "Počet rezolvování URN:NBN v roce " + selectedYear : "Počet rezolvování URN:NBN přes jednotlivé roky";
+            title = selectedYear != null ? constants.chartsResolvationsMonthlyTitle() + " " + selectedYear : constants
+                    .chartsResolvationsYearlyTitle();
             break;
         }
         return title;

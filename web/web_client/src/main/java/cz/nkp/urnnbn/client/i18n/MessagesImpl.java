@@ -61,10 +61,4 @@ public interface MessagesImpl extends Messages {
 
     public String noResultsForSearch(String query);
 
-    // public String charts();
-
-    public String chartsRegistrar();
-
-    public String chartsStatistics();
-
 }

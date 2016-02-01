@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 import com.googlecode.gwt.charts.client.ColumnType;
 import com.googlecode.gwt.charts.client.DataTable;
@@ -17,13 +16,10 @@ import com.googlecode.gwt.charts.client.event.SelectEvent;
 import com.googlecode.gwt.charts.client.event.SelectHandler;
 
 import cz.nkp.urnnbn.client.charts.Utils;
-import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 
 public class TopNRegistrarsPieChart extends Composite {
 
     private static final Logger LOGGER = Logger.getLogger(TopNRegistrarsPieChart.class.getSimpleName());
-
-    final protected MessagesImpl messages = GWT.create(MessagesImpl.class);
 
     // fixed data
     private static final int MAX_REGISTRARS = 3;
@@ -103,8 +99,8 @@ public class TopNRegistrarsPieChart extends Composite {
 
     private void draw(String neutralValueColor, Map<String, String> registrarColorMap) {
         DataTable pieNewData = DataTable.create();
-        pieNewData.addColumn(ColumnType.STRING, messages.chartsRegistrar());
-        pieNewData.addColumn(ColumnType.NUMBER, messages.chartsStatistics());
+        pieNewData.addColumn(ColumnType.STRING, "registrar");
+        pieNewData.addColumn(ColumnType.NUMBER, "statistics");
         List<String> colors = new ArrayList<>();
         // others
         pieNewData.addRow("Ostatní", remainingAmount);
