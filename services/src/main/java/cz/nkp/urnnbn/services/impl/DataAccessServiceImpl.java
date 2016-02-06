@@ -5,13 +5,10 @@
 package cz.nkp.urnnbn.services.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -35,7 +32,6 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -191,45 +187,34 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         }
     }
 
-    // @Override
-    // public List<IntelectualEntity> entitiesByIdValueWithFullTextSearch(String value) {
-    // try {
-    // // TODO: put back
-    // int limit = 500;
-    // List<Long> wholeIdList =
-    // factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, limit);
-    // int last = Math.min(limit, wholeIdList.size());
-    // List<Long> idList = wholeIdList.subList(0, last);
-    //
-    // List<IntelectualEntity> result = new ArrayList<IntelectualEntity>(idList.size());
-    // for (long id : idList) {
-    // IntelectualEntity entity = entityById(id);
-    // if (entity != null) {
-    // result.add(entity);
-    // }
-    // }
-    // return result;
-    // } catch (DatabaseException ex) {
-    // throw new RuntimeException(ex);
-    // }
-    // }
-
     @Override
-    public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value, int hardLimit) {
+    public List<Long> intEntIdsByFulltextSearch(String query, int hardLimit) {
         try {
-            return factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, 0, hardLimit);
+            List<Long> result = search(query, hardLimit);
+            int size = Math.min(result.size(), hardLimit);
+            return result.subList(0, size);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public List<Long> entitiesIdsByIdValueWithFullTextSearch(String value) {
+    public List<Long> intEntIdsByFulltextSearch(String query) {
         try {
-            return factory.intelectualEntityDao().getEntitiesDbIdListByIdentifierValueWithFullTextSearch(value, null, null);
+            return search(query, null);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private List<Long> search(String query, Integer limit) throws DatabaseException {
+        Set<Long> ids = new HashSet<>();
+        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfIe(query, limit));
+        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfDd(query, limit));
+        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfRsi(query, limit));
+        List<Long> result = new ArrayList<>();
+        result.addAll(ids);
+        return result;
     }
 
     @Override

@@ -19,6 +19,7 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PublicationDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarScopeIdentifierDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.SearchDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
@@ -53,6 +54,7 @@ public class DAOFactory {
     private UrnNbnReservedDAO urnReservedDao;
     private ContentDAO contentDao;
     private UrnNbnResolvationStatisticDAO resolvationStatisticDao;
+    private SearchDAO searchDao;
     // cache
     private final boolean postgresImplemantation;
     private final boolean oracleImplementation;
@@ -68,7 +70,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 archiverDao = new ArchiverDaoPostgres(connector);
             } else if (oracleImplementation) {
-                archiverDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return archiverDao;
@@ -79,7 +81,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 registrarDao = new RegistrarDaoPostgres(connector);
             } else if (oracleImplementation) {
-                registrarDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return registrarDao;
@@ -90,7 +92,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 libraryDao = new DigitalLibraryDaoPostgres(connector);
             } else if (oracleImplementation) {
-                libraryDao = null; // TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return libraryDao;
@@ -101,7 +103,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 entityDao = new IntelectualEntityDaoPostgres(connector);
             } else if (oracleImplementation) {
-                entityDao = null; // TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return entityDao;
@@ -112,7 +114,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 intEntIdDao = new IntEntIdentifierDaoPostgres(connector);
             } else if (oracleImplementation) {
-                intEntIdDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return intEntIdDao;
@@ -123,7 +125,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 representationDao = new DigitalDocumentDaoPostgres(connector);
             } else if (oracleImplementation) {
-                representationDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return representationDao;
@@ -134,7 +136,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 userDao = new UserDaoPostgres(connector);
             } else if (oracleImplementation) {
-                userDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return userDao;
@@ -145,7 +147,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 publicationDao = new PublicationDaoPostgres(connector);
             } else if (oracleImplementation) {
-                publicationDao = null; // TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return publicationDao;
@@ -156,7 +158,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 urnDao = new UrnNbnDaoPostgres(connector);
             } else if (oracleImplementation) {
-                urnDao = null;// TODO
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return urnDao;
@@ -167,6 +169,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 catalogDao = new CatalogDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return catalogDao;
@@ -177,6 +180,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 registrarScopeId = new RegistrarScopeIdentifierDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return registrarScopeId;
@@ -187,6 +191,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 digInst = new DigitalInstanceDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return digInst;
@@ -197,6 +202,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 originatorDao = new OriginatorDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return originatorDao;
@@ -207,6 +213,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 srcDocDao = new SourceDocumentDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return srcDocDao;
@@ -217,6 +224,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 urnReservedDao = new UrnNbnReservedDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return urnReservedDao;
@@ -227,6 +235,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 urnSearchDao = new UrnNbnGeneratorDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return urnSearchDao;
@@ -237,6 +246,7 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 contentDao = new ContentDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return contentDao;
@@ -247,8 +257,20 @@ public class DAOFactory {
             if (postgresImplemantation) {
                 resolvationStatisticDao = new UrnNbnResolvationStatisticDaoPostgres(connector);
             } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
         return resolvationStatisticDao;
+    }
+
+    public SearchDAO searchDao() {
+        if (searchDao == null) {
+            if (postgresImplemantation) {
+                searchDao = new SearchDaoPostgres(connector);
+            } else if (oracleImplementation) {
+                throw new UnsupportedOperationException("Oracle implementation not available");
+            }
+        }
+        return searchDao;
     }
 }

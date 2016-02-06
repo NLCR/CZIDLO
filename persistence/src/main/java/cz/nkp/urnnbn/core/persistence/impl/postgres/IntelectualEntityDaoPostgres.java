@@ -4,41 +4,41 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.IntEntIdType;
-import cz.nkp.urnnbn.core.EntityType;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
-import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
-import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
-import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntelectualEntity;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntityRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.core.EntityType;
+import cz.nkp.urnnbn.core.IntEntIdType;
+import cz.nkp.urnnbn.core.dto.IntelectualEntity;
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
+import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntelectualEntity;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCount;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersByStringString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByString;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntity;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntityRT;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 
 /**
  *
@@ -105,6 +105,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
         }
     }
 
+    @Override
     public List<Long> getEntitiesDbIdListByIdentifierValue(String idValue) throws DatabaseException {
         try {
             StatementWrapper st = new SelectSingleAttrByString(IntEntIdentifierDAO.TABLE_NAME, IntEntIdentifierDAO.ATTR_VALUE, idValue,
@@ -120,20 +121,7 @@ public class IntelectualEntityDaoPostgres extends AbstractDAO implements Intelec
         }
     }
 
-    public List<Long> getEntitiesDbIdListByIdentifierValueWithFullTextSearch(String query, Integer offset, Integer limit) throws DatabaseException {
-        try {
-            StatementWrapper st = new SelectEntitiesDbIdListByIdentifierValueWithFullTextSearch(query, offset, limit);
-            DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
-            return (List<Long>) runInTransaction(operation);
-        } catch (PersistenceException ex) {
-            // cannot happen
-            logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return null;
-        } catch (SQLException ex) {
-            throw new DatabaseException(ex);
-        }
-    }
-
+    @Override
     public List<Long> getEntitiesDbIdListByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
             StatementWrapper st = new SelectSingleAttrByTimestamps(TABLE_NAME, ATTR_UPDATED, from, until, ATTR_ID);

@@ -110,29 +110,62 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
     private ArrayList<Long> searchByIdentifiers(String query) {
         // logger.info("searching in ie identifiers");
         query = query.toLowerCase();
+        // logger.info("query (toLowerCase): " + query);
         query = normalizeIfIsbn(query);
+        // logger.info("query (normalizeIfIsbn): " + query);
         query = normalizeIfIssn(query);
+        // logger.info("query (normalizeIfIssn): " + query);
         query = normalizeIfCcnb(query);
-
+        // logger.info("query (normalizeIfCcnb): " + query);
         query = replaceForbiddenCharacters(query, new char[] { '\'', ':', '!', '&' });
+        // logger.info("query (replaceForbiddenCharacters): " + query);
         String[] words = query.split(" ");
+        // logger.info("query (split): " + toString(words));
         StringBuilder indexSearchQuery = new StringBuilder();
         indexSearchQuery.append('\'');
+        boolean atLeastOneAcceptedToken = false;
         for (int i = 0; i < words.length; i++) {
             String word = words[i];
             String trimmed = word.trim();
-            if (!trimmed.isEmpty() && trimmed.length() >= MIN_SEARCH_STRING_LENGTH) {
+            // logger.info("word: " + word + ", trimmed: " + trimmed);
+            if (!trimmed.isEmpty() && (isNumber(trimmed) || trimmed.length() >= MIN_SEARCH_STRING_LENGTH)) {
                 indexSearchQuery.append(trimmed);
+                atLeastOneAcceptedToken = true;
                 if (i != words.length - 1) {
                     indexSearchQuery.append('&');
                 }
             }
         }
         indexSearchQuery.append('\'');
-        // logger.info("indexSearchQuery: " + indexSearchQuery.toString());
-        // return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(indexSearchQuery.toString(),
-        // FULLTEXT_SEARCH_HARD_LIMIT));
-        return new ArrayList<Long>(readService.entitiesIdsByIdValueWithFullTextSearch(indexSearchQuery.toString()));
+        String indexSearchQueryStr = indexSearchQuery.toString();
+        // logger.info("indexSearchQuery: " + indexSearchQueryStr);
+        if (atLeastOneAcceptedToken) {
+            return new ArrayList<Long>(readService.intEntIdsByFulltextSearch(indexSearchQueryStr, FULLTEXT_SEARCH_HARD_LIMIT));
+        } else {
+            return new ArrayList<Long>();
+        }
+    }
+
+    private boolean isNumber(String trimmed) {
+        try {
+            Integer.valueOf(trimmed);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private String toString(String[] words) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0; i < words.length; i++) {
+            builder.append(words[i]);
+            if (i < words.length - 1) {
+                builder.append(',');
+            }
+        }
+        builder.append(']');
+        return builder.toString();
     }
 
     private String normalizeIfCcnb(String query) {
