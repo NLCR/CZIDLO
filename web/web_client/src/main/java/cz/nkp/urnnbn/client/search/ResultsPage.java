@@ -27,7 +27,7 @@ import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
  */
 public class ResultsPage extends ScrollPanel {
 
-    private static final Logger logger = Logger.getLogger(ResultsPage.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResultsPage.class.getName());
     private static final int MAX_ENTITIES_TO_EXPAND = 3;
     private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
 
@@ -113,10 +113,14 @@ public class ResultsPage extends ScrollPanel {
     private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {
         boolean expand = documents.size() <= MAX_DOCUMENTS_TO_EXPAND;
         for (DigitalDocumentDTO doc : documents) {
-            DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, searchPanel);
-            TreeItem documentItem = builder.getItem();
-            entityItem.addItem(documentItem);
-            documentItem.setState(expand);
+            if (doc.getUrn() != null) {
+                DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, searchPanel);
+                TreeItem documentItem = builder.getItem();
+                entityItem.addItem(documentItem);
+                documentItem.setState(expand);
+            } else {
+                LOGGER.severe("no urn:nbn for digital document with id " + doc.getId() + ", ignoring");
+            }
         }
     }
 }

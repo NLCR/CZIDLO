@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.client.search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +37,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
+    private static final Logger LOGGER = Logger.getLogger(DigitalDocumentTreeBuilder.class.getName());
     private static final boolean EXPAND_TECHNICAL = false;
     private static final boolean EXPAND_DIGITAL_INSTANCES = false;
     private static final boolean EXPAND_REGISTRAR_SCOPE_IDENTIFIERS = false;

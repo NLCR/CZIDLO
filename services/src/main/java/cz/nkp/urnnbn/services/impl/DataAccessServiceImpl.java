@@ -63,7 +63,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             }
             return urn;
         } catch (RecordNotFoundException ex) {
-            logger.log(Level.WARNING, ex.getMessage());
+            logger.log(Level.WARNING, "no urn:nbn for digital document " + id);
             return null;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

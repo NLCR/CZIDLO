@@ -45,7 +45,7 @@ import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
 public class SearchPanel extends SingleTabContentPanel implements DigitalInstanceRefreshable {
 
-    private static final Logger logger = Logger.getLogger(SearchPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SearchPanel.class.getName());
     private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
     private static final int ITEMS_PER_PAGE = 10;
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -101,7 +101,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
             }
 
             public void onFailure(Throwable caught) {
-                logger.severe("Error loading configuration: " + caught.getMessage());
+                LOGGER.severe("Error loading configuration: " + caught.getMessage());
             }
 
         };
@@ -157,7 +157,6 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
                 }
             });
         } else {
-
             searchService.getIntEntIdentifiersBySearch(request, new AsyncCallback<ArrayList<Long>>() {
 
                 @Override
@@ -227,7 +226,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
             int afterLast = Math.min(ITEMS_PER_PAGE, intEntIdentifiers.size());
             // int tabCounter = 0;
             searchResultsPages = new LinkedList<ResultsPage>();
-            logger.info("first=" + first + ", afterLast=" + afterLast);
+            // LOGGER.info("first=" + first + ", afterLast=" + afterLast);
             while (true) {
                 // logger.info("tab=" + ++tabCounter + ", first=" + first + ", afterLast=" + afterLast);
                 ArrayList<Long> subList = new ArrayList<Long>(intEntIdentifiers.subList(first, afterLast));
@@ -272,7 +271,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
     }
 
     private void showNoResults(String query) {
-        logger.info("no results for \"" + query + "\"");
+        LOGGER.info("no results for \"" + query + "\"");
         searchResultsPanel.clear();
         Label label = new Label(messages.noResultsForSearch(query));
         label.addStyleName(css.noSearchResults());
@@ -282,10 +281,14 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
     private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {
         boolean expand = documents.size() <= MAX_DOCUMENTS_TO_EXPAND;
         for (DigitalDocumentDTO doc : documents) {
-            DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, this);
-            TreeItem documentItem = builder.getItem();
-            entityItem.addItem(documentItem);
-            documentItem.setState(expand);
+            if (doc.getUrn() != null) {
+                DigitalDocumentTreeBuilder builder = new DigitalDocumentTreeBuilder(doc, this);
+                TreeItem documentItem = builder.getItem();
+                entityItem.addItem(documentItem);
+                documentItem.setState(expand);
+            } else {
+                LOGGER.severe("no urn:nbn for digital document with id " + doc.getId() + ", ignoring");
+            }
         }
     }
 
