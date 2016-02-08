@@ -29,10 +29,17 @@ public enum ProcessType {
      * combination of title, subtitle, volume title and issue title according to what is available for given type of intelectual entity.
      */
     REGISTRARS_URN_NBN_CSV_EXPORT,
+
     /**
      * Harvests external OAI-PMH repository, transforms records into import xmls and registers DD and imports DI into czidlo.
      */
     OAI_ADAPTER,
+
+    /**
+     * Checks availability of DI's URL. DIs to be checked can be filtered by various parameters.
+     */
+    DI_URL_AVAILABILITY_CHECK,
+
     /**
      * Test process.
      */

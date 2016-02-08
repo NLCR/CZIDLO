@@ -22,11 +22,14 @@ import cz.nkp.urnnbn.processmanager.control.ProcessResultManagerImpl;
 import cz.nkp.urnnbn.processmanager.core.Process;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -103,6 +106,7 @@ public class ProcessResource {
         private String getMimetype() {
             switch (type) {
             case REGISTRARS_URN_NBN_CSV_EXPORT:
+            case DI_URL_AVAILABILITY_CHECK:
                 return "text/csv; charset=UTF-8";
             case OAI_ADAPTER:
                 return "text/plain; charset=UTF-8";
@@ -117,6 +121,8 @@ public class ProcessResource {
                 return UrnNbnCsvExportJob.CSV_EXPORT_FILE_NAME;
             case OAI_ADAPTER:
                 return OaiAdapterJob.PARAM_REPORT_FILE;
+            case DI_URL_AVAILABILITY_CHECK:
+                return DiUrlAvailabilityCheckJob.CSV_EXPORT_FILE_NAME;
             default:
                 throw new RuntimeException("Filename of process ouptput for process type " + type + " not defined");
             }

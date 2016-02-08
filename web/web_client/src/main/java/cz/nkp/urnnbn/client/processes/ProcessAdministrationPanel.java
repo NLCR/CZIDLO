@@ -28,6 +28,7 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
+import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class ProcessAdministrationPanel extends SingleTabContentPanel {
@@ -553,6 +554,32 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
                         .getDiImportTransformations());
             }
         }));
+
+        // DI availability check
+        result.add(new Button(constants.DI_URL_AVAILABILITY_CHECK(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                // new OaiAdapterDialogBox(getActiveUser(), xmlTransformationsPanel.getDdRegistrationTransformations(), xmlTransformationsPanel
+                // .getDiImportTransformations());
+                // TODO: dialog, etc
+                String[] params = new String[] { "[nk,tsh01,tsh02]", "[MONOGRAPH]", "True", "True", "True", "True", "1. 1. 2012 0:0.0",
+                        "1. 1. 2016 0:0.0" };
+                processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        // OaiAdapterDialogBox.this.hide();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        // errorLabel.setText(caught.getMessage());
+                    }
+                });
+            }
+        }));
+
         return result;
     }
 

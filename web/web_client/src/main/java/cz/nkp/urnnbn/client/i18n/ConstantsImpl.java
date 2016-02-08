@@ -308,6 +308,8 @@ public interface ConstantsImpl extends Constants {
 
     String OAI_ADAPTER();
 
+    String DI_URL_AVAILABILITY_CHECK();
+
     String scheduleProcess();
 
     String xsltFile();

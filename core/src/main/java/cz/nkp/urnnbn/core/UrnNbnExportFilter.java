@@ -6,19 +6,21 @@ import org.joda.time.DateTime;
 
 public class UrnNbnExportFilter {
 
-    private final DateTime begin;
-    private final DateTime end;
-    private final List<String> registrars;
-    private final List<String> entityTypes;
-    private final Boolean missingCcnb;
-    private final Boolean missingIssn;
-    private final Boolean missingIsbn;
-    private final Boolean returnActive;
-    private final Boolean returnDeactivated;
+    private DateTime begin;
+    private DateTime end;
+    private List<String> registrars;
+    private List<String> entityTypes;
+    private Boolean missingCcnb;
+    private Boolean missingIssn;
+    private Boolean missingIsbn;
+    private Boolean returnActive;
+    private Boolean returnDeactivated;
+
+    public UrnNbnExportFilter() {
+    }
 
     public UrnNbnExportFilter(DateTime begin, DateTime end, List<String> registrars, List<String> entityTypes, Boolean missingCcnb,
             Boolean missingIssn, Boolean missingIsbn, Boolean returnActive, Boolean returnDeactivated) {
-        super();
         this.begin = begin;
         this.end = end;
         this.registrars = registrars;
@@ -64,6 +66,63 @@ public class UrnNbnExportFilter {
 
     public Boolean getReturnDeactivated() {
         return returnDeactivated;
+    }
+
+    public void setBegin(DateTime begin) {
+        this.begin = begin;
+    }
+
+    public void setEnd(DateTime end) {
+        this.end = end;
+    }
+
+    public void setRegistrars(List<String> registrars) {
+        if (registrars == null) {
+            throw new NullPointerException("registrars");
+        }
+        this.registrars = registrars;
+    }
+
+    public void setEntityTypes(List<String> entityTypes) {
+        if (entityTypes == null) {
+            throw new NullPointerException("entityTypes");
+        }
+        this.entityTypes = entityTypes;
+    }
+
+    public void setMissingCcnb(Boolean missingCcnb) {
+        if (missingCcnb == null) {
+            throw new NullPointerException("missingCcnb");
+        }
+        this.missingCcnb = missingCcnb;
+    }
+
+    public void setMissingIssn(Boolean missingIssn) {
+        if (missingIssn == null) {
+            throw new NullPointerException("missingIssn");
+        }
+        this.missingIssn = missingIssn;
+    }
+
+    public void setMissingIsbn(Boolean missingIsbn) {
+        if (missingIsbn == null) {
+            throw new NullPointerException("missingIsbn");
+        }
+        this.missingIsbn = missingIsbn;
+    }
+
+    public void setReturnActive(Boolean returnActive) {
+        if (returnActive == null) {
+            throw new NullPointerException("returnActive");
+        }
+        this.returnActive = returnActive;
+    }
+
+    public void setReturnDeactivated(Boolean returnDeactivated) {
+        if (returnDeactivated == null) {
+            throw new NullPointerException("returnDeactivated");
+        }
+        this.returnDeactivated = returnDeactivated;
     }
 
 }

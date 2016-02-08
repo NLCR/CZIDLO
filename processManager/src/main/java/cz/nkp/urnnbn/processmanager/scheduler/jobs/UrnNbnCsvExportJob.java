@@ -16,8 +16,6 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,15 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
@@ -44,11 +39,9 @@ import cz.nkp.urnnbn.services.Services;
  */
 public class UrnNbnCsvExportJob extends AbstractJob {
 
-    private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
-    private final DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-
     public static final String CSV_EXPORT_FILE_NAME = "export.csv";
 
+    // TODO: really needed?
     public static final String PARAM_COUNTRY_CODE = "countryCode";
     public static final String PARAM_BEGIN = "begin";
     public static final String PARAM_END = "end";
@@ -74,6 +67,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     private static final String HEADER_UNR_ACTIVE = "Aktivní";
     private static final String HEADER_NUM_OF_DIG_INSTANCES = "Počet instancí";
 
+    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
     private PrintWriter csvWriter;
     private Services services;
 
@@ -85,77 +79,16 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             csvWriter = openCsvWriter(createWriteableProcessFile(CSV_EXPORT_FILE_NAME));
             this.services = initServices();
             logger.info("services initialized");
+            // country code
             String countryCode = context.getMergedJobDataMap().getString(PARAM_COUNTRY_CODE);
             logger.info("country code: " + countryCode);
-
-            // datetime
-            DateTime begin = parseDatetimeFromContext(PARAM_BEGIN, context);
-            if (begin == null) {
-                throw new NullPointerException("begin");
-            }
-            DateTime end = parseDatetimeFromContext(PARAM_END, context);
-            if (end == null) {
-                throw new NullPointerException("end");
-            }
-            logger.info("registered: " + begin + " - " + end);
-
-            // registrars
-            String registrarsStr = (String) context.getMergedJobDataMap().get(PARAM_REGISTRARS_CODES);
-            if (registrarsStr == null) {
-                throw new NullPointerException("registrars");
-            }
-            List<String> registrars = Arrays.asList((registrarsStr).split(","));
-            logger.info("registrars: " + registrarsStr);
-
-            // intelectual entity types
-            String entityTypesStr = (String) context.getMergedJobDataMap().get(PARAM_ENT_TYPES);
-            if (entityTypesStr == null) {
-                throw new NullPointerException("intEntTypes");
-            }
-            List<String> entityTypes = Arrays.asList((entityTypesStr).split(","));
-            logger.info("intelectual entity types: " + entityTypesStr);
-
-            // limit to missing ccnb
-            Boolean missingCcnb = context.getMergedJobDataMap().getBoolean(PARAM_MISSING_CCNB);
-            if (missingCcnb == null) {
-                throw new NullPointerException("missingCcnb");
-            }
-            logger.info("limit to records missing cCNB: " + missingCcnb);
-
-            // limit to missing issn
-            Boolean missingIssn = context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISSN);
-            if (missingIssn == null) {
-                throw new NullPointerException("missingIssn");
-            }
-            logger.info("limit to records missing ISSN: " + missingIssn);
-
-            // limit to missing isbn
-            Boolean missingIsbn = context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISBN);
-            if (missingIsbn == null) {
-                throw new NullPointerException("missingIsbn");
-            }
-            logger.info("limit to records missing ISBN: " + missingIsbn);
-
-            // active/deactivated
-            Boolean returnActive = context.getMergedJobDataMap().getBoolean(PARAM_RETURN_ACTIVE);
-            if (returnActive == null) {
-                throw new NullPointerException("returnActive");
-            }
-            logger.info("return active records: " + returnActive);
-            Boolean returnDeactivated = context.getMergedJobDataMap().getBoolean(PARAM_RETURN_DEACTIVED);
-            if (returnDeactivated == null) {
-                throw new NullPointerException("returnDeactivated");
-            }
-            logger.info("return deactivated records: " + returnDeactivated);
+            // include number of digital instances
             Boolean exportNumOfDigInstances = context.getMergedJobDataMap().getBoolean(PARAM_EXPORT_NUM_OF_DIG_INSTANCES);
             if (exportNumOfDigInstances == null) {
                 throw new NullPointerException("includeNumOfDigInst");
             }
-
-            // include number of digital instances
-            logger.info("include number of digital instances: " + exportNumOfDigInstances);
-            UrnNbnExportFilter filter = new UrnNbnExportFilter(begin, end, registrars, entityTypes, missingCcnb, missingIssn, missingIsbn,
-                    returnActive, returnDeactivated);
+            logger.info("export number of digital instances: " + exportNumOfDigInstances);
+            UrnNbnExportFilter filter = extractFilter(context);
             runProcess(countryCode, filter, exportNumOfDigInstances);
             logger.info("finished");
             if (interrupted) {
@@ -172,17 +105,35 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         }
     }
 
-    private DateTime parseDatetimeFromContext(String key, JobExecutionContext context) throws ParseException {
-        if (context.getMergedJobDataMap().containsKey(key)) {
-            String val = context.getMergedJobDataMap().getString(key);
-            if (val != null) {
-                return new DateTime(dateFormat.parse(val));
-            } else {
-                throw new NullPointerException("data for key '" + key + "'");
-            }
-        } else {
-            throw new IllegalStateException("no data for key '" + key + "' found");
-        }
+    private UrnNbnExportFilter extractFilter(JobExecutionContext context) throws ParseException {
+        UrnNbnExportFilter result = new UrnNbnExportFilter();
+        // datestamps
+        result.setBegin(parseDatetimeFromContext(PARAM_BEGIN, context, dateFormat));
+        result.setEnd(parseDatetimeFromContext(PARAM_END, context, dateFormat));
+        logger.info("registered: " + result.getBegin() + " - " + result.getEnd());
+        // registrars
+        String registrarCodesStr = (String) context.getMergedJobDataMap().getString(PARAM_REGISTRARS_CODES);
+        logger.info("registrars: " + registrarCodesStr);
+        result.setRegistrars(Arrays.asList(registrarCodesStr.split(",")));
+        // intelectual entity types
+        String entityTypesStr = (String) context.getMergedJobDataMap().get(PARAM_ENT_TYPES);
+        result.setEntityTypes(Arrays.asList(entityTypesStr.split(",")));
+        logger.info("intelectual entity types: " + entityTypesStr);
+        // limit to missing ccnb
+        result.setMissingCcnb(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_CCNB));
+        logger.info("limit to records missing cCNB: " + result.getMissingCcnb());
+        // limit to missing issn
+        result.setMissingIssn(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISSN));
+        logger.info("limit to records missing ISSN: " + result.getMissingIssn());
+        // limit to missing isbn
+        result.setMissingIsbn(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISSN));
+        logger.info("limit to records missing ISBN: " + result.getMissingIsbn());
+        // urn:nbn states
+        result.setReturnActive(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_ACTIVE));
+        logger.info("return active records: " + result.getReturnActive());
+        result.setReturnDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_DEACTIVED));
+        logger.info("return deactivated records: " + result.getReturnDeactivated());
+        return result;
     }
 
     @Override
@@ -190,19 +141,6 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         if (csvWriter != null) {
             csvWriter.close();
         }
-    }
-
-    private PrintWriter openCsvWriter(File file) throws FileNotFoundException {
-        return new PrintWriter(file);
-    }
-
-    private Services initServices() {
-        Services.init(initDatabaseConnector());
-        return Services.instanceOf();
-    }
-
-    private DatabaseConnector initDatabaseConnector() {
-        return new PostgresPooledConnector();
     }
 
     private void runProcess(String countryCode, UrnNbnExportFilter filter, boolean exportNumOfDigInstances) {

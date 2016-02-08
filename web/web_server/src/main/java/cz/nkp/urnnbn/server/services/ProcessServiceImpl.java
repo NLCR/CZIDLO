@@ -92,6 +92,14 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
             }
             result[result.length - 1] = CountryCode.getCode();
             return result;
+        case DI_URL_AVAILABILITY_CHECK:
+            // login and password won't probably be needed here
+            result = new String[params.length + 1];
+            for (int i = 0; i < params.length; i++) {
+                result[i] = params[i];
+            }
+            result[result.length - 1] = CountryCode.getCode();
+            return result;
         default:
             return params;
         }

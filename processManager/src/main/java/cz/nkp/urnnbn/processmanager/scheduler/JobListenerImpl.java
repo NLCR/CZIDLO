@@ -95,9 +95,15 @@ public class JobListenerImpl implements JobListener {
             return oaiAdapterParams(processData);
         case REGISTRARS_URN_NBN_CSV_EXPORT:
             return registrarsUrnNbnExportParams(processData);
+        case DI_URL_AVAILABILITY_CHECK:
+            return diUrlAvailabilityCheckparams(processData);
         default:
             return "[]";
         }
+    }
+
+    private String diUrlAvailabilityCheckparams(JobDataMap processData) {
+        return "[]";
     }
 
     private String oaiAdapterParams(JobDataMap processData) {

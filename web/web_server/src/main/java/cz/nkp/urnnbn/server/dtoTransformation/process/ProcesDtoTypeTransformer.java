@@ -16,6 +16,8 @@ public class ProcesDtoTypeTransformer {
             return ProcessType.OAI_ADAPTER;
         case REGISTRARS_URN_NBN_CSV_EXPORT:
             return ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT;
+        case DI_URL_AVAILABILITY_CHECK:
+            return ProcessType.DI_URL_AVAILABILITY_CHECK;
         default:
             return null;
         }

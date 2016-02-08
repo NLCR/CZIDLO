@@ -21,6 +21,8 @@ public class ProcessTypeDtoTransformer extends DtoTransformer {
                 return ProcessDTOType.OAI_ADAPTER;
             case REGISTRARS_URN_NBN_CSV_EXPORT:
                 return ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT;
+            case DI_URL_AVAILABILITY_CHECK:
+                return ProcessDTOType.DI_URL_AVAILABILITY_CHECK;
             case TEST:
                 return ProcessDTOType.TEST;
             default:

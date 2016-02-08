@@ -37,11 +37,14 @@ public class ProcessFormater {
     }
 
     public Widget getProcessType() {
+        // TODO: i18n
         switch (process.getType()) {
         case OAI_ADAPTER:
             return new HTML("OAI Adapter");
         case REGISTRARS_URN_NBN_CSV_EXPORT:
             return new HTML("Export URN:NBN");
+        case DI_URL_AVAILABILITY_CHECK:
+            return new HTML("DI availabiility check");
         default:
             return new HTML("test");
         }

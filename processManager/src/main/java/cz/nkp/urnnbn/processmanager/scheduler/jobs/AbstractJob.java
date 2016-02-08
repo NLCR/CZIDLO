@@ -16,18 +16,28 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.joda.time.DateTime;
 import org.quartz.InterruptableJob;
 import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
 import org.quartz.UnableToInterruptJobException;
+
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
+import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.services.Services;
 
 /**
  *
@@ -95,4 +105,31 @@ public abstract class AbstractJob implements InterruptableJob {
             throw new RuntimeException(ex);
         }
     }
+
+    PrintWriter openCsvWriter(File file) throws FileNotFoundException {
+        return new PrintWriter(file);
+    }
+
+    Services initServices() {
+        Services.init(initDatabaseConnector());
+        return Services.instanceOf();
+    }
+
+    private DatabaseConnector initDatabaseConnector() {
+        return new PostgresPooledConnector();
+    }
+
+    DateTime parseDatetimeFromContext(String key, JobExecutionContext context, DateFormat dateFormat) throws ParseException {
+        if (context.getMergedJobDataMap().containsKey(key)) {
+            String val = context.getMergedJobDataMap().getString(key);
+            if (val != null) {
+                return new DateTime(dateFormat.parse(val));
+            } else {
+                throw new NullPointerException("data for key '" + key + "'");
+            }
+        } else {
+            throw new IllegalStateException("no data for key '" + key + "' found");
+        }
+    }
+
 }
