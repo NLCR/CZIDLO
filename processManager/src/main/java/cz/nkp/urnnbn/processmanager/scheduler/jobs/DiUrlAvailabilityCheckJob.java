@@ -87,7 +87,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         logger.info("URN:NBN - include deactivated: " + result.getUrnStateIncludeDeactivated());
         result.setDiStateIncludeActive(context.getMergedJobDataMap().getBoolean(PARAM_DI_STATES_INCLUDE_ACTIVE));
         logger.info("DI - include active: " + result.getDiStateIncludeActive());
-        result.setDiStateIncludeDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_DI_STATES_INCLUDE_ACTIVE));
+        result.setDiStateIncludeDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_DI_STATES_INCLUDE_DEACTIVATED));
         logger.info("DI - include deactivated: " + result.getDiStateIncludeDeactivated());
         // datestamps
         result.setDiDsFrom(parseDatetimeFromContext(PARAM_DI_DATESTAMP_FROM, context, dateFormat));

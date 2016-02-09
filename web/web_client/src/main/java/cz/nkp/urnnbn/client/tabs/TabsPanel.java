@@ -135,6 +135,7 @@ public class TabsPanel extends Composite {
         }
 
         // process administration panel
+
         if (activeUser.isLoggedUser()) {
             builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
         }

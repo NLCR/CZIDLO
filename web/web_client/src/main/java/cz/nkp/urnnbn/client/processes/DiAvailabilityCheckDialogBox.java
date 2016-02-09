@@ -1,52 +1,52 @@
 package cz.nkp.urnnbn.client.processes;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
+import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
-import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 
-public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDialogBox {
-
+public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogBox {
     private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
     protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
-    private final Label errorLabel = errorLabel(320);
+    private ArrayList<RegistrarDTO> registrars = new ArrayList<RegistrarDTO>();
 
-    private MultiSelectListBox absenceOfIdentifiersListBox;
-    private MultiSelectListBox registrarsListBox;
-    private MultiSelectListBox documentTypeListBox;
+    // widgets
+    private final Label errorLabel = errorLabel(320);
     private TextInputValueField beginDate;
     private TextInputValueField endDate;
-    private ListBox activationFlag;
-    private CheckBox numberOfDigitalInstances;
+    private MultiSelectListBox registrarsListBox;
+    private MultiSelectListBox documentTypeListBox;
+    private CheckBox urnStatesIncludeActive;
+    private CheckBox urnStatesIncludeDeactivated;
+    private CheckBox diStatesIncludeActive;
+    private CheckBox diStatesIncludeDeactivated;
 
-    public ExportUrnNbnListProcessDialogBox(UserDTO user) {
+    public DiAvailabilityCheckDialogBox(UserDTO user) {
         super(user);
         loadRegistrars();
         reload();
@@ -54,55 +54,65 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
     }
 
     private void loadRegistrars() {
-        AsyncCallback<ArrayList<RegistrarDTO>> callback = new AsyncCallback<ArrayList<RegistrarDTO>>() {
+        accountsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
 
+            @Override
             public void onSuccess(ArrayList<RegistrarDTO> result) {
-                registrarsOfUser = result;
-                Collections.sort(registrarsOfUser, new Comparator<RegistrarDTO>() {
-                    @Override
-                    public int compare(RegistrarDTO o1, RegistrarDTO o2) {
-                        return o1.getCode().compareTo(o2.getCode());
-                    }
-                });
+                registrars = result;
                 reload();
             }
 
+            @Override
             public void onFailure(Throwable caught) {
-                Window.alert(messages.serverError(caught.getMessage()));
+                errorLabel.setText(messages.serverError(caught.getMessage()));
             }
-        };
-        if (user.isSuperAdmin()) {
-            accountsService.getAllRegistrars(callback);
-        } else {
-            accountsService.getRegistrarsManagedByUser(callback);
-        }
+        });
     }
 
-    void reload() {
+    private void reload() {
         clear();
-        setText(messages.processPlaning(constants.REGISTRARS_URN_NBN_CSV_EXPORT()));
+        setText(messages.processPlaning(constants.DI_URL_AVAILABILITY_CHECK()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
     }
 
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
+        // DD
+        Label ddHeader = new Label(constants.processDiAvailabilityCheckDd());
+        // TODO: style properly
+        ddHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+        ddHeader.getElement().getStyle().setFontSize(1.2, Unit.EM);
+        result.add(ddHeader);
+        result.add(new HTML("&nbsp;"));
+        result.add(buildRegistrarSelectionPanel());
+        result.add(buildIntEntTypeSelectionPanel());
+        result.add(buildUrnStatePanel());
+
+        // divider
+        result.add(new HTML("<hr style=\"width:100%;\"/>"));
+
+        // DI
+        Label diHeader = new Label(constants.processDiAvailabilityCheckDi());
+        // TODO: style properly
+        diHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+        diHeader.getElement().getStyle().setFontSize(1.2, Unit.EM);
+        result.add(diHeader);
+        result.add(new HTML("&nbsp;"));
         result.add(selectDateRangePanel());
-        result.add(selectRegistrarsPanel());
-        result.add(selectTypeOfDocumentPanel());
-        result.add(selectAbsenceOfIdentifiers());
-        result.add(numberOfDigitalInstancesCheckbox());
-        result.add(selectActivationFlag());
+        result.add(buildDiStatePanel());
         result.add(buttonsPanel());
         result.add(errorLabel);
         return result;
     }
 
-    @SuppressWarnings("deprecation")
     private Panel selectDateRangePanel() {
         HorizontalPanel result = new HorizontalPanel();
+        @SuppressWarnings("deprecation")
         Date start = new Date(112, 8, 1); // 1.9.2012
-        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampRegistered(), dateFormat.format(start), false);
+        constants.processDiAvailabilityCheckCreatedDeactivated();
+        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.processDiAvailabilityCheckCreatedDeactivated(),
+                dateFormat.format(start), false);
         result.add(beginDate.getLabelWidget());
         result.add(beginDate.getContentWidget());
         endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
@@ -111,7 +121,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         return result;
     }
 
-    private Panel selectRegistrarsPanel() {
+    private Panel buildRegistrarSelectionPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(new Label(constants.registrar() + SEPARATOR));
         initRegistrarsList();
@@ -119,7 +129,16 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         return result;
     }
 
-    private Panel selectTypeOfDocumentPanel() {
+    private void initRegistrarsList() {
+        registrarsListBox = new MultiSelectListBox();
+        for (int i = 0; i < registrars.size(); i++) {
+            RegistrarDTO registrar = registrars.get(i);
+            registrarsListBox.addItem(registrar.getCode());
+            registrarsListBox.setItemSelected(i, true);
+        }
+    }
+
+    private Panel buildIntEntTypeSelectionPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(new Label(constants.documentType() + SEPARATOR));
         documentTypeListBox = new MultiSelectListBox();
@@ -138,33 +157,27 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         return result;
     }
 
-    private Panel selectAbsenceOfIdentifiers() {
+    private Widget buildUrnStatePanel() {
+        urnStatesIncludeActive = new CheckBox(constants.processDiAvailabilityCheckActive());
+        urnStatesIncludeDeactivated = new CheckBox(constants.processDiAvailabilityCheckDeactivated());
+        urnStatesIncludeActive.setValue(true);
+        urnStatesIncludeDeactivated.setValue(true);
         HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.absenceOfIdentifiers() + SEPARATOR));
-        absenceOfIdentifiersListBox = new MultiSelectListBox();
-        absenceOfIdentifiersListBox.addItem("CNB");
-        absenceOfIdentifiersListBox.addItem("ISSN");
-        absenceOfIdentifiersListBox.addItem("ISBN");
-        result.add(absenceOfIdentifiersListBox);
+        result.add(new Label(constants.processDiAvailabilityCheckUrnStates() + ": "));
+        result.add(urnStatesIncludeActive);
+        result.add(urnStatesIncludeDeactivated);
         return result;
     }
 
-    private Panel numberOfDigitalInstancesCheckbox() {
+    private Widget buildDiStatePanel() {
+        diStatesIncludeActive = new CheckBox(constants.processDiAvailabilityCheckActive());
+        diStatesIncludeDeactivated = new CheckBox(constants.processDiAvailabilityCheckDeactivated());
+        diStatesIncludeActive.setValue(true);
+        diStatesIncludeDeactivated.setValue(true);
         HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.includeNumberOfDigitalInstances() + SEPARATOR));
-        numberOfDigitalInstances = new CheckBox();
-        result.add(numberOfDigitalInstances);
-        return result;
-    }
-
-    private Panel selectActivationFlag() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.activityFlag() + SEPARATOR));
-        activationFlag = new ListBox();
-        activationFlag.addItem(constants.activityAll());
-        activationFlag.addItem(constants.activityActiveOnly());
-        activationFlag.addItem(constants.activityDeactivatedOnly());
-        result.add(activationFlag);
+        result.add(new Label(constants.processDiAvailabilityCheckDiStates() + ": "));
+        result.add(diStatesIncludeActive);
+        result.add(diStatesIncludeDeactivated);
         return result;
     }
 
@@ -176,25 +189,10 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         return result;
     }
 
-    private void initRegistrarsList() {
-        registrarsListBox = new MultiSelectListBox();
-        for (int i = 0; i < registrarsOfUser.size(); i++) {
-            RegistrarDTO registrar = registrarsOfUser.get(i);
-            registrarsListBox.addItem(registrar.getCode());
-            registrarsListBox.setItemSelected(i, true);
-        }
-    }
-
     private Button scheduleProcessButton() {
         return new Button(constants.scheduleProcess(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
-
-                Boolean missingCnb = idents.contains("CNB");
-                Boolean missingIssn = idents.contains("ISSN");
-                Boolean missingIsbn = idents.contains("ISBN");
-
                 String registrars = null;
                 List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
                 if (selectedRegistrars.size() > 0) {
@@ -207,6 +205,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
                     }
                     registrars = regs.toString();
                 }
+
                 String entityTypes = null;
                 List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
                 if (selectedEntityTypes.size() > 0) {
@@ -223,23 +222,24 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
                 String begin = (String) beginDate.getInsertedValue();
                 String end = (String) endDate.getInsertedValue();
 
-                int activitySelectedIndex = activationFlag.getSelectedIndex();
-                Boolean returnActive = activitySelectedIndex == 0 || activitySelectedIndex == 1;
-                Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;
-                Boolean exportNumberOfDigitalInstances = numberOfDigitalInstances.getValue();
+                Boolean urnIncludeActive = urnStatesIncludeActive.getValue();
+                Boolean urnIncludeDeactivated = urnStatesIncludeDeactivated.getValue();
+                Boolean diIncludeActive = diStatesIncludeActive.getValue();
+                Boolean diIncludeDeactivated = diStatesIncludeDeactivated.getValue();
 
-                String[] params = new String[] { begin, end, registrars, entityTypes, missingCnb.toString(), missingIssn.toString(),
-                        missingIsbn.toString(), returnActive.toString(), returnDeactivated.toString(), exportNumberOfDigitalInstances.toString() };
-                processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
+                String[] params = new String[] { registrars, entityTypes, urnIncludeActive.toString(), urnIncludeDeactivated.toString(),
+                        diIncludeActive.toString(), diIncludeDeactivated.toString(), begin, end };
+                processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
 
                     public void onSuccess(Void result) {
-                        ExportUrnNbnListProcessDialogBox.this.hide();
+                        DiAvailabilityCheckDialogBox.this.hide();
                     }
 
                     public void onFailure(Throwable caught) {
                         errorLabel.setText(caught.getMessage());
                     }
                 });
+
             }
         });
     }
@@ -248,8 +248,9 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         return new Button(constants.close(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                ExportUrnNbnListProcessDialogBox.this.hide();
+                DiAvailabilityCheckDialogBox.this.hide();
             }
         });
     }
+
 }

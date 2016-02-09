@@ -344,8 +344,6 @@ public interface ConstantsImpl extends Constants {
 
     String processDelete();
 
-    String processUrnNbnExportRegistrar();
-
     String processOaiAdapterRegistrar();
 
     String processOaiAdapterRegistrationMode();
@@ -375,6 +373,20 @@ public interface ConstantsImpl extends Constants {
     String processOaiAdapterTransformationCreated();
 
     String processOaiAdapterTransformationXslt();
+
+    String processDiAvailabilityCheckDd();
+
+    String processDiAvailabilityCheckDi();
+
+    String processDiAvailabilityCheckCreatedDeactivated();
+
+    String processDiAvailabilityCheckUrnStates();
+
+    String processDiAvailabilityCheckDiStates();
+
+    String processDiAvailabilityCheckActive();
+
+    String processDiAvailabilityCheckDeactivated();
 
     // logs
     String logsTabProcessListHeading();

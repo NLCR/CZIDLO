@@ -541,6 +541,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
+                // TODO: some show() method or something, just constructor is confusing
                 new ExportUrnNbnListProcessDialogBox(getActiveUser());
             }
         }));
@@ -550,6 +551,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
+                // TODO: some show() method or something, just constructor is confusing
                 new OaiAdapterDialogBox(getActiveUser(), xmlTransformationsPanel.getDdRegistrationTransformations(), xmlTransformationsPanel
                         .getDiImportTransformations());
             }
@@ -560,23 +562,8 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                // new OaiAdapterDialogBox(getActiveUser(), xmlTransformationsPanel.getDdRegistrationTransformations(), xmlTransformationsPanel
-                // .getDiImportTransformations());
-                // TODO: dialog, etc
-                String[] params = new String[] { "[nk,tsh01,tsh02]", "[MONOGRAPH]", "True", "True", "True", "True", "1. 1. 2012 0:0.0",
-                        "1. 1. 2016 0:0.0" };
-                processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
-
-                    @Override
-                    public void onSuccess(Void result) {
-                        // OaiAdapterDialogBox.this.hide();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        // errorLabel.setText(caught.getMessage());
-                    }
-                });
+                // TODO: some show() method or something, just constructor is confusing
+                new DiAvailabilityCheckDialogBox(getActiveUser());
             }
         }));
 
