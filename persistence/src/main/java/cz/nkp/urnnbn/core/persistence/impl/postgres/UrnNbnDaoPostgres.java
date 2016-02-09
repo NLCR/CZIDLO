@@ -367,7 +367,6 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         try {
             SelectUrnNbnExport st = new SelectUrnNbnExport(languageCode, filter, withDigitalInstances);
             DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnExportRT());
-
             return (List<UrnNbnExport>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             // cannot happen
@@ -383,8 +382,8 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
             boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException {
         try {
-            SelectDiExport st = new SelectDiExport(registrarCodes, entityTypes, includeUrnActive,
-                    includeUrnDeactivated, includeDiActive, includeDiDeactivated);
+            SelectDiExport st = new SelectDiExport(registrarCodes, entityTypes, includeUrnActive, includeUrnDeactivated, includeDiActive,
+                    includeDiDeactivated);
             DaoOperation operation = new MultipleResultsOperation(st, new DiExportRT());
             return (List<DiExport>) runInTransaction(operation);
         } catch (PersistenceException ex) {

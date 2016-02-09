@@ -13,7 +13,6 @@ public class SelectDiExport implements StatementWrapper {
 
     private final List<String> registrarCodes;
     private final List<String> entityTypes;
-    // TODO: use these parameters
     private final boolean includeUrnActive;
     private final boolean includeUrnDeactivated;
     private final boolean includeDiActive;
@@ -32,6 +31,8 @@ public class SelectDiExport implements StatementWrapper {
     @Override
     public String preparedStatement() {
         StringBuilder builder = new StringBuilder();
+        boolean filterUrnActivity = (includeUrnActive && !includeUrnDeactivated) || (!includeUrnActive && includeUrnDeactivated);
+        boolean filterDiActivity = (includeDiActive && !includeDiDeactivated) || (!includeDiActive && includeDiDeactivated);
         builder.append("SELECT");
         builder.append(" urnNbn.registrarcode AS regCode,");
         builder.append("urnNbn.documentcode AS docCode,");
@@ -44,19 +45,26 @@ public class SelectDiExport implements StatementWrapper {
         builder.append("digInst.created AS diCreated,");
         builder.append("digInst.deactivated AS diDeactivated");
         builder.append(" FROM");
-        builder.append(" (SELECT registrarcode, documentcode, digitaldocumentid, active FROM urnnbn WHERE registrarcode IN " + buildRegistrarList()
-                + ") AS urnNbn");
+        builder.append(" (SELECT registrarcode, documentcode, digitaldocumentid, active FROM urnnbn WHERE registrarcode IN ").append(
+                buildRegistrarList());
+        if (filterUrnActivity) {
+            builder.append(" AND active=").append(includeUrnActive);
+        }
+        builder.append(") AS urnNbn");
         builder.append(" JOIN");
         builder.append(" (SELECT * FROM digitaldocument) AS digDoc ON digDoc.id = urnNbn.digitaldocumentid");
         builder.append(" JOIN");
-        builder.append(" (SELECT * FROM intelectualEntity WHERE entityType IN " + buildEntityTypeList()
-                + ") AS intEnt ON intEnt.id = digDoc.intelectualentityid");
+        builder.append(" (SELECT * FROM intelectualEntity WHERE entityType IN ").append(buildEntityTypeList())
+                .append(") AS intEnt ON intEnt.id = digDoc.intelectualentityid");
         builder.append(" JOIN");
-        builder.append(" (SELECT * FROM digitalinstance) AS digInst ON digInst.digitaldocumentid = digDoc.id");
+        builder.append(" (SELECT * FROM digitalinstance");
+        if (filterDiActivity) {
+            builder.append(" WHERE active=").append(includeDiActive);
+        }
+        builder.append(") AS digInst ON digInst.digitaldocumentid = digDoc.id");
         builder.append(" ORDER BY regCode,docCode;");
         String result = builder.toString();
-        LOGGER.warning("statement: " + result);
-        // System.err.println("statement: " + result);
+        // LOGGER.info("statement: " + result);
         return result;
     }
 
@@ -72,8 +80,7 @@ public class SelectDiExport implements StatementWrapper {
         }
         builder.append(')');
         String result = builder.toString();
-        // System.err.println("entityTypes: " + result);
-        LOGGER.warning("entityTypes: " + result);
+        // LOGGER.info("entityTypes: " + result);
         return result;
     }
 
@@ -89,7 +96,7 @@ public class SelectDiExport implements StatementWrapper {
         }
         builder.append(')');
         String result = builder.toString();
-        LOGGER.info("registrars: " + result);
+        // LOGGER.info("registrars: " + result);
         return result;
     }
 
