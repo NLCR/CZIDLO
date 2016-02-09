@@ -1,128 +1,128 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>cz.nkp.urnnbn</groupId>
-		<artifactId>czidlo</artifactId>
-		<version>4.3.alpha</version>
-	</parent>
+    <parent>
+        <groupId>cz.nkp.urnnbn</groupId>
+        <artifactId>czidlo</artifactId>
+        <version>4.3.alpha</version>
+    </parent>
 
-	<artifactId>web</artifactId>
-	<name>CZIDLO - web</name>
-	<packaging>pom</packaging>
+    <artifactId>web</artifactId>
+    <name>CZIDLO - web</name>
+    <packaging>pom</packaging>
 
-	<modules>
-		<module>web_shared</module>
-		<module>web_server</module>
-		<module>web_client</module>
-	</modules>
+    <modules>
+        <module>web_shared</module>
+        <module>web_server</module>
+        <module>web_client</module>
+    </modules>
 
-	<properties>
-		<gwtVersion>2.7.0</gwtVersion>
-		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tomcat.webport>8082</tomcat.webport>
-		<tomcat.ajpport>8182</tomcat.ajpport>
-		<tomcat.context>/web</tomcat.context>
-	</properties>
+    <properties>
+        <gwtVersion>2.7.0</gwtVersion>
+        <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tomcat.webport>8082</tomcat.webport>
+        <tomcat.ajpport>8182</tomcat.ajpport>
+        <tomcat.context>/web</tomcat.context>
+    </properties>
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-			<version>${gwtVersion}</version>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>runtime</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwtVersion}</version>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.7</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-			<!-- <scope>test</scope> -->
-		</dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.0.0.GA</version>
+            <!-- <scope>test</scope> -->
+        </dependency>
 
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-			<classifier>sources</classifier>
-			<!-- <scope>test</scope> -->
-		</dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.0.0.GA</version>
+            <classifier>sources</classifier>
+            <!-- <scope>test</scope> -->
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
+    <build>
 
-		<!-- https://github.com/steinsag/gwt-maven-example -->
-		<defaultGoal>clean install  tomcat7:run-war-only</defaultGoal>
+        <!-- https://github.com/steinsag/gwt-maven-example -->
+        <defaultGoal>clean install  tomcat7:run-war-only</defaultGoal>
 
-		<plugins>
+        <plugins>
 
-			<!-- todo: just temporarily -->
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-dependency-plugin</artifactId> -->
-			<!-- <version>2.2</version> -->
-			<!-- </plugin> -->
+            <!-- todo: just temporarily -->
+            <!-- <plugin> -->
+            <!-- <groupId>org.apache.maven.plugins</groupId> -->
+            <!-- <artifactId>maven-dependency-plugin</artifactId> -->
+            <!-- <version>2.2</version> -->
+            <!-- </plugin> -->
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>gwt-maven-plugin</artifactId>
-				<version>${gwtVersion}</version>
-				<configuration>
-					<!-- for Super Dev Mode, otherwise java.lang.outofmemoryerror -->
-					<extraJvmArgs>-Xmx2048M -Xms1024M -Xss1024k</extraJvmArgs>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-					<!-- <source>1.5</source> -->
-					<!-- <target>1.5</target> -->
-					<!-- <fork>true</fork> -->
-					<!-- <meminitial>1024m</meminitial> -->
-					<!-- <maxmem>2024m</maxmem> -->
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.0</version>
-				<configuration>
-					<path>${tomcat.context}</path>
-					<port>${tomcat.webport}</port>
-					<ajpPort>${tomcat.ajpport}</ajpPort>
-					<systemProperties>
-						<JAVA_OPTS>-XX:MaxPermSize=256m</JAVA_OPTS>
-					</systemProperties>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwtVersion}</version>
+                <configuration>
+                    <!-- for Super Dev Mode, otherwise java.lang.outofmemoryerror -->
+                    <extraJvmArgs>-Xmx2048M -Xms1024M -Xss1024k</extraJvmArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <!-- <source>1.5</source> -->
+                    <!-- <target>1.5</target> -->
+                    <!-- <fork>true</fork> -->
+                    <!-- <meminitial>1024m</meminitial> -->
+                    <!-- <maxmem>2024m</maxmem> -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.0</version>
+                <configuration>
+                    <path>${tomcat.context}</path>
+                    <port>${tomcat.webport}</port>
+                    <ajpPort>${tomcat.ajpport}</ajpPort>
+                    <systemProperties>
+                        <JAVA_OPTS>-XX:MaxPermSize=256m</JAVA_OPTS>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

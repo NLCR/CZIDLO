@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>api</artifactId>
@@ -26,12 +26,12 @@
             <version>1.11</version>
         </dependency>
         <dependency>
-            <!-- pridal jsem rucne kvuli problemum s jersey-->
+            <!-- pridal jsem rucne kvuli problemum s jersey -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
             <version>1.11</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
@@ -105,36 +105,36 @@
             <version>3.1.0.RELEASE</version>
         </dependency>
         <dependency>
-            <!-- Tohle tu je kvuli toho, ze spring ma nekde dependency na tuhle knihovnu.
-            Jenze ona je taky v TOMCAT/lib a proto se to bije. Kdyz ale tady tu zavislost
-            zadefinuju a dam <scope>provided</scope>, tak se to do WEB-INF/lib nekopiruje
-            http://stackoverflow.com/questions/7483856/tomcat-7-linkageerror-loader-constraint-violation
-            -->
+            <!-- Tohle tu je kvuli toho, ze spring ma nekde dependency na 
+                tuhle knihovnu. Jenze ona je taky v TOMCAT/lib a proto se to bije. Kdyz ale 
+                tady tu zavislost zadefinuju a dam <scope>provided</scope>, tak se to do 
+                WEB-INF/lib nekopiruje http://stackoverflow.com/questions/7483856/tomcat-7-linkageerror-loader-constraint-violation -->
             <groupId>javax.el</groupId>
             <artifactId>el-api</artifactId>
             <scope>provided</scope>
             <version>2.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
         </dependency>
-        
+
         <dependency>
-            <!-- pridal jsem rucne kvuli problemum s jersey-->
+            <!-- pridal jsem rucne kvuli problemum s jersey -->
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
         </dependency>
-        
+
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <!-- Without this maven compiler sometimes uses java 1.3. See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 -->
+                <!-- Without this maven compiler sometimes uses java 1.3. 
+                    See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
