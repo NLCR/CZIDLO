@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 
 public class UrnNbnExportRT implements ResultsetTransformer {
 
-    public Object transform(ResultSet rs) throws SQLException {
+    public UrnNbnExport transform(ResultSet rs) throws SQLException {
         UrnNbnExport result = new UrnNbnExport();
         result.setUrnNbn(rs.getString("urn_nbn"));
         // reserved

@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 import org.joda.time.DateTime;
 
+import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnExport;
@@ -531,6 +532,17 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) {
         try {
             return factory.urnDao().selectByCriteria(languageCode, filter, withDigitalInstances);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
+            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) {
+        try {
+            return factory.urnDao().listDiExport(registrarCodes, entityTypes, includeUrnActive, includeUrnDeactivated, includeDiActive,
+                    includeDiDeactivated);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 
+import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnExport;
@@ -147,5 +148,8 @@ public interface DataAccessService extends BusinessService {
     public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
 
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances);
+
+    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
+            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated);
 
 }

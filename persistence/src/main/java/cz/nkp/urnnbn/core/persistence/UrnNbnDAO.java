@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
@@ -101,5 +102,8 @@ public interface UrnNbnDAO {
     public void deleteAllPredecessors() throws DatabaseException;
 
     public Integer getAssignmentsFirstYear() throws DatabaseException;
+
+    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
+            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException;
 
 }

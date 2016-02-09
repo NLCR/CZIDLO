@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 
+import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
@@ -43,6 +44,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
 import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select3StringsBy2Strings;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectDiExport;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
@@ -50,6 +52,7 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestamps
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectMinDateStatement;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.DiExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleTimestampRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.StatisticsRT;
@@ -364,11 +367,30 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         try {
             SelectUrnNbnExport st = new SelectUrnNbnExport(languageCode, filter, withDigitalInstances);
             DaoOperation operation = new MultipleResultsOperation(st, new UrnNbnExportRT());
+
             return (List<UrnNbnExport>) runInTransaction(operation);
         } catch (PersistenceException ex) {
             // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return Collections.<UrnNbnExport> emptyList();
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
+            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException {
+        try {
+            SelectDiExport st = new SelectDiExport(registrarCodes, entityTypes, includeUrnActive,
+                    includeUrnDeactivated, includeDiActive, includeDiDeactivated);
+            DaoOperation operation = new MultipleResultsOperation(st, new DiExportRT());
+            return (List<DiExport>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return Collections.<DiExport> emptyList();
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }

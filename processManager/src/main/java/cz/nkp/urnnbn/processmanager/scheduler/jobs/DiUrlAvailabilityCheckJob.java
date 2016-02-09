@@ -11,6 +11,10 @@ import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import cz.nkp.urnnbn.core.DiExport;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
@@ -29,14 +33,16 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
     public static final String PARAM_DI_DATESTAMP_FROM = "diDsFrom";
     public static final String PARAM_DI_DATESTAMP_TO = "diDsTo";
 
+    // TODO: i18n or keep here english only
     private static final String HEADER_URN_NBN = "URN:NBN";
     private static final String HEADER_URN_NBN_STATE = "Stav URN:NBN";
     private static final String HEADER_INT_ENT_TYPE = "Typ dokumentu";
-    private static final String HEADER_DI_URL = "URL";
+    private static final Object HEADER_DI_ACTIVE = "DI aktivní";
     private static final String HEADER_DI_FORMAT = "Formát";
     private static final String HEADER_DI_ACCESSIBLITY = "Dostupnost";
     private static final String HEADER_DI_CREATED = "Vytvořeno";
     private static final String HEADER_DI_DEACTIVATED = "Deaktivováno";
+    private static final String HEADER_DI_URL = "URL";
     private static final String HEADER_AVAILABILITY_RESULT = "Výsledek testu dostupnosti URL";
 
     private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
@@ -96,42 +102,68 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         return result;
     }
 
-    private void runProcess(String countryCode, Filter filter/* String countryCode, UrnNbnExportFilter filter, boolean exportNumOfDigInstances */) {
+    private void runProcess(String countryCode, Filter filter) {
         try {
-            // List<UrnNbnExport> urnNbnList = services.dataAccessService().selectByCriteria(countryCode, filter, exportNumOfDigInstances);
-            // csvWriter.println(buildHeaderLine(exportNumOfDigInstances));
+            List<DiExport> exports = services.dataAccessService().listDiExport(filter.getRegistrarCodes(), filter.getEntityTypes(),
+                    filter.urnStateIncludeActive, filter.urnStateIncludeDeactivated, filter.diStateIncludeActive, filter.diStateIncludeDeactivated);
+            // header
             csvWriter.println(buildHeaderLine());
-            // int counter = 0;
-            // int total = urnNbnList.size();
-            // logger.info("records to export: " + total);
-            // for (UrnNbnExport urnExport : urnNbnList) {
-            // if (interrupted) {
-            // csvWriter.flush();
-            // break;
-            // }
-            // String line = toCsvLine(urnExport, exportNumOfDigInstances);
-            // csvWriter.println(line);
-            // logger.info("exporting " + urnExport.getUrnNbn() + " (" + ++counter + "/" + total + ")");
-            // }
+            // records
+            logger.info("records to export: " + exports.size());
+            for (int i = 0; i < exports.size(); i++) {
+                if (interrupted) {
+                    csvWriter.flush();
+                    break;
+                }
+                String line = toCsvLine(exports.get(i));
+                csvWriter.println(line);
+                if (i % 10 == 0) {
+                    logger.info(String.format("processed %d/%d", i, exports.size()));
+                }
+            }
         } finally {
             csvWriter.close();
         }
     }
 
-    private String buildHeaderLine(/* Boolean exportNumOfDigInstances */) {
+    private String buildHeaderLine() {
         StringBuilder result = new StringBuilder();
         result.append('\"').append(HEADER_URN_NBN).append('\"').append(',');
-        // TODO: only if not filtered
         result.append('\"').append(HEADER_URN_NBN_STATE).append('\"').append(',');
         result.append('\"').append(HEADER_INT_ENT_TYPE).append('\"').append(',');
-        result.append('\"').append(HEADER_DI_URL).append('\"').append(',');
-        // TODO: state
+        result.append('\"').append(HEADER_DI_ACTIVE).append('\"').append(',');
         result.append('\"').append(HEADER_DI_FORMAT).append('\"').append(',');
         result.append('\"').append(HEADER_DI_ACCESSIBLITY).append('\"').append(',');
         result.append('\"').append(HEADER_DI_CREATED).append('\"').append(',');
         result.append('\"').append(HEADER_DI_DEACTIVATED).append('\"').append(',');
+        result.append('\"').append(HEADER_DI_URL).append('\"').append(',');
         result.append('\"').append(HEADER_AVAILABILITY_RESULT).append('\"');
         return result.toString();
+    }
+
+    private String toCsvLine(DiExport export) {
+        StringBuilder result = new StringBuilder();
+        UrnNbn urnNbn = new UrnNbn(RegistrarCode.valueOf(export.getRegistrarCode()), export.getDocumentCode(), -1L, null);
+        result.append('\"').append(urnNbn.toString()).append('\"').append(',');
+        UrnnbnStatus status = export.isUrnActive() ? UrnnbnStatus.ACTIVE : UrnnbnStatus.DEACTIVATED;
+        result.append('\"').append(status.toString()).append('\"').append(',');
+        result.append('\"').append(export.getIeType()).append('\"').append(',');
+        result.append('\"').append(export.isDiActive()).append('\"').append(',');
+        result.append('\"').append(stringValueOrEmpty(export.getDiFormat())).append('\"').append(',');
+        result.append('\"').append(stringValueOrEmpty(export.getDiAccessiblility())).append('\"').append(',');
+        result.append('\"').append(export.getDiCreated().toString()).append('\"').append(',');
+        result.append('\"');
+        if (export.getDiDeactivated() != null) {
+            result.append(export.getDiDeactivated().toString());
+        }
+        result.append('\"').append(',');
+        result.append('\"').append(export.getDiUrl()).append('\"').append(',');
+        result.append('\"').append("TODO: vysledek kontroly").append('\"');
+        return result.toString();
+    }
+
+    private String stringValueOrEmpty(String value) {
+        return value == null ? "" : value;
     }
 
     @Override
