@@ -10,12 +10,16 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.processmanager.control.ProcessManager;
 import cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl;
 import cz.nkp.urnnbn.processmanager.core.Process;
@@ -26,6 +30,9 @@ import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAO;
 import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAOImpl;
 import cz.nkp.urnnbn.server.dtoTransformation.process.ProcesDtoTypeTransformer;
 import cz.nkp.urnnbn.server.dtoTransformation.process.ProcessDtoTransformer;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
@@ -52,13 +59,52 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         try {
             checkNotReadOnlyMode();
             ProcessType processType = new ProcesDtoTypeTransformer(type).transform();
-            String login = getActiveUser().getLogin();
+            UserDTO user = getActiveUser();
+            logger.info(user.toString());
             params = updateParamsOnServer(params, processType);
-            processManager().scheduleNewProcess(login, processType, params);
+            switch (processType) {
+            case DI_URL_AVAILABILITY_CHECK:
+                if (!user.isSuperAdmin()) {
+                    throw new ServerException("user " + user.getLogin() + ": access denied");
+                }
+                break;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                if (!user.isLoggedUser()) {
+                    throw new ServerException("user " + user.getLogin() + ": access denied");
+                } else {
+                    if (!user.isSuperAdmin()) {
+                        checkAccessRights(user.getLogin(), params[2].split(","));
+                    }
+                }
+                break;
+            // TODO: check acces rights for OAI Adapter and other future processes
+            default:
+                break;
+            }
+            processManager().scheduleNewProcess(user.getLogin(), processType, params);
         } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
+            logger.log(Level.WARNING, e.getMessage());
             throw new ServerException(e.getMessage());
         }
+    }
+
+    private void checkAccessRights(String login, String[] registrarCodes) throws UnknownUserException, NotAdminException, ServerException {
+        User user = readService.userByLogin(login);
+        List<Registrar> managedRegistrars = readService.registrarsManagedByUser(user.getId(), user.getLogin());
+        Set<String> managedRegistrarCodes = toRegistrarCodes(managedRegistrars);
+        for (String registrarCode : registrarCodes) {
+            if (!managedRegistrarCodes.contains(registrarCode)) {
+                throw new ServerException("user " + login + ": no access right to registrar " + registrarCode);
+            }
+        }
+    }
+
+    private Set<String> toRegistrarCodes(List<Registrar> registrars) {
+        Set<String> result = new HashSet<>(registrars.size());
+        for (Registrar registrar : registrars) {
+            result.add(registrar.getCode().toString());
+        }
+        return result;
     }
 
     private String[] updateParamsOnServer(String[] params, ProcessType processType) throws Exception {

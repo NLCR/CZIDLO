@@ -110,4 +110,11 @@ public class UserDTO implements Serializable {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO [id=" + id + ", login=" + login + ", email=" + email + ", role=" + role + ", created=" + created + ", modified=" + modified
+                + "]";
+    }
+
 }

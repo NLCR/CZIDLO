@@ -557,15 +557,17 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
             }
         }));
 
-        // DI availability check
-        result.add(new Button(constants.DI_URL_AVAILABILITY_CHECK(), new ClickHandler() {
+        if (getActiveUser().isLoggedUser() && getActiveUser().isSuperAdmin()) {// admin only
+            // DI availability check
+            result.add(new Button(constants.DI_URL_AVAILABILITY_CHECK(), new ClickHandler() {
 
-            @Override
-            public void onClick(ClickEvent event) {
-                // TODO: some show() method or something, just constructor is confusing
-                new DiAvailabilityCheckDialogBox(getActiveUser());
-            }
-        }));
+                @Override
+                public void onClick(ClickEvent event) {
+                    // TODO: some show() method or something, just constructor is confusing
+                    new DiAvailabilityCheckDialogBox(getActiveUser());
+                }
+            }));
+        }
 
         return result;
     }

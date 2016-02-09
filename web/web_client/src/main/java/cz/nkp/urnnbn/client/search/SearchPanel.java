@@ -25,10 +25,13 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
+import cz.nkp.urnnbn.client.processes.DiAvailabilityCheckDialogBox;
+import cz.nkp.urnnbn.client.processes.ExportUrnNbnListProcessDialogBox;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.client.services.ConfigurationService;
 import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
@@ -91,7 +94,19 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
         contentPanel.setHeight("100%");
         contentPanel.add(searchRequestPanel());
         contentPanel.add(searchResultsPanel);
+        // contentPanel.add(testButton());
         return contentPanel;
+    }
+
+    private Widget testButton() {
+        return new Button("test", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                // new DiAvailabilityCheckDialogBox(getActiveUser());
+                new ExportUrnNbnListProcessDialogBox(getActiveUser());
+            }
+        });
     }
 
     private void loadConfigurationFromServer() {
