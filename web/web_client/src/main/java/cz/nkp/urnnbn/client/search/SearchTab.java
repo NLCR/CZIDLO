@@ -321,7 +321,7 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
 
     @Override
     public void onSelected() {
-        LOGGER.info("onSelected");
+        // LOGGER.fine("onSelected");
         super.onSelected();
     }
 

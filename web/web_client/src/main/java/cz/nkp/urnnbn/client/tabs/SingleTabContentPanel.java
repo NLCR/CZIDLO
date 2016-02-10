@@ -12,41 +12,41 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public abstract class SingleTabContentPanel extends ScrollPanel {
 
-    private final String gaTabName;
-    private final TabsPanel superPanel;
     protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     protected final MessagesImpl messages = GWT.create(MessagesImpl.class);
+    private final String gaTabName;
+    private final TabsPanel tabsPanel;
 
-    public SingleTabContentPanel(TabsPanel superPanel, String gaTabName) {
+    public SingleTabContentPanel(TabsPanel tabsPanel, String gaTabName) {
         super();
-        this.superPanel = superPanel;
+        this.tabsPanel = tabsPanel;
         this.gaTabName = gaTabName;
     }
 
     public boolean userManagesRegistrar(RegistrarDTO registrar) {
-        return getActiveUser().isLoggedUser() && superPanel.getRegistrarsManagedByUser().contains(registrar);
+        return getActiveUser().isLoggedUser() && tabsPanel.getRegistrarsManagedByUser().contains(registrar);
     }
 
     public ArrayList<RegistrarDTO> getRegistrarsManagedByUser() {
-        return superPanel.getRegistrarsManagedByUser();
+        return tabsPanel.getRegistrarsManagedByUser();
     }
 
     public UserDTO getActiveUser() {
-        return superPanel.getActiveUser();
+        return tabsPanel.getActiveUser();
     }
 
     /**
      * Implemantations must allways call super.onSelected() preferably as first command.
      */
     public void onSelected() {
-        // TODO: only if GA enabled
-        gaPageEvent("tab_" + gaTabName);
+        if (tabsPanel.isGaEnabled()) {
+            gaPageEvent("tab_" + gaTabName);
+        }
     }
 
     public abstract void onDeselected();
 
     private native void gaPageEvent(String tabName) /*-{
-                                                    console.log("onLoad: " + tabName);
                                                     $wnd.ga('send', 'pageview',tabName);
                                                     }-*/;
 

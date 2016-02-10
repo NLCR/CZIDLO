@@ -151,7 +151,7 @@ public abstract class EditableContentTab extends SingleTabContentPanel {
 
     @Override
     public void onSelected() {
-        LOGGER.info("onSelected (" + contentName + ")");
+        // LOGGER.fine("onSelected (" + contentName + ")");
         super.onSelected();
         if (content == null) {
             loadContent();

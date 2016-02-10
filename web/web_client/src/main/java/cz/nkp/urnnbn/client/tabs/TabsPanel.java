@@ -32,12 +32,15 @@ public class TabsPanel extends Composite {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
+
     private final UserDTO activeUser;
+    private final boolean gaEnabled;
     private TabLayoutPanel tabLayoutPanel;
     private ArrayList<RegistrarDTO> registrarsManagedByUser = null;
 
-    public TabsPanel(UserDTO activeUser) {
+    public TabsPanel(UserDTO activeUser, boolean gaEnabled) {
         this.activeUser = activeUser;
+        this.gaEnabled = gaEnabled;
         loadRegistrarsManagedByUser();
         initTabs();
         selectTab(DEFAULT_SELECTED_TAB_POSITION);
@@ -71,7 +74,7 @@ public class TabsPanel extends Composite {
         PanelsBuilder builder = new PanelsBuilder(tabLayoutPanel);
 
         // test tab
-        // builder.appendPanel(new TestTab(this), "TEST");
+        // builder.appendPanel(new TestTab(this), "TEST", gaEnabled);
 
         // info tab
         builder.appendPanel(new InfoTab(this), constants.tabInfoLabel());
@@ -186,5 +189,9 @@ public class TabsPanel extends Composite {
 
     public UserDTO getActiveUser() {
         return activeUser;
+    }
+
+    public boolean isGaEnabled() {
+        return gaEnabled;
     }
 }

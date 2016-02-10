@@ -20,6 +20,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
     private String alephUrl;
     private String alephBase;
     private String loginPage;
+    private String gaTrackingCode;
 
     static public WebModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -36,6 +37,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
         alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
         alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
         loginPage = loader.loadStringOrNull(PropertyKeys.LOGIN_PAGE);
+        gaTrackingCode = loader.loadStringOrNull(PropertyKeys.GA_TRACKING_CODE);
         Configuration.init(loader);
     }
 
@@ -64,6 +66,7 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
         result.setShowAlephLinks(showAlephLinks);
         result.setAlephBase(alephBase);
         result.setAlephUrl(alephUrl);
+        result.setGaTrackingCode(gaTrackingCode);
         result.setCountryCode(getLanguageCode());
         result.setLoginPage(getLoginPage());
         return result;

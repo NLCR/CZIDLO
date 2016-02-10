@@ -86,7 +86,7 @@ public class LogsTab extends SingleTabContentPanel {
 
     @Override
     public void onSelected() {
-        LOGGER.info("onSelected");
+        // LOGGER.fine("onSelected");
         super.onSelected();
         startTimerIfNotRunningAlready();
     }

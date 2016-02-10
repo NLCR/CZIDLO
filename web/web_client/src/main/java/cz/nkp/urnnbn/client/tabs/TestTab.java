@@ -19,7 +19,7 @@ public class TestTab extends SingleTabContentPanel {
     }
 
     public void onLoad() {
-        LOGGER.info("onSelected");
+        // LOGGER.fine("onSelected");
         super.onSelected();
         reload();
     }

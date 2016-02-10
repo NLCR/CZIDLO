@@ -144,12 +144,12 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     private Widget limitListCheckBox() {
         CheckBox checkbox = new CheckBox(constants.processListShowMyOnlyButton());
-        checkbox.setChecked(limitToMyProcess);
+        checkbox.setValue(limitToMyProcess);
         checkbox.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                limitToMyProcess = ((CheckBox) event.getSource()).isChecked();
+                limitToMyProcess = ((CheckBox) event.getSource()).getValue();
                 loadProcesses();
             }
         });
@@ -573,7 +573,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     @Override
     public void onSelected() {
-        LOGGER.info("onSelected");
+        // LOGGER.fine("onSelected");
         super.onSelected();
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }

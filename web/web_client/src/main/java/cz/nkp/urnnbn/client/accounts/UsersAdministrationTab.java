@@ -169,7 +169,7 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
 
     @Override
     public void onSelected() {
-        LOGGER.info("onSelected");
+        // LOGGER.fine("onSelected");
         super.onSelected();
     }
 

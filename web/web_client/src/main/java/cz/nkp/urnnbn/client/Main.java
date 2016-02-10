@@ -20,8 +20,11 @@ import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
+import cz.nkp.urnnbn.client.services.ConfigurationService;
+import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.core.Czidlo;
+import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 /**
@@ -31,25 +34,44 @@ public class Main implements EntryPoint {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private static final String APP_VERSION = Czidlo.VERSION;
-    private Resources resources = GWT.create(Resources.class);
-    private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    private final Resources resources = GWT.create(Resources.class);
+    private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+    private final AuthServiceAsync authService = GWT.create(AuthService.class);
+    private final ConfigurationServiceAsync configService = GWT.create(ConfigurationService.class);
     private DockLayoutPanel mainPanel;
 
     public void onModuleLoad() {
-        AuthServiceAsync service = GWT.create(AuthService.class);
-        service.getLoggedUser(new AsyncCallback<UserDTO>() {
+        authService.getLoggedUser(new AsyncCallback<UserDTO>() {
+            public void onSuccess(final UserDTO user) {
+                // HEADER
+                Panel headerPanel = headerPanel(user);
+                mainPanel.addNorth(headerPanel, 100);
+                configService.getConfiguration(new AsyncCallback<ConfigurationData>() {
+
+                    @Override
+                    public void onSuccess(ConfigurationData config) {
+                        // analytics
+                        String gaTrackingCode = config.getGaTrackingCode();
+                        if (gaTrackingCode != null) {
+                            initAnalytics(config.getGaTrackingCode());
+                        }
+                        // CONTENT
+                        TabsPanel content = new TabsPanel(user, gaTrackingCode != null);
+                        mainPanel.add(content);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        logger.severe("Error obtaining user credentials: " + caught.getMessage());
+                    }
+                });
+
+            }
+
             public void onFailure(Throwable caught) {
                 logger.severe("Error obtaining user credentials: " + caught.getMessage());
             }
 
-            public void onSuccess(UserDTO user) {
-                // HEADER
-                Panel headerPanel = headerPanel(user);
-                mainPanel.addNorth(headerPanel, 100);
-                // CONTENT
-                TabsPanel content = new TabsPanel(user);
-                mainPanel.add(content);
-            }
         });
         resources.MainCss().ensureInjected();
         // MAIN PANEL
@@ -60,6 +82,16 @@ public class Main implements EntryPoint {
         HorizontalPanel footerPanel = footerPanel();
         mainPanel.addSouth(footerPanel, 50);
     }
+
+    private native void initAnalytics(String trackingCode)/*-{
+                                                          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                                                          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                                                          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                                                          })($wnd,$doc,'script','//www.google-analytics.com/analytics.js','ga');
+                                                          $wnd.ga('create', trackingCode, 'auto');
+                                                          //ga('send', 'pageview');
+                                                          console.log("google analytics script initialized");
+                                                          }-*/;
 
     private Panel headerPanel(UserDTO user) {
         DockLayoutPanel headerPanel = new DockLayoutPanel(Unit.PX);

@@ -10,6 +10,7 @@ public class ConfigurationData implements Serializable {
     private String alephBase;
     private String countryCode;
     private String loginPage;
+    private String gaTrackingCode;
 
     public boolean showAlephLinks() {
         return showAlephLinks;
@@ -55,6 +56,14 @@ public class ConfigurationData implements Serializable {
     public String toString() {
         return "ConfigurationData [showAlephLinks=" + showAlephLinks + ", alephUrl=" + alephUrl + ", alephBase=" + alephBase + ", countryCode="
                 + countryCode + ", loginPage=" + loginPage + "]";
+    }
+
+    public String getGaTrackingCode() {
+        return gaTrackingCode;
+    }
+
+    public void setGaTrackingCode(String gaTrackingCode) {
+        this.gaTrackingCode = gaTrackingCode;
     }
 
 }
