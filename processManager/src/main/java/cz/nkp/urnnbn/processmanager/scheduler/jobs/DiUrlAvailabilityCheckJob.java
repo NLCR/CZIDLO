@@ -1,6 +1,12 @@
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +23,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob.UrlChecker.Result;
 import cz.nkp.urnnbn.services.Services;
 
 public class DiUrlAvailabilityCheckJob extends AbstractJob {
@@ -39,11 +46,12 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
     private static final String HEADER_INT_ENT_TYPE = "Typ dokumentu";
     private static final Object HEADER_DI_ACTIVE = "DI aktivní";
     private static final String HEADER_DI_FORMAT = "Formát";
-    private static final String HEADER_DI_ACCESSIBLITY = "Dostupnost";
+    private static final String HEADER_DI_ACCESSIBLITY = "Přístupnost";
     private static final String HEADER_DI_CREATED = "Vytvořeno";
     private static final String HEADER_DI_DEACTIVATED = "Deaktivováno";
     private static final String HEADER_DI_URL = "URL";
-    private static final String HEADER_AVAILABILITY_RESULT = "Výsledek testu dostupnosti URL";
+    private static final Object HEADER_AVAILABILITY_RESULT_CODE = "Dostupnost URL";
+    private static final Object HEADER_AVAILABILITY_RESULT_MESSAGE = "Popis chyby";
 
     private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
     private PrintWriter csvWriter;
@@ -110,20 +118,115 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
             csvWriter.println(buildHeaderLine());
             // records
             logger.info("records to export: " + exports.size());
-            for (int i = 0; i < exports.size(); i++) {
+            int counter = 0;
+            for (DiExport export : exports) {
+                counter++;
                 if (interrupted) {
                     csvWriter.flush();
                     break;
                 }
-                String line = toCsvLine(exports.get(i));
+                Result checkResult = new UrlChecker(export.getDiUrl()).check();
+                String line = toCsvLine(export, checkResult);
                 csvWriter.println(line);
-                if (i % 10 == 0) {
-                    logger.info(String.format("processed %d/%d", i, exports.size()));
+                if (counter % 10 == 0) {
+                    logger.info(String.format("processed %d/%d", counter, exports.size()));
                 }
             }
+            if (counter % 10 != 0) {
+                logger.info(String.format("processed %d/%d", counter, exports.size()));
+            }
+
         } finally {
             csvWriter.close();
         }
+    }
+
+    static class UrlChecker {
+        private static final int MAX_REDIRECTIONS = 5;// TODO: presmerovani
+        private static final int TIMEOUT_CONNECTION = 1000;
+        private static final int TIMEOUT_READ = 3000;
+
+        private final String urlString;
+
+        public UrlChecker(String urlString) {
+            this.urlString = urlString;
+        }
+
+        public Result check() {
+            return check(urlString, MAX_REDIRECTIONS);
+        }
+
+        private Result check(String urlString, int remainingRedirections) {
+            HttpURLConnection urlConnection = null;
+            if (remainingRedirections == 0) {
+                return new Result("TO_MANY_REDIRECTIONS", "Reached " + MAX_REDIRECTIONS + " redirections, probably redirection loop.");
+            } else {
+                try {
+                    URL url = new URL(urlString);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setConnectTimeout(TIMEOUT_CONNECTION);
+                    urlConnection.setReadTimeout(TIMEOUT_READ);
+                    // urlConnection.setr
+                    int responseCode = urlConnection.getResponseCode();
+                    switch (responseCode) {
+                    case 200:
+                        return new Result("OK", "");
+                    case 300:
+                    case 301:
+                    case 302:
+                    case 303:
+                    case 305:
+                    case 307:
+                        String location = urlConnection.getHeaderField("Location");
+                        return check(location, remainingRedirections - 1);
+
+                    default:
+                        return new Result("UNEXPECTED_HTTP_CODE", "" + responseCode + " " + urlConnection.getResponseMessage());
+                    }
+                } catch (MalformedURLException e) {
+                    return new Result("INVALID_URL", e.getMessage());
+                } catch (UnknownHostException e) {
+                    return new Result("UNKNOWN_HOST", "Domain " + e.getMessage() + " not available.");
+                } catch (SocketTimeoutException e) {
+                    return new Result("TIMEOUT", String.format("Reached eith connection timeout (%d ms) or data transfer timeout (%d ms).",
+                            TIMEOUT_CONNECTION, TIMEOUT_READ));
+                } catch (IOException e) {
+                    return new Result("OTHER_ERROR", e.getMessage());
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        }
+
+        static class Result {
+            private String state;
+            private String message;
+
+            public Result(String state, String message) {
+                this.state = state;
+                this.message = message;
+            }
+
+            public String getState() {
+                return state;
+            }
+
+            public void setState(String state) {
+                this.state = state;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+        }
+
     }
 
     private String buildHeaderLine() {
@@ -137,11 +240,12 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         result.append('\"').append(HEADER_DI_CREATED).append('\"').append(',');
         result.append('\"').append(HEADER_DI_DEACTIVATED).append('\"').append(',');
         result.append('\"').append(HEADER_DI_URL).append('\"').append(',');
-        result.append('\"').append(HEADER_AVAILABILITY_RESULT).append('\"');
+        result.append('\"').append(HEADER_AVAILABILITY_RESULT_CODE).append('\"').append(',');
+        result.append('\"').append(HEADER_AVAILABILITY_RESULT_MESSAGE).append('\"');
         return result.toString();
     }
 
-    private String toCsvLine(DiExport export) {
+    private String toCsvLine(DiExport export, Result checkResult) {
         StringBuilder result = new StringBuilder();
         UrnNbn urnNbn = new UrnNbn(RegistrarCode.valueOf(export.getRegistrarCode()), export.getDocumentCode(), -1L, null);
         result.append('\"').append(urnNbn.toString()).append('\"').append(',');
@@ -158,7 +262,8 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         }
         result.append('\"').append(',');
         result.append('\"').append(export.getDiUrl()).append('\"').append(',');
-        result.append('\"').append("TODO: vysledek kontroly").append('\"');
+        result.append('\"').append(checkResult.getState()).append('\"').append(',');
+        result.append('\"').append(checkResult.getMessage()).append('\"');
         return result.toString();
     }
 

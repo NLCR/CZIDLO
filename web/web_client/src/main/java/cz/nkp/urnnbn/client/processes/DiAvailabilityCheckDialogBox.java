@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.processes;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -58,8 +60,19 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
 
             @Override
             public void onSuccess(ArrayList<RegistrarDTO> result) {
-                registrars = result;
+                registrars = sort(result);
                 reload();
+            }
+
+            private ArrayList<RegistrarDTO> sort(ArrayList<RegistrarDTO> result) {
+                Collections.sort(result, new Comparator<RegistrarDTO>() {
+
+                    @Override
+                    public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+                        return o1.getCode().compareTo(o2.getCode());
+                    }
+                });
+                return result;
             }
 
             @Override
