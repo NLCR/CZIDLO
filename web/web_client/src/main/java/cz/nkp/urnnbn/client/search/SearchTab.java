@@ -30,7 +30,6 @@ import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
-import cz.nkp.urnnbn.client.processes.DiAvailabilityCheckDialogBox;
 import cz.nkp.urnnbn.client.processes.ExportUrnNbnListProcessDialogBox;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.client.services.ConfigurationService;
@@ -77,13 +76,13 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
         return result;
     }
 
-    public SearchTab(TabsPanel superPanel, String searchString) {
+    public SearchTab(TabsPanel superPanel, String query) {
         super(superPanel, "search");
         this.superPanel = superPanel;
         add(contentPanel());
-        if (searchString != null) {
-            searchBox.setText(searchString);
-            search(searchString);
+        if (query != null) {
+            searchBox.setText(query);
+            search(query);
         }
         loadConfigurationFromServer();
     }
@@ -151,15 +150,19 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
         return result;
     }
 
-    public void search(final String request) {
+    public void search(String query) {
+        final String queryTrimmed = query.trim();
+        if (tabsPanel.isGaEnabled()) {
+            sendGaSearchEvent(query);
+        }
         showProcessingWheel();
-        if (request.toLowerCase().startsWith("urn:nbn:")) {
-            searchService.searchByUrnNbn(request, new AsyncCallback<IntelectualEntityDTO>() {
+        if (query.toLowerCase().startsWith("urn:nbn:")) {
+            searchService.searchByUrnNbn(query, new AsyncCallback<IntelectualEntityDTO>() {
 
                 @Override
                 public void onSuccess(IntelectualEntityDTO result) {
                     if (result == null) {
-                        showNoResults(request);
+                        showNoResults(queryTrimmed);
                     } else {
                         showSingleResult(result);
                     }
@@ -172,16 +175,16 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
                 }
             });
         } else {
-            searchService.getIntEntIdentifiersBySearch(request, new AsyncCallback<ArrayList<Long>>() {
+            searchService.getIntEntIdentifiersBySearch(query, new AsyncCallback<ArrayList<Long>>() {
 
                 @Override
                 public void onSuccess(ArrayList<Long> idList) {
                     if (idList.isEmpty()) {
-                        showNoResults(request);
+                        showNoResults(queryTrimmed);
                     } else if (idList.size() == 1) {
                         showSingleResultFromId(idList.get(0));
                     } else {
-                        showResultsWithPagination(request, idList);
+                        showResultsWithPagination(queryTrimmed, idList);
                     }
                 }
 
@@ -193,6 +196,10 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
             });
         }
     }
+
+    private native void sendGaSearchEvent(String query) /*-{
+                                                          $wnd.ga('send', 'event', 'search', query);
+                                                          }-*/;
 
     private void showSingleResultFromId(Long intEntId) {
         searchResultsPanel.clear();

@@ -15,7 +15,7 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
     protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     protected final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final String gaTabName;
-    private final TabsPanel tabsPanel;
+    protected final TabsPanel tabsPanel;
 
     public SingleTabContentPanel(TabsPanel tabsPanel, String gaTabName) {
         super();
