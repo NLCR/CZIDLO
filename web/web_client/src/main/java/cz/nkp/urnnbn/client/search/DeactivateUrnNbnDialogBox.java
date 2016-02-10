@@ -24,11 +24,11 @@ public class DeactivateUrnNbnDialogBox extends DialogBox {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final DataServiceAsync dataService = GWT.create(DataService.class);
-    private final SearchPanel superPanel;
+    private final SearchTab superPanel;
     private final DeactivateUrnNbnForm form;
     private final Label errorLabel;
 
-    public DeactivateUrnNbnDialogBox(SearchPanel superPanel, UrnNbnDTO urn) {
+    public DeactivateUrnNbnDialogBox(SearchTab superPanel, UrnNbnDTO urn) {
         this.superPanel = superPanel;
         this.form = new DeactivateUrnNbnForm(urn);
         this.errorLabel = errorLabel();

@@ -7,7 +7,7 @@ import cz.nkp.urnnbn.shared.dto.ie.MonographVolumeDTO;
 public class MonographVolumeBuilder extends EntityTreeItemBuilder {
     private final MonographVolumeDTO dto;
 
-    public MonographVolumeBuilder(MonographVolumeDTO dto, UserDTO user, SearchPanel superPanel) {
+    public MonographVolumeBuilder(MonographVolumeDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

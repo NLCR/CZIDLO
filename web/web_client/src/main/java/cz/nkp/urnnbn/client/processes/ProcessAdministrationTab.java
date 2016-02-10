@@ -28,12 +28,11 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
-import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
-public class ProcessAdministrationPanel extends SingleTabContentPanel {
+public class ProcessAdministrationTab extends SingleTabContentPanel {
 
-    private static final Logger logger = Logger.getLogger(ProcessAdministrationPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProcessAdministrationTab.class.getName());
 
     private final ProcessAdministrationCss css = initCss();
     private final Timer processesRefreshTimer = initProcessRefreshTimer();
@@ -60,8 +59,8 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
         };
     }
 
-    public ProcessAdministrationPanel(TabsPanel superPanel) {
-        super(superPanel);
+    public ProcessAdministrationTab(TabsPanel superPanel) {
+        super(superPanel, "processes");
         if (getActiveUser().isSuperAdmin()) {
             limitToMyProcess = false;
         }
@@ -92,7 +91,7 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
                 if (caught instanceof SessionExpirationException) {
                     Utils.sessionExpirationRedirect();
                 } else {
-                    logger.severe("Error loading processes: " + caught.getMessage());
+                    LOGGER.severe("Error loading processes: " + caught.getMessage());
                 }
             }
         };
@@ -573,12 +572,14 @@ public class ProcessAdministrationPanel extends SingleTabContentPanel {
     }
 
     @Override
-    public void onSelection() {
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         processesRefreshTimer.cancel();
     }
 

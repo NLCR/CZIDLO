@@ -8,7 +8,7 @@ public class PeriodicalBuilder extends EntityTreeItemBuilder {
 
     private final PeriodicalDTO dto;
 
-    public PeriodicalBuilder(PeriodicalDTO dto, UserDTO user, SearchPanel superPanel) {
+    public PeriodicalBuilder(PeriodicalDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

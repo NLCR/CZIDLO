@@ -45,13 +45,13 @@ public class RegistrarDetailsPanel extends VerticalPanel {
 
     private final UserDTO user;
     private RegistrarDTO registrar;
-    private InstitutionsAdminstrationPanel superPanel;
+    private InstitutionsAdminstrationTab superPanel;
     private ArrayList<DigitalLibraryDTO> libraries = new ArrayList<DigitalLibraryDTO>();
     private ArrayList<CatalogDTO> catalogs = new ArrayList<CatalogDTO>();
     private List<Integer> yearsSorted;
     private boolean chartLoaderInitialized = false;
 
-    public RegistrarDetailsPanel(InstitutionsAdminstrationPanel superPanel, UserDTO user, RegistrarDTO registrar) {
+    public RegistrarDetailsPanel(InstitutionsAdminstrationTab superPanel, UserDTO user, RegistrarDTO registrar) {
         this.superPanel = superPanel;
         this.user = user;
         this.registrar = registrar;

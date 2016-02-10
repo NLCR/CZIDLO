@@ -57,7 +57,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
     private final ConstantsImpl constants = InsertRecordPanelResources.constants();
     private final MessagesImpl messages = InsertRecordPanelResources.messages();
     // superior panel
-    private final DataInputPanel superPanel;
+    private final DataInputTab superPanel;
     // configuration
     private ConfigurationData configuration;
     // forms
@@ -85,7 +85,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         return result;
     }
 
-    public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
+    public RecordDataPanel(DataInputTab superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
             IntelectualEntityForm intelectualEntForm, SourceDocumentForm srcDocForm, String intelectualEntType) {
         this.superPanel = superPanel;
         this.intelectualEntType = intelectualEntType;
@@ -114,7 +114,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         });
     }
 
-    public RecordDataPanel(DataInputPanel superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
+    public RecordDataPanel(DataInputTab superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
             IntelectualEntityForm entityForm, String typeName) {
         this(superPanel, registrar, registrationMode, entityForm, null, typeName);
     }

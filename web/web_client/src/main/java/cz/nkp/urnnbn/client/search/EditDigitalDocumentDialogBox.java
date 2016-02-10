@@ -30,7 +30,7 @@ public class EditDigitalDocumentDialogBox extends DialogBox {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
     private final DataServiceAsync dataService = GWT.create(DataService.class);
-    private final SearchPanel superPanel;
+    private final SearchTab superPanel;
     private Label errorLabel = errorLabel();
     private DigitalDocumentForm digDocForm;
     private TechnicalMetadataForm technicalMetadataForm;
@@ -42,7 +42,7 @@ public class EditDigitalDocumentDialogBox extends DialogBox {
         return result;
     }
 
-    public EditDigitalDocumentDialogBox(final DigitalDocumentDTO digDoc, SearchPanel superPanel) {
+    public EditDigitalDocumentDialogBox(final DigitalDocumentDTO digDoc, SearchTab superPanel) {
         this.superPanel = superPanel;
         institutionsService.getAllArchivers(new AsyncCallback<ArrayList<ArchiverDTO>>() {
 

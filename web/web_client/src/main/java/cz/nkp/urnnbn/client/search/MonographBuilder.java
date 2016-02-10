@@ -8,7 +8,7 @@ public class MonographBuilder extends EntityTreeItemBuilder {
 
     private final MonographDTO dto;
 
-    public MonographBuilder(MonographDTO dto, UserDTO user, SearchPanel superPanel) {
+    public MonographBuilder(MonographDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

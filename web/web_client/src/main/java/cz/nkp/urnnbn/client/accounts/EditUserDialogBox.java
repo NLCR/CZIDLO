@@ -20,11 +20,11 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 public class EditUserDialogBox extends AbstractDialogBox {
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private final UsersAdministrationPanel superPanel;
+    private final UsersAdministrationTab superPanel;
     private final UserDetailsForm form;
     private final Label errorLabel = errorLabel(320);
 
-    public EditUserDialogBox(UsersAdministrationPanel superPanel, UserDTO user) {
+    public EditUserDialogBox(UsersAdministrationTab superPanel, UserDTO user) {
         this.superPanel = superPanel;
         this.form = new UserDetailsForm(user);
         setText(constants.userAccount() + " - " + constants.recordAdjustment());

@@ -7,7 +7,7 @@ import cz.nkp.urnnbn.shared.dto.ie.PeriodicalIssueDTO;
 public class PeriodicalIssueBuilder extends EntityTreeItemBuilder {
     private final PeriodicalIssueDTO dto;
 
-    public PeriodicalIssueBuilder(PeriodicalIssueDTO dto, UserDTO user, SearchPanel superPanel) {
+    public PeriodicalIssueBuilder(PeriodicalIssueDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

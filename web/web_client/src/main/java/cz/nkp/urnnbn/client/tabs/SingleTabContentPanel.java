@@ -12,13 +12,15 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public abstract class SingleTabContentPanel extends ScrollPanel {
 
+    private final String gaTabName;
     private final TabsPanel superPanel;
     protected final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     protected final MessagesImpl messages = GWT.create(MessagesImpl.class);
 
-    public SingleTabContentPanel(TabsPanel superPanel) {
+    public SingleTabContentPanel(TabsPanel superPanel, String gaTabName) {
         super();
         this.superPanel = superPanel;
+        this.gaTabName = gaTabName;
     }
 
     public boolean userManagesRegistrar(RegistrarDTO registrar) {
@@ -33,8 +35,19 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
         return superPanel.getActiveUser();
     }
 
-    public abstract void onSelection();
+    /**
+     * Implemantations must allways call super.onSelected() preferably as first command.
+     */
+    public void onSelected() {
+        // TODO: only if GA enabled
+        gaPageEvent("tab_" + gaTabName);
+    }
 
-    public abstract void onDeselectionSelection();
+    public abstract void onDeselected();
+
+    private native void gaPageEvent(String tabName) /*-{
+                                                    console.log("onLoad: " + tabName);
+                                                    $wnd.ga('send', 'pageview',tabName);
+                                                    }-*/;
 
 }

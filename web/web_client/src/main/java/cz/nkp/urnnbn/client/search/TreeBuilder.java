@@ -12,9 +12,9 @@ import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 
 public class TreeBuilder {
     protected final SearchPanelCss css = SearchPanelResources.css();
-    final SearchPanel superPanel;
+    final SearchTab superPanel;
 
-    public TreeBuilder(SearchPanel superPanel) {
+    public TreeBuilder(SearchTab superPanel) {
         this.superPanel = superPanel;
     }
 

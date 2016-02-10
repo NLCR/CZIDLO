@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client.institutions;
 
+import java.util.logging.Logger;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
 
@@ -10,14 +12,15 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
-public class InstitutionsAdminstrationPanel extends SingleTabContentPanel {
+public class InstitutionsAdminstrationTab extends SingleTabContentPanel {
 
+    private static final Logger LOGGER = Logger.getLogger(InstitutionsAdminstrationTab.class.getName());
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private Panel activePanel;
 
-    public InstitutionsAdminstrationPanel(TabsPanel superPanel) {
-        super(superPanel);
+    public InstitutionsAdminstrationTab(TabsPanel superPanel) {
+        super(superPanel, "registrars");
     }
 
     public void onLoad() {
@@ -44,12 +47,13 @@ public class InstitutionsAdminstrationPanel extends SingleTabContentPanel {
     }
 
     @Override
-    public void onSelection() {
-        // TODO Auto-generated method stub
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         // TODO Auto-generated method stub
 
     }

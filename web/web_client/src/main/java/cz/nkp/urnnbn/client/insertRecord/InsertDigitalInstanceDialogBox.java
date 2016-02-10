@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
 import cz.nkp.urnnbn.client.OnUpdate;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalInstanceForm;
-import cz.nkp.urnnbn.client.search.SearchPanel;
+import cz.nkp.urnnbn.client.search.SearchTab;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
@@ -44,7 +44,7 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
         init();
     }
 
-    public InsertDigitalInstanceDialogBox(final SearchPanel superPanel, UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries) {
+    public InsertDigitalInstanceDialogBox(final SearchTab superPanel, UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries) {
         this.urnNbn = urnNbn;
         this.form = new DigitalInstanceForm(libraries);
         this.onUpdate = new OnUpdate<DigitalInstanceDTO>() {

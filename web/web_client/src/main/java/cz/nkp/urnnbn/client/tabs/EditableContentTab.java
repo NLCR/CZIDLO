@@ -24,21 +24,21 @@ import cz.nkp.urnnbn.shared.dto.ContentDTO;
  * @author Václav Rosecký
  */
 
-public class EditableContentPanel extends SingleTabContentPanel {
+public abstract class EditableContentTab extends SingleTabContentPanel {
 
-    private static final Logger logger = Logger.getLogger(EditableContentPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EditableContentTab.class.getName());
     private final StaticContentServiceAsync staticContentService = GWT.create(StaticContentService.class);
 
-    private final String name;
+    private final String contentName;
     private ContentDTO content = null;
     private VerticalPanel contentPanel = null;
     private RichTextEditor editor = null;
     private Button editButton = null;
     private HorizontalPanel saveAndCancelButtonsPanel;
 
-    public EditableContentPanel(TabsPanel tabsPanel, String name) {
-        super(tabsPanel);
-        this.name = name;
+    public EditableContentTab(TabsPanel tabsPanel, String contentName, String gaTabName) {
+        super(tabsPanel, gaTabName);
+        this.contentName = contentName;
     }
 
     @Override
@@ -131,10 +131,10 @@ public class EditableContentPanel extends SingleTabContentPanel {
 
     public void loadContent() {
         String languageCode = LocaleInfo.getCurrentLocale().getLocaleName();
-        staticContentService.getContentByNameAndLanguage(name, languageCode, new AsyncCallback<ContentDTO>() {
+        staticContentService.getContentByNameAndLanguage(contentName, languageCode, new AsyncCallback<ContentDTO>() {
 
             public void onFailure(Throwable error) {
-                logger.severe(error.getMessage());
+                LOGGER.severe(error.getMessage());
                 contentPanel.clear();
             }
 
@@ -150,14 +150,16 @@ public class EditableContentPanel extends SingleTabContentPanel {
     }
 
     @Override
-    public void onSelection() {
+    public void onSelected() {
+        LOGGER.info("onSelected (" + contentName + ")");
+        super.onSelected();
         if (content == null) {
             loadContent();
         }
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         // TODO Auto-generated method stub
     }
 }

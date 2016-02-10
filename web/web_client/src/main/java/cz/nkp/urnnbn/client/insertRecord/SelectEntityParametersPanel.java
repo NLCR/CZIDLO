@@ -33,13 +33,13 @@ public class SelectEntityParametersPanel extends VerticalPanel {
 
     private static final Logger logger = Logger.getLogger(SelectEntityParametersPanel.class.getName());
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-    private final DataInputPanel superPanel;
+    private final DataInputTab superPanel;
     private final ListBox entityTypeListBox = entityTypeListBox();
     private ListBox registrars;
     private ListBox registrationModes;
     private final Timer timer = waitForRegistrarsTimer();
 
-    public SelectEntityParametersPanel(DataInputPanel superPanel) {
+    public SelectEntityParametersPanel(DataInputTab superPanel) {
         this.superPanel = superPanel;
         // TODO: mozna implementovat jinak - zeptat se a pak se pravidelne ptat po intervalu,
         // jestli registrarsManagedByUser nacetlo

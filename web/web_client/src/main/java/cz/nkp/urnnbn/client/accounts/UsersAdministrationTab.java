@@ -21,14 +21,14 @@ import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-public class UsersAdministrationPanel extends SingleTabContentPanel {
+public class UsersAdministrationTab extends SingleTabContentPanel {
 
-    private static final Logger logger = Logger.getLogger(UsersAdministrationPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UsersAdministrationTab.class.getName());
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private ArrayList<UserDTO> users = new ArrayList<UserDTO>();
 
-    public UsersAdministrationPanel(TabsPanel superPanel) {
-        super(superPanel);
+    public UsersAdministrationTab(TabsPanel superPanel) {
+        super(superPanel, "accounts");
     }
 
     @Override
@@ -48,7 +48,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onFailure(Throwable caught) {
-                logger.severe("Error loading users: " + caught.getMessage());
+                LOGGER.severe("Error loading users: " + caught.getMessage());
             }
         });
     }
@@ -118,7 +118,7 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                new EditUserDialogBox(UsersAdministrationPanel.this, user).show();
+                new EditUserDialogBox(UsersAdministrationTab.this, user).show();
             }
         });
     }
@@ -162,20 +162,20 @@ public class UsersAdministrationPanel extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                new AddUserAccountDialogBox(UsersAdministrationPanel.this).show();
+                new AddUserAccountDialogBox(UsersAdministrationTab.this).show();
             }
         });
     }
 
     @Override
-    public void onSelection() {
-        // TODO Auto-generated method stub
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         // TODO Auto-generated method stub
-
     }
 
 }

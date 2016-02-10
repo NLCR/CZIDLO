@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 public class LogsTab extends SingleTabContentPanel {
 
-    private static final Logger logger = Logger.getLogger(LogsTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LogsTab.class.getName());
     private static final int TIMER_INTERVAL = 1000;
     private static final String ADMIN_LOG_URL = "/processDataServer/adminLog";
     private final LogsServiceAsync logsService = GWT.create(LogsService.class);
@@ -74,22 +74,25 @@ public class LogsTab extends SingleTabContentPanel {
     }
 
     public LogsTab(TabsPanel superPanel) {
-        super(superPanel);
+        super(superPanel, "logs");
     }
 
     @Override
     public void onLoad() {
+        LOGGER.info("onLoad");
         reload();
         startTimerIfNotRunningAlready();
     }
 
     @Override
-    public void onSelection() {
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
         startTimerIfNotRunningAlready();
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         stopTimerIfRunning();
     }
 
@@ -147,7 +150,7 @@ public class LogsTab extends SingleTabContentPanel {
                         if (caught instanceof SessionExpirationException) {
                             Utils.sessionExpirationRedirect();
                         } else {
-                            logger.severe("Error loading admin logs: " + caught.getMessage());
+                            LOGGER.severe("Error loading admin logs: " + caught.getMessage());
                         }
                     }
                 });
@@ -158,7 +161,7 @@ public class LogsTab extends SingleTabContentPanel {
                 if (caught instanceof SessionExpirationException) {
                     Utils.sessionExpirationRedirect();
                 } else {
-                    logger.severe("Error loading admin logs last update time: " + caught.getMessage());
+                    LOGGER.severe("Error loading admin logs last update time: " + caught.getMessage());
                 }
             }
         });

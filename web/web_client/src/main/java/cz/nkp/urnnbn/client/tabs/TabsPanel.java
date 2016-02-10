@@ -14,13 +14,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-import cz.nkp.urnnbn.client.accounts.UsersAdministrationPanel;
+import cz.nkp.urnnbn.client.accounts.UsersAdministrationTab;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
-import cz.nkp.urnnbn.client.insertRecord.DataInputPanel;
-import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationPanel;
-import cz.nkp.urnnbn.client.processes.ProcessAdministrationPanel;
-import cz.nkp.urnnbn.client.search.SearchPanel;
+import cz.nkp.urnnbn.client.insertRecord.DataInputTab;
+import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationTab;
+import cz.nkp.urnnbn.client.processes.ProcessAdministrationTab;
+import cz.nkp.urnnbn.client.search.SearchTab;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
@@ -28,6 +28,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class TabsPanel extends Composite {
 
+    private static final int DEFAULT_SELECTED_TAB_POSITION = 2;
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
@@ -39,8 +40,7 @@ public class TabsPanel extends Composite {
         this.activeUser = activeUser;
         loadRegistrarsManagedByUser();
         initTabs();
-        // activatePanel(3);
-        activatePanel(2);
+        selectTab(DEFAULT_SELECTED_TAB_POSITION);
     }
 
     private void loadRegistrarsManagedByUser() {
@@ -68,82 +68,48 @@ public class TabsPanel extends Composite {
         // tabLayoutPanel.setAnimationDuration(500);
         // tabLayoutPanel.setAnimationVertical(false);
 
-        // // info panel
-        // tabLayoutPanel.add(new InfoPanel(this), constants.tabInfoLabel(),
-        // false);
-        // // search panel
-        // String query =
-        // com.google.gwt.user.client.Window.Location.getParameter("q");
-        // if (query == null || query.isEmpty()) {
-        // tabLayoutPanel.add(new SearchPanel(this, null),
-        // constants.tabSearchLabel(), false);
-        // } else {
-        // tabLayoutPanel.add(new SearchPanel(this, query),
-        // constants.tabSearchLabel(), false);
-        // activatePanel(1);
-        // }
-        // // institutions panel
-        // tabLayoutPanel.add(new InstitutionsAdminstrationPanel(this),
-        // constants.tabInstitutionsLabel(), false);
-        // // insert record panel
-        // if (activeUser.isLoggedUser()) {
-        // tabLayoutPanel.add(new DataInputPanel(this),
-        // constants.tabDataInputLabel(), false);
-        // }
-        // // user accounts panel
-        // if (activeUser.isSuperAdmin()) {
-        // tabLayoutPanel.add(new UsersAdministrationPanel(this),
-        // constants.tabAccountManagementLabel(), false);
-        // }
-        // // TODO: povolit jen prihlasenym uzivatelum
-        // // if (activeUser.isLoggedUser()) {
-        // tabLayoutPanel.add(new ProcessAdministrationPanel(this),
-        // constants.tabProcessesLabel(), false);
-        // // }
-
         PanelsBuilder builder = new PanelsBuilder(tabLayoutPanel);
 
-        // info panel
-        builder.appendPanel(new EditableContentPanel(this, "info"), constants.tabInfoLabel());
-
-        // rules panel
-        builder.appendPanel(new EditableContentPanel(this, "rules"), constants.tabRulesLabel());
-
-        // search panel
-        String query = com.google.gwt.user.client.Window.Location.getParameter("q");
-        if (query == null || query.isEmpty()) {
-            builder.appendPanel(new SearchPanel(this, null), constants.tabSearchLabel());
-        } else {
-            builder.appendPanel(new SearchPanel(this, query), constants.tabSearchLabel());
-            activatePanel(1);
-        }
-
-        // institutions panel
-        builder.appendPanel(new InstitutionsAdminstrationPanel(this), constants.tabInstitutionsLabel());
-
-        // TODO: i18n
-        builder.appendPanel(new StatisticsTab(this), "Statistics");
-
-        // insert record panel
-        if (activeUser.isLoggedUser()) {
-            builder.appendPanel(new DataInputPanel(this), constants.tabDataInputLabel());
-        }
-
-        // user accounts panel
-        if (activeUser.isSuperAdmin()) {
-            builder.appendPanel(new UsersAdministrationPanel(this), constants.tabAccountManagementLabel());
-        }
-
-        // process administration panel
-
-        if (activeUser.isLoggedUser()) {
-            builder.appendPanel(new ProcessAdministrationPanel(this), constants.tabProcessesLabel());
-        }
-
-        // TODO: just for testing new features
+        // test tab
         // builder.appendPanel(new TestTab(this), "TEST");
 
-        // logs for admin
+        // info tab
+        builder.appendPanel(new InfoTab(this), constants.tabInfoLabel());
+
+        // rules tab
+        builder.appendPanel(new RulesTab(this), constants.tabRulesLabel());
+
+        // search tab
+        String query = com.google.gwt.user.client.Window.Location.getParameter("q");
+        if (query == null || query.isEmpty()) {
+            builder.appendPanel(new SearchTab(this, null), constants.tabSearchLabel());
+        } else {
+            builder.appendPanel(new SearchTab(this, query), constants.tabSearchLabel());
+            selectTab(1);
+        }
+
+        // institutions tab
+        builder.appendPanel(new InstitutionsAdminstrationTab(this), constants.tabInstitutionsLabel());
+
+        // statistics tab
+        builder.appendPanel(new StatisticsTab(this), constants.tabStatisticsLabel());
+
+        // insert record tab (logged users only)
+        if (activeUser.isLoggedUser()) {
+            builder.appendPanel(new DataInputTab(this), constants.tabDataInputLabel());
+        }
+
+        // user accounts tab (admin only)
+        if (activeUser.isSuperAdmin()) {
+            builder.appendPanel(new UsersAdministrationTab(this), constants.tabAccountManagementLabel());
+        }
+
+        // process administration tab (logged users only)
+        if (activeUser.isLoggedUser()) {
+            builder.appendPanel(new ProcessAdministrationTab(this), constants.tabProcessesLabel());
+        }
+
+        // logss tab (admin only)
         if (activeUser.isSuperAdmin()) {
             builder.appendPanel(new LogsTab(this), constants.tabLogsLabel());
         }
@@ -175,7 +141,7 @@ public class TabsPanel extends Composite {
                     int selected = event.getSelectedItem();
                     if (selected < panels.size()) {
                         SingleTabContentPanel selectedPanel = panels.get(selected);
-                        selectedPanel.onSelection();
+                        selectedPanel.onSelected();
                     }
                 }
             });
@@ -197,19 +163,19 @@ public class TabsPanel extends Composite {
                     if (historyToken.startsWith("tab") && historyToken.length() == 4) {
                         String tabIndexToken = historyToken.substring(3, 4);
                         int tabIndex = Integer.parseInt(tabIndexToken);
-                        activatePanel(tabIndex);
+                        selectTab(tabIndex);
                     } else {
-                        activatePanel(0);
+                        selectTab(0);
                     }
 
                 } catch (IndexOutOfBoundsException e) {
-                    activatePanel(0);
+                    selectTab(0);
                 }
             }
         });
     }
 
-    private void activatePanel(int number) {
+    private void selectTab(int number) {
         tabLayoutPanel.selectTab(number);
         // tabLayoutPanel.animate(100);
     }

@@ -37,7 +37,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
     private final SourceDocumentDTO srcDoc;
     protected TreeItem result;
 
-    public EntityTreeItemBuilder(UserDTO user, SearchPanel superPanel, PrimaryOriginatorDTO primaryOriginator, PublicationDTO publication,
+    public EntityTreeItemBuilder(UserDTO user, SearchTab superPanel, PrimaryOriginatorDTO primaryOriginator, PublicationDTO publication,
             SourceDocumentDTO srcDoc) {
         super(superPanel);
         this.user = user;
@@ -46,7 +46,7 @@ public abstract class EntityTreeItemBuilder extends TreeBuilder {
         this.srcDoc = srcDoc;
     }
 
-    public static TreeItem getItem(IntelectualEntityDTO dto, UserDTO user, SearchPanel superPanel) {
+    public static TreeItem getItem(IntelectualEntityDTO dto, UserDTO user, SearchTab superPanel) {
         if (dto instanceof MonographDTO) {
             return new MonographBuilder((MonographDTO) dto, user, superPanel).getItem();
         } else if (dto instanceof MonographVolumeDTO) {

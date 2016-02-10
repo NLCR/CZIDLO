@@ -8,7 +8,7 @@ public class AnalyticalBuilder extends EntityTreeItemBuilder {
 
     private final AnalyticalDTO dto;
 
-    public AnalyticalBuilder(AnalyticalDTO dto, UserDTO user, SearchPanel superPanel) {
+    public AnalyticalBuilder(AnalyticalDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), null, dto.getSourceDocument());
         this.dto = dto;
     }

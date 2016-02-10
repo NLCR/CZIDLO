@@ -8,7 +8,7 @@ public class ThesisBuilder extends EntityTreeItemBuilder {
 
     private final ThesisDTO dto;
 
-    public ThesisBuilder(ThesisDTO dto, UserDTO user, SearchPanel superPanel) {
+    public ThesisBuilder(ThesisDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

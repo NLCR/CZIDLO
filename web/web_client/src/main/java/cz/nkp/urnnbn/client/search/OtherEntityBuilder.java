@@ -8,7 +8,7 @@ public class OtherEntityBuilder extends EntityTreeItemBuilder {
 
     private final OtherEntityDTO dto;
 
-    public OtherEntityBuilder(OtherEntityDTO dto, UserDTO user, SearchPanel superPanel) {
+    public OtherEntityBuilder(OtherEntityDTO dto, UserDTO user, SearchTab superPanel) {
         super(user, superPanel, dto.getPrimaryOriginator(), dto.getPublication(), null);
         this.dto = dto;
     }

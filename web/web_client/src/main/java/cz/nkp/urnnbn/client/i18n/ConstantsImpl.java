@@ -36,6 +36,8 @@ public interface ConstantsImpl extends Constants {
 
     String tabLogsLabel();
 
+    String tabStatisticsLabel();
+
     // presunout
 
     String tabSearchSearchButtonLabel();

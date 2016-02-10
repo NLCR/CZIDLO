@@ -14,12 +14,11 @@ import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
 
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.AssignmentsWidget;
-import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.ResolvationsWidget;
-import cz.nkp.urnnbn.client.services.InstitutionsService;
-import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.client.services.GwtStatisticsService;
 import cz.nkp.urnnbn.client.services.GwtStatisticsServiceAsync;
+import cz.nkp.urnnbn.client.services.InstitutionsService;
+import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
@@ -41,7 +40,7 @@ public class StatisticsTab extends SingleTabContentPanel {
     private ResolvationsWidget resolvationsWidget;
 
     public StatisticsTab(TabsPanel superPanel) {
-        super(superPanel);
+        super(superPanel, "statistics");
         tabPanel = new TabLayoutPanel(1.5, Unit.EM);
         tabPanel.setHeight("800px");
         // tabPanel.setHeight("100%");
@@ -49,7 +48,9 @@ public class StatisticsTab extends SingleTabContentPanel {
     }
 
     @Override
-    public void onSelection() {
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
         if (!loaded) {
             load();
         }
@@ -121,7 +122,7 @@ public class StatisticsTab extends SingleTabContentPanel {
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         // TODO Auto-generated method stub
 
     }

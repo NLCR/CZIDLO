@@ -46,9 +46,9 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
-public class SearchPanel extends SingleTabContentPanel implements DigitalInstanceRefreshable {
+public class SearchTab extends SingleTabContentPanel implements DigitalInstanceRefreshable {
 
-    private static final Logger LOGGER = Logger.getLogger(SearchPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SearchTab.class.getName());
     private static final int MAX_DOCUMENTS_TO_EXPAND = 1;
     private static final int ITEMS_PER_PAGE = 10;
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -77,8 +77,8 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
         return result;
     }
 
-    public SearchPanel(TabsPanel superPanel, String searchString) {
-        super(superPanel);
+    public SearchTab(TabsPanel superPanel, String searchString) {
+        super(superPanel, "search");
         this.superPanel = superPanel;
         add(contentPanel());
         if (searchString != null) {
@@ -112,7 +112,7 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
     private void loadConfigurationFromServer() {
         AsyncCallback<ConfigurationData> callback = new AsyncCallback<ConfigurationData>() {
             public void onSuccess(ConfigurationData data) {
-                SearchPanel.this.configuration = data;
+                SearchTab.this.configuration = data;
             }
 
             public void onFailure(Throwable caught) {
@@ -320,13 +320,13 @@ public class SearchPanel extends SingleTabContentPanel implements DigitalInstanc
     }
 
     @Override
-    public void onSelection() {
-        // TODO Auto-generated method stub
-
+    public void onSelected() {
+        LOGGER.info("onSelected");
+        super.onSelected();
     }
 
     @Override
-    public void onDeselectionSelection() {
+    public void onDeselected() {
         // TODO Auto-generated method stub
 
     }

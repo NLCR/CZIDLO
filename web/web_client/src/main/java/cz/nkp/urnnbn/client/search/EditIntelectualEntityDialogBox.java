@@ -38,13 +38,13 @@ import cz.nkp.urnnbn.shared.dto.ie.ThesisDTO;
 public class EditIntelectualEntityDialogBox extends AbstractDialogBox {
 
     private final DataServiceAsync dataService = GWT.create(DataService.class);
-    private final SearchPanel superPanel;
+    private final SearchTab superPanel;
     private IntelectualEntityForm entityForm;
     private SourceDocumentForm srcDocForm;
     private String title;
     private final Label errorLabel = errorLabel(320);
 
-    public EditIntelectualEntityDialogBox(SearchPanel superPanel, IntelectualEntityDTO entity, PrimaryOriginatorDTO originator,
+    public EditIntelectualEntityDialogBox(SearchTab superPanel, IntelectualEntityDTO entity, PrimaryOriginatorDTO originator,
             SourceDocumentForm srcDocForm) {
         this.superPanel = superPanel;
         this.srcDocForm = srcDocForm;

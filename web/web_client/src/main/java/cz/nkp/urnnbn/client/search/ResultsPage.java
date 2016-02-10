@@ -35,13 +35,13 @@ public class ResultsPage extends ScrollPanel {
     private final SearchServiceAsync searchService = GWT.create(SearchService.class);
     private final SearchPanelCss css = SearchPanelResources.css();
 
-    private final SearchPanel searchPanel;
+    private final SearchTab searchPanel;
     private final UserDTO user;
     private final ArrayList<Long> intEntIdentifiers;
     private ArrayList<IntelectualEntityDTO> entities;
     private boolean dataLoaded = false;
 
-    public ResultsPage(SearchPanel searchPanel, UserDTO user, ArrayList<Long> intEntIdentifiers) {
+    public ResultsPage(SearchTab searchPanel, UserDTO user, ArrayList<Long> intEntIdentifiers) {
         super();
         this.searchPanel = searchPanel;
         this.user = user;

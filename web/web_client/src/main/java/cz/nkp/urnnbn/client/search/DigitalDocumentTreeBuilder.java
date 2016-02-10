@@ -49,7 +49,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final DigitalDocumentDTO dto;
 
-    public DigitalDocumentTreeBuilder(DigitalDocumentDTO dto, SearchPanel superPanel) {
+    public DigitalDocumentTreeBuilder(DigitalDocumentDTO dto, SearchTab superPanel) {
         super(superPanel);
         this.dto = dto;
     }
