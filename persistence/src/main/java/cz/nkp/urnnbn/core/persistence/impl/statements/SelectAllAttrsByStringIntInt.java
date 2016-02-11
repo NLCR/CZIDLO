@@ -16,13 +16,13 @@ import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
  */
 public class SelectAllAttrsByStringIntInt implements StatementWrapper {
 
-    private final String tableName;
-    private final String whereAttr1Name;
-    private final String whereAttr1Value;
-    private final String whereAttr2Name;
-    private final int whereAttr2Value;
-    private final String whereAttr3Name;
-    private final int whereAttr3Value;
+    final String tableName;
+    final String whereAttr1Name;
+    final String whereAttr1Value;
+    final String whereAttr2Name;
+    final int whereAttr2Value;
+    final String whereAttr3Name;
+    final int whereAttr3Value;
 
     public SelectAllAttrsByStringIntInt(String tableName, String whereAttr1Name, String whereAttr1Value, String whereAttr2Name, int whereAttr2Value,
             String whereAttr3Name, int whereAttr3Value) {

@@ -13,7 +13,6 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -75,11 +74,6 @@ public interface UrnNbnDAO {
     public boolean isPredecessesor(UrnNbn precessor, UrnNbn successor) throws DatabaseException;
 
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) throws DatabaseException;
-
-    public List<Statistic> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated)
-            throws DatabaseException;
-
-    public List<Statistic> getUrnNbnRegistrationStatistics(boolean includeActive, boolean includeDeactivated) throws DatabaseException;
 
     // only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;

@@ -20,7 +20,6 @@ import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
@@ -37,25 +36,23 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectStatistics;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
 import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
 import cz.nkp.urnnbn.core.persistence.impl.statements.Select3StringsBy2Strings;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectDiExport;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectDiExport;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectMinDateStatement;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DiExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleTimestampRT;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.StatisticsRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ThreeStringsRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
@@ -145,6 +142,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<UrnNbn> getUrnNbnsByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException {
         StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_REGISTRAR_CODE, registrarCode.toString());
@@ -161,6 +159,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     // TODO: test
+    @SuppressWarnings("unchecked")
     @Override
     public List<UrnNbn> getUrnNbnsByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
@@ -177,6 +176,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
     }
 
     // TODO: test
+    @SuppressWarnings("unchecked")
     @Override
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException {
         try {
@@ -193,6 +193,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<UrnNbnWithStatus> getPredecessors(UrnNbn successor) throws DatabaseException {
         try {
@@ -211,6 +212,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<UrnNbnWithStatus> getSuccessors(UrnNbn predecessor) throws DatabaseException {
         try {
@@ -412,28 +414,6 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
-    }
-
-    @Override
-    public List<Statistic> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated)
-            throws DatabaseException {
-        try {
-            String registarCodeStr = registrarCode == null ? null : registrarCode.toString();
-            SelectStatistics st = new SelectStatistics(UrnNbnDAO.TABLE_NAME, UrnNbnDAO.ATTR_REGISTRAR_CODE, UrnNbnDAO.ATTR_REGISTERED,
-                    UrnNbnDAO.ATTR_ACTIVE, registarCodeStr, includeActive, includeDeactivated);
-            DaoOperation operation = new MultipleResultsOperation(st, new StatisticsRT());
-            return (List<Statistic>) runInTransaction(operation);
-        } catch (PersistenceException ex) {
-            // cannot happen
-            logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return Collections.<Statistic> emptyList();
-        } catch (SQLException ex) {
-            throw new DatabaseException(ex);
-        }
-    }
-
-    public List<Statistic> getUrnNbnRegistrationStatistics(boolean includeActive, boolean includeDeactivated) throws DatabaseException {
-        return getUrnNbnAssignmentStatistics(null, includeActive, includeDeactivated);
     }
 
 }

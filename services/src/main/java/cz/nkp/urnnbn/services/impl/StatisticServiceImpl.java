@@ -31,10 +31,10 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
             int year = now.get(Calendar.YEAR);
             int month = now.get(Calendar.MONTH);
             try {
-                Statistic current = factory.urnNbnResolvationStatisticDao().getStatistic(registrarCode, year, month);
+                Statistic current = factory.urnNbnStatisticDao().getResolvationsStatistic(registrarCode, year, month);
                 LOGGER.warning(current.toString());
                 current.setVolume(current.getVolume() + 1);
-                factory.urnNbnResolvationStatisticDao().updateStatistic(current);
+                factory.urnNbnStatisticDao().updateResolvationStatistic(current);
             } catch (RecordNotFoundException e) {
                 Statistic initial = new Statistic();
                 initial.setRegistrarCode(registrarCode);
@@ -42,7 +42,7 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
                 initial.setMonth(month);
                 initial.setVolume(1);
                 try {
-                    factory.urnNbnResolvationStatisticDao().insertStatistic(initial);
+                    factory.urnNbnStatisticDao().insertResolvationStatistic(initial);
                 } catch (AlreadyPresentException e1) {
                     // should never happen
                 }
@@ -76,8 +76,10 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     @Override
     public Map<String, Map<Integer, Map<Integer, Integer>>> getUrnNbnAssignmentStatistics(boolean includeActive, boolean includeDeactivated) {
         try {
+            boolean filterByActivity = (includeActive && !includeDeactivated) || (!includeActive && includeDeactivated);
             List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
-            List<Statistic> data = factory.urnDao().getUrnNbnRegistrationStatistics(includeActive, includeDeactivated);
+            List<Statistic> data = filterByActivity ? factory.urnNbnStatisticDao().listAssignmentStatistics(includeActive) : factory
+                    .urnNbnStatisticDao().listAssignmentStatistics(includeActive);
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
             Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
@@ -94,7 +96,9 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     @Override
     public Map<Integer, Map<Integer, Integer>> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
         try {
-            List<Statistic> data = factory.urnDao().getUrnNbnAssignmentStatistics(registrarCode, includeActive, includeDeactivated);
+            boolean filterByActivity = (includeActive && !includeDeactivated) || (!includeActive && includeDeactivated);
+            List<Statistic> data = filterByActivity ? factory.urnNbnStatisticDao().listAssignmentStatistics(registrarCode, includeActive) : factory
+                    .urnNbnStatisticDao().listAssignmentStatistics(registrarCode);
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
             return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
@@ -107,7 +111,7 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     public Map<String, Map<Integer, Map<Integer, Integer>>> getUrnNbnResolvationStatistics() {
         try {
             List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
-            List<Statistic> data = factory.urnNbnResolvationStatisticDao().listStatistics();
+            List<Statistic> data = factory.urnNbnStatisticDao().listResolvationStatistics();
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
             Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
@@ -124,7 +128,7 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     @Override
     public Map<Integer, Map<Integer, Integer>> getUrnNbnResolvationStatistics(String registrarCode) {
         try {
-            List<Statistic> data = factory.urnNbnResolvationStatisticDao().listStatistics(registrarCode);
+            List<Statistic> data = factory.urnNbnStatisticDao().listResolvationStatistics(registrarCode);
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
             return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);

@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnReservedDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnResolvationStatisticDaoPostgres;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbntatisticDaoPostgres;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.UserDaoPostgres;
 
 /**
@@ -53,7 +53,7 @@ public class DAOFactory {
     private UrnNbnGeneratorDAO urnSearchDao;
     private UrnNbnReservedDAO urnReservedDao;
     private ContentDAO contentDao;
-    private UrnNbnResolvationStatisticDAO resolvationStatisticDao;
+    private UrnNbnStatisticDAO statisticDao;
     private SearchDAO searchDao;
     // cache
     private final boolean postgresImplemantation;
@@ -252,15 +252,15 @@ public class DAOFactory {
         return contentDao;
     }
 
-    public UrnNbnResolvationStatisticDAO urnNbnResolvationStatisticDao() {
-        if (resolvationStatisticDao == null) {
+    public UrnNbnStatisticDAO urnNbnStatisticDao() {
+        if (statisticDao == null) {
             if (postgresImplemantation) {
-                resolvationStatisticDao = new UrnNbnResolvationStatisticDaoPostgres(connector);
+                statisticDao = new UrnNbntatisticDaoPostgres(connector);
             } else if (oracleImplementation) {
                 throw new UnsupportedOperationException("Oracle implementation not available");
             }
         }
-        return resolvationStatisticDao;
+        return statisticDao;
     }
 
     public SearchDAO searchDao() {

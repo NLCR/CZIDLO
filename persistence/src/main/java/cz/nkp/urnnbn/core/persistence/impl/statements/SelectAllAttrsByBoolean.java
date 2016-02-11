@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
 import java.sql.PreparedStatement;
@@ -10,17 +6,13 @@ import java.sql.SQLException;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
-/**
- *
- * @author Martin Řehánek
- */
-public class SelectAllAttrsByStringAttr implements StatementWrapper {
+public class SelectAllAttrsByBoolean implements StatementWrapper {
 
-    final String tableName;
-    final String whereAttrName;
-    final String whereAttrValue;
+    private final String tableName;
+    private final String whereAttrName;
+    private final boolean whereAttrValue;
 
-    public SelectAllAttrsByStringAttr(String tableName, String whereAttrName, String whereAttrValue) {
+    public SelectAllAttrsByBoolean(String tableName, String whereAttrName, boolean whereAttrValue) {
         this.tableName = tableName;
         this.whereAttrName = whereAttrName;
         this.whereAttrValue = whereAttrValue;
@@ -28,16 +20,17 @@ public class SelectAllAttrsByStringAttr implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "SELECT * from " + tableName + " WHERE " + whereAttrName + "=?;";
+        return "SELECT * from " + tableName + " WHERE " + whereAttrName + "=?";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setString(1, whereAttrValue);
+            st.setBoolean(1, whereAttrValue);
         } catch (SQLException e) {
             // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
         }
     }
+
 }

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.UrnNbnResolvationStatisticDAO;
+import cz.nkp.urnnbn.core.persistence.UrnNbnStatisticDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
@@ -22,20 +22,23 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByBoolean;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringBoolean;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringIntInt;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringIntIntBoolean;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnResolvationStatisticRT;
 
-public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implements UrnNbnResolvationStatisticDAO {
+public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStatisticDAO {
 
-    private static final Logger LOGGER = Logger.getLogger(UrnNbnResolvationStatisticDaoPostgres.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UrnNbntatisticDaoPostgres.class.getName());
 
-    public UrnNbnResolvationStatisticDaoPostgres(DatabaseConnector connector) {
+    public UrnNbntatisticDaoPostgres(DatabaseConnector connector) {
         super(connector);
     }
 
     @Override
-    public void insertStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException {
+    public void insertResolvationStatistic(Statistic statistic) throws DatabaseException, AlreadyPresentException {
         // checking disabled (optimization)
         // checkRecordNotExists(log);
         DaoOperation operation = new NoResultOperation(buildInsertStatement(statistic));
@@ -58,9 +61,9 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
     }
 
     @Override
-    public Statistic getStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringIntInt(TABLE_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_YEAR, year, ATTR_MONTH,
-                month);
+    public Statistic getResolvationsStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringIntInt(TABLE_RESOLVATIONS_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_YEAR, year,
+                ATTR_MONTH, month);
         DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
             return (Statistic) runInTransaction(operation);
@@ -75,8 +78,124 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
     }
 
     @Override
-    public List<Statistic> listStatistics(String registrarCode) throws DatabaseException {
-        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_REGISTRAR_CODE, registrarCode);
+    public Statistic getAssignmentStatistic(String registrarCode, int year, int month) throws DatabaseException, RecordNotFoundException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringIntInt(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_YEAR, year,
+                ATTR_MONTH, month);
+        DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (Statistic) runInTransaction(operation);
+        } catch (RecordNotFoundException e) {
+            throw e;
+        } catch (PersistenceException ex) {
+            // throw new RecordNotFoundException(TABLE_NAME);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @Override
+    public Statistic getAssignmentStatistic(String registrarCode, int year, int month, boolean active) throws DatabaseException,
+            RecordNotFoundException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringIntIntBoolean(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_YEAR,
+                year, ATTR_MONTH, month, ATTR_ACTIVE, active);
+        DaoOperation operation = new SingleResultOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (Statistic) runInTransaction(operation);
+        } catch (RecordNotFoundException e) {
+            throw e;
+        } catch (PersistenceException ex) {
+            // throw new RecordNotFoundException(TABLE_NAME);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listResolvationStatistics(String registrarCode) throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_RESOLVATIONS_NAME, ATTR_REGISTRAR_CODE, registrarCode);
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (List<Statistic>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // should never happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listAssignmentStatistics(String registrarCode) throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode);
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (List<Statistic>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // should never happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listAssignmentStatistics(String registrarCode, boolean active) throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrsByStringBoolean(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_ACTIVE, active);
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (List<Statistic>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // should never happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listResolvationStatistics() throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrs(TABLE_RESOLVATIONS_NAME);
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (List<Statistic>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // should never happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listAssignmentStatistics() throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrs(TABLE_ASSIGNMENTS_NAME);
+        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
+        try {
+            return (List<Statistic>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // should never happen
+            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Statistic> listAssignmentStatistics(boolean active) throws DatabaseException {
+        StatementWrapper wrapper = new SelectAllAttrsByBoolean(TABLE_ASSIGNMENTS_NAME, ATTR_ACTIVE, active);
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
             return (List<Statistic>) runInTransaction(operation);
@@ -90,22 +209,7 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
     }
 
     @Override
-    public List<Statistic> listStatistics() throws DatabaseException {
-        StatementWrapper wrapper = new SelectAllAttrs(TABLE_NAME);
-        DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
-        try {
-            return (List<Statistic>) runInTransaction(operation);
-        } catch (PersistenceException ex) {
-            // should never happen
-            LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
-            throw new DatabaseException(ex);
-        } catch (SQLException ex) {
-            throw new DatabaseException(ex);
-        }
-    }
-
-    @Override
-    public void updateStatistic(Statistic statistic) throws DatabaseException, RecordNotFoundException {
+    public void updateResolvationStatistic(Statistic statistic) throws DatabaseException, RecordNotFoundException {
         // checking disabled (optimization)
         // checkRecordExists(log);
         try {
@@ -122,12 +226,12 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
     }
 
     private void checkRecordExists(Statistic statistic) throws RecordNotFoundException, DatabaseException {
-        getStatistic(statistic.getRegistrarCode(), statistic.getYear(), statistic.getMonth());
+        getResolvationsStatistic(statistic.getRegistrarCode(), statistic.getYear(), statistic.getMonth());
     }
 
     private void checkRecordNotExists(Statistic log) throws DatabaseException, AlreadyPresentException {
         try {
-            getStatistic(log.getRegistrarCode(), log.getYear(), log.getMonth());
+            getResolvationsStatistic(log.getRegistrarCode(), log.getYear(), log.getMonth());
             IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, log.getRegistrarCode());
             IdPart year = new IdPart(ATTR_YEAR, Integer.toString(log.getYear()));
             IdPart month = new IdPart(ATTR_MONTH, Integer.toString(log.getMonth()));
@@ -142,11 +246,11 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
 
             @Override
             public String preparedStatement() {
-                return "INSERT into " + TABLE_NAME//
+                return "INSERT into " + TABLE_RESOLVATIONS_NAME//
                         + "(" + ATTR_REGISTRAR_CODE//
                         + "," + ATTR_YEAR//
                         + "," + ATTR_MONTH//
-                        + "," + ATTR_RESOLVATIONS//
+                        + "," + ATTR_SUM//
                         + ") values(?,?,?,?)";
             }
 
@@ -172,7 +276,7 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
 
             @Override
             public String preparedStatement() {
-                return "UPDATE " + TABLE_NAME + " SET " + ATTR_RESOLVATIONS + "=?" + " WHERE "//
+                return "UPDATE " + TABLE_RESOLVATIONS_NAME + " SET " + ATTR_SUM + "=?" + " WHERE "//
                         + ATTR_REGISTRAR_CODE + "=? AND "//
                         + ATTR_YEAR + "=? AND "//
                         + ATTR_MONTH + "=?";
@@ -192,4 +296,5 @@ public class UrnNbnResolvationStatisticDaoPostgres extends AbstractDAO implement
             }
         };
     }
+
 }
