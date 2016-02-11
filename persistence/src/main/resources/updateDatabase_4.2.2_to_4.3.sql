@@ -4,22 +4,7 @@ DROP FUNCTION IF EXISTS ie_title_update_trigger_function() CASCADE;
 DROP FUNCTION IF EXISTS ie_title_update(NUMERIC) CASCADE;
 DROP view IF EXISTS ie_title_view;
 DROP index IF EXISTS ie_title_fulltext_idx;
-DROP index IF EXISTS URNNBN_REGISTERED; 
-DROP index IF EXISTS URNNBNRESOLVATIONSTATISTIC_REGISTRARCODE
 DROP table IF EXISTS ie_title;
-DROP table IF EXISTS URNNBNRESOLVATIONSTATISTIC;
-
-CREATE TABLE URNNBNRESOLVATIONSTATISTIC
-(
-	REGISTRARCODE VARCHAR NOT NULL,
-	YEAR NUMERIC NOT NULL,
-	MONTH NUMERIC NOT NULL,
-	SUM NUMERIC NOT NULL,
-	PRIMARY KEY (REGISTRARCODE, YEAR, MONTH)
-) WITHOUT OIDS;
-
-CREATE INDEX URNNBN_REGISTERED ON URNNBN (REGISTERED);
-CREATE INDEX URNNBNRESOLVATIONSTATISTIC_REGISTRARCODE ON URNNBNRESOLVATIONSTATISTIC (REGISTRARCODE);
 
 /*************************/
 /*        SEARCH         */
@@ -393,9 +378,6 @@ SELECT update_search_rsi_preprocessed(registrarId, digitalDocumentId, type) FROM
 
 /* cleanup */
 DROP INDEX IF EXISTS urnnbn_registrar_code_year_month_active_idx;
-DROP INDEX IF EXISTS urnnbn_assignment_statistics_preprocessed_registrar_idx;
-DROP INDEX IF EXISTS urnnbn_assignment_statistics_preprocessed_active_idx;
-DROP INDEX IF EXISTS urnnbn_assignment_statistics_preprocessed_registrar_active_idx;
 DROP TABLE IF EXISTS urnnbn_assignment_statistics_preprocessed;
 DROP VIEW IF EXISTS urnnbn_assignment_statistics_view;
 DROP FUNCTION IF EXISTS update_urnnbn_assignment_tg() CASCADE;
@@ -437,11 +419,8 @@ CREATE TABLE urnnbn_assignment_statistics_preprocessed
    PRIMARY KEY (registrarCode, year, month, active)
 ) WITHOUT OIDS;
 
-/* preprocessed table index*/
+/* index for efficient view*/
 CREATE INDEX urnnbn_registrar_code_year_month_active_idx ON urnnbn(registrarCode, to_year(registered), to_month(registered), active);
-CREATE INDEX urnnbn_assignment_statistics_preprocessed_registrar_idx ON urnnbn_assignment_statistics_preprocessed (registrarCode);
-CREATE INDEX urnnbn_assignment_statistics_preprocessed_active_idx ON urnnbn_assignment_statistics_preprocessed (active);
-CREATE INDEX urnnbn_assignment_statistics_preprocessed_registrar_active_idx ON urnnbn_assignment_statistics_preprocessed (registrarCode, active);
 
 /* view - source for data for preprocessd table */
 CREATE OR REPLACE VIEW urnnbn_assignment_statistics_view AS
@@ -503,3 +482,15 @@ CREATE TRIGGER update_urnnbn_assignment_tg AFTER INSERT OR UPDATE  ON UrnNbn FOR
 /* initial filling table search_rsi_preprocessed */
 INSERT INTO urnnbn_assignment_statistics_preprocessed (SELECT * FROM urnnbn_assignment_statistics_view);
 
+/**************************************/
+/* Statistics for URN:NBN resolvations */
+/**************************************/
+
+CREATE TABLE urnnbn_resolvation_statistics
+(
+	registrarCode VARCHAR NOT NULL,
+	year NUMERIC NOT NULL,
+	month NUMERIC NOT NULL,
+	sum NUMERIC NOT NULL,
+	PRIMARY KEY (registrarCode, year, month)
+) WITHOUT OIDS;
