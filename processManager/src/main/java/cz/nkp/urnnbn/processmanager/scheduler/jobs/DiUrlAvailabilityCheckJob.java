@@ -129,11 +129,13 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                 String line = toCsvLine(export, checkResult);
                 csvWriter.println(line);
                 if (counter % 10 == 0) {
-                    logger.info(String.format("processed %d/%d", counter, exports.size()));
+                    int percentage = (int) ((((float) counter) / exports.size()) * 100);
+                    logger.info(String.format("processed %d/%d (%d %%)", counter, exports.size(), percentage));
                 }
             }
             if (counter % 10 != 0) {
-                logger.info(String.format("processed %d/%d", counter, exports.size()));
+                int percentage = (int) ((((float) counter) / exports.size()) * 100);
+                logger.info(String.format("processed %d/%d (%d %%)", counter, exports.size(), percentage));
             }
 
         } finally {
@@ -188,7 +190,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                 } catch (UnknownHostException e) {
                     return new Result("UNKNOWN_HOST", "Domain " + e.getMessage() + " not available.");
                 } catch (SocketTimeoutException e) {
-                    return new Result("TIMEOUT", String.format("Reached eith connection timeout (%d ms) or data transfer timeout (%d ms).",
+                    return new Result("TIMEOUT", String.format("Reached either connection timeout (%d ms) or data transfer timeout (%d ms).",
                             TIMEOUT_CONNECTION, TIMEOUT_READ));
                 } catch (IOException e) {
                     return new Result("OTHER_ERROR", e.getMessage());
