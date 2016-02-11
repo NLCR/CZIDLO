@@ -10,8 +10,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 public interface UrnNbnStatisticDAO {
 
     // TODO: rename
-    public String TABLE_RESOLVATIONS_NAME = "UrnNbnResolvationStatistic";
-    // public String TABLE_RESOLVATIONS_NAME = "urnnbn_resolvation_statistics";
+    public String TABLE_RESOLVATIONS_NAME = "urnnbn_resolvation_statistics";
     public String TABLE_ASSIGNMENTS_NAME = "urnnbn_assignment_statistics_preprocessed";
     public String ATTR_REGISTRAR_CODE = "registrarCode";
     public String ATTR_YEAR = "year";
