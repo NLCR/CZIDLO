@@ -12,46 +12,50 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
+        <jersey.version>1.11</jersey.version>
+        <spring.version>3.1.0.RELEASE</spring.version>
     </properties>
 
     <dependencies>
+        <!-- jersey -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <!-- pridal jsem rucne kvuli problemum s jersey -->
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
             <artifactId>oauth-client</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
             <artifactId>oauth-signature</artifactId>
-            <version>1.11</version>
+            <version>${jersey.version}</version>
         </dependency>
+
+        <!-- czidlo -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>xml</artifactId>
@@ -77,38 +81,28 @@
             <artifactId>persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- spring -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>3.1.0.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>3.1.0.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>3.1.0.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
+
+        <!-- Spring 3.1.0.RELEASE depends on this library but it is also 
+            included int TOMCAT/lib. To avoid conflivt it is explicitly declared here 
+            with scope=provided. See http://stackoverflow.com/questions/7483856/tomcat-7-linkageerror-loader-constraint-violation -->
         <dependency>
-            <!-- Tohle tu je kvuli toho, ze spring ma nekde dependency na 
-                tuhle knihovnu. Jenze ona je taky v TOMCAT/lib a proto se to bije. Kdyz ale 
-                tady tu zavislost zadefinuju a dam <scope>provided</scope>, tak se to do 
-                WEB-INF/lib nekopiruje http://stackoverflow.com/questions/7483856/tomcat-7-linkageerror-loader-constraint-violation -->
             <groupId>javax.el</groupId>
             <artifactId>el-api</artifactId>
             <scope>provided</scope>
@@ -116,16 +110,30 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <!-- pridal jsem rucne kvuli problemum s jersey -->
+            <!-- manually added due to some problems with jersey -->
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>
             <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
         </dependency>
 
     </dependencies>
