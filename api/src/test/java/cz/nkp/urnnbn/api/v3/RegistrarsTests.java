@@ -51,25 +51,25 @@ public class RegistrarsTests extends ApiV3Tests {
 
     @Test
     public void getRegistrarsWithDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).parameters("digitalLibraries", "true")//
+        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                 .expect().body(hasXPath("//c:digitalLibraries", nsContext)).when().get("/registrars");
     }
 
     @Test
     public void getRegistrarsWithoutDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).parameters("digitalLibraries", "false")//
+        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                 .expect().body(not(hasXPath("//c:digitalLibraries", nsContext))).when().get("/registrars");
     }
 
     @Test
     public void getRegistrarsWithCatalogs() {
-        with().config(namespaceAwareXmlConfig()).parameters("catalogs", "true")//
+        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                 .expect().body(hasXPath("//c:catalogs", nsContext)).when().get("/registrars");
     }
 
     @Test
     public void getRegistrarsWithoutCatalogs() {
-        with().config(namespaceAwareXmlConfig()).parameters("catalogs", "false")//
+        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
                 .expect().body(not(hasXPath("//c:catalogs", nsContext))).when().get("/registrars");
     }
 

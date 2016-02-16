@@ -79,7 +79,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservations() {
         int size = 3;
-        String xml = with().config(namespaceAwareXmlConfig()).param("size", size).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
                 .contentType(ContentType.XML).statusCode(201)//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
@@ -90,7 +90,6 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         for (int i = 0; i < responseSize; i++) {
             UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
         }
-        // FIXME: parameter size seems to be ignored
         Assert.assertEquals(responseSize, size);
     }
 

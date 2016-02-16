@@ -66,25 +66,25 @@ public class RegistrarTests extends ApiV3Tests {
 
     @Test
     public void getRegistrarWithDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).parameters("digitalLibraries", "true")//
+        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                 .expect().body(hasXPath("//c:digitalLibraries", nsContext)).when().get("/registrars/" + getRandomRegistrarCode());
     }
 
     @Test
     public void getRegistrarWithoutDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).parameters("digitalLibraries", "false")//
+        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                 .expect().body(not(hasXPath("//c:digitalLibraries", nsContext))).when().get("/registrars/" + getRandomRegistrarCode());
     }
 
     @Test
     public void getRegistrarWithCatalogs() {
-        with().config(namespaceAwareXmlConfig()).parameters("catalogs", "true")//
+        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                 .expect().body(hasXPath("//c:catalogs", nsContext)).when().get("/registrars/" + getRandomRegistrarCode());
     }
 
     @Test
     public void getRegistrarWithoutCatalogs() {
-        with().config(namespaceAwareXmlConfig()).parameters("catalogs", "false")//
+        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
                 .expect().body(not(hasXPath("//c:catalogs", nsContext))).when().get("/registrars/" + getRandomRegistrarCode());
     }
 
