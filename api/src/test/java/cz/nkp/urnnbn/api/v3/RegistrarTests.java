@@ -8,10 +8,12 @@ import static org.hamcrest.Matchers.not;
 
 import java.util.logging.Logger;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.xml.XmlPath;
 
 public class RegistrarTests extends ApiV3Tests {
 
@@ -23,19 +25,33 @@ public class RegistrarTests extends ApiV3Tests {
     }
 
     @Test
+    public void getInvalidRegistrar() {
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(400).contentType(ContentType.XML)//
+                .body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get("/registrars/0123456789").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_REGISTRAR_CODE");
+    }
+
+    @Test
+    public void getUnknownRegistrar() {
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(404).contentType(ContentType.XML)//
+                .body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get("/registrars/xxx000").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "UNKNOWN_REGISTRAR");
+    }
+
+    @Test
     public void getRegistrarStatusCode() {
         getRandomRegistrarCode();
         expect().statusCode(200).when().get("/registrars/" + getRandomRegistrarCode());
-    }
-
-    @Test
-    public void getInvalidRegistrarStatusCode() {
-        expect().statusCode(400).when().get("/registrars/0123456789");
-    }
-
-    @Test
-    public void getUnknownRegistrarStatusCode() {
-        expect().statusCode(404).when().get("/registrars/xxx000");
     }
 
     @Test
