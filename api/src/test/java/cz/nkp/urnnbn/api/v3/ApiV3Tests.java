@@ -18,10 +18,9 @@ package cz.nkp.urnnbn.api.v3;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
+import static com.jayway.restassured.config.SSLConfig.sslConfig;
 import static com.jayway.restassured.config.XmlConfig.xmlConfig;
 import static com.jayway.restassured.path.xml.config.XmlPathConfig.xmlPathConfig;
-import static com.jayway.restassured.config.RedirectConfig.redirectConfig;
-import static com.jayway.restassured.config.SSLConfig.sslConfig;
 
 import java.util.Random;
 
@@ -34,9 +33,11 @@ import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.core.CountryCode;
 
 public abstract class ApiV3Tests {
 
+    private static final String LANG_CODE = "cz";
     private static final String BASE_URI = "http://localhost";
     private static final int PORT = 8080;
     private static final String BASE_PATH = "/api/v3";
@@ -51,6 +52,7 @@ public abstract class ApiV3Tests {
     NamespaceContext nsContext;
 
     void init() {
+        CountryCode.initialize(LANG_CODE);
         RestAssured.baseURI = BASE_URI;
         RestAssured.port = PORT;
         RestAssured.basePath = BASE_PATH;
