@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.api.v3;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
 
@@ -78,19 +79,66 @@ public class UrnNbnReservationTests extends ApiV3Tests {
 
     @Test
     public void postReservations() {
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+                .expect()//
+                .contentType(ContentType.XML).statusCode(201)//
+                .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:urnNbnReservation");
+        int responseSize = xmlPath.getInt("c:urnNbn.size()");
+        assertThat(responseSize, greaterThan(0));
+        for (int i = 0; i < responseSize; i++) {
+            UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
+        }
+    }
+
+    @Test
+    public void postReservationsWithSize() {
         int size = 3;
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
                 .contentType(ContentType.XML).statusCode(201)//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
-        System.err.println(xml);
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:urnNbnReservation");
         int responseSize = xmlPath.getInt("c:urnNbn.size()");
         for (int i = 0; i < responseSize; i++) {
             UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
         }
         Assert.assertEquals(responseSize, size);
+    }
+
+    @Test
+    public void postReservationsSizeNegative() {
+        int size = -1;
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+                .expect()//
+                .contentType(ContentType.XML).statusCode(400)//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_QUERY_PARAM_VALUE");
+    }
+
+    @Test
+    public void postReservationsSizeNan() {
+        String size = "blabla";
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+                .expect()//
+                .contentType(ContentType.XML).statusCode(400)//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_QUERY_PARAM_VALUE");
+    }
+
+    @Test
+    public void postReservationsSizeEmpty() {
+        String size = "";
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+                .expect()//
+                .contentType(ContentType.XML).statusCode(400)//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
 }
