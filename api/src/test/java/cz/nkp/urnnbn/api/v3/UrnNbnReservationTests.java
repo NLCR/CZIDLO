@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v3;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasXPath;
@@ -27,6 +28,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     private static final String REGISTRAR_CODE_OK = "tst01";
     private static final String REGISTRAR_CODE_UNKNOWN = "xxx999";
     private static final String REGISTRAR_CODE_INVALID = "xxx_999";
+    private static final String REGISTRAR_CODE_NO_ACCESS_RIGHTS = "anl001";
 
     @BeforeSuite
     public void beforeSuite() {
@@ -139,6 +141,27 @@ public class UrnNbnReservationTests extends ApiV3Tests {
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_QUERY_PARAM_VALUE");
+    }
+
+    @Test
+    public void postReservationsNotAuthenticated() {
+        // TODO: check this out, seems to be the only error when response is not xml with error code
+        with().config(namespaceAwareXmlConfig())//
+                .expect().statusCode(401)//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
+    }
+
+    @Test
+    public void postReservationsNotAuthorized() {
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+                .expect()//
+                .statusCode(401).contentType(ContentType.XML)//
+                .body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_NO_ACCESS_RIGHTS + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.getString("c:code"), "NOT_AUTHORIZED");
     }
 
 }
