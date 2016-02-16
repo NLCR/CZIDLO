@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
@@ -384,10 +385,20 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
                 panel.add(new HTML("&nbsp&nbsp"));
                 panel.add(deactivateDigitalInstanceButton(instanceDTO));
             }
+
         } else {
             panel.add(new HTML("<span style=\"color:grey\">" + constants.deactivatedDigitalInstance() + "</span>"));
         }
+        panel.add(new HTML("&nbsp&nbsp"));
+        panel.add(showDigInstMetadataButton(instanceDTO));
         return panel;
+    }
+
+    private Widget showDigInstMetadataButton(DigitalInstanceDTO instanceDTO) {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("/api").append('/').append(API_VERSION).append('/').append("digitalInstances").append('/');
+        urlBuilder.append("id").append('/').append(instanceDTO.getId());
+        return openUrlButton(constants.showRecordInXml(), urlBuilder.toString());
     }
 
     private void addDigitalLibrary(TreeItem instanceItem, final DigitalLibraryDTO library) {
