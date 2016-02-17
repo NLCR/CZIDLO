@@ -25,7 +25,6 @@ public class DigitalDocumentsTests extends ApiV3Tests {
 
     @Test
     public void getDigitalDocumentsStatusCode() {
-
         expect().statusCode(200).when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments");
     }
 
