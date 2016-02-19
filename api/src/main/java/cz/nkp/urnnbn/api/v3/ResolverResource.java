@@ -42,9 +42,7 @@ public class ResolverResource extends AbstractResource {
                     throw new UnknownDigitalDocumentException(fetched.getUrn());
                 } else {
                     // update resolvations statistics
-                    logger.log(Level.SEVERE, "here1");
                     statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
-                    logger.log(Level.SEVERE, "here2");
                     return new DigitalDocumentResource(doc, fetched.getUrn());
                 }
             case FREE:

@@ -15,6 +15,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+
 public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     static class Id {
@@ -54,23 +56,147 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
     }
 
-    // TODO: test id types and values
-    // type
-    // [A-Za-z0-9_\-:]{1,20}
-    // value:
-    // [A-Za-z0-9\-_\.~!\*'\(\);:@&=+$,/\?#\[\]]{1,60}
+    @Test
+    public void resolveIdIdTypeToShort() {
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "a", "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("c:code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
 
-    // @Test
-    // public void resolveIdValueCharsTest() {
-    // String xml = with().config(namespaceAwareXmlConfig())//
-    // .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-    // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-    // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-    // .when().get(buildPath(new Id("tst01", "something", "!*'();:@&=+$,/?#[]0123456789-_.~abcABC")))//
-    // .andReturn().asString();
-    // XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-    // Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
-    // }
+    @Test
+    public void resolveIdIdTypeToLong() {
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "aaaaaaaaa1aaaaaaaaa2a", "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("c:code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
+
+    @Test
+    public void resolveIdIdTypeSizeOk() {
+        // length 2
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "aA", "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+
+        // length 20
+        xml = with().config(namespaceAwareXmlConfig())//
+                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "aaaaaaaaa1AAAAAAAAA2", "something")))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+    }
+
+    @Test
+    public void resolveIdIdTypeValidCharactersReserved() {
+        // TODO: vytvorit existujici id
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("Ab9:8cD"), "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+    }
+
+    @Test
+    public void resolveIdIdTypeValidCharactersUnreserved() {
+        // TODO: vytvorit existujici id a otestovat, ze se to chova stejne, at url encoded, nebo ne
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "aA9_-:", "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+    }
+
+    @Test
+    public void resolveIdIdTypeInvalidCharactersReserved() {
+        // only ":" allowed from reserved character set
+        // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
+        // resolveIdIdTypeInvalidCharactersReserved('/');
+        resolveIdIdTypeInvalidCharactersReserved('?');
+        resolveIdIdTypeInvalidCharactersReserved('#');
+        resolveIdIdTypeInvalidCharactersReserved('[');
+        resolveIdIdTypeInvalidCharactersReserved(']');
+        resolveIdIdTypeInvalidCharactersReserved('@');
+        resolveIdIdTypeInvalidCharactersReserved('!');
+        resolveIdIdTypeInvalidCharactersReserved('$');
+        resolveIdIdTypeInvalidCharactersReserved('&');
+        resolveIdIdTypeInvalidCharactersReserved('\'');
+        resolveIdIdTypeInvalidCharactersReserved('(');
+        resolveIdIdTypeInvalidCharactersReserved(')');
+        resolveIdIdTypeInvalidCharactersReserved('*');
+        resolveIdIdTypeInvalidCharactersReserved('+');
+        resolveIdIdTypeInvalidCharactersReserved(',');
+        resolveIdIdTypeInvalidCharactersReserved(';');
+        resolveIdIdTypeInvalidCharactersReserved('=');
+    }
+
+    private void resolveIdIdTypeInvalidCharactersReserved(char c) {
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .urlEncodingEnabled(false)//
+                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("" + c + c), "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("c:code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
+
+    @Test
+    public void resolveIdIdTypeInvalidCharactersUnreserved() {
+        // only ~ not allowed (from unreserved character set)
+
+        // not url-encoded
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .urlEncodingEnabled(false)//
+                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", "~~", "something")))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("c:code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+
+        // url-encoded
+        xml = with().config(namespaceAwareXmlConfig())//
+                .urlEncodingEnabled(false)//
+                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("~~"), "something")))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("c:code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
+
+    // TODO: test id value similarly as id type (reserved, unreserved characters, urlencoded or not)
 
     @Test
     public void resolveNoSuchDocument() {
