@@ -316,7 +316,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- identifier type -->
     <xs:simpleType name="registarScopeIdTypeType">
         <xs:restriction base="xs:token">
-            <xs:pattern value="[A-Za-z0-9_\-:]{1,20}"/>
+            <xs:pattern value="[A-Za-z0-9_\-:]{2,20}"/>
         </xs:restriction>
     </xs:simpleType>
     

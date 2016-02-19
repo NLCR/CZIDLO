@@ -13,6 +13,6 @@ import javax.ws.rs.core.Response.Status;
 public class InvalidDigDocIdType extends ApiV3Exception {
 
     public InvalidDigDocIdType(String stringValue, String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_ID_TYPE", "Incorrect syntax in '" + stringValue + "':" + errorMessage);
+        super(Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_ID_TYPE", "Incorrect value '" + stringValue + "': " + errorMessage);
     }
 }
