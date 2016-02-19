@@ -32,8 +32,8 @@ public class RegistrarTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/registrars/0123456789").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_REGISTRAR_CODE");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
@@ -44,8 +44,8 @@ public class RegistrarTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/registrars/xxx000").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "UNKNOWN_REGISTRAR");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test

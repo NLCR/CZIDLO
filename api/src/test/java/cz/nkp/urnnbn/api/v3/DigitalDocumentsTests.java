@@ -44,7 +44,7 @@ public class DigitalDocumentsTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:digitalDocuments", nsContext))//
                 .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext))//
                 .when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:digitalDocuments");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocuments");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }
 

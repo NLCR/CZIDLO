@@ -3,9 +3,7 @@ package cz.nkp.urnnbn.api.v3;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
-import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
@@ -47,8 +45,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_INVALID).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "INVALID_DIGITAL_INSTANCE_ID");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
     }
 
     @Test
@@ -59,8 +57,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_UNKNOWN).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "UNKNOWN_DIGITAL_INSTANCE");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
     }
 
     @Test
@@ -104,7 +102,7 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .statusCode(200).contentType(ContentType.XML)//
                 .body(matchesXsd(responseXsdString))//
                 .when().get("/digitalInstances/id/" + ID_DEACTIVATED).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:digitalInstance");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("c:response.c:digitalInstance");
         Assert.assertEquals(xmlPath.getBoolean("@active"), false);
     }
 
@@ -113,7 +111,7 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .statusCode(200).contentType(ContentType.XML)//
                 .body(matchesXsd(responseXsdString))//
                 .when().get("/digitalInstances/id/" + ID_ACTIVE).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:digitalInstance");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("c:response.c:digitalInstance");
         Assert.assertEquals(xmlPath.getBoolean("@active"), true);
     }
 
@@ -138,8 +136,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_ACTIVE_NO_RIGHTS)//
                 // .when().delete("/digitalInstances/id/" + ID_ACTIVE)//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "NOT_AUTHORIZED");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
     }
 
     @Test
@@ -153,8 +151,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_DEACTIVATED)
                 // .when().delete("/digitalInstances/id/" + ID_ACTIVE)
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.getString("c:code"), "ALREADY_DEACTIVATED");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ALREADY_DEACTIVATED");
     }
 
     @Test
@@ -167,14 +165,14 @@ public class DigitalInstanceTests extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:url", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:deactivated", nsContext))//
-                    // TODO: in api V4 should be <digitalLibrary id='12'> just like in GET. Now it is <digitalLibraryId>12</digitalLibraryId>
+                    // TODO:APIv4: should be <digitalLibrary id='12'> just like in GET. Now it is <digitalLibraryId>12</digitalLibraryId>
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibraryId", nsContext))//
                     .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_ACTIVE_RIGHTS)
                     // .when().delete("/digitalInstances/id/" + ID_ACTIVE)
                     .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:digitalInstance");
+            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalInstance");
             Assert.assertEquals((Integer) xmlPath.getInt("@id"), ID_ACTIVE_RIGHTS);
-            Assert.assertEquals(xmlPath.getBoolean("c:active"), false);
+            Assert.assertEquals(xmlPath.getBoolean("active"), false);
         } else {
             LOGGER.info("ignoring test deactivateDigitalInstance - no id of digital instance to be deactivated is available");
         }

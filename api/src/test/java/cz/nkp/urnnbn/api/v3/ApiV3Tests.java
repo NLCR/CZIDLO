@@ -1,21 +1,5 @@
 package cz.nkp.urnnbn.api.v3;
 
-//import static com.jayway.restassured.RestAssured.*;
-//import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
-//import static com.jayway.restassured.config.RestAssuredConfig.*;
-//import static com.jayway.restassured.config.XmlConfig.*;
-//import static org.hamcrest.Matchers.*;
-//import static com.jayway.restassured.path.xml.XmlPath.*;
-//import static com.jayway.restassured.path.xml.config.XmlPathConfig.*;
-//import static com.jayway.restassured.RestAssured.expect;
-//import static com.jayway.restassured.RestAssured.given;
-//import static com.jayway.restassured.RestAssured.with;
-//import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
-//import static com.jayway.restassured.config.XmlConfig.xmlConfig;
-//import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-//import static org.hamcrest.Matchers.equalTo;
-//import static org.hamcrest.Matchers.hasXPath;
-
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
 import static com.jayway.restassured.config.SSLConfig.sslConfig;
@@ -81,11 +65,11 @@ public abstract class ApiV3Tests {
 
     String getRandomRegistrarCode() {
         String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig());
-        int registrarsCount = xmlPath.getInt("c:response.c:registrars.c:registrar.size()");
+        XmlPath xmlPath = XmlPath.from(xml);
+        int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");
         int registrarPosition = rand.nextInt(registrarsCount);
         // registrar not prefixed because of this bug: https://github.com/jayway/rest-assured/issues/647
-        String registrarCode = xmlPath.getString("c:response.c:registrars.registrar[" + registrarPosition + "].@code");
+        String registrarCode = xmlPath.getString("response.registrars.registrar[" + registrarPosition + "].@code");
         // LOGGER.info(String.format("position: %d, code: %s", registrarPosition, registrarCode));
         return registrarCode;
     }

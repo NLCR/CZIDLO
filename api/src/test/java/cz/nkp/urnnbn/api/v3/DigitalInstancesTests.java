@@ -46,7 +46,7 @@ public class DigitalInstancesTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
                 .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
                 .when().get("/digitalInstances").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:digitalInstances");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalInstances");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }
 
