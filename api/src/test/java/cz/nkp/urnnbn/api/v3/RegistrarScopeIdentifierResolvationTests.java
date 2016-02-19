@@ -116,32 +116,44 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeValidCharactersReserved() {
-        // TODO: vytvorit existujici id
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+        String type = "Ab9:8cD";
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(404)//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("Ab9:8cD"), DEFAULT_ID_VALUE)))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters(type), DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_DOCUMENT");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
     }
 
     @Test
     public void resolveIdIdTypeValidCharactersUnreserved() {
-        // TODO: vytvorit existujici id a otestovat, ze se to chova stejne, at url encoded, nebo ne
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+        String type = "aA9_-";
+        // not url encoded
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(404)//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aA9_-:", DEFAULT_ID_VALUE)))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_DOCUMENT");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        String urn = xmlPath.getString("digitalDocument.urnNbn.value");
+        // url encoded
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedAndUnreserved(type), DEFAULT_ID_VALUE)))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        // urn:nbn same
+        Assert.assertEquals(xmlPath.getString("digitalDocument.urnNbn.value"), urn);
     }
 
     @Test
