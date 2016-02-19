@@ -39,6 +39,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     private final Id ID_NO_DD = new Id("tst02", "K4_pid", "uuid:123456789");
     private final Id ID_DD_DEACTIVATED = new Id("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");
 
+    private final String DEFAULT_ID_VALUE = "something";
+    private final String DEFAULT_REGISTRAR = "aba001";
+
     // select
     // registrar.code as registrar,
     // rsid.type as type,
@@ -62,7 +65,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "a", "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "a", DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -75,7 +78,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "aaaaaaaaa1aaaaaaaaa2a", "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -85,24 +88,26 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdTypeSizeOk() {
         // length 2
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "aA", "something")))//
+        String type = "aA";
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
 
         // length 20
-        xml = with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "aaaaaaaaa1AAAAAAAAA2", "something")))//
+        type = "aaaaaaaaa1AAAAAAAAA2";
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
-        xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
-        Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
     }
 
     @Test
@@ -112,7 +117,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("Ab9:8cD"), "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("Ab9:8cD"), DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
@@ -125,7 +130,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "aA9_-:", "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aA9_-:", DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         Assert.assertEquals(xmlPath.get("c:code"), "UNKNOWN_DIGITAL_DOCUMENT");
@@ -160,7 +165,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("" + c + c), "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("" + c + c), DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -177,7 +182,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", "~~", "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "~~", DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -189,7 +194,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id("tst01", Utils.urlEncodeReservedCharacters("~~"), "something")))//
+                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("~~"), DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).using(namespaceAwareXmlpathConfig()).setRoot("c:response.c:error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
