@@ -56,6 +56,16 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     private final Id ID_TYPE_RESERVED_CHARS = new Id(ID_TYPE_REGISTRAR, "Ab9:8cD", ID_TYPE_VALUE); // only ":" allowed from reserved
     private final Id ID_TYPE_UNRESERVED_CHARS = new Id(ID_TYPE_REGISTRAR, "aA9_-", ID_TYPE_VALUE);// 0-9, a-z, A-Z , "_", "-" allowed from unreserved
 
+    // testing id value
+    private final String ID_VALUE_REGISTRAR = "aba001";
+    private final String ID_VALUE_TYPE = "test";
+    private final Id ID_VALUE_LENGTH_1 = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "a");
+    private final Id ID_VALUE_LENGTH_60 = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6");
+    // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
+    // private final Id ID_VALUE_RESERVED = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "!*'();:@&=+$,/?#[]");
+    private final Id ID_VALUE_RESERVED_CHARS = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "!*'();:@&=+$,?#[]");
+    private final Id ID_VALUE_UNRESERVED_CHARS = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "-_.~");
+
     @BeforeSuite
     public void beforeSuite() {
         init();
@@ -231,7 +241,93 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
 
-    // TODO: test id value similarly as id type (reserved, unreserved characters, urlencoded or not)
+    @Test
+    public void resolveIdIdValueToLong() {
+        // APIv3 doesn't actually check this
+        // TODO:APIv4: check the values for length, allowed chars
+        // String xml = with().config(namespaceAwareXmlConfig()).expect()//
+        // .statusCode(400)//
+        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+        // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+        // .when().get(buildPath(new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa61")))//
+        // .andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // // TODO:APIv4: create new error type INVALID_ID_VALUE
+        // Assert.assertEquals(xmlPath.get("code"), "INVALID_ID_VALUE");
+    }
+
+    @Test
+    public void resolveIdIdValueSizeOk() {
+        // length 2
+        Id id = ID_VALUE_LENGTH_1;
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(id))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
+
+        // length 20
+        id = ID_VALUE_LENGTH_60;
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(id))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
+    }
+
+    @Test
+    public void resolveIdIdValueValidCharactersReserved() {
+        Id id = ID_VALUE_RESERVED_CHARS;
+        Id idWithReservedCharsEncoded = new Id(id.registrarCode, id.type, Utils.urlEncodeReservedCharacters(id.value));
+        System.err.println(buildPath(idWithReservedCharsEncoded));
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(idWithReservedCharsEncoded))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
+    }
+
+    @Test
+    public void resolveIdIdValueValidCharactersUnreserved() {
+        Id id = ID_VALUE_UNRESERVED_CHARS;
+        // not url encoded
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(id))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
+        String urn = xmlPath.getString("digitalDocument.urnNbn.value");
+        // url encoded
+        Id idWithReservedAndUnreservedUrlEncoded = new Id(id.registrarCode, id.type, Utils.urlEncodeReservedAndUnreserved(id.value));
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildPath(idWithReservedAndUnreservedUrlEncoded))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
+        // urn:nbn same
+        Assert.assertEquals(xmlPath.getString("digitalDocument.urnNbn.value"), urn);
+    }
 
     @Test
     public void resolveNoSuchDocument() {
