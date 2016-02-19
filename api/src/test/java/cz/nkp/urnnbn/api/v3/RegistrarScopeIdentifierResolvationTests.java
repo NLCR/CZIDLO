@@ -19,6 +19,15 @@ import cz.nkp.urnnbn.api.Utils;
 
 public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
+    // sql to get (registrar, id_type, id_value) triplets
+    // select
+    // registrar.code as registrar,
+    // rsid.type as type,
+    // rsid.idvalue as value
+    // from
+    // (select registrarid, type, idvalue from registrarscopeid) as rsid join
+    // (select id, code from registrar) as registrar on rsid.registrarid=registrar.id;
+
     static class Id {
         final String registrarCode;
         final String type;
@@ -39,16 +48,13 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     private final Id ID_NO_DD = new Id("tst02", "K4_pid", "uuid:123456789");
     private final Id ID_DD_DEACTIVATED = new Id("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");
 
-    private final String DEFAULT_ID_VALUE = "something";
-    private final String DEFAULT_REGISTRAR = "aba001";
-
-    // select
-    // registrar.code as registrar,
-    // rsid.type as type,
-    // rsid.idvalue as value
-    // from
-    // (select registrarid, type, idvalue from registrarscopeid) as rsid join
-    // (select id, code from registrar) as registrar on rsid.registrarid=registrar.id;
+    // testing id type
+    private final String ID_TYPE_REGISTRAR = "aba001";
+    private final String ID_TYPE_VALUE = "something";
+    private final Id ID_TYPE_LENGTH_2 = new Id(ID_TYPE_REGISTRAR, "aA", ID_TYPE_VALUE);
+    private final Id ID_TYPE_LENGTH_20 = new Id(ID_TYPE_REGISTRAR, "aaaaaaaaa1AAAAAAAAA2", ID_TYPE_VALUE);
+    private final Id ID_TYPE_RESERVED_CHARS = new Id(ID_TYPE_REGISTRAR, "Ab9:8cD", ID_TYPE_VALUE); // only ":" allowed from reserved
+    private final Id ID_TYPE_UNRESERVED_CHARS = new Id(ID_TYPE_REGISTRAR, "aA9_-", ID_TYPE_VALUE);// 0-9, a-z, A-Z , "_", "-" allowed from unreserved
 
     @BeforeSuite
     public void beforeSuite() {
@@ -66,7 +72,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "a", DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(new Id(ID_TYPE_REGISTRAR, "a", ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -80,7 +86,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(new Id(ID_TYPE_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -90,68 +96,70 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdTypeSizeOk() {
         // length 2
-        String type = "aA";
+        Id id = ID_TYPE_LENGTH_2;
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
 
         // length 20
-        type = "aaaaaaaaa1AAAAAAAAA2";
+        id = ID_TYPE_LENGTH_20;
         xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(id))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
     }
 
     @Test
     public void resolveIdIdTypeValidCharactersReserved() {
-        String type = "Ab9:8cD";
+        Id id = ID_TYPE_RESERVED_CHARS;
+        Id idWithReservedCharsEncoded = new Id(id.registrarCode, Utils.urlEncodeReservedCharacters(id.type), id.value);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters(type), DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(idWithReservedCharsEncoded))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
     }
 
     @Test
     public void resolveIdIdTypeValidCharactersUnreserved() {
-        String type = "aA9_-";
+        Id id = ID_TYPE_UNRESERVED_CHARS;
         // not url encoded
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         String urn = xmlPath.getString("digitalDocument.urnNbn.value");
         // url encoded
+        Id idWithReservedAndUnreservedUrlEncoded = new Id(id.registrarCode, Utils.urlEncodeReservedAndUnreserved(id.type), id.value);
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedAndUnreserved(type), DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(idWithReservedAndUnreservedUrlEncoded))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + type + "\' }"), DEFAULT_ID_VALUE);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         // urn:nbn same
         Assert.assertEquals(xmlPath.getString("digitalDocument.urnNbn.value"), urn);
     }
@@ -186,7 +194,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("" + c + c), DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(new Id(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedCharacters("" + c + c), ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -203,7 +211,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "~~", DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(new Id(ID_TYPE_REGISTRAR, "~~", ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -216,7 +224,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("~~"), DEFAULT_ID_VALUE)))//
+                .when().get(buildPath(new Id(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedCharacters("~~"), ID_TYPE_VALUE)))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
