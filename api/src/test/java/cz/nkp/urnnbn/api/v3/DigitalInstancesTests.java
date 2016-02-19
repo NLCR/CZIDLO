@@ -30,20 +30,15 @@ public class DigitalInstancesTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalInstancesContentType() {
-        expect().contentType(ContentType.XML).when().get("/digitalInstances");
-    }
-
-    @Test
-    public void getDigitalInstancesValidByXsd() {
-        expect().body(matchesXsd(responseXsdString)).when().get("/digitalInstances");
+    public void getDigitalInstancesResponseValidXml() {
+        expect().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get("/digitalInstances");
     }
 
     @Test
     public void getDigitalInstancesData() {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .body(hasXPath("/c:response", nsContext))//
-                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
                 .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
                 .when().get("/digitalInstances").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalInstances");

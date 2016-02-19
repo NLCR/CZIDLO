@@ -29,19 +29,15 @@ public class DigitalDocumentsTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalDocumentsContentType() {
-        expect().contentType(ContentType.XML).when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments");
-    }
-
-    @Test
-    public void getDigitalDocumentsValidByXsd() {
-        expect().body(matchesXsd(responseXsdString)).when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments");
+    public void getDigitalDocumentsResponseValidXml() {
+        expect().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments");
     }
 
     @Test
     public void getDigitalInstancesData() {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .body(hasXPath("/c:response/c:digitalDocuments", nsContext))//
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
                 .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext))//
                 .when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocuments");

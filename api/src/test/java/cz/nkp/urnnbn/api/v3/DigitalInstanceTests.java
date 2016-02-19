@@ -40,8 +40,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
     @Test
     public void getUnknownDigitalInstance() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(400).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_INVALID).andReturn().asString();
@@ -52,8 +52,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
     @Test
     public void getDigitalInstanceByUnknownId() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(404).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_UNKNOWN).andReturn().asString();
@@ -67,18 +67,16 @@ public class DigitalInstanceTests extends ApiV3Tests {
     }
 
     @Test
-    public void getExistingDigitalInstanceContentType() {
-        expect().contentType(ContentType.XML).when().get("/digitalInstances/id/" + ID_ACTIVE);
-    }
-
-    @Test
-    public void getDigitalInstanceValidByXsd() {
-        expect().body(matchesXsd(responseXsdString)).when().get("/digitalInstances/id/" + ID_ACTIVE);
+    public void getExistingDigitalInstanceValidXml() {
+        expect().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get("/digitalInstances/id/" + ID_ACTIVE);
     }
 
     @Test
     public void getDigitalInstancesData() {
-        with().config(namespaceAwareXmlConfig()).when().get("/digitalInstances/id/" + ID_ACTIVE).then()//
+        with().config(namespaceAwareXmlConfig())//
+                .when().get("/digitalInstances/id/" + ID_ACTIVE).then()//
+                .assertThat().body(matchesXsd(responseXsdString))//
                 .assertThat().body(hasXPath("/c:response", nsContext))//
                 .assertThat().body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                 .assertThat().body(hasXPath("/c:response/c:digitalInstance/@id", nsContext))//
@@ -99,8 +97,9 @@ public class DigitalInstanceTests extends ApiV3Tests {
     @Test
     public void getDigitalInstanceDeactivatedActivity() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_DEACTIVATED).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("c:response.c:digitalInstance");
         Assert.assertEquals(xmlPath.getBoolean("@active"), false);
@@ -108,8 +107,9 @@ public class DigitalInstanceTests extends ApiV3Tests {
 
     public void getDigitalInstanceActiveActivity() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                 .when().get("/digitalInstances/id/" + ID_ACTIVE).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("c:response.c:digitalInstance");
         Assert.assertEquals(xmlPath.getBoolean("@active"), true);
@@ -118,8 +118,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
     @Test
     public void deactivateDigitalInstanceNotAuthenticated() {
         // TODO: check this out, seems to be the only error when response is not xml with error code
-        with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(401)//
+        with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(401)//
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_ACTIVE_NO_RIGHTS)//
         // .when().delete("/digitalInstances/id/" + ID_ACTIVE)//
         ;
@@ -129,8 +129,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
     public void deactivateDigitalInstanceNotAuthorized() {
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
                 .expect()//
-                .statusCode(401).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_ACTIVE_NO_RIGHTS)//
@@ -144,8 +144,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
     public void deactivateDigitalInstanceAlreadyDeactivated() {
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
                 .expect()//
-                .statusCode(403).contentType(ContentType.XML)//
-                .body(matchesXsd(responseXsdString))//
+                .statusCode(403)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_DEACTIVATED)
@@ -160,8 +160,8 @@ public class DigitalInstanceTests extends ApiV3Tests {
         if (ID_ACTIVE_RIGHTS != null) {
             String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
                     .expect()//
-                    .statusCode(200).contentType(ContentType.XML)//
-                    .body(matchesXsd(responseXsdString))//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:url", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:deactivated", nsContext))//

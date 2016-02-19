@@ -61,8 +61,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeToShort() {
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "a", DEFAULT_ID_VALUE)))//
@@ -74,8 +75,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeToLong() {
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", DEFAULT_ID_VALUE)))//
@@ -91,7 +93,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         String type = "aA";
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
@@ -102,7 +105,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         type = "aaaaaaaaa1AAAAAAAAA2";
         xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, type, DEFAULT_ID_VALUE)))//
                 .andReturn().asString();
@@ -114,7 +118,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveIdIdTypeValidCharactersReserved() {
         // TODO: vytvorit existujici id
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
-                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("Ab9:8cD"), DEFAULT_ID_VALUE)))//
@@ -127,7 +133,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveIdIdTypeValidCharactersUnreserved() {
         // TODO: vytvorit existujici id a otestovat, ze se to chova stejne, at url encoded, nebo ne
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
-                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "aA9_-:", DEFAULT_ID_VALUE)))//
@@ -160,9 +168,10 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     }
 
     private void resolveIdIdTypeInvalidCharactersReserved(char c) {
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .urlEncodingEnabled(false)//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("" + c + c), DEFAULT_ID_VALUE)))//
@@ -177,9 +186,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         // only ~ not allowed (from unreserved character set)
 
         // not url-encoded
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .urlEncodingEnabled(false)//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect()//
+                .statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, "~~", DEFAULT_ID_VALUE)))//
@@ -189,9 +198,10 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
 
         // url-encoded
-        xml = with().config(namespaceAwareXmlConfig())//
-                .urlEncodingEnabled(false)//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(new Id(DEFAULT_REGISTRAR, Utils.urlEncodeReservedCharacters("~~"), DEFAULT_ID_VALUE)))//
@@ -206,7 +216,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveNoSuchDocument() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
-                .expect().statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_NO_DD))//
@@ -218,7 +230,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveDocumentDeactivatedAndActionRedirect() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
-                .expect().statusCode(403).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(403)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_DD_DEACTIVATED))//
@@ -230,7 +244,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveActionEmpty() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -242,7 +258,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveActionInvalid() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "nonsense")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -253,7 +271,6 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveActionShow() {
-        //
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
                 .expect().statusCode(200).contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
@@ -263,7 +280,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveActionShowFormatInvalid() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "nonsense")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -275,7 +294,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveActionShowFormatEmpty() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -287,7 +308,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveActionShowFormatHtml() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "html")//
-                .expect().statusCode(200).contentType(ContentType.HTML)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
                 .when().get(buildPath(ID_WITHOUT_DI));
     }
@@ -296,7 +319,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionShowFormatXml() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
                 .when().get(buildPath(ID_WITHOUT_DI)).andReturn().asString();
         // xml path handles namespaces incorrectly, but it does work without prefixes (which is incorrect)
@@ -309,7 +333,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionShowFormatXmlWithDigitalInstances() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "true")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext))// checking for correct type of response and namespace
                 .when().get(buildPath(ID_WITHOUT_DI)).andReturn().asString();
     }
@@ -319,7 +344,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "false")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
                 .body(not(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext)))//
                 .when().get(buildPath(ID_WITHOUT_DI)).andReturn().asString();
@@ -329,7 +355,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionShowFormatXmlWithDigitalInstancesEmpty() {
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -342,7 +370,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionShowFormatXmlWithDigitalInstancesInvalid() {
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "nope")//
-                .expect().statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get(buildPath(ID_WITHOUT_DI))//
@@ -355,7 +385,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionRedirectWithoutDi() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
-                .statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
                 .when().get(buildPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
@@ -367,7 +398,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionRedirectWithActiveDi() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.HTML)//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
                 .when().get(buildPath(ID_WITH_ACTIVE_DI));
     }
@@ -376,7 +408,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionRedirectWithDeactivatedDi() {
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
-                .statusCode(404).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
                 .when().get(buildPath(ID_WITH_DEACTIVATED_DI))//
                 .andReturn().asString();
@@ -388,7 +421,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionDecideWithoutDi() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.HTML)//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
                 .when().get(buildPath(ID_WITHOUT_DI));
     }
@@ -397,7 +431,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionDecideWithActiveDi() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.HTML)//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
                 .when().get(buildPath(ID_WITH_ACTIVE_DI));
     }
@@ -406,7 +441,8 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     public void resolveActionDecideWithDeactivatedDi() {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
-                .statusCode(200).contentType(ContentType.HTML)//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
                 .when().get(buildPath(ID_WITH_DEACTIVATED_DI));
     }

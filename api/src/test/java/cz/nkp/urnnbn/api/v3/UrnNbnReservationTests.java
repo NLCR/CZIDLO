@@ -41,8 +41,10 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void getReservationsContentType() {
-        expect().contentType(ContentType.XML).when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
+    public void getReservationsResponseValidXml() {
+        expect()//
+        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
     }
 
     @Test
@@ -62,7 +64,9 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void getReservationsInvalidRegistrar() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .contentType(ContentType.XML).statusCode(400).body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get("/registrars/" + REGISTRAR_CODE_INVALID + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -72,7 +76,9 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void getReservationsUnknownRegistrar() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .contentType(ContentType.XML).statusCode(404).body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().get("/registrars/" + REGISTRAR_CODE_UNKNOWN + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -83,7 +89,8 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     public void postReservations() {
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
                 .expect()//
-                .contentType(ContentType.XML).statusCode(201)//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
@@ -99,7 +106,8 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         int size = 3;
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
-                .contentType(ContentType.XML).statusCode(201)//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
@@ -115,7 +123,10 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         int size = -1;
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
-                .contentType(ContentType.XML).statusCode(400)//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -126,7 +137,10 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         String size = "blabla";
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
-                .contentType(ContentType.XML).statusCode(400)//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -137,7 +151,10 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         String size = "";
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
                 .expect()//
-                .contentType(ContentType.XML).statusCode(400)//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -146,8 +163,8 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservationsNotAuthenticated() {
         // TODO: check this out, seems to be the only error when response is not xml with error code
-        with().config(namespaceAwareXmlConfig())//
-                .expect().statusCode(401)//
+        with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(401)//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
     }
 
@@ -155,7 +172,8 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     public void postReservationsNotAuthorized() {
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
                 .expect()//
-                .statusCode(401).contentType(ContentType.XML)//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
