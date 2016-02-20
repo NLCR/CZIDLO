@@ -10,6 +10,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.xml.namespace.NamespaceContext;
@@ -23,6 +25,7 @@ import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public abstract class ApiV3Tests {
 
@@ -131,6 +134,27 @@ public abstract class ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         assertThat(xmlPath.getString("id"), equalTo(newValue));
         assertThat(xmlPath.getString("id.@type"), equalTo(type));
+    }
+
+    List<RsId> getRsIds(String urnNbn) {
+        String url = buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers";
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(url)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
+        int size = xmlPath.getInt("id.size()");
+        List<RsId> result = new ArrayList<>(size);
+        String registrarCode = UrnNbn.valueOf(urnNbn).getRegistrarCode().toString();
+        for (int i = 0; i < size; i++) {
+            String type = xmlPath.getString("id[0].@type");
+            String value = xmlPath.getString("id[0]");
+            result.add(new RsId(registrarCode, type, value));
+        }
+        return result;
     }
 
 }
