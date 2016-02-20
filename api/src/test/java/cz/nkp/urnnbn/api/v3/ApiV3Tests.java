@@ -74,4 +74,24 @@ public abstract class ApiV3Tests {
         return registrarCode;
     }
 
+    static class RsId {
+        final String registrarCode;
+        final String type;
+        final String value;
+
+        public RsId(String registrarCode, String type, String value) {
+            this.registrarCode = registrarCode;
+            this.type = type;
+            this.value = value;
+        }
+    }
+
+    String buildResolvationPathByRegistrarScopeId(RsId id) {
+        return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
+    }
+
+    String buildResolvationPathByUrnNbn(String urnNbnString) {
+        return "/resolver/" + urnNbnString;
+    }
+
 }
