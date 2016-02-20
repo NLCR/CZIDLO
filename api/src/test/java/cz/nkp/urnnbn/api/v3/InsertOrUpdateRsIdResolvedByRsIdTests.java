@@ -243,7 +243,7 @@ public class InsertOrUpdateRsIdResolvedByRsIdTests extends ApiV3Tests {
         // cleanup
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
-    
-    //TODO: test values of idType in url and idValue in body for both operation versions
+
+    // TODO: test values of idType in url and idValue in body for both operation versions
 
 }

@@ -15,9 +15,9 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-public class RegistrarTests extends ApiV3Tests {
+public class GetRegistrarTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(RegistrarTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetRegistrarTests.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
@@ -25,7 +25,20 @@ public class RegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getInvalidRegistrar() {
+    public void getRegistrarOkStatusCode() {
+        getRandomRegistrarCode();
+        expect().statusCode(200).when().get("/registrars/" + getRandomRegistrarCode());
+    }
+
+    @Test
+    public void getRegistrarOkResponseValidXml() {
+        expect()//
+        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get("/registrars/" + getRandomRegistrarCode());
+    }
+
+    @Test
+    public void getRegistrarInvalidCode() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -37,7 +50,7 @@ public class RegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getUnknownRegistrar() {
+    public void getRegistrarUnknown() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -46,19 +59,6 @@ public class RegistrarTests extends ApiV3Tests {
                 .when().get("/registrars/xxx000").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-    }
-
-    @Test
-    public void getRegistrarStatusCode() {
-        getRandomRegistrarCode();
-        expect().statusCode(200).when().get("/registrars/" + getRandomRegistrarCode());
-    }
-
-    @Test
-    public void getRegistrarResponseValidXml() {
-        expect()//
-        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .when().get("/registrars/" + getRandomRegistrarCode());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class RegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarData() {
+    public void getRegistrarCheckData() {
         String code = getRandomRegistrarCode();
         with().config(namespaceAwareXmlConfig()).when().get("/registrars/" + code).then()//
                 .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

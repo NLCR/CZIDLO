@@ -1,10 +1,8 @@
 package cz.nkp.urnnbn.api.v3;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
 
@@ -19,14 +17,12 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
-public class UrnNbnReservationTests extends ApiV3Tests {
+public class PostUrnNbnReservationTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(UrnNbnReservationTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationTests.class.getName());
 
     private static final Credentials USER = new Credentials("martin", "i0oEhu");
     private static final String REGISTRAR_CODE_OK = "tst01";
-    private static final String REGISTRAR_CODE_UNKNOWN = "xxx999";
-    private static final String REGISTRAR_CODE_INVALID = "xxx_999";
     private static final String REGISTRAR_CODE_NO_ACCESS_RIGHTS = "anl001";
 
     @BeforeSuite
@@ -35,57 +31,8 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void getReservationsStatusCode() {
-        expect().statusCode(200).when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
-    }
-
-    @Test
-    public void getReservationsResponseValidXml() {
-        expect()//
-        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
-    }
-
-    @Test
-    public void getReservationsData() {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
-                .when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservations");
-        assertThat(xmlPath.getInt("maxReservationSize"), greaterThanOrEqualTo(0));
-        assertThat(xmlPath.getInt("defaultReservationSize"), greaterThanOrEqualTo(0));
-        assertThat(xmlPath.getInt("reserved.@totalSize"), greaterThanOrEqualTo(0));
-    }
-
-    @Test
-    public void getReservationsInvalidRegistrar() {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get("/registrars/" + REGISTRAR_CODE_INVALID + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-    }
-
-    @Test
-    public void getReservationsUnknownRegistrar() {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(404)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get("/registrars/" + REGISTRAR_CODE_UNKNOWN + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-    }
-
-    @Test
     public void postReservations() {
+        getUrnNbnReservations(REGISTRAR_CODE_OK);
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(201)//
@@ -93,9 +40,9 @@ public class UrnNbnReservationTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
-        int responseSize = xmlPath.getInt("urnNbn.size()");
-        assertThat(responseSize, greaterThan(0));
-        for (int i = 0; i < responseSize; i++) {
+        int urnCount = xmlPath.getInt("urnNbn.size()");
+        assertThat(urnCount, greaterThan(0));
+        for (int i = 0; i < urnCount; i++) {
             UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
         }
     }

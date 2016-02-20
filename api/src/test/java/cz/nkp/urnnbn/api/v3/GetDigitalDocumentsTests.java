@@ -15,8 +15,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-public class DigitalDocumentsTests extends ApiV3Tests {
-    private static final Logger LOGGER = Logger.getLogger(DigitalDocumentsTests.class.getName());
+public class GetDigitalDocumentsTests extends ApiV3Tests {
+    private static final Logger LOGGER = Logger.getLogger(GetDigitalDocumentsTests.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
@@ -35,7 +35,7 @@ public class DigitalDocumentsTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalInstancesData() {
+    public void getDigitalDocumentsDigitalInstancesData() {
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext))//

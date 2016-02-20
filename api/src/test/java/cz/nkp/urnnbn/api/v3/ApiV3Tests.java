@@ -51,6 +51,20 @@ public abstract class ApiV3Tests {
         }
     }
 
+    static class UrnNbnReservations {
+        final int maxReservationSize;
+        final int defaultReservationSize;
+        final int totalReserved;
+        final List<String> reservedOffered;
+
+        public UrnNbnReservations(int maxReservationSize, int defaultReservationSize, int totalReserved, List<String> reservedOffered) {
+            this.maxReservationSize = maxReservationSize;
+            this.defaultReservationSize = defaultReservationSize;
+            this.totalReserved = totalReserved;
+            this.reservedOffered = reservedOffered;
+        }
+    }
+
     private static final String LANG_CODE = "cz";
     private static final String BASE_URI = "http://localhost";
     private static final int PORT = 8080;
@@ -157,4 +171,22 @@ public abstract class ApiV3Tests {
         return result;
     }
 
+    UrnNbnReservations getUrnNbnReservations(String registrarCode) {
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
+                .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
+                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
+                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
+                .when().get("/registrars/" + registrarCode + "/urnNbnReservations").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservations");
+        int maxReservationSize = xmlPath.getInt("maxReservationSize");
+        int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
+        int reservedTotalSize = xmlPath.getInt("reserved.@totalSize");
+        int reservedOfferedSize = xmlPath.getInt("reserved.urnNbn.size()");
+        List<String> reservedOffered = new ArrayList<>(reservedOfferedSize);
+        for (int i = 0; i < reservedOfferedSize; i++) {
+            reservedOffered.add(xmlPath.getString(String.format("reserved.urnNbn[%d]", i)));
+        }
+        return new UrnNbnReservations(maxReservationSize, defaultReservationSize, reservedTotalSize, reservedOffered);
+    }
 }
