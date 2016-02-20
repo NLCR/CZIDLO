@@ -26,6 +26,28 @@ import cz.nkp.urnnbn.core.CountryCode;
 
 public abstract class ApiV3Tests {
 
+    static class RsId {
+        final String registrarCode;
+        final String type;
+        final String value;
+
+        public RsId(String registrarCode, String type, String value) {
+            this.registrarCode = registrarCode;
+            this.type = type;
+            this.value = value;
+        }
+    }
+
+    static class Credentials {
+        final String login;
+        final String password;
+
+        public Credentials(String login, String password) {
+            this.login = login;
+            this.password = password;
+        }
+    }
+
     private static final String LANG_CODE = "cz";
     private static final String BASE_URI = "http://localhost";
     private static final int PORT = 8080;
@@ -79,18 +101,6 @@ public abstract class ApiV3Tests {
         return registrarCode;
     }
 
-    static class RsId {
-        final String registrarCode;
-        final String type;
-        final String value;
-
-        public RsId(String registrarCode, String type, String value) {
-            this.registrarCode = registrarCode;
-            this.type = type;
-            this.value = value;
-        }
-    }
-
     String buildResolvationPath(RsId id) {
         return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
     }
@@ -99,9 +109,9 @@ public abstract class ApiV3Tests {
         return "/resolver/" + urnNbnString;
     }
 
-    void deleteAllRegistrarScopeIdentifiers(String urnNbn, String login, String password) {
+    void deleteAllRegistrarScopeIdentifiers(String urnNbn, Credentials credentials) {
         String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers";
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(login, password) //
+        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(credentials.login, credentials.password) //
                 .expect() //
                 .statusCode(200) //
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
@@ -109,9 +119,9 @@ public abstract class ApiV3Tests {
                 .when().delete(url);
     }
 
-    void insertRegistrarScopeId(String urnNbn, String type, String newValue, String login, String password) {
+    void insertRegistrarScopeId(String urnNbn, String type, String newValue, Credentials credentials) {
         String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers/" + type;
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(login, password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(credentials.login, credentials.password)//
                 .body(newValue).expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

@@ -23,8 +23,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(UrnNbnReservationTests.class.getName());
 
-    private static final String TEST_USER_LOGIN = "martin";
-    private static final String TEST_USER_PASSWORD = "i0oEhu";
+    private static final Credentials USER = new Credentials("martin", "i0oEhu");
     private static final String REGISTRAR_CODE_OK = "tst01";
     private static final String REGISTRAR_CODE_UNKNOWN = "xxx999";
     private static final String REGISTRAR_CODE_INVALID = "xxx_999";
@@ -87,7 +86,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
 
     @Test
     public void postReservations() {
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -104,7 +103,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservationsWithSize() {
         int size = 3;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -121,7 +120,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservationsSizeNegative() {
         int size = -1;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -135,7 +134,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservationsSizeNan() {
         String size = "blabla";
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -149,7 +148,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void postReservationsSizeEmpty() {
         String size = "";
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD).queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -166,11 +165,12 @@ public class UrnNbnReservationTests extends ApiV3Tests {
         with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(401)//
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
+        // TODO: check that no change happened
     }
 
     @Test
     public void postReservationsNotAuthorized() {
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -180,6 +180,7 @@ public class UrnNbnReservationTests extends ApiV3Tests {
                 .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_NO_ACCESS_RIGHTS + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
+        // TODO: check that no change happened
     }
 
 }

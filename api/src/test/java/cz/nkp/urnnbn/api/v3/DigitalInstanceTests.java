@@ -17,8 +17,7 @@ import com.jayway.restassured.path.xml.XmlPath;
 public class DigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DigitalInstanceTests.class.getName());
-    private static final String TEST_USER_LOGIN = "martin";
-    private static final String TEST_USER_PASSWORD = "i0oEhu";
+    private static final Credentials USER = new Credentials("martin", "i0oEhu");
     private static final String ID_INVALID = "abc";
     private static final int ID_UNKNOWN = 9999999;// make sure it exists and is not assigned
     private static final int ID_ACTIVE = 27703;// make sure it exists and is active
@@ -122,12 +121,13 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .statusCode(401)//
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + ID_ACTIVE_NO_RIGHTS)//
         // .when().delete("/digitalInstances/id/" + ID_ACTIVE)//
+        // TODO: check that no change happened
         ;
     }
 
     @Test
     public void deactivateDigitalInstanceNotAuthorized() {
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -138,11 +138,12 @@ public class DigitalInstanceTests extends ApiV3Tests {
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
+        // TODO: check that no change happened
     }
 
     @Test
     public void deactivateDigitalInstanceAlreadyDeactivated() {
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -158,7 +159,7 @@ public class DigitalInstanceTests extends ApiV3Tests {
     @Test
     public void deactivateDigitalInstance() {
         if (ID_ACTIVE_RIGHTS != null) {
-            String xml = with().config(namespaceAwareXmlConfig()).auth().basic(TEST_USER_LOGIN, TEST_USER_PASSWORD)//
+            String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

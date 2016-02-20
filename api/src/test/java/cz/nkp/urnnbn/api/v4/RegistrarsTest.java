@@ -1,57 +1,24 @@
 package cz.nkp.urnnbn.api.v4;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.with;
-import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
-import static com.jayway.restassured.config.XmlConfig.xmlConfig;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasXPath;
-import groovy.time.BaseDuration.From;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Iterator;
-
-import javax.xml.namespace.NamespaceContext;
-
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import com.jayway.restassured.RestAssured;
-
 //import static com.jayway.restassured.RestAssured.*;
 //import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
 //import static com.jayway.restassured.config.RestAssuredConfig.*;
 //import static com.jayway.restassured.config.XmlConfig.*;
 //import static org.hamcrest.Matchers.*;
 //import static com.jayway.restassured.path.xml.XmlPath.*;
-import static com.jayway.restassured.RestAssured.*;
-import static com.jayway.restassured.matcher.RestAssuredMatchers.*;
-import static com.jayway.restassured.config.RestAssuredConfig.*;
-import static com.jayway.restassured.config.XmlConfig.*;
-import static org.hamcrest.Matchers.*;
-import static com.jayway.restassured.path.xml.XmlPath.*;
+import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.with;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.Matchers.equalTo;
 
+import javax.xml.namespace.NamespaceContext;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
+import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.xml.XmlPath;
-import com.jayway.restassured.path.xml.config.XmlPathConfig;
-import com.jayway.restassured.response.ResponseBodyExtractionOptions;
-import com.jayway.restassured.response.ValidatableResponse;
 
 import cz.nkp.urnnbn.api.Utils;
 
