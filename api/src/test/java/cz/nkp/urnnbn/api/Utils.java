@@ -69,7 +69,7 @@ public class Utils {
      * @param original
      * @return
      */
-    public static String urlEncodeReservedCharacters(String original) {
+    public static String urlEncodeReservedChars(String original) {
         Map<Character, String> translations = new HashMap<>();
         translations.put('!', "%21");
         translations.put('#', "%23");
@@ -109,7 +109,7 @@ public class Utils {
      * @param original
      * @return
      */
-    public static String urlEncodeReservedAndUnreserved(String original) {
+    public static String urlEncodeAll(String original) {
         Map<Character, String> translations = new HashMap<>();
         // reserved
         translations.put('!', "%21");

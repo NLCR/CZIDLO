@@ -4,7 +4,11 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.config.RestAssuredConfig.newConfig;
 import static com.jayway.restassured.config.SSLConfig.sslConfig;
 import static com.jayway.restassured.config.XmlConfig.xmlConfig;
+import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static com.jayway.restassured.path.xml.config.XmlPathConfig.xmlPathConfig;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasXPath;
+import static org.junit.Assert.assertThat;
 
 import java.util.Random;
 
@@ -13,6 +17,7 @@ import javax.xml.namespace.NamespaceContext;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.RedirectConfig;
 import com.jayway.restassured.config.RestAssuredConfig;
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
@@ -86,12 +91,36 @@ public abstract class ApiV3Tests {
         }
     }
 
-    String buildResolvationPathByRegistrarScopeId(RsId id) {
+    String buildResolvationPath(RsId id) {
         return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
     }
 
-    String buildResolvationPathByUrnNbn(String urnNbnString) {
+    String buildResolvationPath(String urnNbnString) {
         return "/resolver/" + urnNbnString;
+    }
+
+    void deleteAllRegistrarScopeIdentifiers(String urnNbn, String login, String password) {
+        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers";
+        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(login, password) //
+                .expect() //
+                .statusCode(200) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext)) //
+                .when().delete(url);
+    }
+
+    void insertRegistrarScopeId(String urnNbn, String type, String newValue, String login, String password) {
+        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers/" + type;
+        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(login, password)//
+                .body(newValue).expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().put(url)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        assertThat(xmlPath.getString("id"), equalTo(newValue));
+        assertThat(xmlPath.getString("id.@type"), equalTo(type));
     }
 
 }

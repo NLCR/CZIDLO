@@ -83,7 +83,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(new RsId(ID_TYPE_REGISTRAR, "a", ID_TYPE_VALUE)))//
+                .when().get(buildResolvationPath(new RsId(ID_TYPE_REGISTRAR, "a", ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -97,7 +97,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(new RsId(ID_TYPE_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", ID_TYPE_VALUE)))//
+                .when().get(buildResolvationPath(new RsId(ID_TYPE_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", ID_TYPE_VALUE)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -113,7 +113,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -125,7 +125,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -134,13 +134,13 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdTypeValidCharactersReserved() {
         RsId id = ID_TYPE_RESERVED_CHARS;
-        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, Utils.urlEncodeReservedCharacters(id.type), id.value);
+        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, Utils.urlEncodeReservedChars(id.type), id.value);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(idWithReservedCharsEncoded))//
+                .when().get(buildResolvationPath(idWithReservedCharsEncoded))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -155,19 +155,19 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         String urn = xmlPath.getString("digitalDocument.urnNbn.value");
         // url encoded
-        RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, Utils.urlEncodeReservedAndUnreserved(id.type), id.value);
+        RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, Utils.urlEncodeAll(id.type), id.value);
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(idWithReservedAndUnreservedUrlEncoded))//
+                .when().get(buildResolvationPath(idWithReservedAndUnreservedUrlEncoded))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -199,20 +199,14 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     }
 
     private void resolveIdIdTypeInvalidCharactersReserved(char c) {
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)
-                //
-                .expect()
-                //
-                .statusCode(400)
-                //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))
-                //
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))
-                //
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))
-                //
-                .when()
-                .get(buildResolvationPathByRegistrarScopeId(new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedCharacters("" + c + c), ID_TYPE_VALUE)))//
+        RsId id = new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedChars("" + c + c), ID_TYPE_VALUE);
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false) //
+                .expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
+                .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -221,35 +215,30 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeInvalidCharactersUnreserved() {
-        // only ~ not allowed (from unreserved character set)
+        // only "~" not allowed (from unreserved character set)
 
         // not url-encoded
+        RsId id = new RsId(ID_TYPE_REGISTRAR, "~~", ID_TYPE_VALUE);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
                 .expect()//
                 .statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(new RsId(ID_TYPE_REGISTRAR, "~~", ID_TYPE_VALUE)))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
 
         // url-encoded
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)
-                //
-                .expect()
-                //
-                .statusCode(400)
-                //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))
-                //
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))
-                //
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))
-                //
-                .when()
-                .get(buildResolvationPathByRegistrarScopeId(new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedCharacters("~~"), ID_TYPE_VALUE)))//
+        id = new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedChars("~~"), ID_TYPE_VALUE);
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false) //
+                .expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
+                .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -281,7 +270,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -293,7 +282,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -302,13 +291,13 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdValueValidCharactersReserved() {
         RsId id = ID_VALUE_RESERVED_CHARS;
-        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeReservedCharacters(id.value));
+        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeReservedChars(id.value));
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(idWithReservedCharsEncoded))//
+                .when().get(buildResolvationPath(idWithReservedCharsEncoded))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -323,19 +312,19 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         String urn = xmlPath.getString("digitalDocument.urnNbn.value");
         // url encoded
-        RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeReservedAndUnreserved(id.value));
+        RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeAll(id.value));
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(idWithReservedAndUnreservedUrlEncoded))//
+                .when().get(buildResolvationPath(idWithReservedAndUnreservedUrlEncoded))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
@@ -351,7 +340,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_NO_DD))//
+                .when().get(buildResolvationPath(ID_NO_DD))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_DOCUMENT");
@@ -365,7 +354,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_DD_DEACTIVATED))//
+                .when().get(buildResolvationPath(ID_DD_DEACTIVATED))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
@@ -379,7 +368,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -393,7 +382,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -404,7 +393,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
                 .expect().statusCode(200).contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI));
+                .when().get(buildResolvationPath(ID_WITHOUT_DI));
     }
 
     @Test
@@ -415,7 +404,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -429,7 +418,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -442,7 +431,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI));
+                .when().get(buildResolvationPath(ID_WITHOUT_DI));
     }
 
     @Test
@@ -452,7 +441,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI)).andReturn().asString();
+                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
         // xml path handles namespaces incorrectly, but it does work without prefixes (which is incorrect)
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         String xmlPathExp = "registrarScopeIdentifiers.id.find { it.@type == '" + ID_WITHOUT_DI.type + "' }";
@@ -466,7 +455,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI)).andReturn().asString();
+                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
     }
 
     @Test
@@ -478,7 +467,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
                 .body(not(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext)))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI)).andReturn().asString();
+                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
     }
 
     @Test
@@ -490,7 +479,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -505,7 +494,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
@@ -518,7 +507,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
@@ -531,7 +520,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITH_ACTIVE_DI));
+                .when().get(buildResolvationPath(ID_WITH_ACTIVE_DI));
     }
 
     @Test
@@ -541,7 +530,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITH_DEACTIVATED_DI))//
+                .when().get(buildResolvationPath(ID_WITH_DEACTIVATED_DI))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
@@ -554,7 +543,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITHOUT_DI));
+                .when().get(buildResolvationPath(ID_WITHOUT_DI));
     }
 
     @Test
@@ -564,7 +553,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITH_ACTIVE_DI));
+                .when().get(buildResolvationPath(ID_WITH_ACTIVE_DI));
     }
 
     @Test
@@ -574,7 +563,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPathByRegistrarScopeId(ID_WITH_DEACTIVATED_DI));
+                .when().get(buildResolvationPath(ID_WITH_DEACTIVATED_DI));
     }
 
     @Test
@@ -585,7 +574,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers/c:id", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id) + "/registrarScopeIdentifiers")//
+                .when().get(buildResolvationPath(id) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
@@ -596,8 +585,6 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void deleteRegistrarScopeIdentifiersNotAuthenticated() {
         RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-        // delete all identifiers by registrarScopeId
-        String rsIdBasedRootPath = buildResolvationPathByRegistrarScopeId(id1);
         // String xml =
         with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
                 .expect()//
@@ -605,7 +592,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().delete(HTTPS_API_URL + rsIdBasedRootPath + "/registrarScopeIdentifiers")//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
@@ -614,118 +601,58 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void deleteRegistrarScopeIdentifiersNotAuthorized() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-        // delete all identifiers by urn:nbn
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-
-        // insert id1 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id1.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id1.type));
-
+        RsId id = new RsId("aba001", "deleteTest1", "something1");
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id by urn:nbn
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id.type, id.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
         // delete all identifiers by registrarScopeId with not authorized user
-        String rsIdBasedRootPath = buildResolvationPathByRegistrarScopeId(id1);
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
                 .expect()//
-                // .statusCode(401)//
+                .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().delete(HTTPS_API_URL + rsIdBasedRootPath + "/registrarScopeIdentifiers")//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+        // cleanlup
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
     }
 
     @Test
     public void deleteRegistrarScopeIdentifiers() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
         RsId id1 = new RsId("aba001", "deleteTest1", "something1");
         RsId id2 = new RsId("aba001", "deleteTest2", "something2");
         RsId id3 = new RsId("aba001", "deleteTest3", "something3");
-
-        // delete all identifiers by urn:nbn
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id1, id2, id3
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id1.type, id1.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id2.type, id2.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id3.type, id3.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // delete all identifiers by registrarScopeId
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
-
-        // insert id1 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id1.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id1.type));
-
-        // insert id2 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id2.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id2.type)//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id2.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id2.type));
-
-        // insert id3 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id3.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id3.type)//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id3.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id3.type));
-
-        // delete all identifiers by registrarScopeId
-        String rsIdBasedRootPath = buildResolvationPathByRegistrarScopeId(id1);
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + rsIdBasedRootPath + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), equalTo(id1.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id3.type + "\' }"), equalTo(id3.value));
-
         // get all rsids by urn:nbn (should be empty)
+        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URN_FOR_DELETE_RS_TESTS)) + "/registrarScopeIdentifiers";
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
+                .when().get(url)//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id"), isEmptyOrNullString());
@@ -739,7 +666,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().get(buildResolvationPathByRegistrarScopeId(id) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_2.type)//
+                .when().get(buildResolvationPath(id) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_2.type)//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + ID_TWO_RSI_2.type + "\' }"), equalTo(ID_TWO_RSI_2.value));
@@ -747,105 +674,28 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifier() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-        RsId id2 = new RsId("aba001", "deleteTest2", "something2");
-
-        // delete all identifiers by urn:nbn
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
+    public void getRegistrarScopeIdentifierNotDefined() {
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
-                .statusCode(200)//
+                .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(ID_TWO_RSI_1) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_3_NOT_EXISTING.type)//
                 .andReturn().asString();
-
-        // insert id1 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id1.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id1.type));
-
-        // insert id2 by urn:nbn
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id2.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id2.type)//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id2.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id2.type));
-
-        // delete id 1
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPathByRegistrarScopeId(id1) + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), isEmptyOrNullString());
-
-        // get all rsids by urn:nbn (should contain only id 2)
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), isEmptyOrNullString());
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifierNotAuthenticated() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-
-        // delete all identifiers by urn:nbn
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-
-        // insert id1 by urn:nbn
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id1.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id1.type));
-
-        // delete id 1
+    public void putRegistrarScopeIdentifierNotAuthenticated() {
         // xml =
         with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .body("newValue")//
                 .expect()//
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPathByRegistrarScopeId(id1) + "/registrarScopeIdentifiers/" + id1.type)//
+                .when().put(HTTPS_API_URL + buildResolvationPath(ID_TWO_RSI_1) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_1.type)//
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
@@ -853,69 +703,137 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifierNotAuthorized() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-
-        // delete all identifiers by urn:nbn
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-
-        // insert id1 by urn:nbn
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
-                .body(id1.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.@type"), equalTo(id1.type));
-
-        // delete id 1
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
+    public void putRegistrarScopeIdentifierNotAuthorized() {
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
+                .body("newValue")//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPathByRegistrarScopeId(id1) + "/registrarScopeIdentifiers/" + id1.type)//
+                .when().put(HTTPS_API_URL + buildResolvationPath(ID_TWO_RSI_1) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_1.type)//
                 .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
     }
 
-    @Test
-    public void deleteRegistrarScopeIdentifierInvalidRsId() {
-        String urnBasedRootPath = buildResolvationPathByUrnNbn(Utils.urlEncodeReservedCharacters(URN_FOR_DELETE_RS_TESTS));
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
+    // @Test
+    // public void putRegistrarScopeIdentifierInsert() {
+    // String urn = URN_FOR_DELETE_RS_TESTS;
+    //
+    // String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
+    // .body("newValue")//
+    // .expect()//
+    // .statusCode(401)//
+    // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+    // .body(hasXPath("/c:response/c:error", nsContext))//
+    // .when().put(HTTPS_API_URL + buildResolvationPathByRegistrarScopeId(ID_TWO_RSI_1) + "/registrarScopeIdentifiers/" + ID_TWO_RSI_1.type)//
+    // .andReturn().asString();
+    // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+    // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+    // }
 
-        // delete all identifiers by urn:nbn
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
+    @Test
+    public void deleteRegistrarScopeIdentifier() {
+        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
+        RsId id2 = new RsId("aba001", "deleteTest2", "something2");
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id1 and id2
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id1.type, id1.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id2.type, id2.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // delete id 1
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
+                .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id1) + "/registrarScopeIdentifiers/" + id1.type)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), equalTo(id1.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), isEmptyOrNullString());
+        // get all rsids by urn:nbn (should contain only id 2)
+        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URN_FOR_DELETE_RS_TESTS)) + "/registrarScopeIdentifiers";
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers")//
+                .when().get(url)//
                 .andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), isEmptyOrNullString());
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
+        // cleanlup
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+    }
 
-        // delete id 1 without this id being present
+    @Test
+    public void deleteRegistrarScopeIdentifierNotAuthenticated() {
+        RsId id = new RsId("aba001", "deleteTest1", "something1");
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id.type, id.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // delete id without credentials
+        // xml =
+        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+                .expect()//
+                .statusCode(401)//
+                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                // .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers/" + id.type)//
+                .andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        // TODO:APIv4: return xml as well
+        // cleanlup
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+    }
+
+    @Test
+    public void deleteRegistrarScopeIdentifierNotAuthorized() {
+        RsId id = new RsId("aba001", "deleteTest1", "something1");
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id.type, id.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // try and delete id with wrong credentials
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS_LOGIN, USER_NO_RIGHTS_PASSWORD)//
+                .expect()//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers/" + id.type)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+        // cleanlup
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+    }
+
+    @Test
+    public void deleteRegistrarScopeIdentifierInvalidRsId() {
+        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
+        RsId id2 = new RsId("aba001", "deleteTest2", "something2");
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // insert id1
+        insertRegistrarScopeId(URN_FOR_DELETE_RS_TESTS, id1.type, id1.value, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
+        // try and delete id2 without id2 being present
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(HTTPS_API_URL + urnBasedRootPath + "/registrarScopeIdentifiers/" + id1.type)//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id1) + "/registrarScopeIdentifiers/" + id2.type)//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
+        // cleanlup
+        deleteAllRegistrarScopeIdentifiers(URN_FOR_DELETE_RS_TESTS, USER_WITH_RIGHTS_LOGIN, USER_WITH_RIGHTS_PASSWORD);
     }
 
 }
