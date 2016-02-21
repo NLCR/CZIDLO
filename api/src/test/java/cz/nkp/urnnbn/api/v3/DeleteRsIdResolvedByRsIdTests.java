@@ -60,7 +60,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
         // delete id without credentials
         // responseXml =
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+        with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -83,8 +83,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // insert id
         insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
         // try and delete id with wrong credentials
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -130,8 +129,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // insert id
         insertRegistrarScopeId(URNNBN, idToBeDeleted, USER_WITH_RIGHTS);
         // delete id
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -143,7 +141,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeDeleted.type + "\' }"), equalTo(idToBeDeleted.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
         // try and get deleted rsid
-        responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -162,8 +160,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and delete with type=typeUnknown
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -193,8 +190,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
     private void deleteRegistrarScopeIdentifierTypeInvalid(RsId idForResolvation, String typeInvalid) {
         // even though it was not inserted, error INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned
         // try and delete with type=typeUnknown
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -205,8 +201,5 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
-
-    // TODO: test invalid values of idType
-    // see DeleteRsIdResolvedByRsIdTests and DeleteRsIdsResolvedByRsIdTests
 
 }

@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
@@ -47,7 +48,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 // .body(matchesXsd(responseXsdString))//
                 // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations")
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")
         // .andReturn().asString()
         ;
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -69,7 +70,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_NO_ACCESS_RIGHTS + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_NO_ACCESS_RIGHTS) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
         // check that no more reservations
@@ -87,7 +89,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservation");
         int nowReserved = xmlPath.getInt("urnNbn.size()");
         assertThat(nowReserved, equalTo(reservationsBefore.defaultReservationSize));
@@ -110,7 +113,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
         int nowReserved = xmlPath.getInt("urnNbn.size()");
         for (int i = 0; i < nowReserved; i++) {
@@ -134,7 +138,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
@@ -154,7 +159,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
@@ -174,7 +180,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
@@ -194,7 +201,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations")//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations

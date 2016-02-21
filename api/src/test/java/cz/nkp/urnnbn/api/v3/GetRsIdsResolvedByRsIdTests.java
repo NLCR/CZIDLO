@@ -68,7 +68,7 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
         insertRegistrarScopeId(URNNBN, idTest7, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idTest8, USER_WITH_RIGHTS);
         // get all ids
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

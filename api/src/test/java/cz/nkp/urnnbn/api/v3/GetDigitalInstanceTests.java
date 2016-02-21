@@ -16,6 +16,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+
 /**
  * Tests for GET /api/v3/digitalInstances/id/${DIGITAL_INSTANCE_ID}
  *
@@ -36,12 +38,14 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
 
     @Test
     public void getDigitalInstanceInvalidId() {
+        // TODO: test with other invalid values
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().get("/digitalInstances/id/" + ID_INVALID).andReturn().asString();
+                .when().get("/digitalInstances/id/" + Utils.urlEncodeReservedChars(ID_INVALID))//
+                .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
     }

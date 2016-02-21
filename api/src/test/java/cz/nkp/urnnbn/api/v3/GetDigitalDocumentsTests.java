@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+
 /**
  * Tests for GET /api/v3/registrars/${REGISTRARS_CODE}/digitalDocuments
  *
@@ -33,7 +35,7 @@ public class GetDigitalDocumentsTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext))//
-                .when().get("/registrars/" + getRandomRegistrarCode() + "/digitalDocuments").andReturn().asString();
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()) + "/digitalDocuments").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocuments");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }

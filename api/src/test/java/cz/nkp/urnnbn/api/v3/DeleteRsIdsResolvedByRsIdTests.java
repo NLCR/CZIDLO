@@ -61,7 +61,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         // try and delete all ids
         // TODO:APIv4: return xml as well
         // String responseXml =
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
+        with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -94,8 +94,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         insertRegistrarScopeId(URNNBN, idInserted1, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idInserted2, USER_WITH_RIGHTS);
         // try and delete all ids
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -165,8 +164,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         }
 
         // delete all ids
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -195,13 +193,12 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         }
 
         // get all ids by urn:nbn (should be empty)
-        responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN)) + "/registrarScopeIdentifiers")//
+                .when().get(HTTPS_API_URL + buildResolvationPath(URNNBN) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id"), isEmptyOrNullString());

@@ -131,9 +131,7 @@ public class DeleteDigitalInstanceTests extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:deactivated", nsContext))//
                     // TODO:APIv4: should be <digitalLibrary id='12'> just like in GET. Now it is <digitalLibraryId>12</digitalLibraryId>
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibraryId", nsContext))//
-                    .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + id)
-                    // .when().delete("/digitalInstances/id/" + ID_ACTIVE)
-                    .andReturn().asString();
+                    .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + id).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             Assert.assertEquals((Long) xmlPath.getLong("@id"), id);
             Assert.assertEquals(xmlPath.getBoolean("active"), false);

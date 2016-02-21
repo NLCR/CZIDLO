@@ -125,8 +125,7 @@ public abstract class ApiV3Tests {
         // doesn't work, must use .relaxedHTTPSValidation() in each request
         // see https://github.com/jayway/rest-assured/issues/561
         RestAssured.useRelaxedHTTPSValidation();
-        // RestAssured.authentication = basic("username", "password");
-        // RestAssured.rootPath = "x.y.z";
+        RestAssured.urlEncodingEnabled = false;
         responseXsdString = Utils.readXsd(RESPONSE_XSD);
         nsContext = Utils.buildNsContext("c", RESPONSE_NS);
         // XmlConfig.xmlConfig().namespaceAware(true).declareNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS);
@@ -158,16 +157,18 @@ public abstract class ApiV3Tests {
 
     String buildResolvationPath(RsId id) {
         // TODO: Utils.urlEncodeReservedChars() vzdy tady primo
-        return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
+        return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/"//
+                + Utils.urlEncodeReservedChars(id.type) + "/" + Utils.urlEncodeReservedChars(id.value);
     }
 
-    String buildResolvationPath(String urnNbnString) {
-        return "/resolver/" + urnNbnString;
+    String buildResolvationPath(String urnNbn) {
+        // TODO: allways urlEncodeReservedChars(
+        return "/resolver/" + Utils.urlEncodeReservedChars(urnNbn);
     }
 
     void deleteAllRegistrarScopeIdentifiers(String urnNbn, Credentials credentials) {
-        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers";
-        with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(credentials.login, credentials.password) //
+        String url = HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers";
+        with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password) //
                 .expect() //
                 .statusCode(200) //
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
@@ -176,9 +177,8 @@ public abstract class ApiV3Tests {
     }
 
     void insertRegistrarScopeId(String urnNbn, RsId id, Credentials credentials) {
-        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers/"
-                + Utils.urlEncodeReservedChars(id.type);
-        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(credentials.login, credentials.password)//
+        String url = HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .body(id.value).expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -191,15 +191,15 @@ public abstract class ApiV3Tests {
     }
 
     List<RsId> getRsIds(String urnNbn) {
-        String url = buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers";
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+        String url = buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers";
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(url)//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
         int size = xmlPath.getInt("id.size()");
         List<RsId> result = new ArrayList<>(size);
         String registrarCode = UrnNbn.valueOf(urnNbn).getRegistrarCode().toString();
@@ -212,13 +212,14 @@ public abstract class ApiV3Tests {
     }
 
     UrnNbnReservations getUrnNbnReservations(String registrarCode) {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
-                .when().get("/registrars/" + registrarCode + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservations");
+                .when().get("/registrars/" + registrarCode + "/urnNbnReservations")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
         // reservation size
         int maxReservationSize = xmlPath.getInt("maxReservationSize");
         int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
