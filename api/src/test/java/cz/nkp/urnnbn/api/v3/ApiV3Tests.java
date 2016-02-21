@@ -18,6 +18,8 @@ import java.util.Random;
 
 import javax.xml.namespace.NamespaceContext;
 
+import org.joda.time.DateTime;
+
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.RedirectConfig;
 import com.jayway.restassured.config.RestAssuredConfig;
@@ -27,6 +29,7 @@ import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public abstract class ApiV3Tests {
@@ -201,4 +204,36 @@ public abstract class ApiV3Tests {
         }
         return new UrnNbnReservations(maxReservationSize, defaultReservationSize, reservedTotal, reservedReturnedUrns);
     }
+
+    DigitalInstance getDigitalInstanceOrNull(long diId) {
+        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                // .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response", nsContext))//
+                .when().get("/digitalInstances/id/" + diId).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        // if (xmlPath.getNode("digitalInstance") != null) {
+        if (xmlPath.get("digitalInstance") != null) {
+            DigitalInstance result = new DigitalInstance();
+            result.setId(diId);
+            result.setUrl(xmlPath.getString("digitalInstance.url"));
+            result.setActive(xmlPath.getBoolean("digitalInstance.@active"));
+            result.setCreated(DateTime.parse(xmlPath.getString("digitalInstance.created")));
+            if (!result.isActive()) {
+                result.setDeactivated(DateTime.parse(xmlPath.getString("digitalInstance.deactivated")));
+            }
+            return result;
+        } else {
+            return null;
+        }
+        //
+        // String deactivated = xmlPath.getString("deactivated");
+        // if (deactivated == null || deactivated.isEmpty()) {
+        // return null;
+        // } else {
+        // // return DateTimeUtils.datetimeToTimestamp(DateTime.parse(deactivated));
+        // return DateTime.parse(deactivated);
+        // }
+    }
+
 }

@@ -15,9 +15,9 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-public class DigitalInstancesTests extends ApiV3Tests {
+public class GetDigitalInstancesTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(DigitalInstancesTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetDigitalInstancesTests.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
