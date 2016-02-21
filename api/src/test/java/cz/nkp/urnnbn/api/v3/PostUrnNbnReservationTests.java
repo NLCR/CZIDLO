@@ -25,9 +25,9 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationTests.class.getName());
 
-    private static final Credentials USER = new Credentials("martin", "i0oEhu");
-    private static final String REGISTRAR_CODE_OK = "tst01";
-    private static final String REGISTRAR_CODE_NO_ACCESS_RIGHTS = "anl001";
+    private final Credentials USER = new Credentials("martin", "i0oEhu");
+    private final String REGISTRAR_CODE_OK = "tst01";
+    private final String REGISTRAR_CODE_NO_ACCESS_RIGHTS = "anl001";
 
     @BeforeSuite
     public void beforeSuite() {

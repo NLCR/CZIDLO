@@ -70,17 +70,17 @@ public abstract class ApiV3Tests {
         }
     }
 
-    private static final String LANG_CODE = "cz";
-    private static final String BASE_URI = "http://localhost";
-    private static final int PORT = 8080;
-    private static final String BASE_PATH = "/api/v3";
-    static final String HTTPS_API_URL = "https://localhost:8443" + BASE_PATH;
+    private final String LANG_CODE = "cz";
+    private final String BASE_URI = "http://localhost";
+    private final int PORT = 8080;
+    private final String BASE_PATH = "/api/v3";
+    final String HTTPS_API_URL = "https://localhost:8443" + BASE_PATH;
 
-    private static final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
-    private static final String RESPONSE_NS_PREFIX = "c";
-    private static final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
+    private final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
+    private final String RESPONSE_NS_PREFIX = "c";
+    private final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
 
-    static final int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
+    static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
     Random rand = new Random();
     String responseXsdString;

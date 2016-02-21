@@ -24,9 +24,9 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsTest.class.getName());
 
-    private static final String REGISTRAR_CODE_OK = "tst01";
-    private static final String REGISTRAR_CODE_UNKNOWN = "xxx999";
-    private static final String REGISTRAR_CODE_INVALID = "xxx_999";
+    private final String REGISTRAR_CODE_OK = "tst01";
+    private final String REGISTRAR_CODE_UNKNOWN = "xxx999";
+    private final String REGISTRAR_CODE_INVALID = "xxx_999";
 
     @BeforeSuite
     public void beforeSuite() {

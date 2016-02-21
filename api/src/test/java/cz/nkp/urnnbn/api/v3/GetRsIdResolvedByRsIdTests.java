@@ -25,7 +25,7 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRsIdResolvedByRsIdTests.class.getName());
 
-    private static final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
     private final String REGISTRAR_CODE = "aba001";
 

@@ -25,17 +25,18 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 public class DeleteDigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteDigitalInstanceTests.class.getName());
-    private static final Credentials USER = new Credentials("martin", "i0oEhu");
+
+    private final Credentials USER = new Credentials("martin", "i0oEhu");
     // select diginst.id as diginstid from
     // (select id from registrar where code='tst01') as registrar join
     // (select id, registrarId from digitallibrary) as diglib on registrar.id=diglib.registrarid join
     // (select id, digitallibraryid from digitalinstance where active='true') as diginst on diglib.id=diginst.digitallibraryid;
     // and if needed to re-run tests:
     // update digitalinstance set active='t', deactivated=null where id=642390;
-    private static final Long ID_ACTIVE_RIGHTS_1 = 642389L;// make sure it exists, is active and TEST_USER has access rights to it
-    private static final Long ID_ACTIVE_RIGHTS_2 = null;// 642390L;// make sure it exists, is active and TEST_USER has access rights to it
-    private static final long ID_ACTIVE_NO_RIGHTS = 27703;// make sure it exists, is active and TEST_USER has no access rights to it
-    private static final long ID_DEACTIVATED = 60;// make sure it exists and is not active
+    private final Long ID_ACTIVE_RIGHTS_1 = 642389L;// make sure it exists, is active and TEST_USER has access rights to it
+    private final Long ID_ACTIVE_RIGHTS_2 = null;// 642390L;// make sure it exists, is active and TEST_USER has access rights to it
+    private final long ID_ACTIVE_NO_RIGHTS = 27703;// make sure it exists, is active and TEST_USER has no access rights to it
+    private final long ID_DEACTIVATED = 60;// make sure it exists and is not active
 
     @BeforeSuite
     public void beforeSuite() {

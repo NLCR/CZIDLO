@@ -24,10 +24,10 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstanceTests.class.getName());
 
-    private static final String ID_INVALID = "abc";
-    private static final long ID_UNKNOWN = 9999999L;// make sure it exists and is not assigned
-    private static final long ID_ACTIVE = 27703L;// make sure it exists and is active
-    private static final long ID_DEACTIVATED = 60L;// make sure it exists and is not active
+    private final String ID_INVALID = "abc";
+    private final long ID_UNKNOWN = 9999999L;// make sure it exists and is not assigned
+    private final long ID_ACTIVE = 27703L;// make sure it exists and is active
+    private final long ID_DEACTIVATED = 60L;// make sure it exists and is not active
 
     @BeforeSuite
     public void beforeSuite() {

@@ -25,8 +25,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PutRsIdResolvedByRsIdTests.class.getName());
 
-    private static final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private static final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
+    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
     private final String EXISTING_URNNBN = "urn:nbn:cz:aba001-0005hy";
 
     @BeforeSuite
