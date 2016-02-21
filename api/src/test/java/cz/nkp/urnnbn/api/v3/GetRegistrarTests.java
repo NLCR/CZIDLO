@@ -31,7 +31,7 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void getRegistrarInvalidCode() {
-        //TODO: otestovat min, max delku, nepovolane znaky, atd
+        // TODO: otestovat min, max delku, nepovolane znaky, atd
         String code = "0123456789";
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//

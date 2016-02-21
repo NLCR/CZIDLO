@@ -8,24 +8,20 @@ import static org.hamcrest.Matchers.not;
 
 import java.util.logging.Logger;
 
-import org.junit.AfterClass;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-import cz.nkp.urnnbn.api.Utils;
-
 /**
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}
  *
  */
-public class GetResolvedByRsIdTests extends ApiV3Tests {
-
-    // TODO: tohle jeste projit
+public class ResolveByRsIdTests extends ApiV3Tests {
 
     // sql to get (registrar, id_type, id_value) triplets
     // select
@@ -36,9 +32,12 @@ public class GetResolvedByRsIdTests extends ApiV3Tests {
     // (select registrarid, type, idvalue from registrarscopeid) as rsid join
     // (select id, code from registrar) as registrar on rsid.registrarid=registrar.id;
 
-    private static final Logger LOGGER = Logger.getLogger(GetResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResolveByRsIdTests.class.getName());
 
     private static final Credentials USER = new Credentials("martin", "i0oEhu");
+
+    private final String REGISTRAR = "aba001";
+    private final String URNNBN = "urn:nbn:cz:aba001-000000";
 
     private final RsId ID_WITHOUT_DI = new RsId("tst02", "K4_pid", "uuid:123");
     private final RsId ID_WITH_ACTIVE_DI = new RsId("p01nk", "uuid", "113e83b0-1db2-11e2-bec6-005056827e51");
@@ -46,133 +45,19 @@ public class GetResolvedByRsIdTests extends ApiV3Tests {
     private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");
     private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");
 
-    private final String URNNBN0 = "urn:nbn:cz:aba001-000000";
-    private final String URNNBN1 = "urn:nbn:cz:aba001-000001";
-    private final String URNNBN2 = "urn:nbn:cz:aba001-000002";
-    private final String URNNBN3 = "urn:nbn:cz:aba001-000003";
-    private final String URNNBN4 = "urn:nbn:cz:aba001-000004";
-    private final String URNNBN5 = "urn:nbn:cz:aba001-000005";
-
-    private final String REGISTRAR = "aba001";
-
-    // testing id type
-    private final RsId TYPE_LENGTH_MIN_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, RSID_VALUE_DEFAULT);
-    private final RsId TYPE_LENGTH_MAX_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, RSID_VALUE_DEFAULT);
-    private final RsId TYPE_RESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_RESERVED_DEPR, RSID_VALUE_DEFAULT); // only ":"
-    private final RsId TYPE_UNRESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_UNRESERVED_DEPR, RSID_VALUE_DEFAULT);// 0-9, a-z, A-Z ,
-                                                                                                                                   // "_", "-"
-
-    // testing id value
-    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MIN = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_MIN_LENGTH);
-    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MAX = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_MAX_LENGTH);
-    private final RsId TYPE_DEFAULT_VALUE_RESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_RESERVED_DEPR);
-    private final RsId TYPE_DEFAULT_VALUE_UNRESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_UNRESERVED_DEPR);
-
     @BeforeSuite
     public void beforeSuite() {
         init();
     }
 
-    @BeforeClass
-    public void beforeClass() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN0, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN1, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN4, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN5, USER);
-        // testing type
-        insertRegistrarScopeId(URNNBN0, TYPE_LENGTH_MIN_VALUE_DEFAULT, USER);
-        insertRegistrarScopeId(URNNBN0, TYPE_LENGTH_MAX_VALUE_DEFAULT, USER);
-        insertRegistrarScopeId(URNNBN0, TYPE_RESERVED_CHARS_VALUE_DEFAULT, USER);
-        insertRegistrarScopeId(URNNBN0, TYPE_UNRESERVED_CHARS_VALUE_DEFAULT, USER);
-        // testing value
-        insertRegistrarScopeId(URNNBN1, TYPE_DEFAULT_VALUE_LENGTH_MIN, USER);
-        insertRegistrarScopeId(URNNBN2, TYPE_DEFAULT_VALUE_LENGTH_MAX, USER);
-        insertRegistrarScopeId(URNNBN3, TYPE_DEFAULT_VALUE_RESERVED_CHARS, USER);
-        insertRegistrarScopeId(URNNBN4, TYPE_DEFAULT_VALUE_UNRESERVED_CHARS, USER);
+    @BeforeMethod
+    public void beforeMethod() {
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
-    @AfterClass
-    public void afterClass() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN0, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN1, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN4, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN5, USER);
-    }
-
-    @Test
-    public void resolveIdTypeSizeOk() {
-        // length 2
-        RsId id = TYPE_LENGTH_MIN_VALUE_DEFAULT;
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-
-        // length 20
-        id = TYPE_LENGTH_MAX_VALUE_DEFAULT;
-        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-    }
-
-    @Test
-    public void resolveIdTypeValidCharactersReserved() {
-        RsId id = TYPE_RESERVED_CHARS_VALUE_DEFAULT;
-        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, id.type, id.value);
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(idWithReservedCharsEncoded))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-    }
-
-    @Test
-    public void resolveIdTypeValidCharactersUnreserved() {
-        RsId id = TYPE_UNRESERVED_CHARS_VALUE_DEFAULT;
-        // not url encoded
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-        String urn = xmlPath.getString("digitalDocument.urnNbn.value");
-        // TODO: fix encoded vs not encoded
-        // // url encoded
-        // RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, Utils.urlEncodeAll(id.type), id.value);
-        // xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-        // .expect()//
-        // .statusCode(200)//
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-        // .when().get(buildResolvationPath(idWithReservedAndUnreservedUrlEncoded))//
-        // .andReturn().asString();
-        // xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        // Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-        // // urn:nbn same
-        // Assert.assertEquals(xmlPath.getString("digitalDocument.urnNbn.value"), urn);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
     @Test
@@ -203,123 +88,64 @@ public class GetResolvedByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void resolveIdTypeInvalidCharactersUnreserved() {
-        // TODO: nahradit, unreserved znaky jsou definovane jinde
-        // only "~" not allowed (from unreserved character set)
+    public void resolveIdValueInvalid() {
+        // TODO: enable when after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
+        // resolveIdValueInvalid(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
+        // resolveIdValueInvalid(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
+    }
 
-        // not url-encoded
-        RsId id = new RsId(REGISTRAR, "~~", RSID_VALUE_DEFAULT);
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+    private void resolveIdValueInvalid(RsId id) {
+        String responseXml = with().config(namespaceAwareXmlConfig()) //
+                .expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error", nsContext)) //
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
-        Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
-        // TODO: fix encode vs not encoded
-
-        // // url-encoded
-        // id = new RsId(REGISTRAR, Utils.urlEncodeReservedChars("~~"), RSID_VALUE_DEFAULT);
-        // xml = with().config(namespaceAwareXmlConfig()).expect() //
-        // .statusCode(400) //
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-        // .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
-        // .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
-        // .when().get(buildResolvationPath(id))//
-        // .andReturn().asString();
-        // xmlPath = XmlPath.from(xml).setRoot("response.error");
-        // // TODO:APIv4: rename error to INVALID_ID_TYPE
-        // Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // TODO:APIv4: rename error to INVALID_ID_VALUE
+        Assert.assertEquals(xmlPath.get("code"), "TODO");
     }
 
     @Test
-    public void resolveIdValueToLong() {
-        // APIv3 doesn't actually check this
-        // TODO:APIv4: check the values for length, allowed chars
-        // String xml = with().config(namespaceAwareXmlConfig()).expect()//
-        // .statusCode(400)//
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-        // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-        // .when().get(buildPath(new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa61")))//
-        // .andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        // // TODO:APIv4: create new error type INVALID_ID_VALUE
-        // Assert.assertEquals(xmlPath.get("code"), "INVALID_ID_VALUE");
+    public void resolveIdTypeAndValueOk() {
+        String urnNbn = URNNBN;
+        // values
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "inLength", RSID_VALUE_OK_MIN_LENGTH));
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "maxLength", RSID_VALUE_OK_MAX_LENGTH));
+        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
+        }
+        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]));
+        }
+
+        // types
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, "value"));
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, "value"));
+        for (int i = 0; i < RSID_TYPE_OK_RESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_RESERVED[i], "value"));
+        }
+        for (int i = 0; i < RSID_TYPE_OK_UNRESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_UNRESERVED[i], "value"));
+        }
     }
 
-    @Test
-    public void resolveIdValueSizeOk() {
-        // length 2
-        RsId id = TYPE_DEFAULT_VALUE_LENGTH_MIN;
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+    private void resolveIdTypeAndValueOk(String urnNbn, RsId id) {
+        // insert id
+        insertRegistrarScopeId(urnNbn, id, USER);
+        // resolve
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-
-        // length 20
-        id = TYPE_DEFAULT_VALUE_LENGTH_MAX;
-        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-    }
-
-    @Test
-    public void resolveIdValueValidCharactersReserved() {
-        RsId id = TYPE_DEFAULT_VALUE_RESERVED_CHARS;
-        RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, id.type, id.value);
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(idWithReservedCharsEncoded))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-    }
-
-    @Test
-    public void resolveIdValueValidCharactersUnreserved() {
-        RsId id = TYPE_DEFAULT_VALUE_UNRESERVED_CHARS;
-        // not url encoded
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-        String urn = xmlPath.getString("digitalDocument.urnNbn.value");
-        // TODO: fix url encoded vs not
-        // // url encoded
-        // RsId idWithReservedAndUnreservedUrlEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeAll(id.value));
-        // xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-        // .expect()//
-        // .statusCode(200)//
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-        // .when().get(buildResolvationPath(idWithReservedAndUnreservedUrlEncoded))//
-        // .andReturn().asString();
-        // xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        // Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-        // // urn:nbn same
-        // Assert.assertEquals(xmlPath.getString("digitalDocument.urnNbn.value"), urn);
+        // remove id
+        deleteRegistrarScopeId(urnNbn, id, USER);
     }
 
     @Test
@@ -349,6 +175,8 @@ public class GetResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
     }
+
+    // TODO: projit odsud dal
 
     @Test
     public void resolveActionEmpty() {

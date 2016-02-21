@@ -82,7 +82,7 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
-    final String RSID_TYPE_DEFAULT = "testType";
+    // rsid types correct
     final String RSID_TYPE_OK_MIN_LENGTH = "aA";
     final String RSID_TYPE_OK_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
     @Deprecated
@@ -91,27 +91,25 @@ public abstract class ApiV3Tests {
     @Deprecated
     final String RSID_TYPE_OK_UNRESERVED_DEPR = "aA9_-";
     final String[] RSID_TYPE_OK_UNRESERVED = new String[] { "__", "--", "aa", "AA", "00" };
+    // rsid types invalid
     final String RSID_TYPE_INVALID_TO_SHORT = "a";
     final String RSID_TYPE_INVALID_TO_LONG = "aaaaaaaaa1AAAAAAAAA21";
     // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
-    // final String[] RSID_TYPE_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,", "//", "??",
-    // "##", "[[", "]]" };
-    final String[] RSID_TYPE_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,", "??", "##",
-            "[[", "]]" };
+    final String[] RSID_TYPE_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,"/* , "//" */,
+            "??", "##", "[[", "]]" };
     final String[] RSID_TYPE_INVALID_UNRESERVED = new String[] { "..", "~~" };
 
+    // rsid values correct
     final String RSID_VALUE_DEFAULT = "testValue";
     final String RSID_VALUE_OK_MIN_LENGTH = "a";
     final String RSID_VALUE_OK_MAX_LENGTH = "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6";
     // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
-    @Deprecated
-    final String RSID_VALUE_OK_RESERVED_DEPR = "!*'();:@&=+$,?#[]";
-    // final String[] RSID_VALUE_RESERVED_CHARS = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[",
-    // "]" };
-    final String[] RSID_VALUE_OK_RESERVED = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "?", "#", "[", "]" };
-    @Deprecated
-    final String RSID_VALUE_OK_UNRESERVED_DEPR = "-_.~";
+    final String[] RSID_VALUE_OK_RESERVED = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", "," /* , "/" */, "?", "#",
+            "[", "]" };
     final String[] RSID_VALUE_OK_UNRESERVED = new String[] { "-", "_", ".", "~" };
+    // rsid values invalid
+    final String RSID_VALUE_INVALID_TO_SHORT = "";
+    final String RSID_VALUE_INVALID_TO_LONG = "aaaaaaaaa1AAAAAAAAA21";
 
     Random rand = new Random();
     String responseXsdString;
@@ -174,6 +172,20 @@ public abstract class ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext)) //
                 .when().delete(url);
+    }
+
+    void deleteRegistrarScopeId(String urnNbn, RsId id, Credentials credentials) {
+        String url = HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .body(id.value).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().delete(url)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        assertThat(xmlPath.getString("id"), equalTo(id.value));
+        assertThat(xmlPath.getString("id.@type"), equalTo(id.type));
     }
 
     void insertRegistrarScopeId(String urnNbn, RsId id, Credentials credentials) {
