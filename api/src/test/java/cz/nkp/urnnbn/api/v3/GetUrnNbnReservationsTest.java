@@ -5,6 +5,7 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
@@ -50,9 +51,17 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
                 .when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservations");
-        assertThat(xmlPath.getInt("maxReservationSize"), greaterThanOrEqualTo(0));
-        assertThat(xmlPath.getInt("defaultReservationSize"), greaterThanOrEqualTo(0));
-        assertThat(xmlPath.getInt("reserved.@totalSize"), greaterThanOrEqualTo(0));
+        // reservation size
+        int maxReservationSize = xmlPath.getInt("maxReservationSize");
+        int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
+        assertThat(maxReservationSize, greaterThanOrEqualTo(0));
+        assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
+        // reservations total/returned
+        int reservedTotal = xmlPath.getInt("reserved.@totalSize");
+        int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
+        assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
+        assertThat(reservedReturned, lessThanOrEqualTo(reservedTotal));
+        assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
     }
 
     @Test

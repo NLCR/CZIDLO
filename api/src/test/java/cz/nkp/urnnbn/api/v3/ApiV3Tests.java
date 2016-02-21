@@ -7,7 +7,9 @@ import static com.jayway.restassured.config.XmlConfig.xmlConfig;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static com.jayway.restassured.path.xml.config.XmlPathConfig.xmlPathConfig;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
@@ -74,6 +76,8 @@ public abstract class ApiV3Tests {
     private static final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
     private static final String RESPONSE_NS_PREFIX = "c";
     private static final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
+
+    static final int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
     Random rand = new Random();
     String responseXsdString;
@@ -179,14 +183,22 @@ public abstract class ApiV3Tests {
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
                 .when().get("/registrars/" + registrarCode + "/urnNbnReservations").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservations");
+        // reservation size
         int maxReservationSize = xmlPath.getInt("maxReservationSize");
         int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
-        int reservedTotalSize = xmlPath.getInt("reserved.@totalSize");
-        int reservedOfferedSize = xmlPath.getInt("reserved.urnNbn.size()");
-        List<String> reservedOffered = new ArrayList<>(reservedOfferedSize);
-        for (int i = 0; i < reservedOfferedSize; i++) {
-            reservedOffered.add(xmlPath.getString(String.format("reserved.urnNbn[%d]", i)));
+        assertThat(maxReservationSize, greaterThanOrEqualTo(0));
+        assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
+        // reservations total/returned
+        int reservedTotal = xmlPath.getInt("reserved.@totalSize");
+        int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
+        assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
+        assertThat(reservedReturned, lessThanOrEqualTo(reservedTotal));
+        assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
+        // to be returned
+        List<String> reservedReturnedUrns = new ArrayList<>(reservedReturned);
+        for (int i = 0; i < reservedReturned; i++) {
+            reservedReturnedUrns.add(xmlPath.getString(String.format("reserved.urnNbn[%d]", i)));
         }
-        return new UrnNbnReservations(maxReservationSize, defaultReservationSize, reservedTotalSize, reservedOffered);
+        return new UrnNbnReservations(maxReservationSize, defaultReservationSize, reservedTotal, reservedReturnedUrns);
     }
 }
