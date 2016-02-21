@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.api.v3;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
@@ -8,18 +7,15 @@ import static org.hamcrest.Matchers.not;
 
 import java.util.logging.Logger;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
 
+/**
+ * Tests for GET /api/v3/registrars
+ *
+ */
 public class GetRegistrarsTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrarsTests.class.getName());
@@ -27,17 +23,6 @@ public class GetRegistrarsTests extends ApiV3Tests {
     @BeforeSuite
     public void beforeSuite() {
         init();
-    }
-
-    @Test
-    public void getRegistrarsStatusCode() {
-        expect().statusCode(200).when().get("/registrars");
-    }
-
-    @Test
-    public void getRegistrarsResponseValidXml() {
-        expect().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .when().get("/registrars");
     }
 
     @Test
@@ -99,34 +84,6 @@ public class GetRegistrarsTests extends ApiV3Tests {
                 .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                 .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
         ;
-    }
-
-    @BeforeMethod
-    public void beforeMethod() {
-    }
-
-    @AfterMethod
-    public void afterMethod() {
-    }
-
-    @BeforeClass
-    public void beforeClass() {
-    }
-
-    @AfterClass
-    public void afterClass() {
-    }
-
-    @BeforeTest
-    public void beforeTest() {
-    }
-
-    @AfterTest
-    public void afterTest() {
-    }
-
-    @AfterSuite
-    public void afterSuite() {
     }
 
 }

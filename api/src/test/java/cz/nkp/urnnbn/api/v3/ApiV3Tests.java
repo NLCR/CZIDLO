@@ -207,12 +207,10 @@ public abstract class ApiV3Tests {
 
     DigitalInstance getDigitalInstanceOrNull(long diId) {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
-                // .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response", nsContext))//
                 .when().get("/digitalInstances/id/" + diId).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        // if (xmlPath.getNode("digitalInstance") != null) {
         if (xmlPath.get("digitalInstance") != null) {
             DigitalInstance result = new DigitalInstance();
             result.setId(diId);
@@ -226,14 +224,6 @@ public abstract class ApiV3Tests {
         } else {
             return null;
         }
-        //
-        // String deactivated = xmlPath.getString("deactivated");
-        // if (deactivated == null || deactivated.isEmpty()) {
-        // return null;
-        // } else {
-        // // return DateTimeUtils.datetimeToTimestamp(DateTime.parse(deactivated));
-        // return DateTime.parse(deactivated);
-        // }
     }
 
 }

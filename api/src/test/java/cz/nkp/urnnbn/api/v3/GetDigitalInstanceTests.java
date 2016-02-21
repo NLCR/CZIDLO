@@ -16,6 +16,10 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+/**
+ * Tests for GET /api/v3/digitalInstances/id/${DIGITAL_INSTANCE_ID}
+ *
+ */
 public class GetDigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstanceTests.class.getName());

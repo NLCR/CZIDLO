@@ -17,6 +17,10 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
+/**
+ * Tests for POST /api/v3/registrars/${REGISTRAR_CODE}/urnNbnReservations
+ *
+ */
 public class PostUrnNbnReservationTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationTests.class.getName());

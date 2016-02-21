@@ -18,6 +18,10 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 
+/**
+ * Tests for DELETE /api/v3/digitalInstances/id/${DIGITAL_INSTANCE_ID}
+ *
+ */
 public class DeleteDigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteDigitalInstanceTests.class.getName());
@@ -30,8 +34,8 @@ public class DeleteDigitalInstanceTests extends ApiV3Tests {
     // update digitalinstance set active='t', deactivated=null where id=642390;
     private static final Long ID_ACTIVE_RIGHTS_1 = 642389L;// make sure it exists, is active and TEST_USER has access rights to it
     private static final Long ID_ACTIVE_RIGHTS_2 = null;// 642390L;// make sure it exists, is active and TEST_USER has access rights to it
-    private static final int ID_ACTIVE_NO_RIGHTS = 27703;// make sure it exists, is active and TEST_USER has no access rights to it
-    private static final int ID_DEACTIVATED = 60;// make sure it exists and is not active
+    private static final long ID_ACTIVE_NO_RIGHTS = 27703;// make sure it exists, is active and TEST_USER has no access rights to it
+    private static final long ID_DEACTIVATED = 60;// make sure it exists and is not active
 
     @BeforeSuite
     public void beforeSuite() {
@@ -67,7 +71,7 @@ public class DeleteDigitalInstanceTests extends ApiV3Tests {
 
     @Test
     public void deactivateDigitalInstanceNotAuthorized() {
-        int id = ID_ACTIVE_NO_RIGHTS;
+        long id = ID_ACTIVE_NO_RIGHTS;
         // check not deactivated yet
         DigitalInstance idBefore = getDigitalInstanceOrNull(id);
         assertTrue(idBefore.isActive());
@@ -89,7 +93,7 @@ public class DeleteDigitalInstanceTests extends ApiV3Tests {
 
     @Test
     public void deactivateDigitalInstanceAlreadyDeactivated() {
-        int id = ID_DEACTIVATED;
+        long id = ID_DEACTIVATED;
         // check deactivated
         DigitalInstance idBefore = getDigitalInstanceOrNull(id);
         assertFalse(idBefore.isActive());

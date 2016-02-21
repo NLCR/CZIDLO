@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.api.v3;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -17,6 +16,10 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+/**
+ * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/urnNbnReservations
+ *
+ */
 public class GetUrnNbnReservationsTest extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsTest.class.getName());
@@ -31,20 +34,10 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
     }
 
     @Test
-    public void getUrnNbnReservationsOkchedkStatusCode() {
-        expect().statusCode(200).when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
-    }
-
-    @Test
-    public void getUrnNbnReservationsOkcheckResponseValidXml() {
-        expect()//
-        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .when().get("/registrars/" + REGISTRAR_CODE_OK + "/urnNbnReservations");
-    }
-
-    @Test
-    public void getUrnNbnReservationsOkcheckResponseData() {
+    public void getUrnNbnReservations() {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
                 .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//

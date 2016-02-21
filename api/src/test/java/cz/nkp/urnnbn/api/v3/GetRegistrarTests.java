@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.api.v3;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
@@ -15,6 +14,10 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+/**
+ * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}
+ *
+ */
 public class GetRegistrarTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrarTests.class.getName());
@@ -22,19 +25,6 @@ public class GetRegistrarTests extends ApiV3Tests {
     @BeforeSuite
     public void beforeSuite() {
         init();
-    }
-
-    @Test
-    public void getRegistrarOkStatusCode() {
-        getRandomRegistrarCode();
-        expect().statusCode(200).when().get("/registrars/" + getRandomRegistrarCode());
-    }
-
-    @Test
-    public void getRegistrarOkResponseValidXml() {
-        expect()//
-        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .when().get("/registrars/" + getRandomRegistrarCode());
     }
 
     @Test
@@ -65,6 +55,7 @@ public class GetRegistrarTests extends ApiV3Tests {
     public void getRegistrarWithDigitalLibraries() {
         with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                 .expect()//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("//c:digitalLibraries", nsContext))//
                 .when().get("/registrars/" + getRandomRegistrarCode());
@@ -74,6 +65,7 @@ public class GetRegistrarTests extends ApiV3Tests {
     public void getRegistrarWithoutDigitalLibraries() {
         with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                 .expect()//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(not(hasXPath("//c:digitalLibraries", nsContext)))//
                 .when().get("/registrars/" + getRandomRegistrarCode());
@@ -83,6 +75,7 @@ public class GetRegistrarTests extends ApiV3Tests {
     public void getRegistrarWithCatalogs() {
         with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                 .expect()//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("//c:catalogs", nsContext))//
                 .when().get("/registrars/" + getRandomRegistrarCode());
@@ -92,6 +85,7 @@ public class GetRegistrarTests extends ApiV3Tests {
     public void getRegistrarWithoutCatalogs() {
         with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
                 .expect()//
+                .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(not(hasXPath("//c:catalogs", nsContext)))//
                 .when().get("/registrars/" + getRandomRegistrarCode());
