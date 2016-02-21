@@ -48,10 +48,25 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
     @Test
     public void getRegistrarScopeIdentifiers() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
-        RsId id2 = new RsId(REGISTRAR_CODE, "getTest2", "something2");
-        // insert idForResolvation, id2
+        RsId idTest1 = new RsId(REGISTRAR_CODE, "test1", RSID_TYPE_MIN_LENGTH);
+        RsId idTest2 = new RsId(REGISTRAR_CODE, "test2", RSID_TYPE_MAX_LENGTH);
+        RsId idTest3 = new RsId(REGISTRAR_CODE, "test3", RSID_TYPE_RESERVED_CHARS);
+        RsId idTest4 = new RsId(REGISTRAR_CODE, "test4", RSID_TYPE_UNRESERVED_CHARS);
+        RsId idTest5 = new RsId(REGISTRAR_CODE, RSID_TYPE_MIN_LENGTH, "something");
+        RsId idTest6 = new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something");
+        RsId idTest7 = new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something");
+        RsId idTest8 = new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something");
+
+        // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id2, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest1, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest2, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest3, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest4, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest5, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest6, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest7, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest8, USER_WITH_RIGHTS);
         // get all ids
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -62,9 +77,14 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest1.type + "\' }"), equalTo(idTest1.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest2.type + "\' }"), equalTo(idTest2.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest3.type + "\' }"), equalTo(idTest3.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest4.type + "\' }"), equalTo(idTest4.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest5.type + "\' }"), equalTo(idTest5.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest6.type + "\' }"), equalTo(idTest6.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest7.type + "\' }"), equalTo(idTest7.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idTest8.type + "\' }"), equalTo(idTest8.value));
     }
-
-    // TODO: include edge examples
 
 }

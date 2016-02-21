@@ -18,6 +18,9 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.ApiV3Tests.RsId;
+
 /**
  * Tests for GET
  * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
@@ -49,26 +52,96 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarScopeIdentifier() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
-        RsId idToGet = new RsId(REGISTRAR_CODE, "getTest2", "something2");
-        RsId idOther = new RsId(REGISTRAR_CODE, "getTest3", "something3");
+    public void getRegistrarScopeIdentifierOk() {
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
+        RsId idOther = new RsId(REGISTRAR_CODE, "other", "something");
+        RsId idTest1 = new RsId(REGISTRAR_CODE, "test1", RSID_TYPE_MIN_LENGTH);
+        RsId idTest2 = new RsId(REGISTRAR_CODE, "test2", RSID_TYPE_MAX_LENGTH);
+        RsId idTest3 = new RsId(REGISTRAR_CODE, "test3", RSID_TYPE_RESERVED_CHARS);
+        RsId idTest4 = new RsId(REGISTRAR_CODE, "test4", RSID_TYPE_UNRESERVED_CHARS);
+        RsId idTest5 = new RsId(REGISTRAR_CODE, RSID_TYPE_MIN_LENGTH, "something");
+        RsId idTest6 = new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something");
+        RsId idTest7 = new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something");
+        RsId idTest8 = new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something");
+
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest1, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest2, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest3, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest4, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest5, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest6, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest7, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTest8, USER_WITH_RIGHTS);
+
+        // test
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest1, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest2, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest3, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest4, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest5, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest6, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest7, idOther);
+        getRegistrarScopeIdentifierOk(idForResolvation, idTest8, idOther);
+    }
+
+    private void getRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToGet, RsId idInsertedOther) {
         // get
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToGet.type)//
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToGet.type))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToGet.type + "\' }"), equalTo(idToGet.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idInsertedOther.type + "\' }"), isEmptyOrNullString());
+    }
+
+    @Test
+    public void getRegistrarScopeIdentifierInvalidType() {
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+
+        // forbidden reserved characters
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "??");
+        // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
+        // getRegistrarScopeIdentifierInvalidType(idForResolvation, "//");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "##");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "[[");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "]]");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "@@");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "!!");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "$$");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "&&");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "((");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "))");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "**");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "++");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, ",,");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, ";;");
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "==");
+
+        // forbidden nonreserved characters
+        getRegistrarScopeIdentifierInvalidType(idForResolvation, "~~");
+    }
+
+    private void getRegistrarScopeIdentifierInvalidType(RsId idForResolvation, String type) {
+        // get
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(type))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        // TODO:APIv4: rename this error code
+        assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
     @Test
@@ -88,7 +161,5 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
     }
-
-    // TODO: check characters in idToGet
 
 }
