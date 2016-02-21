@@ -10,6 +10,8 @@ import static org.junit.Assert.assertThat;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -34,13 +36,23 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         init();
     }
 
+    @BeforeMethod
+    public void beforeMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
     @Test
     public void getRegistrarScopeIdentifier() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
         RsId idToGet = new RsId(REGISTRAR_CODE, "getTest2", "something2");
         RsId idOther = new RsId(REGISTRAR_CODE, "getTest3", "something3");
-        // delete all idForResolvation, id2
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
@@ -57,19 +69,15 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToGet.type + "\' }"), equalTo(idToGet.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
-        // clean up
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
     public void getRegistrarScopeIdentifierNotDefined() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
         RsId idToGet = new RsId(REGISTRAR_CODE, "getTest2", "something2");
-        // delete all idForResolvation, id2
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // try and get
+        // try and get idToGet
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(404)//
@@ -79,8 +87,6 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
-        // clean up
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
     // TODO: check characters in idToGet

@@ -8,6 +8,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -31,13 +33,23 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
         init();
     }
 
+    @BeforeMethod
+    public void beforeMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
     @Test
     public void getRegistrarScopeIdentifiers() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
         RsId id2 = new RsId(REGISTRAR_CODE, "getTest2", "something2");
-        // delete all idForResolvation, id2
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
-        // insert ids
+        // insert idForResolvation, id2
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, id2, USER_WITH_RIGHTS);
         // get all ids
@@ -51,8 +63,8 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
-        // clean up
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
+
+    // TODO: include edge examples
 
 }

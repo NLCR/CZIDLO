@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -27,21 +29,31 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
-    private final String EXISTING_URNNBN = "urn:nbn:cz:aba001-0005hy";
+    private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
 
     @BeforeSuite
     public void beforeSuite() {
         init();
     }
 
+    @BeforeMethod
+    public void beforeMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
+    @AfterMethod
+    public void afterMethod() {
+        // delete all registrar-scope-ids
+        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
     @Test
     public void putRegistrarScopeIdentifierInsertNotAuthenticated() {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         // TODO:APIv4: return xml as well
@@ -56,22 +68,18 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check that idToBeInserted was not actually inserted
-        List<RsId> rsIds = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIds = getRsIds(URNNBN);
         assertThat(rsIds.size(), equalTo(1));
         assertThat(idForResolvation.type, equalTo(rsIds.get(0).type));
         assertThat(idForResolvation.value, equalTo(rsIds.get(0).value));
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
     public void putRegistrarScopeIdentifierInsertNotAuthorized() {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -85,22 +93,18 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check that idToBeInserted was not actually inserted
-        List<RsId> rsIds = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIds = getRsIds(URNNBN);
         assertThat(1, equalTo(rsIds.size()));
         assertThat(idForResolvation.type, equalTo(rsIds.get(0).type));
         assertThat(idForResolvation.value, equalTo(rsIds.get(0).value));
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
     public void putRegistrarScopeIdentifierInsertOk() {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -117,7 +121,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0]"), equalTo(idToBeInserted.value));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("[]"));
         // check that both ids present
-        List<RsId> rsIdsFetched = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -128,8 +132,6 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
                 Assert.fail();
             }
         }
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
@@ -137,11 +139,9 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // try and update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         // TODO:APIv4: return xml as well
@@ -156,7 +156,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check that both ids present and idToBeUpdated with old value
-        List<RsId> rsIdsFetched = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -167,8 +167,6 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
                 Assert.fail();
             }
         }
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
@@ -176,11 +174,9 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // try and update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -194,7 +190,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check that both ids present and idToBeUpdated with old value
-        List<RsId> rsIdsFetched = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -205,8 +201,6 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
                 Assert.fail();
             }
         }
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     @Test
@@ -214,11 +208,9 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
         RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
-        // delete all ids
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -234,7 +226,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(xmlPath.getString("id"), equalTo(newValue));
         assertThat(xmlPath.getString("id.@previousValue"), equalTo(idToBeUpdated.value));
         // check that both ids present and idToBeUpdated with new value
-        List<RsId> rsIdsFetched = getRsIds(EXISTING_URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -245,12 +237,11 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
                 Assert.fail();
             }
         }
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
     }
 
     // TODO: test values of idType in url and idValue in body for both operation versions
 
     // TODO:APIv4: rename INVALID_REGISTRAR_SCOPE_IDENTIFIER to REGISTRAR_SCOPE_COLLISION and change code to 403
+    // TODO: test the collisions here
 
 }
