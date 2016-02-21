@@ -60,7 +60,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         insertRegistrarScopeId(URNNBN, idInserted2, USER_WITH_RIGHTS);
         // try and delete all ids
         // TODO:APIv4: return xml as well
-        // String xml =
+        // String responseXml =
         with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
                 .expect()//
                 .statusCode(401)//
@@ -69,7 +69,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
                 // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idInserted1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check that both ids present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
@@ -93,7 +93,8 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         insertRegistrarScopeId(URNNBN, idInserted1, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idInserted2, USER_WITH_RIGHTS);
         // try and delete all ids
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
+                .basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -101,7 +102,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idInserted1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check that both ids present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
@@ -118,30 +119,52 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifiers() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something1");
-        RsId id2 = new RsId(REGISTRAR_CODE, "test2", RSID_VALUE_MIN_LENGTH);
-        RsId id3 = new RsId(REGISTRAR_CODE, "test3", RSID_VALUE_MAX_LENGTH);
-        RsId id4 = new RsId(REGISTRAR_CODE, "test4", RSID_VALUE_RESERVED_CHARS);
-        RsId id5 = new RsId(REGISTRAR_CODE, "test5", RSID_VALUE_UNRESERVED_CHARS);
+    public void deleteRegistrarScopeIdentifiersOk() {
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
+        // types
+        RsId idTypeMinLength = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "typeMinLength");
+        RsId idTypeMaxLength = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength");
+        RsId[] idsTypereserved = new RsId[RSID_TYPE_OK_RESERVED.length];
+        for (int i = 0; i < RSID_TYPE_OK_RESERVED.length; i++) {
+            idsTypereserved[i] = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_RESERVED[i], "valueUnreserved");
+        }
+        RsId[] idsTypeUnreserved = new RsId[RSID_TYPE_OK_UNRESERVED.length];
+        for (int i = 0; i < RSID_TYPE_OK_UNRESERVED.length; i++) {
+            idsTypeUnreserved[i] = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_UNRESERVED[i], "valueUnreserved");
+        }
+        // values
+        RsId idValueMinLength = new RsId(REGISTRAR_CODE, "minLength", RSID_VALUE_OK_MIN_LENGTH);
+        RsId idValueMaxLength = new RsId(REGISTRAR_CODE, "maxLength", RSID_VALUE_OK_MAX_LENGTH);
+        RsId[] idValuesReserved = new RsId[RSID_VALUE_OK_RESERVED.length];
+        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
+            idValuesReserved[i] = new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUE_OK_RESERVED[i]);
+        }
+        RsId[] idValuesUnreserved = new RsId[RSID_VALUE_OK_UNRESERVED.length];
+        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
+            idValuesUnreserved[i] = new RsId(REGISTRAR_CODE, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]);
+        }
 
-        RsId id6 = new RsId(REGISTRAR_CODE, RSID_TYPE_MIN_LENGTH, "something");
-        RsId id7 = new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something");
-        RsId id8 = new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something");
-        RsId id9 = new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something");
-
-        // insert idInserted1, idInserted2
+        // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id2, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id3, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id4, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id5, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id6, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id7, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id8, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id9, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTypeMinLength, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idTypeMaxLength, USER_WITH_RIGHTS);
+        for (RsId id : idsTypereserved) {
+            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        }
+        for (RsId id : idsTypeUnreserved) {
+            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        }
+        insertRegistrarScopeId(URNNBN, idValueMinLength, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idValueMaxLength, USER_WITH_RIGHTS);
+        for (RsId id : idValuesReserved) {
+            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        }
+        for (RsId id : idValuesUnreserved) {
+            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        }
+
         // delete all ids
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
+        String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
@@ -149,27 +172,43 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id3.type + "\' }"), equalTo(id3.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id4.type + "\' }"), equalTo(id4.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id5.type + "\' }"), equalTo(id5.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id6.type + "\' }"), equalTo(id6.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id7.type + "\' }"), equalTo(id7.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id8.type + "\' }"), equalTo(id8.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id9.type + "\' }"), equalTo(id9.value));
-        // get all rsids by urn:nbn (should be empty)
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+
+        // check all ids in response
+        assertIdFoundInResponse(xmlPath, idForResolvation);
+        assertIdFoundInResponse(xmlPath, idTypeMinLength);
+        assertIdFoundInResponse(xmlPath, idTypeMaxLength);
+        for (RsId id : idsTypereserved) {
+            assertIdFoundInResponse(xmlPath, id);
+        }
+        for (RsId id : idsTypeUnreserved) {
+            assertIdFoundInResponse(xmlPath, id);
+        }
+        assertIdFoundInResponse(xmlPath, idValueMinLength);
+        assertIdFoundInResponse(xmlPath, idValueMaxLength);
+        for (RsId id : idValuesReserved) {
+            assertIdFoundInResponse(xmlPath, id);
+        }
+        for (RsId id : idValuesUnreserved) {
+            assertIdFoundInResponse(xmlPath, id);
+        }
+
+        // get all ids by urn:nbn (should be empty)
         String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN)) + "/registrarScopeIdentifiers";
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
+                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(url)//
                 .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
+        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id"), isEmptyOrNullString());
+    }
+
+    private void assertIdFoundInResponse(XmlPath xmlPath, RsId id) {
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
     }
 
 }

@@ -19,7 +19,6 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.ApiV3Tests.RsId;
 
 /**
  * Tests for GET
@@ -55,14 +54,14 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
     public void getRegistrarScopeIdentifierOk() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
         RsId idOther = new RsId(REGISTRAR_CODE, "other", "something");
-        RsId idTest1 = new RsId(REGISTRAR_CODE, "test1", RSID_TYPE_MIN_LENGTH);
-        RsId idTest2 = new RsId(REGISTRAR_CODE, "test2", RSID_TYPE_MAX_LENGTH);
-        RsId idTest3 = new RsId(REGISTRAR_CODE, "test3", RSID_TYPE_RESERVED_CHARS);
-        RsId idTest4 = new RsId(REGISTRAR_CODE, "test4", RSID_TYPE_UNRESERVED_CHARS);
-        RsId idTest5 = new RsId(REGISTRAR_CODE, RSID_TYPE_MIN_LENGTH, "something");
-        RsId idTest6 = new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something");
-        RsId idTest7 = new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something");
-        RsId idTest8 = new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something");
+        RsId idTest1 = new RsId(REGISTRAR_CODE, "test1", RSID_TYPE_OK_MIN_LENGTH);
+        RsId idTest2 = new RsId(REGISTRAR_CODE, "test2", RSID_TYPE_OK_MAX_LENGTH);
+        RsId idTest3 = new RsId(REGISTRAR_CODE, "test3", RSID_TYPE_OK_RESERVED_DEPR);
+        RsId idTest4 = new RsId(REGISTRAR_CODE, "test4", RSID_TYPE_OK_UNRESERVED_DEPR);
+        RsId idTest5 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "something");
+        RsId idTest6 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "something");
+        RsId idTest7 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_RESERVED_DEPR, "something");
+        RsId idTest8 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_UNRESERVED_DEPR, "something");
 
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);

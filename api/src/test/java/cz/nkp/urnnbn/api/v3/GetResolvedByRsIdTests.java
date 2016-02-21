@@ -56,17 +56,17 @@ public class GetResolvedByRsIdTests extends ApiV3Tests {
     private final String REGISTRAR = "aba001";
 
     // testing id type
-    private final RsId TYPE_LENGTH_MIN_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_MIN_LENGTH, RSID_VALUE_DEFAULT);
-    private final RsId TYPE_LENGTH_MAX_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_MAX_LENGTH, RSID_VALUE_DEFAULT);
-    private final RsId TYPE_RESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_RESERVED_CHARS, RSID_VALUE_DEFAULT); // only ":"
-    private final RsId TYPE_UNRESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_UNRESERVED_CHARS, RSID_VALUE_DEFAULT);// 0-9, a-z, A-Z ,
-                                                                                                                                 // "_", "-"
+    private final RsId TYPE_LENGTH_MIN_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, RSID_VALUE_DEFAULT);
+    private final RsId TYPE_LENGTH_MAX_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, RSID_VALUE_DEFAULT);
+    private final RsId TYPE_RESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_RESERVED_DEPR, RSID_VALUE_DEFAULT); // only ":"
+    private final RsId TYPE_UNRESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_OK_UNRESERVED_DEPR, RSID_VALUE_DEFAULT);// 0-9, a-z, A-Z ,
+                                                                                                                                   // "_", "-"
 
     // testing id value
-    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MIN = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_MIN_LENGTH);
-    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MAX = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_MAX_LENGTH);
-    private final RsId TYPE_DEFAULT_VALUE_RESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_RESERVED_CHARS);
-    private final RsId TYPE_DEFAULT_VALUE_UNRESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_UNRESERVED_CHARS);
+    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MIN = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_MIN_LENGTH);
+    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MAX = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_MAX_LENGTH);
+    private final RsId TYPE_DEFAULT_VALUE_RESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_RESERVED_DEPR);
+    private final RsId TYPE_DEFAULT_VALUE_UNRESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_OK_UNRESERVED_DEPR);
 
     @BeforeSuite
     public void beforeSuite() {

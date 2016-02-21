@@ -53,55 +53,33 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void deleteRegistrarScopeIdentifierOk() {
-        RsId id1 = new RsId("aba001", "deleteTest1", "something1");
-        RsId id2 = new RsId("aba001", "deleteTest2", "something2");
-        // insert id1 and id2
-        insertRegistrarScopeId(URNNBN, id1, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, id2, USER_WITH_RIGHTS);
-        // delete id 1
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
-                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPath(id1) + "/registrarScopeIdentifiers/" + id1.type)//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), equalTo(id1.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), isEmptyOrNullString());
-        // get all rsids by urn:nbn (should contain only id 2)
-        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN)) + "/registrarScopeIdentifiers";
-        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(url)//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id1.type + "\' }"), isEmptyOrNullString());
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id2.type + "\' }"), equalTo(id2.value));
-    }
-
-    @Test
-    public void deleteRegistrarScopeIdentifierEdgeExamples() {
-        // values
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test2", RSID_VALUE_MIN_LENGTH));
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test3", RSID_VALUE_MAX_LENGTH));
-        // TODO: enable after fixed https://github.com/NLCR/CZIDLO/issues/131
-        // deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test4", RSID_VALUE_RESERVED_CHARS));
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test5", RSID_VALUE_UNRESERVED_CHARS));
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // types
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something"));
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something"));
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something"));
-        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something"));
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMinLength"));
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength"));
+        for (String type : RSID_TYPE_OK_RESERVED) {
+            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "typereserved"));
+        }
+        for (String type : RSID_TYPE_OK_UNRESERVED) {
+            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "typeUnreserved"));
+        }
+        // values
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMinLength", RSID_VALUE_OK_MIN_LENGTH));
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMaxLength", RSID_VALUE_OK_MAX_LENGTH));
+        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
+            String value = RSID_VALUE_OK_RESERVED[i];
+            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueReserved" + i, value));
+        }
+        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
+            String value = RSID_VALUE_OK_UNRESERVED[i];
+            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueUnreserved" + i, value));
+        }
     }
 
-    private void deleteRegistrarScopeIdentifierEdgeExample(RsId id) {
+    private void deleteRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToBeDeleted) {
         // insert id
-        insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idToBeDeleted, USER_WITH_RIGHTS);
         // delete id
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
@@ -109,10 +87,12 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation)//
+                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToBeDeleted.type))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeDeleted.type + "\' }"), equalTo(idToBeDeleted.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
         // try and get deleted rsid
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -120,7 +100,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN))//
-                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type))//
+                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToBeDeleted.type))//
                 .andReturn().asString();
         xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");

@@ -83,18 +83,27 @@ public abstract class ApiV3Tests {
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
     final String RSID_TYPE_DEFAULT = "testType";
-    final String RSID_TYPE_MIN_LENGTH = "aa";
-    final String RSID_TYPE_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
-    final String RSID_TYPE_RESERVED_CHARS = "Ab9:8cD";
-    final String RSID_TYPE_UNRESERVED_CHARS = "aA9_-";
+    final String RSID_TYPE_OK_MIN_LENGTH = "aA";
+    final String RSID_TYPE_OK_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
+    @Deprecated
+    final String RSID_TYPE_OK_RESERVED_DEPR = "::";
+    final String[] RSID_TYPE_OK_RESERVED = new String[] { "::" };
+    @Deprecated
+    final String RSID_TYPE_OK_UNRESERVED_DEPR = "aA9_-";
+    final String[] RSID_TYPE_OK_UNRESERVED = new String[] { "__", "--", "aa", "AA", "00" };
 
     final String RSID_VALUE_DEFAULT = "testValue";
-    final String RSID_VALUE_MIN_LENGTH = "a";
-    final String RSID_VALUE_MAX_LENGTH = "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6";
+    final String RSID_VALUE_OK_MIN_LENGTH = "a";
+    final String RSID_VALUE_OK_MAX_LENGTH = "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6";
     // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
-    // final String RSID_VALUE_RESERVED_CHARS= "!*'();:@&=+$,/?#[]";
-    final String RSID_VALUE_RESERVED_CHARS = "!*'();:@&=+$,?#[]";
-    final String RSID_VALUE_UNRESERVED_CHARS = "-_.~";
+    @Deprecated
+    final String RSID_VALUE_OK_RESERVED_DEPR = "!*'();:@&=+$,?#[]";
+    // final String[] RSID_VALUE_RESERVED_CHARS = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[",
+    // "]" };
+    final String[] RSID_VALUE_OK_RESERVED = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "?", "#", "[", "]" };
+    @Deprecated
+    final String RSID_VALUE_OK_UNRESERVED_DEPR = "-_.~";
+    final String[] RSID_VALUE_OK_UNRESERVED = new String[] { "-", "_", ".", "~" };
 
     Random rand = new Random();
     String responseXsdString;
@@ -140,6 +149,7 @@ public abstract class ApiV3Tests {
     }
 
     String buildResolvationPath(RsId id) {
+        // TODO: Utils.urlEncodeReservedChars() vzdy tady primo
         return "/registrars/" + id.registrarCode + "/digitalDocuments/registrarScopeIdentifier/" + id.type + "/" + id.value;
     }
 
