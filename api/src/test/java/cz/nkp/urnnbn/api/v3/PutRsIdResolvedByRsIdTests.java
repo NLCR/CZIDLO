@@ -16,9 +16,14 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-public class UpdateRsIdResolvedByRsIdTests extends ApiV3Tests {
+/**
+ * Tests for PUT
+ * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}registrarScopeIdentifiers/${ID_TYPE_2}
+ *
+ */
+public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(UpdateRsIdResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PutRsIdResolvedByRsIdTests.class.getName());
 
     private static final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private static final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
