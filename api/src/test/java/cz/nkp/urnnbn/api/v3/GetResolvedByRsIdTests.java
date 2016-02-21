@@ -3,15 +3,14 @@ package cz.nkp.urnnbn.api.v3;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
+import org.junit.AfterClass;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -20,7 +19,13 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
 
-public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
+/**
+ * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}
+ *
+ */
+public class GetResolvedByRsIdTests extends ApiV3Tests {
+
+    // TODO: tohle jeste projit
 
     // sql to get (registrar, id_type, id_value) triplets
     // select
@@ -31,10 +36,9 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     // (select registrarid, type, idvalue from registrarscopeid) as rsid join
     // (select id, code from registrar) as registrar on rsid.registrarid=registrar.id;
 
-    private static final Logger LOGGER = Logger.getLogger(RegistrarScopeIdentifierResolvationTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetResolvedByRsIdTests.class.getName());
 
-    private static final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private static final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
+    private static final Credentials USER = new Credentials("martin", "i0oEhu");
 
     private final RsId ID_WITHOUT_DI = new RsId("tst02", "K4_pid", "uuid:123");
     private final RsId ID_WITH_ACTIVE_DI = new RsId("p01nk", "uuid", "113e83b0-1db2-11e2-bec6-005056827e51");
@@ -42,35 +46,61 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");
     private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");
 
+    private final String URNNBN0 = "urn:nbn:cz:aba001-000000";
+    private final String URNNBN1 = "urn:nbn:cz:aba001-000001";
+    private final String URNNBN2 = "urn:nbn:cz:aba001-000002";
+    private final String URNNBN3 = "urn:nbn:cz:aba001-000003";
+    private final String URNNBN4 = "urn:nbn:cz:aba001-000004";
+    private final String URNNBN5 = "urn:nbn:cz:aba001-000005";
+
+    private final String REGISTRAR = "aba001";
+
     // testing id type
-    private final String ID_TYPE_REGISTRAR = "aba001";
-    private final String ID_TYPE_VALUE = "something";
-    private final RsId ID_TYPE_LENGTH_2 = new RsId(ID_TYPE_REGISTRAR, "aA", ID_TYPE_VALUE);
-    private final RsId ID_TYPE_LENGTH_20 = new RsId(ID_TYPE_REGISTRAR, "aaaaaaaaa1AAAAAAAAA2", ID_TYPE_VALUE);
-    private final RsId ID_TYPE_RESERVED_CHARS = new RsId(ID_TYPE_REGISTRAR, "Ab9:8cD", ID_TYPE_VALUE); // only ":" allowed from reserved
-    private final RsId ID_TYPE_UNRESERVED_CHARS = new RsId(ID_TYPE_REGISTRAR, "aA9_-", ID_TYPE_VALUE);// 0-9, a-z, A-Z , "_", "-" allowed from
-                                                                                                      // unreserved
+    private final RsId TYPE_LENGTH_MIN_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_MIN_LENGTH, RSID_VALUE_DEFAULT);
+    private final RsId TYPE_LENGTH_MAX_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_MAX_LENGTH, RSID_VALUE_DEFAULT);
+    private final RsId TYPE_RESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_RESERVED_CHARS, RSID_VALUE_DEFAULT); // only ":"
+    private final RsId TYPE_UNRESERVED_CHARS_VALUE_DEFAULT = new RsId(REGISTRAR, RSID_TYPE_UNRESERVED_CHARS, RSID_VALUE_DEFAULT);// 0-9, a-z, A-Z ,
+                                                                                                                                 // "_", "-"
 
     // testing id value
-    private final String ID_VALUE_REGISTRAR = "aba001";
-    private final String ID_VALUE_TYPE = "test";
-    private final RsId ID_VALUE_LENGTH_1 = new RsId(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "a");
-    private final RsId ID_VALUE_LENGTH_60 = new RsId(ID_VALUE_REGISTRAR, ID_VALUE_TYPE,
-            "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6");
-    // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
-    // private final Id ID_VALUE_RESERVED = new Id(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "!*'();:@&=+$,/?#[]");
-    private final RsId ID_VALUE_RESERVED_CHARS = new RsId(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "!*'();:@&=+$,?#[]");
-    private final RsId ID_VALUE_UNRESERVED_CHARS = new RsId(ID_VALUE_REGISTRAR, ID_VALUE_TYPE, "-_.~");
-
-    private final RsId ID_TWO_RSI_1 = new RsId("aba001", "first", "something");
-    private final RsId ID_TWO_RSI_2 = new RsId("aba001", "second", "somethingElse");
-    private final RsId ID_TWO_RSI_3_NOT_EXISTING = new RsId("aba001", "third", "anotherOne");
-
-    private final String EXISTING_URNNBN = "urn:nbn:cz:aba001-0005hy";
+    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MIN = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_MIN_LENGTH);
+    private final RsId TYPE_DEFAULT_VALUE_LENGTH_MAX = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_MAX_LENGTH);
+    private final RsId TYPE_DEFAULT_VALUE_RESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_RESERVED_CHARS);
+    private final RsId TYPE_DEFAULT_VALUE_UNRESERVED_CHARS = new RsId(REGISTRAR, RSID_TYPE_DEFAULT, RSID_VALUE_UNRESERVED_CHARS);
 
     @BeforeSuite
     public void beforeSuite() {
         init();
+    }
+
+    @BeforeClass
+    public void beforeClass() {
+        deleteAllRegistrarScopeIdentifiers(URNNBN0, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN1, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN4, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN5, USER);
+        // testing type
+        insertRegistrarScopeId(URNNBN0, TYPE_LENGTH_MIN_VALUE_DEFAULT, USER);
+        insertRegistrarScopeId(URNNBN0, TYPE_LENGTH_MAX_VALUE_DEFAULT, USER);
+        insertRegistrarScopeId(URNNBN0, TYPE_RESERVED_CHARS_VALUE_DEFAULT, USER);
+        insertRegistrarScopeId(URNNBN0, TYPE_UNRESERVED_CHARS_VALUE_DEFAULT, USER);
+        // testing value
+        insertRegistrarScopeId(URNNBN1, TYPE_DEFAULT_VALUE_LENGTH_MIN, USER);
+        insertRegistrarScopeId(URNNBN2, TYPE_DEFAULT_VALUE_LENGTH_MAX, USER);
+        insertRegistrarScopeId(URNNBN3, TYPE_DEFAULT_VALUE_RESERVED_CHARS, USER);
+        insertRegistrarScopeId(URNNBN4, TYPE_DEFAULT_VALUE_UNRESERVED_CHARS, USER);
+    }
+
+    @AfterClass
+    public void afterClass() {
+        deleteAllRegistrarScopeIdentifiers(URNNBN0, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN1, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN4, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN5, USER);
     }
 
     @Test
@@ -80,7 +110,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(new RsId(ID_TYPE_REGISTRAR, "a", ID_TYPE_VALUE)))//
+                .when().get(buildResolvationPath(new RsId(REGISTRAR, "a", RSID_VALUE_DEFAULT)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -94,7 +124,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(new RsId(ID_TYPE_REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", ID_TYPE_VALUE)))//
+                .when().get(buildResolvationPath(new RsId(REGISTRAR, "aaaaaaaaa1aaaaaaaaa2a", RSID_VALUE_DEFAULT)))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_ID_TYPE
@@ -104,7 +134,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdTypeSizeOk() {
         // length 2
-        RsId id = ID_TYPE_LENGTH_2;
+        RsId id = TYPE_LENGTH_MIN_VALUE_DEFAULT;
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -116,7 +146,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
 
         // length 20
-        id = ID_TYPE_LENGTH_20;
+        id = TYPE_LENGTH_MAX_VALUE_DEFAULT;
         xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -130,7 +160,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeValidCharactersReserved() {
-        RsId id = ID_TYPE_RESERVED_CHARS;
+        RsId id = TYPE_RESERVED_CHARS_VALUE_DEFAULT;
         RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, Utils.urlEncodeReservedChars(id.type), id.value);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -145,7 +175,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdTypeValidCharactersUnreserved() {
-        RsId id = ID_TYPE_UNRESERVED_CHARS;
+        RsId id = TYPE_UNRESERVED_CHARS_VALUE_DEFAULT;
         // not url encoded
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -196,7 +226,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     }
 
     private void resolveIdIdTypeInvalidCharactersReserved(char c) {
-        RsId id = new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedChars("" + c + c), ID_TYPE_VALUE);
+        RsId id = new RsId(REGISTRAR, Utils.urlEncodeReservedChars("" + c + c), RSID_VALUE_DEFAULT);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false) //
                 .expect() //
                 .statusCode(400) //
@@ -215,7 +245,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         // only "~" not allowed (from unreserved character set)
 
         // not url-encoded
-        RsId id = new RsId(ID_TYPE_REGISTRAR, "~~", ID_TYPE_VALUE);
+        RsId id = new RsId(REGISTRAR, "~~", RSID_VALUE_DEFAULT);
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
                 .expect()//
                 .statusCode(400).contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -228,7 +258,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
 
         // url-encoded
-        id = new RsId(ID_TYPE_REGISTRAR, Utils.urlEncodeReservedChars("~~"), ID_TYPE_VALUE);
+        id = new RsId(REGISTRAR, Utils.urlEncodeReservedChars("~~"), RSID_VALUE_DEFAULT);
         xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false) //
                 .expect() //
                 .statusCode(400) //
@@ -261,7 +291,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
     @Test
     public void resolveIdIdValueSizeOk() {
         // length 2
-        RsId id = ID_VALUE_LENGTH_1;
+        RsId id = TYPE_DEFAULT_VALUE_LENGTH_MIN;
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -273,7 +303,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
 
         // length 20
-        id = ID_VALUE_LENGTH_60;
+        id = TYPE_DEFAULT_VALUE_LENGTH_MAX;
         xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -287,7 +317,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdValueValidCharactersReserved() {
-        RsId id = ID_VALUE_RESERVED_CHARS;
+        RsId id = TYPE_DEFAULT_VALUE_RESERVED_CHARS;
         RsId idWithReservedCharsEncoded = new RsId(id.registrarCode, id.type, Utils.urlEncodeReservedChars(id.value));
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -302,7 +332,7 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
 
     @Test
     public void resolveIdIdValueValidCharactersUnreserved() {
-        RsId id = ID_VALUE_UNRESERVED_CHARS;
+        RsId id = TYPE_DEFAULT_VALUE_UNRESERVED_CHARS;
         // not url encoded
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -561,22 +591,6 @@ public class RegistrarScopeIdentifierResolvationTests extends ApiV3Tests {
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
                 .when().get(buildResolvationPath(ID_WITH_DEACTIVATED_DI));
-    }
-
-    @Test
-    public void getRegistrarScopeIdentifiers() {
-        RsId id = ID_TWO_RSI_1;
-        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers/c:id", nsContext))//
-                .when().get(buildResolvationPath(id) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + ID_TWO_RSI_2.type + "\' }"), equalTo(ID_TWO_RSI_2.value));
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + ID_TWO_RSI_3_NOT_EXISTING.type + "\' }"), isEmptyOrNullString());
     }
 
 }

@@ -18,7 +18,7 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 /**
  * Tests for PUT
- * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}registrarScopeIdentifiers/${ID_TYPE_2}
+ * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
 public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
@@ -41,7 +41,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         // TODO:APIv4: return xml as well
@@ -71,7 +71,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -100,7 +100,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // insert idToBeInserted
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeInserted.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -140,8 +140,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated.type, idToBeUpdated.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // try and update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         // TODO:APIv4: return xml as well
@@ -179,8 +179,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated.type, idToBeUpdated.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // try and update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -217,8 +217,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all ids
         deleteAllRegistrarScopeIdentifiers(EXISTING_URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation, idToBeUpdated
-        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated.type, idToBeUpdated.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(EXISTING_URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
         // update idToBeUpdated with newValue
         String url = HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + idToBeUpdated.type;
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
@@ -250,5 +250,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
     }
 
     // TODO: test values of idType in url and idValue in body for both operation versions
+
+    // TODO:APIv4: rename INVALID_REGISTRAR_SCOPE_IDENTIFIER to REGISTRAR_SCOPE_COLLISION and change code to 403
 
 }

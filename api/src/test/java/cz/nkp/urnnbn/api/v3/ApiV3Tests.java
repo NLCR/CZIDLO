@@ -82,6 +82,20 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
+    final String RSID_TYPE_DEFAULT = "testType";
+    final String RSID_TYPE_MIN_LENGTH = "aa";
+    final String RSID_TYPE_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
+    final String RSID_TYPE_RESERVED_CHARS = "Ab9:8cD";
+    final String RSID_TYPE_UNRESERVED_CHARS = "aA9_-";
+
+    final String RSID_VALUE_DEFAULT = "testValue";
+    final String RSID_VALUE_MIN_LENGTH = "a";
+    final String RSID_VALUE_MAX_LENGTH = "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6";
+    // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
+    // final String RSID_VALUE_RESERVED_CHARS= "!*'();:@&=+$,/?#[]";
+    final String RSID_VALUE_RESERVED_CHARS = "!*'();:@&=+$,?#[]";
+    final String RSID_VALUE_UNRESERVED_CHARS = "-_.~";
+
     Random rand = new Random();
     String responseXsdString;
     NamespaceContext nsContext;
@@ -143,18 +157,19 @@ public abstract class ApiV3Tests {
                 .when().delete(url);
     }
 
-    void insertRegistrarScopeId(String urnNbn, String type, String newValue, Credentials credentials) {
-        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers/" + type;
+    void insertRegistrarScopeId(String urnNbn, RsId id, Credentials credentials) {
+        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(urnNbn)) + "/registrarScopeIdentifiers/"
+                + Utils.urlEncodeReservedChars(id.type);
         String responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(credentials.login, credentials.password)//
-                .body(newValue).expect()//
+                .body(id.value).expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().put(url)//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        assertThat(xmlPath.getString("id"), equalTo(newValue));
-        assertThat(xmlPath.getString("id.@type"), equalTo(type));
+        assertThat(xmlPath.getString("id"), equalTo(id.value));
+        assertThat(xmlPath.getString("id.@type"), equalTo(id.type));
     }
 
     List<RsId> getRsIds(String urnNbn) {

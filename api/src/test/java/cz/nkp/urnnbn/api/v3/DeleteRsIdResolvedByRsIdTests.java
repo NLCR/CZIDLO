@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.api.Utils;
 
 /**
  * Tests for DELETE
- * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}registrarScopeIdentifiers/${ID_TYPE_2}
+ * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
 public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
@@ -29,6 +29,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
+    private final String REGISTRAR_CODE = "aba001";
     private final String URN_NBN = "urn:nbn:cz:aba001-0005hy";
 
     @BeforeSuite
@@ -43,8 +44,8 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all registrar-scope-identifiers
         deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
         // insert id1 and id2
-        insertRegistrarScopeId(URN_NBN, id1.type, id1.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URN_NBN, id2.type, id2.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URN_NBN, id1, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URN_NBN, id2, USER_WITH_RIGHTS);
         // delete id 1
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
@@ -74,12 +75,58 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
     }
 
     @Test
+    public void deleteRegistrarScopeIdentifierEdgeExamples() {
+        // delete all registrar-scope-identifiers
+        deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
+
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test2", RSID_VALUE_MIN_LENGTH));
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test3", RSID_VALUE_MAX_LENGTH));
+        // TODO: enable after fixed https://github.com/NLCR/CZIDLO/issues/131
+        // deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test4", RSID_VALUE_RESERVED_CHARS));
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, "test5", RSID_VALUE_UNRESERVED_CHARS));
+
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something"));
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_MAX_LENGTH, "something"));
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_RESERVED_CHARS, "something"));
+        deleteRegistrarScopeIdentifierEdgeExample(new RsId(REGISTRAR_CODE, RSID_TYPE_UNRESERVED_CHARS, "something"));
+        // clean up
+        deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
+    }
+
+    private void deleteRegistrarScopeIdentifierEdgeExample(RsId id) {
+        // insert id
+        insertRegistrarScopeId(URN_NBN, id, USER_WITH_RIGHTS);
+        // delete id
+        String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
+                .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+        // try and get deleted rsid
+        xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(Utils.urlEncodeReservedChars(URN_NBN))//
+                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(id.type))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
+    }
+
+    @Test
     public void deleteRegistrarScopeIdentifierNotAuthenticated() {
         RsId id = new RsId("aba001", "deleteTest1", "something1");
         // delete all registrar-scope-identifiers
         deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
         // insert id
-        insertRegistrarScopeId(URN_NBN, id.type, id.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URN_NBN, id, USER_WITH_RIGHTS);
         // delete id without credentials
         // xml =
         with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false)//
@@ -103,7 +150,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all registrar-scope-identifiers
         deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
         // insert id
-        insertRegistrarScopeId(URN_NBN, id.type, id.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URN_NBN, id, USER_WITH_RIGHTS);
         // try and delete id with wrong credentials
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
@@ -126,7 +173,7 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all registrar-scope-identifiers
         deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
         // insert id1
-        insertRegistrarScopeId(URN_NBN, id1.type, id1.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URN_NBN, id1, USER_WITH_RIGHTS);
         // try and delete id2 without id2 being present
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
@@ -142,6 +189,6 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URN_NBN, USER_WITH_RIGHTS);
     }
 
-    // TODO: dodelat testy na validni rsIdType
+    // TODO: dodelat testy na nepovolene reserved/unreserved znaky v rsIdType a prilis kratkou/dlouhou hodnotu idType
 
 }

@@ -18,7 +18,7 @@ import com.jayway.restassured.path.xml.XmlPath;
 
 /**
  * Tests for GET
- * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}registrarScopeIdentifiers/${ID_TYPE_2}
+ * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
 public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
@@ -42,9 +42,9 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all idForResolvation, id2
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToGet.type, idToGet.value, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idOther.type, idOther.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
         // get
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -68,7 +68,7 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         // delete all idForResolvation, id2
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
         // insert idForResolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation.type, idForResolvation.value, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and get
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
