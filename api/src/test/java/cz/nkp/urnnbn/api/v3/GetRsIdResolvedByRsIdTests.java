@@ -52,42 +52,34 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void getRegistrarScopeIdentifierOk() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
         RsId idOther = new RsId(REGISTRAR_CODE, "other", "something");
-        RsId idTest1 = new RsId(REGISTRAR_CODE, "test1", RSID_TYPE_OK_MIN_LENGTH);
-        RsId idTest2 = new RsId(REGISTRAR_CODE, "test2", RSID_TYPE_OK_MAX_LENGTH);
-        RsId idTest3 = new RsId(REGISTRAR_CODE, "test3", RSID_TYPE_OK_RESERVED_DEPR);
-        RsId idTest4 = new RsId(REGISTRAR_CODE, "test4", RSID_TYPE_OK_UNRESERVED_DEPR);
-        RsId idTest5 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "something");
-        RsId idTest6 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "something");
-        RsId idTest7 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_RESERVED_DEPR, "something");
-        RsId idTest8 = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_UNRESERVED_DEPR, "something");
-
-        // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest1, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest2, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest3, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest4, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest5, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest6, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest7, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTest8, USER_WITH_RIGHTS);
-
-        // test
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest1, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest2, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest3, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest4, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest5, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest6, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest7, idOther);
-        getRegistrarScopeIdentifierOk(idForResolvation, idTest8, idOther);
+        // test id types
+        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "value"));
+        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "value"));
+        for (int i = 0; i < RSID_TYPE_OK_RESERVED.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_RESERVED[i], "value"));
+        }
+        for (int i = 0; i < RSID_TYPE_OK_UNRESERVED.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_UNRESERVED[i], "value"));
+        }
+        // test id values
+        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "minLength", RSID_VALUE_OK_MIN_LENGTH));
+        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "maxLength", RSID_VALUE_OK_MAX_LENGTH));
+        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
+        }
+        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]));
+        }
     }
 
-    private void getRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToGet, RsId idInsertedOther) {
-        // get
+    private void getRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idInsertedOther, RsId idToGet) {
+        // insert id
+        insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
+        // get id
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -99,6 +91,8 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToGet.type + "\' }"), equalTo(idToGet.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idInsertedOther.type + "\' }"), isEmptyOrNullString());
+        // remove id
+        deleteRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
     }
 
     @Test

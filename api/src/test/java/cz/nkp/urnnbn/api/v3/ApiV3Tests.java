@@ -85,11 +85,7 @@ public abstract class ApiV3Tests {
     // rsid types correct
     final String RSID_TYPE_OK_MIN_LENGTH = "aA";
     final String RSID_TYPE_OK_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
-    @Deprecated
-    final String RSID_TYPE_OK_RESERVED_DEPR = "::";
     final String[] RSID_TYPE_OK_RESERVED = new String[] { "::" };
-    @Deprecated
-    final String RSID_TYPE_OK_UNRESERVED_DEPR = "aA9_-";
     final String[] RSID_TYPE_OK_UNRESERVED = new String[] { "__", "--", "aa", "AA", "00" };
     // rsid types invalid
     final String RSID_TYPE_INVALID_TO_SHORT = "a";
