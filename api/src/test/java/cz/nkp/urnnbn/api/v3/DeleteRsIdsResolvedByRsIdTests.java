@@ -80,6 +80,7 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
             } else if (id.type.equals(idInserted1.type)) {
                 assertThat(id.value, equalTo(idInserted1.value));
             } else {// unexpected id type
+                System.err.println("type: " + id.type + ", value: " + id.value);
                 Assert.fail();
             }
         }
@@ -194,14 +195,13 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
         }
 
         // get all ids by urn:nbn (should be empty)
-        String url = HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN)) + "/registrarScopeIdentifiers";
         responseXml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).auth()
                 .basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(url)//
+                .when().get(HTTPS_API_URL + buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN)) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id"), isEmptyOrNullString());

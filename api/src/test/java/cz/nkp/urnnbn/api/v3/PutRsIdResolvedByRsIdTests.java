@@ -240,6 +240,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
     }
 
     // TODO: test values of idType in url and idValue in body for both operation versions
+    // see DeleteRsIdResolvedByRsIdTests and DeleteRsIdsResolvedByRsIdTests
 
     // TODO:APIv4: rename INVALID_REGISTRAR_SCOPE_IDENTIFIER to REGISTRAR_SCOPE_COLLISION and change code to 403
     // TODO: test the collisions here

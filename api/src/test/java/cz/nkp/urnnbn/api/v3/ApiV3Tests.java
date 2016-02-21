@@ -91,6 +91,14 @@ public abstract class ApiV3Tests {
     @Deprecated
     final String RSID_TYPE_OK_UNRESERVED_DEPR = "aA9_-";
     final String[] RSID_TYPE_OK_UNRESERVED = new String[] { "__", "--", "aa", "AA", "00" };
+    final String RSID_TYPE_INVALID_TO_SHORT = "a";
+    final String RSID_TYPE_INVALID_TO_LONG = "aaaaaaaaa1AAAAAAAAA21";
+    // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
+    // final String[] RSID_TYPE_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,", "//", "??",
+    // "##", "[[", "]]" };
+    final String[] RSID_TYPE_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,", "??", "##",
+            "[[", "]]" };
+    final String[] RSID_TYPE_INVALID_UNRESERVED = new String[] { "..", "~~" };
 
     final String RSID_VALUE_DEFAULT = "testValue";
     final String RSID_VALUE_OK_MIN_LENGTH = "a";

@@ -102,34 +102,21 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarScopeIdentifierInvalidType() {
+    public void getRegistrarScopeIdentifierTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
 
-        // forbidden reserved characters
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "??");
-        // TODO: character '/' ignored for now until this bug is fixed: https://github.com/NLCR/CZIDLO/issues/129
-        // getRegistrarScopeIdentifierInvalidType(idForResolvation, "//");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "##");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "[[");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "]]");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "@@");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "!!");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "$$");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "&&");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "((");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "))");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "**");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "++");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, ",,");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, ";;");
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "==");
-
-        // forbidden nonreserved characters
-        getRegistrarScopeIdentifierInvalidType(idForResolvation, "~~");
+        // invalid reserved characters
+        for (String type : RSID_TYPE_INVALID_RESERVED) {
+            getRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
+        }
+        // invalid unreserved characters
+        for (String type : RSID_TYPE_INVALID_UNRESERVED) {
+            getRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
+        }
     }
 
-    private void getRegistrarScopeIdentifierInvalidType(RsId idForResolvation, String type) {
+    private void getRegistrarScopeIdentifierTypeInvalid(RsId idForResolvation, String type) {
         // get
         String xml = with().config(namespaceAwareXmlConfig()).urlEncodingEnabled(false).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
