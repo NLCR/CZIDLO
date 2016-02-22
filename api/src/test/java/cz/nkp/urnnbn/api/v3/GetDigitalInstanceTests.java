@@ -26,10 +26,9 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstanceTests.class.getName());
 
-    private final String ID_INVALID = "abc";
-    private final long ID_UNKNOWN = 9999999L;// make sure it exists and is not assigned
-    private final long ID_ACTIVE = 27703L;// make sure it exists and is active
-    private final long ID_DEACTIVATED = 60L;// make sure it exists and is not active
+    private final long DI_ID_UNKNOWN = 9999999L;// make sure it exists and is not assigned
+    private final long DI_ID_ACTIVE = 27703L;// make sure it exists and is active
+    private final long DI_ID_DEACTIVATED = 60L;// make sure it exists and is not active
 
     @BeforeSuite
     public void beforeSuite() {
@@ -37,14 +36,14 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalInstanceInvalidId() {
-        // TODO: test with other invalid values
+    public void getDigitalInstanceInvalidIdNotNumber() {
+        String id = "abc";
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().get("/digitalInstances/id/" + Utils.urlEncodeReservedChars(ID_INVALID))//
+                .when().get("/digitalInstances/id/" + Utils.urlEncodeReservedChars(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
@@ -57,13 +56,13 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().get("/digitalInstances/id/" + ID_UNKNOWN).andReturn().asString();
+                .when().get("/digitalInstances/id/" + DI_ID_UNKNOWN).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
     }
 
     public void getDigitalInstanceActive() {
-        long id = ID_ACTIVE;
+        long id = DI_ID_ACTIVE;
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -76,7 +75,7 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
 
     @Test
     public void getDigitalInstanceDeactivated() {
-        long id = ID_DEACTIVATED;
+        long id = DI_ID_DEACTIVATED;
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -90,7 +89,7 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
     @Test
     public void getDigitalInstancesData() {
         with().config(namespaceAwareXmlConfig())//
-                .when().get("/digitalInstances/id/" + ID_ACTIVE).then()//
+                .when().get("/digitalInstances/id/" + DI_ID_ACTIVE).then()//
                 .assertThat().body(matchesXsd(responseXsdString))//
                 .assertThat().body(hasXPath("/c:response", nsContext))//
                 .assertThat().body(hasXPath("/c:response/c:digitalInstance", nsContext))//

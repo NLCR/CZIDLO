@@ -34,16 +34,15 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(ResolveByRsIdTests.class.getName());
 
-    private static final Credentials USER = new Credentials("martin", "i0oEhu");
-
+    private final Credentials USER = new Credentials("martin", "i0oEhu");
     private final String REGISTRAR = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-000000";
 
-    private final RsId ID_WITHOUT_DI = new RsId("tst02", "K4_pid", "uuid:123");
-    private final RsId ID_WITH_ACTIVE_DI = new RsId("p01nk", "uuid", "113e83b0-1db2-11e2-bec6-005056827e51");
-    private final RsId ID_WITH_DEACTIVATED_DI = new RsId("p01mzk", "uuid", "eff774d0-24a2-11e2-a6ce-5ef3fc9ae867");
-    private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");
-    private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");
+    private final RsId ID_WITHOUT_DI = new RsId("tst02", "K4_pid", "uuid:123");// or urn:nbn:cz:aba001-00000d
+    private final RsId ID_WITH_ACTIVE_DI = new RsId("p01nk", "uuid", "113e83b0-1db2-11e2-bec6-005056827e51");// or urn:nbn:cz:aba001-000004
+    private final RsId ID_WITH_DEACTIVATED_DI = new RsId("p01mzk", "uuid", "eff774d0-24a2-11e2-a6ce-5ef3fc9ae867"); // or urn:nbn:cz:aba001-000005
+    private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");// or urn:nbn:cz:aba001-999999
+    private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");// or urn:nbn:cz:aba001-00000d
 
     @BeforeSuite
     public void beforeSuite() {
@@ -60,16 +59,54 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
+    // TODO: test ID_TYPE, ID_VALUE for valid/invalid type and value
+
+    @Test
+    public void resolveRegistrarCodesInvalid() {
+        for (String registrarCode : REGISTRAR_CODES_INVALID) {
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            LOGGER.info("registrar code: " + registrarCode);
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation))//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            String errorCode = xmlPath.getString("code");
+            // LOGGER.info("error code: " + errorCode);
+            Assert.assertEquals(errorCode, "INVALID_REGISTRAR_CODE");
+        }
+    }
+
+    @Test
+    public void resolveRegistrarCodesValid() {
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation))//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            String errorCode = xmlPath.getString("error.code");
+            // LOGGER.info("error code: " + errorCode);
+            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(errorCode) || "UNKNOWN_DIGITAL_DOCUMENT".equals(errorCode));
+        }
+    }
+
     @Test
     public void resolveIdTypeInvalid() {
         resolveIdTypeInvalid(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_SHORT, "value"));
         resolveIdTypeInvalid(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_LONG, "value"));
         // reserved
-        for (String type : RSID_TYPE_INVALID_RESERVED) {
+        for (String type : RSID_TYPES_INVALID_RESERVED) {
             resolveIdTypeInvalid(new RsId(REGISTRAR, type, "value"));
         }
         // unreserved
-        for (String type : RSID_TYPE_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
             resolveIdTypeInvalid(new RsId(REGISTRAR, type, "value"));
         }
     }
@@ -89,30 +126,31 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     @Test
     public void resolveIdValueInvalid() {
-        // TODO: enable when after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
-        // resolveIdValueInvalid(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
-        // resolveIdValueInvalid(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
+        resolveIdValueInvalid(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
+        resolveIdValueInvalid(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
     }
 
     private void resolveIdValueInvalid(RsId id) {
-        String responseXml = with().config(namespaceAwareXmlConfig()) //
-                .expect() //
-                .statusCode(400) //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                .body(hasXPath("/c:response/c:error", nsContext)) //
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_VALUE
-        Assert.assertEquals(xmlPath.get("code"), "TODO");
+        // TODO: enable after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
+        // String responseXml = with().config(namespaceAwareXmlConfig()) //
+        // .expect() //
+        // .statusCode(400) //
+        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+        // .body(hasXPath("/c:response/c:error", nsContext)) //
+        // .when().get(buildResolvationPath(id))//
+        // .andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // // TODO:APIv4: rename error to INVALID_ID_VALUE
+        // Assert.assertEquals(xmlPath.get("code"), "TODO");
+        LOGGER.info("deleteRegistrarScopeIdentifiersInvalidResolvationValue ignored untill issue 132 is fixed");
     }
 
     @Test
     public void resolveIdTypeAndValueOk() {
         String urnNbn = URNNBN;
         // values
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "inLength", RSID_VALUE_OK_MIN_LENGTH));
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "maxLength", RSID_VALUE_OK_MAX_LENGTH));
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "inLength", RSID_VALUES_OK_MIN_LENGTH));
+        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "maxLength", RSID_VALUES_OK_MAX_LENGTH));
         for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
             resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
         }
@@ -123,11 +161,11 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         // types
         resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, "value"));
         resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, "value"));
-        for (int i = 0; i < RSID_TYPE_OK_RESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_RESERVED[i], "value"));
+        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_OK_RESERVED[i], "value"));
         }
-        for (int i = 0; i < RSID_TYPE_OK_UNRESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_UNRESERVED[i], "value"));
+        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_OK_UNRESERVED[i], "value"));
         }
     }
 

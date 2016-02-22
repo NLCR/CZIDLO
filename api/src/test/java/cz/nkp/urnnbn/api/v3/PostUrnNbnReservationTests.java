@@ -35,6 +35,8 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
         init();
     }
 
+    // TODO: otestovat min, max delku, nepovolane znaky, atd pro REGISTRAR_CODE
+
     @Test
     public void postReservationsNotAuthenticated() {
         // check total reservations before

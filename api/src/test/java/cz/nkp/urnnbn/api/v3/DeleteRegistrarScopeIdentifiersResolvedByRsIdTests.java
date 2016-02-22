@@ -23,13 +23,13 @@ import com.jayway.restassured.path.xml.XmlPath;
  * Tests for DELETE /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers
  *
  */
-public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
+public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(DeleteRsIdResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifiersResolvedByRsIdTests.class.getName());
 
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
-    private final String REGISTRAR_CODE = "aba001";
+    private final String REGISTRAR = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
 
     @BeforeSuite
@@ -51,8 +51,8 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void deleteRegistrarScopeIdentifiersNotAuthenticated() {
-        RsId idInserted1 = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
-        RsId idInserted2 = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
+        RsId idInserted1 = new RsId(REGISTRAR, "deleteTest1", "something1");
+        RsId idInserted2 = new RsId(REGISTRAR, "deleteTest2", "something2");
         // insert idInserted1, idInserted2
         insertRegistrarScopeId(URNNBN, idInserted1, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idInserted2, USER_WITH_RIGHTS);
@@ -86,8 +86,8 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void deleteRegistrarScopeIdentifiersNotAuthorized() {
-        RsId idInserted1 = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
-        RsId idInserted2 = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
+        RsId idInserted1 = new RsId(REGISTRAR, "deleteTest1", "something1");
+        RsId idInserted2 = new RsId(REGISTRAR, "deleteTest2", "something2");
         // insert idInserted1, idInserted2
         insertRegistrarScopeId(URNNBN, idInserted1, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idInserted2, USER_WITH_RIGHTS);
@@ -118,28 +118,28 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void deleteRegistrarScopeIdentifiersOk() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
+        RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "something");
         // types
-        RsId idTypeMinLength = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "typeMinLength");
-        RsId idTypeMaxLength = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength");
-        RsId[] idsTypereserved = new RsId[RSID_TYPE_OK_RESERVED.length];
-        for (int i = 0; i < RSID_TYPE_OK_RESERVED.length; i++) {
-            idsTypereserved[i] = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_RESERVED[i], "valueUnreserved");
+        RsId idTypeMinLength = new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, "typeMinLength");
+        RsId idTypeMaxLength = new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength");
+        RsId[] idsTypereserved = new RsId[RSID_TYPES_OK_RESERVED.length];
+        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
+            idsTypereserved[i] = new RsId(REGISTRAR, RSID_TYPES_OK_RESERVED[i], "valueUnreserved");
         }
-        RsId[] idsTypeUnreserved = new RsId[RSID_TYPE_OK_UNRESERVED.length];
-        for (int i = 0; i < RSID_TYPE_OK_UNRESERVED.length; i++) {
-            idsTypeUnreserved[i] = new RsId(REGISTRAR_CODE, RSID_TYPE_OK_UNRESERVED[i], "valueUnreserved");
+        RsId[] idsTypeUnreserved = new RsId[RSID_TYPES_OK_UNRESERVED.length];
+        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
+            idsTypeUnreserved[i] = new RsId(REGISTRAR, RSID_TYPES_OK_UNRESERVED[i], "valueUnreserved");
         }
         // values
-        RsId idValueMinLength = new RsId(REGISTRAR_CODE, "minLength", RSID_VALUE_OK_MIN_LENGTH);
-        RsId idValueMaxLength = new RsId(REGISTRAR_CODE, "maxLength", RSID_VALUE_OK_MAX_LENGTH);
+        RsId idValueMinLength = new RsId(REGISTRAR, "minLength", RSID_VALUES_OK_MIN_LENGTH);
+        RsId idValueMaxLength = new RsId(REGISTRAR, "maxLength", RSID_VALUES_OK_MAX_LENGTH);
         RsId[] idValuesReserved = new RsId[RSID_VALUE_OK_RESERVED.length];
         for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            idValuesReserved[i] = new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUE_OK_RESERVED[i]);
+            idValuesReserved[i] = new RsId(REGISTRAR, "reserved" + i, RSID_VALUE_OK_RESERVED[i]);
         }
         RsId[] idValuesUnreserved = new RsId[RSID_VALUE_OK_UNRESERVED.length];
         for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            idValuesUnreserved[i] = new RsId(REGISTRAR_CODE, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]);
+            idValuesUnreserved[i] = new RsId(REGISTRAR, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]);
         }
 
         // insert ids
@@ -204,6 +204,54 @@ public class DeleteRsIdsResolvedByRsIdTests extends ApiV3Tests {
 
     private void assertIdFoundInResponse(XmlPath xmlPath, RsId id) {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+    }
+
+    @Test
+    public void deleteRegistrarScopeIdentifiersInvalidResolvationType() {
+        deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_SHORT, "value"));
+        deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_LONG, "value"));
+        // reserved
+        for (String type : RSID_TYPES_INVALID_RESERVED) {
+            deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, type, "value"));
+        }
+        // unreserved
+        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
+            deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, type, "value"));
+        }
+    }
+
+    private void deleteRegistrarScopeIdentifiersInvalidResolvationType(RsId id) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error", nsContext)) //
+                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
+
+    @Test
+    public void deleteRegistrarScopeIdentifiersInvalidResolvationValue() {
+        deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
+        deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
+    }
+
+    private void deleteRegistrarScopeIdentifiersInvalidResolvationValue(RsId id) {
+        // TODO: enable after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
+        // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        // .expect() //
+        // .statusCode(400) //
+        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+        // .body(hasXPath("/c:response/c:error", nsContext)) //
+        // .when().get(buildResolvationPath(id))//
+        // .andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // // TODO:APIv4: rename error to INVALID_ID_VALUE
+        // Assert.assertEquals(xmlPath.get("code"), "TODO");
+        LOGGER.info("deleteRegistrarScopeIdentifiersInvalidResolvationValue ignored untill issue 132 is fixed");
     }
 
 }

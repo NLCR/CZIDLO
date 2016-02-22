@@ -30,17 +30,32 @@ public class GetRegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarInvalidCode() {
-        // TODO: otestovat min, max delku, nepovolane znaky, atd
-        String code = "0123456789";
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+    public void getRegistrarRegistrarCodesInvalid() {
+        for (String code : REGISTRAR_CODES_INVALID) {
+            LOGGER.info("registrar code: " + code);
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+        }
+    }
+
+    @Test
+    public void getRegistrarRegistrarCodesValid() {
+        for (String code : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + code);
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response", nsContext))//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code"))
+                    || code.toLowerCase().equals(xmlPath.getString("registrar.@code")));
+        }
     }
 
     @Test

@@ -19,6 +19,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.ApiV3Tests.RsId;
 
 /**
  * Tests for PUT
@@ -29,7 +30,7 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PutRsIdResolvedByRsIdTests.class.getName());
 
-    // TODO: extract registrarCode
+    private final String REGISTRAR_CODE = "aba001";
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
@@ -53,8 +54,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierInsertNotAuthenticated() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeInserted = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
@@ -78,8 +79,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierInsertNotAuthorized() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeInserted = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and insert idToBeInserted
@@ -103,8 +104,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierInsertOk() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeInserted = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeInserted = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // insert idToBeInserted
@@ -137,8 +138,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierUpdateNotAuthenticated() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeUpdated = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
         // insert idForResolvation, idToBeUpdated
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
@@ -171,8 +172,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierUpdateNotAuthorized() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeUpdated = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
         // insert idForResolvation, idToBeUpdated
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
@@ -204,8 +205,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
 
     @Test
     public void putRegistrarScopeIdentifierUpdateOk() {
-        RsId idForResolvation = new RsId("aba001", "deleteTest1", "something1");
-        RsId idToBeUpdated = new RsId("aba001", "deleteTest2", "something2");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "deleteTest1", "something1");
+        RsId idToBeUpdated = new RsId(REGISTRAR_CODE, "deleteTest2", "something2");
         String newValue = idToBeUpdated.value + "new";
         // insert idForResolvation, idToBeUpdated
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
@@ -236,6 +237,8 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
             }
         }
     }
+
+    // TODO: test ID_TYPE, ID_VALUE for valid/invalid type and value
 
     // TODO: test values of idType in url and idValue in body for both operation versions
     // see DeleteRsIdResolvedByRsIdTests and DeleteRsIdsResolvedByRsIdTests

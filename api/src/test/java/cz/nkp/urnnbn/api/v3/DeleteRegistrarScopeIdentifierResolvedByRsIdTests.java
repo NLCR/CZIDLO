@@ -27,9 +27,9 @@ import cz.nkp.urnnbn.api.Utils;
  * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
-public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
+public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(DeleteRsIdResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifierResolvedByRsIdTests.class.getName());
 
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
@@ -106,15 +106,15 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // types
         deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMinLength"));
         deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength"));
-        for (String type : RSID_TYPE_OK_RESERVED) {
+        for (String type : RSID_TYPES_OK_RESERVED) {
             deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "value"));
         }
-        for (String type : RSID_TYPE_OK_UNRESERVED) {
+        for (String type : RSID_TYPES_OK_UNRESERVED) {
             deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "value"));
         }
         // values
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMinLength", RSID_VALUE_OK_MIN_LENGTH));
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMaxLength", RSID_VALUE_OK_MAX_LENGTH));
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMinLength", RSID_VALUES_OK_MIN_LENGTH));
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMaxLength", RSID_VALUES_OK_MAX_LENGTH));
         for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
             String value = RSID_VALUE_OK_RESERVED[i];
             deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "typeReserved" + i, value));
@@ -179,10 +179,10 @@ public class DeleteRsIdResolvedByRsIdTests extends ApiV3Tests {
         // test
         deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, RSID_TYPE_INVALID_TO_SHORT);
         deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, RSID_TYPE_INVALID_TO_LONG);
-        for (String type : RSID_TYPE_INVALID_RESERVED) {
+        for (String type : RSID_TYPES_INVALID_RESERVED) {
             deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
         }
-        for (String type : RSID_TYPE_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
             deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
         }
     }
