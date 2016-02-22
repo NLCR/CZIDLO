@@ -119,45 +119,23 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     @Test
     public void deleteRegistrarScopeIdentifiersOk() {
         RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "something");
-        // types
-        RsId idTypeMinLength = new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, "typeMinLength");
-        RsId idTypeMaxLength = new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength");
-        RsId[] idsTypereserved = new RsId[RSID_TYPES_OK_RESERVED.length];
-        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
-            idsTypereserved[i] = new RsId(REGISTRAR, RSID_TYPES_OK_RESERVED[i], "valueUnreserved");
+        // rs-id types
+        RsId[] idTypes = new RsId[RSID_TYPES_VALID.length];
+        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
+            idTypes[i] = new RsId(REGISTRAR, RSID_TYPES_VALID[i], "valueUnreserved");
         }
-        RsId[] idsTypeUnreserved = new RsId[RSID_TYPES_OK_UNRESERVED.length];
-        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
-            idsTypeUnreserved[i] = new RsId(REGISTRAR, RSID_TYPES_OK_UNRESERVED[i], "valueUnreserved");
-        }
-        // values
-        RsId idValueMinLength = new RsId(REGISTRAR, "minLength", RSID_VALUES_OK_MIN_LENGTH);
-        RsId idValueMaxLength = new RsId(REGISTRAR, "maxLength", RSID_VALUES_OK_MAX_LENGTH);
-        RsId[] idValuesReserved = new RsId[RSID_VALUE_OK_RESERVED.length];
-        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            idValuesReserved[i] = new RsId(REGISTRAR, "reserved" + i, RSID_VALUE_OK_RESERVED[i]);
-        }
-        RsId[] idValuesUnreserved = new RsId[RSID_VALUE_OK_UNRESERVED.length];
-        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            idValuesUnreserved[i] = new RsId(REGISTRAR, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]);
+        // rs-id values
+        RsId[] idValues = new RsId[RSID_VALUES_VALID.length];
+        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
+            idValues[i] = new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_VALID[i]);
         }
 
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTypeMinLength, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idTypeMaxLength, USER_WITH_RIGHTS);
-        for (RsId id : idsTypereserved) {
+        for (RsId id : idTypes) {
             insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
         }
-        for (RsId id : idsTypeUnreserved) {
-            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
-        }
-        insertRegistrarScopeId(URNNBN, idValueMinLength, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idValueMaxLength, USER_WITH_RIGHTS);
-        for (RsId id : idValuesReserved) {
-            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
-        }
-        for (RsId id : idValuesUnreserved) {
+        for (RsId id : idValues) {
             insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
         }
 
@@ -173,20 +151,10 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
         // check all ids in response
         assertIdFoundInResponse(xmlPath, idForResolvation);
-        assertIdFoundInResponse(xmlPath, idTypeMinLength);
-        assertIdFoundInResponse(xmlPath, idTypeMaxLength);
-        for (RsId id : idsTypereserved) {
+        for (RsId id : idTypes) {
             assertIdFoundInResponse(xmlPath, id);
         }
-        for (RsId id : idsTypeUnreserved) {
-            assertIdFoundInResponse(xmlPath, id);
-        }
-        assertIdFoundInResponse(xmlPath, idValueMinLength);
-        assertIdFoundInResponse(xmlPath, idValueMaxLength);
-        for (RsId id : idValuesReserved) {
-            assertIdFoundInResponse(xmlPath, id);
-        }
-        for (RsId id : idValuesUnreserved) {
+        for (RsId id : idValues) {
             assertIdFoundInResponse(xmlPath, id);
         }
 
@@ -208,19 +176,13 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     @Test
     public void deleteRegistrarScopeIdentifiersInvalidResolvationType() {
-        deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_SHORT, "value"));
-        deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_LONG, "value"));
-        // reserved
-        for (String type : RSID_TYPES_INVALID_RESERVED) {
-            deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, type, "value"));
-        }
-        // unreserved
-        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID) {
             deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, type, "value"));
         }
     }
 
     private void deleteRegistrarScopeIdentifiersInvalidResolvationType(RsId id) {
+        LOGGER.info(id.toString());
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect() //
                 .statusCode(400) //
@@ -235,8 +197,9 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     @Test
     public void deleteRegistrarScopeIdentifiersInvalidResolvationValue() {
-        deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
-        deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
+        for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
+            deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "type" + i, RSID_VALUES_INVALID[i]));
+        }
     }
 
     private void deleteRegistrarScopeIdentifiersInvalidResolvationValue(RsId id) {

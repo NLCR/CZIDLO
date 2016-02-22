@@ -19,7 +19,6 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.ApiV3Tests.RsId;
 
 /**
  * Tests for PUT
@@ -99,7 +98,16 @@ public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
         assertThat(1, equalTo(rsIds.size()));
         assertThat(idForResolvation.type, equalTo(rsIds.get(0).type));
         assertThat(idForResolvation.value, equalTo(rsIds.get(0).value));
-        // TODO: check that not inserted
+        // check idForResolvation present, idToBeInserted not
+        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        assertThat(rsIdsFetched.size(), equalTo(1));
+        for (RsId id : rsIdsFetched) {
+            if (id.type.equals(idForResolvation.type)) {
+                assertThat(id.value, equalTo(idForResolvation.value));
+            } else {// unexpected id type
+                Assert.fail();
+            }
+        }
     }
 
     @Test

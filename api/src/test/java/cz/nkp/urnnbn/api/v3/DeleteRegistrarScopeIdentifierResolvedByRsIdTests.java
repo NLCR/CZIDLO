@@ -104,28 +104,18 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // types
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMinLength"));
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "typeMaxLength"));
-        for (String type : RSID_TYPES_OK_RESERVED) {
-            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "value"));
-        }
-        for (String type : RSID_TYPES_OK_UNRESERVED) {
+        for (String type : RSID_TYPES_VALID) {
             deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "value"));
         }
         // values
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMinLength", RSID_VALUES_OK_MIN_LENGTH));
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "valueMaxLength", RSID_VALUES_OK_MAX_LENGTH));
-        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            String value = RSID_VALUE_OK_RESERVED[i];
-            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "typeReserved" + i, value));
-        }
-        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            String value = RSID_VALUE_OK_UNRESERVED[i];
-            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "typeUnreserved" + i, value));
+        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
+            String value = RSID_VALUES_VALID[i];
+            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "type" + i, value));
         }
     }
 
     private void deleteRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToBeDeleted) {
+        LOGGER.info("resolved by: " + idForResolvation.toString() + ", toBeDeleted: " + idToBeDeleted.toString());
         // insert id
         insertRegistrarScopeId(URNNBN, idToBeDeleted, USER_WITH_RIGHTS);
         // delete id
@@ -177,17 +167,13 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // test
-        deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, RSID_TYPE_INVALID_TO_SHORT);
-        deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, RSID_TYPE_INVALID_TO_LONG);
-        for (String type : RSID_TYPES_INVALID_RESERVED) {
-            deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
-        }
-        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID) {
             deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
         }
     }
 
     private void deleteRegistrarScopeIdentifierTypeInvalid(RsId idForResolvation, String typeInvalid) {
+        LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeInvalid);
         // even though it was not inserted, error INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned
         // try and delete with type=typeUnknown
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//

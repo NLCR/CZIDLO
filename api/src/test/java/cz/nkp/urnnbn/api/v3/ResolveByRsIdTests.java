@@ -99,19 +99,13 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     @Test
     public void resolveIdTypeInvalid() {
-        resolveIdTypeInvalid(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_SHORT, "value"));
-        resolveIdTypeInvalid(new RsId(REGISTRAR, RSID_TYPE_INVALID_TO_LONG, "value"));
-        // reserved
-        for (String type : RSID_TYPES_INVALID_RESERVED) {
-            resolveIdTypeInvalid(new RsId(REGISTRAR, type, "value"));
-        }
-        // unreserved
-        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID) {
             resolveIdTypeInvalid(new RsId(REGISTRAR, type, "value"));
         }
     }
 
     private void resolveIdTypeInvalid(RsId id) {
+        LOGGER.info(id.toString());
         String responseXml = with().config(namespaceAwareXmlConfig()) //
                 .expect() //
                 .statusCode(400) //
@@ -126,8 +120,9 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     @Test
     public void resolveIdValueInvalid() {
-        resolveIdValueInvalid(new RsId(REGISTRAR, "toShort", RSID_VALUE_INVALID_TO_SHORT));
-        resolveIdValueInvalid(new RsId(REGISTRAR, "toLong", RSID_VALUE_INVALID_TO_LONG));
+        for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
+            resolveIdValueInvalid(new RsId(REGISTRAR, "type" + i, RSID_VALUES_INVALID[i]));
+        }
     }
 
     private void resolveIdValueInvalid(RsId id) {
@@ -148,28 +143,18 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void resolveIdTypeAndValueOk() {
         String urnNbn = URNNBN;
-        // values
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "inLength", RSID_VALUES_OK_MIN_LENGTH));
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "maxLength", RSID_VALUES_OK_MAX_LENGTH));
-        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
-        }
-        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]));
-        }
-
         // types
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MIN_LENGTH, "value"));
-        resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPE_OK_MAX_LENGTH, "value"));
-        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_OK_RESERVED[i], "value"));
+        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_VALID[i], "value"));
         }
-        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_OK_UNRESERVED[i], "value"));
+        // values
+        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
+            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_VALID[i]));
         }
     }
 
     private void resolveIdTypeAndValueOk(String urnNbn, RsId id) {
+        LOGGER.info(urnNbn + " " + id.toString());
         // insert id
         insertRegistrarScopeId(urnNbn, id, USER);
         // resolve

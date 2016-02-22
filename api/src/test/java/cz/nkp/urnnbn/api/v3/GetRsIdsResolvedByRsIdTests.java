@@ -19,9 +19,6 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
-import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.ApiV3Tests.RsId;
-
 /**
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers
  *
@@ -57,23 +54,13 @@ public class GetRsIdsResolvedByRsIdTests extends ApiV3Tests {
     public void getRegistrarScopeIdentifiersOk() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "getTest1", "something");
         List<RsId> ids = new ArrayList<>();
-        // test id types
-        ids.add(new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "value"));
-        ids.add(new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "value"));
-        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
-            ids.add(new RsId(REGISTRAR_CODE, RSID_TYPES_OK_RESERVED[i], "value"));
+        // rs-id types
+        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
+            ids.add(new RsId(REGISTRAR_CODE, RSID_TYPES_VALID[i], "value"));
         }
-        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
-            ids.add(new RsId(REGISTRAR_CODE, RSID_TYPES_OK_UNRESERVED[i], "value"));
-        }
-        // test id values
-        ids.add(new RsId(REGISTRAR_CODE, "minLength", RSID_VALUES_OK_MIN_LENGTH));
-        ids.add(new RsId(REGISTRAR_CODE, "maxLength", RSID_VALUES_OK_MAX_LENGTH));
-        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            ids.add(new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
-        }
-        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            ids.add(new RsId(REGISTRAR_CODE, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]));
+        // rs-id values
+        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
+            ids.add(new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUES_VALID[i]));
         }
 
         // insert ids

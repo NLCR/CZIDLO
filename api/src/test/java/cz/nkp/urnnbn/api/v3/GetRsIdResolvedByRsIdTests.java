@@ -58,27 +58,18 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
         RsId idOther = new RsId(REGISTRAR_CODE, "other", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
-        // test id types
-        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MIN_LENGTH, "value"));
-        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPE_OK_MAX_LENGTH, "value"));
-        for (int i = 0; i < RSID_TYPES_OK_RESERVED.length; i++) {
-            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPES_OK_RESERVED[i], "value"));
+        // rs-id types
+        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPES_VALID[i], "value"));
         }
-        for (int i = 0; i < RSID_TYPES_OK_UNRESERVED.length; i++) {
-            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPES_OK_UNRESERVED[i], "value"));
-        }
-        // test id values
-        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "minLength", RSID_VALUES_OK_MIN_LENGTH));
-        getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "maxLength", RSID_VALUES_OK_MAX_LENGTH));
-        for (int i = 0; i < RSID_VALUE_OK_RESERVED.length; i++) {
-            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUE_OK_RESERVED[i]));
-        }
-        for (int i = 0; i < RSID_VALUE_OK_UNRESERVED.length; i++) {
-            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "unreserved" + i, RSID_VALUE_OK_UNRESERVED[i]));
+        // rs-id values
+        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
+            getRegistrarScopeIdentifierOk(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUES_VALID[i]));
         }
     }
 
     private void getRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idInsertedOther, RsId idToGet) {
+        LOGGER.info(idToGet.toString());
         // insert id
         insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
         // get id
@@ -101,18 +92,13 @@ public class GetRsIdResolvedByRsIdTests extends ApiV3Tests {
     public void getRegistrarScopeIdentifierTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-
-        // invalid reserved characters
-        for (String type : RSID_TYPES_INVALID_RESERVED) {
-            getRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
-        }
-        // invalid unreserved characters
-        for (String type : RSID_TYPES_INVALID_UNRESERVED) {
+        for (String type : RSID_TYPES_INVALID) {
             getRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
         }
     }
 
     private void getRegistrarScopeIdentifierTypeInvalid(RsId idForResolvation, String type) {
+        LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + type);
         // get
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//

@@ -44,6 +44,12 @@ public abstract class ApiV3Tests {
             this.type = type;
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return "RsId [registrarCode=" + registrarCode + ", type=" + type + ", value=" + value + "]";
+        }
+
     }
 
     static class Credentials {
@@ -82,30 +88,20 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
-    // registrar-scope-id types valid
-    final String RSID_TYPE_OK_MIN_LENGTH = "aA";
-    final String RSID_TYPE_OK_MAX_LENGTH = "aaaaaaaaa1AAAAAAAAA2";
-    final String[] RSID_TYPES_OK_RESERVED = new String[] { "::" };
-    final String[] RSID_TYPES_OK_UNRESERVED = new String[] { "__", "--", "aa", "AA", "00" };
-    // registrar-scope-id types invalid
-    final String RSID_TYPE_INVALID_TO_SHORT = "a";
-    final String RSID_TYPE_INVALID_TO_LONG = "aaaaaaaaa1AAAAAAAAA21";
+    // registrar-scope-id valid/invalid types
+    // [A-Za-z0-9_\-:]{2,20}
+    final String[] RSID_TYPES_VALID = new String[] { "aa", "AA", "00", "::", "__", "--", "aaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAA",
+            "01234567890123456789", ":::::::::::::::::::", "____________________", "-------------------" };
     // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
-    final String[] RSID_TYPES_INVALID_RESERVED = new String[] { "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,"/* , "//" */,
-            "??", "##", "[[", "]]" };
-    final String[] RSID_TYPES_INVALID_UNRESERVED = new String[] { "..", "~~" };
+    final String[] RSID_TYPES_INVALID = new String[] { "a", "A", "0", "aaaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAAA", "012345678901234567890",
+            "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,"/* , "//" */, "??", "##", "[[", "]]", "a!a", "a*a", "a'a", "a(a",
+            "a)a", "a;a", "a@a", "a&a", "a=a", "a+a", "a$a", "a,a"/* , "a/a" */, "a?a", "a#a", "a[a", "a]a", "..", "~~", "a.a", "a~a" };
 
-    // registrar-scope-id values valid
-    final String RSID_VALUE_DEFAULT = "testValue";
-    final String RSID_VALUES_OK_MIN_LENGTH = "a";
-    final String RSID_VALUES_OK_MAX_LENGTH = "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6";
-    // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
-    final String[] RSID_VALUE_OK_RESERVED = new String[] { "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", "," /* , "/" */, "?", "#",
-            "[", "]" };
-    final String[] RSID_VALUE_OK_UNRESERVED = new String[] { "-", "_", ".", "~" };
-    // registrar-scope-id values invalid
-    final String RSID_VALUE_INVALID_TO_SHORT = "";
-    final String RSID_VALUE_INVALID_TO_LONG = "aaaaaaaaa1AAAAAAAAA21";
+    // registrar-scope-id valid/invalid values
+    // [A-Za-z0-9\-_\.~!\*'\(\);:@&=+$,/\?#\[\]]{1,60}
+    final String[] RSID_VALUES_VALID = new String[] { "a", "A", "0", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", "," /* , "/" */,
+            "?", "#", "[", "]", "-", "_", ".", "~", "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6" };
+    final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAAA", "012345678901234567890" };
 
     // registrar-code valid and invalid values
     // [A-Za-z0-9]{2,6}
