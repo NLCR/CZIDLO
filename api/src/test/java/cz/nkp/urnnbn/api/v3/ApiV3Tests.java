@@ -101,7 +101,8 @@ public abstract class ApiV3Tests {
     // [A-Za-z0-9\-_\.~!\*'\(\);:@&=+$,/\?#\[\]]{1,60}
     final String[] RSID_VALUES_VALID = new String[] { "a", "A", "0", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", "," /* , "/" */,
             "?", "#", "[", "]", "-", "_", ".", "~", "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6" };
-    final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAAA", "012345678901234567890" };
+    final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffg",
+            "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
 
     // registrar-code valid and invalid values
     // [A-Za-z0-9]{2,6}
@@ -161,7 +162,6 @@ public abstract class ApiV3Tests {
     }
 
     String buildResolvationPath(String urnNbn) {
-        // TODO: allways urlEncodeReservedChars(
         return "/resolver/" + Utils.urlEncodeReservedChars(urnNbn);
     }
 
