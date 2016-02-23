@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
@@ -26,8 +27,9 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsTest.class.getName());
 
-    private final String REGISTRAR_CODE_OK = "tst01";
-    private final String REGISTRAR_CODE_UNKNOWN = "xxx999";
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");// must exist
+    private final String REGISTRAR_CODE = "tst01"; // must exist and USER_WITH_RIGHTS must have access rights
+    private final String REGISTRAR_CODE_UNKNOWN = "xxx999";// must not exist
 
     @BeforeSuite
     public void beforeSuite() {
@@ -35,34 +37,48 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
     }
 
     @Test
-    public void getUrnNbnReservations() {
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
-                .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_OK) + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
-        // reservation size
-        int maxReservationSize = xmlPath.getInt("maxReservationSize");
-        int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
-        assertThat(maxReservationSize, greaterThanOrEqualTo(0));
-        assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
-        // reservations total/returned
-        int reservedTotal = xmlPath.getInt("reserved.@totalSize");
-        int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
-        assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
-        assertThat(reservedReturned, lessThanOrEqualTo(reservedTotal));
-        assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
+    public void ok() {
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(REGISTRAR_CODE);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR_CODE, USER_WITH_RIGHTS);
+        }
+        // check all registrars' reservations
+        List<String> codes = getAllRegistrarCodes();
+        if (codes.isEmpty()) {
+            LOGGER.warning("no registrars available");
+        } else {
+            for (String code : codes) {
+                LOGGER.info("registrar code: " + code);
+                String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                        .statusCode(200)//
+                        .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                        .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
+                        .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
+                        .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
+                        .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
+                        .when().get("/registrars/" + Utils.urlEncodeReservedChars(code) + "/urnNbnReservations").andReturn().asString();
+                XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
+                // reservation size
+                int maxReservationSize = xmlPath.getInt("maxReservationSize");
+                int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
+                assertThat(maxReservationSize, greaterThanOrEqualTo(0));
+                assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
+                // reservations total/returned
+                int reservedTotal = xmlPath.getInt("reserved.@totalSize");
+                int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
+                assertThat(reservedReturned, greaterThanOrEqualTo(0));
+                assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
+                assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
+            }
+        }
     }
 
     @Test
-    public void getUrnNbnReservationsRegistrarCodesInvalid() {
+    public void registrarCodeInvalid() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
             LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -78,7 +94,7 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
     }
 
     @Test
-    public void getUrnNbnReservationsRegistrarCodesValid() {
+    public void registrarCodeValid() {
         for (String registrarCode : REGISTRAR_CODES_VALID) {
             LOGGER.info("registrar code: " + registrarCode);
             RsId idForResolvation = new RsId(registrarCode, "type", "value");
@@ -95,7 +111,7 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
     }
 
     @Test
-    public void getUrnNbnReservationsUnknownRegistrar() {
+    public void registrarCodeUnknown() {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

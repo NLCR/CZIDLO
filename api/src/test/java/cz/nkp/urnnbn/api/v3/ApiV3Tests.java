@@ -145,6 +145,15 @@ public abstract class ApiV3Tests {
         return xmlPathConfig().declaredNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS);
     }
 
+    String buildResolvationPath(RsId id) {
+        return "/registrars/" + Utils.urlEncodeReservedChars(id.registrarCode) + "/digitalDocuments/registrarScopeIdentifier/"//
+                + Utils.urlEncodeReservedChars(id.type) + "/" + Utils.urlEncodeReservedChars(id.value);
+    }
+
+    String buildResolvationPath(String urnNbn) {
+        return "/resolver/" + Utils.urlEncodeReservedChars(urnNbn);
+    }
+
     String getRandomExistingRegistrarCode() {
         String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml);
@@ -158,13 +167,33 @@ public abstract class ApiV3Tests {
         }
     }
 
-    String buildResolvationPath(RsId id) {
-        return "/registrars/" + Utils.urlEncodeReservedChars(id.registrarCode) + "/digitalDocuments/registrarScopeIdentifier/"//
-                + Utils.urlEncodeReservedChars(id.type) + "/" + Utils.urlEncodeReservedChars(id.value);
+    List<String> getAllRegistrarCodes() {
+        String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml);
+        int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");
+        List<String> result = new ArrayList<String>(registrarsCount);
+        for (int i = 0; i < registrarsCount; i++) {
+            String registrarCode = xmlPath.getString("response.registrars.registrar[" + i + "].@code");
+            result.add(registrarCode);
+        }
+        return result;
     }
 
-    String buildResolvationPath(String urnNbn) {
-        return "/resolver/" + Utils.urlEncodeReservedChars(urnNbn);
+    List<String> reserveUrnNbns(String registrarCode, Credentials credentials) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservation");
+        int nowReserved = xmlPath.getInt("urnNbn.size()");
+        List<String> result = new ArrayList<>(nowReserved);
+        for (int i = 0; i < nowReserved; i++) {
+            result.add(xmlPath.getString("urnNbn[" + i + "]"));
+        }
+        return result;
     }
 
     void deleteAllRegistrarScopeIdentifiers(String urnNbn, Credentials credentials) {
