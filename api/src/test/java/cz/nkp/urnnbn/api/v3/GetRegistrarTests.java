@@ -60,7 +60,7 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void registrarCodeUnknown() {
-        String code = "xxx000";
+        String code = REGISTRAR_CODE_UNKNOWN;
         LOGGER.info(String.format("registrar code: %s", code));
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(404)//
@@ -183,4 +183,33 @@ public class GetRegistrarTests extends ApiV3Tests {
         }
     }
 
+    @Test
+    public void registrarCodeCaseInsensitive() {
+        String code = getRandomExistingRegistrarCode();
+        if (code != null) {
+            LOGGER.info(String.format("registrar code: %s", code));
+            // fetch by code in upper case
+            String responseXml = with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:registrar", nsContext))//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code.toUpperCase())).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
+            int idByUpperCase = xmlPath.getInt("@id");
+            // fetch by code in lower case
+            responseXml = with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:registrar", nsContext))//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code.toLowerCase())).andReturn().asString();
+            xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
+            int idByLowerCase = xmlPath.getInt("@id");
+            // check
+            Assert.assertEquals(idByLowerCase, idByUpperCase);
+        } else {
+            LOGGER.warning("no registrar available");
+        }
+    }
 }

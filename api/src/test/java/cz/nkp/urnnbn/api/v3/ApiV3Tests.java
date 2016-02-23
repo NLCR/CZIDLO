@@ -88,6 +88,9 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
+    // registrar codes
+    final String REGISTRAR_CODE_UNKNOWN = "xxx000";// must not exist
+
     // registrar-scope-id valid/invalid types
     // [A-Za-z0-9_\-:]{2,20}
     final String[] RSID_TYPES_VALID = new String[] { "aa", "AA", "00", "::", "__", "--", "aaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAA",
@@ -104,8 +107,8 @@ public abstract class ApiV3Tests {
     final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffg",
             "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
 
-    // registrar-code valid and invalid values
-    // [A-Za-z0-9]{2,6}
+    // examples of valid and invalid registrar codes according to regexp [A-Za-z0-9]{2,6}
+    // all valid codes must not identify existing registrar in database
     final String[] REGISTRAR_CODES_VALID = new String[] { "ab", "AB", "01", "aB0", "abcdef", "ABCDEF", "012345", "aB0cD1" };
     // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
     // TODO: character '_' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/133
