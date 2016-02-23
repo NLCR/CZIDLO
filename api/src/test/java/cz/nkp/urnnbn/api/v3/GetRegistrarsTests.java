@@ -3,7 +3,8 @@ package cz.nkp.urnnbn.api.v3;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
-import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.xml.XmlPath;
 
 /**
  * Tests for GET /api/v3/registrars
@@ -26,64 +28,154 @@ public class GetRegistrarsTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarsWithDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
+    public void noQueryParams() {
+        // digitalLibraries=false, catalogs=false by default
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .body(hasXPath("//c:digitalLibraries", nsContext))//
-                .when().get("/registrars");
+                .when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        int size = xmlPath.getInt("registrar.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                // digital libraries and catalogs not present
+                assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
+                assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
+                // all modes defined and have boolean values
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
     }
 
     @Test
-    public void getRegistrarsWithoutDigitalLibraries() {
-        with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
+    public void withDigitalLibraries() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .body(not(hasXPath("//c:digitalLibraries", nsContext)))//
-                .when().get("/registrars");
+                .when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        int size = xmlPath.getInt("registrar.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                // digital libraries present
+                assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
+                // all modes defined and have boolean values
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
     }
 
     @Test
-    public void getRegistrarsWithCatalogs() {
-        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
+    public void withoutDigitalLibraries() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .body(hasXPath("//c:catalogs", nsContext))//
-                .when().get("/registrars");
+                .when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        int size = xmlPath.getInt("registrar.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                // digital libraries not present
+                assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
+                // all modes defined and have boolean values
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
     }
 
     @Test
-    public void getRegistrarsWithoutCatalogs() {
-        with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
+    public void withCatalogs() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .body(not(hasXPath("//c:catalogs", nsContext)))//
-                .when().get("/registrars");
+                .when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        int size = xmlPath.getInt("registrar.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                // catalogs present
+                assertEquals(1, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
+                // all modes defined and have boolean values
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
     }
 
     @Test
-    public void getRegistrarsRandomRegistrarData() {
-        String code = getRandomRegistrarCode();
+    public void withoutCatalogs() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrars", nsContext))//
+                .when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        int size = xmlPath.getInt("registrar.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                // catalogs not present
+                assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
+                // all modes defined and have boolean values
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
+                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
+    }
+
+    @Test
+    public void responseContainsExistingRegistrar() {
+        String code = getRandomExistingRegistrarCode();
+        LOGGER.info(String.format("registrar code: %s", code));
         with().config(namespaceAwareXmlConfig()).when().get("/registrars").then()//
                 .assertThat().statusCode(200)//
                 .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .assertThat().body(hasXPath("/c:response/c:registrars", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:name", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:created", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
-                .assertThat().body(hasXPath("//c:registrar[@code='" + code + "']/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .assertThat().body(hasXPath(String.format("/c:response/c:registrars/c:registrar[@code='%s']", code), nsContext))//
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .assertThat().body(hasXPath(//
+                        String.format("/c:response/c:registrars/c:registrar[@code='%s']/c:created", code), nsContext))//
+                .assertThat().body(hasXPath(String.format(//
+                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESOLVER']", code), nsContext))//
+                .assertThat().body(hasXPath(String.format(//
+                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_REGISTRAR']", code), nsContext))//
+                .assertThat().body(hasXPath(String.format(//
+                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESERVATION']", code), nsContext))//
         ;
     }
-
 }

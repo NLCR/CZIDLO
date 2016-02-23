@@ -30,9 +30,9 @@ public class GetRegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarRegistrarCodesInvalid() {
+    public void registrarCodeInvalid() {
         for (String code : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + code);
+            LOGGER.info(String.format("registrar code: %s", code));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -45,9 +45,9 @@ public class GetRegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarRegistrarCodesValid() {
+    public void registrarCodeValid() {
         for (String code : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + code);
+            LOGGER.info(String.format("registrar code: %s", code));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response", nsContext))//
@@ -59,8 +59,9 @@ public class GetRegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarUnknown() {
+    public void registrarCodeUnknown() {
         String code = "xxx000";
+        LOGGER.info(String.format("registrar code: %s", code));
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -72,58 +73,94 @@ public class GetRegistrarTests extends ApiV3Tests {
     }
 
     @Test
-    public void getRegistrarWithDigitalLibraries() {
+    public void okNoQueryParams() {
+        // digitalLibraries=true, catalogs=true by default
+        String code = getRandomExistingRegistrarCode();
+        LOGGER.info(String.format("registrar code: %s", code));
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                .body(hasXPath("//c:catalogs", nsContext))//
+                .body(hasXPath("//c:digitalLibraries", nsContext))//
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+    }
+
+    @Test
+    public void okWithDigitalLibraries() {
+        String code = getRandomExistingRegistrarCode();
+        LOGGER.info(String.format("registrar code: %s", code));
         with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
                 .body(hasXPath("//c:digitalLibraries", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()));
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
     }
 
     @Test
-    public void getRegistrarWithoutDigitalLibraries() {
+    public void okWithoutDigitalLibraries() {
+        String code = getRandomExistingRegistrarCode();
+        LOGGER.info(String.format("registrar code: %s", code));
         with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
                 .body(not(hasXPath("//c:digitalLibraries", nsContext)))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()));
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
     }
 
     @Test
-    public void getRegistrarWithCatalogs() {
+    public void okWithCatalogs() {
+        String code = getRandomExistingRegistrarCode();
+        LOGGER.info(String.format("registrar code: %s", code));
         with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
                 .body(hasXPath("//c:catalogs", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()));
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
     }
 
     @Test
-    public void getRegistrarWithoutCatalogs() {
+    public void okWithoutCatalogs() {
+        String code = getRandomExistingRegistrarCode();
         with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
                 .body(not(hasXPath("//c:catalogs", nsContext)))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()));
-    }
-
-    @Test
-    public void getRegistrarCheckData() {
-        String code = getRandomRegistrarCode();
-        with().config(namespaceAwareXmlConfig()).when().get("/registrars/" + Utils.urlEncodeReservedChars(code)).then()//
-                .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:name", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/@code", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:registrationModes", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
-                .assertThat().body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-        ;
+                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
     }
 
 }

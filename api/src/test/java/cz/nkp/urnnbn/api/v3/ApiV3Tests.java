@@ -145,7 +145,7 @@ public abstract class ApiV3Tests {
         return xmlPathConfig().declaredNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS);
     }
 
-    String getRandomRegistrarCode() {
+    String getRandomExistingRegistrarCode() {
         String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml);
         int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");

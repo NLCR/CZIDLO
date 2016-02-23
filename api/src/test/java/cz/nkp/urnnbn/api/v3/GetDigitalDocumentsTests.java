@@ -31,18 +31,19 @@ public class GetDigitalDocumentsTests extends ApiV3Tests {
 
     @Test
     public void getDigitalDocumentsDigitalDocumentsOk() {
-        String xml = with().config(namespaceAwareXmlConfig())//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomRegistrarCode()) + "/digitalDocuments").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocuments");
+        String responseXml = with().config(namespaceAwareXmlConfig()) //
+                .expect() //
+                .statusCode(200) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomExistingRegistrarCode()) + "/digitalDocuments")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }
 
     @Test
-    public void getDigitalDocumentsDigitalDocumentRegistrarCodesInvalid() {
+    public void getDigitalDocumentsDigitalDocumentRegistrarCodeInvalid() {
         for (String code : REGISTRAR_CODES_INVALID) {
             LOGGER.info("registrar code: " + code);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
