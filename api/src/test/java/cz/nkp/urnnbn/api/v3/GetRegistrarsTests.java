@@ -162,20 +162,24 @@ public class GetRegistrarsTests extends ApiV3Tests {
     @Test
     public void responseContainsExistingRegistrar() {
         String code = getRandomExistingRegistrarCode();
-        LOGGER.info(String.format("registrar code: %s", code));
-        with().config(namespaceAwareXmlConfig()).when().get("/registrars").then()//
-                .assertThat().statusCode(200)//
-                .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .assertThat().body(hasXPath(String.format("/c:response/c:registrars/c:registrar[@code='%s']", code), nsContext))//
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                .assertThat().body(hasXPath(//
-                        String.format("/c:response/c:registrars/c:registrar[@code='%s']/c:created", code), nsContext))//
-                .assertThat().body(hasXPath(String.format(//
-                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESOLVER']", code), nsContext))//
-                .assertThat().body(hasXPath(String.format(//
-                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_REGISTRAR']", code), nsContext))//
-                .assertThat().body(hasXPath(String.format(//
-                        "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESERVATION']", code), nsContext))//
-        ;
+        if (code != null) {
+            LOGGER.info(String.format("registrar code: %s", code));
+            with().config(namespaceAwareXmlConfig()).when().get("/registrars").then()//
+                    .assertThat().statusCode(200)//
+                    .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .assertThat().body(hasXPath(String.format("/c:response/c:registrars/c:registrar[@code='%s']", code), nsContext))//
+                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
+                    .assertThat().body(hasXPath(//
+                            String.format("/c:response/c:registrars/c:registrar[@code='%s']/c:created", code), nsContext))//
+                    .assertThat().body(hasXPath(String.format(//
+                            "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESOLVER']", code), nsContext))//
+                    .assertThat().body(hasXPath(String.format(//
+                            "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_REGISTRAR']", code), nsContext))//
+                    .assertThat().body(hasXPath(String.format(//
+                            "/c:response/c:registrars/c:registrar[@code='%s']/c:registrationModes/c:mode[@name='BY_RESERVATION']", code), nsContext))//
+            ;
+        } else {
+            LOGGER.warning("no registrars available");
+        }
     }
 }

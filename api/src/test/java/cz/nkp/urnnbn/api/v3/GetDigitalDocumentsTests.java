@@ -30,20 +30,25 @@ public class GetDigitalDocumentsTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalDocumentsDigitalDocumentsOk() {
-        String responseXml = with().config(namespaceAwareXmlConfig()) //
-                .expect() //
-                .statusCode(200) //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(getRandomExistingRegistrarCode()) + "/digitalDocuments")//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
-        assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+    public void ok() {
+        String code = getRandomExistingRegistrarCode();
+        if (code != null) {
+            String responseXml = with().config(namespaceAwareXmlConfig()) //
+                    .expect() //
+                    .statusCode(200) //
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                    .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code) + "/digitalDocuments")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
+            assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
     }
 
     @Test
-    public void getDigitalDocumentsDigitalDocumentRegistrarCodeInvalid() {
+    public void registrarCodeInvalid() {
         for (String code : REGISTRAR_CODES_INVALID) {
             LOGGER.info("registrar code: " + code);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
@@ -58,7 +63,7 @@ public class GetDigitalDocumentsTests extends ApiV3Tests {
     }
 
     @Test
-    public void getDigitalDocumentsDigitalDocumentRegistrarCodesValid() {
+    public void registrarCodesValid() {
         for (String code : REGISTRAR_CODES_VALID) {
             LOGGER.info("registrar code: " + code);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//

@@ -149,11 +149,13 @@ public abstract class ApiV3Tests {
         String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml);
         int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");
-        int registrarPosition = rand.nextInt(registrarsCount);
-        // registrar not prefixed because of this bug: https://github.com/jayway/rest-assured/issues/647
-        String registrarCode = xmlPath.getString("response.registrars.registrar[" + registrarPosition + "].@code");
-        // LOGGER.info(String.format("position: %d, code: %s", registrarPosition, registrarCode));
-        return registrarCode;
+        if (registrarsCount != 0) {
+            int registrarPosition = rand.nextInt(registrarsCount);
+            String registrarCode = xmlPath.getString("response.registrars.registrar[" + registrarPosition + "].@code");
+            return registrarCode;
+        } else {
+            return null;
+        }
     }
 
     String buildResolvationPath(RsId id) {
