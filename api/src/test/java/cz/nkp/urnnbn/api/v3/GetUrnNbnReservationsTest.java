@@ -27,8 +27,8 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsTest.class.getName());
 
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");// must exist
-    private final String REGISTRAR_CODE = "tst01"; // must exist and USER_WITH_RIGHTS must have access rights
+    private final String REGISTRAR_CODE = "tst01"; // must exist
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
 
     @BeforeSuite
     public void beforeSuite() {

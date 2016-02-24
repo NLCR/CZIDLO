@@ -31,10 +31,10 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
 
     private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifierResolvedByRsIdTests.class.getName());
 
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
     private final String REGISTRAR_CODE = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
+    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
 
     @BeforeClass
     public void beforeClass() {
