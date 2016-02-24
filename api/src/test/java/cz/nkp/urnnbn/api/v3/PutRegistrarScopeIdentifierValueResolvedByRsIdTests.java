@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -25,29 +25,27 @@ import cz.nkp.urnnbn.api.Utils;
  * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
-public class PutRsIdResolvedByRsIdTests extends ApiV3Tests {
+public class PutRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(PutRsIdResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PutRegistrarScopeIdentifierValueResolvedByRsIdTests.class.getName());
 
     private final String REGISTRAR_CODE = "aba001";
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
     @BeforeMethod
     public void beforeMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
     @AfterMethod
     public void afterMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 

@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -27,26 +27,59 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifiersResolvedByRsIdTests.class.getName());
 
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
     private final String REGISTRAR = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
+    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
     @BeforeMethod
     public void beforeMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
     @AfterMethod
     public void afterMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
+    @Test
+    public void registrarCodeInvalid() {
+        for (String registrarCode : REGISTRAR_CODES_INVALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+        }
+    }
+
+    @Test
+    public void registrarCodeValidUnknown() {
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+                    .expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
+        }
     }
 
     @Test

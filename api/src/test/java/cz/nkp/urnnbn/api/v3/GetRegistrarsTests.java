@@ -182,4 +182,5 @@ public class GetRegistrarsTests extends ApiV3Tests {
             LOGGER.warning("no registrars available");
         }
     }
+
 }

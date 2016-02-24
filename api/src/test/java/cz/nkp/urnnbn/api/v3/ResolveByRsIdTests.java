@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -44,8 +44,8 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");// or urn:nbn:cz:aba001-999999
     private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");// or urn:nbn:cz:aba001-00000d
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
@@ -59,13 +59,11 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
-    // TODO: test ID_TYPE, ID_VALUE for valid/invalid type and value
-
     @Test
     public void resolveRegistrarCodesInvalid() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
             LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -74,28 +72,27 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                     .when().get(buildResolvationPath(idForResolvation))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            String errorCode = xmlPath.getString("code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertEquals(errorCode, "INVALID_REGISTRAR_CODE");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
         }
     }
 
     @Test
-    public void resolveRegistrarCodesValid() {
+    public void resolveRegistrarCodeValidUnknown() {
         for (String registrarCode : REGISTRAR_CODES_VALID) {
             LOGGER.info("registrar code: " + registrarCode);
             RsId idForResolvation = new RsId(registrarCode, "type", "value");
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                     .when().get(buildResolvationPath(idForResolvation))//
                     .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-            String errorCode = xmlPath.getString("error.code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(errorCode) || "UNKNOWN_DIGITAL_DOCUMENT".equals(errorCode));
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
         }
     }
+
+    // TODO: test ID_TYPE, ID_VALUE for valid/invalid type and value
 
     @Test
     public void resolveIdTypeInvalid() {

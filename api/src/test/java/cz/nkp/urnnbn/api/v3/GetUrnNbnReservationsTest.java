@@ -29,11 +29,43 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
 
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");// must exist
     private final String REGISTRAR_CODE = "tst01"; // must exist and USER_WITH_RIGHTS must have access rights
-    private final String REGISTRAR_CODE_UNKNOWN = "xxx999";// must not exist
 
     @BeforeSuite
     public void beforeSuite() {
         init();
+    }
+
+    @Test
+    public void registrarCodeInvalid() {
+        for (String registrarCode : REGISTRAR_CODES_INVALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+        }
+    }
+
+    @Test
+    public void registrarCodeValidUnknown() {
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
+        }
     }
 
     @Test
@@ -72,54 +104,6 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
                 assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
             }
         }
-    }
-
-    @Test
-    public void registrarCodeInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            String errorCode = xmlPath.getString("code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertEquals(errorCode, "INVALID_REGISTRAR_CODE");
-        }
-    }
-
-    @Test
-    public void registrarCodeValid() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-            String errorCode = xmlPath.getString("error.code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(errorCode) || "UNKNOWN_DIGITAL_DOCUMENT".equals(errorCode));
-        }
-    }
-
-    @Test
-    public void registrarCodeUnknown() {
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(404)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE_UNKNOWN) + "/urnNbnReservations").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
 }

@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -33,8 +33,8 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Te
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
     private final String REGISTRAR_CODE = "aba001";
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
@@ -46,6 +46,41 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Te
     @AfterMethod
     public void afterMethod() {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    }
+
+    @Test
+    public void registrarCodesInvalid() {
+        for (String registrarCode : REGISTRAR_CODES_INVALID) {
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            RsId idToGet = new RsId(registrarCode, "type2", "value2");
+            LOGGER.info("registrar code: " + registrarCode);
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToGet.type))//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+        }
+    }
+
+    @Test
+    public void registrarCodesValidUnknown() {
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            RsId idForResolvation = new RsId(registrarCode, "type", "value");
+            RsId idToGet = new RsId(registrarCode, "type2", "value2");
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToGet.type))//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
+        }
     }
 
     // TODO: sjednotit nazvy metod, odstraint prefixy "getRegistrarScopeIdentifier"
@@ -86,44 +121,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Te
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
-    }
-
-    @Test
-    public void getRegistrarScopeIdentifierRegistrarCodesInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            RsId idToGet = new RsId(registrarCode, "type2", "value2");
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToGet.type))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            String errorCode = xmlPath.getString("code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertEquals(errorCode, "INVALID_REGISTRAR_CODE");
-        }
-    }
-
-    @Test
-    public void getRegistrarScopeIdentifierRegistrarCodesValid() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            RsId idToGet = new RsId(registrarCode, "type2", "value2");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToGet.type))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-            String errorCode = xmlPath.getString("error.code");
-            // LOGGER.info("error code: " + errorCode);
-            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(errorCode) || "UNKNOWN_DIGITAL_DOCUMENT".equals(errorCode));
-        }
     }
 
     @Test

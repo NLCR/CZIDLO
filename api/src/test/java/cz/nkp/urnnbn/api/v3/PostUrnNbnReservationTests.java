@@ -35,10 +35,41 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
         init();
     }
 
-    // TODO: otestovat min, max delku, nepovolane znaky, atd pro REGISTRAR_CODE
+    @Test
+    public void registrarCodeInvalid() {
+        for (String registrarCode : REGISTRAR_CODES_INVALID) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
+        }
+    }
 
     @Test
-    public void postReservationsNotAuthenticated() {
+    public void registrarCodeValidUnknown() {
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info("registrar code: " + registrarCode);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
+        }
+    }
+
+    @Test
+    public void notAuthenticated() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve
@@ -61,7 +92,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsNotAuthorized() {
+    public void notAuthorized() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve
@@ -82,7 +113,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsWithoutSize() {
+    public void sizeNotSpecified() {
         // check total reserved before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // reserve
@@ -105,7 +136,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsWithSize() {
+    public void sizeOk() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // reserve
@@ -129,7 +160,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsSizeNegative() {
+    public void sizeNegative() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve
@@ -150,7 +181,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsSizeToHigh() {
+    public void sizeToBig() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve
@@ -171,7 +202,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsSizeNan() {
+    public void sizeNan() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve
@@ -192,7 +223,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     }
 
     @Test
-    public void postReservationsSizeEmpty() {
+    public void sizeEmpty() {
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE_OK);
         // try and reserve

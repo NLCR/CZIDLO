@@ -88,8 +88,15 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
-    // registrar codes
-    final String REGISTRAR_CODE_UNKNOWN = "xxx000";// must not exist
+    // examples of valid and invalid registrar codes according to regexp [A-Za-z0-9]{2,6}
+    // all valid codes must not identify existing registrar in database
+    final String[] REGISTRAR_CODES_VALID = new String[] { "ab", "AB", "01", "aB0", "abcdef", "ABCDEF", "012345", "aB0cD1" };
+    // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
+    // TODO: character '_' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/133
+    final String[] REGISTRAR_CODES_INVALID = new String[] { "!!", "**", "''", "((", "))", ";;", "::", "@@", "&&", "==", "++", "$$",
+            ",," /* , "//" */, "??", "##", "[[", "]]", "--",/* "__", */"..", "~~", "a!a", "a*a", "a'a", "a(a", "a)a", "a;a", "a:a", "a@a", "a&a",
+            "a=a", "a+a", "a$a", "a,a" /* , "a/a" */, "a?a", "a#a", "a[a", "a]a", "a-a"/* , "a_a" */, "a.a", "a~a", "a", "A", "0", "aaaaaaa",
+            "AAAAAAA", "0000000" };
 
     // registrar-scope-id valid/invalid types
     // [A-Za-z0-9_\-:]{2,20}
@@ -106,16 +113,6 @@ public abstract class ApiV3Tests {
             "?", "#", "[", "]", "-", "_", ".", "~", "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6" };
     final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffg",
             "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
-
-    // examples of valid and invalid registrar codes according to regexp [A-Za-z0-9]{2,6}
-    // all valid codes must not identify existing registrar in database
-    final String[] REGISTRAR_CODES_VALID = new String[] { "ab", "AB", "01", "aB0", "abcdef", "ABCDEF", "012345", "aB0cD1" };
-    // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
-    // TODO: character '_' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/133
-    final String[] REGISTRAR_CODES_INVALID = new String[] { "!!", "**", "''", "((", "))", ";;", "::", "@@", "&&", "==", "++", "$$",
-            ",," /* , "//" */, "??", "##", "[[", "]]", "--",/* "__", */"..", "~~", "a!a", "a*a", "a'a", "a(a", "a)a", "a;a", "a:a", "a@a", "a&a",
-            "a=a", "a+a", "a$a", "a,a" /* , "a/a" */, "a?a", "a#a", "a[a", "a]a", "a-a"/* , "a_a" */, "a.a", "a~a", "a", "A", "0", "aaaaaaa",
-            "AAAAAAA", "0000000" };
 
     Random rand = new Random();
     String responseXsdString;

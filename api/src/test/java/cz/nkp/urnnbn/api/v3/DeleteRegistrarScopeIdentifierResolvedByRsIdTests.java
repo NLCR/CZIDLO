@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -36,20 +36,18 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
     private final String REGISTRAR_CODE = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
     @BeforeMethod
     public void beforeMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
     @AfterMethod
     public void afterMethod() {
-        // delete all registrar-scope-ids
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
