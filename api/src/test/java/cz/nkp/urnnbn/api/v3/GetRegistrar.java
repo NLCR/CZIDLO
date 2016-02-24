@@ -20,9 +20,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}
  *
  */
-public class GetRegistrarTests extends ApiV3Tests {
+public class GetRegistrar extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetRegistrarTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetRegistrar.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
@@ -47,13 +47,13 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void registrarCodeValidUnknown() {
-        for (String codregistrarCodee : REGISTRAR_CODES_VALID) {
-            LOGGER.info(String.format("registrar code: %s", codregistrarCodee));
+        for (String registrarCode : REGISTRAR_CODES_VALID) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                     .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(codregistrarCodee))//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
@@ -63,14 +63,14 @@ public class GetRegistrarTests extends ApiV3Tests {
     @Test
     public void okNoQueryParams() {
         // digitalLibraries=true, catalogs=true by default
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
-            LOGGER.info(String.format("registrar code: %s", code));
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:catalogs", nsContext))//
                     .body(hasXPath("//c:digitalLibraries", nsContext))//
                     // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
@@ -78,7 +78,7 @@ public class GetRegistrarTests extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -86,21 +86,21 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void okWithDigitalLibraries() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
-            LOGGER.info(String.format("registrar code: %s", code));
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true")//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:digitalLibraries", nsContext))//
                     // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                     .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -108,21 +108,21 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void okWithoutDigitalLibraries() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
-            LOGGER.info(String.format("registrar code: %s", code));
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "false")//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(not(hasXPath("//c:digitalLibraries", nsContext)))//
                     // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                     .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -130,21 +130,21 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void okWithCatalogs() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
-            LOGGER.info(String.format("registrar code: %s", code));
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "true")//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:catalogs", nsContext))//
                     // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                     .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -152,20 +152,20 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void okWithoutCatalogs() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
             with().config(namespaceAwareXmlConfig()).queryParam("catalogs", "false")//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", code), nsContext))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(not(hasXPath("//c:catalogs", nsContext)))//
                     // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                     .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code));
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -173,16 +173,16 @@ public class GetRegistrarTests extends ApiV3Tests {
 
     @Test
     public void registrarCodeCaseInsensitive() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
-            LOGGER.info(String.format("registrar code: %s", code));
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
             // fetch by code in upper case
             String responseXml = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:registrar", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code.toUpperCase())).andReturn().asString();
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toUpperCase())).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
             int idByUpperCase = xmlPath.getInt("@id");
             // fetch by code in lower case
@@ -191,7 +191,7 @@ public class GetRegistrarTests extends ApiV3Tests {
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:registrar", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code.toLowerCase())).andReturn().asString();
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toLowerCase())).andReturn().asString();
             xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
             int idByLowerCase = xmlPath.getInt("@id");
             // check

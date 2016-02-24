@@ -23,9 +23,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/urnNbnReservations
  *
  */
-public class GetUrnNbnReservationsTest extends ApiV3Tests {
+public class GetUrnNbnReservationsByRegistrarTest extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrarTest.class.getName());
 
     private final String REGISTRAR_CODE = "tst01"; // must exist
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
@@ -76,12 +76,12 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
             reserveUrnNbns(REGISTRAR_CODE, USER_WITH_RIGHTS);
         }
         // check all registrars' reservations
-        List<String> codes = getAllRegistrarCodes();
-        if (codes.isEmpty()) {
+        List<String> registrarCodes = getAllRegistrarCodes();
+        if (registrarCodes.isEmpty()) {
             LOGGER.warning("no registrars available");
         } else {
-            for (String code : codes) {
-                LOGGER.info("registrar code: " + code);
+            for (String registrarCode : registrarCodes) {
+                LOGGER.info("registrar code: " + registrarCode);
                 String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                         .statusCode(200)//
                         .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -89,7 +89,7 @@ public class GetUrnNbnReservationsTest extends ApiV3Tests {
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
-                        .when().get("/registrars/" + Utils.urlEncodeReservedChars(code) + "/urnNbnReservations").andReturn().asString();
+                        .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations").andReturn().asString();
                 XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
                 // reservation size
                 int maxReservationSize = xmlPath.getInt("maxReservationSize");

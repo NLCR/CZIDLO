@@ -22,9 +22,9 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  * Tests for POST /api/v3/registrars/${REGISTRAR_CODE}/urnNbnReservations
  *
  */
-public class PostUrnNbnReservationTests extends ApiV3Tests {
+public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationByRegistrar.class.getName());
 
     private final String REGISTRAR_CODE = "tst01"; // must exist
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
@@ -39,7 +39,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
     @Test
     public void registrarCodeInvalid() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            LOGGER.info("registrar code: " + registrarCode);
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                     .expect()//
                     .statusCode(400)//
@@ -71,8 +71,10 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
 
     @Test
     public void notAuthenticated() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         // TODO:APIv4: return xml
         // String responseXml =
@@ -82,20 +84,22 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 // .body(matchesXsd(responseXsdString))//
                 // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")
         // .andReturn().asString()
         ;
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHENTICATED");
         // check that no more reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void notAuthorized() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
@@ -104,19 +108,21 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
         // check that no more reservations created
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void sizeNan() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         String size = "blabla";
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
@@ -126,19 +132,21 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void sizeNegative() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         int size = -1;
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
@@ -148,19 +156,21 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations created
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void sizeToBig() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         int size = reservationsBefore.maxReservationSize + 1;
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
@@ -170,19 +180,21 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void sizeEmpty() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         String size = "";
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
@@ -192,26 +204,28 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));
     }
 
     @Test
     public void sizeNotSpecified() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reserved before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // reserve
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservation");
         int nowReserved = xmlPath.getInt("urnNbn.size()");
@@ -220,14 +234,16 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
             UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
         }
         // check total reserved after reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved + nowReserved));
     }
 
     @Test
     public void sizeOk() {
+        String registrarCode = REGISTRAR_CODE;
+        LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
-        UrnNbnReservations reservationsBefore = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // reserve
         int size = 3;
         String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
@@ -236,7 +252,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
-                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(REGISTRAR_CODE) + "/urnNbnReservations")//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
         int nowReserved = xmlPath.getInt("urnNbn.size()");
@@ -245,7 +261,7 @@ public class PostUrnNbnReservationTests extends ApiV3Tests {
         }
         Assert.assertEquals(nowReserved, size);
         // check that no more reservations
-        UrnNbnReservations reservationsAfter = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved + nowReserved));
     }
 

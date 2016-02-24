@@ -18,9 +18,9 @@ import com.jayway.restassured.path.xml.XmlPath;
  * Tests for GET /api/v3/registrars
  *
  */
-public class GetRegistrarsTests extends ApiV3Tests {
+public class GetRegistrars extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetRegistrarsTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetRegistrars.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {

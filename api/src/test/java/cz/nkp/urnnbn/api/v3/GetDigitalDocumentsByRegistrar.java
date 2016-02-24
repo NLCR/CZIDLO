@@ -21,8 +21,8 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRARS_CODE}/digitalDocuments
  *
  */
-public class GetDigitalDocumentsTests extends ApiV3Tests {
-    private static final Logger LOGGER = Logger.getLogger(GetDigitalDocumentsTests.class.getName());
+public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
+    private static final Logger LOGGER = Logger.getLogger(GetDigitalDocumentsByRegistrar.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
@@ -62,14 +62,15 @@ public class GetDigitalDocumentsTests extends ApiV3Tests {
 
     @Test
     public void ok() {
-        String code = getRandomExistingRegistrarCode();
-        if (code != null) {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info("registrar code: " + registrarCode);
             String responseXml = with().config(namespaceAwareXmlConfig()) //
                     .expect() //
                     .statusCode(200) //
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
                     .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(code) + "/digitalDocuments")//
+                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
             assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
