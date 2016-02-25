@@ -44,8 +44,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -59,8 +58,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -80,8 +78,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 // .body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                // .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")
         // .andReturn().asString()
         ;
@@ -104,8 +101,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -128,8 +124,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -152,8 +147,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -176,8 +170,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -200,8 +193,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");

@@ -43,8 +43,7 @@ public class GetUrnNbnReservationsByRegistrarTest extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -58,8 +57,7 @@ public class GetUrnNbnReservationsByRegistrarTest extends ApiV3Tests {
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");

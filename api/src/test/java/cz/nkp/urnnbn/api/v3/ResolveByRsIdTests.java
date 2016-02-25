@@ -79,8 +79,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(idForResolvation))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -94,8 +93,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(idForResolvation))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -186,8 +184,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -202,8 +199,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -218,8 +214,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -246,8 +241,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -262,8 +256,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -306,8 +299,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -323,8 +315,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -369,8 +360,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");

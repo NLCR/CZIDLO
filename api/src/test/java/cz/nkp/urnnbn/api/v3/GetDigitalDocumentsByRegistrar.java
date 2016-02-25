@@ -36,8 +36,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -50,8 +49,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         LOGGER.info("registrar code: " + registrarCode);
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments").andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code")) || xmlPath.get("digitalDocuments") != null);

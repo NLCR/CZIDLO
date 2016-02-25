@@ -59,8 +59,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -75,8 +74,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -97,8 +95,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .expect()//
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                // .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                // .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idInserted1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -130,8 +127,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .expect()//
                 .statusCode(401)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idInserted1) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");

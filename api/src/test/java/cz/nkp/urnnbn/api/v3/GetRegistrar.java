@@ -36,8 +36,7 @@ public class GetRegistrar extends ApiV3Tests {
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
@@ -51,8 +50,7 @@ public class GetRegistrar extends ApiV3Tests {
             LOGGER.info(String.format("registrar code: %s", registrarCode));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");

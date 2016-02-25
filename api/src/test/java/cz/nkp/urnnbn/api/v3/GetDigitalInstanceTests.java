@@ -41,8 +41,7 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get("/digitalInstances/id/" + Utils.urlEncodeReservedChars(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
@@ -54,8 +53,7 @@ public class GetDigitalInstanceTests extends ApiV3Tests {
         String xml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get("/digitalInstances/id/" + DI_ID_UNKNOWN).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
