@@ -178,7 +178,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void unknowDigitalDocument() {
+    public void unknownDigitalDocument() {
         RsId id = new RsId(REGISTRAR, "unknownType", "unknownValue");
         String xml = with().config(namespaceAwareXmlConfig()) //
                 .expect()//

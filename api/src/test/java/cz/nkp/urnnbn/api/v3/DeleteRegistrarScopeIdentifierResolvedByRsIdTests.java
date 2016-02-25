@@ -97,14 +97,41 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
         assertEquals(id.value, rsIds.get(0).value);
     }
 
+    // TODO: unknowDigitalDocument
+
     @Test
     public void deleteRegistrarScopeIdentifierOk() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type1", "value1");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // valid type example
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
-        // valid value example
-        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_VALID)));
+        RsId idToBeDeleted = new RsId(REGISTRAR_CODE, "type2", "value2");
+        LOGGER.info("resolved by: " + idForResolvation.toString() + ", toBeDeleted: " + idToBeDeleted.toString());
+        // insert id
+        insertRegistrarScopeId(URNNBN, idToBeDeleted, USER_WITH_RIGHTS);
+        // delete id
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation)//
+                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToBeDeleted.type))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeDeleted.type + "\' }"), equalTo(idToBeDeleted.value));
+        assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
+        // TODO
+        // try and get deleted rsid
+        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(Utils.urlEncodeReservedChars(URNNBN))//
+                        + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(idToBeDeleted.type))//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
+
     }
 
     private void deleteRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToBeDeleted) {
@@ -123,6 +150,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeDeleted.type + "\' }"), equalTo(idToBeDeleted.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
+        // TODO
         // try and get deleted rsid
         responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//

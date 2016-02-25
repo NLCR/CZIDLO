@@ -1,0 +1,8 @@
+<response xmlns="http://resolver.nkp.cz/v3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://localhost:8080/api/v3/response.xsd">
+    <error>
+        <code>URN_NBN_DEACTIVATED</code>
+        <message>urn:nbn:cz:aba001-000006 has been deactivated at
+            2013-04-16T23:19:20.000+02:00</message>
+    </error>
+</response>
