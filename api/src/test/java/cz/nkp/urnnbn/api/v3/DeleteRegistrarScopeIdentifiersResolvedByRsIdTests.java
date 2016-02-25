@@ -55,7 +55,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -71,7 +71,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
@@ -82,7 +82,89 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifiersNotAuthenticated() {
+    public void rsIdTypeInvalid() {
+        String type = Utils.getRandomItem(RSID_TYPES_INVALID);
+        RsId idForResolvation = new RsId(REGISTRAR, type, "value");
+        LOGGER.info(idForResolvation.toString());
+        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error", nsContext)) //
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
+    }
+
+    @Test
+    public void rsIdTypeValidValueInvalid() {
+        int counter = 0;
+        for (String value : RSID_VALUES_INVALID) {
+            RsId idForResolvation = new RsId(REGISTRAR, "reserved" + ++counter, value);
+            LOGGER.info(idForResolvation.toString());
+            // same id but with valid value
+            RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
+            insertRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
+            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+            // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
+            // https://github.com/NLCR/CZIDLO/issues/132
+            String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+            // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+            assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
+            // cleanup
+            deleteRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
+        }
+    }
+
+    @Test
+    public void rsIdTypeValidValueValid() {
+        // create ids
+        List<RsId> ids = new ArrayList<>();
+        RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "something");
+        ids.add(idForResolvation);
+        ids.add(new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
+        ids.add(new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_VALID)));
+        // insert ids
+        for (RsId id : ids) {
+            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+        }
+        // delete all ids
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        // check all ids in response
+        for (RsId id : ids) {
+            assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+        }
+        // get all ids by urn:nbn (should be empty)
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(HTTPS_API_URL + buildResolvationPath(URNNBN) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        assertThat(xmlPath.getString("id"), isEmptyOrNullString());
+    }
+
+    @Test
+    public void notAuthenticated() {
         RsId idInserted1 = new RsId(REGISTRAR, "deleteTest1", "something1");
         RsId idInserted2 = new RsId(REGISTRAR, "deleteTest2", "something2");
         // insert idInserted1, idInserted2
@@ -100,7 +182,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
-        // check that both ids present
+        // check that both ids still present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
@@ -116,7 +198,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     }
 
     @Test
-    public void deleteRegistrarScopeIdentifiersNotAuthorized() {
+    public void notAuthorized() {
         RsId idInserted1 = new RsId(REGISTRAR, "deleteTest1", "something1");
         RsId idInserted2 = new RsId(REGISTRAR, "deleteTest2", "something2");
         // insert idInserted1, idInserted2
@@ -132,7 +214,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
-        // check that both ids present
+        // check that both ids still present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
@@ -144,83 +226,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 Assert.fail();
             }
         }
-    }
-
-    // TODO: type invalid, value invalid, ...
-
-    @Test
-    public void deleteRegistrarScopeIdentifiersOk() {
-        RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "something");
-        // create ids
-        List<RsId> ids = new ArrayList<>();
-        ids.add(new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
-        ids.add(new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_VALID)));
-        // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        for (RsId id : ids) {
-            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
-        }
-        // delete all ids
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        // check all ids in response
-        assertIdFoundInResponse(xmlPath, idForResolvation);
-        for (RsId id : ids) {
-            assertIdFoundInResponse(xmlPath, id);
-        }
-        // get all ids by urn:nbn (should be empty)
-        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(HTTPS_API_URL + buildResolvationPath(URNNBN) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        assertThat(xmlPath.getString("id"), isEmptyOrNullString());
-    }
-
-    private void assertIdFoundInResponse(XmlPath xmlPath, RsId id) {
-        assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
-    }
-
-    @Test
-    public void deleteRegistrarScopeIdentifiersInvalidResolvationType() {
-        RsId id = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
-        LOGGER.info(id.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                .expect() //
-                .statusCode(400) //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                .body(hasXPath("/c:response/c:error", nsContext)) //
-                .when().delete(HTTPS_API_URL + buildResolvationPath(id) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
-        Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
-    }
-
-    @Test
-    public void deleteRegistrarScopeIdentifiersInvalidResolvationValue() {
-        RsId id = new RsId(REGISTRAR, Utils.getRandomItem(RSID_VALUES_INVALID), "value");
-        // TODO: enable after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
-        // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-        // .expect() //
-        // .statusCode(400) //
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-        // .body(hasXPath("/c:response/c:error", nsContext)) //
-        // .when().get(buildResolvationPath(id))//
-        // .andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // // TODO:APIv4: rename error to INVALID_ID_VALUE
-        // Assert.assertEquals(xmlPath.get("code"), "TODO");
-        LOGGER.info("deleteRegistrarScopeIdentifiersInvalidResolvationValue ignored untill issue 132 is fixed");
     }
 
 }

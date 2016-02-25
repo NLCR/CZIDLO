@@ -130,7 +130,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
             // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
             // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
             // https://github.com/NLCR/CZIDLO/issues/132
-            String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+            String xml = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(404)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
