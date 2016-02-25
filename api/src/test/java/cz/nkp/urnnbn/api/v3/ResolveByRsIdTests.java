@@ -3,8 +3,10 @@ package cz.nkp.urnnbn.api.v3;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
@@ -37,12 +39,10 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     private final Credentials USER = new Credentials("martin", "i0oEhu");
     private final String REGISTRAR = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-000000";
-
-    private final RsId ID_WITHOUT_DI = new RsId("tst02", "K4_pid", "uuid:123");// or urn:nbn:cz:aba001-00000d
-    private final RsId ID_WITH_ACTIVE_DI = new RsId("p01nk", "uuid", "113e83b0-1db2-11e2-bec6-005056827e51");// or urn:nbn:cz:aba001-000004
-    private final RsId ID_WITH_DEACTIVATED_DI = new RsId("p01mzk", "uuid", "eff774d0-24a2-11e2-a6ce-5ef3fc9ae867"); // or urn:nbn:cz:aba001-000005
-    private final RsId ID_NO_DD = new RsId("tst02", "K4_pid", "uuid:123456789");// or urn:nbn:cz:aba001-999999
-    private final RsId ID_DD_DEACTIVATED = new RsId("tst02", "K4_pid", "uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl");// or urn:nbn:cz:aba001-00000d
+    private final String URNNBN_WITHOUT_DI = "urn:nbn:cz:aba001-000004";
+    private final String URNNBN_WITH_DI_ACTIVE = "urn:nbn:cz:aba001-00000t";
+    private final String URNNBN_WITH_DI_DEACTIVATED = "urn:nbn:cz:aba001-000006";
+    private final String URNNBN_DD_DEACTIVATED = "urn:nbn:cz:aba001-00000d"; // TODO:APIv4: should throw error when trying to insert rsid
 
     @BeforeClass
     public void beforeClass() {
@@ -52,15 +52,25 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @BeforeMethod
     public void beforeMethod() {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITHOUT_DI, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_ACTIVE, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_DEACTIVATED, USER);
+        // deleteAllRegistrarScopeIdentifiers(URNNBN_NO_DD, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_DD_DEACTIVATED, USER);
     }
 
     @AfterMethod
     public void afterMethod() {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITHOUT_DI, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_ACTIVE, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_DEACTIVATED, USER);
+        // deleteAllRegistrarScopeIdentifiers(URNNBN_NO_DD, USER);
+        deleteAllRegistrarScopeIdentifiers(URNNBN_DD_DEACTIVATED, USER);
     }
 
     @Test
-    public void resolveRegistrarCodesInvalid() {
+    public void registrarCodeInvalid() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
             LOGGER.info("registrar code: " + registrarCode);
             RsId idForResolvation = new RsId(registrarCode, "type", "value");
@@ -77,7 +87,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void resolveRegistrarCodeValidUnknown() {
+    public void registrarCodeValidUnknown() {
         for (String registrarCode : REGISTRAR_CODES_VALID) {
             LOGGER.info("registrar code: " + registrarCode);
             RsId idForResolvation = new RsId(registrarCode, "type", "value");
@@ -92,224 +102,203 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         }
     }
 
-    // TODO: test ID_TYPE, ID_VALUE for valid/invalid type and value
-
     @Test
-    public void resolveIdTypeInvalid() {
+    public void rsIdTypeInvalid() {
         for (String type : RSID_TYPES_INVALID) {
-            resolveIdTypeInvalid(new RsId(REGISTRAR, type, "value"));
+            RsId idForResolvation = new RsId(REGISTRAR, type, "value");
+            LOGGER.info(idForResolvation.toString());
+            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+            String responseXml = with().config(namespaceAwareXmlConfig()) //
+                    .expect() //
+                    .statusCode(400) //
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                    .body(hasXPath("/c:response/c:error", nsContext)) //
+                    .when().get(buildResolvationPath(idForResolvation)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            // TODO:APIv4: rename error to INVALID_ID_TYPE
+            Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
         }
     }
 
-    private void resolveIdTypeInvalid(RsId id) {
-        LOGGER.info(id.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()) //
-                .expect() //
-                .statusCode(400) //
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                .body(hasXPath("/c:response/c:error", nsContext)) //
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
-        Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
-    }
-
     @Test
-    public void resolveIdValueInvalid() {
+    public void rsIdTypeValidValueInvalid() {
         for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
-            resolveIdValueInvalid(new RsId(REGISTRAR, "type" + i, RSID_VALUES_INVALID[i]));
+            RsId idForResolvation = new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_INVALID[i]);
+            LOGGER.info(idForResolvation.toString());
+            // same id but with valid value
+            RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
+            insertRegistrarScopeId(URNNBN, idValidValue, USER);
+            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+            // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
+            // https://github.com/NLCR/CZIDLO/issues/132
+            String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildResolvationPath(idForResolvation))//
+                    .andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+            // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+            assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
+            // cleanup
+            deleteRegistrarScopeId(URNNBN, idValidValue, USER);
         }
-    }
-
-    private void resolveIdValueInvalid(RsId id) {
-        // TODO: enable after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
-        // String responseXml = with().config(namespaceAwareXmlConfig()) //
-        // .expect() //
-        // .statusCode(400) //
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-        // .body(hasXPath("/c:response/c:error", nsContext)) //
-        // .when().get(buildResolvationPath(id))//
-        // .andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // // TODO:APIv4: rename error to INVALID_ID_VALUE
-        // Assert.assertEquals(xmlPath.get("code"), "TODO");
-        LOGGER.info("deleteRegistrarScopeIdentifiersInvalidResolvationValue ignored untill issue 132 is fixed");
     }
 
     @Test
-    public void resolveIdTypeAndValueOk() {
-        String urnNbn = URNNBN;
-        // types
+    public void rsIdTypeValidValueValid() {
+        RsId idToBeFetched = new RsId(REGISTRAR, "idRequestedType", "idRequestedValue");
+        insertRegistrarScopeId(URNNBN, idToBeFetched, USER);
         for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, RSID_TYPES_VALID[i], "value"));
+            rsIdTypeValidValueValid(new RsId(REGISTRAR, RSID_TYPES_VALID[i], "value"));
         }
-        // values
         for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            resolveIdTypeAndValueOk(urnNbn, new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_VALID[i]));
+            rsIdTypeValidValueValid(new RsId(REGISTRAR, "typeValid" + i, RSID_VALUES_VALID[i]));
         }
     }
 
-    private void resolveIdTypeAndValueOk(String urnNbn, RsId id) {
-        LOGGER.info(urnNbn + " " + id.toString());
-        // insert id
-        insertRegistrarScopeId(urnNbn, id, USER);
-        // resolve
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+    private void rsIdTypeValidValueValid(RsId idForResolvation) {
+        LOGGER.info(idForResolvation.toString());
+        // insert id for resolvation
+        insertRegistrarScopeId(URNNBN, idForResolvation, USER);
+        // get id value byt idForResolvation and type
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(id))//
+                .when().get(buildResolvationPath(idForResolvation)) //
                 .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
-        // remove id
-        deleteRegistrarScopeId(urnNbn, id, USER);
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + idForResolvation.type + "\' }"),
+                idForResolvation.value);
+        // delete id
+        deleteRegistrarScopeId(URNNBN, idForResolvation, USER);
     }
 
     @Test
-    public void resolveNoSuchDocument() {
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
+    public void unknowDigitalDocument() {
+        RsId id = new RsId(REGISTRAR, "unknownType", "unknownValue");
+        String xml = with().config(namespaceAwareXmlConfig()) //
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_NO_DD))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_DOCUMENT");
     }
 
     @Test
-    public void resolveDocumentDeactivatedAndActionRedirect() {
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
-                .expect()//
-                .statusCode(403)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_DD_DEACTIVATED))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
-    }
-
-    // TODO: projit odsud dal
-
-    @Test
-    public void resolveActionEmpty() {
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
-                .expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
-    }
-
-    @Test
-    public void resolveActionInvalid() {
+    public void actionInvalid() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "nonsense")//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
     @Test
-    public void resolveActionShow() {
-        with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
-                .expect().statusCode(200).contentType(ContentType.HTML)//
-                .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(ID_WITHOUT_DI));
-    }
-
-    @Test
-    public void resolveActionShowFormatInvalid() {
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "nonsense")//
+    public void actionEmpty() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
+    // action=show
+
     @Test
-    public void resolveActionShowFormatEmpty() {
+    public void actionShow() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
+                .expect().statusCode(200).contentType(ContentType.HTML)//
+                .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
+                .when().get(buildResolvationPath(id));
+    }
+
+    @Test
+    public void actionShowFormatEmpty() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "")//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
     @Test
-    public void resolveActionShowFormatHtml() {
+    public void actionShowFormatInvalid() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "nonsense")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildResolvationPath(id))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
+    }
+
+    @Test
+    public void actionShowFormatHtml() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "html")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(ID_WITHOUT_DI));
+                .when().get(buildResolvationPath(id));
     }
 
     @Test
-    public void resolveActionShowFormatXml() {
+    public void actionShowFormatXml() {
+        // TODO: rozlisit na pripady ruznych stavu DD, URN, DI
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
-        // xml path handles namespaces incorrectly, but it does work without prefixes (which is incorrect)
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext)).when().get(buildResolvationPath(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        String xmlPathExp = "registrarScopeIdentifiers.id.find { it.@type == '" + ID_WITHOUT_DI.type + "' }";
-        Assert.assertEquals(xmlPath.get(xmlPathExp), ID_WITHOUT_DI.value);
+        String xmlPathExp = "registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }";
+        Assert.assertEquals(xmlPath.get(xmlPathExp), id.value);
     }
 
     @Test
-    public void resolveActionShowFormatXmlWithDigitalInstances() {
-        with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "true")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
-    }
-
-    @Test
-    public void resolveActionShowFormatXmlWithoutDigitalInstances() {
-        with().config(namespaceAwareXmlConfig())//
-                .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "false")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
-                .body(not(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext)))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI)).andReturn().asString();
-    }
-
-    @Test
-    public void resolveActionShowFormatXmlWithDigitalInstancesEmpty() {
+    public void actionShowFormatXmlDigitalInstancesEmpty() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "")//
                 .expect()//
@@ -317,14 +306,16 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
     @Test
-    public void resolveActionShowFormatXmlWithDigitalInstancesInvalid() {
+    public void actionShowFormatXmlDigitalInstancesInvalid() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "nope")//
                 .expect()//
@@ -332,76 +323,136 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error/c:code", nsContext))//
                 .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
 
     @Test
-    public void resolveActionRedirectWithoutDi() {
+    public void actionShowFormatXmlDigitalInstancesTrue() {
+        // TODO: situace DD existuje, neexistuje, deaktivovane
+        RsId idNoDi = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, idNoDi, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "true")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext))// checking for correct type of response and namespace
+                .when().get(buildResolvationPath(idNoDi))//
+                .andReturn().asString();
+    }
+
+    @Test
+    public void actionShowFormatXmlDigitalInstancesFalse() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "false") //
+                .expect() //
+                .statusCode(200) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext)).body(//
+                        not(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext)))//
+                .when()//
+                .get(buildResolvationPath(id)).andReturn().asString();
+    }
+
+    // action=redirect
+
+    @Test
+    public void actionRedirectUrnDeactivated() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_DD_DEACTIVATED, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
+                .expect()//
+                .statusCode(403)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .when().get(buildResolvationPath(id))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
+    }
+
+    @Test
+    public void actionRedirectDiNotFound() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(ID_WITHOUT_DI))//
+                .when().get(buildResolvationPath(id))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
     }
 
     @Test
-    public void resolveActionRedirectWithActiveDi() {
+    public void actionRedirectDiDeactivated() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITH_DI_DEACTIVATED, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(id))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
+    }
+
+    @Test
+    public void actionRedirectDiActive() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITH_DI_ACTIVE, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPath(ID_WITH_ACTIVE_DI));
+                .when().get(buildResolvationPath(id));
     }
 
-    @Test
-    public void resolveActionRedirectWithDeactivatedDi() {
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
-                .expect()//
-                .statusCode(404)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(ID_WITH_DEACTIVATED_DI))//
-                .andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
-    }
+    // action=decide
 
     @Test
-    public void resolveActionDecideWithoutDi() {
+    public void actionDecideDiNotFound() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(ID_WITHOUT_DI));
+                .when().get(buildResolvationPath(id));
     }
 
     @Test
-    public void resolveActionDecideWithActiveDi() {
+    public void actionDecideDiDeactivated() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITH_DI_DEACTIVATED, id, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.HTML)//
+                .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
+                .when().get(buildResolvationPath(id));
+    }
+
+    @Test
+    public void actionDecideDiActive() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(URNNBN_WITH_DI_ACTIVE, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPath(ID_WITH_ACTIVE_DI));
-    }
-
-    @Test
-    public void resolveActionDecideWithDeactivatedDi() {
-        with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.HTML)//
-                .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(ID_WITH_DEACTIVATED_DI));
+                .when().get(buildResolvationPath(id));
     }
 
 }
