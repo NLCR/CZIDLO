@@ -38,35 +38,33 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void registrarCodeInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
     public void registrarCodeValidUnknown() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-                    .expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+                .expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test

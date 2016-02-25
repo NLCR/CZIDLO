@@ -30,7 +30,7 @@ public class GetRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void registrarCodeInvalid() {
+    public void registrarCodeInvalidAll() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
             LOGGER.info(String.format("registrar code: %s", registrarCode));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
@@ -46,7 +46,7 @@ public class GetRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void registrarCodeValidUnknown() {
+    public void registrarCodeValidUnknownAll() {
         for (String registrarCode : REGISTRAR_CODES_VALID) {
             LOGGER.info(String.format("registrar code: %s", registrarCode));
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//

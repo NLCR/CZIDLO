@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -18,6 +19,8 @@ import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
+
+import cz.nkp.urnnbn.api.Utils;
 
 /**
  * Tests for DELETE /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers
@@ -49,37 +52,35 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     @Test
     public void registrarCodeInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
     public void registrarCodeValidUnknown() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
-                    .expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+                .expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test
@@ -149,29 +150,20 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         }
     }
 
+    // TODO: type invalid, value invalid, ...
+
     @Test
     public void deleteRegistrarScopeIdentifiersOk() {
         RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "something");
-        // rs-id types
-        RsId[] idTypes = new RsId[RSID_TYPES_VALID.length];
-        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
-            idTypes[i] = new RsId(REGISTRAR, RSID_TYPES_VALID[i], "valueUnreserved");
-        }
-        // rs-id values
-        RsId[] idValues = new RsId[RSID_VALUES_VALID.length];
-        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            idValues[i] = new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_VALID[i]);
-        }
-
+        // create ids
+        List<RsId> ids = new ArrayList<>();
+        ids.add(new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
+        ids.add(new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_VALID)));
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        for (RsId id : idTypes) {
+        for (RsId id : ids) {
             insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
         }
-        for (RsId id : idValues) {
-            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
-        }
-
         // delete all ids
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
@@ -181,16 +173,11 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-
         // check all ids in response
         assertIdFoundInResponse(xmlPath, idForResolvation);
-        for (RsId id : idTypes) {
+        for (RsId id : ids) {
             assertIdFoundInResponse(xmlPath, id);
         }
-        for (RsId id : idValues) {
-            assertIdFoundInResponse(xmlPath, id);
-        }
-
         // get all ids by urn:nbn (should be empty)
         responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
@@ -209,12 +196,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     @Test
     public void deleteRegistrarScopeIdentifiersInvalidResolvationType() {
-        for (String type : RSID_TYPES_INVALID) {
-            deleteRegistrarScopeIdentifiersInvalidResolvationType(new RsId(REGISTRAR, type, "value"));
-        }
-    }
-
-    private void deleteRegistrarScopeIdentifiersInvalidResolvationType(RsId id) {
+        RsId id = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(id.toString());
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect() //
@@ -230,12 +212,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
 
     @Test
     public void deleteRegistrarScopeIdentifiersInvalidResolvationValue() {
-        for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
-            deleteRegistrarScopeIdentifiersInvalidResolvationValue(new RsId(REGISTRAR, "type" + i, RSID_VALUES_INVALID[i]));
-        }
-    }
-
-    private void deleteRegistrarScopeIdentifiersInvalidResolvationValue(RsId id) {
+        RsId id = new RsId(REGISTRAR, Utils.getRandomItem(RSID_VALUES_INVALID), "value");
         // TODO: enable after this bug is fixed: https://github.com/NLCR/CZIDLO/issues/132
         // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
         // .expect() //

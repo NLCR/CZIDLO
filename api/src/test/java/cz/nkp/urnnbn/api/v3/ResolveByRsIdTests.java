@@ -19,6 +19,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+
 /**
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}
  *
@@ -71,39 +73,37 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     @Test
     public void registrarCodeInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
     public void registrarCodeValidUnknown() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test
-    public void rsIdTypeInvalid() {
+    public void rsIdTypeInvalidAll() {
         for (String type : RSID_TYPES_INVALID) {
             RsId idForResolvation = new RsId(REGISTRAR, type, "value");
             LOGGER.info(idForResolvation.toString());
@@ -121,9 +121,10 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void rsIdTypeValidValueInvalid() {
-        for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
-            RsId idForResolvation = new RsId(REGISTRAR, "reserved" + i, RSID_VALUES_INVALID[i]);
+    public void rsIdTypeValidValueInvalidAll() {
+        int counter = 0;
+        for (String value : RSID_VALUES_INVALID) {
+            RsId idForResolvation = new RsId(REGISTRAR, "reserved" + ++counter, value);
             LOGGER.info(idForResolvation.toString());
             // same id but with valid value
             RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
@@ -147,14 +148,15 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     }
 
     @Test
-    public void rsIdTypeValidValueValid() {
+    public void rsIdTypeValidValueValidAll() {
         RsId idToBeFetched = new RsId(REGISTRAR, "idRequestedType", "idRequestedValue");
         insertRegistrarScopeId(URNNBN, idToBeFetched, USER);
-        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
-            rsIdTypeValidValueValid(new RsId(REGISTRAR, RSID_TYPES_VALID[i], "value"));
+        for (String type : RSID_TYPES_VALID) {
+            rsIdTypeValidValueValid(new RsId(REGISTRAR, type, "value"));
         }
-        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            rsIdTypeValidValueValid(new RsId(REGISTRAR, "typeValid" + i, RSID_VALUES_VALID[i]));
+        int counter = 0;
+        for (String value : RSID_VALUES_VALID) {
+            rsIdTypeValidValueValid(new RsId(REGISTRAR, "typeValid" + ++counter, value));
         }
     }
 

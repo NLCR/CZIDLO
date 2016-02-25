@@ -31,33 +31,31 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
 
     @Test
     public void registrarCodeInvalid() {
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
     public void registrarCodesValidUnknown() {
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext))//
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments").andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code")) || xmlPath.get("digitalDocuments") != null);
-            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error/c:message", nsContext))//
+                .body(hasXPath("/c:response/c:error/c:code", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code")) || xmlPath.get("digitalDocuments") != null);
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test

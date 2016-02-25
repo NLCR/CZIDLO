@@ -51,101 +51,92 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     @Test
     public void registrarCodeInvalid() {
         String typeToBeFetched = "toBeFetched";
-        for (String registrarCode : REGISTRAR_CODES_INVALID) {
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect() //
-                    .statusCode(400) //
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/"//
-                            + Utils.urlEncodeReservedChars(typeToBeFetched))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        LOGGER.info("registrar code: " + registrarCode);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect() //
+                .statusCode(400) //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
+                .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/"//
+                        + Utils.urlEncodeReservedChars(typeToBeFetched))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
 
     @Test
     public void registrarCodeValidUnknown() {
         String typeToBeFetched = "toBeFetched";
-        for (String registrarCode : REGISTRAR_CODES_VALID) {
-            LOGGER.info("registrar code: " + registrarCode);
-            RsId idForResolvation = new RsId(registrarCode, "type", "value");
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect() //
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                    .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
-                    .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/"//
-                            + Utils.urlEncodeReservedChars(typeToBeFetched))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
-        }
+        String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect() //
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                .body(hasXPath("/c:response/c:error/c:message", nsContext)) //
+                .body(hasXPath("/c:response/c:error/c:code", nsContext)) //
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/"//
+                        + Utils.urlEncodeReservedChars(typeToBeFetched))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
     @Test
     public void rsIdTypeInvalid() {
         String typeToBeFetched = "toBeFetched";
-        for (int i = 0; i < RSID_TYPES_INVALID.length; i++) {
-            RsId idForResolvation = new RsId(REGISTRAR_CODE, RSID_TYPES_INVALID[i], "value");
-            LOGGER.info(idForResolvation.toString());
-            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-            // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-            String xml = with().config(namespaceAwareXmlConfig())//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers"//
-                            + Utils.urlEncodeReservedChars(typeToBeFetched))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-            // TODO:APIv4: rename error to INVALID_ID_TYPE
-            assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
-        }
+        String type = Utils.getRandomItem(RSID_TYPES_INVALID);
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, type, "value");
+        LOGGER.info(idForResolvation.toString());
+        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers"//
+                        + Utils.urlEncodeReservedChars(typeToBeFetched))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
     @Test
     public void rsIdTypeValidValueInvalid() {
         String typeToBeFetched = "toBeFetched";
-        for (int i = 0; i < RSID_VALUES_INVALID.length; i++) {
-            RsId idForResolvation = new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUES_INVALID[i]);
-            LOGGER.info(idForResolvation.toString());
-            // same id but with valid value
-            RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
-            insertRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
-            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-            // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
-            // https://github.com/NLCR/CZIDLO/issues/132
-            // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-            String xml = with().config(namespaceAwareXmlConfig())//
-                    .expect()//
-                    .statusCode(404)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers"//
-                            + Utils.urlEncodeReservedChars(typeToBeFetched))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-            // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
-            assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
-            // cleanup
-            deleteRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
-        }
+        int counter = 0;
+        String value = Utils.getRandomItem(RSID_VALUES_INVALID);
+        RsId idForResolvation = new RsId(REGISTRAR_CODE, "reserved" + ++counter, value);
+        LOGGER.info(idForResolvation.toString());
+        // same id but with valid value
+        RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
+        insertRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
+        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
+        // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
+        // https://github.com/NLCR/CZIDLO/issues/132
+        String xml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(404)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers"//
+                        + Utils.urlEncodeReservedChars(typeToBeFetched))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+        assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
+        // cleanup
+        deleteRegistrarScopeId(URNNBN, idValidValue, USER_WITH_RIGHTS);
     }
 
     @Test
     public void rsIdTypeValidValueValid() {
         RsId idToBeFetched = new RsId(REGISTRAR_CODE, "idRequestedType", "idRequestedValue");
         insertRegistrarScopeId(URNNBN, idToBeFetched, USER_WITH_RIGHTS);
-        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
-            rsIdTypeValidValueValid(new RsId(REGISTRAR_CODE, RSID_TYPES_VALID[i], "value"), idToBeFetched.type, idToBeFetched.value);
-        }
-        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            rsIdTypeValidValueValid(new RsId(REGISTRAR_CODE, "typeValid" + i, RSID_VALUES_VALID[i]), idToBeFetched.type, idToBeFetched.value);
-        }
+        rsIdTypeValidValueValid(new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_VALID), "value"), idToBeFetched.type, idToBeFetched.value);
+        rsIdTypeValidValueValid(new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_TYPES_VALID)), idToBeFetched.type, idToBeFetched.value);
     }
 
     private void rsIdTypeValidValueValid(RsId idForResolvation, String requestedType, String expectedValue) {
@@ -153,7 +144,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // insert id for resolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // get id value byt idForResolvation and type
-        // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
         String xml = with().config(namespaceAwareXmlConfig()) //
                 .expect()//
                 .statusCode(200)//
@@ -173,21 +163,18 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     public void typeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        for (String type : RSID_TYPES_INVALID) {
-            LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + type);
-            // get
-            // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-            String xml = with().config(namespaceAwareXmlConfig())//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(type))//
-                    .andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
-            // TODO:APIv4: rename this error code
-            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
-        }
+        String type = Utils.getRandomItem(RSID_TYPES_INVALID);
+        LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + type);
+        String responseXml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(type))//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        // TODO:APIv4: rename this error code
+        assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
     @Test
@@ -197,7 +184,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and get idToGet
-        // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
@@ -216,14 +202,10 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idOther = new RsId(REGISTRAR_CODE, "other", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
-        // rs-id types
-        for (int i = 0; i < RSID_TYPES_VALID.length; i++) {
-            typeValidValueDefined(idForResolvation, idOther, new RsId(REGISTRAR_CODE, RSID_TYPES_VALID[i], "value"));
-        }
-        // rs-id values
-        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            typeValidValueDefined(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "reserved" + i, RSID_VALUES_VALID[i]));
-        }
+        // valid type example
+        typeValidValueDefined(idForResolvation, idOther, new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
+        // valid value example
+        typeValidValueDefined(idForResolvation, idOther, new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_TYPES_VALID)));
     }
 
     private void typeValidValueDefined(RsId idForResolvation, RsId idInsertedOther, RsId idToGet) {
@@ -231,7 +213,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // insert id
         insertRegistrarScopeId(URNNBN, idToGet, USER_WITH_RIGHTS);
         // get id
-        // String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//

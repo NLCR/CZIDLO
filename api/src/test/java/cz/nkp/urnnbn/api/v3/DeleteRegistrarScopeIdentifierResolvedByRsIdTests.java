@@ -101,15 +101,10 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
     public void deleteRegistrarScopeIdentifierOk() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // types
-        for (String type : RSID_TYPES_VALID) {
-            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, type, "value"));
-        }
-        // values
-        for (int i = 0; i < RSID_VALUES_VALID.length; i++) {
-            String value = RSID_VALUES_VALID[i];
-            deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "type" + i, value));
-        }
+        // valid type example
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_VALID), "value"));
+        // valid value example
+        deleteRegistrarScopeIdentifierOk(idForResolvation, new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_VALID)));
     }
 
     private void deleteRegistrarScopeIdentifierOk(RsId idForResolvation, RsId idToBeDeleted) {
@@ -163,14 +158,10 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Test
     @Test
     public void deleteRegistrarScopeIdentifierIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "resolvation", "something");
+        // insert id for resolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // test
-        for (String type : RSID_TYPES_INVALID) {
-            deleteRegistrarScopeIdentifierTypeInvalid(idForResolvation, type);
-        }
-    }
-
-    private void deleteRegistrarScopeIdentifierTypeInvalid(RsId idForResolvation, String typeInvalid) {
+        String typeInvalid = Utils.getRandomItem(RSID_TYPES_INVALID);
         LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeInvalid);
         // even though it was not inserted, error INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned
         // try and delete with type=typeUnknown

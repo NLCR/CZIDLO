@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.xml.namespace.NamespaceContext;
 
 public class Utils {
+
+    private static Random rand = new Random();
 
     public static String readXsd(String urlString) {
         InputStream in = null;
@@ -208,6 +211,10 @@ public class Utils {
             }
         }
         return builder.toString();
+    }
+
+    public static String getRandomItem(String[] data) {
+        return data[rand.nextInt(data.length)];
     }
 
 }
