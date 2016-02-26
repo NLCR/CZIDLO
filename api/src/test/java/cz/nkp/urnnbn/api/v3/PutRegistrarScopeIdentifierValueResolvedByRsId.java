@@ -25,9 +25,9 @@ import cz.nkp.urnnbn.api.Utils;
  * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
-public class PutRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Tests {
+public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(PutRegistrarScopeIdentifierValueResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PutRegistrarScopeIdentifierValueResolvedByRsId.class.getName());
 
     private final String REGISTRAR = "aba001";
     private final String REGISTRAR2 = "tst001";
