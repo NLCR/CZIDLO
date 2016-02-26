@@ -18,23 +18,27 @@ import com.jayway.restassured.path.xml.XmlPath;
  * Tests for GET /api/v3/digitalInstances
  *
  */
-public class GetDigitalInstancesTests extends ApiV3Tests {
+public class GetDigitalInstances extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetDigitalInstancesTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetDigitalInstances.class.getName());
 
     @BeforeSuite
     public void beforeSuite() {
         init();
     }
 
+    private String buildUrl() {
+        return "/digitalInstances";
+    }
+
     @Test
-    public void getDigitalInstances() {
+    public void ok() {
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
-                .when().get("/digitalInstances").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalInstances");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }
