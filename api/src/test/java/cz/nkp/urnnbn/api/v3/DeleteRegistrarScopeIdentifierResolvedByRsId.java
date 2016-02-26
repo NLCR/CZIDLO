@@ -27,9 +27,9 @@ import cz.nkp.urnnbn.api.Utils;
  * /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers/${ID_TYPE_2}
  *
  */
-public class DeleteRegistrarScopeIdentifierResolvedByRsIdTests extends ApiV3Tests {
+public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifierResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifierResolvedByRsId.class.getName());
 
     private final String REGISTRAR = "aba001";
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";

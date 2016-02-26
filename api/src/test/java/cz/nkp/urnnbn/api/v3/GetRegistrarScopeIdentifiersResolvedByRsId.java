@@ -23,9 +23,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/registrarScopeIdentifiers
  *
  */
-public class GetRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tests {
+public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetRegistrarScopeIdentifiersResolvedByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetRegistrarScopeIdentifiersResolvedByRsId.class.getName());
 
     private final Credentials USER = new Credentials("martin", "i0oEhu");
     private final String URNNBN = "urn:nbn:cz:aba001-0005hy";

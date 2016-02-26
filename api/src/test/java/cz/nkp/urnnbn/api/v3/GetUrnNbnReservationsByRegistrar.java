@@ -23,9 +23,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/urnNbnReservations
  *
  */
-public class GetUrnNbnReservationsByRegistrarTest extends ApiV3Tests {
+public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrarTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrar.class.getName());
 
     private final String REGISTRAR_CODE = "tst01"; // must exist
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
