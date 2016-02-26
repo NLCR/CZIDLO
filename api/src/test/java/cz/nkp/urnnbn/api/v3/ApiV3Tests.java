@@ -248,8 +248,8 @@ public abstract class ApiV3Tests {
         List<RsId> result = new ArrayList<>(size);
         String registrarCode = UrnNbn.valueOf(urnNbn).getRegistrarCode().toString();
         for (int i = 0; i < size; i++) {
-            String type = xmlPath.getString("id[0].@type");
-            String value = xmlPath.getString("id[0]");
+            String type = xmlPath.getString(String.format("id[%d].@type", i));
+            String value = xmlPath.getString(String.format("id[%d]", i));
             result.add(new RsId(registrarCode, type, value));
         }
         return result;

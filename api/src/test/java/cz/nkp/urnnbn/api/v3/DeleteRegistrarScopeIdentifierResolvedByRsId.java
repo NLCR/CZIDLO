@@ -100,7 +100,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                         + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(typeToDelete))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
 
@@ -118,7 +118,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                         + "/registrarScopeIdentifiers/" + Utils.urlEncodeReservedChars(typeToDelete))//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
     }
 
@@ -147,7 +147,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         // insert id for resolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and delete rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -158,16 +158,6 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // TODO:APIv4: rename this error code
         assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
-        // check that id has not been deleted
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
-        boolean found = false;
-        for (RsId id : rsIdsFetched) {
-            if (id.type.equals(idForResolvation.type)) {
-                assertThat(id.value, equalTo(idForResolvation.value));
-                found = true;
-            }
-        }
-        Assert.assertTrue(found);
     }
 
     @Test
@@ -177,7 +167,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         // try and delete rsId by type, resolved by another rsId
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)// TODO:APIv4: code 404
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

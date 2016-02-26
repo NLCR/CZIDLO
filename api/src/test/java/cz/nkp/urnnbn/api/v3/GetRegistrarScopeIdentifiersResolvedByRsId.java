@@ -79,9 +79,6 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-        // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
-        // https://github.com/NLCR/CZIDLO/issues/132
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(400)//
@@ -90,6 +87,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
@@ -97,9 +95,6 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeValidValueInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        // get all ids
-        // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
-        // https://github.com/NLCR/CZIDLO/issues/132
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(404)//
@@ -108,7 +103,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
     }
 

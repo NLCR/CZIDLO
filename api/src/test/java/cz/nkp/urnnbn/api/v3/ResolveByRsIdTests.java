@@ -113,7 +113,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext)) //
                     .when().get(buildResolvationPath(idForResolvation)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename error to INVALID_ID_TYPE
+            // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
             Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
         }
     }
@@ -127,9 +127,6 @@ public class ResolveByRsIdTests extends ApiV3Tests {
             // same id but with valid value
             RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
             insertRegistrarScopeId(URNNBN, idValidValue, USER);
-            // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-            // expected http response code 404 and app error code UNKNOWN_DIGITAL_DOCUMENT until this bug fixed:
-            // https://github.com/NLCR/CZIDLO/issues/132
             String xml = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(404)//
@@ -138,7 +135,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                     .when().get(buildResolvationPath(idForResolvation))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
-            // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132
+            // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
             assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
             // cleanup
             deleteRegistrarScopeId(URNNBN, idValidValue, USER);
