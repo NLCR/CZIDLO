@@ -29,11 +29,6 @@ public class GetDigitalInstancesResolvedByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
-    @AfterMethod
-    public void afterMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
-    }
-
     // TODO: implement tests
 
 }

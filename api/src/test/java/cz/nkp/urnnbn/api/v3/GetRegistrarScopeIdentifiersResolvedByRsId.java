@@ -41,11 +41,6 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
-    @AfterMethod
-    public void afterMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
-    }
-
     @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);

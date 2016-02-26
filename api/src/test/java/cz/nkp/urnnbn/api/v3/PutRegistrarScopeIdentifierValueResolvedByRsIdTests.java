@@ -48,11 +48,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsIdTests extends ApiV3Te
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
-    @AfterMethod
-    public void afterMethod() {
-        // deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
-    }
-
     @Test
     public void createNotAuthenticated() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");

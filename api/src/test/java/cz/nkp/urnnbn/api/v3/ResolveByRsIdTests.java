@@ -61,16 +61,6 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN_DD_DEACTIVATED, USER);
     }
 
-    @AfterMethod
-    public void afterMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITHOUT_DI, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_ACTIVE, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_DEACTIVATED, USER);
-        // deleteAllRegistrarScopeIdentifiers(URNNBN_NO_DD, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_DD_DEACTIVATED, USER);
-    }
-
     @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
