@@ -86,7 +86,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         String typeToBeFetched = "toBeFetched";
         RsId idForResolvation = new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(400)//
@@ -105,7 +104,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         String typeToBeFetched = "toBeFetched";
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        // try and get rsId value by type, resolved by another rsId
+        // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
@@ -124,7 +123,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         String typeToBeFetched = "toBeFetched";
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", "value");
         LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeToBeFetched);
-        // try and get rsId value by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
@@ -144,7 +142,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeToBeFetched);
         // insert id for resolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // try and get rsId value by type, resolved by another rsId
+        // try and get rsId by type, resolved by another rsId
         String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(400)//
@@ -163,7 +161,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeFetched = new RsId(REGISTRAR_CODE, "type2", "value2");
         // insert idForResolvation
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // try and get idToGet
+        // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
@@ -181,9 +179,10 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR_CODE, "type1", "value1");
         RsId idToBeFetched = new RsId(REGISTRAR_CODE, "type2", "value2");
         LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idToBeFetched, USER_WITH_RIGHTS);
-        // get id
+        // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//

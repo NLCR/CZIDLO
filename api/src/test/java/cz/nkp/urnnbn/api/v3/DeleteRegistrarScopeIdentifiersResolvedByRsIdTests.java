@@ -55,7 +55,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(400)//
@@ -72,7 +71,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -87,7 +85,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect() //
                 .statusCode(400) //
@@ -104,8 +101,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     public void rsIdTypeValidValueInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_TYPES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-        // try and delete all ids
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(404)//
@@ -122,8 +117,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     public void unknowDigitalDocument() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
-        // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
-        // try and delete all ids
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(404)//
@@ -139,7 +132,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
     public void notAuthenticated() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
-        RsId idOther = new RsId(REGISTRAR, "deleteTest2", "something2");
+        RsId idOther = new RsId(REGISTRAR, "type2", "value2");
         // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
@@ -155,14 +148,14 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
-        // check that both ids still present
+        // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
                 assertThat(id.value, equalTo(idForResolvation.value));
-            } else if (id.type.equals(idForResolvation.type)) {
-                assertThat(id.value, equalTo(idForResolvation.value));
+            } else if (id.type.equals(idOther.type)) {
+                assertThat(id.value, equalTo(idOther.value));
             } else {// unexpected id type
                 System.err.println("type: " + id.type + ", value: " + id.value);
                 Assert.fail();
@@ -175,7 +168,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
         RsId idOther = new RsId(REGISTRAR, "type2", "value2");
-        // insert idInserted1, idInserted2
+        // insert ids
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
         insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
         // try and delete all ids
@@ -188,14 +181,14 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
-        // check that both ids still present
+        // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(URNNBN);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
                 assertThat(id.value, equalTo(idForResolvation.value));
-            } else if (id.type.equals(idForResolvation.type)) {
-                assertThat(id.value, equalTo(idForResolvation.value));
+            } else if (id.type.equals(idOther.type)) {
+                assertThat(id.value, equalTo(idOther.value));
             } else {// unexpected id type
                 Assert.fail();
             }
@@ -224,11 +217,11 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsIdTests extends ApiV3Tes
                 .when().delete(HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        // check all ids in response
+        // check that all ids in response
         for (RsId id : ids) {
             assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
         }
-        // get all ids by urn:nbn (should be empty)
+        // check that all ids have been deleted
         responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .expect()//
                 .statusCode(200)//
