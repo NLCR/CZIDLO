@@ -10,7 +10,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +87,9 @@ public abstract class ApiV3Tests {
     private final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
     private final String RESPONSE_NS_PREFIX = "c";
     private final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
+    // TODO: change after fixed https://github.com/NLCR/CZIDLO/issues/138
+    private final String IMPORT_DI_XSD = "https://raw.githubusercontent.com/NLCR/CZIDLO/master/api/src/main/resources/v3/importDigitalInstance.xsd";
+    private final String REGISTER_DI_XSD = "https://raw.githubusercontent.com/NLCR/CZIDLO/master/api/src/main/resources/v3/registerDigitalDocument.xsd";
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
@@ -115,8 +120,10 @@ public abstract class ApiV3Tests {
             "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
 
     Random rand = new Random();
-    String responseXsdString;
     NamespaceContext nsContext;
+    String responseXsdString;
+    String importDiXsdString;
+    String registerDdXsdString;
 
     void init() {
         CountryCode.initialize(LANG_CODE);
@@ -127,8 +134,10 @@ public abstract class ApiV3Tests {
         // see https://github.com/jayway/rest-assured/issues/561
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.urlEncodingEnabled = false;
-        responseXsdString = Utils.readXsd(RESPONSE_XSD);
         nsContext = Utils.buildNsContext("c", RESPONSE_NS);
+        responseXsdString = Utils.readXsd(RESPONSE_XSD);
+        importDiXsdString = Utils.readXsd(IMPORT_DI_XSD);
+        registerDdXsdString = Utils.readXsd(REGISTER_DI_XSD);
         // XmlConfig.xmlConfig().namespaceAware(true).declareNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS);
     }
 
@@ -304,4 +313,60 @@ public abstract class ApiV3Tests {
         }
     }
 
+    Long getDigitalLibraryIdOrNull(String registrarCode) {
+        String responseXml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrar", nsContext))//
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toUpperCase())).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
+        String digLibId = xmlPath.getString("digitalLibraries.digitalLibrary[0].@id");
+        try {
+            return Long.valueOf(digLibId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    String registerUrnNbn(String registrarCode, Credentials credentials) {
+        String bodyXml = XmlBuilder.buildRegisterDigDocDataMinimal();
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + registrarCode + "/digitalDocuments")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        return xmlPath.getString("value");
+    }
+
+    long insertDigitalInstance(String urnNbn, long digLibId, String diUrl, Credentials credentials) {
+        String bodyXml = XmlBuilder.buildImportDiDataMinimal(digLibId, diUrl);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(importDiXsdString))//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                .when().post(HTTPS_API_URL + buildResolvationPath(urnNbn) + "/digitalInstances")//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
+        assertTrue(xmlPath.getBoolean("@active"));
+        return xmlPath.getLong("@id");
+    }
+
+    void deactivateDigitalInstance(long id, Credentials credentials) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + id)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
+        assertFalse(xmlPath.getBoolean("@active"));
+    }
 }

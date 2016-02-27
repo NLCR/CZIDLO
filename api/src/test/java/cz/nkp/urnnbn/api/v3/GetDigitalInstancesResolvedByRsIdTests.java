@@ -2,7 +2,6 @@ package cz.nkp.urnnbn.api.v3;
 
 import java.util.logging.Logger;
 
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 

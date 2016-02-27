@@ -33,7 +33,6 @@ public class GetDigitalInstance extends ApiV3Tests {
     @BeforeSuite
     public void beforeSuite() {
         init();
-        LOGGER.info("blabla");
     }
 
     private String buildUrl(String id) {
@@ -41,7 +40,7 @@ public class GetDigitalInstance extends ApiV3Tests {
     }
 
     private String buildUrl(long id) {
-        return "/digitalInstances/id/" + String.valueOf(id);
+        return buildUrl(String.valueOf(id));
     }
 
     @Test
