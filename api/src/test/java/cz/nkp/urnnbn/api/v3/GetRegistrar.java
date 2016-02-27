@@ -182,7 +182,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:registrar", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toUpperCase())).andReturn().asString();
+                    .when().get(buildUrl(registrarCode.toLowerCase())).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
             int idByUpperCase = xmlPath.getInt("@id");
             // fetch by code in lower case
@@ -191,10 +191,10 @@ public class GetRegistrar extends ApiV3Tests {
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:registrar", nsContext))//
-                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+                    .when().get(buildUrl(registrarCode.toUpperCase())).andReturn().asString();
             xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
             int idByLowerCase = xmlPath.getInt("@id");
-            // check
+            // check both have same registrar id
             Assert.assertEquals(idByLowerCase, idByUpperCase);
         } else {
             LOGGER.warning("no registrar available");

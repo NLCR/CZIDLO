@@ -6,7 +6,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
@@ -356,20 +358,22 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     public void createNoCollision() {
         // initial cleanup
         deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER_WITH_RIGHTS);
         // init ids
         RsId idForResolvation = new RsId(REGISTRAR, "resolvingType", "value");
-        RsId idToBeCreated = new RsId(REGISTRAR, "type", "collidingValue");
-        RsId idNotColidingUpperCase = new RsId(REGISTRAR, "type", "COLLIDINGVALUE");
-        RsId idNotColidingLowerCase = new RsId(REGISTRAR, "type", "collidingvalue");
-        RsId idNotColidingOtherRegistrar = new RsId(REGISTRAR2, "type", "collidingValue");
+        RsId idToBeCreated = new RsId(REGISTRAR, "typeTEST", "valueTEST");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.toString()));
-        // insert id for resolvation, non-colliding ids
+        RsId rsIdAnotherRegistrar = new RsId(REGISTRAR, "typeTEST", "valueTEST");
+        Map<String, RsId> examples = new HashMap<>();
+        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "TYPETEST", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typetest", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typeTEST", "valuetest"));
+        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typeTEST", "VALUETEST"));
+        // insert rsIds
         insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN2, idNotColidingUpperCase, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN3, idNotColidingLowerCase, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(REGISTRAR2_URNNBN, idNotColidingOtherRegistrar, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(REGISTRAR2_URNNBN, rsIdAnotherRegistrar, USER_WITH_RIGHTS);
+        for (String urn : examples.keySet()) {
+            insertRegistrarScopeId(urn, examples.get(urn), USER_WITH_RIGHTS);
+        }
         // try and set rsId by type, resolved by another rsId
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
                 .body(idToBeCreated.value).expect()//
@@ -383,10 +387,11 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeCreated.type));
         assertThat(xmlPath.getString("id[0]"), equalTo(idToBeCreated.value));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("[]"));
-        // final cleanup
+        // cleanup
         deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER_WITH_RIGHTS);
+        for (String urn : examples.keySet()) {
+            deleteAllRegistrarScopeIdentifiers(urn, USER_WITH_RIGHTS);
+        }
     }
 
     @Test

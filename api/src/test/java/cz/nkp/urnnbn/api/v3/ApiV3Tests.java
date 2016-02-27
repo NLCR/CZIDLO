@@ -319,7 +319,7 @@ public abstract class ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrar", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toUpperCase())).andReturn().asString();
+                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
         String digLibId = xmlPath.getString("digitalLibraries.digitalLibrary[0].@id");
         try {

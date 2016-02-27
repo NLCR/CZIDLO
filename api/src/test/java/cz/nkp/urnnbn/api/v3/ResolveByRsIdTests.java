@@ -6,8 +6,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
@@ -158,6 +161,38 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         // delete id
         deleteRegistrarScopeId(URNNBN, id, USER);
+    }
+
+    @Test
+    public void rsIdTypeValidValueValidCaseSensitive() {
+        Map<String, RsId> examples = new HashMap<>();
+        // create urns and rsIds
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typeTESTS", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "TYPETESTS", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typetest", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typeTESTS", "valuetest"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typeTESTS", "VALUETEST"));
+        // insert rsIds
+        for (String urn : examples.keySet()) {
+            insertRegistrarScopeId(urn, examples.get(urn), USER);
+        }
+        // check
+        for (String urn : examples.keySet()) {
+            RsId rsId = examples.get(urn);
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:digitalDocument", nsContext))// checking for correct type of response and namespace
+                    .when().get(buildUrl(rsId)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
+            String urnFetched = xmlPath.getString("urnNbn.value");
+            assertEquals(urn, urnFetched);
+        }
+        // cleanup
+        for (String urn : examples.keySet()) {
+            deleteAllRegistrarScopeIdentifiers(urn, USER);
+        }
     }
 
     @Test
