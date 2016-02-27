@@ -27,25 +27,27 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrar.class.getName());
 
-    private final String REGISTRAR_CODE = "tst01"; // must exist
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
+    private final String REGISTRAR = "tst01"; // must exist
+    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have accesss rights REGISTRAR
 
     @BeforeSuite
     public void beforeSuite() {
         init();
     }
 
+    private String buildUrl(String registrarCode) {
+        return "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations";
+    }
+
     @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
-        RsId idForResolvation = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
-                .andReturn().asString();
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
@@ -54,12 +56,10 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
     public void registrarCodeValidUnknown() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
-        RsId idForResolvation = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/urnNbnReservations/")//
-                .andReturn().asString();
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
@@ -67,9 +67,9 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
     @Test
     public void ok() {
         // make sure that at least some reservations exist
-        UrnNbnReservations reservations = getUrnNbnReservations(REGISTRAR_CODE);
+        UrnNbnReservations reservations = getUrnNbnReservations(REGISTRAR);
         if (reservations.totalReserved == 0) {
-            reserveUrnNbns(REGISTRAR_CODE, USER_WITH_RIGHTS);
+            reserveUrnNbns(REGISTRAR, USER_WITH_RIGHTS);
         }
         // check all registrars' reservations
         List<String> registrarCodes = getAllRegistrarCodes();
@@ -85,7 +85,7 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
                         .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
-                        .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/urnNbnReservations").andReturn().asString();
+                        .when().get(buildUrl(registrarCode)).andReturn().asString();
                 XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
                 // reservation size
                 int maxReservationSize = xmlPath.getInt("maxReservationSize");

@@ -50,8 +50,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
     }
@@ -65,8 +64,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .statusCode(404)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(id))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
         } else {
@@ -86,8 +84,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary/c:registrar", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalDocument", nsContext))//
-                    .when().get(buildUrl(id))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
             assertTrue(xmlPath.getBoolean("@active"));
@@ -110,8 +107,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary/c:registrar", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalDocument", nsContext))//
-                    .when().get(buildUrl(id))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
             assertFalse(xmlPath.getBoolean("@active"));

@@ -29,6 +29,10 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         init();
     }
 
+    private String buildUrl(String registrarCode) {
+        return "/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments";
+    }
+
     @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
@@ -37,8 +41,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
-                .andReturn().asString();
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
@@ -50,7 +53,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments").andReturn().asString();
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code")) || xmlPath.get("digitalDocuments") != null);
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
@@ -66,8 +69,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
                     .statusCode(200) //
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
                     .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode) + "/digitalDocuments")//
-                    .andReturn().asString();
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
             assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
         } else {

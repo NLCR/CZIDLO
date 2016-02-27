@@ -27,6 +27,10 @@ public class GetRegistrars extends ApiV3Tests {
         init();
     }
 
+    private String buildUrl() {
+        return "/registrars";
+    }
+
     @Test
     public void noQueryParams() {
         // digitalLibraries=false, catalogs=false by default
@@ -35,7 +39,7 @@ public class GetRegistrars extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .when().get("/registrars").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
@@ -62,7 +66,7 @@ public class GetRegistrars extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .when().get("/registrars").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
@@ -88,7 +92,7 @@ public class GetRegistrars extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .when().get("/registrars").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
@@ -114,7 +118,7 @@ public class GetRegistrars extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .when().get("/registrars").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
@@ -140,7 +144,7 @@ public class GetRegistrars extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrars", nsContext))//
-                .when().get("/registrars").andReturn().asString();
+                .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
@@ -164,7 +168,7 @@ public class GetRegistrars extends ApiV3Tests {
         String code = getRandomExistingRegistrarCode();
         if (code != null) {
             LOGGER.info(String.format("registrar code: %s", code));
-            with().config(namespaceAwareXmlConfig()).when().get("/registrars").then()//
+            with().config(namespaceAwareXmlConfig()).when().get(buildUrl()).then()//
                     .assertThat().statusCode(200)//
                     .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .assertThat().body(hasXPath(String.format("/c:response/c:registrars/c:registrar[@code='%s']", code), nsContext))//

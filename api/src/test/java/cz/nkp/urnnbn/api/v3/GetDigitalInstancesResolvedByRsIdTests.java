@@ -28,6 +28,10 @@ public class GetDigitalInstancesResolvedByRsIdTests extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
     }
 
+    private String buildUrl(RsId idForResolvation, String idType, String idValue) {
+        return buildResolvationPath(idForResolvation) + "/digitalInstances";
+    }
+
     // TODO: implement tests
 
 }

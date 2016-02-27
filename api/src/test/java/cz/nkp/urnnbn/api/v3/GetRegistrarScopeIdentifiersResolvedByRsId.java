@@ -40,6 +40,10 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
     }
 
+    private String buildUrl(RsId idForResolvation) {
+        return HTTPS_API_URL + buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers";
+    }
+
     @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
@@ -49,8 +53,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
@@ -63,8 +66,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers/")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
@@ -78,8 +80,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
@@ -94,8 +95,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
@@ -111,8 +111,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
     }
@@ -131,8 +130,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation) + "/registrarScopeIdentifiers")//
-                .andReturn().asString();
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.registrarScopeIdentifiers");
         // check that ids found in response
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));

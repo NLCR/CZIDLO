@@ -29,6 +29,10 @@ public class GetRegistrar extends ApiV3Tests {
         init();
     }
 
+    private String buildUrl(String registrarCode) {
+        return "/registrars/" + Utils.urlEncodeReservedChars(registrarCode);
+    }
+
     @Test
     public void registrarCodeInvalidAll() {
         for (String registrarCode : REGISTRAR_CODES_INVALID) {
@@ -37,8 +41,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
         }
@@ -51,8 +54,7 @@ public class GetRegistrar extends ApiV3Tests {
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
         }
@@ -76,7 +78,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
+                    .when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -98,7 +100,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
+                    .when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -120,7 +122,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
+                    .when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -142,7 +144,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
+                    .when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -163,7 +165,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode));
+                    .when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -189,7 +191,7 @@ public class GetRegistrar extends ApiV3Tests {
                     .statusCode(200)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:registrar", nsContext))//
-                    .when().get("/registrars/" + Utils.urlEncodeReservedChars(registrarCode.toLowerCase())).andReturn().asString();
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
             xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
             int idByLowerCase = xmlPath.getInt("@id");
             // check

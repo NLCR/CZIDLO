@@ -50,6 +50,10 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         init();
     }
 
+    private String buildUrl(RsId idForResolvation) {
+        return buildResolvationPath(idForResolvation);
+    }
+
     @BeforeMethod
     public void beforeMethod() {
         deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
@@ -64,13 +68,12 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
-        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        RsId id = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_CODE");
     }
@@ -79,12 +82,11 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     public void registrarCodeValidUnknown() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
-        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        RsId id = new RsId(registrarCode, "type", "value");
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
@@ -92,15 +94,15 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void rsIdTypeInvalidAll() {
         for (String type : RSID_TYPES_INVALID) {
-            RsId idForResolvation = new RsId(REGISTRAR, type, "value");
-            LOGGER.info(idForResolvation.toString());
+            RsId id = new RsId(REGISTRAR, type, "value");
+            LOGGER.info(id.toString());
             // idForResolvation wasn't inserted, but INVALID_DIGITAL_DOCUMENT_ID_TYPE should be returned before this becomes relevant
             String responseXml = with().config(namespaceAwareXmlConfig()) //
                     .expect() //
                     .statusCode(400) //
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
                     .body(hasXPath("/c:response/c:error", nsContext)) //
-                    .when().get(buildResolvationPath(idForResolvation)).andReturn().asString();
+                    .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
             Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
@@ -121,8 +123,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                     .statusCode(404)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildResolvationPath(idForResolvation))//
-                    .andReturn().asString();
+                    .when().get(buildUrl(idForResolvation)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
             // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
             assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
@@ -133,8 +134,6 @@ public class ResolveByRsIdTests extends ApiV3Tests {
 
     @Test
     public void rsIdTypeValidValueValidAll() {
-        RsId idToBeFetched = new RsId(REGISTRAR, "idRequestedType", "idRequestedValue");
-        insertRegistrarScopeId(URNNBN, idToBeFetched, USER);
         for (String type : RSID_TYPES_VALID) {
             rsIdTypeValidValueValid(new RsId(REGISTRAR, type, "value"));
         }
@@ -144,23 +143,21 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         }
     }
 
-    private void rsIdTypeValidValueValid(RsId idForResolvation) {
-        LOGGER.info(idForResolvation.toString());
-        // insert id for resolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER);
-        // get id value byt idForResolvation and type
+    private void rsIdTypeValidValueValid(RsId id) {
+        LOGGER.info(id.toString());
+        // insert id
+        insertRegistrarScopeId(URNNBN, id, USER);
+        // get dd by id
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildResolvationPath(idForResolvation)) //
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + idForResolvation.type + "\' }"),
-                idForResolvation.value);
+        Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         // delete id
-        deleteRegistrarScopeId(URNNBN, idForResolvation, USER);
+        deleteRegistrarScopeId(URNNBN, id, USER);
     }
 
     @Test
@@ -171,8 +168,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_DOCUMENT");
     }
@@ -186,8 +182,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -201,8 +196,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -216,7 +210,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
                 .expect().statusCode(200).contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     @Test
@@ -228,8 +222,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -243,8 +236,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -258,7 +250,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     @Test
@@ -270,7 +262,8 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext)).when().get(buildResolvationPath(id)).andReturn().asString();
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         String xmlPathExp = "registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }";
         Assert.assertEquals(xmlPath.get(xmlPathExp), id.value);
@@ -286,8 +279,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -302,8 +294,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
     }
@@ -318,8 +309,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(idNoDi))//
-                .andReturn().asString();
+                .when().get(buildUrl(idNoDi)).andReturn().asString();
     }
 
     @Test
@@ -332,8 +322,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext)).body(//
                         not(hasXPath("/c:response/c:digitalDocument/c:digitalInstances", nsContext)))//
-                .when()//
-                .get(buildResolvationPath(id)).andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     // action=redirect
@@ -347,8 +336,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
     }
@@ -362,8 +350,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))// checking for correct type of response and namespace
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
     }
@@ -377,8 +364,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildResolvationPath(id))//
-                .andReturn().asString();
+                .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_DIGITAL_INSTANCE");
     }
@@ -392,7 +378,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     // action=decide
@@ -406,7 +392,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     @Test
@@ -418,7 +404,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
     @Test
@@ -430,7 +416,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .statusCode(200)//
                 .contentType(ContentType.HTML)//
                 .body(not(containsString("<title>CZIDLO</title>")))// should redirect to digital instance url, not web search
-                .when().get(buildResolvationPath(id));
+                .when().get(buildUrl(id)).andReturn().asString();
     }
 
 }
