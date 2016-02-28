@@ -42,7 +42,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
     public void urnnbnInvalid() {
         String urnNbn = Utils.getRandomItem(URNNBN_INVALID);
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -57,7 +57,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
     public void urnnbnValidFree() {
         String urnNbn = URN_NBN_FREE;
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -71,7 +71,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
     public void urnnbnValidReserved() {
         String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
