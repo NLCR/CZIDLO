@@ -129,8 +129,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, idOther, USER);
         // try and delete all ids
         // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(401)//
                 // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

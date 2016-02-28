@@ -24,10 +24,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/urnnbn/${URN_NBN}
  *
  */
+public class GetUrnnbn extends ApiV3Tests {
 
-public class GetUrnNbn extends ApiV3Tests {
-
-    private static final Logger LOGGER = Logger.getLogger(GetUrnNbn.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetUrnnbn.class.getName());
 
     private String urnNbnActive;
     private String urnNbnDeactivated;
@@ -40,12 +39,7 @@ public class GetUrnNbn extends ApiV3Tests {
         urnNbnActive = registerUrnNbn(REGISTRAR, USER);
         urnNbnDeactivated = registerUrnNbn(REGISTRAR, USER);
         deactivateUrnNbn(urnNbnDeactivated, USER);
-        UrnNbnReservations urnNbnReservations = getUrnNbnReservations(REGISTRAR);
-        if (!urnNbnReservations.reservedOffered.isEmpty()) {
-            urnNbnReserved = urnNbnReservations.reservedOffered.get(0);
-        } else {
-            urnNbnReserved = reserveUrnNbns(REGISTRAR, USER).get(0);
-        }
+        urnNbnReserved = getReservedUrnNbn(REGISTRAR, USER);
         urnNbnFree = URN_NBN_FREE;
     }
 

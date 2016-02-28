@@ -398,4 +398,38 @@ public abstract class ApiV3Tests {
         assertEquals(urnNbn, xmlPath.getString("value"));
         assertEquals("DEACTIVATED", xmlPath.getString("status"));
     }
+
+    String getUrnNbnState(String urnNbn) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get("/urnnbn/" + Utils.urlEncodeReservedChars(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        return xmlPath.getString("status");
+    }
+
+    DateTime getUrnNbnRegisteredOrNull(String urnNbn) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get("/urnnbn/" + Utils.urlEncodeReservedChars(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        String registeredStr = xmlPath.getString("registered");
+        if (registeredStr == null || registeredStr.isEmpty()) {
+            return null;
+        } else {
+            return DateTime.parse(registeredStr);
+        }
+    }
+
+    String getReservedUrnNbn(String registrarCode, Credentials credentials) {
+        UrnNbnReservations urnNbnReservations = getUrnNbnReservations(REGISTRAR);
+        if (!urnNbnReservations.reservedOffered.isEmpty()) {
+            return urnNbnReservations.reservedOffered.get(0);
+        } else {
+            return reserveUrnNbns(REGISTRAR, USER).get(0);
+        }
+    }
 }
