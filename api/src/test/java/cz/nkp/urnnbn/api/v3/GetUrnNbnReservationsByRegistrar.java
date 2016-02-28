@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -30,8 +30,8 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
     private final String REGISTRAR = "tst01"; // must exist
     private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have accesss rights REGISTRAR
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 

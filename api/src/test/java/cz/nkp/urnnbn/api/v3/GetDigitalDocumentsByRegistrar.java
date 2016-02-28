@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -24,8 +24,8 @@ import cz.nkp.urnnbn.api.Utils;
 public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
     private static final Logger LOGGER = Logger.getLogger(GetDigitalDocumentsByRegistrar.class.getName());
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 

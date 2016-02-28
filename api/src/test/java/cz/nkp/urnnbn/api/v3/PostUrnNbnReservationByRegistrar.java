@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -31,8 +31,8 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
     private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg"); // must exist and have no rights to registrar with
                                                                                        // REGISTRAR_CODE
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 

@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -34,13 +33,9 @@ public class DeleteDigitalInstance extends ApiV3Tests {
 
     private Long digLibId;
 
-    @BeforeSuite
-    public void beforeSuite() {
-        init();
-    }
-
     @BeforeClass
     public void beforeClass() {
+        init();
         digLibId = getDigitalLibraryIdOrNull(REGISTRAR);
     }
 

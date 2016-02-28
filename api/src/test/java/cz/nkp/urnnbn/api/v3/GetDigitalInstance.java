@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -30,8 +30,8 @@ public class GetDigitalInstance extends ApiV3Tests {
     private final Long DI_ID_ACTIVE = 27703L;// must exist and be active
     private final Long DI_ID_DEACTIVATED = 60L;// must existe and be deactivated
 
-    @BeforeSuite
-    public void beforeSuite() {
+    @BeforeClass
+    public void beforeClass() {
         init();
     }
 
