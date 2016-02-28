@@ -45,7 +45,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(urnNbn, "type")).andReturn().asString();
-        // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
     }
@@ -81,7 +80,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         String type = Utils.getRandomItem(RSID_TYPES_INVALID);
         LOGGER.info(urnNbn + ", type: " + type);
-        // try and get rsId by type
         String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(400)//
