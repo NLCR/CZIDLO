@@ -166,7 +166,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // insert ids
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
-        // try and get rsId by type, resolved by another rsId
+        // get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
