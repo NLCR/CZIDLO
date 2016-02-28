@@ -26,13 +26,22 @@ public class GetDigitalInstance extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstance.class.getName());
 
-    private final Long DI_ID_UNKNOWN = 9999999L;// must not exist
-    private final Long DI_ID_ACTIVE = 27703L;// must exist and be active
-    private final Long DI_ID_DEACTIVATED = 60L;// must existe and be deactivated
+    private String urnNbn;
+    private Long diIdActive;
+    private Long diIdDeactivated;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbn = registerUrnNbn(REGISTRAR, USER);
+        Long digLibId = getDigitalLibraryIdOrNull(REGISTRAR);
+        if (digLibId == null) {
+            LOGGER.warning("no digital instance found");
+        } else {
+            diIdDeactivated = insertDigitalInstance(urnNbn, digLibId, "http://something.com/somewhere", USER);
+            deactivateDigitalInstance(diIdDeactivated, USER);
+            diIdActive = insertDigitalInstance(urnNbn, digLibId, "http://something.com/somewhere", USER);
+        }
     }
 
     private String buildUrl(String id) {
@@ -74,7 +83,7 @@ public class GetDigitalInstance extends ApiV3Tests {
 
     @Test
     public void okActive() {
-        Long id = DI_ID_ACTIVE;
+        Long id = diIdActive;
         if (id != null) {
             LOGGER.info("id: " + id);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
@@ -97,7 +106,7 @@ public class GetDigitalInstance extends ApiV3Tests {
 
     @Test
     public void okDeactivated() {
-        Long id = DI_ID_DEACTIVATED;
+        Long id = diIdDeactivated;
         if (id != null) {
             LOGGER.info("id: " + id);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//

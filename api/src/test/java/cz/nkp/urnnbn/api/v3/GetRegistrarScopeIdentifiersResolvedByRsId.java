@@ -9,8 +9,8 @@ import static org.junit.Assert.assertThat;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -26,18 +26,17 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrarScopeIdentifiersResolvedByRsId.class.getName());
 
-    private final Credentials USER = new Credentials("martin", "i0oEhu");
-    private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
-    private final String REGISTRAR_CODE = "aba001";
+    private String urnNbn;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbn = registerUrnNbn(REGISTRAR, USER);
     }
 
-    @BeforeMethod
-    public void beforeMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
 
     private String buildUrl(RsId idForResolvation) {
@@ -73,7 +72,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void rsIdTypeInvalid() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
+        RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
@@ -88,7 +87,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void rsIdTypeValidValueInvalid() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
+        RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -103,7 +102,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void unknowDigitalDocument() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", "value");
+        RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
         // get all ids
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
@@ -118,12 +117,12 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void ok() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type1", "value1");
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
         LOGGER.info(idForResolvation.toString());
-        RsId other = new RsId(REGISTRAR_CODE, "type2", "value2");
+        RsId other = new RsId(REGISTRAR, "type2", "value2");
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER);
-        insertRegistrarScopeId(URNNBN, other, USER);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, other, USER);
         // get all ids
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//

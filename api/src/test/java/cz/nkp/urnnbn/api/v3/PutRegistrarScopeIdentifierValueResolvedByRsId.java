@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -30,23 +30,26 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PutRegistrarScopeIdentifierValueResolvedByRsId.class.getName());
 
-    private final String REGISTRAR = "aba001";
-    private final String REGISTRAR2 = "tst001";
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
-    private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
-    private final String URNNBN2 = "urn:nbn:cz:aba001-00017q";
-    private final String URNNBN3 = "urn:nbn:cz:aba001-0002g3";
-    private final String REGISTRAR2_URNNBN = "urn:nbn:cz:tst01-000001";
+    private String urnNbn;
+    private String urnNbn2;
+    private String urnNbn3;
+    private String registrar2UrnNbn;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbn = registerUrnNbn(REGISTRAR, USER);
+        urnNbn2 = registerUrnNbn(REGISTRAR, USER);
+        urnNbn3 = registerUrnNbn(REGISTRAR, USER);
+        registrar2UrnNbn = registerUrnNbn(REGISTRAR2, USER);
     }
 
-    @BeforeMethod
-    public void beforeMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbn2, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbn3, USER);
+        deleteAllRegistrarScopeIdentifiers(registrar2UrnNbn, USER);
     }
 
     private String buildUrl(RsId idForResolvation, String type) {
@@ -59,7 +62,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeCreated = new RsId(REGISTRAR, "type2", "value2");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.type));
         // insert id for resolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and create id
         // TODO:APIv4: return xml as well
         // String responseXml =
@@ -73,7 +76,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check not inserted
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(1));
         assertThat(rsIdsFetched.get(0).type, equalTo(idForResolvation.type));
         assertThat(rsIdsFetched.get(0).value, equalTo(idForResolvation.value));
@@ -87,8 +90,8 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeUpdated = new RsId(REGISTRAR, "type2", valueOld);
         LOGGER.info(String.format("resolved by: %s, id to be updated: %s, new value: %s", idForResolvation.toString(), idToBeUpdated.type, valueNew));
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeUpdated, USER);
         // try and update id
         // TODO:APIv4: return xml as well
         // String responseXml =
@@ -102,7 +105,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check not updated
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -121,7 +124,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeCreated = new RsId(REGISTRAR, "type2", "value2");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.type));
         // insert id for resolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and delete id
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .body(idToBeCreated.value)//
@@ -133,7 +136,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check not inserted
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(1));
         assertThat(rsIdsFetched.get(0).type, equalTo(idForResolvation.type));
         assertThat(rsIdsFetched.get(0).value, equalTo(idForResolvation.value));
@@ -147,8 +150,8 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeUpdated = new RsId(REGISTRAR, "type2", valueOld);
         LOGGER.info(String.format("resolved by: %s, id to be updated: %s, new value: %s", idForResolvation.toString(), idToBeUpdated.type, valueNew));
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToBeUpdated, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeUpdated, USER);
         // try and update id
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .body(valueNew)//
@@ -160,7 +163,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check not updated
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -179,7 +182,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type1", "value1");
         RsId idToBeCreatedOrUpdated = new RsId(registrarCode, "type2", "value2");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect()//
                 .statusCode(400)//
@@ -196,7 +199,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type1", "value1");
         RsId idToBeCreatedOrUpdated = new RsId(registrarCode, "type2", "value2");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -211,7 +214,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
         RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type2", "value2");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect() //
                 .statusCode(400) //
@@ -228,7 +231,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_TYPES_INVALID));
         LOGGER.info(idForResolvation.toString());
         RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type2", "value2");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect()//
                 .statusCode(404)//
@@ -245,7 +248,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
         RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type2", "value2");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect()//
                 .statusCode(404)//
@@ -262,9 +265,9 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value2");
         LOGGER.info(String.format("resolved by: %s, id to be created or updated: %s", idForResolvation.toString(), idToBeCreatedOrUpdated.type));
         // insert id for resolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
                 .expect()//
                 .statusCode(400)//
@@ -301,18 +304,16 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void createCollision() {
-        // initial cleanup
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         RsId idToBeCreated = new RsId(REGISTRAR, "type2", "valueColiding");
         RsId idColiding = new RsId(REGISTRAR2, "type2", "valueColiding");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.toString()));
         // insert id for resolvation, colliding id (same value and type but different digDoc)
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN2, idColiding, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn2, idColiding, USER);
 
         // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreated.value).expect()//
                 .expect()//
                 .statusCode(400)//
@@ -322,25 +323,21 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
         assertThat(xmlPath.getString("error.code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
-        // final cleanup
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
     }
 
     @Test
     public void updateCollision() {
-        // initial cleanup
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
         RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
         RsId idToBeInserted = new RsId(REGISTRAR, "type", "value");
         RsId idColiding = new RsId(REGISTRAR2, "type", "valueColliding");
         RsId idToBeUpdated = new RsId(REGISTRAR, "type", "valueColliding");
         LOGGER.info(String.format("resolved by: %s, id to be updated: %s", idForResolvation.toString(), idToBeUpdated.toString()));
         // insert id for resolvation, id to be updated, colliding id (same value and type but different digDoc)
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToBeInserted, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN2, idColiding, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeInserted, USER);
+        insertRegistrarScopeId(urnNbn2, idColiding, USER);
         // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeUpdated.value).expect()//
                 .expect()//
                 .statusCode(400)//
@@ -350,32 +347,28 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
         assertThat(xmlPath.getString("error.code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
-        // final cleanup
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
     }
 
     @Test
     public void createNoCollision() {
-        // initial cleanup
-        deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
         // init ids
         RsId idForResolvation = new RsId(REGISTRAR, "resolvingType", "value");
         RsId idToBeCreated = new RsId(REGISTRAR, "typeTEST", "valueTEST");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.toString()));
         RsId rsIdAnotherRegistrar = new RsId(REGISTRAR, "typeTEST", "valueTEST");
         Map<String, RsId> examples = new HashMap<>();
-        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "TYPETEST", "valueTEST"));
-        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typetest", "valueTEST"));
-        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typeTEST", "valuetest"));
-        examples.put(registerUrnNbn(REGISTRAR, USER_WITH_RIGHTS), new RsId(REGISTRAR, "typeTEST", "VALUETEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "TYPETEST", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typetest", "valueTEST"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typeTEST", "valuetest"));
+        examples.put(registerUrnNbn(REGISTRAR, USER), new RsId(REGISTRAR, "typeTEST", "VALUETEST"));
         // insert rsIds
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(REGISTRAR2_URNNBN, rsIdAnotherRegistrar, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(registrar2UrnNbn, rsIdAnotherRegistrar, USER);
         for (String urn : examples.keySet()) {
-            insertRegistrarScopeId(urn, examples.get(urn), USER_WITH_RIGHTS);
+            insertRegistrarScopeId(urn, examples.get(urn), USER);
         }
         // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreated.value).expect()//
                 .expect()//
                 .statusCode(201)//
@@ -388,18 +381,13 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0]"), equalTo(idToBeCreated.value));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("[]"));
         // cleanup
-        deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
         for (String urn : examples.keySet()) {
-            deleteAllRegistrarScopeIdentifiers(urn, USER_WITH_RIGHTS);
+            deleteAllRegistrarScopeIdentifiers(urn, USER);
         }
     }
 
     @Test
     public void updateNoCollision() {
-        // initial cleanup
-        deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER_WITH_RIGHTS);
         // init ids
         RsId idForResolvation = new RsId(REGISTRAR, "resolvingType", "value");
         RsId idToBeCreated = new RsId(REGISTRAR, "type", "oldValue");
@@ -409,13 +397,13 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         RsId idNotColidingOtherRegistrar = new RsId(REGISTRAR2, "type", "collidingValue");
         LOGGER.info(String.format("resolved by: %s, id to be updated: %s", idForResolvation.toString(), idToBeUpdated.toString()));
         // insert id for resolvation, non-colliding ids, original id
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToBeCreated, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN2, idNotColidingUpperCase, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN3, idNotColidingLowerCase, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(REGISTRAR2_URNNBN, idNotColidingOtherRegistrar, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeCreated, USER);
+        insertRegistrarScopeId(urnNbn2, idNotColidingUpperCase, USER);
+        insertRegistrarScopeId(urnNbn3, idNotColidingLowerCase, USER);
+        insertRegistrarScopeId(registrar2UrnNbn, idNotColidingOtherRegistrar, USER);
         // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeUpdated.value).expect()//
                 .expect()//
                 .statusCode(200)//
@@ -427,30 +415,26 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeUpdated.type));
         assertThat(xmlPath.getString("id[0]"), equalTo(idToBeUpdated.value));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("oldValue"));
-        // final cleanup
-        deleteAllRegistrarScopeIdentifiers(REGISTRAR2_URNNBN, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN2, USER_WITH_RIGHTS);
-        deleteAllRegistrarScopeIdentifiers(URNNBN3, USER_WITH_RIGHTS);
     }
 
     @Test
     public void createValidAll() {
         RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
         // insert idForResolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         for (String type : RSID_TYPES_VALID) {
-            createValid(URNNBN, idForResolvation, new RsId(REGISTRAR, type, "value"));
+            createValid(urnNbn, idForResolvation, new RsId(REGISTRAR, type, "value"));
         }
         int counter = 0;
         for (String value : RSID_VALUES_VALID) {
-            createValid(URNNBN, idForResolvation, new RsId(REGISTRAR, "type" + ++counter, value));
+            createValid(urnNbn, idForResolvation, new RsId(REGISTRAR, "type" + ++counter, value));
         }
     }
 
     private void createValid(String urnNbn, RsId idForResolvation, RsId idToBeCreated) {
         LOGGER.info(String.format("resolved by: %s, id to be inserted: %s", idForResolvation.toString(), idToBeCreated.toString()));
         // insert idToBeInserted
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreated.value).expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -477,7 +461,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     public void updateValidAll() {
         RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
         // insert idForResolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         for (String type : RSID_TYPES_VALID) {
             String valueOld = "oldValue";
             String valueNew = "newValue";
@@ -495,9 +479,9 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         LOGGER.info(String.format("resolved by: %s, id to be updated: type: %s, old value: %s, new value: %s", idForResolvation.toString(), type,
                 valueOld, valueNew));
         // insert idToBeInserted
-        insertRegistrarScopeId(URNNBN, new RsId(REGISTRAR, type, valueOld), USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, new RsId(REGISTRAR, type, valueOld), USER);
         // update
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(valueNew).expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -509,7 +493,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0]"), equalTo(valueNew));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo(valueOld));
         // check that id present and with new value
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         boolean found = false;
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(type)) {

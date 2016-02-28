@@ -10,8 +10,8 @@ import static org.junit.Assert.assertThat;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -28,18 +28,17 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrarScopeIdentifierValueResolvedByRsId.class.getName());
 
-    private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
-    private final String REGISTRAR_CODE = "aba001";
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
+    private String urnNbn;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbn = registerUrnNbn(REGISTRAR, USER);
     }
 
-    @BeforeMethod
-    public void beforeMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
 
     private String buildUrl(RsId idForResolvation, String type) {
@@ -78,7 +77,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     @Test
     public void rsIdTypeInvalid() {
         String typeToBeFetched = "toBeFetched";
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
+        RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
@@ -94,7 +93,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     @Test
     public void rsIdTypeValidValueInvalid() {
         String typeToBeFetched = "toBeFetched";
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
+        RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
         // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
@@ -111,7 +110,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     @Test
     public void unknowDigitalDocument() {
         String typeToBeFetched = "toBeFetched";
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type", "value");
+        RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeToBeFetched);
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
@@ -125,11 +124,11 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void typeInvalid() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "forResolvation", "something");
+        RsId idForResolvation = new RsId(REGISTRAR, "forResolvation", "something");
         String typeToBeFetched = Utils.getRandomItem(RSID_TYPES_INVALID);
         LOGGER.info("resolved by: " + idForResolvation.toString() + ", type: " + typeToBeFetched);
         // insert id for resolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and get rsId by type, resolved by another rsId
         String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
@@ -144,10 +143,10 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void notDefined() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type1", "value1");
-        RsId idToBeFetched = new RsId(REGISTRAR_CODE, "type2", "value2");
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
         // insert idForResolvation
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
@@ -161,12 +160,12 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
 
     @Test
     public void ok() {
-        RsId idForResolvation = new RsId(REGISTRAR_CODE, "type1", "value1");
-        RsId idToBeFetched = new RsId(REGISTRAR_CODE, "type2", "value2");
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
         LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idToBeFetched, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
         // try and get rsId by type, resolved by another rsId
         String xml = with().config(namespaceAwareXmlConfig())//
                 .expect()//

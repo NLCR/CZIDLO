@@ -7,15 +7,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -29,42 +31,55 @@ import cz.nkp.urnnbn.api.Utils;
  */
 public class ResolveByRsIdTests extends ApiV3Tests {
 
-    // sql to get (registrar, id_type, id_value) triplets
-    // select
-    // registrar.code as registrar,
-    // rsid.type as type,
-    // rsid.idvalue as value
-    // from
-    // (select registrarid, type, idvalue from registrarscopeid) as rsid join
-    // (select id, code from registrar) as registrar on rsid.registrarid=registrar.id;
-
     private static final Logger LOGGER = Logger.getLogger(ResolveByRsIdTests.class.getName());
 
-    private final Credentials USER = new Credentials("martin", "i0oEhu");
-    private final String REGISTRAR = "aba001";
-    private final String URNNBN = "urn:nbn:cz:aba001-000000";
-    private final String URNNBN_WITHOUT_DI = "urn:nbn:cz:aba001-000004";
-    private final String URNNBN_WITH_DI_ACTIVE = "urn:nbn:cz:aba001-00000t";
-    private final String URNNBN_WITH_DI_DEACTIVATED = "urn:nbn:cz:aba001-000006";
-    private final String URNNBN_DD_DEACTIVATED = "urn:nbn:cz:aba001-00000d"; // TODO:APIv4: should throw error when trying to insert rsid
+    private String urnNbnActiveDiNone;
+    private String urnNbnActiveDiActive;
+    private String urnNbnActiveDiDeactivated;
+    private String urnNbnDeactivatedDiNone; // TODO:APIv4: should throw error when trying to insert rsid
+    private String urnNbnDeactivatedDiActive;
+    private String urnNbnDeactivatedDiDeactivated;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        Long digLibId = getDigitalLibraryIdOrNull(REGISTRAR);
+        Long diId = null;
+        // urn active, no di
+        urnNbnActiveDiNone = registerUrnNbn(REGISTRAR, USER);
+        // urn active di active
+        urnNbnActiveDiActive = registerUrnNbn(REGISTRAR, USER);
+        insertDigitalInstance(urnNbnActiveDiActive, digLibId, WORKING_URL, USER);
+        // urn active, di deactivated
+        urnNbnActiveDiDeactivated = registerUrnNbn(REGISTRAR, USER);
+        diId = insertDigitalInstance(urnNbnActiveDiDeactivated, digLibId, WORKING_URL, USER);
+        deactivateDigitalInstance(diId, USER);
+        // urn deactivated no di
+        urnNbnDeactivatedDiNone = registerUrnNbn(REGISTRAR, USER);
+        deactivateUrnNbn(urnNbnDeactivatedDiNone, USER);
+        // urn deactivated, di active
+        urnNbnDeactivatedDiActive = registerUrnNbn(REGISTRAR, USER);
+        insertDigitalInstance(urnNbnDeactivatedDiActive, digLibId, WORKING_URL, USER);
+        deactivateUrnNbn(urnNbnDeactivatedDiActive, USER);
+        // urn deactivated, di deactivated
+        urnNbnDeactivatedDiDeactivated = registerUrnNbn(REGISTRAR, USER);
+        diId = insertDigitalInstance(urnNbnDeactivatedDiDeactivated, digLibId, WORKING_URL, USER);
+        deactivateDigitalInstance(diId, USER);
+        deactivateUrnNbn(urnNbnDeactivatedDiDeactivated, USER);
     }
 
     private String buildUrl(RsId idForResolvation) {
         return buildResolvationPath(idForResolvation);
     }
 
-    @BeforeMethod
-    public void beforeMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITHOUT_DI, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_ACTIVE, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_WITH_DI_DEACTIVATED, USER);
-        // deleteAllRegistrarScopeIdentifiers(URNNBN_NO_DD, USER);
-        deleteAllRegistrarScopeIdentifiers(URNNBN_DD_DEACTIVATED, USER);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(urnNbnActiveDiNone, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbnActiveDiActive, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbnActiveDiDeactivated, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbnDeactivatedDiNone, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbnDeactivatedDiActive, USER);
+        deleteAllRegistrarScopeIdentifiers(urnNbnDeactivatedDiDeactivated, USER);
     }
 
     @Test
@@ -120,7 +135,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
             LOGGER.info(idForResolvation.toString());
             // same id but with valid value
             RsId idValidValue = new RsId(idForResolvation.registrarCode, idForResolvation.type, "value");
-            insertRegistrarScopeId(URNNBN, idValidValue, USER);
+            insertRegistrarScopeId(urnNbnActiveDiActive, idValidValue, USER);
             String xml = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(404)//
@@ -131,7 +146,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
             // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
             assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
             // cleanup
-            deleteRegistrarScopeId(URNNBN, idValidValue, USER);
+            deleteRegistrarScopeId(urnNbnActiveDiActive, idValidValue, USER);
         }
     }
 
@@ -149,7 +164,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     private void rsIdTypeValidValueValid(RsId id) {
         LOGGER.info(id.toString());
         // insert id
-        insertRegistrarScopeId(URNNBN, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         // get dd by id
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
@@ -160,7 +175,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
         Assert.assertEquals(xmlPath.get("registrarScopeIdentifiers.id.find { it.@type == \'" + id.type + "\' }"), id.value);
         // delete id
-        deleteRegistrarScopeId(URNNBN, id, USER);
+        deleteRegistrarScopeId(urnNbnActiveDiActive, id, USER);
     }
 
     @Test
@@ -211,7 +226,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionInvalid() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "nonsense")//
                 .expect()//
                 .statusCode(400)//
@@ -225,7 +240,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionEmpty() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
                 .expect()//
                 .statusCode(400)//
@@ -241,7 +256,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShow() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
                 .expect().statusCode(200).contentType(ContentType.HTML)//
                 .body(containsString("<title>CZIDLO</title>"))// should redirect to web search
@@ -251,7 +266,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatEmpty() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "")//
                 .expect()//
                 .statusCode(400)//
@@ -265,7 +280,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatInvalid() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "nonsense")//
                 .expect()//
                 .statusCode(400)//
@@ -279,7 +294,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatHtml() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "html")//
                 .expect()//
                 .statusCode(200)//
@@ -291,8 +306,9 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatXml() {
         // TODO: rozlisit na pripady ruznych stavu DD, URN, DI
-        RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        // active no id
+        RsId id = new RsId(REGISTRAR, "urn_act_di_none", "value");
+        insertRegistrarScopeId(urnNbnActiveDiNone, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
                 .expect()//
                 .statusCode(200)//
@@ -300,14 +316,83 @@ public class ResolveByRsIdTests extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
-        String xmlPathExp = "registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }";
-        Assert.assertEquals(xmlPath.get(xmlPathExp), id.value);
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
+
+        // active id active
+        id = new RsId(REGISTRAR, "urn_act_di_act", "value");
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+        assertTrue(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+
+        // active id deactivated
+        id = new RsId(REGISTRAR, "urn_act_di_deact", "value");
+        insertRegistrarScopeId(urnNbnActiveDiDeactivated, id, USER);
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+
+        // deactivated without di
+        id = new RsId(REGISTRAR, "urn_deact_di_none", "value");
+        insertRegistrarScopeId(urnNbnDeactivatedDiNone, id, USER);
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
+
+        // deactivated with di active
+        id = new RsId(REGISTRAR, "urn_deact_di_act", "value");
+        insertRegistrarScopeId(urnNbnDeactivatedDiActive, id, USER);
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+        assertTrue(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+
+        // deactivated with di deactivated
+        id = new RsId(REGISTRAR, "urn_deact_di_deact", "value");
+        insertRegistrarScopeId(urnNbnDeactivatedDiDeactivated, id, USER);
+        xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        xmlPath = XmlPath.from(xml).setRoot("response.digitalDocument");
+        assertEquals(id.value, xmlPath.getString("registrarScopeIdentifiers.id.find { it.@type == '" + id.type + "' }"));
+        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
     }
 
     @Test
     public void actionShowFormatXmlDigitalInstancesEmpty() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "")//
                 .expect()//
@@ -322,7 +407,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatXmlDigitalInstancesInvalid() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         String xml = with().config(namespaceAwareXmlConfig())//
                 .queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "nope")//
                 .expect()//
@@ -338,7 +423,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     public void actionShowFormatXmlDigitalInstancesTrue() {
         // TODO: situace DD existuje, neexistuje, deaktivovane
         RsId idNoDi = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, idNoDi, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, idNoDi, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "true")//
                 .expect()//
                 .statusCode(200)//
@@ -350,7 +435,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionShowFormatXmlDigitalInstancesFalse() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml").queryParam("digitalInstances", "false") //
                 .expect() //
                 .statusCode(200) //
@@ -363,9 +448,37 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     // action=redirect
 
     @Test
-    public void actionRedirectUrnDeactivated() {
+    public void actionRedirectUrnDeactivatedWithoutDi() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_DD_DEACTIVATED, id, USER);
+        insertRegistrarScopeId(urnNbnDeactivatedDiNone, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
+                .expect()//
+                .statusCode(403)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
+    }
+
+    @Test
+    public void actionRedirectUrnDeactivatedWithDiActive() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbnDeactivatedDiActive, id, USER);
+        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
+                .expect()//
+                .statusCode(403)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(id)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.get("code"), "URN_NBN_DEACTIVATED");
+    }
+
+    @Test
+    public void actionRedirectUrnDeactivatedWithDiDeactivated() {
+        RsId id = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbnDeactivatedDiDeactivated, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(403)//
@@ -379,7 +492,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionRedirectDiNotFound() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiNone, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(404)//
@@ -393,7 +506,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionRedirectDiDeactivated() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITH_DI_DEACTIVATED, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiDeactivated, id, USER);
         String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(404)//
@@ -407,7 +520,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionRedirectDiActive() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITH_DI_ACTIVE, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "redirect")//
                 .expect()//
                 .statusCode(200)//
@@ -421,7 +534,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionDecideDiNotFound() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITHOUT_DI, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiNone, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
                 .statusCode(200)//
@@ -433,7 +546,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionDecideDiDeactivated() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITH_DI_DEACTIVATED, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiDeactivated, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
                 .statusCode(200)//
@@ -445,7 +558,7 @@ public class ResolveByRsIdTests extends ApiV3Tests {
     @Test
     public void actionDecideDiActive() {
         RsId id = new RsId(REGISTRAR, "type", "value");
-        insertRegistrarScopeId(URNNBN_WITH_DI_ACTIVE, id, USER);
+        insertRegistrarScopeId(urnNbnActiveDiActive, id, USER);
         with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
                 .expect()//
                 .statusCode(200)//

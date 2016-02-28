@@ -27,10 +27,6 @@ public class DeleteDigitalInstance extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteDigitalInstance.class.getName());
 
-    private final String REGISTRAR = "aba001";// must exist and have registration mode BY_RESOLVER enabled
-    private final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR
-
     private Long digLibId;
 
     @BeforeClass

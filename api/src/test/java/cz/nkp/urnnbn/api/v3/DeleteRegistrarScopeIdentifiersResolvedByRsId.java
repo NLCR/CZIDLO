@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
@@ -29,19 +29,17 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifiersResolvedByRsId.class.getName());
 
-    private final String REGISTRAR = "aba001";
-    private final String URNNBN = "urn:nbn:cz:aba001-0005hy";
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu");
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");
+    private String urnNbn;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbn = registerUrnNbn(REGISTRAR, USER);
     }
 
-    @BeforeMethod
-    public void beforeMethod() {
-        deleteAllRegistrarScopeIdentifiers(URNNBN, USER_WITH_RIGHTS);
+    @AfterMethod
+    public void afterMethod() {
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
 
     private String buildUrl(RsId idForResolvation) {
@@ -53,7 +51,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -68,7 +66,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
@@ -81,7 +79,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect() //
                 .statusCode(400) //
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
@@ -96,7 +94,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeValidValueInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_TYPES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -111,7 +109,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
     public void unknowDigitalDocument() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -127,8 +125,8 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         LOGGER.info(idForResolvation.toString());
         RsId idOther = new RsId(REGISTRAR, "type2", "value2");
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idOther, USER);
         // try and delete all ids
         // TODO:APIv4: return xml as well
         // String responseXml =
@@ -141,7 +139,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check that all ids still present
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -161,8 +159,8 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         LOGGER.info(idForResolvation.toString());
         RsId idOther = new RsId(REGISTRAR, "type2", "value2");
         // insert ids
-        insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        insertRegistrarScopeId(URNNBN, idOther, USER_WITH_RIGHTS);
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idOther, USER);
         // try and delete all ids
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
@@ -173,7 +171,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check that all ids still present
-        List<RsId> rsIdsFetched = getRsIds(URNNBN);
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
         for (RsId id : rsIdsFetched) {
             if (id.type.equals(idForResolvation.type)) {
@@ -197,10 +195,10 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         ids.add(new RsId(REGISTRAR, "type3", "value3"));
         // insert ids
         for (RsId id : ids) {
-            insertRegistrarScopeId(URNNBN, id, USER_WITH_RIGHTS);
+            insertRegistrarScopeId(urnNbn, id, USER);
         }
         // delete all ids
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -212,12 +210,12 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
             assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
         }
         // check that all ids have been deleted
-        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
-                .when().get(HTTPS_API_URL + buildResolvationPath(URNNBN) + "/registrarScopeIdentifiers")//
+                .when().get(HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers")//
                 .andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
         assertThat(xmlPath.getString("id"), isEmptyOrNullString());

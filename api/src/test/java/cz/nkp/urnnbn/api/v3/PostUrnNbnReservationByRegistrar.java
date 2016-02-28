@@ -26,11 +26,6 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationByRegistrar.class.getName());
 
-    private final String REGISTRAR_CODE = "tst01"; // must exist
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have rights to registrar with REGISTRAR_CODE
-    private final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg"); // must exist and have no rights to registrar with
-                                                                                       // REGISTRAR_CODE
-
     @BeforeClass
     public void beforeClass() {
         init();
@@ -44,7 +39,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -58,7 +53,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
     public void registrarCodeValidUnknown() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
@@ -69,7 +64,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void notAuthenticated() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
@@ -91,7 +86,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void notAuthorized() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
@@ -112,14 +107,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeNan() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         String size = "blabla";
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
-                .queryParam("size", size)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -134,14 +128,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeNegative() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         int size = -1;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
-                .queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -156,14 +149,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeToBig() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         int size = reservationsBefore.maxReservationSize + 1;
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
-                .queryParam("size", size)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -178,14 +170,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeEmpty() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         String size = "";
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
-                .queryParam("size", size)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -200,12 +191,12 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeNotSpecified() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reserved before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // reserve
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -224,14 +215,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
 
     @Test
     public void sizeOk() {
-        String registrarCode = REGISTRAR_CODE;
+        String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         // check total reservations before
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // reserve
         int size = 3;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)
-                .queryParam("size", size)//
+        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//

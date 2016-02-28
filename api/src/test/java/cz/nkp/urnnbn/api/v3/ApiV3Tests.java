@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -83,6 +84,13 @@ public abstract class ApiV3Tests {
     private final int PORT = 8080;
     private final String BASE_PATH = "/api/v3";
     final String HTTPS_API_URL = "https://localhost:8443" + BASE_PATH;
+
+    final String REGISTRAR = "tst01";
+    final String REGISTRAR2 = "tst02";
+    final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
+    final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
+    final String WORKING_URL = "https://play.google.com/store/books/details/Bo%C5%BEena_N%C4%9Bmcov%C3%A1_Babi%C4%8Dka?id=jLqnCgAAQBAJ";
+    final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
 
     private final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
     private final String RESPONSE_NS_PREFIX = "c";
@@ -368,5 +376,18 @@ public abstract class ApiV3Tests {
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
         assertFalse(xmlPath.getBoolean("@active"));
+    }
+
+    void deactivateUrnNbn(String urnNbn, Credentials credentials) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().delete(HTTPS_API_URL + "/urnnbn/" + urnNbn)//
+                .andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(urnNbn, xmlPath.getString("value"));
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
     }
 }

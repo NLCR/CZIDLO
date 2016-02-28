@@ -27,9 +27,6 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrar.class.getName());
 
-    private final String REGISTRAR = "tst01"; // must exist
-    private final Credentials USER_WITH_RIGHTS = new Credentials("martin", "i0oEhu"); // must exist and have accesss rights REGISTRAR
-
     @BeforeClass
     public void beforeClass() {
         init();
@@ -69,7 +66,7 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
         // make sure that at least some reservations exist
         UrnNbnReservations reservations = getUrnNbnReservations(REGISTRAR);
         if (reservations.totalReserved == 0) {
-            reserveUrnNbns(REGISTRAR, USER_WITH_RIGHTS);
+            reserveUrnNbns(REGISTRAR, USER);
         }
         // check all registrars' reservations
         List<String> registrarCodes = getAllRegistrarCodes();
