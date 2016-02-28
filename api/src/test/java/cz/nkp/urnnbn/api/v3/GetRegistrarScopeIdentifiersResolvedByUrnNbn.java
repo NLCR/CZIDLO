@@ -32,7 +32,7 @@ public class GetRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests {
     }
 
     private String buildUrl(String urnNbn) {
-        return HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers";
+        return buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers";
     }
 
     @Test
