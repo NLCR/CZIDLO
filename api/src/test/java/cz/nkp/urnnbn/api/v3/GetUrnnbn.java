@@ -211,4 +211,35 @@ public class GetUrnnbn extends ApiV3Tests {
         assertTrue(registered.isBefore(deactivated));
         assertTrue(reserved.isBefore(registered));
     }
+
+    @Test
+    public void urnnbnCaseInsensitive() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        long ddId = xmlPath.getLong("digitalDocumentId");
+        // upper case
+        responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn.toUpperCase())).andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        long ddIdUpperCase = xmlPath.getLong("digitalDocumentId");
+        assertEquals(ddId, ddIdUpperCase);
+        // lower case
+        responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn.toLowerCase())).andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        long ddIdLowerCase = xmlPath.getLong("digitalDocumentId");
+        assertEquals(ddId, ddIdLowerCase);
+    }
 }

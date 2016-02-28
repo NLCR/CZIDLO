@@ -134,4 +134,37 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
         assertTrue(activeCreated.isAfter(deactivatedDeactivated));
     }
+
+    @Test
+    public void urnnbnCaseInsensitive() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        long diDeactivated = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        deactivateDigitalInstance(diDeactivated, USER);
+        long diActive = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        LOGGER.info(urnNbn);
+        // original
+        with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diActive), nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diDeactivated), nsContext))//
+                .when().get(buildUrl(urnNbn));
+        // lower case
+        with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diActive), nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diDeactivated), nsContext))//
+                .when().get(buildUrl(urnNbn.toLowerCase()));
+        // upper case
+        with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diActive), nsContext))//
+                .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diDeactivated), nsContext))//
+                .when().get(buildUrl(urnNbn.toUpperCase()));
+    }
 }
