@@ -134,7 +134,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(buildUrl(idForResolvation, typeToBeFetched)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // TODO:APIv4: rename this error code
