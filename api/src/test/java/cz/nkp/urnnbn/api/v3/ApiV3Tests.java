@@ -93,8 +93,8 @@ public abstract class ApiV3Tests {
     final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
     final String URN_NBN_FREE = "urn:nbn:cz:" + REGISTRAR + "-zzzzzz";
 
-    private final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
-    private final String RESPONSE_NS_PREFIX = "c";
+    private final String NAMESPACE = "http://resolver.nkp.cz/v3/";
+    private final String NAMESPACE_PREFIX = "c";
     private final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
     // TODO: change after fixed https://github.com/NLCR/CZIDLO/issues/138
     private final String IMPORT_DI_XSD = "https://raw.githubusercontent.com/NLCR/CZIDLO/master/api/src/main/resources/v3/importDigitalInstance.xsd";
@@ -140,6 +140,7 @@ public abstract class ApiV3Tests {
     String responseXsdString;
     String importDiXsdString;
     String registerDdXsdString;
+    XmlBuilder xmlBuilder = new XmlBuilder(NAMESPACE);
 
     void init() {
         CountryCode.initialize(LANG_CODE);
@@ -150,7 +151,7 @@ public abstract class ApiV3Tests {
         // see https://github.com/jayway/rest-assured/issues/561
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.urlEncodingEnabled = false;
-        nsContext = Utils.buildNsContext("c", RESPONSE_NS);
+        nsContext = Utils.buildNsContext("c", NAMESPACE);
         responseXsdString = Utils.readXsd(RESPONSE_XSD);
         importDiXsdString = Utils.readXsd(IMPORT_DI_XSD);
         registerDdXsdString = Utils.readXsd(REGISTER_DI_XSD);
@@ -158,7 +159,7 @@ public abstract class ApiV3Tests {
     }
 
     RestAssuredConfig namespaceAwareXmlConfig() {
-        return newConfig().xmlConfig(xmlConfig().with().namespaceAware(true).declareNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS))//
+        return newConfig().xmlConfig(xmlConfig().with().namespaceAware(true).declareNamespace(NAMESPACE_PREFIX, NAMESPACE))//
                 .sslConfig(sslConfig().relaxedHTTPSValidation())//
                 // https + redirections doesn't work
                 // see https://github.com/jayway/rest-assured/issues/467
@@ -167,7 +168,7 @@ public abstract class ApiV3Tests {
     }
 
     XmlPathConfig namespaceAwareXmlpathConfig() {
-        return xmlPathConfig().declaredNamespace(RESPONSE_NS_PREFIX, RESPONSE_NS);
+        return xmlPathConfig().declaredNamespace(NAMESPACE_PREFIX, NAMESPACE);
     }
 
     String buildResolvationPath(RsId id) {
@@ -346,7 +347,7 @@ public abstract class ApiV3Tests {
     }
 
     String registerUrnNbn(String registrarCode, Credentials credentials) {
-        String bodyXml = XmlBuilder.buildRegisterDigDocDataMinimal();
+        String bodyXml = xmlBuilder.buildRegisterDigDocDataMinimal();
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -360,7 +361,7 @@ public abstract class ApiV3Tests {
     }
 
     void registerUrnNbn(String registrarCode, String urnNbn, Credentials credentials) {
-        String bodyXml = XmlBuilder.buildRegisterDigDocDataMinimal(urnNbn);
+        String bodyXml = xmlBuilder.buildRegisterDigDocDataMinimal(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -373,7 +374,7 @@ public abstract class ApiV3Tests {
     }
 
     long insertDigitalInstance(String urnNbn, long digLibId, String diUrl, Credentials credentials) {
-        String bodyXml = XmlBuilder.buildImportDiDataMinimal(digLibId, diUrl);
+        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, diUrl);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(importDiXsdString))//
                 .expect()//
