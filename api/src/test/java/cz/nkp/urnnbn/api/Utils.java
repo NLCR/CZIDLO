@@ -217,4 +217,13 @@ public class Utils {
         return data[rand.nextInt(data.length)];
     }
 
+    public static String[] splitUrnNbn(String urnNbn) {
+        String[] tokens = urnNbn.toLowerCase().split(":");
+        String langCode = tokens[2];
+        tokens = tokens[3].split("-");
+        String registrarCode = tokens[0];
+        String docCode = tokens[1];
+        return new String[] { langCode, registrarCode, docCode };
+    }
+
 }

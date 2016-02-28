@@ -91,6 +91,7 @@ public abstract class ApiV3Tests {
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://play.google.com/store/books/details/Bo%C5%BEena_N%C4%9Bmcov%C3%A1_Babi%C4%8Dka?id=jLqnCgAAQBAJ";
     final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
+    final String URN_NBN_FREE = "urn:nbn:cz:" + REGISTRAR + "-zzzzzz";
 
     private final String RESPONSE_NS = "http://resolver.nkp.cz/v3/";
     private final String RESPONSE_NS_PREFIX = "c";
@@ -126,6 +127,13 @@ public abstract class ApiV3Tests {
             "?", "#", "[", "]", "-", "_", ".", "~", "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6" };
     final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffg",
             "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
+
+    // urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}
+    final String[] URNNBN_VALID = new String[] { "urn:nbn:cz:ab-aaaaaa", "urn:NBN:cZ:00-012345", "URN:NBN:CZ:AB-AAAAAA", "urn:nbn:cz:1aABb2-1A2a3b",
+            "urn:NBN:Cz:ABCDEF-1A2a3b", "URN:NBN:cz:123456-1A2a3b" };
+    final String[] URNNBN_INVALID = new String[] { "cz:abc012-123456", "urn:isbn:cz:abc012-123456", "nbn:cz:abc012-123456",
+            "urn:nbn:cs:abc012-123456", "urn:nbn:abc012-123456", "urn:nbn:cz:a-123456", "urn:nbn:cz:abc123X-123456", "urn:nbn:cz:abc012-12345",
+            "urn:nbn:cz:abc012-1234567" };
 
     Random rand = new Random();
     NamespaceContext nsContext;
