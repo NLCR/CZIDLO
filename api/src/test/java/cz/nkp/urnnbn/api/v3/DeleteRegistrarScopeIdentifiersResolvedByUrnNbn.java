@@ -191,4 +191,82 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
+
+    @Test
+    public void urnnbnCaseInsensitive() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+
+        // UPPER CASE
+        // create ids
+        List<RsId> ids = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            ids.add(new RsId(REGISTRAR, "type" + i, "value" + i));
+        }
+        // insert ids
+        for (RsId id : ids) {
+            insertRegistrarScopeId(urnNbn, id, USER);
+        }
+        // delete all ids
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().delete(buildUrl(urnNbn.toUpperCase())).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        // check that all ids in response
+        assertThat(xmlPath.getInt("id.size()"), equalTo(ids.size()));
+        for (RsId id : ids) {
+            assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+        }
+        // check that all ids have been deleted
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        assertThat(xmlPath.getString("id"), isEmptyOrNullString());
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+
+        // LOWER CASE
+        // create ids
+        ids = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            ids.add(new RsId(REGISTRAR, "type" + i, "value" + i));
+        }
+        // insert ids
+        for (RsId id : ids) {
+            insertRegistrarScopeId(urnNbn, id, USER);
+        }
+        // delete all ids
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().delete(buildUrl(urnNbn.toLowerCase())).andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        // check that all ids in response
+        assertThat(xmlPath.getInt("id.size()"), equalTo(ids.size()));
+        for (RsId id : ids) {
+            assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));
+        }
+        // check that all ids have been deleted
+        responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(HTTPS_API_URL + buildResolvationPath(urnNbn) + "/registrarScopeIdentifiers")//
+                .andReturn().asString();
+        xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        assertThat(xmlPath.getString("id"), isEmptyOrNullString());
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
 }
