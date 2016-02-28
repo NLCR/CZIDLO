@@ -359,6 +359,20 @@ public abstract class ApiV3Tests {
         return xmlPath.getString("value");
     }
 
+    void registerUrnNbn(String registrarCode, String urnNbn, Credentials credentials) {
+        String bodyXml = XmlBuilder.buildRegisterDigDocDataMinimal(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
+                .expect()//
+                // .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                // .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().post(HTTPS_API_URL + "/registrars/" + registrarCode + "/digitalDocuments")//
+                .andReturn().asString();
+        System.err.println(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+    }
+
     long insertDigitalInstance(String urnNbn, long digLibId, String diUrl, Credentials credentials) {
         String bodyXml = XmlBuilder.buildImportDiDataMinimal(digLibId, diUrl);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//

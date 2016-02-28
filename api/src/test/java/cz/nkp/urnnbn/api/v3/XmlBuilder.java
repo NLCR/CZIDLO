@@ -17,4 +17,15 @@ public class XmlBuilder {
                 + "<digitalDocument/>"//
                 + "</import>";
     }
+
+    public static String buildRegisterDigDocDataMinimal(String urnNbn) {
+        return String.format("<import xmlns=\"http://resolver.nkp.cz/v3/\">"//
+                + "<monograph>" //
+                + "<titleInfo><title>TestTitle</title></titleInfo>"//
+                + "</monograph>"//
+                + "<digitalDocument>"//
+                + "<urnNbn><value>%s</value></urnNbn>"//
+                + "</digitalDocument>"//
+                + "</import>", urnNbn);
+    }
 }

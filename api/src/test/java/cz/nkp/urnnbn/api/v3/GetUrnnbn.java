@@ -5,12 +5,12 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -28,19 +28,9 @@ public class GetUrnnbn extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnnbn.class.getName());
 
-    private String urnNbnActive;
-    private String urnNbnDeactivated;
-    private String urnNbnReserved;
-    private String urnNbnFree;
-
     @BeforeClass
     public void beforeClass() {
         init();
-        urnNbnActive = registerUrnNbn(REGISTRAR, USER);
-        urnNbnDeactivated = registerUrnNbn(REGISTRAR, USER);
-        deactivateUrnNbn(urnNbnDeactivated, USER);
-        urnNbnReserved = getReservedUrnNbn(REGISTRAR, USER);
-        urnNbnFree = URN_NBN_FREE;
     }
 
     private String buildUrl(String urnNbn) {
@@ -80,49 +70,8 @@ public class GetUrnnbn extends ApiV3Tests {
     }
 
     @Test
-    public void urnnbnValidActive() {
-        String urnNbn = urnNbnActive;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
-        assertEquals("ACTIVE", xmlPath.getString("status"));
-        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
-        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
-        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
-        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
-        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
-        assertFalse("".equals(xmlPath.getString("registered")));
-    }
-
-    @Test
-    public void urnnbnValidDeactivated() {
-        String urnNbn = urnNbnDeactivated;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
-        assertEquals("DEACTIVATED", xmlPath.getString("status"));
-        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
-        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
-        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
-        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
-        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
-        assertFalse("".equals(xmlPath.getString("registered")));
-        assertFalse("".equals(xmlPath.getString("deactivated")));
-    }
-
-    @Test
     public void urnnbnValidFree() {
-        String urnNbn = urnNbnFree;
+        String urnNbn = URN_NBN_FREE;
         LOGGER.info(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
@@ -138,11 +87,13 @@ public class GetUrnnbn extends ApiV3Tests {
         assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
         assertTrue("".equals(xmlPath.getString("digitalDocumentId")));
         assertTrue("".equals(xmlPath.getString("registered")));
+        assertTrue("".equals(xmlPath.getString("reserved")));
+        assertTrue("".equals(xmlPath.getString("deactivated")));
     }
 
     @Test
     public void urnnbnValidReserved() {
-        String urnNbn = urnNbnReserved;
+        String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
@@ -158,7 +109,106 @@ public class GetUrnnbn extends ApiV3Tests {
         assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
         assertTrue("".equals(xmlPath.getString("digitalDocumentId")));
         assertTrue("".equals(xmlPath.getString("registered")));
-        assertFalse("".equals(xmlPath.getString("reserved")));
+        assertTrue(DateTime.parse(xmlPath.getString("reserved")).isBeforeNow());
+        assertTrue("".equals(xmlPath.getString("deactivated")));
     }
 
+    @Test
+    public void urnnbnValidActiveWasNotReserved() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertTrue("".equals(xmlPath.getString("reserved")));
+        assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+    }
+
+    @Test
+    public void urnnbnValidActiveWasReserved() {
+        String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
+        registerUrnNbn(REGISTRAR, urnNbn, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        DateTime reserved = DateTime.parse(xmlPath.getString("reserved"));
+        DateTime registered = DateTime.parse(xmlPath.getString("registered"));
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+        assertTrue(registered.isBeforeNow());
+        assertTrue(reserved.isBefore(registered));
+    }
+
+    @Test
+    public void urnnbnValidDeactivatedWasNotReserved() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        deactivateUrnNbn(urnNbn, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertTrue("".equals(xmlPath.getString("reserved")));
+        DateTime registered = DateTime.parse(xmlPath.getString("registered"));
+        DateTime deactivated = DateTime.parse(xmlPath.getString("deactivated"));
+        assertTrue(deactivated.isBeforeNow());
+        assertTrue(registered.isBefore(deactivated));
+    }
+
+    @Test
+    public void urnnbnValidDeactivatedWasReserved() {
+        String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
+        registerUrnNbn(REGISTRAR, urnNbn, USER);
+        deactivateUrnNbn(urnNbn, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        DateTime reserved = DateTime.parse(xmlPath.getString("reserved"));
+        DateTime registered = DateTime.parse(xmlPath.getString("registered"));
+        DateTime deactivated = DateTime.parse(xmlPath.getString("deactivated"));
+        assertTrue(deactivated.isBeforeNow());
+        assertTrue(registered.isBefore(deactivated));
+        assertTrue(reserved.isBefore(registered));
+    }
 }
