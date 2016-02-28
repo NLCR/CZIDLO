@@ -22,9 +22,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/urnnbn/${URN_NBN}/digitalInstances
  *
  */
-public class GetDigitalInstancesByUrnNbn extends ApiV3Tests {
+public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(GetDigitalInstancesByUrnNbn.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(GetDigitalInstancesResolvedByUrnNbn.class.getName());
 
     private Long digLibId;
 

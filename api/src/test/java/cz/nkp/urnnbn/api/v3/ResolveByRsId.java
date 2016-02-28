@@ -29,9 +29,9 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}
  *
  */
-public class ResolveByRsIdTests extends ApiV3Tests {
+public class ResolveByRsId extends ApiV3Tests {
 
-    private static final Logger LOGGER = Logger.getLogger(ResolveByRsIdTests.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResolveByRsId.class.getName());
 
     private String urnNbnActiveDiNone;
     private String urnNbnActiveDiActive;
