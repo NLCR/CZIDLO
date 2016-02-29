@@ -278,6 +278,63 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         }
     }
 
+    @Test
+    public void invalidDataPredecessorReserved() {
+        String registrarCode = REGISTRAR;
+        Predecessor predecessor = new Predecessor(getReservedUrnNbn(registrarCode, USER), "reserved");
+        LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
+        String bodyXml = ddRegistrationBuilder.withPredecessors(asList(predecessor));
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INCORRECT_PREDECESSOR_RESERVED");
+    }
+
+    @Test
+    public void invalidDataPredecessorFree() {
+        String registrarCode = REGISTRAR;
+        Predecessor predecessor = new Predecessor(String.format("urn:nbn:%s:%s-010101", CountryCode.getCode(), registrarCode), "free");
+        LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
+        String bodyXml = ddRegistrationBuilder.withPredecessors(asList(predecessor));
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INCORRECT_PREDECESSOR_FREE");
+    }
+
+    @Test
+    public void invalidDataInvalidArchiver() {
+        String registrarCode = REGISTRAR;
+        long archiverId = -1;
+        LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
+        String bodyXml = ddRegistrationBuilder.withArchiver(archiverId);
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_ARCHIVER_ID");
+    }
+
     // TODO: jeste prirarzovani pres ruzne mody, pokud prava jsou
     // TODO: korektni predecessors, successors a potom to zkontrolovat, jestli jsou vztahy opravdu uloženy,
     // jestli se predecessor deaktivuje apod.

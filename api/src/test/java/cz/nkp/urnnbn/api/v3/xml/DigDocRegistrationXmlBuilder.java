@@ -22,11 +22,16 @@ public class DigDocRegistrationXmlBuilder {
                 + "</import>";
     }
 
-    public String build(String urnNbn, List<Predecessor> predecessors, List<RsId> ids) {
+    public String build(Long archiverId, String urnNbn, List<Predecessor> predecessors, List<RsId> ids) {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("<import xmlns=\"%s\">", namespace));
         builder.append("<monograph><titleInfo><title>TestTitle</title></titleInfo></monograph>");
         builder.append("<digitalDocument>");
+        // archiver
+        if (archiverId != null) {
+            builder.append(String.format("<archiverId>%d</archiverId>", archiverId));
+        }
+
         // URN:NBN, predecessors
         if (urnNbn == null && (predecessors != null && !predecessors.isEmpty())) {// predecessors only
             builder.append("<urnNbn>");
@@ -66,27 +71,31 @@ public class DigDocRegistrationXmlBuilder {
     }
 
     public String minimal() {
-        return build(null, null, null);
+        return build(null, null, null, null);
     }
 
     public String withUrnNbn(String urnNbn) {
-        return build(urnNbn, null, null);
+        return build(null, urnNbn, null, null);
     }
 
     public String withPredecessors(List<Predecessor> predecessors) {
-        return build(null, predecessors, null);
+        return build(null, null, predecessors, null);
     }
 
     public String withPredecessors(String urnNbn, List<Predecessor> predecessors) {
-        return build(urnNbn, predecessors, null);
+        return build(null, urnNbn, predecessors, null);
     }
 
     public String withRsIds(List<RsId> rsIds) {
-        return build(null, null, rsIds);
+        return build(null, null, null, rsIds);
     }
 
     public String withRsIds(String urnNbn, List<RsId> rsIds) {
-        return build(urnNbn, null, rsIds);
+        return build(null, urnNbn, null, rsIds);
+    }
+
+    public String withArchiver(long archiverId) {
+        return build(archiverId, null, null, null);
     }
 
 }
