@@ -33,13 +33,13 @@ public class GetDigitalInstances extends ApiV3Tests {
 
     @Test
     public void ok() {
-        String xml = with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
                 .when().get(buildUrl()).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.digitalInstances");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
     }
 

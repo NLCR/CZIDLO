@@ -55,12 +55,12 @@ public class GetDigitalInstance extends ApiV3Tests {
     @Test
     public void idNotNumber() {
         String id = "abc";
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
     }
 
@@ -69,12 +69,12 @@ public class GetDigitalInstance extends ApiV3Tests {
         Long id = DI_ID_UNKNOWN;
         if (id != null) {
             LOGGER.info("id: " + id);
-            String xml = with().config(namespaceAwareXmlConfig()).expect()//
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(404)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get(buildUrl(id)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
         } else {
             LOGGER.warning("id not defined, ignoring");

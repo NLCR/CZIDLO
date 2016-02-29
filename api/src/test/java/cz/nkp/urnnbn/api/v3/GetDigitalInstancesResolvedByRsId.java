@@ -71,13 +71,13 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        String xml = with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
@@ -86,13 +86,13 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeValidValueInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
     }
@@ -101,14 +101,13 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void unknowDigitalDocument() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
-        // get all ids
-        String xml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
     }
 

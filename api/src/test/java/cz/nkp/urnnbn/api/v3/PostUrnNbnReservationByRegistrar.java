@@ -134,13 +134,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // try and reserve
         int size = -1;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_QUERY_PARAM_VALUE");
         // check that no more reservations created
         UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
@@ -221,13 +221,13 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
         UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
         // reserve
         int size = 3;
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
                 .expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.urnNbnReservation");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservation");
         int nowReserved = xmlPath.getInt("urnNbn.size()");
         for (int i = 0; i < nowReserved; i++) {
             UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));

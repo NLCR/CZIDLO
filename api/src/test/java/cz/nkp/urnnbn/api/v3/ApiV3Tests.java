@@ -85,8 +85,8 @@ public abstract class ApiV3Tests {
     private final String BASE_PATH = "/api/v3";
     final String HTTPS_API_URL = "https://localhost:8443" + BASE_PATH;
 
-    final String REGISTRAR = "tst01";
-    final String REGISTRAR2 = "tst02";
+    final String REGISTRAR = "tst01"; // must exist and have at least 1 digital library
+    final String REGISTRAR2 = "tst02";// must exist and have at least 1 digital library
     final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://www.seznam.cz/";
@@ -182,8 +182,8 @@ public abstract class ApiV3Tests {
     }
 
     String getRandomExistingRegistrarCode() {
-        String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml);
         int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");
         if (registrarsCount != 0) {
             int registrarPosition = rand.nextInt(registrarsCount);
@@ -195,8 +195,8 @@ public abstract class ApiV3Tests {
     }
 
     List<String> getAllRegistrarCodes() {
-        String xml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).when().get("/registrars").andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml);
         int registrarsCount = xmlPath.getInt("response.registrars.registrar.size()");
         List<String> result = new ArrayList<String>(registrarsCount);
         for (int i = 0; i < registrarsCount; i++) {
@@ -311,11 +311,11 @@ public abstract class ApiV3Tests {
     }
 
     DigitalInstance getDigitalInstanceOrNull(long diId) {
-        String xml = with().config(namespaceAwareXmlConfig()).expect()//
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response", nsContext))//
                 .when().get("/digitalInstances/id/" + diId).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         if (xmlPath.get("digitalInstance") != null) {
             DigitalInstance result = new DigitalInstance();
             result.setId(diId);

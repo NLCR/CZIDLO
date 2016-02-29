@@ -162,13 +162,13 @@ public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         String type = Utils.getRandomItem(RSID_TYPES_VALID);
         LOGGER.info(urnNbn + ", type: " + type);
-        String xml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(urnNbn, type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // TODO:APIv4: INVALID_REGISTRAR_SCOPE_IDENTIFIER rename to NOT_DEFINED
         Assert.assertEquals(xmlPath.get("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
     }

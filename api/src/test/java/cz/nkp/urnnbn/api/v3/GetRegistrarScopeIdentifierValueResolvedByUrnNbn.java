@@ -97,13 +97,13 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String type = Utils.getRandomItem(RSID_TYPES_VALID);
         LOGGER.info(urnNbn + ", type: " + type);
         // try and get rsId by type
-        String xml = with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(urnNbn, type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response.error");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_DEFINED");
     }
 
@@ -117,13 +117,13 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
         insertRegistrarScopeId(urnNbn, idOther, USER);
         // get rsId by type
-        String xml = with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // check that only requested id found in response
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
@@ -142,25 +142,25 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         insertRegistrarScopeId(urnNbn, idOther, USER);
 
         // lower case
-        String xml = with().config(namespaceAwareXmlConfig())//
+        String responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(urnNbn.toLowerCase(), idToBeFetched.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(xml).setRoot("response");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
         // check that only requested id found in response
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
 
         // upper case
-        xml = with().config(namespaceAwareXmlConfig())//
+        responseXml = with().config(namespaceAwareXmlConfig())//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(urnNbn.toUpperCase(), idToBeFetched.type)).andReturn().asString();
-        xmlPath = XmlPath.from(xml).setRoot("response");
+        xmlPath = XmlPath.from(responseXml).setRoot("response");
         // check that only requested id found in response
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
