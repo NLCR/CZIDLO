@@ -29,6 +29,7 @@ public class GetDigitalInstance extends ApiV3Tests {
     private String urnNbn;
     private Long diIdActive;
     private Long diIdDeactivated;
+    private Long diUnknown;
 
     @BeforeClass
     public void beforeClass() {
@@ -42,6 +43,7 @@ public class GetDigitalInstance extends ApiV3Tests {
             deactivateDigitalInstance(diIdDeactivated, USER);
             diIdActive = insertDigitalInstance(urnNbn, digLibId, "http://something.com/somewhere", USER);
         }
+        diUnknown = getRandomFreeDigitalInstanceIdOrNull();
     }
 
     private String buildUrl(String id) {
@@ -66,8 +68,10 @@ public class GetDigitalInstance extends ApiV3Tests {
 
     @Test
     public void idUnknown() {
-        Long id = DI_ID_UNKNOWN;
-        if (id != null) {
+        Long id = diUnknown;
+        if (id == null) {
+            LOGGER.warning("didn't find any free digital instance, ignoring");
+        } else {
             LOGGER.info("id: " + id);
             String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                     .statusCode(404)//
@@ -76,8 +80,6 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
             Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
-        } else {
-            LOGGER.warning("id not defined, ignoring");
         }
     }
 

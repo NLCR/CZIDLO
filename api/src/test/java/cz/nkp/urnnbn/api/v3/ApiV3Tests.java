@@ -29,6 +29,7 @@ import com.jayway.restassured.config.RestAssuredConfig;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.config.XmlPathConfig;
+import com.jayway.restassured.response.Response;
 
 import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.api.v3.pojo.Credentials;
@@ -56,7 +57,6 @@ public abstract class ApiV3Tests {
     final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://www.seznam.cz/";
-    final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
     final int UNKNOWN_DIG_LIB_DI = -1; // digital library with this id must not exist
 
     private final String NAMESPACE = "http://resolver.nkp.cz/v3/";
@@ -426,12 +426,28 @@ public abstract class ApiV3Tests {
 
     String getRandomFreeUrnNbnOrNull(String registrarCode) {
         int trials = 10;
-        while (trials-- > 1) {
+        while (trials-- >= 1) {
             String urnNbn = "urn:nbn:" + CountryCode.getCode() + ":" + registrarCode + "-" + Utils.generateRandomDocumentCode();
             System.err.println(urnNbn);
             String state = getUrnNbnStatus(urnNbn);
             if ("FREE".equals(state)) {
                 return urnNbn;
+            }
+        }
+        return null;
+    }
+
+    Long getRandomFreeDigitalInstanceIdOrNull() {
+        int trials = 10;
+        while (trials-- >= 1) {
+            int id = rand.nextInt();
+            Response response = with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get("/digitalInstances/id/" + id)//
+                    .andReturn();
+            if (response.getStatusCode() == 404) {
+                return Long.valueOf(id);
             }
         }
         return null;

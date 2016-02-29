@@ -115,7 +115,38 @@ public class DeleteDigitalInstance extends ApiV3Tests {
     }
 
     @Test
-    public void alreadyDeactivated() {
+    public void idNotNumber() {
+        String id = "abc";
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().delete(buildUrl(id)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_DIGITAL_INSTANCE_ID");
+    }
+
+    @Test
+    public void idUnknown() {
+        Long id = getRandomFreeDigitalInstanceIdOrNull();
+        if (id == null) {
+            LOGGER.warning("didn't find any free digital instance, ignoring");
+        } else {
+            LOGGER.info("id: " + id);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().delete(buildUrl(id)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_DIGITAL_INSTANCE");
+        }
+    }
+
+    @Test
+    public void deactivatedAlready() {
         Long id = createActiveDigitalInstanceOrNull();
         if (id != null) {
             LOGGER.info("id: " + id);
