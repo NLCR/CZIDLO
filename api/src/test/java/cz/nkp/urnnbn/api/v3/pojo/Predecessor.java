@@ -10,4 +10,9 @@ public class Predecessor {
         this.note = note;
     }
 
+    @Override
+    public String toString() {
+        return "Predecessor [urnNbn=" + urnNbn + ", note=" + note + "]";
+    }
+
 }

@@ -8,6 +8,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
@@ -426,9 +428,57 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         Assert.assertEquals(xmlPath.getString("code"), "INCORRECT_PREDECESSOR_FREE");
     }
 
-    // TODO: predecessor ok
-    // TODO: korektni predecessors, successors a potom to zkontrolovat, jestli jsou vztahy opravdu uloženy,
-    // jestli se predecessor deaktivuje apod.
+    @Test
+    public void predecessorsOk() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        List<Predecessor> predecessors = new ArrayList<>();
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), "predecessor1"));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), null));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), ""));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), "       "));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), "   surrounded_with_ws    "));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), "   starts_with_ws"));
+        predecessors.add(new Predecessor(registerUrnNbn(REGISTRAR, USER), "ends_with_ws     "));
+        String bodyXml = ddRegistrationBuilder.withPredecessors(predecessors);
+        LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String urnNbn = xmlPath.getString("value");
+        LOGGER.info(urnNbn);
+        assertEquals(predecessors.size(), xmlPath.getInt("predecessor.size()"));
+        // check predecessors match
+        // see https://github.com/NLCR/CZIDLO/issues/142
+        for (int i = 0; i < predecessors.size(); i++) {
+            String urnFound = xmlPath.getString(String.format("predecessor[%d].@value", i));
+            Predecessor predecessor = null;
+            for (Predecessor p : predecessors) {
+                if (p.urnNbn.equals(urnFound)) {
+                    predecessor = p;
+                    break;
+                }
+            }
+            String noteFound = xmlPath.getString(String.format("predecessor[%d].@note", i));
+            if (predecessor.note == null) {
+                assertEquals("[]", noteFound);
+            } else {
+                assertEquals(predecessor.note, noteFound);
+            }
+        }
+        // all predecessors must be deactivated
+        for (Predecessor p : predecessors) {
+            assertEquals("DEACTIVATED", getUrnNbnStatus(p.urnNbn));
+        }
+        // TODO: fetch predecessor (getUrnNbn) and check again that they match (i.e. relation stored)
+    }
 
     // ARCHIVER
 

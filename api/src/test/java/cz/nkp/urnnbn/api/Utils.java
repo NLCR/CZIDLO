@@ -263,4 +263,20 @@ public class Utils {
         return builder.toString();
     }
 
+    /**
+     * 
+     * containsOnlyWhitespaces("") = true; containsOnlyWhitespaces("   ") = true; containsOnlyWhitespaces(" v ") = false;
+     * 
+     * @param string
+     * @return
+     */
+    public static boolean containsOnlyWhitespaces(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (!Character.isWhitespace(string.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
