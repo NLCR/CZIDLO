@@ -51,6 +51,7 @@ public abstract class ApiV3Tests {
 
     final String REGISTRAR = "tst01"; // must exist and have at least 1 digital library
     final String REGISTRAR2 = "tst02";// must exist and have at least 1 digital library
+    final String REGISTRAR_NO_MODES_ENABLED = "tst03";// must exist and and have all 3 registration modes disabled
     final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://www.seznam.cz/";
@@ -405,11 +406,11 @@ public abstract class ApiV3Tests {
     }
 
     String getReservedUrnNbn(String registrarCode, Credentials credentials) {
-        UrnNbnReservations urnNbnReservations = getUrnNbnReservations(REGISTRAR);
+        UrnNbnReservations urnNbnReservations = getUrnNbnReservations(registrarCode);
         if (!urnNbnReservations.reservedOffered.isEmpty()) {
             return urnNbnReservations.reservedOffered.get(0);
         } else {
-            return reserveUrnNbns(REGISTRAR, USER).get(0);
+            return reserveUrnNbns(registrarCode, USER).get(0);
         }
     }
 

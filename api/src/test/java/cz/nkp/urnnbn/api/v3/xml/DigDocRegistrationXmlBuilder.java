@@ -81,6 +81,10 @@ public class DigDocRegistrationXmlBuilder {
         return build(urnNbn, predecessors, null);
     }
 
+    public String withRsIds(List<RsId> rsIds) {
+        return build(null, null, rsIds);
+    }
+
     public String withRsIds(String urnNbn, List<RsId> rsIds) {
         return build(urnNbn, null, rsIds);
     }
