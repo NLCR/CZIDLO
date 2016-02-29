@@ -14,6 +14,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
 
 /**
  * Tests for POST /api/v3/registrars/${REGISTRARS_CODE}/digitalDocuments
@@ -102,28 +103,87 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         String registrarCode = REGISTRAR;
         LOGGER.info("registrar code: " + registrarCode);
         String bodyXml = ddRegistrationBuilder.noNamespace();
+        // LOGGER.info(bodyXml);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_DATA");
     }
 
     @Test
-    public void invalidDataInvalidUrnRegistrarCode() {
+    public void invalidDataInvalidUrnNbnRegistrarCode() {
         String registrarCode = REGISTRAR;
         String urnNbn = "urn:nbn:cz:" + REGISTRAR2 + "-000000";
         LOGGER.info(String.format("registrar code: %s, %s", registrarCode, urnNbn));
-        String bodyXml = ddRegistrationBuilder.minimal(urnNbn);
+        String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+        // LOGGER.info(bodyXml);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
+    }
+
+    @Test
+    public void invalidDataInvalidPredecessorRegistrarCode() {
+        String registrarCode = REGISTRAR;
+        Predecessor predecessor = new Predecessor("urn:nbn:cz:" + REGISTRAR2 + "-000000", "blabla");
+        LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
+        String bodyXml = ddRegistrationBuilder.withPredecessors(asList(predecessor));
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
+    }
+
+    @Test
+    public void invalidDataUrnNbnActiveAlready() {
+        String registrarCode = REGISTRAR;
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
+    }
+
+    @Test
+    public void invalidDataUrnNbnDeactivatedAlready() {
+        String registrarCode = REGISTRAR;
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        deactivateUrnNbn(urnNbn, USER);
+        LOGGER.info(urnNbn);
+        String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
     }

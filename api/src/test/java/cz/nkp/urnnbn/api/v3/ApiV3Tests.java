@@ -32,6 +32,7 @@ import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.api.v3.pojo.Credentials;
+import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
 import cz.nkp.urnnbn.api.v3.pojo.RsId;
 import cz.nkp.urnnbn.api.v3.pojo.UrnNbnReservations;
 import cz.nkp.urnnbn.api.v3.xml.DigDocRegistrationXmlBuilder;
@@ -326,7 +327,7 @@ public abstract class ApiV3Tests {
     }
 
     void registerUrnNbn(String registrarCode, String urnNbn, Credentials credentials) {
-        String bodyXml = ddRegistrationBuilder.minimal(urnNbn);
+        String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -411,4 +412,21 @@ public abstract class ApiV3Tests {
             return reserveUrnNbns(REGISTRAR, USER).get(0);
         }
     }
+
+    List<Predecessor> asList(Predecessor... array) {
+        List<Predecessor> result = new ArrayList<Predecessor>(array.length);
+        for (int i = 0; i < array.length; i++) {
+            result.add(array[i]);
+        }
+        return result;
+    }
+
+    List<RsId> asList(RsId... array) {
+        List<RsId> result = new ArrayList<RsId>(array.length);
+        for (int i = 0; i < array.length; i++) {
+            result.add(array[i]);
+        }
+        return result;
+    }
+
 }

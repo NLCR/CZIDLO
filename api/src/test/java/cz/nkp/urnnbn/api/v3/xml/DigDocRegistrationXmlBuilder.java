@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.api.v3.xml;
 import java.util.List;
 
 import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
+import cz.nkp.urnnbn.api.v3.pojo.RsId;
 
 public class DigDocRegistrationXmlBuilder {
 
@@ -10,26 +11,6 @@ public class DigDocRegistrationXmlBuilder {
 
     public DigDocRegistrationXmlBuilder(String namespace) {
         this.namespace = namespace;
-    }
-
-    public String minimal() {
-        return String.format("<import xmlns=\"%s\">"//
-                + "<monograph>" //
-                + "<titleInfo><title>TestTitle</title></titleInfo>"//
-                + "</monograph>"//
-                + "<digitalDocument/>"//
-                + "</import>", namespace);
-    }
-
-    public String minimal(String urnNbn) {
-        return String.format("<import xmlns=\"%s\">"//
-                + "<monograph>" //
-                + "<titleInfo><title>TestTitle</title></titleInfo>"//
-                + "</monograph>"//
-                + "<digitalDocument>"//
-                + "<urnNbn><value>%s</value></urnNbn>"//
-                + "</digitalDocument>"//
-                + "</import>", namespace, urnNbn);
     }
 
     public String noNamespace() {
@@ -41,32 +22,67 @@ public class DigDocRegistrationXmlBuilder {
                 + "</import>";
     }
 
-    public String withPredecessors(String urnNbn, List<Predecessor> predecessors) {
-        String result = String.format("<import xmlns=\"%s\">"//
-                + "<monograph><titleInfo><title>TestTitle</title></titleInfo></monograph>"//
-                + "<digitalDocument>", namespace);
-        if (!predecessors.isEmpty() || urnNbn != null) {
-            StringBuilder builder = new StringBuilder();
+    public String build(String urnNbn, List<Predecessor> predecessors, List<RsId> ids) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("<import xmlns=\"%s\">", namespace));
+        builder.append("<monograph><titleInfo><title>TestTitle</title></titleInfo></monograph>");
+        builder.append("<digitalDocument>");
+        // URN:NBN, predecessors
+        if (urnNbn == null && (predecessors != null && !predecessors.isEmpty())) {// predecessors only
             builder.append("<urnNbn>");
-            if (urnNbn != null) {
-                builder.append("<value>").append(urnNbn).append("</value>");
-            }
             for (Predecessor predecessor : predecessors) {
-                builder.append("<predecessor value=\"").append(predecessor.urnNbn).append("\"");
-                if (predecessor.note != null) {
-                    builder.append(" note=\"").append(predecessor.note).append("\"");
+                if (predecessor.note == null) {
+                    builder.append(String.format("<predecessor value=\"%s\"/>", predecessor.urnNbn));
+                } else {
+                    builder.append(String.format("<predecessor value=\"%s\" note=\"%s\"/>", predecessor.urnNbn, predecessor.note));
                 }
-                builder.append("</predecessor>");
             }
-            builder.append("/<urnNbn>");
-            result += builder.toString();
+            builder.append("</urnNbn>");
+        } else if (urnNbn != null && (predecessors == null || predecessors.isEmpty())) {// urn only
+            builder.append(String.format("<urnNbn><value>%s</value></urnNbn>", urnNbn));
+        } else if (urnNbn != null && (predecessors != null && !predecessors.isEmpty())) {// both
+            builder.append("<urnNbn>");
+            builder.append(String.format("<value>%s</value>", urnNbn));
+            for (Predecessor predecessor : predecessors) {
+                if (predecessor.note == null) {
+                    builder.append(String.format("<predecessor value=\"%s\"/>", predecessor.urnNbn));
+                } else {
+                    builder.append(String.format("<predecessor value=\"%s\" note=\"%s\"/>", predecessor.urnNbn, predecessor.note));
+                }
+            }
+            builder.append("</urnNbn>");
         }
-        result += "</digitalDocument></import>";
-        return result;
+        // REGISTRAR-SCOPE-IDs
+        if (ids != null && !ids.isEmpty()) {
+            builder.append("<registrarScopeIdentifiers>");
+            for (RsId id : ids) {
+                builder.append(String.format("<id type=\"%s\">%s</id>", id.type, id.value));
+            }
+            builder.append("</registrarScopeIdentifiers>");
+        }
+        builder.append("</digitalDocument>");
+        builder.append("</import>");
+        return builder.toString();
+    }
+
+    public String minimal() {
+        return build(null, null, null);
+    }
+
+    public String withUrnNbn(String urnNbn) {
+        return build(urnNbn, null, null);
     }
 
     public String withPredecessors(List<Predecessor> predecessors) {
-        return withPredecessors(null, predecessors);
+        return build(null, predecessors, null);
+    }
+
+    public String withPredecessors(String urnNbn, List<Predecessor> predecessors) {
+        return build(urnNbn, predecessors, null);
+    }
+
+    public String withRsIds(String urnNbn, List<RsId> rsIds) {
+        return build(urnNbn, null, rsIds);
     }
 
 }
