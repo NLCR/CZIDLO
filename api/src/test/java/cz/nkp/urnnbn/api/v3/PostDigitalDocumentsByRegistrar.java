@@ -2,10 +2,15 @@ package cz.nkp.urnnbn.api.v3;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -317,7 +322,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void invalidDataInvalidArchiver() {
+    public void invalidDataInvalidArchiverDoesNotExist() {
         String registrarCode = REGISTRAR;
         long archiverId = -1;
         LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
@@ -335,8 +340,65 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_ARCHIVER_ID");
     }
 
+    @Test
+    public void okArchiver() {
+        String registrarCode = REGISTRAR;
+        long archiverId = ARCHIVER;
+        LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
+        String bodyXml = ddRegistrationBuilder.withArchiver(archiverId);
+        LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String urnNbn = xmlPath.getString("value");
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+        // TODO: check archiver id (by resolvation)
+    }
+
+    @Test
+    public void okArchiverIsRegistrar() {
+        String registrarCode = REGISTRAR;
+        long archiverId = getRegistrarId(REGISTRAR2);
+        LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
+        String bodyXml = ddRegistrationBuilder.withArchiver(archiverId);
+        LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String urnNbn = xmlPath.getString("value");
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+        // TODO: check archiver id (by resolvation)
+    }
+
     // TODO: jeste prirarzovani pres ruzne mody, pokud prava jsou
     // TODO: korektni predecessors, successors a potom to zkontrolovat, jestli jsou vztahy opravdu uloženy,
     // jestli se predecessor deaktivuje apod.
+    // TODO: otestovat korektniho archivatora
 
 }
