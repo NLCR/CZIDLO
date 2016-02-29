@@ -89,9 +89,10 @@ public abstract class ApiV3Tests {
     final String REGISTRAR2 = "tst02";
     final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
-    final String WORKING_URL = "https://play.google.com/store/books/details/Bo%C5%BEena_N%C4%9Bmcov%C3%A1_Babi%C4%8Dka?id=jLqnCgAAQBAJ";
+    final String WORKING_URL = "https://www.seznam.cz/";
     final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
     final String URN_NBN_FREE = "urn:nbn:cz:" + REGISTRAR + "-zzzzzz";
+    final int UNKNOWN_DIG_LIB_DI = -1; // digital library with this id must not exist
 
     private final String NAMESPACE = "http://resolver.nkp.cz/v3/";
     private final String NAMESPACE_PREFIX = "c";

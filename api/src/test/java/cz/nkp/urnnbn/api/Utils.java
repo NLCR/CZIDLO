@@ -226,4 +226,31 @@ public class Utils {
         return new String[] { langCode, registrarCode, docCode };
     }
 
+    /**
+     * Escapes special characters for xml, so that this string can be used in CDATA.
+     * 
+     * @see https://en.wikipedia.org/wiki/XML#Escaping
+     * @param original
+     * @return
+     */
+    public static String xmlEscape(String original) {
+        Map<Character, String> translations = new HashMap<>();
+        translations.put('<', "&lt;");
+        translations.put('>', "&gt;");
+        translations.put('&', "&amp;");
+        translations.put('\'', "&apos;");
+        translations.put('"', "&quot;");
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < original.length(); i++) {
+            char c = original.charAt(i);
+            if (translations.containsKey(c)) {
+                builder.append(translations.get(c));
+            } else {
+                builder.append(c);
+            }
+        }
+        return builder.toString();
+    }
+
 }

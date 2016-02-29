@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.api.v3;
 
+import cz.nkp.urnnbn.api.Utils;
+
 public class XmlBuilder {
 
     private final String namespace;
@@ -12,7 +14,14 @@ public class XmlBuilder {
         return String.format("<digitalInstance xmlns=\"%s\">"//
                 + "<url>%s</url>" //
                 + "<digitalLibraryId>%d</digitalLibraryId>"//
-                + "</digitalInstance>", namespace, url, digLibId);
+                + "</digitalInstance>", namespace, Utils.xmlEscape(url), digLibId);
+    }
+
+    String buildImportDiDataNoNamespace(long digLibId, String url) {
+        return String.format("<digitalInstance>"//
+                + "<url>%s</url>" //
+                + "<digitalLibraryId>%d</digitalLibraryId>"//
+                + "</digitalInstance>", Utils.xmlEscape(url), digLibId);
     }
 
     String buildRegisterDigDocDataMinimal() {
