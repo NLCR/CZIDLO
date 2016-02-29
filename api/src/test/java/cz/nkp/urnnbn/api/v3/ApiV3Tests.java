@@ -49,7 +49,7 @@ public abstract class ApiV3Tests {
     private final String BASE_PATH = "/api/v3";
     final String HTTPS_API_URL = "https://localhost:8443" + BASE_PATH;
 
-    final String REGISTRAR = "tst01"; // must exist and have at least 1 digital library
+    final String REGISTRAR = "tst01"; // must exist, have at least 1 digital library and all 3 registration modes enabled
     final String REGISTRAR2 = "tst02";// must exist and have at least 1 digital library
     final String REGISTRAR_NO_MODES_ENABLED = "tst03";// must exist and and have all 3 registration modes disabled
     final Long ARCHIVER = 134l; // must existe and not be registrar
@@ -57,7 +57,6 @@ public abstract class ApiV3Tests {
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://www.seznam.cz/";
     final Long DI_ID_UNKNOWN = 9999999L;// digital instance with this must not exist
-    final String URN_NBN_FREE = "urn:nbn:cz:" + REGISTRAR + "-zzzzzz";
     final int UNKNOWN_DIG_LIB_DI = -1; // digital library with this id must not exist
 
     private final String NAMESPACE = "http://resolver.nkp.cz/v3/";
@@ -381,16 +380,6 @@ public abstract class ApiV3Tests {
         assertEquals("DEACTIVATED", xmlPath.getString("status"));
     }
 
-    String getUrnNbnState(String urnNbn) {
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
-                .when().get("/urnnbn/" + Utils.urlEncodeReservedChars(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        return xmlPath.getString("status");
-    }
-
     DateTime getUrnNbnRegisteredOrNull(String urnNbn) {
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
@@ -404,6 +393,16 @@ public abstract class ApiV3Tests {
         } else {
             return DateTime.parse(registeredStr);
         }
+    }
+
+    String getUrnNbnStatus(String urnNbn) {
+        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get("/urnnbn/" + Utils.urlEncodeReservedChars(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        return xmlPath.getString("status");
     }
 
     String getReservedUrnNbn(String registrarCode, Credentials credentials) {
@@ -423,6 +422,19 @@ public abstract class ApiV3Tests {
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrar");
         return xmlPath.getLong("@id");
+    }
+
+    String getRandomFreeUrnNbnOrNull(String registrarCode) {
+        int trials = 10;
+        while (trials-- > 1) {
+            String urnNbn = "urn:nbn:" + CountryCode.getCode() + ":" + registrarCode + "-" + Utils.generateRandomDocumentCode();
+            System.err.println(urnNbn);
+            String state = getUrnNbnStatus(urnNbn);
+            if ("FREE".equals(state)) {
+                return urnNbn;
+            }
+        }
+        return null;
     }
 
     List<Predecessor> asList(Predecessor... array) {

@@ -71,24 +71,28 @@ public class GetUrnnbn extends ApiV3Tests {
 
     @Test
     public void urnnbnValidFree() {
-        String urnNbn = URN_NBN_FREE;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
-        assertEquals("FREE", xmlPath.getString("status"));
-        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
-        assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
-        assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
-        assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
-        assertTrue("".equals(xmlPath.getString("digitalDocumentId")));
-        assertTrue("".equals(xmlPath.getString("registered")));
-        assertTrue("".equals(xmlPath.getString("reserved")));
-        assertTrue("".equals(xmlPath.getString("deactivated")));
+        String urnNbn = getRandomFreeUrnNbnOrNull(REGISTRAR);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+            assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+            assertEquals("FREE", xmlPath.getString("status"));
+            String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+            assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+            assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+            assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+            assertTrue("".equals(xmlPath.getString("digitalDocumentId")));
+            assertTrue("".equals(xmlPath.getString("registered")));
+            assertTrue("".equals(xmlPath.getString("reserved")));
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+        }
     }
 
     @Test

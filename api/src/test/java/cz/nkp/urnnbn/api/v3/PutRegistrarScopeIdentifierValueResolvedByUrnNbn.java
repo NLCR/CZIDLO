@@ -166,17 +166,21 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
 
     @Test
     public void urnNbnValidFree() {
-        String urnNbn = URN_NBN_FREE;
-        LOGGER.info(urnNbn);
-        RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type", "value");
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .body(idToBeCreatedOrUpdated.value).expect()//
-                .statusCode(404)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().put(buildUrl(urnNbn, idToBeCreatedOrUpdated.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        assertEquals("UNKNOWN_URN", xmlPath.getString("code"));
+        String urnNbn = getRandomFreeUrnNbnOrNull(REGISTRAR);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type", "value");
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(idToBeCreatedOrUpdated.value).expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(urnNbn, idToBeCreatedOrUpdated.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            assertEquals("UNKNOWN_URN", xmlPath.getString("code"));
+        }
     }
 
     @Test

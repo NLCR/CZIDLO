@@ -50,7 +50,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check state hasn't changed
-        assertEquals("ACTIVE", getUrnNbnState(urnNbn));
+        assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
         // check state hasn't changed
-        assertEquals("ACTIVE", getUrnNbnState(urnNbn));
+        assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
     }
 
     @Test
@@ -97,23 +97,27 @@ public class DeleteUrnnbn extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INCORRECT_URN_NBN_STATE");
         // check state hasn't changed
-        assertEquals("DEACTIVATED", getUrnNbnState(urnNbn));
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
     }
 
     @Test
     public void errorStateFree() {
-        String urnNbn = URN_NBN_FREE;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .expect()//
-                .statusCode(403)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "INCORRECT_URN_NBN_STATE");
-        // check state hasn't changed
-        assertEquals("FREE", getUrnNbnState(urnNbn));
+        String urnNbn = getRandomFreeUrnNbnOrNull(REGISTRAR);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .expect()//
+                    .statusCode(403)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().delete(buildUrl(urnNbn)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.get("code"), "INCORRECT_URN_NBN_STATE");
+            // check state hasn't changed
+            assertEquals("FREE", getUrnNbnStatus(urnNbn));
+        }
     }
 
     @Test
@@ -129,7 +133,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "INCORRECT_URN_NBN_STATE");
         // check state hasn't changed
-        assertEquals("RESERVED", getUrnNbnState(urnNbn));
+        assertEquals("RESERVED", getUrnNbnStatus(urnNbn));
     }
 
     @Test
@@ -154,7 +158,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
         DateTime.parse(xmlPath.getString("deactivated"));
         // check state has changed
-        assertEquals("DEACTIVATED", getUrnNbnState(urnNbn));
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
     }
 
     @Test
@@ -180,7 +184,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
         DateTime.parse(xmlPath.getString("deactivated"));
         // check state has changed
-        assertEquals("DEACTIVATED", getUrnNbnState(urnNbn));
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
 
         // upper case
         urnNbn = registerUrnNbn(REGISTRAR, USER);
@@ -204,7 +208,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
         assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
         DateTime.parse(xmlPath.getString("deactivated"));
         // check state has changed
-        assertEquals("DEACTIVATED", getUrnNbnState(urnNbn));
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
     }
 
 }

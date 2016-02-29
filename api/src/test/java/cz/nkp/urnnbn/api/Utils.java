@@ -253,4 +253,14 @@ public class Utils {
         return builder.toString();
     }
 
+    public static String generateRandomDocumentCode() {
+        String values = "0123456789abcdefghijklmnopqrstuvwxyz";
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            char c = values.charAt(rand.nextInt(values.length()));
+            builder.append(c);
+        }
+        return builder.toString();
+    }
+
 }

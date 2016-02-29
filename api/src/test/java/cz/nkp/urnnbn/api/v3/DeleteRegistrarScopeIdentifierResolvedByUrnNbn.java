@@ -116,16 +116,20 @@ public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
 
     @Test
     public void urnnbnValidFree() {
-        String urnNbn = URN_NBN_FREE;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .expect()//
-                .statusCode(404)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn, "type")).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        assertEquals("UNKNOWN_URN", xmlPath.getString("code"));
+        String urnNbn = getRandomFreeUrnNbnOrNull(REGISTRAR);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().delete(buildUrl(urnNbn, "type")).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            assertEquals("UNKNOWN_URN", xmlPath.getString("code"));
+        }
     }
 
     @Test

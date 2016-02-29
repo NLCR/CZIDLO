@@ -144,25 +144,6 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void invalidDataInvalidPredecessorRegistrarCode() {
-        String registrarCode = REGISTRAR;
-        Predecessor predecessor = new Predecessor("urn:nbn:cz:" + REGISTRAR2 + "-000000", "blabla");
-        LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
-        String bodyXml = ddRegistrationBuilder.withPredecessors(asList(predecessor));
-        // LOGGER.info(bodyXml);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .given().request().body(bodyXml).contentType(ContentType.XML)//
-                .expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().post(buildUrl(registrarCode)).andReturn().asString();
-        // LOGGER.info(responseXml);
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
-    }
-
-    @Test
     public void invalidDataUrnNbnActiveAlready() {
         String registrarCode = REGISTRAR;
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
@@ -201,6 +182,8 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
     }
 
+    // REGISTRATION MODES
+
     @Test
     public void invalidDataRsIdCollision() {
         String registrarCode = REGISTRAR;
@@ -225,7 +208,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void registrarModeByResolverForbidden() {
+    public void registrationModeByResolverForbidden() {
         String registrarCode = REGISTRAR_NO_MODES_ENABLED;
         String bodyXml = ddRegistrationBuilder.minimal();
         // LOGGER.info(bodyXml);
@@ -242,25 +225,91 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void registrarModeByRegistrarForbidden() {
-        String registrarCode = REGISTRAR_NO_MODES_ENABLED;
-        String urnNbn = String.format("urn:nbn:%s:%s-123456", CountryCode.getCode(), registrarCode);
-        String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+    public void registrationModeByResolverAllowed() {
+        String registrarCode = REGISTRAR;
+        String bodyXml = ddRegistrationBuilder.minimal();
         // LOGGER.info(bodyXml);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
         // LOGGER.info(responseXml);
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "UNAUTHORIZED_REGISTRATION_MODE");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("ACTIVE", xmlPath.getString("status"));
+        String urnNbn = xmlPath.getString("value");
+        String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+        assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+        assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+        assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+        assertTrue("".equals(xmlPath.getString("deactivated")));
+        // check urn:nbn state
+        assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
     }
 
     @Test
-    public void registrarModeByReservationForbidden() {
+    public void registrationModeByRegistrarForbidden() {
+        String registrarCode = REGISTRAR_NO_MODES_ENABLED;
+        String urnNbn = getRandomFreeUrnNbnOrNull(registrarCode);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "UNAUTHORIZED_REGISTRATION_MODE");
+            // check urn:nbn state
+            assertEquals("FREE", getUrnNbnStatus(urnNbn));
+        }
+    }
+
+    @Test
+    public void registrationModeByRegistrarAllowed() {
+        String registrarCode = REGISTRAR;
+        String urnNbn = getRandomFreeUrnNbnOrNull(registrarCode);
+        if (urnNbn == null) {
+            LOGGER.warning("no free urn:nbn found, ignoring");
+        } else {
+            String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(201)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+            assertEquals("ACTIVE", xmlPath.getString("status"));
+            String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+            assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+            assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+            assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+            assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+            assertTrue("".equals(xmlPath.getString("reserved")));
+            assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            // check urn:nbn state
+            assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
+        }
+    }
+
+    @Test
+    public void registrationModeByReservationForbidden() {
         String registrarCode = REGISTRAR_NO_MODES_ENABLED;
         String urnNbn = getReservedUrnNbn(registrarCode, USER);
         if (urnNbn == null) {
@@ -284,7 +333,63 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void invalidDataPredecessorReserved() {
+    public void registrationModeByReservationAllowed() {
+        String registrarCode = REGISTRAR;
+        String urnNbn = getReservedUrnNbn(registrarCode, USER);
+        if (urnNbn == null) {
+            LOGGER.warning("no reserved urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(201)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+            assertEquals("ACTIVE", xmlPath.getString("status"));
+            String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+            assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+            assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+            assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+            assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+            DateTime reserved = DateTime.parse(xmlPath.getString("reserved"));
+            DateTime registered = DateTime.parse(xmlPath.getString("registered"));
+            assertTrue(registered.isBeforeNow());
+            assertTrue(reserved.isBefore(registered));
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            // check urn:nbn state
+            assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
+        }
+    }
+
+    // PREDECESSORS
+
+    @Test
+    public void predecessorInvalidRegistrarCode() {
+        String registrarCode = REGISTRAR;
+        Predecessor predecessor = new Predecessor("urn:nbn:cz:" + REGISTRAR2 + "-000000", "blabla");
+        LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
+        String bodyXml = ddRegistrationBuilder.withPredecessors(asList(predecessor));
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
+    }
+
+    @Test
+    public void predecessorIncorrectStateReserved() {
         String registrarCode = REGISTRAR;
         Predecessor predecessor = new Predecessor(getReservedUrnNbn(registrarCode, USER), "reserved");
         LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
@@ -303,7 +408,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void invalidDataPredecessorFree() {
+    public void predecessorIncorrectStateFree() {
         String registrarCode = REGISTRAR;
         Predecessor predecessor = new Predecessor(String.format("urn:nbn:%s:%s-010101", CountryCode.getCode(), registrarCode), "free");
         LOGGER.info(String.format("registrar code: %s, predecessor: %s", registrarCode, predecessor.urnNbn));
@@ -321,8 +426,14 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         Assert.assertEquals(xmlPath.getString("code"), "INCORRECT_PREDECESSOR_FREE");
     }
 
+    // TODO: predecessor ok
+    // TODO: korektni predecessors, successors a potom to zkontrolovat, jestli jsou vztahy opravdu uloženy,
+    // jestli se predecessor deaktivuje apod.
+
+    // ARCHIVER
+
     @Test
-    public void invalidDataInvalidArchiverDoesNotExist() {
+    public void archiverInvalidDoesNotExist() {
         String registrarCode = REGISTRAR;
         long archiverId = -1;
         LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
@@ -341,12 +452,12 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void okArchiver() {
+    public void archiverOk() {
         String registrarCode = REGISTRAR;
         long archiverId = ARCHIVER;
         LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
         String bodyXml = ddRegistrationBuilder.withArchiver(archiverId);
-        LOGGER.info(bodyXml);
+        // LOGGER.info(bodyXml);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -354,7 +465,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
-        LOGGER.info(responseXml);
+        // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
         assertEquals("ACTIVE", xmlPath.getString("status"));
         String urnNbn = xmlPath.getString("value");
@@ -369,12 +480,12 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void okArchiverIsRegistrar() {
+    public void archiverOkIsRegistrar() {
         String registrarCode = REGISTRAR;
         long archiverId = getRegistrarId(REGISTRAR2);
         LOGGER.info(registrarCode + ", archiver_id: " + archiverId);
         String bodyXml = ddRegistrationBuilder.withArchiver(archiverId);
-        LOGGER.info(bodyXml);
+        // LOGGER.info(bodyXml);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -382,7 +493,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
-        LOGGER.info(responseXml);
+        // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
         assertEquals("ACTIVE", xmlPath.getString("status"));
         String urnNbn = xmlPath.getString("value");
@@ -395,10 +506,5 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         assertTrue("".equals(xmlPath.getString("deactivated")));
         // TODO: check archiver id (by resolvation)
     }
-
-    // TODO: jeste prirarzovani pres ruzne mody, pokud prava jsou
-    // TODO: korektni predecessors, successors a potom to zkontrolovat, jestli jsou vztahy opravdu uloženy,
-    // jestli se predecessor deaktivuje apod.
-    // TODO: otestovat korektniho archivatora
 
 }
