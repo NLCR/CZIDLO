@@ -31,6 +31,8 @@ import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.xml.DigDocRegistrationXmlBuilder;
+import cz.nkp.urnnbn.api.v3.xml.DigInstImportXmlBuilder;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -141,7 +143,8 @@ public abstract class ApiV3Tests {
     String responseXsdString;
     String importDiXsdString;
     String registerDdXsdString;
-    XmlBuilder xmlBuilder = new XmlBuilder(NAMESPACE);
+    DigInstImportXmlBuilder diImportBuilder = new DigInstImportXmlBuilder(NAMESPACE);
+    DigDocRegistrationXmlBuilder ddRegistrationBuilder = new DigDocRegistrationXmlBuilder(NAMESPACE);
 
     void init() {
         CountryCode.initialize(LANG_CODE);
@@ -348,7 +351,7 @@ public abstract class ApiV3Tests {
     }
 
     String registerUrnNbn(String registrarCode, Credentials credentials) {
-        String bodyXml = xmlBuilder.buildRegisterDigDocDataMinimal();
+        String bodyXml = ddRegistrationBuilder.minimal();
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -362,7 +365,7 @@ public abstract class ApiV3Tests {
     }
 
     void registerUrnNbn(String registrarCode, String urnNbn, Credentials credentials) {
-        String bodyXml = xmlBuilder.buildRegisterDigDocDataMinimal(urnNbn);
+        String bodyXml = ddRegistrationBuilder.minimal(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -375,7 +378,7 @@ public abstract class ApiV3Tests {
     }
 
     long insertDigitalInstance(String urnNbn, long digLibId, String diUrl, Credentials credentials) {
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, diUrl);
+        String bodyXml = diImportBuilder.minimal(digLibId, diUrl);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(importDiXsdString))//
                 .expect()//

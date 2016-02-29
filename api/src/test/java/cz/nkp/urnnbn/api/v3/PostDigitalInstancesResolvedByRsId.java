@@ -43,11 +43,50 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
     }
 
     @Test
+    public void notAuthenticated() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        RsId idForResolvation = new RsId(registrarCode, "type", "value");
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
+        // TODO:APIv4: return xml as well
+        // String responseXml =
+        with().config(namespaceAwareXmlConfig())//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(401)//
+                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                // .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(idForResolvation)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        // Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHENTICATED");
+    }
+
+    @Test
+    public void notAuthorized() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        LOGGER.info(rsId.toString());
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(rsId)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
     public void registrarCodeInvalid() {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_INVALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -64,7 +103,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         String registrarCode = Utils.getRandomItem(REGISTRAR_CODES_VALID);
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -79,7 +118,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
         LOGGER.info(idForResolvation.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -96,7 +135,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void rsIdTypeValidValueInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -113,7 +152,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
     public void unknowDigitalDocument() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(idForResolvation.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -131,7 +170,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         RsId rsId = new RsId(REGISTRAR, "type", "value");
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(rsId.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataNoNamespace(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.noNamespace(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -152,7 +191,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(rsId.toString());
         // TODO: possibly test other invalid urls
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, "ftp://something.com/somewhere");
+        String bodyXml = diImportBuilder.minimal(digLibId, "ftp://something.com/somewhere");
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -173,7 +212,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         RsId rsId = new RsId(REGISTRAR, "type", "value");
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(rsId.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(UNKNOWN_DIG_LIB_DI, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(UNKNOWN_DIG_LIB_DI, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -194,7 +233,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(rsId.toString());
         insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -214,7 +253,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         RsId rsId = new RsId(REGISTRAR, "type", "value");
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(rsId.toString());
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -238,7 +277,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         LOGGER.info(rsId.toString());
         long diDeactivated = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
         deactivateDigitalInstance(diDeactivated, USER);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -264,7 +303,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
             insertRegistrarScopeId(urnNbn, rsId, USER);
             LOGGER.info(rsId.toString());
             insertDigitalInstance(urnNbn, registrar2_digLibId, WORKING_URL, USER);
-            String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+            String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                     .given().request().body(bodyXml).contentType(ContentType.XML)//
                     .expect()//

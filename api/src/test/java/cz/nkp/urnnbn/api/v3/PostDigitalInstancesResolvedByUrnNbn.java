@@ -44,7 +44,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void notAuthenticated() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         // TODO:APIv4: return xml as well
         // String responseXml =
         with().config(namespaceAwareXmlConfig())//
@@ -62,13 +62,13 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void notAuthorized() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
-                // .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
@@ -78,7 +78,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void urnnbnInvalid() {
         String urnNbn = Utils.getRandomItem(URNNBN_INVALID);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -94,7 +94,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void urnnbnValidFree() {
         String urnNbn = URN_NBN_FREE;
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -110,7 +110,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void urnnbnValidReserved() {
         String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -126,7 +126,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void invalidBodyIncorrectNamespace() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataNoNamespace(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.noNamespace(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -143,7 +143,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
         // TODO: possibly test other invalid urls
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, "ftp://something.com/somewhere");
+        String bodyXml = diImportBuilder.minimal(digLibId, "ftp://something.com/somewhere");
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -160,7 +160,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void unknowDigitalLibrary() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(UNKNOWN_DIG_LIB_DI, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(UNKNOWN_DIG_LIB_DI, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -177,7 +177,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
         insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -193,7 +193,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void diNotPresent() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -213,7 +213,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         LOGGER.info(urnNbn);
         long diDeactivated = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
         deactivateDigitalInstance(diDeactivated, USER);
-        String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+        String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
@@ -235,7 +235,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
             String urnNbn = registerUrnNbn(REGISTRAR, USER);
             insertDigitalInstance(urnNbn, registrar2_digLibId, WORKING_URL, USER);
             LOGGER.info(urnNbn);
-            String bodyXml = xmlBuilder.buildImportDiDataMinimal(digLibId, WORKING_URL);
+            String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                     .given().request().body(bodyXml).contentType(ContentType.XML)//
                     .expect()//
