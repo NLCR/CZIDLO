@@ -31,6 +31,9 @@ import com.jayway.restassured.path.xml.XmlPath;
 import com.jayway.restassured.path.xml.config.XmlPathConfig;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.pojo.Credentials;
+import cz.nkp.urnnbn.api.v3.pojo.RsId;
+import cz.nkp.urnnbn.api.v3.pojo.UrnNbnReservations;
 import cz.nkp.urnnbn.api.v3.xml.DigDocRegistrationXmlBuilder;
 import cz.nkp.urnnbn.api.v3.xml.DigInstImportXmlBuilder;
 import cz.nkp.urnnbn.core.CountryCode;
@@ -38,48 +41,6 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public abstract class ApiV3Tests {
-
-    static class RsId {
-        final String registrarCode;
-        final String type;
-        final String value;
-
-        public RsId(String registrarCode, String type, String value) {
-            this.registrarCode = registrarCode;
-            this.type = type;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "RsId [registrarCode=" + registrarCode + ", type=" + type + ", value=" + value + "]";
-        }
-
-    }
-
-    static class Credentials {
-        final String login;
-        final String password;
-
-        public Credentials(String login, String password) {
-            this.login = login;
-            this.password = password;
-        }
-    }
-
-    static class UrnNbnReservations {
-        final int maxReservationSize;
-        final int defaultReservationSize;
-        final int totalReserved;
-        final List<String> reservedOffered;
-
-        public UrnNbnReservations(int maxReservationSize, int defaultReservationSize, int totalReserved, List<String> reservedOffered) {
-            this.maxReservationSize = maxReservationSize;
-            this.defaultReservationSize = defaultReservationSize;
-            this.totalReserved = totalReserved;
-            this.reservedOffered = reservedOffered;
-        }
-    }
 
     private final String LANG_CODE = "cz";
     private final String BASE_URI = "http://localhost";

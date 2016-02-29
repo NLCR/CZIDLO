@@ -20,6 +20,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
+import cz.nkp.urnnbn.api.v3.pojo.RsId;
 
 /**
  * Tests for DELETE
