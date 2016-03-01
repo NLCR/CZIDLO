@@ -16,7 +16,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.xml.namespace.NamespaceContext;
@@ -35,6 +37,7 @@ import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.api.v3.pojo.Credentials;
 import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
 import cz.nkp.urnnbn.api.v3.pojo.RsId;
+import cz.nkp.urnnbn.api.v3.pojo.Successor;
 import cz.nkp.urnnbn.api.v3.pojo.UrnNbnReservations;
 import cz.nkp.urnnbn.api.v3.xml.DigDocRegistrationXmlBuilder;
 import cz.nkp.urnnbn.api.v3.xml.DigInstImportXmlBuilder;
@@ -465,6 +468,76 @@ public abstract class ApiV3Tests {
         List<RsId> result = new ArrayList<RsId>(array.length);
         for (int i = 0; i < array.length; i++) {
             result.add(array[i]);
+        }
+        return result;
+    }
+
+    void assertHasPredecessors(String urnNbn, List<Predecessor> predecessors) {
+        String responseXml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get("/urnnbn/" + urnNbn).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals(predecessors.size(), xmlPath.getInt("predecessor.size()"));
+        for (int i = 0; i < predecessors.size(); i++) {
+            String foundUrn = xmlPath.getString(String.format("predecessor[%d].@value", i));
+            String foundNote = xmlPath.getString(String.format("predecessor[%d].@note", i));
+            Predecessor predecessor = null;
+            for (Predecessor p : predecessors) {
+                if (foundUrn.equals(p.urnNbn)) {
+                    predecessor = p;
+                    break;
+                }
+            }
+            // TODO: no need after upgrading rest-assured (current version 2.8)
+            // see see https://github.com/jayway/rest-assured/issues/650
+            if ("[]".equals(foundNote)) {
+                assertTrue(predecessor.note == null);
+            } else {
+                assertEquals(predecessor.note, foundNote);
+            }
+        }
+    }
+
+    void assertHasSuccessors(String urnNbn, List<Successor> successors) {
+        String responseXml = with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get("/urnnbn/" + urnNbn).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        System.err.println(responseXml);
+        assertEquals(successors.size(), xmlPath.getInt("successor.size()"));
+        for (int i = 0; i < successors.size(); i++) {
+            String foundUrn = xmlPath.getString(String.format("successor[%d].@value", i));
+            String foundNote = xmlPath.getString(String.format("successor[%d].@note", i));
+            Successor successor = null;
+            for (Successor s : successors) {
+                if (foundUrn.equals(s.urnNbn)) {
+                    successor = s;
+                    break;
+                }
+            }
+            // TODO: no need this after upgrading rest-assured (current version 2.8)
+            // see see https://github.com/jayway/rest-assured/issues/650
+            if ("[]".equals(foundNote)) {
+                assertTrue(successor.note == null);
+            } else {
+                assertEquals(successor.note, foundNote);
+            }
+        }
+    }
+
+    Map<String, List<Successor>> toSuccessors(String urnNbn, List<Predecessor> predecessors) {
+        Map<String, List<Successor>> result = new HashMap<>();
+        for (Predecessor p : predecessors) {
+            Successor s = new Successor(urnNbn, p.note);
+            List<Successor> list = new ArrayList<>();
+            list.add(s);
+            result.put(p.urnNbn, list);
         }
         return result;
     }
