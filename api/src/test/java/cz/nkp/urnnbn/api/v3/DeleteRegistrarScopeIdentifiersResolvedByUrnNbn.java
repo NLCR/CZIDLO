@@ -115,7 +115,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
             } else if (id.type.equals(id2.type)) {
                 assertThat(id.value, equalTo(id2.value));
             } else {// unexpected id type
-                System.err.println("type: " + id.type + ", value: " + id.value);
                 Assert.fail();
             }
         }

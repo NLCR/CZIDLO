@@ -130,13 +130,13 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         assertEquals(2, xmlPath.getInt("@count"));
         assertEquals(2, xmlPath.getInt("digitalInstance.size()"));
         // deactivated
-        assertEquals(false, xmlPath.getBoolean(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated)));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated))));
         DateTime deactivatedCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diDeactivated)));
         DateTime deactivatedDeactivated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated",
                 diDeactivated)));
         assertTrue(deactivatedCreated.isBefore(deactivatedDeactivated));
         // active
-        assertEquals(true, xmlPath.getBoolean(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive)));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive))));
         DateTime activeCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diActive)));
         assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
         assertTrue(activeCreated.isAfter(deactivatedDeactivated));
@@ -163,18 +163,17 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         assertEquals(2, xmlPath.getInt("@count"));
         assertEquals(2, xmlPath.getInt("digitalInstance.size()"));
         // deactivated
-        assertEquals(false, xmlPath.getBoolean(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated)));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated))));
         DateTime deactivatedCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diDeactivated)));
         DateTime deactivatedDeactivated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated",
                 diDeactivated)));
         assertTrue(deactivatedCreated.isBefore(deactivatedDeactivated));
         // active
-        assertEquals(true, xmlPath.getBoolean(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive)));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive))));
         DateTime activeCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diActive)));
         assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
         assertTrue(activeCreated.isAfter(deactivatedDeactivated));
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
-
 }

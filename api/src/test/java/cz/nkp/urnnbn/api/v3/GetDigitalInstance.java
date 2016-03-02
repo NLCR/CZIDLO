@@ -5,7 +5,6 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
@@ -98,7 +97,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
-            assertTrue(xmlPath.getBoolean("@active"));
+            assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
             assertFalse("".equals(xmlPath.getString("url")));
             assertFalse("".equals(xmlPath.getString("created")));
         } else {
@@ -121,7 +120,7 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .when().get(buildUrl(id)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
-            assertFalse(xmlPath.getBoolean("@active"));
+            assertEquals(false, Utils.booleanValue(xmlPath.getString("@active")));
             assertFalse("".equals(xmlPath.getString("url")));
             assertFalse("".equals(xmlPath.getString("created")));
         } else {

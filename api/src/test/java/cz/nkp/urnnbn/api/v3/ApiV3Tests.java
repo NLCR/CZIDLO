@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -289,7 +288,7 @@ public abstract class ApiV3Tests {
             DigitalInstance result = new DigitalInstance();
             result.setId(diId);
             result.setUrl(xmlPath.getString("digitalInstance.url"));
-            result.setActive(xmlPath.getBoolean("digitalInstance.@active"));
+            result.setActive(Utils.booleanValue(xmlPath.getString("digitalInstance.@active")));
             result.setCreated(DateTime.parse(xmlPath.getString("digitalInstance.created")));
             if (!result.isActive()) {
                 result.setDeactivated(DateTime.parse(xmlPath.getString("digitalInstance.deactivated")));
@@ -354,7 +353,7 @@ public abstract class ApiV3Tests {
                 .when().post(HTTPS_API_URL + buildResolvationPath(urnNbn) + "/digitalInstances")//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-        assertTrue(xmlPath.getBoolean("@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
         return xmlPath.getLong("@id");
     }
 
@@ -367,7 +366,7 @@ public abstract class ApiV3Tests {
                 .when().delete(HTTPS_API_URL + "/digitalInstances/id/" + id)//
                 .andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-        assertFalse(xmlPath.getBoolean("@active"));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString("@active")));
     }
 
     void deactivateUrnNbn(String urnNbn, Credentials credentials) {
@@ -431,7 +430,6 @@ public abstract class ApiV3Tests {
         int trials = 10;
         while (trials-- >= 1) {
             String urnNbn = "urn:nbn:" + CountryCode.getCode() + ":" + registrarCode + "-" + Utils.generateRandomDocumentCode();
-            System.err.println(urnNbn);
             String state = getUrnNbnStatus(urnNbn);
             if ("FREE".equals(state)) {
                 return urnNbn;
@@ -509,7 +507,6 @@ public abstract class ApiV3Tests {
                 .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().get("/urnnbn/" + urnNbn).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        System.err.println(responseXml);
         assertEquals(successors.size(), xmlPath.getInt("successor.size()"));
         for (int i = 0; i < successors.size(); i++) {
             String foundUrn = xmlPath.getString(String.format("successor[%d].@value", i));

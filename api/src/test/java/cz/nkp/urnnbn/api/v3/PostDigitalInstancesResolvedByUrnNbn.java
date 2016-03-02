@@ -206,7 +206,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                 .when().post(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-        assertTrue(xmlPath.getBoolean("@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
         assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
         assertEquals(digLibId.longValue(), xmlPath.getLong("digitalLibraryId"));
     }
@@ -226,7 +226,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                 .when().post(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-        assertTrue(xmlPath.getBoolean("@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
         assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
         assertEquals(digLibId.longValue(), xmlPath.getLong("digitalLibraryId"));
     }
@@ -248,7 +248,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                     .when().post(buildUrl(urnNbn)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-            assertTrue(xmlPath.getBoolean("@active"));
+            assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
             assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
             assertEquals(digLibId.longValue(), xmlPath.getLong("digitalLibraryId"));
         }

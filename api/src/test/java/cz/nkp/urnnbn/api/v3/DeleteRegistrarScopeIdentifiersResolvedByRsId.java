@@ -147,7 +147,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
             } else if (id.type.equals(idOther.type)) {
                 assertThat(id.value, equalTo(idOther.value));
             } else {// unexpected id type
-                System.err.println("type: " + id.type + ", value: " + id.value);
                 Assert.fail();
             }
         }

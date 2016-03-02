@@ -293,7 +293,7 @@ public class Utils {
      *             if string doesn't contain "false" or "true" (ignoring case)
      * @return Non-null Boolean value.
      */
-    public static Boolean booleanValue(String string) {
+    public static boolean booleanValue(String string) {
         if (string == null || string.isEmpty()) {
             throw new IllegalArgumentException(String.format("\"%s\" is not valid boolean value", string));
         } else if ("true".equals(string.toLowerCase())) {

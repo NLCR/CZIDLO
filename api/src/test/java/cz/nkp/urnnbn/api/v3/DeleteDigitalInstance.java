@@ -196,7 +196,7 @@ public class DeleteDigitalInstance extends ApiV3Tests {
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             Assert.assertEquals((Long) xmlPath.getLong("@id"), id);
-            Assert.assertEquals(xmlPath.getBoolean("active"), false);
+            Assert.assertEquals(Utils.booleanValue(xmlPath.getString("@active")), false);
             // check that deactivated
             DigitalInstance idAfter = getDigitalInstanceOrNull(id);
             assertFalse(idAfter.isActive());

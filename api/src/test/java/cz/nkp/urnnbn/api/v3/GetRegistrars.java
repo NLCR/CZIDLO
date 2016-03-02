@@ -14,6 +14,8 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
+import cz.nkp.urnnbn.api.Utils;
+
 /**
  * Tests for GET /api/v3/registrars
  *
@@ -50,9 +52,12 @@ public class GetRegistrars extends ApiV3Tests {
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
                 // all modes defined and have boolean values
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESOLVER")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_REGISTRAR")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESERVATION")));
             }
         } else {
             LOGGER.warning("no registrars found");
@@ -76,9 +81,12 @@ public class GetRegistrars extends ApiV3Tests {
                 // digital libraries present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 // all modes defined and have boolean values
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESOLVER")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_REGISTRAR")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESERVATION")));
             }
         } else {
             LOGGER.warning("no registrars found");
@@ -102,9 +110,12 @@ public class GetRegistrars extends ApiV3Tests {
                 // digital libraries not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 // all modes defined and have boolean values
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESOLVER")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_REGISTRAR")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESERVATION")));
             }
         } else {
             LOGGER.warning("no registrars found");
@@ -128,9 +139,12 @@ public class GetRegistrars extends ApiV3Tests {
                 // catalogs present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
                 // all modes defined and have boolean values
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESOLVER")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_REGISTRAR")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESERVATION")));
             }
         } else {
             LOGGER.warning("no registrars found");
@@ -154,9 +168,12 @@ public class GetRegistrars extends ApiV3Tests {
                 // catalogs not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
                 // all modes defined and have boolean values
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESOLVER"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_REGISTRAR"));
-                xmlPath.getBoolean(String.format("registrar[%d].registrationModes.mode.findAll{it.name =='%s'}", i, "BY_RESERVATION"));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESOLVER")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_REGISTRAR")));
+                Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+                        "BY_RESERVATION")));
             }
         } else {
             LOGGER.warning("no registrars found");

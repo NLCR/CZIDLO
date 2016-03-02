@@ -7,9 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -394,7 +392,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertTrue(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn active id deactivated
         id = urnNbnActiveDiDeactivated;
@@ -407,7 +405,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn active id none
         id = urnNbnActiveDiNone;
@@ -432,7 +430,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertTrue(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn deactivated di deactivated
         id = urnNbnDeactivatedDiDeactivated;
@@ -445,7 +443,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn deactivated di none
         id = urnNbnDeactivatedDiNone;
@@ -530,7 +528,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn active id none
         id = urnNbnActiveDiNone;
@@ -555,7 +553,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertTrue(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn deactivated di deactivated
         id = urnNbnDeactivatedDiDeactivated;
@@ -568,7 +566,7 @@ public class ResolveByRsId extends ApiV3Tests {
                 .when().get(buildUrl(id)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertFalse(xmlPath.getBoolean("digitalInstances.digitalInstance[0].@active"));
+        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
 
         // urn deactivated di none
         id = urnNbnDeactivatedDiNone;
