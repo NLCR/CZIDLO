@@ -279,4 +279,29 @@ public class Utils {
         return true;
     }
 
+    /**
+     * <pre>
+     * Becauce Boolean.valueOf(String) always returns Boolean which is never null. And no exception is thrown either, if string contains non-boole
+     * value. This method either returns non-null Boolean or throws IllegalArgumentException
+     * Boolean.valueOf("123") == false 
+     * Boolean.valueOf("wtf") == false
+     * @see https://github.com/jayway/rest-assured/issues/653
+     * </pre>
+     * 
+     * @param string
+     * @throws IllegalArgumentException
+     *             if string doesn't contain "false" or "true" (ignoring case)
+     * @return Non-null Boolean value.
+     */
+    public static Boolean booleanValue(String string) {
+        if (string == null || string.isEmpty()) {
+            throw new IllegalArgumentException(String.format("\"%s\" is not valid boolean value", string));
+        } else if ("true".equals(string.toLowerCase())) {
+            return Boolean.TRUE;
+        } else if ("false".equals(string.toLowerCase())) {
+            return Boolean.FALSE;
+        } else {
+            throw new IllegalArgumentException(String.format("\"%s\" is not valid boolean value", string));
+        }
+    }
 }
