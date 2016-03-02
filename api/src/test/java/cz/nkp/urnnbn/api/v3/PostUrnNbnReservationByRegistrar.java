@@ -239,4 +239,34 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved + nowReserved));
     }
 
+    /**
+     * Even though registration mode BY_RESERVATION is disabled, registrar can stil reserve urn:nbns.
+     * 
+     * @see https://github.com/NLCR/CZIDLO/issues/141
+     */
+    @Test
+    public void registrationModeByReservationDisabled() {
+        String registrarCode = REGISTRAR_NO_MODES_ENABLED;
+        LOGGER.info("registrar code: " + registrarCode);
+        // check total reservations before
+        UrnNbnReservations reservationsBefore = getUrnNbnReservations(registrarCode);
+        // reserve
+        int size = 3;
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password).queryParam("size", size)//
+                .expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbnReservation/c:urnNbn", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservation");
+        int nowReserved = xmlPath.getInt("urnNbn.size()");
+        for (int i = 0; i < nowReserved; i++) {
+            UrnNbn.valueOf(xmlPath.getString("urnNbn[" + i + "]"));
+        }
+        Assert.assertEquals(nowReserved, size);
+        // check that no more reservations
+        UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
+        assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved + nowReserved));
+    }
+
 }
