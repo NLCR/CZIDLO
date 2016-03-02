@@ -16,18 +16,20 @@
  */
 package cz.nkp.urnnbn.xml.unmarshallers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import nu.xom.Element;
+import nu.xom.Nodes;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import nu.xom.Element;
-import nu.xom.Nodes;
 
 /**
  *
@@ -127,7 +129,7 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                     String value = idEl.getValue();
                     RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
                     id.setType(RegistrarScopeIdType.valueOf(type));
-                    id.setValue(value);
+                    id.setValue(RegistrarScopeIdValue.valueOf(value));
                     result.add(id);
                 }
                 return result;

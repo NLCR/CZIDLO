@@ -4,14 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.operations;
 
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 
 /**
  * 

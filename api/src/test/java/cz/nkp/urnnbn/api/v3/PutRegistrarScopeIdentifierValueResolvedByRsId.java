@@ -4,6 +4,7 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
@@ -207,7 +208,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 
-    // TODO: test on all invalid types
     @Test
     public void rsIdTypeInvalid() {
         RsId idForResolvation = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value");
@@ -220,24 +220,24 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext)) //
                 .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
+        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
 
     @Test
     public void rsIdTypeValidValueInvalid() {
-        RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_TYPES_INVALID));
+        RsId idForResolvation = new RsId(REGISTRAR, "type", Utils.getRandomItem(RSID_VALUES_INVALID));
         LOGGER.info(idForResolvation.toString());
         RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type2", "value2");
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreatedOrUpdated.value).expect()//
-                .statusCode(404)//
+                .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: https://github.com/NLCR/CZIDLO/issues/132 (INVALID_REGISTRAR_SCOPE_ID_VALUE, code 400)
-        assertThat(xmlPath.getString("code"), equalTo("UNKNOWN_DIGITAL_DOCUMENT"));
+        // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
     }
 
     @Test
@@ -256,45 +256,175 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
     }
 
     @Test
-    public void typeInvalid() {
+    public void typeInvalidCreateAll() {
         RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
-        RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, Utils.getRandomItem(RSID_TYPES_INVALID), "value2");
-        LOGGER.info(String.format("resolved by: %s, id to be created or updated: %s", idForResolvation.toString(), idToBeCreatedOrUpdated.type));
-        // insert id for resolvation
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
-        // try and set rsId by type, resolved by another rsId
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .body(idToBeCreatedOrUpdated.value).expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // TODO:APIv4: rename this error code
-        assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
+        for (String type : RSID_TYPES_INVALID) {
+            RsId idToBeInserted = new RsId(REGISTRAR, type, "value");
+            LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeInserted.type));
+            // try and set rsId by type, resolved by another rsId
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(idToBeInserted.value).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(idForResolvation, idToBeInserted.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
+            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
+        }
     }
 
     @Test
-    public void valueInvalid() {
-        // TODO: split into create and update methods
-        // TODO: enable after this is fixed: https://github.com/NLCR/CZIDLO/issues/135
-        // RsId idForResolvation = new RsId(REGISTRAR, "type", "value");
-        // // insert id for resolvation
-        // insertRegistrarScopeId(URNNBN, idForResolvation, USER_WITH_RIGHTS);
-        // for (String value : RSID_VALUES_INVALID) {
-        // RsId idToBeCreatedOrUpdated = new RsId(REGISTRAR, "type", value);
-        // LOGGER.info(String.format("resolved by: %s, id to be created or updated: %s", idForResolvation.toString(), idToBeCreatedOrUpdated.type));
-        // // try and set rsId by type, resolved by another rsId
-        // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_WITH_RIGHTS.login, USER_WITH_RIGHTS.password)//
-        // .body(idToBeCreatedOrUpdated.value).expect()//
-        // .statusCode(400)//
-        // // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // // .body(hasXPath("/c:response/c:error", nsContext))//
-        // .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // // TODO:APIv4: define new error INVALID_REGISTRAR_SCOPE_ID_VALUE
-        // assertThat(xmlPath.getString("error.code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
-        // }
+    public void typeValidCreateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        for (String type : RSID_TYPES_VALID) {
+            typeValidValueValidCreate(idForResolvation, urnNbn, type, "value");
+        }
+    }
+
+    @Test
+    public void typeValidUpdateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        for (String type : RSID_TYPES_VALID) {
+            String valueOld = "oldValue";
+            String valueNew = "newValue";
+            typeValidValueValidUpdate(idForResolvation, new RsId(REGISTRAR, type, valueOld), valueNew);
+        }
+    }
+
+    @Test
+    public void valueInvalidCreateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        for (String value : RSID_VALUES_INVALID) {
+            RsId idToBeCreated = new RsId(REGISTRAR, "create", value);
+            LOGGER.info(String.format("resolved by: %s, id to be created: %s", idForResolvation.toString(), idToBeCreated.type));
+            // try and set rsId by type, resolved by another rsId
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(idToBeCreated.value).expect()//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
+            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+            // check that only id for resolvation was created
+            List<RsId> rsIds = getRsIds(urnNbn);
+            assertEquals(1, rsIds.size());
+        }
+    }
+
+    @Test
+    public void valueInvalidUpdateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "resolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        RsId idtoBeUpdated = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, idtoBeUpdated, USER);
+        for (String value : RSID_VALUES_INVALID) {
+            LOGGER.info(String.format("resolved by: %s, id to be updated: %s, new value: %s", idForResolvation.toString(), idtoBeUpdated.toString(),
+                    value));
+            // try and set rsId by type, resolved by another rsId
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(value).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(idForResolvation, idtoBeUpdated.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
+            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+            // check that not updated
+            List<RsId> rsIds = getRsIds(urnNbn);
+            assertEquals(2, rsIds.size());
+            for (RsId id : rsIds) {
+                if (id.type.equals(idtoBeUpdated.type)) {
+                    assertEquals(id.value, idtoBeUpdated.value);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void valueValidCreateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        int counter = 0;
+        for (String value : RSID_VALUES_VALID) {
+            String type = "type" + ++counter;
+            typeValidValueValidCreate(idForResolvation, urnNbn, type, value);
+        }
+    }
+
+    @Test
+    public void valueValidUpdateAll() {
+        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        int counter = 0;
+        for (String valueNew : RSID_VALUES_VALID) {
+            String type = "type" + ++counter;
+            String valueOld = "oldVAlue";
+            typeValidValueValidUpdate(idForResolvation, new RsId(REGISTRAR, type, valueOld), valueNew);
+        }
+    }
+
+    private void typeValidValueValidCreate(RsId idForResolvation, String urnNbn, String type, String value) {
+        RsId idToBeCreated = new RsId(REGISTRAR, type, value);
+        LOGGER.info(String.format("resolved by: %s, created: %s", idForResolvation.toString(), idToBeCreated.toString()));
+        // insert idToBeCreated
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .body(idToBeCreated.value).expect()//
+                .statusCode(201)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        assertThat(xmlPath.getInt("id.size()"), equalTo(1));
+        assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeCreated.type));
+        assertThat(xmlPath.getString("id[0]"), equalTo(idToBeCreated.value));
+        assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("[]"));
+        // check that id present
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
+        boolean found = false;
+        for (RsId id : rsIdsFetched) {
+            if (id.type.equals(idToBeCreated.type)) {
+                assertThat(id.value, equalTo(idToBeCreated.value));
+                found = true;
+            }
+        }
+        Assert.assertTrue(found, "inserted id not found in getAllRsIds response");
+    }
+
+    private void typeValidValueValidUpdate(RsId idForResolvation, RsId idToBeUpdated, String valueNew) {
+        LOGGER.info(String.format("resolved by: %s, created: %s, new value: %s", idForResolvation.toString(), idToBeUpdated.toString(), valueNew));
+        // insert idToBeUpdated
+        insertRegistrarScopeId(urnNbn, idToBeUpdated, USER);
+        // update idToBeUpdated
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .body(valueNew).expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().put(buildUrl(idForResolvation, idToBeUpdated.type)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        assertThat(xmlPath.getInt("id.size()"), equalTo(1));
+        assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeUpdated.type));
+        assertThat(xmlPath.getString("id[0].@previousValue"), equalTo(idToBeUpdated.value));
+        assertThat(xmlPath.getString("id[0]"), equalTo(valueNew));
+        // check that id present and with new value
+        List<RsId> rsIdsFetched = getRsIds(urnNbn);
+        boolean found = false;
+        for (RsId id : rsIdsFetched) {
+            if (id.type.equals(idToBeUpdated.type)) {
+                assertThat(id.value, equalTo(valueNew));
+                found = true;
+            }
+        }
+        Assert.assertTrue(found, "inserted id not found in getAllRsIds response");
     }
 
     @Test
@@ -406,93 +536,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeUpdated.type));
         assertThat(xmlPath.getString("id[0]"), equalTo(idToBeUpdated.value));
         assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("oldValue"));
-    }
-
-    @Test
-    public void createValidAll() {
-        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
-        // insert idForResolvation
-        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
-        for (String type : RSID_TYPES_VALID) {
-            createValid(urnNbn, idForResolvation, new RsId(REGISTRAR, type, "value"));
-        }
-        int counter = 0;
-        for (String value : RSID_VALUES_VALID) {
-            createValid(urnNbn, idForResolvation, new RsId(REGISTRAR, "type" + ++counter, value));
-        }
-    }
-
-    private void createValid(String urnNbn, RsId idForResolvation, RsId idToBeCreated) {
-        LOGGER.info(String.format("resolved by: %s, id to be inserted: %s", idForResolvation.toString(), idToBeCreated.toString()));
-        // insert idToBeInserted
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .body(idToBeCreated.value).expect()//
-                .statusCode(201)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        assertThat(xmlPath.getInt("id.size()"), equalTo(1));
-        assertThat(xmlPath.getString("id[0].@type"), equalTo(idToBeCreated.type));
-        assertThat(xmlPath.getString("id[0]"), equalTo(idToBeCreated.value));
-        assertThat(xmlPath.getString("id[0].@previousValue"), equalTo("[]"));
-        // check that id present
-        List<RsId> rsIdsFetched = getRsIds(urnNbn);
-        boolean found = false;
-        for (RsId id : rsIdsFetched) {
-            if (id.type.equals(idToBeCreated.type)) {
-                assertThat(id.value, equalTo(idToBeCreated.value));
-                found = true;
-            }
-        }
-        Assert.assertTrue(found, "inserted id not found in getAllRsIds response");
-    }
-
-    @Test
-    public void updateValidAll() {
-        RsId idForResolvation = new RsId(REGISTRAR, "typeForResolvation", "value");
-        // insert idForResolvation
-        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
-        for (String type : RSID_TYPES_VALID) {
-            String valueOld = "oldValue";
-            String valueNew = "newValue";
-            updateValid(idForResolvation, type, valueOld, valueNew);
-        }
-        int counter = 0;
-        for (String valueNew : RSID_VALUES_VALID) {
-            String type = "type" + ++counter;
-            String valueOld = "oldVAlue";
-            updateValid(idForResolvation, type, valueOld, valueNew);
-        }
-    }
-
-    private void updateValid(RsId idForResolvation, String type, String valueOld, String valueNew) {
-        LOGGER.info(String.format("resolved by: %s, id to be updated: type: %s, old value: %s, new value: %s", idForResolvation.toString(), type,
-                valueOld, valueNew));
-        // insert idToBeInserted
-        insertRegistrarScopeId(urnNbn, new RsId(REGISTRAR, type, valueOld), USER);
-        // update
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .body(valueNew).expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(buildUrl(idForResolvation, type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        assertThat(xmlPath.getInt("id.size()"), equalTo(1));
-        assertThat(xmlPath.getString("id[0].@type"), equalTo(type));
-        assertThat(xmlPath.getString("id[0]"), equalTo(valueNew));
-        assertThat(xmlPath.getString("id[0].@previousValue"), equalTo(valueOld));
-        // check that id present and with new value
-        List<RsId> rsIdsFetched = getRsIds(urnNbn);
-        boolean found = false;
-        for (RsId id : rsIdsFetched) {
-            if (id.type.equals(type)) {
-                assertThat(id.value, equalTo(valueNew));
-                found = true;
-            }
-        }
-        Assert.assertTrue(found, "inserted id not found in getAllRsIds response");
     }
 
 }

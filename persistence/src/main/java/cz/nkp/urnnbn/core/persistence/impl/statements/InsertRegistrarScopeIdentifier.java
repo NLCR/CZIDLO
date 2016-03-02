@@ -4,14 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  *
@@ -42,7 +43,7 @@ public class InsertRegistrarScopeIdentifier implements StatementWrapper {
             st.setTimestamp(3, now);
             st.setTimestamp(4, now);
             st.setString(5, identifier.getType().toString());
-            st.setString(6, identifier.getValue());
+            st.setString(6, identifier.getValue().toString());
         } catch (SQLException e) {
             // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);

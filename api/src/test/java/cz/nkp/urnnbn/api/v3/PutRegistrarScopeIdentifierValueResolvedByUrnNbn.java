@@ -211,57 +211,55 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(urnNbn, idToBeCreatedOrUpdated.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-            // TODO:APIv4: rename this error code
+            // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
             assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
         }
     }
 
     @Test
-    public void valueInvalidCreate() {
-        // TODO: enable after this is fixed: https://github.com/NLCR/CZIDLO/issues/135
-        // for (String value : RSID_VALUES_INVALID) {
-        // RsId idToBeCreated = new RsId(REGISTRAR, "type", value);
-        // LOGGER.info(String.format("resolved by: %s, id to be created: %s", urnNbn, idToBeCreated.type));
-        // // try and set rsId by type, resolved by another rsId
-        // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-        // .body(idToBeCreated.value).expect()//
-        // .expect()//
-        // .statusCode(400)//
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // .body(hasXPath("/c:response/c:error", nsContext))//
-        // .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // // TODO:APIv4: define new error INVALID_REGISTRAR_SCOPE_ID_VALUE
-        // assertThat(xmlPath.getString("error.code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
-        // }
-        // // check that nothing was created
-        // List<RsId> rsIds = getRsIds(urnNbn);
-        // assertEquals(0, rsIds.size());
+    public void valueInvalidCreateAll() {
+        for (String value : RSID_VALUES_INVALID) {
+            RsId idToBeCreated = new RsId(REGISTRAR, "type", value);
+            LOGGER.info(String.format("resolved by: %s, id to be created: %s", urnNbn, idToBeCreated.type));
+            // try and set rsId by type, resolved by another rsId
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(idToBeCreated.value).expect()//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
+            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+        }
+        // check that nothing was created
+        List<RsId> rsIds = getRsIds(urnNbn);
+        assertEquals(0, rsIds.size());
     }
 
     @Test
-    public void valueInvalidUpdate() {
-        // TODO: enable after this is fixed: https://github.com/NLCR/CZIDLO/issues/135
-        // RsId idtoBeUpdated = new RsId(REGISTRAR, "type", "value");
-        // insertRegistrarScopeId(urnNbn, idtoBeUpdated, USER);
-        // for (String value : RSID_VALUES_INVALID) {
-        // LOGGER.info(String.format("resolved by: %s, id to be updated: %s, new value: %s", urnNbn, idtoBeUpdated.toString(), value));
-        // // try and set rsId by type, resolved by another rsId
-        // String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-        // .body(value).expect()//
-        // .statusCode(400)//
-        // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-        // .body(hasXPath("/c:response/c:error", nsContext))//
-        // .when().put(buildUrl(urnNbn, idtoBeUpdated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // // TODO:APIv4: define new error INVALID_REGISTRAR_SCOPE_ID_VALUE
-        // assertThat(xmlPath.getString("error.code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
-        // // check that not updated
-        // List<RsId> rsIds = getRsIds(urnNbn);
-        // assertEquals(1, rsIds.size());
-        // assertEquals(idtoBeUpdated.type, rsIds.get(0).type);
-        // assertEquals(idtoBeUpdated.value, rsIds.get(0).value);
-        // }
+    public void valueInvalidUpdateAll() {
+        RsId idtoBeUpdated = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, idtoBeUpdated, USER);
+        for (String value : RSID_VALUES_INVALID) {
+            LOGGER.info(String.format("resolved by: %s, id to be updated: %s, new value: %s", urnNbn, idtoBeUpdated.toString(), value));
+            // try and set rsId by type, resolved by another rsId
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .body(value).expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().put(buildUrl(urnNbn, idtoBeUpdated.type)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
+            assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+            // check that not updated
+            List<RsId> rsIds = getRsIds(urnNbn);
+            assertEquals(1, rsIds.size());
+            assertEquals(idtoBeUpdated.type, rsIds.get(0).type);
+            assertEquals(idtoBeUpdated.value, rsIds.get(0).value);
+        }
     }
 
     @Test
@@ -370,10 +368,14 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
     }
 
     @Test
-    public void validCreateAll() {
+    public void typeValidCreateAll() {
         for (String type : RSID_TYPES_VALID) {
             typeValidValueValidCreate(urnNbn, type, "value");
         }
+    }
+
+    @Test
+    public void valueValidCreateAll() {
         int counter = 0;
         for (String value : RSID_VALUES_VALID) {
             typeValidValueValidCreate(urnNbn, "type" + ++counter, value);
@@ -381,18 +383,20 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
     }
 
     private void typeValidValueValidCreate(String urnNbn, String type, String value) {
-        RsId idToBeCreate = new RsId(REGISTRAR, type, value);
-        LOGGER.info(urnNbn + ", type: " + idToBeCreate.type);
+        RsId idToBeCreated = new RsId(REGISTRAR, type, value);
+        LOGGER.info(urnNbn + ", type: " + idToBeCreated.type);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .body(idToBeCreate.value).expect()//
+                .body(idToBeCreated.value).expect()//
                 .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:id", nsContext))//
-                .when().put(buildUrl(urnNbn, idToBeCreate.type)).andReturn().asString();
+                .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.id");
         assertEquals(type, xmlPath.getString("@type"));
         assertEquals("[]", xmlPath.getString("@previousValue"));
         assertEquals(value, xmlPath.getString(""));
+        // cleanup
+        deleteRegistrarScopeId(urnNbn, idToBeCreated, USER);
     }
 
     @Test
@@ -402,6 +406,10 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
             insertRegistrarScopeId(urnNbn, new RsId(REGISTRAR, type, valueOld), USER);
             typeValidValueValidUpdate(urnNbn, type, valueOld, "valueNew");
         }
+    }
+
+    @Test
+    public void valueValidUpdateAll() {
         int counter = 0;
         for (String valueNew : RSID_VALUES_VALID) {
             String valueOld = "valueOld";

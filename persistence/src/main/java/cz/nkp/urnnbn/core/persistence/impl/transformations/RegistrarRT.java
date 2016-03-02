@@ -4,12 +4,13 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * 

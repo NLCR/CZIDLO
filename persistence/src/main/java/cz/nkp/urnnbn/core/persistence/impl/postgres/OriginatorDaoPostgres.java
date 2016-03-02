@@ -4,19 +4,20 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.OriginatorDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertOriginator;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateOriginator;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.OriginatorRT;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

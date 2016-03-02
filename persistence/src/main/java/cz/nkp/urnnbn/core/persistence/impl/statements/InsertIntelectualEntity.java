@@ -4,14 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
 import java.sql.Timestamp;
+
+import cz.nkp.urnnbn.core.dto.IntelectualEntity;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
+import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
 /**
  *

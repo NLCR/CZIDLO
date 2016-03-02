@@ -4,6 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -35,14 +44,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRegistrar;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.RegistrarRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

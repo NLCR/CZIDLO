@@ -33,11 +33,11 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
     private final List<UrnNbn> urnNbnList;
     private final Integer reservedSize;
 
-    public UrnNbnReservationsBuilder(int maxReservationSize, int defaultReservationSize, List<UrnNbn> urnNbnList) {
+    public UrnNbnReservationsBuilder(int maxReservationSize, int defaultReservationSize, int totalReserved, List<UrnNbn> urnNbnList) {
         this.maxReservationSize = maxReservationSize;
         this.defaultReservationSize = defaultReservationSize;
         this.urnNbnList = urnNbnList;
-        reservedSize = urnNbnList.size();
+        this.reservedSize = totalReserved;
     }
 
     public UrnNbnReservationsBuilder(int maxReservationSize, int defaultReservationSize, Integer soFarReserved) {

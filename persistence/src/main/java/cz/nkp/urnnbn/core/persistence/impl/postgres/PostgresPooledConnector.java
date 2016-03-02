@@ -16,13 +16,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 
 /**
  *

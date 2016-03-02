@@ -4,6 +4,10 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Content;
 import cz.nkp.urnnbn.core.persistence.ContentDAO;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -19,9 +23,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertContent;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectContentByLangAndName;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateContent;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ContentRT;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

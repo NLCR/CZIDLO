@@ -92,7 +92,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(urnNbn, type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // TODO:APIv4: rename this error code
+        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
         assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 

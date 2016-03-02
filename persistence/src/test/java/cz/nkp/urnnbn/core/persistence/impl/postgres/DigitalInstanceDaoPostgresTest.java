@@ -4,12 +4,13 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.List;
+
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.List;
 
 /**
  * 

@@ -22,11 +22,14 @@ import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
+
 import java.util.logging.Level;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -93,21 +96,22 @@ public class RegistrarScopeIdentifiersResource extends AbstractRegistrarScopeIde
     @PUT
     @Path("/{idType}")
     @Produces("application/xml")
-    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String value) {
+    public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String idValueStr) {
         try {
             try {
                 checkServerNotReadOnly();
                 String login = req.getRemoteUser();
                 RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
+                RegistrarScopeIdValue idValue = Parser.parseRegistrarScopeIdValue(idValueStr);
                 RegistrarScopeIdentifier oldId = presentIdentifierOrNull(idType);
                 if (oldId == null) { // insert new value
-                    RegistrarScopeIdentifier newId = addNewIdentifier(idType, value, login);
+                    RegistrarScopeIdentifier newId = addNewIdentifier(idType, idValue, login);
                     String apiV3Response = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
                     XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getSetOrUpdateRegScopeIdResponseV3ToV2Transformer();
                     String transformedResponse = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);
                     return Response.created(null).entity(transformedResponse).build();
                 } else { // update value
-                    RegistrarScopeIdentifier newId = updateIdentifier(login, idType, value);
+                    RegistrarScopeIdentifier newId = updateIdentifier(login, idType, idValue);
                     String apiV3Response = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                     XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getSetOrUpdateRegScopeIdResponseV3ToV2Transformer();
                     String transformedResponse = transformApiV3ToApiV2ResponseAsString(transformer, apiV3Response);

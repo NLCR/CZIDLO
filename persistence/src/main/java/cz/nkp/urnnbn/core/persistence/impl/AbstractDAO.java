@@ -4,6 +4,14 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.IdentifiableByLongAttribute;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -34,13 +42,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.SelectIdentifiersAll;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateRecordTimestamp;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ResultsetTransformer;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

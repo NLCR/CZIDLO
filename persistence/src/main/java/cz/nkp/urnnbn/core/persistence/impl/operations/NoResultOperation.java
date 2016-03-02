@@ -4,10 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.operations;
 
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
 /**
  *

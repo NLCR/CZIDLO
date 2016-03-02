@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.builders;
 
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import nu.xom.Attribute;
 import nu.xom.Element;
@@ -27,14 +28,14 @@ import nu.xom.Element;
 public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
 
     private final RegistrarScopeIdentifier id;
-    private final String previousValue;
+    private final RegistrarScopeIdValue previousValue;
 
     public RegistrarScopeIdentifierBuilder(RegistrarScopeIdentifier id) {
         this.id = id;
         this.previousValue = null;
     }
 
-    public RegistrarScopeIdentifierBuilder(RegistrarScopeIdentifier id, String previousValue) {
+    public RegistrarScopeIdentifierBuilder(RegistrarScopeIdentifier id, RegistrarScopeIdValue previousValue) {
         this.id = id;
         this.previousValue = previousValue;
     }
@@ -44,9 +45,9 @@ public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
         Element root = new Element("id", CZIDLO_NS);
         root.addAttribute(new Attribute("type", id.getType().toString()));
         if (previousValue != null) {
-            root.addAttribute(new Attribute("previousValue", previousValue));
+            root.addAttribute(new Attribute("previousValue", previousValue.toString()));
         }
-        root.appendChild(id.getValue());
+        root.appendChild(id.getValue().toString());
         return root;
     }
 }

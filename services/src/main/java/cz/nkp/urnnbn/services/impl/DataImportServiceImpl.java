@@ -107,7 +107,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(id.getDigDocId());
             } catch (AlreadyPresentException e) {
-                throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+                throw new IdentifierConflictException(id.getType().toString(), id.getValue().toString());
             }
             logRegistrarScopeIdCreated(login, id, registrar, urn);
         } catch (DatabaseException ex) {

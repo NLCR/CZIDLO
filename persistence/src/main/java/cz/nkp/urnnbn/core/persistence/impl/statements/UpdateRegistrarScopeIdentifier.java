@@ -4,13 +4,14 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /**
  *
@@ -35,7 +36,7 @@ public class UpdateRegistrarScopeIdentifier implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
             st.setTimestamp(1, DateTimeUtils.nowTs());
-            st.setString(2, id.getValue());
+            st.setString(2, id.getValue().toString());
             st.setLong(3, id.getRegistrarId());
             st.setLong(4, id.getDigDocId());
             st.setString(5, id.getType().toString());

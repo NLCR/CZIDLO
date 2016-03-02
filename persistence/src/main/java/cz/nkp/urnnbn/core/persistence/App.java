@@ -1,10 +1,22 @@
 package cz.nkp.urnnbn.core.persistence;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
@@ -24,15 +36,6 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.joda.time.DateTime;
 
 public class App {
 
@@ -216,14 +219,14 @@ public class App {
             // DR id type=OAI
             RegistrarScopeIdentifier babickaMzkDrOaiId = new RegistrarScopeIdentifier();
             babickaMzkDrOaiId.setType(RegistrarScopeIdType.valueOf("K4_pid"));
-            babickaMzkDrOaiId.setValue("uuid:123");
+            babickaMzkDrOaiId.setValue(RegistrarScopeIdValue.valueOf("uuid:123"));
             babickaMzkDrOaiId.setRegistrarId(mzk.getId());
             babickaMzkDrOaiId.setDigDocId(babickaMzk.getId());
             factory.digDocIdDao().insertRegistrarScopeId(babickaMzkDrOaiId);
             // DR id type=OTHER
             RegistrarScopeIdentifier babickaMzkDrOtherId = new RegistrarScopeIdentifier();
             babickaMzkDrOtherId.setType(RegistrarScopeIdType.valueOf("signatura"));
-            babickaMzkDrOtherId.setValue("3-1275.138");
+            babickaMzkDrOtherId.setValue(RegistrarScopeIdValue.valueOf("3-1275.138"));
             babickaMzkDrOtherId.setRegistrarId(mzk.getId());
             babickaMzkDrOtherId.setDigDocId(babickaMzk.getId());
             factory.digDocIdDao().insertRegistrarScopeId(babickaMzkDrOtherId);

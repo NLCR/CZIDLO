@@ -4,8 +4,9 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.EntityType;
 import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.core.EntityType;
 
 /**
  *

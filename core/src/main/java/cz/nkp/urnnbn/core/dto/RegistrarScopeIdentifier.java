@@ -4,8 +4,10 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 
 /**
  *
@@ -18,7 +20,7 @@ public class RegistrarScopeIdentifier {
     private DateTime created;
     private DateTime modified;
     private RegistrarScopeIdType type;
-    private String value;
+    private RegistrarScopeIdValue value;
 
     public RegistrarScopeIdentifier() {
     }
@@ -54,11 +56,11 @@ public class RegistrarScopeIdentifier {
         this.type = type;
     }
 
-    public String getValue() {
+    public RegistrarScopeIdValue getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(RegistrarScopeIdValue value) {
         this.value = value;
     }
 

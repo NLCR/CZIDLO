@@ -4,6 +4,10 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
@@ -21,9 +25,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateUrnNbnGenerator;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnGeneratorRT;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
