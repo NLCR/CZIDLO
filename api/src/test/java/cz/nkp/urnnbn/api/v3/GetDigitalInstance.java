@@ -5,9 +5,11 @@ import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -99,7 +101,7 @@ public class GetDigitalInstance extends ApiV3Tests {
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
             assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
             assertFalse("".equals(xmlPath.getString("url")));
-            assertFalse("".equals(xmlPath.getString("created")));
+            assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
         } else {
             LOGGER.warning("id not defined, ignoring");
         }
@@ -122,7 +124,7 @@ public class GetDigitalInstance extends ApiV3Tests {
             assertEquals(id.longValue(), xmlPath.getLong("@id"));
             assertEquals(false, Utils.booleanValue(xmlPath.getString("@active")));
             assertFalse("".equals(xmlPath.getString("url")));
-            assertFalse("".equals(xmlPath.getString("created")));
+            assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
         } else {
             LOGGER.warning("id not defined, ignoring");
         }

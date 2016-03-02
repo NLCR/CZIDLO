@@ -4,10 +4,11 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -47,7 +48,7 @@ public class GetRegistrars extends ApiV3Tests {
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries and catalogs not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
@@ -77,7 +78,7 @@ public class GetRegistrars extends ApiV3Tests {
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 // all modes defined and have boolean values
@@ -106,7 +107,7 @@ public class GetRegistrars extends ApiV3Tests {
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
                 // all modes defined and have boolean values
@@ -135,7 +136,7 @@ public class GetRegistrars extends ApiV3Tests {
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // catalogs present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
                 // all modes defined and have boolean values
@@ -164,7 +165,7 @@ public class GetRegistrars extends ApiV3Tests {
         if (size > 0) {
             for (int i = 0; i < size; i++) {
                 // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                assertFalse("".equals(xmlPath.getString(String.format("registrar[%d].created", i))));
+                assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // catalogs not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
                 // all modes defined and have boolean values
