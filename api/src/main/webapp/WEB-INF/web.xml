@@ -22,8 +22,7 @@
     <!-- SPRING START -->
     <listener>
         <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
+            org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -41,8 +40,16 @@
     </filter-mapping>
     <!-- SPRING END -->
     <servlet>
-        <servlet-name>indexjsp</servlet-name>
+        <servlet-name>index</servlet-name>
         <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>index_v2</servlet-name>
+        <jsp-file>/index_v2.jsp</jsp-file>
+    </servlet>
+    <servlet>
+        <servlet-name>index_v3</servlet-name>
+        <jsp-file>/index_v3.jsp</jsp-file>
     </servlet>
 
     <servlet>
@@ -101,9 +108,20 @@
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>indexjsp</servlet-name>
+        <servlet-name>index</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>index_v2</servlet-name>
+        <url-pattern>/v2</url-pattern>
+        <url-pattern>/v2/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>index_v3</servlet-name>
+        <url-pattern>/v3</url-pattern>
+        <url-pattern>/v3/</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>ServletAdaptor-v2</servlet-name>
         <url-pattern>/v2/*</url-pattern>

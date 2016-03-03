@@ -64,9 +64,8 @@ public abstract class ApiV3Tests {
     private final String NAMESPACE = "http://resolver.nkp.cz/v3/";
     private final String NAMESPACE_PREFIX = "c";
     private final String RESPONSE_XSD = "http://localhost:8080/api/v3/response.xsd";
-    // TODO: change after fixed https://github.com/NLCR/CZIDLO/issues/138
-    private final String IMPORT_DI_XSD = "https://raw.githubusercontent.com/NLCR/CZIDLO/master/api/src/main/resources/v3/importDigitalInstance.xsd";
-    private final String REGISTER_DI_XSD = "https://raw.githubusercontent.com/NLCR/CZIDLO/master/api/src/main/resources/v3/registerDigitalDocument.xsd";
+    private final String IMPORT_DI_XSD = "http://localhost:8080/api/v3/digInstImport.xsd";
+    private final String REGISTER_DI_XSD = "http://localhost:8080/api/v3/digDocRegistration.xsd";
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 

@@ -5,27 +5,18 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>CZIDLO: API</title>
+        <title>API</title>
     </head>
     <body>
-        <h1>CZIDLO: aplikační rozhraní</h1>
+        <h1>API pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>
         Aplikační programové rozhraní je popsáno na
-        <a href="https://github.com/NLCR/CZIDLO/wiki/API">wiki projektu na Githubu</a>. 
-        Tato verze CZIDLO (<%=cz.nkp.urnnbn.core.Czidlo.VERSION%>) podporuje API ve verzi 3 
-        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V3)</a>
-        a kvůli zpětně kompatibilitě i verzi 2
-        <a href="https://docs.google.com/spreadsheet/pub?key=0Ag5aMq4LaXVcdGxGVUFITE1lVUk5blkyZ2ZIc3RuT1E&gid=2">(specifikace API V2)</a>
-        .
+        <a href="https://github.com/NLCR/CZIDLO/wiki/API">wiki projektu na Githubu</a>.<br> 
+        <p><a href="/api/v3/">API verze 3</a></p>
+        <p><a href="/api/v2/">API verze 2 (deprecated)</a></p>
+        <p>
         Pro ruční vyhledávání, vkládání či editaci záznamů a další administraci použijte <a href ="/web">webové rozhraní</a>.
-        <br>
         Pro hromadné sklízení záznamů použijte <a href ="/oaiPmhProvider/provider">OAI-PMH</a>,
         ke kterému je dostupné jednoduché <a href ="/oaiPmhProvider/web">webové rozhraní</a>.
-        <br>
-        Ukázky operací dostupných přes API:
-        <br>
-        <a href ="/api/v3/registrars">Seznam registrátorů</a>
-        <br>
-        <a href ="/api/v3/digitalInstances">Digitální instance</a>
-        <br>
+        </p>
     </body>
 </html>
