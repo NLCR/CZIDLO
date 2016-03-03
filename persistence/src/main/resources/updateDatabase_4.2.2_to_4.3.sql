@@ -347,7 +347,7 @@ BEGIN
          INSERT INTO search_rsi_preprocessed (SELECT * FROM search_rsi_view WHERE regId=$1 AND ddId=$2 AND type=$3);
       END IF;
    ELSE
-      DELETE FROM search_rsi_preprocessd WHERE regId=$1 AND ddId=$2 AND type=$3;
+      DELETE FROM search_rsi_preprocessed WHERE regId=$1 AND ddId=$2 AND type=$3;
    END IF;
 END;
 $BODY$

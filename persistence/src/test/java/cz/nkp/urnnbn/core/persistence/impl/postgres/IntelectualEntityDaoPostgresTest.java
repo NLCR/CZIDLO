@@ -4,6 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -11,9 +16,6 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import org.joda.time.DateTime;
 
 /**
  *

@@ -4,7 +4,12 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -13,8 +18,6 @@ import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
 import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.List;
-import org.joda.time.DateTime;
 
 /**
  *
@@ -43,14 +46,14 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // insert identifier
         RegistrarScopeIdentifier id = builder.registrarScopeIdentifierWithoutIds();
         id.setType(RegistrarScopeIdType.valueOf("K4_pid"));
-        id.setValue("uuid:123");
+        id.setValue(RegistrarScopeIdValue.valueOf("uuid:123"));
         id.setDigDocId(doc.getId());
         id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(id);
         // insert another typ of identifiere
         RegistrarScopeIdentifier id2 = builder.registrarScopeIdentifierWithoutIds();
         id2.setType(RegistrarScopeIdType.valueOf("signatura"));
-        id2.setValue("nevim,neco");
+        id2.setValue(RegistrarScopeIdValue.valueOf("nevim,neco"));
         id2.setDigDocId(doc.getId());
         id2.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(id2);
@@ -151,14 +154,14 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // insert id OAI
         RegistrarScopeIdentifier oaiId = new RegistrarScopeIdentifier();
         oaiId.setType(RegistrarScopeIdType.valueOf("oai"));
-        oaiId.setValue("123");
+        oaiId.setValue(RegistrarScopeIdValue.valueOf("123"));
         oaiId.setDigDocId(doc.getId());
         oaiId.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(oaiId);
         // insert id K4_pid
         RegistrarScopeIdentifier k4pid = new RegistrarScopeIdentifier();
         k4pid.setType(RegistrarScopeIdType.valueOf("K4_pid"));
-        k4pid.setValue("uuid:3456");
+        k4pid.setValue(RegistrarScopeIdValue.valueOf("uuid:3456"));
         k4pid.setDigDocId(doc.getId());
         k4pid.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(k4pid);
@@ -196,7 +199,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         DateTime between = new DateTime();
         Thread.sleep(1000);
         // second
-        second.setValue("newValue");
+        second.setValue(RegistrarScopeIdValue.valueOf("newValue"));
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
@@ -251,7 +254,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         DateTime between = new DateTime();
         Thread.sleep(1000);
         // second
-        second.setValue("newValue");
+        second.setValue(RegistrarScopeIdValue.valueOf("newValue"));
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
@@ -283,7 +286,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         DateTime between = new DateTime();
         Thread.sleep(1000);
         // second
-        second.setValue("newValue");
+        second.setValue(RegistrarScopeIdValue.valueOf("newValue"));
         registrarScopeIdDao.updateRegistrarScopeIdValue(second);
         second = registrarScopeIdDao.getRegistrarScopeId(digDocId, second.getType());
         Thread.sleep(1000);
@@ -318,13 +321,13 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // insert identifier
         RegistrarScopeIdentifier inserted = builder.registrarScopeIdentifierWithoutIds();
         inserted.setType(RegistrarScopeIdType.valueOf("my_Id"));
-        inserted.setValue("oldValue");
+        inserted.setValue(RegistrarScopeIdValue.valueOf("oldValue"));
         inserted.setDigDocId(doc.getId());
         inserted.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(inserted);
         // update
         RegistrarScopeIdentifier updated = new RegistrarScopeIdentifier(inserted);
-        updated.setValue("newValue");
+        updated.setValue(RegistrarScopeIdValue.valueOf("newValue"));
         registrarScopeIdDao.updateRegistrarScopeIdValue(updated);
         // fetch
         RegistrarScopeIdentifier fetched = registrarScopeIdDao.getRegistrarScopeIds(doc.getId()).get(0);
@@ -342,7 +345,7 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // identifier of first digDoc
         RegistrarScopeIdentifier digDoc1Id = builder.registrarScopeIdentifierWithoutIds();
         digDoc1Id.setType(idType);
-        digDoc1Id.setValue(collidingValue);
+        digDoc1Id.setValue(RegistrarScopeIdValue.valueOf(collidingValue));
         digDoc1Id.setDigDocId(doc1.getId());
         digDoc1Id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(digDoc1Id);
@@ -353,13 +356,13 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // insert identifier to digDoc2
         RegistrarScopeIdentifier digDoc2Id = builder.registrarScopeIdentifierWithoutIds();
         digDoc2Id.setType(idType);
-        digDoc2Id.setValue("okValue");
+        digDoc2Id.setValue(RegistrarScopeIdValue.valueOf("okValue"));
         digDoc2Id.setDigDocId(doc2.getId());
         digDoc2Id.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(digDoc2Id);
         // update
         RegistrarScopeIdentifier updated = new RegistrarScopeIdentifier(digDoc2Id);
-        updated.setValue(collidingValue);
+        updated.setValue(RegistrarScopeIdValue.valueOf(collidingValue));
         try {
             registrarScopeIdDao.updateRegistrarScopeIdValue(updated);
             fail();
@@ -460,14 +463,14 @@ public class RegistrarScopeIdentifierDaoPostgresTest extends AbstractDaoTest {
         // insert id OAI
         RegistrarScopeIdentifier idOai = new RegistrarScopeIdentifier();
         idOai.setType(RegistrarScopeIdType.valueOf("oai"));
-        idOai.setValue("123");
+        idOai.setValue(RegistrarScopeIdValue.valueOf("123"));
         idOai.setDigDocId(doc.getId());
         idOai.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(idOai);
         // insert id OTHER
         RegistrarScopeIdentifier idOther = new RegistrarScopeIdentifier();
         idOther.setType(RegistrarScopeIdType.valueOf("K4_pid"));
-        idOther.setValue("uuid:3456");
+        idOther.setValue(RegistrarScopeIdValue.valueOf("uuid:3456"));
         idOther.setDigDocId(doc.getId());
         idOther.setRegistrarId(registrar.getId());
         registrarScopeIdDao.insertRegistrarScopeId(idOther);

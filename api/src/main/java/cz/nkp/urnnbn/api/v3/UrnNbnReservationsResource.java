@@ -4,15 +4,8 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.AbstractUrnNbnReservationsResource;
-import cz.nkp.urnnbn.api.Parser;
-import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import java.util.logging.Level;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,6 +14,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import cz.nkp.urnnbn.api.AbstractUrnNbnReservationsResource;
+import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 /**
  *
@@ -53,10 +55,8 @@ public class UrnNbnReservationsResource extends AbstractUrnNbnReservationsResour
     public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
         try {
             checkServerNotReadOnly();
-            int size = ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
-            if (sizeStr != null) {
-                size = Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
-            }
+            int size = sizeStr != null ? Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()
+                    .getUrnReservationMaxSize()) : ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
             String login = req.getRemoteUser();
             String responseXml = super.reserveUrnNbns(login, size);
             return Response.created(null).entity(responseXml).build();

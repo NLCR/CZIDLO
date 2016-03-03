@@ -24,10 +24,10 @@ public class RegistrarScopeIdType {
             throw new NullPointerException();
         }
         if (stringValue.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("must be longer than " + MAX_LENGTH);
+            throw new IllegalArgumentException("must be at least " + MIN_LENGTH + " characters long, actual length: " + stringValue.length());
         }
         if (stringValue.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("must be shorter than " + MAX_LENGTH);
+            throw new IllegalArgumentException("must be at most " + MAX_LENGTH + " characters long, actual length: " + stringValue.length());
         }
         for (int i = 0; i < stringValue.length(); i++) {
             char character = stringValue.charAt(i);

@@ -211,7 +211,7 @@ public abstract class AbstractDigitalDocumentResource extends Resource {
      */
     private URI webModuleUri(HttpServletRequest request) {
         try {
-            return new URI("http://" + request.getServerName() + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
+            return new URI("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
         } catch (URISyntaxException ex) {
             throw new InternalException(ex);
         }

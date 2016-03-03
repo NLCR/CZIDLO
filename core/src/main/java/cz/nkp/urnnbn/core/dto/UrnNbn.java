@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.CountryCode;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 
 /**
  *

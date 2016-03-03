@@ -4,13 +4,14 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /**
  *

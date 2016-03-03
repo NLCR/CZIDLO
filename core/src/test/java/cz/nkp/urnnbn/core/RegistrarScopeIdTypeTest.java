@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.core;
 
+import java.util.logging.Logger;
+
 import junit.framework.TestCase;
 
 /**
@@ -11,6 +13,8 @@ import junit.framework.TestCase;
  * @author Martin Řehánek
  */
 public class RegistrarScopeIdTypeTest extends TestCase {
+
+    private static final Logger LOGGER = Logger.getLogger(RegistrarScopeIdTypeTest.class.getName());
 
     public RegistrarScopeIdTypeTest(String testName) {
         super(testName);
@@ -35,24 +39,28 @@ public class RegistrarScopeIdTypeTest extends TestCase {
             fail();
         } catch (NullPointerException e) {
             // null
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarScopeIdType.valueOf("a");
             fail();
         } catch (IllegalArgumentException e) {
             // too short
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarScopeIdType.valueOf("incredibly_long_identifier_type");
             fail();
         } catch (IllegalArgumentException e) {
             // too long
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarScopeIdType.valueOf("incorrect+char");
             fail();
         } catch (IllegalArgumentException e) {
             // contains illegal character
+            LOGGER.info(e.getMessage());
         }
     }
 

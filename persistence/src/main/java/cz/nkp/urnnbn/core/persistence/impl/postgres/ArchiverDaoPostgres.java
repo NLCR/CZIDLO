@@ -4,6 +4,10 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -14,9 +18,6 @@ import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateArchiver;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.ArchiverRT;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

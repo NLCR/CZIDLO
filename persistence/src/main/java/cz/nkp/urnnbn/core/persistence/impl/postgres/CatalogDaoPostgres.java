@@ -4,27 +4,28 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.CatalogDAO;
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.statements.InsertCatalog;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
 import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
 import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateCatalog;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.CatalogRT;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

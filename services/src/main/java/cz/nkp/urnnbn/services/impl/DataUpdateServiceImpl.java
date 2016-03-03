@@ -76,7 +76,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (AlreadyPresentException e) {
-                throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+                throw new IdentifierConflictException(id.getType().toString(), id.getValue().toString());
             }
             try {
                 factory.documentDao().updateDocumentDatestamp(id.getDigDocId());

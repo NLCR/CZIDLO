@@ -4,11 +4,12 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import cz.nkp.urnnbn.core.persistence.UserDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
 /**
  *

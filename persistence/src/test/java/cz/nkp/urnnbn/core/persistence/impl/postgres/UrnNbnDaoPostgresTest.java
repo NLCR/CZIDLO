@@ -4,6 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.Timestamp;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -14,9 +19,6 @@ import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.sql.Timestamp;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 /**
  *

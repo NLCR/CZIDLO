@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
+import java.util.List;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import java.util.List;
-import org.joda.time.DateTime;
 
 /**
  *

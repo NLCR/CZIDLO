@@ -4,25 +4,6 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
-import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
-import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
-import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalLibrary;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateLibrary;
-import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalLibraryRT;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +11,26 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.DigitalLibraryDAO;
+import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
+import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
+import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
+import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalLibrary;
+import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
+import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateLibrary;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalLibraryRT;
 
 /**
  *

@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.core;
 
+import java.util.logging.Logger;
+
 import junit.framework.TestCase;
 
 /**
@@ -11,6 +13,8 @@ import junit.framework.TestCase;
  * @author Martin Řehánek
  */
 public class RegistrarCodeTest extends TestCase {
+
+    private static final Logger LOGGER = Logger.getLogger(RegistrarCodeTest.class.getName());
 
     public RegistrarCodeTest(String testName) {
         super(testName);
@@ -42,26 +46,31 @@ public class RegistrarCodeTest extends TestCase {
             RegistrarCode.valueOf("a");
             fail();
         } catch (IllegalArgumentException e) {
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarCode.valueOf("aaba001");
             fail();
         } catch (IllegalArgumentException e) {
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarCode.valueOf("aaaba001");
             fail();
         } catch (IllegalArgumentException e) {
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarCode.valueOf("aba-01");
             fail();
         } catch (IllegalArgumentException e) {
+            LOGGER.info(e.getMessage());
         }
         try {
             RegistrarCode.valueOf("ába001");
             fail();
         } catch (IllegalArgumentException e) {
+            LOGGER.info(e.getMessage());
         }
     }
 }

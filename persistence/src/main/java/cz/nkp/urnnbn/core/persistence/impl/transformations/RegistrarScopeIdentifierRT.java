@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
-import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
+import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
 
 /**
  *
@@ -34,7 +36,7 @@ public class RegistrarScopeIdentifierRT implements ResultsetTransformer {
         Timestamp updated = resultSet.getTimestamp(RegistrarScopeIdentifierDAO.ATTR_UPDATED);
         identifier.setModified(DateTimeUtils.timestampToDatetime(updated));
         identifier.setType(RegistrarScopeIdType.valueOf(resultSet.getString(RegistrarScopeIdentifierDAO.ATTR_TYPE)));
-        identifier.setValue(resultSet.getString(RegistrarScopeIdentifierDAO.ATTR_VALUE));
+        identifier.setValue(RegistrarScopeIdValue.valueOf(resultSet.getString(RegistrarScopeIdentifierDAO.ATTR_VALUE)));
         return identifier;
     }
 }

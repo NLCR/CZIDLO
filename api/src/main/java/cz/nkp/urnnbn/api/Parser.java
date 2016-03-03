@@ -4,19 +4,22 @@
  */
 package cz.nkp.urnnbn.api;
 
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigDocIdType;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigInstanceIdException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarCodeException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigInstanceIdException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarCodeException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarScopeIdType;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarScopeIdValue;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidUrnException;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
  *
@@ -39,7 +42,15 @@ public class Parser {
         try {
             return RegistrarScopeIdType.valueOf(idTypeStr);
         } catch (IllegalArgumentException e) {
-            throw new InvalidDigDocIdType(idTypeStr, e.getMessage());
+            throw new InvalidRegistrarScopeIdType(idTypeStr, e.getMessage());
+        }
+    }
+
+    public static RegistrarScopeIdValue parseRegistrarScopeIdValue(String idValueStr) {
+        try {
+            return RegistrarScopeIdValue.valueOf(idValueStr);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRegistrarScopeIdValue(idValueStr, e.getMessage());
         }
     }
 

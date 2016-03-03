@@ -4,16 +4,17 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import cz.nkp.urnnbn.config.PropertyKeys;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
 import cz.nkp.urnnbn.utils.PropertyLoader;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *

@@ -4,10 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
-import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
+import cz.nkp.urnnbn.core.persistence.UrnNbnGeneratorDAO;
 
 /**
  *

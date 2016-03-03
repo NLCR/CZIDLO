@@ -4,6 +4,12 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.util.List;
+import java.util.Random;
+
+import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
@@ -11,9 +17,6 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.List;
-import java.util.Random;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -186,7 +189,7 @@ public class DigitalDocumentDaoPostgresTest extends AbstractDaoTest {
         // try find with unknown value
         RegistrarScopeIdentifier id2 = builder.registrarScopeIdentifierWithoutIds();
         id2.setRegistrarId(registrar.getId());
-        id2.setValue(identifier.getValue() + "-new");
+        id2.setValue(RegistrarScopeIdValue.valueOf(identifier.getValue().toString() + "-new"));
         try {
             digDocDao.getDigDocIdByRegistrarScopeId(id2);
             fail();

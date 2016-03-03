@@ -6,6 +6,8 @@ package cz.nkp.urnnbn.core;
 
 import java.security.NoSuchAlgorithmException;
 
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -20,8 +22,6 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.utils.CryptoUtils;
-
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -41,8 +41,8 @@ public class DtoBuilder {
         return loginSuffix++;
     }
 
-    private String nextRegistrarScopeId() {
-        return String.valueOf(registrarScopeIdCounter++);
+    private RegistrarScopeIdValue nextRegistrarScopeIdValue() {
+        return RegistrarScopeIdValue.valueOf("" + registrarScopeIdCounter++);
     }
 
     private DateTime now() {
@@ -88,7 +88,7 @@ public class DtoBuilder {
     public RegistrarScopeIdentifier registrarScopeIdentifierWithoutIds() {
         RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
         id.setType(RegistrarScopeIdType.valueOf("test"));
-        id.setValue(nextRegistrarScopeId());
+        id.setValue(nextRegistrarScopeIdValue());
         return id;
     }
 

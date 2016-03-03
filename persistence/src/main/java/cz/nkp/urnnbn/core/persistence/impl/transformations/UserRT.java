@@ -4,12 +4,13 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import cz.nkp.urnnbn.core.dto.User;
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
-import cz.nkp.urnnbn.core.persistence.UserDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+
+import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
+import cz.nkp.urnnbn.core.persistence.UserDAO;
 
 /**
  * 

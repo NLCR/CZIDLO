@@ -4,11 +4,12 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
 import cz.nkp.urnnbn.core.persistence.IntEntIdentifierDAO;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *

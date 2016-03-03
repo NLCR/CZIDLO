@@ -35,6 +35,7 @@ import cz.nkp.urnnbn.api.v3.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -146,15 +147,16 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
 
     public abstract AbstractDigitalDocumentResource getDigitalDocumentResource(String idTypeStr, String idValue);
 
-    protected final DigitalDocument getDigitalDocument(String idTypeStr, String idValue) {
+    protected final DigitalDocument getDigitalDocument(String idTypeStr, String idValueStr) {
         RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
+        RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(idValueStr);
         RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
         id.setRegistrarId(registrar.getId());
         id.setType(type);
-        id.setValue(idValue);
+        id.setValue(value);
         DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
         if (digDoc == null) {
-            throw new UnknownDigitalDocumentException(registrar.getCode(), type, idValue);
+            throw new UnknownDigitalDocumentException(registrar.getCode(), type, value);
         } else {
             return digDoc;
         }

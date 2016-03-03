@@ -5,6 +5,7 @@
 package cz.nkp.urnnbn.core.persistence;
 
 import java.sql.Timestamp;
+
 import org.joda.time.DateTime;
 
 /**

@@ -4,10 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
+import java.util.List;
+
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.List;
 
 /**
  *

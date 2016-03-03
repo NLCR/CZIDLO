@@ -16,11 +16,15 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.util.List;
+import java.util.logging.Level;
+
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -31,8 +35,6 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
-import java.util.List;
-import java.util.logging.Level;
 
 /**
  *
@@ -74,9 +76,9 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         }
     }
 
-    protected final RegistrarScopeIdentifier addNewIdentifier(RegistrarScopeIdType idType, String value, String login) {
+    protected final RegistrarScopeIdentifier addNewIdentifier(RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
         try {
-            RegistrarScopeIdentifier newId = identifierInstance(idType, value);
+            RegistrarScopeIdentifier newId = identifierInstance(type, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
         } catch (UnknownUserException ex) {
@@ -98,9 +100,9 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         }
     }
 
-    protected final RegistrarScopeIdentifier updateIdentifier(String login, RegistrarScopeIdType idType, String value) {
+    protected final RegistrarScopeIdentifier updateIdentifier(String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
         try {
-            RegistrarScopeIdentifier id = identifierInstance(idType, value);
+            RegistrarScopeIdentifier id = identifierInstance(type, value);
             dataUpdateService().updateRegistrarScopeIdentifier(login, id);
             return id;
         } catch (UnknownUserException ex) {
@@ -122,11 +124,11 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends Resource
         }
     }
 
-    private RegistrarScopeIdentifier identifierInstance(RegistrarScopeIdType idType, String value) {
+    private RegistrarScopeIdentifier identifierInstance(RegistrarScopeIdType type, RegistrarScopeIdValue value) {
         RegistrarScopeIdentifier result = new RegistrarScopeIdentifier();
         result.setDigDocId(doc.getId());
         result.setRegistrarId(doc.getRegistrarId());
-        result.setType(idType);
+        result.setType(type);
         result.setValue(value);
         return result;
     }

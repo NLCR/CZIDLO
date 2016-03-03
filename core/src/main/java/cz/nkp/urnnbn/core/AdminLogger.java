@@ -18,6 +18,7 @@ package cz.nkp.urnnbn.core;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;

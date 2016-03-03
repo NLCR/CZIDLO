@@ -4,8 +4,9 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import java.sql.Connection;
+
+import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 
 /**
  *

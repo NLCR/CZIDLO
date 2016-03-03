@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.CountryCode;
 import junit.framework.TestCase;
+import cz.nkp.urnnbn.core.CountryCode;
 
 /**
  *

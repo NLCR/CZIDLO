@@ -16,6 +16,17 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
+import java.util.logging.Level;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
 import cz.nkp.urnnbn.api.AbstractUrnNbnReservationsResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
@@ -26,15 +37,6 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-import java.util.logging.Level;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 /**
  *
@@ -74,10 +76,8 @@ public class UrnNbnReservationsResource extends AbstractUrnNbnReservationsResour
         try {
             try {
                 checkServerNotReadOnly();
-                int size = ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
-                if (sizeStr != null) {
-                    size = Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf().getUrnReservationMaxSize());
-                }
+                int size = sizeStr != null ? Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()
+                        .getUrnReservationMaxSize()) : ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
                 String login = req.getRemoteUser();
                 String apiV3Response = super.reserveUrnNbns(login, size);
                 XsltXmlTransformer transformer = ApiModuleConfiguration.instanceOf().getReserveUrnNbnResponseV3ToV2Transformer();

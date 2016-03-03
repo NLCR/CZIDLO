@@ -4,6 +4,16 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.joda.time.DateTime;
+
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
@@ -34,14 +44,6 @@ import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalDocumentRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -185,7 +187,7 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     public Long getDigDocIdByRegistrarScopeId(RegistrarScopeIdentifier id) throws DatabaseException, RecordNotFoundException {
         StatementWrapper statement = new SelectSingleAttrByLongStringString(RegistrarScopeIdentifierDAO.TABLE_NAME,
                 RegistrarScopeIdentifierDAO.ATTR_DIG_DOC_ID, RegistrarScopeIdentifierDAO.ATTR_REG_ID, id.getRegistrarId(),
-                RegistrarScopeIdentifierDAO.ATTR_TYPE, id.getType().toString(), RegistrarScopeIdentifierDAO.ATTR_VALUE, id.getValue());
+                RegistrarScopeIdentifierDAO.ATTR_TYPE, id.getType().toString(), RegistrarScopeIdentifierDAO.ATTR_VALUE, id.getValue().toString());
         DaoOperation operation = new SingleResultOperation(statement, new SingleLongRT());
         try {
             return (Long) runInTransaction(operation);
