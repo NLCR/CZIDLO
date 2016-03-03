@@ -56,7 +56,7 @@ public abstract class ApiV3Tests {
     final String REGISTRAR2 = "tst02";// must exist and have at least 1 digital library
     final String REGISTRAR_NO_MODES_ENABLED = "tst03";// must exist and and have all 3 registration modes disabled
     final Long ARCHIVER = 134l; // must existe and not be registrar
-    final Credentials USER = new Credentials("martin", "i0oEhu"); // must exist and have access rights to REGISTRAR, REGISTRAR2
+    final Credentials USER = new Credentials("api_test_user", "0aFukuC"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
     final String WORKING_URL = "https://www.seznam.cz/";
     final int UNKNOWN_DIG_LIB_DI = -1; // digital library with this id must not exist

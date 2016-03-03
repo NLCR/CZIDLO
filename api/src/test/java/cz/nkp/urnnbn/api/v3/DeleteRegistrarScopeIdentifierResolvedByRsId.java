@@ -140,9 +140,9 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // TODO:APIv4: rename this error code
-        assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
     @Test

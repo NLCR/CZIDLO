@@ -55,7 +55,6 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertTrue("UNKNOWN_REGISTRAR".equals(xmlPath.getString("error.code")) || xmlPath.get("digitalDocuments") != null);
         Assert.assertEquals(xmlPath.getString("code"), "UNKNOWN_REGISTRAR");
     }
 

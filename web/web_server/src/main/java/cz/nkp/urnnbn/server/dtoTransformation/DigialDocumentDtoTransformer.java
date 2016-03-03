@@ -61,7 +61,7 @@ public class DigialDocumentDtoTransformer extends DtoTransformer {
         for (RegistrarScopeIdentifier id : original) {
             RegistrarScopeIdDTO idTransformed = new RegistrarScopeIdDTO();
             idTransformed.setType(id.getType().toString());
-            idTransformed.setValue(id.getValue());
+            idTransformed.setValue(id.getValue().toString());
             result.add(idTransformed);
         }
         return result;

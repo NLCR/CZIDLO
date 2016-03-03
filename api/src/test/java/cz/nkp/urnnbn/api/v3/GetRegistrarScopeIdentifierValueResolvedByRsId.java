@@ -137,9 +137,9 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(idForResolvation, typeToBeFetched)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
-        assertThat(xmlPath.getString("error.code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
     @Test
