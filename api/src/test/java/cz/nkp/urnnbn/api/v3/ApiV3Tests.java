@@ -69,33 +69,55 @@ public abstract class ApiV3Tests {
 
     static int MAX_URN_NBN_RESERVATIONS_RETURNED = 30;// in api.properties (api.getReseravations.maxReservedToPrint)
 
-    // examples of valid and invalid registrar codes according to regexp [A-Za-z0-9]{2,6}
+    // examples of valid and invalid registrar codes according to regexp ^[a-zA-Z0-9]{2,6}$
     // all valid codes must not identify existing registrar in database
     final String[] REGISTRAR_CODES_VALID = new String[] { "ab", "AB", "01", "aB0", "abcdef", "ABCDEF", "012345", "aB0cD1" };
-    // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
-    // TODO: character '_' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/133
-    final String[] REGISTRAR_CODES_INVALID = new String[] { "!!", "**", "''", "((", "))", ";;", "::", "@@", "&&", "==", "++", "$$",
-            ",," /* , "//" */, "??", "##", "[[", "]]", "--",/* "__", */"..", "~~", "a!a", "a*a", "a'a", "a(a", "a)a", "a;a", "a:a", "a@a", "a&a",
-            "a=a", "a+a", "a$a", "a,a" /* , "a/a" */, "a?a", "a#a", "a[a", "a]a", "a-a"/* , "a_a" */, "a.a", "a~a", "a", "A", "0", "aaaaaaa",
-            "AAAAAAA", "0000000" };
+    final String[] REGISTRAR_CODES_INVALID = new String[] {//
+            // incorrect length
+            "a", "A", "0",
+            "aaaaaa7",//
+            ":", "?", "#", "[", "]", "@", "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "=", "-", ".", "_",
+            "~",//
+            // starts with invalid character
+            ":x", "?x", "#x", "[x", "]x", "@x", "!x", "$x", "&x", "'x", "(x", ")x", "*x", "+x", ",x", ";x", "=x", "-x", ".x", "_x",
+            "~x", //
+            // ends with invalid character
+            "x:", "x?", "x#", "x[", "x]", "x@", "x!", "x$", "x&", "x'", "x(", "x)", "x*", "x+", "x,", "x;", "x=", "x-", "x.", "x_",
+            "x~",//
+            // contains invalid character
+            "x:x"/* , "x/x" */, "x?x", "x#x", "x[x", "x]x", "x@x", "x!x", "x$x", "x&x", "x'x", "x(x", "x)x", "x*x", "x+x", "x,x", "x;x", "x=x",
+            "x-x", "x.x", "x_x", "x~x" };
 
-    // registrar-scope-id valid/invalid types
-    // [A-Za-z0-9_\-:]{2,20}
-    final String[] RSID_TYPES_VALID = new String[] { "aa", "AA", "00", "::", "__", "--", "aaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAA",
-            "01234567890123456789", ":::::::::::::::::::", "____________________", "-------------------" };
-    // TODO: character '/' ignored until fixed: https://github.com/NLCR/CZIDLO/issues/129
-    final String[] RSID_TYPES_INVALID = new String[] { "a", "A", "0", "aaaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAAA", "012345678901234567890",
-            "!!", "**", "''", "((", "))", ";;", "@@", "&&", "==", "++", "$$", ",,"/* , "//" */, "??", "##", "[[", "]]", "a!a", "a*a", "a'a", "a(a",
-            "a)a", "a;a", "a@a", "a&a", "a=a", "a+a", "a$a", "a,a"/* , "a/a" */, "a?a", "a#a", "a[a", "a]a", "..", "~~", "a.a", "a~a" };
+    // registrar-scope-id valid/invalid type examples according to regex ^[a-zA-Z0-9]{1}[a-zA-Z0-9_:\\-]{0,18}[a-zA-Z0-9]{1}$
+    final String[] RSID_TYPES_VALID = new String[] { "aa", "AA", "00", "aaaaaaaaaaaaaaaaaaaa", "AAAAAAAAAAAAAAAAAAAA", "01234567890123456789", //
+            "aB0:0Ba", "aB0_0Ba", "aB0-0Ba" };
+    final String[] RSID_TYPES_INVALID = new String[] {
+            // incorrect length
+            "a", "A", "0", "aaaaaaaaa1aaaaaaaaa2X",//
+            // starts with valid character
+            ":x", "_x", "-x",//
+            // ends with valid character
+            "x:", "x_", "x-",//
+            // contains invalid character
+            "x?x", "x#x", "x[x", "x]x", "x@x", "x!x", "x$x", "x&x", "x'x", "x(x", "x)x", "x*x", "x+x", "x,x", "x;x", "x=x", "x.x", "x~x" };
 
-    // registrar-scope-id valid/invalid values
-    // [A-Za-z0-9\-_\.~!\*'\(\);:@&=+$,/\?#\[\]]{1,60}
-    final String[] RSID_VALUES_VALID = new String[] { "a", "A", "0", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", "," /* , "/" */,
-            "?", "#", "[", "]", "-", "_", ".", "~", "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6" };
-    final String[] RSID_VALUES_INVALID = new String[] { "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffffg",
-            "AAAAAAAAAABBBBBBBBBBCCCCCCCCCCDDDDDDDDDDEEEEEEEEEEFFFFFFFFFFG", "0000000000111111111122222222223333333333444444444455555555556" };
+    // registrar-scope-id valid/invalid value examples according to regex
+    // ^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,58}[a-zA-Z0-9]{1}$
+    final String[] RSID_VALUES_VALID = new String[] { "a", "A", "0", "aA0",
+            "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6",//
+            // contains valid character
+            "x:x", "x?x", "x#x", "x[x", "x]x", "x@x", "x!x", "x$x", "x&x", "x'x", "x(x", "x)x", "x*x", "x+x", "x,x", "x;x", "x=x", "x-x", "x.x",
+            "x_x", "x~x" };
 
-    // urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}
+    final String[] RSID_VALUES_INVALID = new String[] {
+            // to long
+            "aaaaaaaaa1bbbbbbbbb2ccccccccc3ddddddddd4eeeeeeeee5eeeeeeeee6x",//
+            // starts with valid character
+            ":x", "?x", "#x", "[x", "]x", "@x", "!x", "$x", "&x", "'x", "(x", ")x", "*x", "+x", ",x", ";x", "=x", "-x", ".x", "_x", "~x",//
+            // ends with valid character
+            "x:", "x?", "x#", "x[", "x]", "x@", "x!", "x$", "x&", "x'", "x(", "x)", "x*", "x+", "x,", "x;", "x=", "x-", "x.", "x_", "x~" };
+
+    // urn:nbn valid/invalid examples according to regex urn:nbn:cz:[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}
     final String[] URNNBN_VALID = new String[] { "urn:nbn:cz:ab-aaaaaa", "urn:NBN:cZ:00-012345", "URN:NBN:CZ:AB-AAAAAA", "urn:nbn:cz:1aABb2-1A2a3b",
             "urn:NBN:Cz:ABCDEF-1A2a3b", "URN:NBN:cz:123456-1A2a3b" };
     final String[] URNNBN_INVALID = new String[] { "cz:abc012-123456", "urn:isbn:cz:abc012-123456", "nbn:cz:abc012-123456",

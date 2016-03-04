@@ -42,7 +42,7 @@ public class DtoBuilder {
     }
 
     private RegistrarScopeIdValue nextRegistrarScopeIdValue() {
-        return RegistrarScopeIdValue.valueOf("" + registrarScopeIdCounter++);
+        return RegistrarScopeIdValue.valueOf(String.format("x%dx", registrarScopeIdCounter++));
     }
 
     private DateTime now() {

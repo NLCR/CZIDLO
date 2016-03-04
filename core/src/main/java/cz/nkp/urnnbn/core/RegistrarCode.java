@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.core;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -13,27 +12,19 @@ import java.util.regex.Pattern;
  */
 public class RegistrarCode {
 
-    private static final int MIN_LENGTH = 2;
-    private static final int MAX_LENGTH = 6;
-    private static final Pattern PATTERN = Pattern.compile("\\w*");
+    /**
+     * Must contain only small/big letters and numers. Min length is 2, max length is 6.
+     */
+    private static final String REGEXP = "^[a-zA-Z0-9]{2,6}$";
+    private static final Pattern PATTERN = Pattern.compile(REGEXP);
     private final String value;
 
     public static RegistrarCode valueOf(String string) {
-        if (string.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("registrat code '" + string + "' to short, must be at least " + MIN_LENGTH + " characters long");
+        if (PATTERN.matcher(string).matches()) {
+            return new RegistrarCode(string);
+        } else {
+            throw new IllegalArgumentException(String.format("%s doesn't match regexp %s", string, REGEXP));
         }
-        if (string.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("registrat code '" + string + "' to long, must be at most " + MAX_LENGTH + " characters long");
-        }
-        if (!containsOnlyWordCharacters(string)) {
-            throw new IllegalArgumentException("registrat code '" + string + "' contains illegal character");
-        }
-        return new RegistrarCode(string);
-    }
-
-    private static boolean containsOnlyWordCharacters(String string) {
-        Matcher matcher = PATTERN.matcher(string);
-        return matcher.matches();
     }
 
     private RegistrarCode(String value) {

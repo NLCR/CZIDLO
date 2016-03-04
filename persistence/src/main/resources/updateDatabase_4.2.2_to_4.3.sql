@@ -1,3 +1,16 @@
+/***************************************************/
+/* Removed now invalid registrar-scope identifiers */
+/* https://github.com/NLCR/CZIDLO/issues/129       */
+/***************************************************/
+DELETE FROM registrarScopeId WHERE 
+idValue !~ '^[0-9a-zA-Z]' OR 
+idValue !~ '[0-9a-zA-Z]$' OR
+type !~ '^[0-9a-zA-Z]' OR 
+type !~ '[0-9a-zA-Z]$' OR 
+char_length(idValue) > 60 OR 
+char_length(type) < 2 OR 
+char_length(type) > 20;
+
 /* remove search-related indexes,tables, views, functions, triggers from previous version */
 DROP FUNCTION IF EXISTS ie_title_update_trigger() CASCADE;
 DROP FUNCTION IF EXISTS ie_title_update_trigger_function() CASCADE;

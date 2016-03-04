@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v3.xml;
 
 import java.util.List;
 
+import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
 import cz.nkp.urnnbn.api.v3.pojo.RsId;
 
@@ -61,7 +62,7 @@ public class DigDocRegistrationXmlBuilder {
         if (ids != null && !ids.isEmpty()) {
             builder.append("<registrarScopeIdentifiers>");
             for (RsId id : ids) {
-                builder.append(String.format("<id type=\"%s\">%s</id>", id.type, id.value));
+                builder.append(String.format("<id type=\"%s\">%s</id>", Utils.xmlEscape(id.type), Utils.xmlEscape(id.value)));
             }
             builder.append("</registrarScopeIdentifiers>");
         }

@@ -30,47 +30,97 @@ public class RegistrarCodeTest extends TestCase {
         super.tearDown();
     }
 
-    /**
-     * Test of valueOf method, of class RegistrarCode.
-     */
-    public void testValueOf() {
-        RegistrarCode.valueOf("ab");
-        RegistrarCode.valueOf("12");
-        RegistrarCode.valueOf("a1");
-        RegistrarCode.valueOf("aba");
-        RegistrarCode.valueOf("aba0");
-        RegistrarCode.valueOf("aba00");
-        RegistrarCode.valueOf("aba001");
-        RegistrarCode.valueOf("001aaa");
+    public void testValueOfNull() {
         try {
-            RegistrarCode.valueOf("a");
+            RegistrarCode.valueOf(null);
             fail();
-        } catch (IllegalArgumentException e) {
-            LOGGER.info(e.getMessage());
-        }
-        try {
-            RegistrarCode.valueOf("aaba001");
-            fail();
-        } catch (IllegalArgumentException e) {
-            LOGGER.info(e.getMessage());
-        }
-        try {
-            RegistrarCode.valueOf("aaaba001");
-            fail();
-        } catch (IllegalArgumentException e) {
-            LOGGER.info(e.getMessage());
-        }
-        try {
-            RegistrarCode.valueOf("aba-01");
-            fail();
-        } catch (IllegalArgumentException e) {
-            LOGGER.info(e.getMessage());
-        }
-        try {
-            RegistrarCode.valueOf("ába001");
-            fail();
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
+            // null
             LOGGER.info(e.getMessage());
         }
     }
+
+    public void testValueOfEmpty() {
+        try {
+            RegistrarCode.valueOf("");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // null
+            LOGGER.info(e.getMessage());
+        }
+    }
+
+    public void testValueOfToShort() {
+        try {
+            RegistrarCode.valueOf("X");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // null
+            LOGGER.info(e.getMessage());
+        }
+    }
+
+    public void testValueOfToLong() {
+        try {
+            RegistrarCode.valueOf("123456x");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // null
+            LOGGER.info(e.getMessage());
+        }
+    }
+
+    public void testValueOfOk() {
+        RegistrarCode.valueOf("12");
+        RegistrarCode.valueOf("123456");
+        RegistrarCode.valueOf("ab");
+        RegistrarCode.valueOf("abcdef");
+        RegistrarCode.valueOf("ABC");
+        RegistrarCode.valueOf("ABCDEF");
+        RegistrarCode.valueOf("12abAB");
+    }
+
+    public void testValueOfInvalidChar() {
+        char[] invalidChars = new char[] { '-', '_', '.', '~', '!', '*', '\'', '(', ')', ';', ':', '@', '&', '=', '+', '$', ',', '/', '?', '#', '[',
+                ']' };
+        for (char c : invalidChars) {
+            // starts with special character
+            try {
+                String str = "" + c + "x";
+                RegistrarCode.valueOf(str);
+                fail(str);
+            } catch (IllegalArgumentException e) {
+                LOGGER.info(e.getMessage());
+            }
+
+            // ends with special character
+            try {
+                String str = "x" + c;
+                RegistrarCode.valueOf(str);
+                fail(str);
+            } catch (IllegalArgumentException e) {
+                LOGGER.info(e.getMessage());
+            }
+
+            // contains special character
+            try {
+                String str = "x" + c + "x";
+                RegistrarCode.valueOf(str);
+                fail(str);
+            } catch (IllegalArgumentException e) {
+                LOGGER.info(e.getMessage());
+            }
+        }
+    }
+
+    public void testCaseInsensitive() {
+        String code = "abCD01";
+        assertEquals(code.toLowerCase(), RegistrarCode.valueOf(code).toString().toLowerCase());
+    }
+
+    public void testInternalRepresentationLowCase() {
+        String code = "abCD01";
+        assertEquals(code.toLowerCase(), RegistrarCode.valueOf(code).toString());
+    }
+
 }

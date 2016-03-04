@@ -63,26 +63,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </xs:sequence>
     </xs:complexType>
     
-    <!-- registrar scope identifier and type -->
+    <!-- registrar-scope identifier -->
     <xs:complexType name="registrarScopeIdentifier">
         <xs:simpleContent>
             <xs:extension base="czidlo:registarScopeIdValueType">
-                <xs:attribute name="type" use="required" type="czidlo:registarScopeIdTypeType"/>
-                <xs:attribute name="previousValue" use="optional" type="czidlo:registarScopeIdValueType"/>
+                <xs:attribute name="type" use="required"
+                    type="czidlo:registarScopeIdTypeType" />
+                <xs:attribute name="previousValue" use="optional"
+                    type="czidlo:registarScopeIdValueType" />
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <!-- identifier value -->
-    <xs:simpleType name="registarScopeIdValueType">
-        <xs:restriction base="xs:string">
-            <!-- $ - _ . + ! * ' ( ) , : @ -->
-            <xs:pattern value="[A-Za-z0-9$\-_\.+!\*'\(\),:@]{1,60}"/>
-        </xs:restriction>
-    </xs:simpleType>
-    <!-- identifier type -->
+
+    <!-- registrar-scope type -->
     <xs:simpleType name="registarScopeIdTypeType">
         <xs:restriction base="xs:token">
-            <xs:pattern value="[A-Za-z0-9_\-:]{2,20}"/>
+            <!-- uppercase/lowercase letters, numbers, '_', '-', ':'. Must 
+                start and end with letter or number. Length must be between 1 and 20 characters. -->
+            <xs:pattern
+                value="[A-Za-z0-9]{1}[A-Za-z0-9_\-:]{0,18}[A-Za-z0-9]{1}" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- registrar-scope value -->
+    <xs:simpleType name="registarScopeIdValueType">
+        <!-- In API V2 were allowed only these characters: A-Z a-z 0-9 $ 
+            - _ . + ! * ' ( ) , : @ -->
+        <!-- Now all reserved and unreserved URI characters as specified 
+            in RFC 3986 (sections 2.2 and 2.3) are allowed, except for '/'. Must start 
+            and end with number letter (capital or not). Leng must be between 1 and 60 
+            characters. -->
+        <!-- unreserved characters: -->
+        <!-- A-Z a-z 0-9 -_.~ -->
+        <!-- reserved characters (must be url-encoded): -->
+        <!-- ! * ' ( ) ; : @ & = + $ , / ? # [ ] -->
+        <!-- i.e. these characters are newly allowed: ? [ ] ; & = # -->
+        <xs:restriction base="xs:token">
+            <xs:pattern
+                value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,58}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}" />
         </xs:restriction>
     </xs:simpleType>
     

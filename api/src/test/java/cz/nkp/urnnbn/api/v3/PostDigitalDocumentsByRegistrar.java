@@ -192,30 +192,6 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
     // REGISTRATION MODES
 
     @Test
-    public void invalidDataRsIdCollision() {
-        String registrarCode = REGISTRAR;
-        LOGGER.info(registrarCode);
-        RsId rsId = new RsId(REGISTRAR, "type", "value");
-        LOGGER.info(rsId.toString());
-        String urnNbnWithRsId = registerUrnNbn(REGISTRAR, USER);
-        insertRegistrarScopeId(urnNbnWithRsId, rsId, USER);
-        String bodyXml = ddRegistrationBuilder.withRsIds(asList(rsId));
-        // LOGGER.info(bodyXml);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
-                .given().request().body(bodyXml).contentType(ContentType.XML)//
-                .expect()//
-                .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().post(buildUrl(registrarCode)).andReturn().asString();
-        // LOGGER.info(responseXml);
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
-        // cleanup
-        deleteAllRegistrarScopeIdentifiers(urnNbnWithRsId, USER);
-    }
-
-    @Test
     public void registrationModeByResolverForbidden() {
         String registrarCode = REGISTRAR_NO_MODES_ENABLED;
         LOGGER.info(registrarCode);
@@ -600,6 +576,150 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .when().get(buildResolvationPath(urnNbn)).andReturn().asString();
         xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
         assertEquals(archiverId, xmlPath.getInt("archiver.@id"));
+    }
+
+    // Registrar-scope id
+
+    @Test
+    public void rsIdValidTypeAll() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        for (String type : RSID_TYPES_VALID) {
+            RsId id = new RsId(REGISTRAR, type, "value");
+            String bodyXml = ddRegistrationBuilder.withRsIds(asList(id));
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(201)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+            assertEquals("ACTIVE", xmlPath.getString("status"));
+            String urnNbn = xmlPath.getString("value");
+            LOGGER.info(urnNbn);
+            String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+            assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+            assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+            assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+            assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            // check urn:nbn state
+            assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
+            // cleanup
+            deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+        }
+    }
+
+    @Test
+    public void rsIdValidValueAll() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        int counter = 0;
+        for (String value : RSID_VALUES_VALID) {
+            RsId id = new RsId(REGISTRAR, "type" + ++counter, value);
+            String bodyXml = ddRegistrationBuilder.withRsIds(asList(id));
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(201)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+            assertEquals("ACTIVE", xmlPath.getString("status"));
+            String urnNbn = xmlPath.getString("value");
+            LOGGER.info(urnNbn);
+            String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+            assertEquals(urnSplit[0], xmlPath.getString("countryCode"));
+            assertEquals(urnSplit[1], xmlPath.getString("registrarCode"));
+            assertEquals(urnSplit[2], xmlPath.getString("documentCode"));
+            assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            assertTrue(DateTime.parse(xmlPath.getString("registered")).isBeforeNow());
+            assertTrue("".equals(xmlPath.getString("deactivated")));
+            // check urn:nbn state
+            assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
+            // cleanup
+            deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+        }
+    }
+
+    @Test
+    public void rsIdInvalidTypeAll() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        for (String type : RSID_TYPES_INVALID) {
+            RsId rsId = new RsId(REGISTRAR, type, "value");
+            LOGGER.info(rsId.toString());
+            String bodyXml = ddRegistrationBuilder.withRsIds(asList(rsId));
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            // TODO: APIv4: Sjednotit pouzivane chyby - pokud je probelem v predchudci, tak specialni chyba. Tady jen INVALID_DATA
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_DATA");
+        }
+    }
+
+    @Test
+    public void rsIdInvalidValueAll() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        int counter = 0;
+        for (String value : RSID_VALUES_INVALID) {
+            RsId rsId = new RsId(REGISTRAR, "type" + ++counter, value);
+            LOGGER.info(rsId.toString());
+            String bodyXml = ddRegistrationBuilder.withRsIds(asList(rsId));
+            // LOGGER.info(bodyXml);
+            String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                    .given().request().body(bodyXml).contentType(ContentType.XML)//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().post(buildUrl(registrarCode)).andReturn().asString();
+            // LOGGER.info(responseXml);
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            // TODO: APIv4: Sjednotit pouzivane chyby - pokud je probelem v predchudci, tak specialni chyba. Tady jen INVALID_DATA
+            Assert.assertEquals(xmlPath.getString("code"), "INVALID_DATA");
+        }
+    }
+
+    @Test
+    public void invalidDataRsIdCollision() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info(registrarCode);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        LOGGER.info(rsId.toString());
+        String urnNbnWithRsId = registerUrnNbn(REGISTRAR, USER);
+        insertRegistrarScopeId(urnNbnWithRsId, rsId, USER);
+        String bodyXml = ddRegistrationBuilder.withRsIds(asList(rsId));
+        // LOGGER.info(bodyXml);
+        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+                .given().request().body(bodyXml).contentType(ContentType.XML)//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().post(buildUrl(registrarCode)).andReturn().asString();
+        // LOGGER.info(responseXml);
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbnWithRsId, USER);
     }
 
 }

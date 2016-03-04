@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.core;
 
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Martin Řehánek
@@ -12,41 +14,24 @@ public class RegistrarScopeIdValue {
 
     private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 60;
-    private static char[] SPECIAL_CHARACTERS_ALLOWED = { '-', '_', '.', '~', '!', '*', '\'', '(', ')', ';', ':', '@', '&', '=', '+', '$', ',', '/',
-            '?', '#', '[', ']' };
-
+    /*
+     * Min length 1, max length 60, can contain small, big letters, numbers, and following characters: :?#[]@!$&'()*+,;=-._~ I.e. all reserved and
+     * unreserved characters as specified inrfc3986, except for '/'. Must start and end with letter/number.
+     */
+    private static final String REGEXP = "^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,58}[a-zA-Z0-9]{1}$|[a-zA-Z0-9]{1}";
+    private static final Pattern PATTERN = Pattern.compile(REGEXP);
     private String value;
 
     private RegistrarScopeIdValue(String value) {
         this.value = value;
     }
 
-    public static RegistrarScopeIdValue valueOf(String stringValue) {
-        if (stringValue == null) {
-            throw new NullPointerException();
+    public static RegistrarScopeIdValue valueOf(String string) {
+        if (PATTERN.matcher(string).matches()) {
+            return new RegistrarScopeIdValue(string);
+        } else {
+            throw new IllegalArgumentException(String.format("%s doesn't match regexp %s", string, REGEXP));
         }
-        if (stringValue.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("must be at least " + MIN_LENGTH + " characters long, actual length: " + stringValue.length());
-        }
-        if (stringValue.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("must be at most " + MAX_LENGTH + " characters long, actual length: " + stringValue.length());
-        }
-        for (int i = 0; i < stringValue.length(); i++) {
-            char character = stringValue.charAt(i);
-            if (!Character.isLetter(character) && !Character.isDigit(character)) {
-                boolean isPermitted = false;
-                for (int j = 0; j < SPECIAL_CHARACTERS_ALLOWED.length; j++) {
-                    if (SPECIAL_CHARACTERS_ALLOWED[j] == character) {
-                        isPermitted = true;
-                        break;
-                    }
-                }
-                if (!isPermitted) {
-                    throw new IllegalArgumentException("character '" + character + "' at position " + i + " is not permitted");
-                }
-            }
-        }
-        return new RegistrarScopeIdValue(stringValue);
     }
 
     @Override

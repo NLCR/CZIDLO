@@ -4,47 +4,31 @@
  */
 package cz.nkp.urnnbn.core;
 
+import java.util.regex.Pattern;
+
 /**
  *
  * @author Martin Řehánek
  */
 public class RegistrarScopeIdType {
 
-    private static final int MIN_LENGTH = 2;
-    private static final int MAX_LENGTH = 20;
-    private static char[] SPECIAL_CHARACTERS_ALLOWED = { '_', '-', ':' };
+    /*
+     * min length 2, max length 20, can contain small, big letters, numbers, characters '_', ':' and '-'. Must start and end with letter/number.
+     */
+    private static final String REGEXP = "^[a-zA-Z0-9]{1}[a-zA-Z0-9_:\\-]{0,18}[a-zA-Z0-9]{1}$";
+    private static final Pattern PATTERN = Pattern.compile(REGEXP);
     private String value;
 
     private RegistrarScopeIdType(String value) {
         this.value = value;
     }
 
-    public static RegistrarScopeIdType valueOf(String stringValue) {
-        if (stringValue == null) {
-            throw new NullPointerException();
+    public static RegistrarScopeIdType valueOf(String string) {
+        if (PATTERN.matcher(string).matches()) {
+            return new RegistrarScopeIdType(string);
+        } else {
+            throw new IllegalArgumentException(String.format("%s doesn't match regexp %s", string, REGEXP));
         }
-        if (stringValue.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("must be at least " + MIN_LENGTH + " characters long, actual length: " + stringValue.length());
-        }
-        if (stringValue.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("must be at most " + MAX_LENGTH + " characters long, actual length: " + stringValue.length());
-        }
-        for (int i = 0; i < stringValue.length(); i++) {
-            char character = stringValue.charAt(i);
-            if (!Character.isLetter(character) && !Character.isDigit(character)) {
-                boolean isPermitted = false;
-                for (int j = 0; j < SPECIAL_CHARACTERS_ALLOWED.length; j++) {
-                    if (SPECIAL_CHARACTERS_ALLOWED[j] == character) {
-                        isPermitted = true;
-                        break;
-                    }
-                }
-                if (!isPermitted) {
-                    throw new IllegalArgumentException("character '" + character + "' at position " + i + " is not permitted");
-                }
-            }
-        }
-        return new RegistrarScopeIdType(stringValue);
     }
 
     @Override

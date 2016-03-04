@@ -12,11 +12,11 @@ import junit.framework.TestCase;
  *
  * @author Martin Řehánek
  */
-public class RegistrarScopeIdTypeTest extends TestCase {
+public class RegistrarScopeIdValueTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(RegistrarScopeIdTypeTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RegistrarScopeIdValueTest.class.getName());
 
-    public RegistrarScopeIdTypeTest(String testName) {
+    public RegistrarScopeIdValueTest(String testName) {
         super(testName);
     }
 
@@ -32,7 +32,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
 
     public void testValueOfNull() {
         try {
-            RegistrarScopeIdType.valueOf(null);
+            RegistrarScopeIdValue.valueOf(null);
             fail();
         } catch (NullPointerException e) {
             LOGGER.info(e.getMessage());
@@ -41,16 +41,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
 
     public void testValueOfEmpty() {
         try {
-            RegistrarScopeIdType.valueOf("");
-            fail();
-        } catch (IllegalArgumentException e) {
-            LOGGER.info(e.getMessage());
-        }
-    }
-
-    public void testValueOfToShort() {
-        try {
-            RegistrarScopeIdType.valueOf("X");
+            RegistrarScopeIdValue.valueOf("");
             fail();
         } catch (IllegalArgumentException e) {
             LOGGER.info(e.getMessage());
@@ -59,7 +50,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
 
     public void testValueOfToLong() {
         try {
-            RegistrarScopeIdType.valueOf("0123456789x0123456789");
+            RegistrarScopeIdValue.valueOf("aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaaa5aaaaaaaaa6X");
             fail();
         } catch (IllegalArgumentException e) {
             LOGGER.info(e.getMessage());
@@ -67,22 +58,25 @@ public class RegistrarScopeIdTypeTest extends TestCase {
     }
 
     public void testValueOfOk() {
-        RegistrarScopeIdType.valueOf("123");
-        RegistrarScopeIdType.valueOf("abc");
-        RegistrarScopeIdType.valueOf("ABC");
-        RegistrarScopeIdType.valueOf("1aA");
+        RegistrarScopeIdValue.valueOf("1");
+        RegistrarScopeIdValue.valueOf("a");
+        RegistrarScopeIdValue.valueOf("A");
+        RegistrarScopeIdValue.valueOf("123");
+        RegistrarScopeIdValue.valueOf("abc");
+        RegistrarScopeIdValue.valueOf("ABC");
+        RegistrarScopeIdValue.valueOf("1aA");
     }
 
     public void testValueOfSpecialChars() {
-        char[] chars = new char[] { '_', ':', '-' };
-        for (char c : chars) {
+        char[] validChars = new char[] { ':', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '-', '.', '_', '~' };
+        for (char c : validChars) {
             // contains special character
-            RegistrarScopeIdType.valueOf("x" + c + "x");
+            RegistrarScopeIdValue.valueOf("x" + c + "x");
 
             // starts with special character
             try {
                 String str = "" + c + "x";
-                RegistrarScopeIdType.valueOf(str);
+                RegistrarScopeIdValue.valueOf(str);
                 fail(str);
             } catch (IllegalArgumentException e) {
                 LOGGER.info(e.getMessage());
@@ -91,21 +85,22 @@ public class RegistrarScopeIdTypeTest extends TestCase {
             // ends with special character
             try {
                 String str = "x" + c;
-                RegistrarScopeIdType.valueOf(str);
+                RegistrarScopeIdValue.valueOf(str);
                 fail(str);
             } catch (IllegalArgumentException e) {
+                // null
                 LOGGER.info(e.getMessage());
             }
         }
     }
 
     public void testValueOfInvalidSpecialChars() {
-        char[] invalidChars = new char[] { '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=', '.', '~' };
+        char[] invalidChars = new char[] { '/' };
         for (char c : invalidChars) {
             // starts with special character
             try {
                 String str = "" + c + "x";
-                RegistrarScopeIdType.valueOf(str);
+                RegistrarScopeIdValue.valueOf(str);
                 fail(str);
             } catch (IllegalArgumentException e) {
                 LOGGER.info(e.getMessage());
@@ -114,7 +109,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
             // ends with special character
             try {
                 String str = "x" + c;
-                RegistrarScopeIdType.valueOf(str);
+                RegistrarScopeIdValue.valueOf(str);
                 fail(str);
             } catch (IllegalArgumentException e) {
                 LOGGER.info(e.getMessage());
@@ -123,7 +118,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
             // contains special character
             try {
                 String str = "x" + c + "x";
-                RegistrarScopeIdType.valueOf(str);
+                RegistrarScopeIdValue.valueOf(str);
                 fail(str);
             } catch (IllegalArgumentException e) {
                 LOGGER.info(e.getMessage());
@@ -132,7 +127,7 @@ public class RegistrarScopeIdTypeTest extends TestCase {
     }
 
     public void testCaseSensitive() {
-        String type = "abc_DEF-012";
-        assertEquals(type, RegistrarScopeIdType.valueOf(type).toString());
+        String value = "abc_DEF-012";
+        assertEquals(value, RegistrarScopeIdValue.valueOf(value).toString());
     }
 }
