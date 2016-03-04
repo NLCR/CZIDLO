@@ -25,23 +25,23 @@ public class SearchDaoPostgres extends AbstractDAO implements SearchDAO {
     }
 
     @Override
-    public List<Long> listIeIdsByFulltextSearchOfIe(String query, Integer limit) throws DatabaseException {
-        return searchTable(TABLE_IE_NAME, query, limit);
+    public List<Long> listIeIdsByFulltextSearchOfIe(String[] queryTokens, Integer limit) throws DatabaseException {
+        return searchTable(TABLE_IE_NAME, queryTokens, limit);
     }
 
     @Override
-    public List<Long> listIeIdsByFulltextSearchOfDd(String query, Integer limit) throws DatabaseException {
-        return searchTable(TABLE_DD_NAME, query, limit);
+    public List<Long> listIeIdsByFulltextSearchOfDd(String[] queryTokens, Integer limit) throws DatabaseException {
+        return searchTable(TABLE_DD_NAME, queryTokens, limit);
     }
 
     @Override
-    public List<Long> listIeIdsByFulltextSearchOfRsi(String query, Integer limit) throws DatabaseException {
-        return searchTable(TABLE_RSI_NAME, query, limit);
+    public List<Long> listIeIdsByFulltextSearchOfRsi(String[] queryTokens, Integer limit) throws DatabaseException {
+        return searchTable(TABLE_RSI_NAME, queryTokens, limit);
     }
 
-    private List<Long> searchTable(String tableName, String query, Integer limit) throws DatabaseException {
+    private List<Long> searchTable(String tableName, String[] queryTokens, Integer limit) throws DatabaseException {
         try {
-            StatementWrapper st = new SelectIdByFulltextSearch(tableName, ATTR_ID, ATTR_VALUE, query, limit);
+            StatementWrapper st = new SelectIdByFulltextSearch(tableName, ATTR_ID, ATTR_VALUE, queryTokens, limit);
             DaoOperation operation = new MultipleResultsOperation(st, new SingleLongRT());
             return (List<Long>) runInTransaction(operation);
         } catch (PersistenceException ex) {

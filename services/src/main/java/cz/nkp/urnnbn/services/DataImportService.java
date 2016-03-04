@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.services;
 
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -28,7 +30,6 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import java.util.logging.Logger;
 
 /**
  * @author Martin Řehánek

@@ -175,7 +175,7 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
                 }
             });
         } else {
-            searchService.getIntEntIdentifiersBySearch(query, new AsyncCallback<ArrayList<Long>>() {
+            searchService.searchMetadata(query, new AsyncCallback<ArrayList<Long>>() {
 
                 @Override
                 public void onSuccess(ArrayList<Long> idList) {

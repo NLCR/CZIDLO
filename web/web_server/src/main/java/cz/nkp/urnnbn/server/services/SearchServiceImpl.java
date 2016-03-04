@@ -33,23 +33,26 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
 
     private static final long serialVersionUID = 1750995108864579331L;
     private static final Logger logger = Logger.getLogger(SearchServiceImpl.class.getName());
-    private static final int MIN_SEARCH_STRING_LENGTH = 3;
-    private static final int MAX_SEARCH_STRING_LENGTH = 100;
+    private static final int MAX_QUERY_LENGTH = 200;
+
     private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
     private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
     private static final int FULLTEXT_SEARCH_HARD_LIMIT = 100;
 
     @Override
-    public ArrayList<Long> getIntEntIdentifiersBySearch(String query) throws ServerException {
+    public ArrayList<Long> searchMetadata(String query) throws ServerException {
         try {
-            // logger.info("searching for \"" + query + "\" (ie identifiers)");
-            if (query == null || query.isEmpty()) {
-                return EMPTY_LONG_LIST;
-            } else if (query.length() > MAX_SEARCH_STRING_LENGTH) {
-                return searchByIdentifiers(query.substring(0, MAX_SEARCH_STRING_LENGTH));
-            } else {
-                return searchByIdentifiers(query);
+            // logger.info(String.format("query: \"%s\"", query));
+            if (query != null && !query.isEmpty()) {
+                if (query.length() > MAX_QUERY_LENGTH) {
+                    query = query.substring(0, MAX_QUERY_LENGTH);
+                }
+                String[] queryTokens = query.split("\\s");
+                if (queryTokens.length != 0) {
+                    return new ArrayList<Long>(readService.intEntIdsByFulltextSearch(queryTokens, FULLTEXT_SEARCH_HARD_LIMIT));
+                }
             }
+            return EMPTY_LONG_LIST;
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
@@ -105,134 +108,6 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
         }
-    }
-
-    private ArrayList<Long> searchByIdentifiers(String query) {
-        // logger.info("searching in ie identifiers");
-        query = query.toLowerCase();
-        // logger.info("query (toLowerCase): " + query);
-        query = normalizeIfIsbn(query);
-        // logger.info("query (normalizeIfIsbn): " + query);
-        query = normalizeIfIssn(query);
-        // logger.info("query (normalizeIfIssn): " + query);
-        query = normalizeIfCcnb(query);
-        // logger.info("query (normalizeIfCcnb): " + query);
-        query = replaceForbiddenCharacters(query, new char[] { '\'', ':', '!', '&' });
-        // logger.info("query (replaceForbiddenCharacters): " + query);
-        String[] words = query.split(" ");
-        // logger.info("query (split): " + toString(words));
-        StringBuilder indexSearchQuery = new StringBuilder();
-        indexSearchQuery.append('\'');
-        boolean atLeastOneAcceptedToken = false;
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i];
-            String trimmed = word.trim();
-            // logger.info("word: " + word + ", trimmed: " + trimmed);
-            if (!trimmed.isEmpty() && (isNumber(trimmed) || trimmed.length() >= MIN_SEARCH_STRING_LENGTH)) {
-                indexSearchQuery.append(trimmed);
-                atLeastOneAcceptedToken = true;
-                if (i != words.length - 1) {
-                    indexSearchQuery.append('&');
-                }
-            }
-        }
-        indexSearchQuery.append('\'');
-        String indexSearchQueryStr = indexSearchQuery.toString();
-        // logger.info("indexSearchQuery: " + indexSearchQueryStr);
-        if (atLeastOneAcceptedToken) {
-            return new ArrayList<Long>(readService.intEntIdsByFulltextSearch(indexSearchQueryStr, FULLTEXT_SEARCH_HARD_LIMIT));
-        } else {
-            return new ArrayList<Long>();
-        }
-    }
-
-    private boolean isNumber(String trimmed) {
-        try {
-            Integer.valueOf(trimmed);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private String toString(String[] words) {
-        StringBuilder builder = new StringBuilder();
-        builder.append('[');
-        for (int i = 0; i < words.length; i++) {
-            builder.append(words[i]);
-            if (i < words.length - 1) {
-                builder.append(',');
-            }
-        }
-        builder.append(']');
-        return builder.toString();
-    }
-
-    private String normalizeIfCcnb(String query) {
-        // query = query.toUpperCase();
-        String standardPrefix = "cnb";
-        String incorrectPrefix = "čnb";
-        if (query.toUpperCase().startsWith(incorrectPrefix)) {
-            String normalized = standardPrefix + query.substring(incorrectPrefix.length());
-            // logger.info("CCNB normalized: '" + normalized + "'");
-            return normalized;
-        } else {
-            return query;
-        }
-    }
-
-    private String normalizeIfIssn(String query) {
-        // query = query.toUpperCase();
-        String[] preficies = new String[] { "issn ", "issn: ", "issn:" };
-        for (String prefix : preficies) {
-            if (query.startsWith(prefix)) {
-                String normalized = query.substring(prefix.length());
-                // logger.info("ISSN normalized: '" + normalized + "'");
-                return normalized;
-            }
-        }
-        return query;
-    }
-
-    private String normalizeIfIsbn(String query) {
-        // query = query.toUpperCase();
-        String[] preficies = new String[] { "isbn:", "isbn: ", "isbn:" };
-        for (String prefix : preficies) {
-            if (query.startsWith(prefix)) {
-                query = query.substring(prefix.length());
-                String normalized = removeSeparators(query, new char[] { '-', ' ' });
-                // logger.info("ISBN normalized: '" + normalized + "'");
-                return normalized;
-            }
-        }
-        return query;
-    }
-
-    private String removeSeparators(String original, char[] separators) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < original.length(); i++) {
-            char character = original.charAt(i);
-            if (!isSeparator(character, separators)) {
-                result.append(character);
-            }
-        }
-        return result.toString();
-    }
-
-    private boolean isSeparator(char character, char[] separators) {
-        for (char separator : separators) {
-            if (character == separator) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String replaceForbiddenCharacters(String string, char[] forbiddenChars) {
-        for (char forbiddenChar : forbiddenChars) {
-            string = string.replace(forbiddenChar, ' ');
-        }
-        return string;
     }
 
     private IntelectualEntityDTO transformedEntity(IntelectualEntity entity) {

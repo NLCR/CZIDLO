@@ -12,10 +12,10 @@ public interface SearchDAO {
     public String ATTR_ID = "ieId";
     public String ATTR_VALUE = "searchable";
 
-    public List<Long> listIeIdsByFulltextSearchOfIe(String query, Integer limit) throws DatabaseException;
+    public List<Long> listIeIdsByFulltextSearchOfIe(String[] queryTokens, Integer limit) throws DatabaseException;
 
-    public List<Long> listIeIdsByFulltextSearchOfDd(String query, Integer limit) throws DatabaseException;
+    public List<Long> listIeIdsByFulltextSearchOfDd(String[] queryTokens, Integer limit) throws DatabaseException;
 
-    public List<Long> listIeIdsByFulltextSearchOfRsi(String query, Integer limit) throws DatabaseException;
+    public List<Long> listIeIdsByFulltextSearchOfRsi(String[] queryTokens, Integer limit) throws DatabaseException;
 
 }

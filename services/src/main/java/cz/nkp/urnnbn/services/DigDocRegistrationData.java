@@ -4,6 +4,9 @@
  */
 package cz.nkp.urnnbn.services;
 
+import java.util.Collections;
+import java.util.List;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -14,8 +17,6 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *

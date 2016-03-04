@@ -4,6 +4,9 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.UrnNbnGenerator;
@@ -11,8 +14,6 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

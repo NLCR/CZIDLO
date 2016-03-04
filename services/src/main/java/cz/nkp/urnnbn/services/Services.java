@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.services;
 
+import java.util.logging.Logger;
+
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.services.impl.AuthenticationServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataAccessServiceImpl;
@@ -12,8 +14,6 @@ import cz.nkp.urnnbn.services.impl.DataRemoveServiceImpl;
 import cz.nkp.urnnbn.services.impl.DataUpdateServiceImpl;
 import cz.nkp.urnnbn.services.impl.StatisticServiceImpl;
 import cz.nkp.urnnbn.services.impl.UrnNbnReservationServiceImpl;
-
-import java.util.logging.Logger;
 
 /**
  *
