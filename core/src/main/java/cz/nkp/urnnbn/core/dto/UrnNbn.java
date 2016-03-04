@@ -20,6 +20,29 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
  */
 public class UrnNbn {
 
+    public static class DocumentCode {
+
+        private static final String REGEXP = "^[a-zA-Z0-9]{6}$";
+        private static final Pattern PATTERN = Pattern.compile(REGEXP);
+        final String value;
+
+        private DocumentCode(String value) {
+            this.value = value.toLowerCase();
+        }
+
+        public static DocumentCode valueOf(String string) {
+            if (PATTERN.matcher(string).matches()) {
+                return new DocumentCode(string);
+            } else {
+                throw new IllegalArgumentException(String.format("%s doesn't match regexp %s", string, REGEXP));
+            }
+        }
+
+        public String toString() {
+            return value;
+        }
+    }
+
     private static final String PREFIX = "urn:nbn:";
     private static Pattern URN_NBN_PATTERN = null;
     private final Long digDocId;
@@ -41,7 +64,7 @@ public class UrnNbn {
      * @param digDocId
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved) {
-        this(registrarCode, documentCode, digDocId, reserved, null);
+        this(registrarCode, DocumentCode.valueOf(documentCode), digDocId, reserved, null);
     }
 
     /**
@@ -52,9 +75,9 @@ public class UrnNbn {
      * @param digDocId
      * @param deactivationNote
      */
-    public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, String deactivationNote) {
+    public UrnNbn(RegistrarCode registrarCode, DocumentCode documentCode, Long digDocId, DateTime reserved, String deactivationNote) {
         this.registrarCode = registrarCode;
-        this.documentCode = documentCode.toLowerCase();
+        this.documentCode = documentCode.toString();
         this.digDocId = digDocId;
         this.reserved = reserved;
         this.registered = null;
@@ -65,7 +88,7 @@ public class UrnNbn {
 
     private static Pattern getUrnNbnPattern() {
         if (URN_NBN_PATTERN == null) {
-            URN_NBN_PATTERN = Pattern.compile(PREFIX + CountryCode.getCode() + ":[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}", Pattern.CASE_INSENSITIVE);
+            URN_NBN_PATTERN = Pattern.compile("^" + PREFIX + CountryCode.getCode() + ":[a-zA-z0-9]{2,6}\\-[a-zA-Z0-9]{6}$", Pattern.CASE_INSENSITIVE);
         }
         return URN_NBN_PATTERN;
     }

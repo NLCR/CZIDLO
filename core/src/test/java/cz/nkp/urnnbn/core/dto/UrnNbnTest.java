@@ -145,6 +145,12 @@ public class UrnNbnTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // ok
         }
+        try {
+            UrnNbn.valueOf("urn:nbn:cz:aba001-12345 ");
+            fail();
+        } catch (IllegalArgumentException e) {
+            // ok
+        }
     }
 
     public void testValueOf_incorrectSeparator() {
