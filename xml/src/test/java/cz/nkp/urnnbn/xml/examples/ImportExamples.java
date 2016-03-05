@@ -30,9 +30,9 @@ import nu.xom.ParsingException;
  */
 public class ImportExamples extends TestCase {
 
-    File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
-    File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/recordImport.xsd.xml");
-    String importSchema;
+    // File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
+    // File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/recordImport.xsd.xml");
+    // String importSchema;
 
     public ImportExamples(String testName) {
         super(testName);
@@ -40,7 +40,7 @@ public class ImportExamples extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        importSchema = XOMUtils.loadDocumentWithoutValidation(importSchemaFile).toXML();
+        // importSchema = XOMUtils.loadDocumentWithoutValidation(importSchemaFile).toXML();
     }
 
     @Override
@@ -49,11 +49,11 @@ public class ImportExamples extends TestCase {
     }
 
     public void testValidateMonographImport() throws Exception {
-        String xmlString = toXmlString(importExamplesDir, "monograph.xml");
-        System.err.println("file: " + xmlString);
-        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
-        // Document doc = XOMUtils.loadDocumentValidByInternalXsd(xmlString);
-        assertNotNull(doc);
+        // String xmlString = toXmlString(importExamplesDir, "monograph.xml");
+        // System.err.println("file: " + xmlString);
+        // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, importSchema);
+        // // Document doc = XOMUtils.loadDocumentValidByInternalXsd(xmlString);
+        // assertNotNull(doc);
     }
 
     // public void testValidateMonographWithUrnImport() throws Exception {

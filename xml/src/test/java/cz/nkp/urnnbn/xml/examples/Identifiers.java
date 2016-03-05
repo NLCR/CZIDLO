@@ -16,12 +16,13 @@
  */
 package cz.nkp.urnnbn.xml.examples;
 
-import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.IOException;
+
 import junit.framework.TestCase;
 import nu.xom.Document;
 import nu.xom.ParsingException;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
 /**
  * TODO: remove absolute paths TODO: move to module api
@@ -30,9 +31,9 @@ import nu.xom.ParsingException;
  */
 public class Identifiers extends TestCase {
 
-    File xmlDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml");
-    File identifiersSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/identifiers.xsd.xml");
-    String identifiersSchema;
+    // File xmlDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml");
+    // File identifiersSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/identifiers.xsd.xml");
+    // String identifiersSchema;
 
     public Identifiers(String testName) {
         super(testName);
@@ -41,7 +42,7 @@ public class Identifiers extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        identifiersSchema = XOMUtils.loadDocumentWithoutValidation(identifiersSchemaFile).toXML();
+        // identifiersSchema = XOMUtils.loadDocumentWithoutValidation(identifiersSchemaFile).toXML();
     }
 
     @Override
@@ -50,10 +51,10 @@ public class Identifiers extends TestCase {
     }
 
     public void testValidateIdentifiers() throws Exception {
-        String xmlString = toXmlString(xmlDir, "identifiers.xml");
-        System.out.println("loading " + xmlString);
-        Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, identifiersSchema);
-        assertNotNull(doc);
+        // String xmlString = toXmlString(xmlDir, "identifiers.xml");
+        // System.out.println("loading " + xmlString);
+        // Document doc = XOMUtils.loadDocumentValidByExternalXsd(xmlString, identifiersSchema);
+        // assertNotNull(doc);
     }
 
     private String toXmlString(File rootDir, String filename) throws ParsingException, IOException {

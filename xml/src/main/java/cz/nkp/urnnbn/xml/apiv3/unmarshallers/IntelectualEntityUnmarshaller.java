@@ -198,7 +198,7 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
      * @return IntEntIdentier or null
      */
     IntEntIdentifier identifierByElementName(Element rootEl, String elementName, IntEntIdType type, boolean mandatory, ElementContentEnhancer enhancer) {
-        Elements idElements = rootEl.getChildElements(elementName, Namespaces.CZIDLO_NS);
+        Elements idElements = rootEl.getChildElements(elementName, Namespaces.CZIDLO_V3_NS);
         int found = idElements.size();
         if (found == 1) {
             return elementToIntEntId(idElements.get(0), type, enhancer);

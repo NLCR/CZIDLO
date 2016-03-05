@@ -38,14 +38,14 @@ public abstract class XmlBuilder {
     private static final Logger logger = Logger.getLogger(XmlBuilder.class.getName());
     private static final boolean INCLUDE_SCHEMA = true;
     private static String responseSchema = null;
-    static String CZIDLO_NS = Namespaces.CZIDLO_NS;
+    static String CZIDLO_NS = Namespaces.CZIDLO_V3_NS;
     static String IDTYPE_INTERNAL = "INTERNAL";
 
     abstract Element buildRootElement();
 
     private static String getResponseSchema() {
         if (responseSchema == null) {
-            responseSchema = Namespaces.XSI_NS + ' ' + XmlModuleConfiguration.instanceOf().getResponseXsdLocation();
+            responseSchema = Namespaces.XSI_NS + ' ' + XmlModuleConfiguration.instanceOf().getApiV3ResponseXsdLocation();
         }
         return responseSchema;
     }

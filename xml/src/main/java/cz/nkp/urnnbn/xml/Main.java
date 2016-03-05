@@ -177,7 +177,7 @@ public class Main {
         try {
             File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
             nu.xom.Document doc = XOMUtils.loadDocumentWithoutValidation(in);
-            XPathContext context = new XPathContext("r", Namespaces.CZIDLO_NS);
+            XPathContext context = new XPathContext("r", Namespaces.CZIDLO_V3_NS);
             Nodes nodes = doc.query("r:digitalInstance/r:url", context);
             System.out.println("nodes:" + nodes.size());
             for (int i = 0; i < nodes.size(); i++) {

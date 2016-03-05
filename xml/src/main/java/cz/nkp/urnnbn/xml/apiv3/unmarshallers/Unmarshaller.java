@@ -36,7 +36,7 @@ public abstract class Unmarshaller {
     static final Logger logger = Logger.getLogger(Unmarshaller.class.getName());
     private static final String NS_PREFIX_NAME = "resolver";
     private static final String NS_PREFIX = NS_PREFIX_NAME + ":";
-    private static final XPathContext context = new XPathContext(NS_PREFIX_NAME, Namespaces.CZIDLO_NS);
+    private static final XPathContext context = new XPathContext(NS_PREFIX_NAME, Namespaces.CZIDLO_V3_NS);
 
     static String prefixed(String elementName) {
         return NS_PREFIX + elementName;

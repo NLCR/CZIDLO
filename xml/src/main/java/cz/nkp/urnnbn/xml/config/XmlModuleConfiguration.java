@@ -29,7 +29,8 @@ public class XmlModuleConfiguration {
 
     private static final Logger logger = Logger.getLogger(XmlModuleConfiguration.class.getName());
     private static XmlModuleConfiguration instance = null;
-    private String responseXsdLocation;
+    private String apiV3ResponseXsdLocation;
+    private String apiV4ResponseXsdLocation;
 
     static public XmlModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -46,10 +47,17 @@ public class XmlModuleConfiguration {
      */
     public void initialize(PropertyLoader loader) throws IOException {
         logger.log(Level.INFO, "Initializing {0}", XmlModuleConfiguration.class.getName());
-        responseXsdLocation = loader.loadString(PropertyKeys.RESPONSE_XSD_LOCATION);
+        apiV3ResponseXsdLocation = loader.loadString(PropertyKeys.API_V3_RESPONSE_XSD_LOCATION);
+        logger.log(Level.INFO, "APIv3 response.xsd location: {0}", apiV3ResponseXsdLocation);
+        apiV4ResponseXsdLocation = loader.loadString(PropertyKeys.API_V4_RESPONSE_XSD_LOCATION);
+        logger.log(Level.INFO, "APIv4 response.xsd location: {0}", apiV4ResponseXsdLocation);
     }
 
-    public String getResponseXsdLocation() {
-        return responseXsdLocation;
+    public String getApiV3ResponseXsdLocation() {
+        return apiV3ResponseXsdLocation;
+    }
+    
+    public String getApiV4ResponseXsdLocation() {
+        return apiV3ResponseXsdLocation;
     }
 }
