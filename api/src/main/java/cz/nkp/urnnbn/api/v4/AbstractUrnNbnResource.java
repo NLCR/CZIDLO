@@ -3,7 +3,7 @@ package cz.nkp.urnnbn.api.v4;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
-public abstract class AbstractUrnNbnResource extends V4Resource {
+public abstract class AbstractUrnNbnResource extends ApiV4Resource {
 
     public abstract String getUrnNbnXmlRecord(String urnNbnString);
 

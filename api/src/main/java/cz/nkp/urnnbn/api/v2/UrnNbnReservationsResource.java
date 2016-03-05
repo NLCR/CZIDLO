@@ -28,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v2_v3.AbstractUrnNbnReservationsResource;
 import cz.nkp.urnnbn.api.v2_v3.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;

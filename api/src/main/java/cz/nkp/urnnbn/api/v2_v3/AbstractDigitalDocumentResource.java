@@ -54,7 +54,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractDigitalDocumentResource extends V2V3Resource {
+public abstract class AbstractDigitalDocumentResource extends ApiV2V3Resource {
 
     private static final Logger logger = Logger.getLogger(AbstractDigitalDocumentResource.class.getName());
     protected static final String PARAM_FORMAT = "format";

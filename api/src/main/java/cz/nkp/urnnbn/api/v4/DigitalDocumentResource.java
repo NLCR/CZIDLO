@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.api.v4;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,19 +21,8 @@ import cz.nkp.urnnbn.api.Action;
 import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.xml.apiv4.builders.ArchiverBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.IntelectualEntityBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 
 /**
  * REST Web Service
@@ -78,44 +65,6 @@ public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
         DigitalDocumentBuilder builder = digitalDocumentBuilder(withDigitalInstances);
         String xml = builder.buildDocumentWithResponseHeader().toXML();
         return Response.ok().entity(xml).build();
-    }
-
-    // protected final DigitalDocumentBuilder digitalDocumentBuilder(boolean withDigitalInstances) {
-    // return new DigitalDocumentBuilder(doc, urn, apiV4registrarScopeIdentifiersBuilder(doc.getId()), withDigitalInstances ? instancesBuilder() :
-    // null,
-    // registrarBuilder(), archiverBuilder(), entityBuilder());
-    // }
-
-    private DigitalInstancesBuilder instancesBuilder() {
-        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-        List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
-        for (DigitalInstance instance : instances) {
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);
-            result.add(builder);
-        }
-        return new DigitalInstancesBuilder(result);
-    }
-
-    private RegistrarBuilder registrarBuilder() {
-        return new RegistrarBuilder(dataAccessService().registrarById(doc.getRegistrarId()), null, null);
-    }
-
-    private ArchiverBuilder archiverBuilder() {
-        if (doc.getRegistrarId() == doc.getArchiverId()) {
-            return null;
-        } else {
-            return new ArchiverBuilder(dataAccessService().archiverById(doc.getArchiverId()));
-        }
-    }
-
-    private IntelectualEntityBuilder entityBuilder() {
-        long intEntId = doc.getIntEntId();
-        IntelectualEntity entity = dataAccessService().entityById(intEntId);
-        List<IntEntIdentifier> ieIdentfiers = dataAccessService().intEntIdentifiersByIntEntId(intEntId);
-        Publication pub = dataAccessService().publicationByIntEntId(intEntId);
-        Originator originator = dataAccessService().originatorByIntEntId(intEntId);
-        SourceDocument srcDoc = dataAccessService().sourceDocumentByIntEntId(intEntId);
-        return IntelectualEntityBuilder.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
     }
 
     @Path("/registrarScopeIdentifiers")

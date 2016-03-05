@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
-public class V4Resource extends Resource {
+public class ApiV4Resource extends Resource {
 
     protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);

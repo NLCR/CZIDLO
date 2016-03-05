@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.api.v2;
+package cz.nkp.urnnbn.api.v2_v3;
 
 import java.util.List;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v2_v3.V2V3Resource;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -32,7 +31,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnReservationsBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractUrnNbnReservationsResource extends V2V3Resource {
+public abstract class AbstractUrnNbnReservationsResource extends ApiV2V3Resource {
 
     private final Registrar registrar;
 

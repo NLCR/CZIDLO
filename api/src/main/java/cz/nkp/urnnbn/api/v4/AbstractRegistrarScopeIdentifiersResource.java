@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
 
-public abstract class AbstractRegistrarScopeIdentifiersResource extends V4Resource {
+public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV4Resource {
     private final DigitalDocument doc;
 
     public AbstractRegistrarScopeIdentifiersResource(DigitalDocument doc) {

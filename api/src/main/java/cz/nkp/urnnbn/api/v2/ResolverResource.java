@@ -12,7 +12,7 @@ import javax.ws.rs.WebApplicationException;
 
 import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.v2_v3.Parser;
-import cz.nkp.urnnbn.api.v2_v3.V2V3Resource;
+import cz.nkp.urnnbn.api.v2_v3.ApiV2V3Resource;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalDocumentException;
@@ -27,7 +27,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  * @author Martin Řehánek
  */
 @Path("/resolver")
-public class ResolverResource extends V2V3Resource {
+public class ResolverResource extends ApiV2V3Resource {
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {

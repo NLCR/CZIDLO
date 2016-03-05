@@ -16,7 +16,6 @@
  */
 package cz.nkp.urnnbn.api.v2_v3;
 
-import cz.nkp.urnnbn.api.v2.AbstractUrnNbnReservationsResource;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
@@ -25,7 +24,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractRegistrarResource extends V2V3Resource {
+public abstract class AbstractRegistrarResource extends ApiV2V3Resource {
 
     protected final Registrar registrar;
 

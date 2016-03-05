@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  * @author Martin Řehánek
  */
 @Path("/resolver")
-public class ResolverResource extends V4Resource {
+public class ResolverResource extends ApiV4Resource {
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {

@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilder;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.DigitalInstanceUnmarshaller;
 
-public abstract class AbstractDigitalInstancesResource extends V4Resource {
+public abstract class AbstractDigitalInstancesResource extends ApiV4Resource {
     protected final DigitalDocument digDoc;
 
     public AbstractDigitalInstancesResource(DigitalDocument digDoc) {

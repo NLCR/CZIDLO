@@ -19,7 +19,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.DigitalLibraryBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
 
-public abstract class AbstractDigitalInstanceResource extends V4Resource {
+public abstract class AbstractDigitalInstanceResource extends ApiV4Resource {
 
     private final DigitalInstance instance;
 

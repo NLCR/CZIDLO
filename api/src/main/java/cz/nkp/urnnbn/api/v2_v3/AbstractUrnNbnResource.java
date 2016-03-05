@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  * 
  * @author Martin Řehánek
  */
-public abstract class AbstractUrnNbnResource extends V2V3Resource {
+public abstract class AbstractUrnNbnResource extends ApiV2V3Resource {
 
     public abstract String getUrnNbnXmlRecord(String urnNbnString);
 

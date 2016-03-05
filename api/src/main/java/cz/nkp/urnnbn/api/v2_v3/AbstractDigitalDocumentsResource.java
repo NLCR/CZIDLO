@@ -59,7 +59,7 @@ import cz.nkp.urnnbn.xml.apiv3.unmarshallers.RecordImportUnmarshaller;
  * 
  * @author Martin Řehánek
  */
-public abstract class AbstractDigitalDocumentsResource extends V2V3Resource {
+public abstract class AbstractDigitalDocumentsResource extends ApiV2V3Resource {
 
     protected final Registrar registrar;
 

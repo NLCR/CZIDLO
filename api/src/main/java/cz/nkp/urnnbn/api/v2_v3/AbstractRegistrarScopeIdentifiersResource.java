@@ -40,7 +40,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractRegistrarScopeIdentifiersResource extends V2V3Resource {
+public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV2V3Resource {
 
     private final DigitalDocument doc;
 

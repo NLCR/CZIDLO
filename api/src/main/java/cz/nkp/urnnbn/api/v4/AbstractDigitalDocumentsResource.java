@@ -39,7 +39,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.RecordImportUnmarshaller;
 
-public abstract class AbstractDigitalDocumentsResource extends V4Resource {
+public abstract class AbstractDigitalDocumentsResource extends ApiV4Resource {
     protected final Registrar registrar;
 
     public AbstractDigitalDocumentsResource(Registrar registrar) {

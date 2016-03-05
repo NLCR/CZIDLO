@@ -11,7 +11,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnReservationBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnReservationsBuilder;
 
-public abstract class AbstractUrnNbnReservationsResource extends V4Resource {
+public abstract class AbstractUrnNbnReservationsResource extends ApiV4Resource {
 
     private final Registrar registrar;
 

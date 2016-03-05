@@ -30,7 +30,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarsBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractRegistrarsResource extends V2V3Resource {
+public abstract class AbstractRegistrarsResource extends ApiV2V3Resource {
 
     public String getRegistrarsApiV3XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);

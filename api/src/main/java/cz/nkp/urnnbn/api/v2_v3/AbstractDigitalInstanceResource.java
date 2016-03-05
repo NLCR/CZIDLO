@@ -39,7 +39,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractDigitalInstanceResource extends V2V3Resource {
+public abstract class AbstractDigitalInstanceResource extends ApiV2V3Resource {
 
     private final DigitalInstance instance;
 

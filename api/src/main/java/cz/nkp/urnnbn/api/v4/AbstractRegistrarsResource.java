@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarsBuilder;
 
-public class AbstractRegistrarsResource extends V4Resource {
+public class AbstractRegistrarsResource extends ApiV4Resource {
 
     public String getRegistrarsApiV4XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);

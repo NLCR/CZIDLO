@@ -34,7 +34,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.IntelectualEntityBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 
-public abstract class AbstractDigitalDocumentResource extends V4Resource {
+public abstract class AbstractDigitalDocumentResource extends ApiV4Resource {
 
     private static final Logger logger = Logger.getLogger(AbstractDigitalDocumentResource.class.getName());
     protected static final String PARAM_FORMAT = "format";

@@ -40,7 +40,7 @@ import cz.nkp.urnnbn.xml.apiv3.unmarshallers.DigitalInstanceUnmarshaller;
  *
  * @author Martin Řehánek
  */
-public abstract class AbstractDigitalInstancesResource extends V2V3Resource {
+public abstract class AbstractDigitalInstancesResource extends ApiV2V3Resource {
 
     protected final DigitalDocument digDoc;
 
