@@ -81,6 +81,12 @@ public abstract class AbstractDigitalDocumentsResource extends Resource {
         return registerDigitalDocumentByApiV3(doc, login, registrarCode);
     }
 
+    protected String registerDigitalDocumentByApiV4(String content, String login, RegistrarCode registrarCode) throws ValidityException, IOException,
+            ParsingException {
+        Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
+        return registerDigitalDocumentByApiV3(doc, login, registrarCode);
+    }
+
     protected String registerDigitalDocumentByApiV3(Document doc, String login, RegistrarCode registrarCode) {
         try {
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);

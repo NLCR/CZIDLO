@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (C) 2011, 2012 Martin Řehánek
+Copyright (C) 2011 - 2016 Martin Řehánek
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,10 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <!--
-    Document   : response.xsd
     Author     : Martin Řehánek
     Description:
-        This XML Schema (W3C) document validates api v3 operations' response data.
+        This XML Schema (W3C) document validates APIv3 operations' response data.
         https://github.com/NLCR/CZIDLO
         https://github.com/NLCR/CZIDLO/wiki/API
 -->

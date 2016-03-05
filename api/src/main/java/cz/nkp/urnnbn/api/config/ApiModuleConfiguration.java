@@ -30,6 +30,12 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationDefaultSize;
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
+    // API V4
+    private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV4;
+    private Document digDocRegistrationXsdV4;
+    private ValidatingXmlLoader digInstImportDataValidatingLoaderV4;
+    private Document digInstImportXsdV4;
+    private Document responseV4Xsd;
     // API V3
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV3;
     private Document digDocRegistrationXsdV3;
@@ -84,6 +90,21 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         urnReservationDefaultSize = loader.loadInt(PropertyKeys.URN_RESERVATION_DEFAULT_SIZE);
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
+    }
+
+    // API V4
+    void initDigDocRegistrationXsdV4(InputStream in) throws ParsingException, ValidityException, IOException {
+        digDocRegistrationXsdV4 = XOMUtils.loadDocumentWithoutValidation(in);
+        digDocRegistrationDataValidatingLoaderV4 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV4.toXML());
+    }
+
+    void initDigInstImportXsdV4(InputStream in) throws ParsingException, ValidityException, IOException {
+        digInstImportXsdV4 = XOMUtils.loadDocumentWithoutValidation(in);
+        digInstImportDataValidatingLoaderV4 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV4.toXML());
+    }
+
+    void initResponseV4Xsd(InputStream in) throws ParsingException, IOException, XSLException {
+        this.responseV4Xsd = XOMUtils.loadDocumentWithoutValidation(in);
     }
 
     // API V3
@@ -219,10 +240,6 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digDocRegistrationV2ToV3DataTransformer;
     }
 
-    public ValidatingXmlLoader getDigDocRegistrationDataValidatingLoaderV3() {
-        return digDocRegistrationDataValidatingLoaderV3;
-    }
-
     public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV2() {
         return digInstImportDataValidatingLoaderV2;
     }
@@ -231,12 +248,28 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digInstImportV2ToV3DataTransformer;
     }
 
+    public ValidatingXmlLoader getDigDocRegistrationDataValidatingLoaderV3() {
+        return digDocRegistrationDataValidatingLoaderV3;
+    }
+
+    public ValidatingXmlLoader getDigDocRegistrationDataValidatingLoaderV4() {
+        return digDocRegistrationDataValidatingLoaderV4;
+    }
+
     public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV3() {
         return digInstImportDataValidatingLoaderV3;
     }
 
+    public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV4() {
+        return digInstImportDataValidatingLoaderV4;
+    }
+
     public Document getResponseV3Xsd() {
         return responseV3Xsd;
+    }
+
+    public Document getResponseV4Xsd() {
+        return responseV4Xsd;
     }
 
     public Document getDigDocRegistrationXsdV2() {
@@ -247,12 +280,20 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digDocRegistrationXsdV3;
     }
 
+    public Document getDigDocRegistrationXsdV4() {
+        return digDocRegistrationXsdV4;
+    }
+
     public Document getDigInstImportXsdV2() {
         return digInstImportXsdV2;
     }
 
     public Document getDigInstImportXsdV3() {
         return digInstImportXsdV3;
+    }
+
+    public Document getDigInstImportXsdV4() {
+        return digInstImportXsdV4;
     }
 
     public XsltXmlTransformer getErrorResponseV3ToV2Transformer() {

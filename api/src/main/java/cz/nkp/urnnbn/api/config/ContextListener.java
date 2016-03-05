@@ -21,6 +21,10 @@ public class ContextListener implements ServletContextListener {
     private static final String WEB_APP_NAME = "API";
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
+    // API v4
+    private static final String REGISTER_DD_XSD_V4 = "v4/registerDigitalDocument.xsd";
+    private static final String IMPORT_DI_XSD_V4 = "v4/importDigitalInstance.xsd";
+    private static final String API_RESPONSE_V4 = "v4/response.xsd";
     // API v3
     private static final String REGISTER_DD_XSD_V3 = "v3/registerDigitalDocument.xsd";
     private static final String IMPORT_DI_XSD_V3 = "v3/importDigitalInstance.xsd";
@@ -54,6 +58,7 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         loadPropertiesFile();
+        loadApiV4Resources();
         loadApiV3Resources();
         loadApiV2Resources();
         loadApiV2RequestsToApiV3RequestTransformers();
@@ -71,6 +76,31 @@ public class ContextListener implements ServletContextListener {
         }.run(PROPERTIES_FILE);
     }
 
+    // API v4
+    private void loadApiV4Resources() {
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initDigDocRegistrationXsdV4(in);
+            }
+        }.run(REGISTER_DD_XSD_V4);
+
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initDigInstImportXsdV4(in);
+            }
+        }.run(IMPORT_DI_XSD_V4);
+
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initResponseV4Xsd(in);
+            }
+        }.run(API_RESPONSE_V4);
+    }
+
+    // API v3
     private void loadApiV3Resources() {
         new ResourceUtilizer(logger) {
             @Override
@@ -94,6 +124,7 @@ public class ContextListener implements ServletContextListener {
         }.run(API_RESPONSE_V3);
     }
 
+    // API v2
     private void loadApiV2Resources() {
         new ResourceUtilizer(logger) {
             @Override

@@ -85,8 +85,8 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @Override
     public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr, idValueStr,
-                    registrar.getCode() });
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
+                    idValueStr, registrar.getCode() });
             DigitalDocument digitalDocument = super.getDigitalDocument(idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return new DigitalDocumentResource(digitalDocument, urn);
