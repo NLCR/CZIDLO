@@ -1,7 +1,21 @@
-/***************************************************/
-/* Removed now invalid registrar-scope identifiers */
-/* https://github.com/NLCR/CZIDLO/issues/129       */
-/***************************************************/
+/**********************************************************************/
+/* Removing leading and trailing spaces in urn:nbn deactivation note. */
+/* Also replacing empty strings with null.                            */
+/* https://github.com/NLCR/CZIDLO/issues/142                          */
+/**********************************************************************/
+
+/* remove leading whitespaces */
+UPDATE urnnbnsuccessors SET note=regexp_replace(note, '^\s*', '', 'g') WHERE note ~ '^\s';
+/* remove traling whitespaces */
+UPDATE urnnbnsuccessors SET note=regexp_replace(note, '\s*$', '', 'g') WHERE note ~ '\s$';
+/* replace empty strings with null */
+UPDATE urnnbnsuccessors SET note=null WHERE note='';
+
+
+/****************************************************/
+/* Removing now invalid registrar-scope identifiers */
+/* https://github.com/NLCR/CZIDLO/issues/129        */
+/****************************************************/
 DELETE FROM registrarScopeId WHERE 
 idValue !~ '^[0-9a-zA-Z]' OR 
 idValue !~ '[0-9a-zA-Z]$' OR
@@ -18,6 +32,7 @@ DROP FUNCTION IF EXISTS ie_title_update(NUMERIC) CASCADE;
 DROP view IF EXISTS ie_title_view;
 DROP index IF EXISTS ie_title_fulltext_idx;
 DROP table IF EXISTS ie_title;
+
 
 /*************************/
 /*        SEARCH         */

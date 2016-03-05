@@ -515,7 +515,7 @@ public abstract class ApiV3Tests {
             if ("[]".equals(foundNote)) {
                 assertTrue(predecessor.note == null);
             } else {
-                assertEquals(predecessor.note, foundNote);
+                assertEquals(predecessor.note.trim(), foundNote);
             }
         }
     }

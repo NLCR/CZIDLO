@@ -460,6 +460,10 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
                 }
             }
             String noteFound = xmlPath.getString(String.format("predecessor[%d].@note", i));
+            // trim predecessor notes
+            predecessors = trimNotes(predecessors);
+            // TODO: no need this after upgrading rest-assured (current version 2.8)
+            // see see https://github.com/jayway/rest-assured/issues/650
             if (predecessor.note == null) {
                 assertEquals("[]", noteFound);
             } else {
@@ -479,6 +483,18 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         for (String urn : urnSuccessorsMap.keySet()) {
             assertHasSuccessors(urn, urnSuccessorsMap.get(urn));
         }
+    }
+
+    private List<Predecessor> trimNotes(List<Predecessor> predecessors) {
+        List<Predecessor> result = new ArrayList<>(predecessors.size());
+        for (Predecessor p : predecessors) {
+            String note = p.note == null ? null : p.note.trim();
+            if (note != null && note.isEmpty()) {
+                note = null;
+            }
+            result.add(new Predecessor(p.urnNbn, note));
+        }
+        return result;
     }
 
     // ARCHIVER
