@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.unmarshallers;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,9 +28,9 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.LimitedLengthEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.NoLeadingRoTrailingWhitespacesEnhancer;
 import cz.nkp.urnnbn.xml.commons.Xpath;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.NoLeadingRoTrailingWhitespacesEnhancer;
 
 /**
  *

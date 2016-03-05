@@ -14,8 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.unmarshallers;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers;
 
+import java.util.List;
+import java.util.logging.Level;
+
+import nu.xom.Element;
+import nu.xom.Elements;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.OriginType;
@@ -24,17 +29,13 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.CcnbEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.ElementContentEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.IsbnEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.IssnEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.LimitedLengthEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.PositiveIntValidator;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.CcnbEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.ElementContentEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.IsbnEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.IssnEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.PositiveIntValidator;
-import java.util.List;
-import java.util.logging.Level;
-import nu.xom.Element;
-import nu.xom.Elements;
 
 /**
  *

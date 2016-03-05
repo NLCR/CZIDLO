@@ -4,20 +4,21 @@
  */
 package cz.nkp.urnnbn.api.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+import nu.xom.xslt.XSLException;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import cz.nkp.urnnbn.xml.commons.ExternalXsdValitatingXmlLoader;
 import cz.nkp.urnnbn.xml.commons.ValidatingXmlLoader;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
-import nu.xom.xslt.XSLException;
 
 /**
  *

@@ -4,25 +4,23 @@
  */
 package cz.nkp.urnnbn.api.v4;
 
+import java.util.List;
+import java.util.logging.Level;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import cz.nkp.urnnbn.api.AbstractRegistrarsResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnsupportedFormatException;
 import cz.nkp.urnnbn.api.v4.jaxb.RegistrarBean;
 import cz.nkp.urnnbn.core.dto.Registrar;
-
-import java.util.List;
-import java.util.logging.Level;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 /**
  * REST Web Service

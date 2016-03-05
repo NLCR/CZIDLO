@@ -16,12 +16,12 @@
  */
 package cz.nkp.urnnbn.xml.examples;
 
-import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import java.io.File;
 import java.io.IOException;
+
 import junit.framework.TestCase;
-import nu.xom.Document;
 import nu.xom.ParsingException;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
 /**
  * TODO: remove absolute paths TODO: move to module api

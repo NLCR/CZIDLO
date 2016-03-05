@@ -4,17 +4,9 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.AbstractDigitalDocumentResource;
-import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
-import cz.nkp.urnnbn.api.Action;
-import cz.nkp.urnnbn.api.Parser;
-import cz.nkp.urnnbn.api.ResponseFormat;
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -24,6 +16,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import cz.nkp.urnnbn.api.AbstractDigitalDocumentResource;
+import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
+import cz.nkp.urnnbn.api.Action;
+import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.ResponseFormat;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentBuilder;
 
 /**
  * REST Web Service

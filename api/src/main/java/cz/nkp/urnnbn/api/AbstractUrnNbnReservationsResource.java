@@ -16,15 +16,16 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.util.List;
+
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.builders.UrnNbnReservationBuilder;
-import cz.nkp.urnnbn.xml.builders.UrnNbnReservationsBuilder;
-import java.util.List;
+import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnReservationBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnReservationsBuilder;
 
 /**
  *

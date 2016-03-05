@@ -51,9 +51,9 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentsBuilder;
-import cz.nkp.urnnbn.xml.builders.UrnNbnBuilder;
-import cz.nkp.urnnbn.xml.unmarshallers.RecordImportUnmarshaller;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentsBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnBuilder;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.RecordImportUnmarshaller;
 
 /**
  * 

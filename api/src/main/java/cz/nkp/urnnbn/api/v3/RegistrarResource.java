@@ -4,16 +4,18 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.AbstractRegistrarResource;
-import cz.nkp.urnnbn.api.Parser;
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.core.dto.Registrar;
 import java.util.logging.Level;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+
+import cz.nkp.urnnbn.api.AbstractRegistrarResource;
+import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.core.dto.Registrar;
 
 /**
  * REST Web Service

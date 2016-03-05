@@ -4,12 +4,12 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.repository;
 
-import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Namespaces;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Namespaces;
 
 /**
  *

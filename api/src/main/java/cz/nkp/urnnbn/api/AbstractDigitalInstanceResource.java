@@ -16,6 +16,8 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.util.logging.Level;
+
 import cz.nkp.urnnbn.api.v3.exceptions.DigitalInstanceAlreadyDeactivatedException;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
@@ -27,12 +29,11 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalLibraryBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
-import java.util.logging.Level;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstanceBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalLibraryBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
 
 /**
  *

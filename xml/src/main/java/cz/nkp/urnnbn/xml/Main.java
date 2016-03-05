@@ -1,9 +1,5 @@
 package cz.nkp.urnnbn.xml;
 
-import cz.nkp.urnnbn.xml.commons.Namespaces;
-import cz.nkp.urnnbn.xml.commons.XOMUtils;
-import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,6 +11,9 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import nu.xom.xslt.XSLException;
+import cz.nkp.urnnbn.xml.commons.Namespaces;
+import cz.nkp.urnnbn.xml.commons.XOMUtils;
+import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 
 /**
  * Hello world!

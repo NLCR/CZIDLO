@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.xml.unmarshallers.validation;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation;
 
 import junit.framework.TestCase;
 

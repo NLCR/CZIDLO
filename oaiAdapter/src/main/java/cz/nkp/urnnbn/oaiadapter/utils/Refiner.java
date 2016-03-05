@@ -4,15 +4,14 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
+import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 
 /**
  *

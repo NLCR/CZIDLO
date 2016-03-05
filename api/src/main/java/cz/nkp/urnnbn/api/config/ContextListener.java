@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.api.config;
 
+import java.io.InputStream;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
 import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
-import java.io.InputStream;
-import java.util.logging.Logger;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  *

@@ -16,6 +16,11 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+
+import nu.xom.Document;
 import cz.nkp.urnnbn.api.v3.exceptions.DigitalInstanceAlreadyPresentException;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
@@ -27,14 +32,9 @@ import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import javax.ws.rs.core.Response;
-import nu.xom.Document;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstanceBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstancesBuilder;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.DigitalInstanceUnmarshaller;
 
 /**
  *

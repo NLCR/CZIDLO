@@ -14,18 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.unmarshallers;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers;
 
-import cz.nkp.urnnbn.xml.commons.Namespaces;
-import cz.nkp.urnnbn.xml.commons.Xpath;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.ElementContentEnhancer;
 import java.util.logging.Logger;
+
 import nu.xom.Attribute;
 import nu.xom.Element;
 import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.ParentNode;
 import nu.xom.XPathContext;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.ElementContentEnhancer;
+import cz.nkp.urnnbn.xml.commons.Namespaces;
+import cz.nkp.urnnbn.xml.commons.Xpath;
 
 /**
  *

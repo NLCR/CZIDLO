@@ -16,18 +16,6 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
-import cz.nkp.urnnbn.api.AbstractRegistrarScopeIdentifiersResource;
-import cz.nkp.urnnbn.api.Parser;
-import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
-import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +28,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import cz.nkp.urnnbn.api.AbstractRegistrarScopeIdentifiersResource;
+import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifierBuilder;
+import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 
 /**
  *

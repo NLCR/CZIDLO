@@ -18,7 +18,7 @@ package cz.nkp.urnnbn.api;
 
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
 
 /**
  *

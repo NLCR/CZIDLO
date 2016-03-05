@@ -16,10 +16,11 @@
  */
 package cz.nkp.urnnbn.xml.config;
 
-import cz.nkp.urnnbn.utils.PropertyLoader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import cz.nkp.urnnbn.utils.PropertyLoader;
 
 /**
  *
@@ -56,7 +57,7 @@ public class XmlModuleConfiguration {
     public String getApiV3ResponseXsdLocation() {
         return apiV3ResponseXsdLocation;
     }
-    
+
     public String getApiV4ResponseXsdLocation() {
         return apiV3ResponseXsdLocation;
     }

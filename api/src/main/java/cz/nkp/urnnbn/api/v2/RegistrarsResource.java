@@ -16,6 +16,15 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
+import java.util.logging.Level;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+
 import cz.nkp.urnnbn.api.AbstractRegistrarsResource;
 import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
@@ -23,13 +32,6 @@ import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-import java.util.logging.Level;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 
 /**
  * The functionality is very same as in API v3

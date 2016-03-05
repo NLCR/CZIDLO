@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.builders;
+package cz.nkp.urnnbn.xml.apiv3.builders;
 
 import java.util.List;
+
 import nu.xom.Element;
 
 /**

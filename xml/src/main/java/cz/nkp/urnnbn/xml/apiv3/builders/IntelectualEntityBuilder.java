@@ -14,8 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.builders;
+package cz.nkp.urnnbn.xml.apiv3.builders;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import nu.xom.Attribute;
+import nu.xom.Element;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -23,13 +31,6 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nu.xom.Attribute;
-import nu.xom.Element;
 
 /**
  *

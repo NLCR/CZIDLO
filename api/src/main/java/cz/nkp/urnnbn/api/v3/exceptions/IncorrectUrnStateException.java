@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.api.v3.exceptions;
 
 import javax.ws.rs.core.Response.Status;
+
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 
 /**

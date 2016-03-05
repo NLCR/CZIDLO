@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
-import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
-import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -13,11 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+
+import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
+import cz.nkp.urnnbn.oaipmhprovider.repository.DateStamp;
 
 /**
  *

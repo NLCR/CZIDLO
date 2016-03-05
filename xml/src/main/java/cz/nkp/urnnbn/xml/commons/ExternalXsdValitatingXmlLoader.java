@@ -21,13 +21,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
+
 import nu.xom.ValidityException;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 

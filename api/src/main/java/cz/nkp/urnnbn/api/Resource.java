@@ -4,6 +4,15 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
@@ -19,24 +28,13 @@ import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.StatisticService;
 import cz.nkp.urnnbn.services.UrnNbnReservationService;
-import cz.nkp.urnnbn.xml.builders.CatalogsBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalLibrariesBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
-import cz.nkp.urnnbn.xml.commons.ValidatingXmlLoader;
+import cz.nkp.urnnbn.xml.apiv3.builders.CatalogsBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalLibrariesBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifierBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
 
 /**
  *

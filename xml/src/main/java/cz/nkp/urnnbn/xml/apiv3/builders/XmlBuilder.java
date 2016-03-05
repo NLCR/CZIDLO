@@ -14,20 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.builders;
+package cz.nkp.urnnbn.xml.apiv3.builders;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import nu.xom.Attribute;
+import nu.xom.Document;
+import nu.xom.Element;
+
+import org.joda.time.DateTime;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.IdentifiableWithDatestamps;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Namespaces;
 import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nu.xom.Attribute;
-import nu.xom.Document;
-import nu.xom.Element;
-import org.joda.time.DateTime;
 
 /**
  *

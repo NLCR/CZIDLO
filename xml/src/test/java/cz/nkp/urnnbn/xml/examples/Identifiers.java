@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import nu.xom.Document;
 import nu.xom.ParsingException;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 

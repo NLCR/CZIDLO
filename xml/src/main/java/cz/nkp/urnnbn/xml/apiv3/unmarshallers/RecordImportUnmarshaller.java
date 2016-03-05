@@ -14,8 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.unmarshallers;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import nu.xom.Document;
+import nu.xom.Element;
+import nu.xom.Node;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -27,12 +34,6 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.commons.Xpath;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Node;
 
 /**
  * 

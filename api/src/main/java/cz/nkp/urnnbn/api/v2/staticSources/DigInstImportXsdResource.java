@@ -16,11 +16,12 @@
  */
 package cz.nkp.urnnbn.api.v2.staticSources;
 
-import cz.nkp.urnnbn.api.Resource;
-import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+
+import cz.nkp.urnnbn.api.Resource;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 
 /**
  *

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.unmarshallers.validation;
+package cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation;
 
 import junit.framework.TestCase;
 

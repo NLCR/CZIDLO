@@ -33,8 +33,8 @@ import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedExcep
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifierBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
 
 /**
  *

@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.builders;
+package cz.nkp.urnnbn.xml.apiv3.builders;
 
+import java.util.logging.Logger;
+
+import nu.xom.Element;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import java.util.logging.Logger;
-import nu.xom.Element;
 
 /**
  *

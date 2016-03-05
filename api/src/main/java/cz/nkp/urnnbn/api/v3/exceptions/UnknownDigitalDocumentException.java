@@ -4,12 +4,12 @@
  */
 package cz.nkp.urnnbn.api.v3.exceptions;
 
+import javax.ws.rs.core.Response.Status;
+
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-
-import javax.ws.rs.core.Response.Status;
 
 /**
  *

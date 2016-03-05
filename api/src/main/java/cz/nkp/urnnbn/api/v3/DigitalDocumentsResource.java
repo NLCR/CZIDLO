@@ -4,12 +4,6 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +20,11 @@ import javax.ws.rs.core.UriInfo;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
  *

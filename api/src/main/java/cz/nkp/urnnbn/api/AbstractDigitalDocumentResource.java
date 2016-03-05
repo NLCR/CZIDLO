@@ -16,6 +16,16 @@
  */
 package cz.nkp.urnnbn.api;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalInstanceException;
@@ -31,20 +41,12 @@ import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import cz.nkp.urnnbn.xml.apiv3.builders.ArchiverBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstanceBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstancesBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.IntelectualEntityBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
 
 /**
  *
