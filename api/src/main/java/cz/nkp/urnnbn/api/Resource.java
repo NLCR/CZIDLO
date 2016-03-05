@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.services.UrnNbnReservationService;
  */
 public class Resource {
 
-    protected static final Logger logger = Logger.getLogger(Resource.class.getName());
+    
 
     protected DataAccessService dataAccessService() {
         return Services.instanceOf().dataAccessService();

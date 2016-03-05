@@ -1,10 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cz.nkp.urnnbn.api.v4;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -20,20 +31,18 @@ import cz.nkp.urnnbn.api.v4.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 
-/**
- * 
- * @author Martin Řehánek
- */
 @Path("/urnnbn")
-public class UrnNbnResource extends AbstractUrnNbnResource {
+public class UrnNbnResource extends ApiV4Resource {
+
+    private static final Logger LOGGER = Logger.getLogger(UrnNbnResource.class.getName());
 
     @GET
     @Path("{urn}")
     @Produces("text/xml")
-    @Override
     public String getUrnNbnXmlRecord(@PathParam("urn") String urnNbnString) {
         try {
             UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
@@ -41,7 +50,7 @@ public class UrnNbnResource extends AbstractUrnNbnResource {
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(e);
         }
     }
@@ -67,8 +76,18 @@ public class UrnNbnResource extends AbstractUrnNbnResource {
         } catch (AccessException e) {
             throw new NotAuthorizedException(e.getMessage());
         } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(e);
         }
     }
+
+    private UrnNbnWithStatus getUrnNbnWithStatus(String urnNbnString) {
+        UrnNbn urnParsed = Parser.parseUrn(urnNbnString);
+        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
+    }
+
+    private UrnNbnWithStatus getUrnNbnWithStatus(UrnNbn urn) {
+        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), true);
+    }
+
 }

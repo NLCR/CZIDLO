@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2012 Martin Řehánek
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,10 +18,6 @@ import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
-/**
- *
- * @author Martin Řehánek
- */
 public class UrnNbnDeactivated extends ApiV4Exception {
 
     public UrnNbnDeactivated(UrnNbn urn) {

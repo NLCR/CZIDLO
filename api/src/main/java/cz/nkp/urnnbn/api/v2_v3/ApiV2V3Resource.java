@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -26,6 +27,8 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 
 public class ApiV2V3Resource extends Resource {
+
+    protected static final Logger logger = Logger.getLogger(ApiV2V3Resource.class.getName());
 
     protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);

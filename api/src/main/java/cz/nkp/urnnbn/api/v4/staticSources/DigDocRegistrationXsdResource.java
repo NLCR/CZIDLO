@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2013 Martin Řehánek
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -23,10 +21,6 @@ import javax.ws.rs.Produces;
 import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 
-/**
- *
- * @author Martin Řehánek
- */
 @Path("/digDocRegistration.xsd")
 public class DigDocRegistrationXsdResource extends Resource {
 

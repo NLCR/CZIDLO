@@ -346,7 +346,6 @@ public abstract class ApiV3Tests {
                 .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + registrarCode + "/digitalDocuments")//
                 .andReturn().asString();
-        System.err.println(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
         return xmlPath.getString("value");
     }

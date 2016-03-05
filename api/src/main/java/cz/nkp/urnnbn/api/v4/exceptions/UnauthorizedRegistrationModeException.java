@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2012 Martin Řehánek
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -22,10 +20,6 @@ import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
-/**
- * 
- * @author Martin Řehánek
- */
 public class UnauthorizedRegistrationModeException extends ApiV4Exception {
 
     public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
