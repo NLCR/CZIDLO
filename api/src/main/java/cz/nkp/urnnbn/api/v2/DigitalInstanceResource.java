@@ -13,8 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 
-import cz.nkp.urnnbn.api.AbstractDigitalInstanceResource;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v2_v3.AbstractDigitalInstanceResource;
 import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;

@@ -17,11 +17,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import cz.nkp.urnnbn.api.AbstractDigitalDocumentResource;
-import cz.nkp.urnnbn.api.AbstractDigitalInstancesResource;
 import cz.nkp.urnnbn.api.Action;
-import cz.nkp.urnnbn.api.Parser;
 import cz.nkp.urnnbn.api.ResponseFormat;
+import cz.nkp.urnnbn.api.v2_v3.AbstractDigitalDocumentResource;
+import cz.nkp.urnnbn.api.v2_v3.AbstractDigitalInstancesResource;
+import cz.nkp.urnnbn.api.v2_v3.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;

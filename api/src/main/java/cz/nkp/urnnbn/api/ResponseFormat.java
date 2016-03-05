@@ -12,5 +12,5 @@ package cz.nkp.urnnbn.api;
  */
 public enum ResponseFormat {
 
-    RAW, HTML, XML
+    HTML, XML
 }

@@ -29,8 +29,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import cz.nkp.urnnbn.api.AbstractRegistrarScopeIdentifiersResource;
-import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.v2_v3.AbstractRegistrarScopeIdentifiersResource;
+import cz.nkp.urnnbn.api.v2_v3.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;

@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 
-import cz.nkp.urnnbn.api.AbstractUrnNbnResource;
+import cz.nkp.urnnbn.api.v2_v3.AbstractUrnNbnResource;
 import cz.nkp.urnnbn.api.v3.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
