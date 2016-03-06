@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Suite1" verbose="1">
+    <test name="APIv3">
+        <packages>
+            <package name="cz.nkp.urnnbn.api.v3" />
+        </packages>
+    </test>
+    <test name="APIv4">
+        <packages>
+            <package name="cz.nkp.urnnbn.api.v4" />
+        </packages>
+    </test>
+</suite>
