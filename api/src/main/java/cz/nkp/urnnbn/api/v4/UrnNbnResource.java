@@ -41,11 +41,13 @@ public class UrnNbnResource extends ApiV4Resource {
     private static final Logger LOGGER = Logger.getLogger(UrnNbnResource.class.getName());
 
     @GET
-    @Path("{urn}")
+    @Path("{urnNbn}")
     @Produces("text/xml")
-    public String getUrnNbnXmlRecord(@PathParam("urn") String urnNbnString) {
+    public String getUrnNbnXmlRecord(@PathParam("urnNbn") String urnNbnString) {
         try {
-            UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
+            UrnNbn urnNbn = Parser.parseUrn(urnNbnString);
+            UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
+                    urnNbn.getDocumentCode(), true);
             return new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
         } catch (WebApplicationException e) {
             throw e;
@@ -56,17 +58,22 @@ public class UrnNbnResource extends ApiV4Resource {
     }
 
     @DELETE
-    @Path("{urn}")
+    @Path("{urnNbn}")
     @Produces("text/xml")
-    public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urn") String urnNbnString, @QueryParam("note") String note) {
+    public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString, @QueryParam("note") String note) {
         try {
+            // TODO: omezovat delku poznamky? trimovat a nahrazovat prazdny string nullem?
+            // anebo jen zkracovat prilis dlouhe
             checkServerNotReadOnly();
-            UrnNbnWithStatus urnNbnWithStatus = getUrnNbnWithStatus(urnNbnString);
+            UrnNbn urnNbn = Parser.parseUrn(urnNbnString);
+            UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
+                    urnNbn.getDocumentCode(), false);
             switch (urnNbnWithStatus.getStatus()) {
             case ACTIVE:
                 String login = req.getRemoteUser();
                 dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
-                UrnNbnWithStatus deactivated = getUrnNbnWithStatus(urnNbnWithStatus.getUrn());
+                UrnNbnWithStatus deactivated = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnWithStatus.getUrn().getRegistrarCode(),
+                        urnNbnWithStatus.getUrn().getDocumentCode(), true);
                 return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
             default:
                 throw new IncorrectUrnStateException(urnNbnWithStatus);
@@ -79,15 +86,6 @@ public class UrnNbnResource extends ApiV4Resource {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(e);
         }
-    }
-
-    private UrnNbnWithStatus getUrnNbnWithStatus(String urnNbnString) {
-        UrnNbn urnParsed = Parser.parseUrn(urnNbnString);
-        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(), urnParsed.getDocumentCode(), true);
-    }
-
-    private UrnNbnWithStatus getUrnNbnWithStatus(UrnNbn urn) {
-        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), true);
     }
 
 }

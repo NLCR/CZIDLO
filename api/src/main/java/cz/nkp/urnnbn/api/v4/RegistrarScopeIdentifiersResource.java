@@ -58,9 +58,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     @GET
     @Produces("application/xml")
-    public String getRegistrarScopeIdentifiersXmlRecord() {
+    public String getRegistrarScopeIdentifiers() {
         try {
-            return getRegistrarScopeIdentifiersApiV4XmlRecord();
+            return getRegistrarScopeIdentifiersXmlRecord();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -69,7 +69,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarScopeIdentifiersApiV4XmlRecord() {
+    private String getRegistrarScopeIdentifiersXmlRecord() {
         RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
         return builder.buildDocumentWithResponseHeader().toXML();
     }
@@ -80,7 +80,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     public String getRegistrarScopeIdentifierValue(@PathParam("idType") String idTypeStr) {
         try {
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
-            return getRegistrarScopeIdentifierValueApiV4XmlRecord(idType);
+            return getRegistrarScopeIdentifierXmlRecord(idType);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -89,7 +89,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarScopeIdentifierValueApiV4XmlRecord(RegistrarScopeIdType idType) {
+    private String getRegistrarScopeIdentifierXmlRecord(RegistrarScopeIdType idType) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
         for (RegistrarScopeIdentifier id : identifiers) {
             if (id.getType().equals(idType)) {
@@ -109,7 +109,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             String login = req.getRemoteUser();
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
             RegistrarScopeIdValue idValue = Parser.parseRegistrarScopeIdValue(idValueStr);
-            RegistrarScopeIdentifier oldId = presentIdentifierOrNull(idType);
+            RegistrarScopeIdentifier oldId = getPresentIdentifierOrNull(idType);
             if (oldId == null) { // insert new value
                 RegistrarScopeIdentifier newId = addNewIdentifier(idType, idValue, login);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
@@ -127,7 +127,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier presentIdentifierOrNull(RegistrarScopeIdType idType) {
+    private RegistrarScopeIdentifier getPresentIdentifierOrNull(RegistrarScopeIdType idType) {
         try {
             return dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
         } catch (RegistrarScopeIdentifierNotDefinedException ex) {
@@ -199,7 +199,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         try {
             checkServerNotReadOnly();
             String login = req.getRemoteUser();
-            return deleteRegistrarScopeIdentifierWithApiV4Response(login, idTypeStr);
+            return deleteRegistrarScopeIdentifierWithXmlResponse(login, idTypeStr);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -208,7 +208,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteRegistrarScopeIdentifierWithApiV4Response(String login, String idTypeStr) {
+    private String deleteRegistrarScopeIdentifierWithXmlResponse(String login, String idTypeStr) {
         try {
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
             RegistrarScopeIdentifier identifier = dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
@@ -234,7 +234,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         try {
             checkServerNotReadOnly();
             String login = req.getRemoteUser();
-            return deleteAllRegistrarScopeIdentifiersWithApiV4Response(login);
+            return deleteAllRegistrarScopeIdentifiersWithXmlResponse(login);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -243,7 +243,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteAllRegistrarScopeIdentifiersWithApiV4Response(String login) {
+    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(String login) {
         try {
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
             dataRemoveService().removeRegistrarScopeIdentifiers(doc.getId(), login);

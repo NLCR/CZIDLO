@@ -76,43 +76,6 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         this.registrar = registrar;
     }
 
-    @GET
-    @Produces("application/xml")
-    public String getDigitalDocumentsXmlRecord() {
-        try {
-            return getDigitalDocumentsApiV4XmlRecord();
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
-        }
-    }
-
-    @POST
-    @Consumes("application/xml")
-    @Produces("application/xml")
-    public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
-        try {
-            checkServerNotReadOnly();
-            String login = req.getRemoteUser();
-            String response = registerDigitalDocument(content, login, registrar.getCode());
-            return Response.created(null).entity(response).build();
-        } catch (ValidityException ex) {
-            throw new InvalidDataException(ex);
-        } catch (ParsingException ex) {
-            throw new InvalidDataException(ex);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
-        }
-    }
-
-    /**
-     * Sub-resource locator method for {id}
-     */
     @Path("registrarScopeIdentifier/{idType}/{idValue}")
     public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         try {
@@ -129,25 +92,68 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         }
     }
 
-    public final String getDigitalDocumentsApiV4XmlRecord() {
+    private DigitalDocument getDigitalDocument(String idTypeStr, String idValueStr) {
+        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
+        RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(idValueStr);
+        RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
+        id.setRegistrarId(registrar.getId());
+        id.setType(type);
+        id.setValue(value);
+        DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
+        if (digDoc == null) {
+            throw new UnknownDigitalDocumentException(registrar.getCode(), type, value);
+        } else {
+            return digDoc;
+        }
+    }
+
+    @GET
+    @Produces("application/xml")
+    public String getDigitalDocumentsRecord() {
+        try {
+            return getDigitalDocumentsRecordXml();
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
+
+    private String getDigitalDocumentsRecordXml() {
         int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
         DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
         return builder.buildDocumentWithResponseHeader().toXML();
     }
 
-    private String registerDigitalDocument(String content, String login, RegistrarCode registrarCode) throws ValidityException, IOException,
-            ParsingException {
-        Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
-        return registerDigitalDocument(doc, login, registrarCode);
+    @POST
+    @Consumes("application/xml")
+    @Produces("application/xml")
+    public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
+        try {
+            checkServerNotReadOnly();
+            String login = req.getRemoteUser();
+            String response = registerDigitalDocumentReturnXml(content, login, registrar.getCode());
+            return Response.created(null).entity(response).build();
+        } catch (ValidityException ex) {
+            throw new InvalidDataException(ex);
+        } catch (ParsingException ex) {
+            throw new InvalidDataException(ex);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
     }
 
-    private String registerDigitalDocumentByApiV4(String content, String login, RegistrarCode registrarCode) throws ValidityException, IOException,
+    private String registerDigitalDocumentReturnXml(String content, String login, RegistrarCode registrarCode) throws ValidityException, IOException,
             ParsingException {
         Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
-        return registerDigitalDocument(doc, login, registrarCode);
+        return registerDigitalDocumentReturnXml(doc, login, registrarCode);
     }
 
-    private String registerDigitalDocument(Document doc, String login, RegistrarCode registrarCode) {
+    private String registerDigitalDocumentReturnXml(Document doc, String login, RegistrarCode registrarCode) {
         try {
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
             UrnNbn urnInData = registrationData.getUrn();
@@ -155,7 +161,7 @@ public class DigitalDocumentsResource extends ApiV4Resource {
                 throw new InvalidUrnException(urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString() + "'");
             }
             UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
-            UrnNbnWithStatus withStatus = urnWithStatus(urn, true);
+            UrnNbnWithStatus withStatus = getUrnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (IncorrectPredecessorStatus ex) {
@@ -207,43 +213,14 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         return result;
     }
 
-    private UrnNbnWithStatus urnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
+    private UrnNbnWithStatus getUrnWithStatus(UrnNbn urn, boolean withPredecessorsAndSuccessors) {
         return dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(), withPredecessorsAndSuccessors);
-    }
-
-    private DigitalDocument getDigitalDocument(String idTypeStr, String idValueStr) {
-        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
-        RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(idValueStr);
-        RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
-        id.setRegistrarId(registrar.getId());
-        id.setType(type);
-        id.setValue(value);
-        DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
-        if (digDoc == null) {
-            throw new UnknownDigitalDocumentException(registrar.getCode(), type, value);
-        } else {
-            return digDoc;
-        }
-    }
-
-    public List<UrnNbnWithStatus> predecessorsFromParams(List<String> predecessorParams) {
-        List<UrnNbnWithStatus> predecessorList = new ArrayList<UrnNbnWithStatus>(predecessorParams.size());
-        for (String predecessor : predecessorParams) {
-            UrnNbn urnNbn = UrnNbn.valueOf(predecessor);
-            UrnNbnWithStatus withStatus = urnWithStatus(urnNbn, false);
-            UrnNbnWithStatus.Status status = withStatus.getStatus();
-            if (status == UrnNbnWithStatus.Status.RESERVED || status == UrnNbnWithStatus.Status.FREE) {
-                throw new IncorrectPredecessorException(withStatus);
-            }
-            predecessorList.add(withStatus);
-        }
-        return predecessorList;
     }
 
     private List<UrnNbnWithStatus> appendStatuses(List<UrnNbnWithStatus> predecessors) {
         List<UrnNbnWithStatus> result = new ArrayList<UrnNbnWithStatus>(predecessors.size());
         for (UrnNbnWithStatus urn : predecessors) {
-            UrnNbnWithStatus withCorrectStatus = urnWithStatus(urn.getUrn(), false);
+            UrnNbnWithStatus withCorrectStatus = getUrnWithStatus(urn.getUrn(), false);
             result.add(new UrnNbnWithStatus(withCorrectStatus.getUrn(), withCorrectStatus.getStatus(), urn.getNote()));
         }
         return result;

@@ -55,7 +55,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @Produces("application/xml")
     public String getDigitalInstanceXmlRecord() {
         try {
-            return getDigitalInstanceApiV4XmlRecord();
+            return buildDigitalInstanceRecordXml();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -64,29 +64,11 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    @DELETE
-    @Produces("application/xml")
-    public String deactivateDigitalInstance(@Context HttpServletRequest req) {
-        try {
-            checkServerNotReadOnly();
-            String login = req.getRemoteUser();
-            return deactivateDigitalInstance(login);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
-        }
-    }
-
-    public final String getDigitalInstanceApiV4XmlRecord() {
-        return digitalInstanceXmlBuilder(instance, true, true).buildDocumentWithResponseHeader().toXML();
-    }
-
-    private DigitalInstanceBuilder digitalInstanceXmlBuilder(DigitalInstance instance, boolean withDigDoc, boolean withDigLib) {
-        DigitalDocumentBuilder digDocBuilder = withDigDoc ? digDocBuilder(instance.getDigDocId()) : null;
-        DigitalLibraryBuilder libBuilder = withDigLib ? digLibBuilder(instance.getLibraryId()) : null;
-        return new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
+    private String buildDigitalInstanceRecordXml() {
+        DigitalDocumentBuilder digDocBuilder = digDocBuilder(instance.getDigDocId());
+        DigitalLibraryBuilder libBuilder = digLibBuilder(instance.getLibraryId());
+        DigitalInstanceBuilder digitalInstanceBuilder = new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
+        return digitalInstanceBuilder.buildDocumentWithResponseHeader().toXML();
     }
 
     private DigitalDocumentBuilder digDocBuilder(long digDocId) {
@@ -103,7 +85,22 @@ public class DigitalInstanceResource extends ApiV4Resource {
         return new DigitalLibraryBuilder(library, regBuilder);
     }
 
-    private String deactivateDigitalInstance(String login) {
+    @DELETE
+    @Produces("application/xml")
+    public String deactivateDigitalInstance(@Context HttpServletRequest req) {
+        try {
+            checkServerNotReadOnly();
+            String login = req.getRemoteUser();
+            return deactivateDigitalInstanceReturnXml(login);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
+
+    private String deactivateDigitalInstanceReturnXml(String login) {
         DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
         if (!found.isActive()) {
             throw new DigitalInstanceAlreadyDeactivatedException(instance);

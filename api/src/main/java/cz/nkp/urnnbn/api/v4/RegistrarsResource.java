@@ -42,42 +42,6 @@ public class RegistrarsResource extends ApiV4Resource {
     private static final String PARAM_DIGITAL_LIBRARIES = "digitalLibraries";
     private static final String PARAM_CATALOGS = "catalogs";
 
-    @GET
-    @Produces("application/xml")
-    public String getRegistrars(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        try {
-            boolean addDigitalLibraries = false;
-            if (addDigLibsStr != null) {
-                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
-            }
-            boolean addCatalogs = false;
-            if (addCatalogsStr != null) {
-                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
-            }
-            return getRegistrarsApiV4XmlRecord(addDigitalLibraries, addCatalogs);
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
-        }
-    }
-
-    private String getRegistrarsApiV4XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
-        List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
-        RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
-
-    private List<RegistrarBuilder> registrarBuilderList(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
-        List<Registrar> registrars = dataAccessService().registrars();
-        List<RegistrarBuilder> result = new ArrayList<RegistrarBuilder>(registrars.size());
-        for (Registrar registrar : registrars) {
-            result.add(registrarBuilder(registrar, addDigitalLibraries, addCatalogs));
-        }
-        return result;
-    }
-
     @Path("{registrarCode}")
     public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
         try {
@@ -100,4 +64,41 @@ public class RegistrarsResource extends ApiV4Resource {
             return registrar;
         }
     }
+
+    @GET
+    @Produces("application/xml")
+    public String getRegistrars(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+        try {
+            boolean addDigitalLibraries = false;
+            if (addDigLibsStr != null) {
+                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+            }
+            boolean addCatalogs = false;
+            if (addCatalogsStr != null) {
+                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+            }
+            return getRegistrarsXmlRecord(addDigitalLibraries, addCatalogs);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
+
+    private String getRegistrarsXmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+        List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
+        RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
+        return builder.buildDocumentWithResponseHeader().toXML();
+    }
+
+    private List<RegistrarBuilder> registrarBuilderList(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+        List<Registrar> registrars = dataAccessService().registrars();
+        List<RegistrarBuilder> result = new ArrayList<RegistrarBuilder>(registrars.size());
+        for (Registrar registrar : registrars) {
+            result.add(registrarBuilder(registrar, addDigitalLibraries, addCatalogs));
+        }
+        return result;
+    }
+
 }

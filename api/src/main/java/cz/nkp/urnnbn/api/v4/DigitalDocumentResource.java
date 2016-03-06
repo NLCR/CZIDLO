@@ -71,6 +71,16 @@ public class DigitalDocumentResource extends ApiV4Resource {
         this.urn = urn;
     }
 
+    @Path("/registrarScopeIdentifiers")
+    public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource() {
+        return new RegistrarScopeIdentifiersResource(doc);
+    }
+
+    @Path("/digitalInstances")
+    public DigitalInstancesResource getDigitalInstancesResource() {
+        return new DigitalInstancesResource(doc);
+    }
+
     @GET
     @Produces("application/xml")
     public Response resolve(@DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
@@ -92,22 +102,6 @@ public class DigitalDocumentResource extends ApiV4Resource {
         }
     }
 
-    private Response recordXmlResponse(boolean withDigitalInstances) {
-        DigitalDocumentBuilder builder = digitalDocumentBuilder(withDigitalInstances);
-        String xml = builder.buildDocumentWithResponseHeader().toXML();
-        return Response.ok().entity(xml).build();
-    }
-
-    @Path("/registrarScopeIdentifiers")
-    public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource() {
-        return new RegistrarScopeIdentifiersResource(doc);
-    }
-
-    @Path("/digitalInstances")
-    public DigitalInstancesResource getDigitalInstancesResource() {
-        return new DigitalInstancesResource(doc);
-    }
-
     public Response resolve(Action action, ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         // for deactivated URN:NBNs the redirection is impossible
         if (!urn.isActive()) { // error if force to redirect
@@ -125,18 +119,19 @@ public class DigitalDocumentResource extends ApiV4Resource {
             // pokud neni digitalni instance nalezena, zobrazi se zaznam DD
             URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
             if (digitalInstance != null) {
-                return redirectResponse(digitalInstance);
+                // redirect to digital instance
+                return Response.seeOther(digitalInstance).build();
             } else {
                 return showRecordResponse(format, request, withDigitalInstances);
             }
         case REDIRECT:
             URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
             if (uriByReferer != null) {
-                return redirectResponse(uriByReferer);
+                return Response.seeOther(uriByReferer).build();
             } else {
                 URI anyInstanceUri = getAnyActiveDigInstanceUri();
                 if (anyInstanceUri != null) {
-                    return redirectResponse(anyInstanceUri);
+                    return Response.seeOther(anyInstanceUri).build();
                 } else {// no digital instance found
                     throw new UnknownDigitalInstanceException();
                 }
@@ -144,7 +139,7 @@ public class DigitalDocumentResource extends ApiV4Resource {
         case SHOW:
             return showRecordResponse(format, request, withDigitalInstances);
         default:
-            return recordXmlResponse(withDigitalInstances);
+            return buildDigitalDocumentRecordXml(withDigitalInstances);
         }
     }
 
@@ -230,16 +225,12 @@ public class DigitalDocumentResource extends ApiV4Resource {
     private Response showRecordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         switch (format) {
         case HTML:
-            return redirectResponse(webModuleUri(request));
+            return Response.seeOther(webModuleUri(request)).build();
         case XML:
-            return recordXmlResponse(withDigitalInstances);
+            return buildDigitalDocumentRecordXml(withDigitalInstances);
         default:
             throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
         }
-    }
-
-    private Response redirectResponse(URI uri) {
-        return Response.seeOther(uri).build();
     }
 
     /**
@@ -255,6 +246,12 @@ public class DigitalDocumentResource extends ApiV4Resource {
         } catch (URISyntaxException ex) {
             throw new InternalException(ex);
         }
+    }
+
+    private Response buildDigitalDocumentRecordXml(boolean withDigitalInstances) {
+        DigitalDocumentBuilder builder = digitalDocumentBuilder(withDigitalInstances);
+        String xml = builder.buildDocumentWithResponseHeader().toXML();
+        return Response.ok().entity(xml).build();
     }
 
     private DigitalDocumentBuilder digitalDocumentBuilder(boolean withDigitalInstances) {

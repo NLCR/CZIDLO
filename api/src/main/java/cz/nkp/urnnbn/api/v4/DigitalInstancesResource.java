@@ -66,19 +66,6 @@ public class DigitalInstancesResource extends ApiV4Resource {
         this(null);
     }
 
-    @GET
-    @Produces("application/xml")
-    public String getDigitalInstancesXmlRecord() {
-        try {
-            return getDigitalInstancesApiV4XmlRecord();
-        } catch (WebApplicationException e) {
-            throw e;
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
-        }
-    }
-
     @Path("id/{digInstId}")
     public DigitalInstanceResource getDigitalInstanceResource(@PathParam("digInstId") String digInstIdStr) {
         try {
@@ -93,24 +80,20 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    @POST
-    @Consumes("application/xml")
+    private DigitalInstance getDigitalInstance(long digitalInstanceId) {
+        DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
+        if (instance == null) {
+            throw new UnknownDigitalInstanceException(digitalInstanceId);
+        } else {
+            return instance;
+        }
+    }
+
+    @GET
     @Produces("application/xml")
-    public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
+    public String getDigitalInstancesXmlRecord() {
         try {
-            checkServerNotReadOnly();
-            if (digDoc == null) {
-                throw new WebApplicationException(Status.BAD_REQUEST);
-            }
-            String login = req.getRemoteUser();
-            Document requestXmlData = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV4().loadDocument(content);
-            DigitalInstance digitalInstance = digitalInstanceFromApiV4Document(requestXmlData);
-            String response = addNewDigitalInstanceWithApiV4Response(digitalInstance, login);
-            return Response.created(null).entity(response).build();
-        } catch (ValidityException ex) {
-            throw new InvalidDataException(ex);
-        } catch (ParsingException ex) {
-            throw new InvalidDataException(ex);
+            return buildDigitalInstancesRecordXml();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -119,7 +102,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private String getDigitalInstancesApiV4XmlRecord() {
+    private String buildDigitalInstancesRecordXml() {
         DigitalInstancesBuilder builder = instancesBuilder();
         return builder.buildDocumentWithResponseHeader().toXML();
     }
@@ -143,14 +126,40 @@ public class DigitalInstancesResource extends ApiV4Resource {
         return result;
     }
 
-    private DigitalInstance digitalInstanceFromApiV4Document(Document xmlDocument) {
+    @POST
+    @Consumes("application/xml")
+    @Produces("application/xml")
+    public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
+        try {
+            checkServerNotReadOnly();
+            if (digDoc == null) {
+                throw new WebApplicationException(Status.BAD_REQUEST);
+            }
+            String login = req.getRemoteUser();
+            Document requestXmlData = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV4().loadDocument(content);
+            DigitalInstance digitalInstance = parseDigitalInstanceFromXml(requestXmlData);
+            String response = addNewDigitalInstanceWithXmlResponse(digitalInstance, login);
+            return Response.created(null).entity(response).build();
+        } catch (ValidityException ex) {
+            throw new InvalidDataException(ex);
+        } catch (ParsingException ex) {
+            throw new InvalidDataException(ex);
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(e);
+        }
+    }
+
+    private DigitalInstance parseDigitalInstanceFromXml(Document xmlDocument) {
         DigitalInstanceUnmarshaller unmarshaller = new DigitalInstanceUnmarshaller(xmlDocument);
         DigitalInstance result = unmarshaller.getDigitalInstance();
         result.setDigDocId(digDoc.getId());
         return result;
     }
 
-    private String addNewDigitalInstanceWithApiV4Response(DigitalInstance digitalInstance, String login) {
+    private String addNewDigitalInstanceWithXmlResponse(DigitalInstance digitalInstance, String login) {
         try {
             Parser.parseUrl(digitalInstance.getUrl());
             checkNoOtherDigInstInSameLibraryPresent(digitalInstance);
@@ -181,12 +190,4 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private DigitalInstance getDigitalInstance(long digitalInstanceId) {
-        DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
-        if (instance == null) {
-            throw new UnknownDigitalInstanceException(digitalInstanceId);
-        } else {
-            return instance;
-        }
-    }
 }

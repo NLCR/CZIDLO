@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.api;
 
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DataRemoveService;
@@ -19,8 +17,6 @@ import cz.nkp.urnnbn.services.UrnNbnReservationService;
  * @author Martin Řehánek
  */
 public class Resource {
-
-    
 
     protected DataAccessService dataAccessService() {
         return Services.instanceOf().dataAccessService();

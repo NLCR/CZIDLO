@@ -34,13 +34,13 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public class Parser {
-    private static final Logger logger = Logger.getLogger(Parser.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
 
     public static UrnNbn parseUrn(String urnPar) {
         try {
             return UrnNbn.valueOf(urnPar.toLowerCase());
         } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage());
+            LOGGER.log(Level.INFO, e.getMessage());
             throw new InvalidUrnException(urnPar, "incorrect syntax: " + e.getMessage());
         }
     }
@@ -65,7 +65,7 @@ public class Parser {
         try {
             return Long.valueOf(digInstIdStr);
         } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage());
+            LOGGER.log(Level.INFO, e.getMessage());
             throw new InvalidDigInstanceIdException(digInstIdStr, e.getMessage());
         }
     }
@@ -89,7 +89,7 @@ public class Parser {
             }
             return result;
         } catch (RuntimeException e) {
-            logger.log(Level.INFO, e.getMessage());
+            LOGGER.log(Level.INFO, e.getMessage());
             throw new InvalidQueryParamValueException(paramName, value, e.getMessage());
         }
     }

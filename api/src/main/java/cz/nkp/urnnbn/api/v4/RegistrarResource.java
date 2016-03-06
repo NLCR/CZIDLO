@@ -41,6 +41,16 @@ public class RegistrarResource extends ApiV4Resource {
         this.registrar = registrar;
     }
 
+    @Path("digitalDocuments")
+    public DigitalDocumentsResource getDigitalDocuments() {
+        return new DigitalDocumentsResource(registrar);
+    }
+
+    @Path("urnNbnReservations")
+    public UrnNbnReservationsResource getUrnNbnReservations() {
+        return new UrnNbnReservationsResource(registrar);
+    }
+
     @GET
     @Produces("application/xml")
     public String getRegistrar(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
@@ -53,7 +63,7 @@ public class RegistrarResource extends ApiV4Resource {
             if (addCatalogsStr != null) {
                 addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
             }
-            return getRegistrarApiV4XmlRecord(addDigitalLibraries, addCatalogs);
+            return getRegistrarRecordXml(addDigitalLibraries, addCatalogs);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -62,18 +72,9 @@ public class RegistrarResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarApiV4XmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+    private String getRegistrarRecordXml(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         RegistrarBuilder builder = registrarBuilder(registrar, addDigitalLibraries, addCatalogs);
         return builder.buildDocumentWithResponseHeader().toXML();
     }
 
-    @Path("digitalDocuments")
-    public DigitalDocumentsResource getDigitalDocuments() {
-        return new DigitalDocumentsResource(registrar);
-    }
-
-    @Path("urnNbnReservations")
-    public UrnNbnReservationsResource getUrnNbnReservations() {
-        return new UrnNbnReservationsResource(registrar);
-    }
 }

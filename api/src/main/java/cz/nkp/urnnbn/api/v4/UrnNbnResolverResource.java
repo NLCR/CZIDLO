@@ -30,9 +30,9 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 @Path("/resolver")
-public class ResolverResource extends ApiV4Resource {
+public class UrnNbnResolverResource extends ApiV4Resource {
 
-    private static final Logger LOGGER = Logger.getLogger(ResolverResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(UrnNbnResolverResource.class.getName());
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {

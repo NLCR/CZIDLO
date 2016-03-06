@@ -24,6 +24,8 @@ import cz.nkp.urnnbn.api.Utils;
  *
  */
 public class DeleteUrnnbn extends ApiV3Tests {
+    
+    //TODO: test note in query param (is it even in api specification?), for api v3 as well
 
     private static final Logger LOGGER = Logger.getLogger(DeleteUrnnbn.class.getName());
 

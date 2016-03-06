@@ -53,7 +53,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @Produces("application/xml")
     public String getUrnNbnReservationsXmlRecord() {
         try {
-            return getUrnNbnReservationsApiV4XmlRecord();
+            return buildUrnNbnReservationsXmlRecord();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -62,7 +62,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
         }
     }
 
-    private final String getUrnNbnReservationsApiV4XmlRecord() throws UnknownRegistrarException {
+    private final String buildUrnNbnReservationsXmlRecord() throws UnknownRegistrarException {
         int maxBatchSize = urnReservationService().getMaxBatchSize();
         List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
         UrnNbnReservationsBuilder builder = selectBuilder(maxBatchSize, reservedUrnNbnList);
@@ -88,7 +88,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
             int size = sizeStr != null ? Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()
                     .getUrnReservationMaxSize()) : ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
             String login = req.getRemoteUser();
-            String responseXml = reserveUrnNbns(login, size);
+            String responseXml = reserveUrnNbnsWithXmlResponse(login, size);
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
@@ -102,7 +102,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
         }
     }
 
-    private final String reserveUrnNbns(String login, int size) throws UnknownUserException, AccessException {
+    private final String reserveUrnNbnsWithXmlResponse(String login, int size) throws UnknownUserException, AccessException {
         List<UrnNbn> reserved = urnReservationService().reserveUrnNbnBatch(size, registrar, login);
         UrnNbnReservationBuilder builder = new UrnNbnReservationBuilder(reserved);
         return builder.buildDocumentWithResponseHeader().toXML();
