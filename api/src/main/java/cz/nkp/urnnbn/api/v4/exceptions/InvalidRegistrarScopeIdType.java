@@ -19,6 +19,6 @@ import javax.ws.rs.core.Response.Status;
 public class InvalidRegistrarScopeIdType extends ApiV4Exception {
 
     public InvalidRegistrarScopeIdType(String stringValue, String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_ID_TYPE", String.format("Incorrect value '%s': %s", stringValue, errorMessage));
+        super(Status.BAD_REQUEST, "INVALID_REGISTRAR_SCOPE_ID_TYPE", String.format("Incorrect value '%s': %s", stringValue, errorMessage));
     }
 }

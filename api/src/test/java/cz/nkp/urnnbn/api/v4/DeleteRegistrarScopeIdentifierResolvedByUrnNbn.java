@@ -150,8 +150,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(urnNbn, type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
-        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_TYPE"));
     }
 
     @Test
