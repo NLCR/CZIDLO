@@ -222,8 +222,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
-        assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+        assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
     }
 
     @Test
@@ -296,8 +295,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
-            assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+            assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
             // check that only id for resolvation was created
             List<RsId> rsIds = getRsIds(urnNbn);
             assertEquals(1, rsIds.size());
@@ -321,8 +319,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(idForResolvation, idtoBeUpdated.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
-            assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
+            assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_VALUE"));
             // check that not updated
             List<RsId> rsIds = getRsIds(urnNbn);
             assertEquals(2, rsIds.size());
