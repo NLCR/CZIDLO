@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:sequence>
             <xs:element name="name" type="xs:string"/>
             <xs:element name="description" type="xs:string" minOccurs="0"/>
-            <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
             <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="registrationModes" type="czidlo:registrationModes" minOccurs="0"/>
             <xs:element name="digitalLibraries" minOccurs="0">

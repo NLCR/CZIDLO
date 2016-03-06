@@ -87,7 +87,6 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().get(buildUrl(idForResolvation, typeToBeFetched)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_ID_TYPE
         assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_ID_TYPE"));
     }
 

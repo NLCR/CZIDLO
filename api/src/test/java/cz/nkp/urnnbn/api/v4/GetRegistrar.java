@@ -73,8 +73,6 @@ public class GetRegistrar extends ApiV3Tests {
                     .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:catalogs", nsContext))//
                     .body(hasXPath("//c:digitalLibraries", nsContext))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                    .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
@@ -95,8 +93,6 @@ public class GetRegistrar extends ApiV3Tests {
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:digitalLibraries", nsContext))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                    .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
@@ -117,8 +113,6 @@ public class GetRegistrar extends ApiV3Tests {
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(not(hasXPath("//c:digitalLibraries", nsContext)))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                    .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
@@ -139,12 +133,12 @@ public class GetRegistrar extends ApiV3Tests {
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(hasXPath("//c:catalogs", nsContext))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                    .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
                     .when().get(buildUrl(registrarCode));
+            // TODO: possibly check timestamps (created, modified) like this:
+            // assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -160,8 +154,6 @@ public class GetRegistrar extends ApiV3Tests {
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     .body(not(hasXPath("//c:catalogs", nsContext)))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
-                    .body(hasXPath("/c:response/c:registrar/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
                     .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//

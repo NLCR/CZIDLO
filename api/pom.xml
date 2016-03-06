@@ -132,8 +132,9 @@
         </dependency>
 
 
-        <!-- TESTS -->
+        <!-- TEST dependencies -->
 
+        <!-- TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -141,6 +142,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- rest-assured -->
         <!-- https://github.com/jayway/rest-assured -->
         <dependency>
             <groupId>com.jayway.restassured</groupId>
@@ -159,13 +161,13 @@
             <version>${restassured.version}</version>
         </dependency>
 
+        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
@@ -214,6 +216,29 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <!-- Disable tests with -Dmaven.test.skip=true unless you 
+                    have api.war(this version) dedicated for api testing deployed and available 
+                    with user accounts, registars and other configuration matching what is defined 
+                    in cz.nkp.urnnbn.api.v4.ApiV3Tests and cz.nkp.urnnbn.api.v4.ApiV4Tests -->
+                <!-- Sometimes if tests fail it is caused by previous tests 
+                    failing/crashing and leaving data in registrarScopeId table. In such case 
+                    you should remove the records manually like this: -->
+                <!-- delete from registrarscopeid where type like 'type%' 
+                    or idvalue like 'value%'; -->
+                <!-- This won't allways remove everything created by tests. 
+                    To check last 10 created registrar-scope ids: -->
+                <!-- select * from registrarscopeid order by created desc 
+                    limit 10; -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/main/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
             </plugin>
         </plugins>
     </build>
