@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public class UnknownUrnException extends ApiV4Exception {
 
-    public UnknownUrnException(UrnNbn urn) {
-        super(Status.NOT_FOUND, "UNKNOWN_URN", "No such urn '" + urn.toString() + "' has been assigned yet");
+    public UnknownUrnException(UrnNbn urnNbn) {
+        super(Status.NOT_FOUND, "UNKNOWN_URN_NBN", String.format("%s has not been assigned yet", urnNbn.toString()));
     }
 }

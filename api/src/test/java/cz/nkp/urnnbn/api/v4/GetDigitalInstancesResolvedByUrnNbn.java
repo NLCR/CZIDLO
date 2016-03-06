@@ -64,7 +64,7 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            assertEquals("UNKNOWN_URN", xmlPath.getString("code"));
+            assertEquals("UNKNOWN_URN_NBN", xmlPath.getString("code"));
         }
     }
 
