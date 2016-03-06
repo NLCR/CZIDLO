@@ -26,7 +26,7 @@ import javax.ws.rs.core.Context;
 
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyDeactivatedException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -116,9 +116,9 @@ public class DigitalInstanceResource extends ApiV4Resource {
         try {
             dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownDigInstException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());

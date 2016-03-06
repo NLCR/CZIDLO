@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -40,15 +41,8 @@ public class DeleteUrnnbn extends ApiV3Tests {
     public void notAuthenticated() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        // try and delete
+        delete(buildUrl(urnNbn)).then().assertThat().statusCode(401);
         // check state hasn't changed
         assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
     }

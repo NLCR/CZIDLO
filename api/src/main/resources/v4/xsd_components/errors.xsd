@@ -46,8 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:enumeration value="INVALID_REGISTRAR_CODE"/>
             <xs:enumeration value="INVALID_URN_NBN"/>
             <xs:enumeration value="MISSING_PARAMETER"/>
-            <xs:enumeration value="NOT_AUTHENTICATED"/>
-            <xs:enumeration value="NOT_AUTHORIZED"/>
+            <xs:enumeration value="NO_ACCESS_RIGHTS"/>
             <xs:enumeration value="NOT_DEFINED"/>
             <xs:enumeration value="UNAUTHORIZED_REGISTRATION_MODE"/>
             <xs:enumeration value="UNKNOWN_DIGITAL_DOCUMENT"/>

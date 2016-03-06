@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
@@ -45,17 +46,10 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
         String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .given().request().body(bodyXml).contentType(ContentType.XML)//
+        given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
     }
 
     @Test

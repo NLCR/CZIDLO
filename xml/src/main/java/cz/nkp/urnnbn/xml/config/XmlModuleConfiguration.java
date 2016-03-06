@@ -59,6 +59,6 @@ public class XmlModuleConfiguration {
     }
 
     public String getApiV4ResponseXsdLocation() {
-        return apiV3ResponseXsdLocation;
+        return apiV4ResponseXsdLocation;
     }
 }

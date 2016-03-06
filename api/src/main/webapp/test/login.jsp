@@ -12,6 +12,6 @@
         <title>Login</title>
     </head>
     <body>
-        <h1>Just fucking log in</h1>
+        <h1>Just log in</h1>
     </body>
 </html>

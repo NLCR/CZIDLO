@@ -16,9 +16,9 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-public class NotAuthorizedException extends ApiV4Exception {
+public class NoAccessRightsException extends ApiV4Exception {
 
-    public NotAuthorizedException(String errorMessage) {
-        super(Status.UNAUTHORIZED, "NOT_AUTHORIZED", errorMessage);
+    public NoAccessRightsException(String errorMessage) {
+        super(Status.FORBIDDEN, "NO_ACCESS_RIGHTS", errorMessage);
     }
 }

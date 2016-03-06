@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v4;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.hasXPath;
@@ -61,25 +62,11 @@ public class DeleteDigitalInstance extends ApiV3Tests {
         Long id = createActiveDigitalInstanceOrNull();
         if (id != null) {
             LOGGER.info("id: " + id);
-
             // check not deactivated yet
             DigitalInstance idBefore = getDigitalInstanceOrNull(id);
             assertTrue(idBefore.isActive());
-
             // try and deactivate
-            // TODO:APIv4: return xml
-            // String responseXml =
-            with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(401)//
-                    // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    // .body(matchesXsd(responseXsdString))//
-                    // .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().delete(buildUrl(id))//
-            // .andReturn().asString()
-            ;
-            // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHENTICATED");
-
+            delete(buildUrl(id)).then().assertThat().statusCode(401);
             // check still not deactivated
             DigitalInstance idAfter = getDigitalInstanceOrNull(id);
             assertTrue(idAfter.isActive());
@@ -99,13 +86,13 @@ public class DeleteDigitalInstance extends ApiV3Tests {
             // try and deactivate
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                     .expect()//
-                    .statusCode(401)//
+                    .statusCode(403)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().delete(buildUrl(id))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
+            Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHS");
             // check still not deactivated
             DigitalInstance idAfter = getDigitalInstanceOrNull(id);
             assertTrue(idAfter.isActive());

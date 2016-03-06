@@ -2,7 +2,7 @@
 <response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
     <error>
-        <code>NOT_AUTHORIZED</code>
+        <code>NO_ACCESS_RIGHTS</code>
         <message>user 'test2' not allowed to manage registrar with code
             'tst02'</message>
     </error>

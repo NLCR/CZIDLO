@@ -38,7 +38,7 @@ import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyPresentException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalLibraryException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -169,9 +169,9 @@ public class DigitalInstancesResource extends ApiV4Resource {
             // String responseXml = builder.buildDocumentWithResponseHeader().toXML();
             // return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownDigLibException ex) {
             throw new UnknownDigitalLibraryException(ex.getMessage());
         } catch (UnknownDigDocException ex) {

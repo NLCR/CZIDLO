@@ -41,7 +41,7 @@ import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.core.RegistrarCode;
@@ -169,7 +169,7 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         } catch (RegistrationModeNotAllowedException ex) {
             throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
         } catch (RegistarScopeIdentifierCollisionException ex) {
@@ -182,7 +182,7 @@ public class DigitalDocumentsResource extends ApiV4Resource {
             LOGGER.log(Level.SEVERE, "unexpected application state", ex);
             throw new InternalException(ex);
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         }
     }
 

@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v4;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -62,17 +63,10 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         RsId idToBeCreated = new RsId(REGISTRAR, "type", "value");
         LOGGER.info(String.format("resolved by: %s, id to be created: %s", urnNbn, idToBeCreated.toString()));
         // try and create id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .body(idToBeCreated.value)//
+        given().request().body(idToBeCreated.value)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+                .when().put(buildUrl(urnNbn, idToBeCreated.type));
         // check not inserted
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(0));
@@ -87,17 +81,11 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         // insert id
         insertRegistrarScopeId(urnNbn, idToBeUpdated, USER);
         // try and update id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
         with().config(namespaceAwareXmlConfig())//
                 .body(valueNew)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeUpdated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
         // check not updated
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertEquals(1, rsIdsFetched.size());
@@ -113,12 +101,12 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .body(idToBeCreated.value)//
                 .expect()//
-                .statusCode(401)//
+                .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
         // check not inserted
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(0));
@@ -136,12 +124,12 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .body(valueNew)//
                 .expect()//
-                .statusCode(401)//
+                .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
         // check not updated
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertEquals(1, rsIdsFetched.size());

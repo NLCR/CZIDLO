@@ -39,7 +39,6 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
 public class ApiV4Resource extends Resource {
 
-    // TODO: oddelit ziskavani dat a xml buildery
     protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);
         List<RegistrarScopeIdentifierBuilder> builders = new ArrayList<RegistrarScopeIdentifierBuilder>(identifiers.size());

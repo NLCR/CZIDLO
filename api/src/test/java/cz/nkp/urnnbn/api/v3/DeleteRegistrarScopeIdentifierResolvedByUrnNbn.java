@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -48,16 +49,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
         // insert id
         insertRegistrarScopeId(urnNbn, idToBeDeleted, USER);
         // try and delete id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .expect()//
-                .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn, idToBeDeleted.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        delete(buildUrl(urnNbn, idToBeDeleted.type)).then().assertThat().statusCode(401);
         // check that id still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         boolean found = false;

@@ -31,7 +31,7 @@ import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdentifier;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
@@ -141,9 +141,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             // should never happen here
             LOGGER.log(Level.SEVERE, null, ex);
@@ -165,9 +165,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             dataUpdateService().updateRegistrarScopeIdentifier(login, id);
             return id;
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             // should never happen here
             LOGGER.log(Level.SEVERE, null, ex);
@@ -210,15 +210,18 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     private String deleteRegistrarScopeIdentifierWithXmlResponse(String login, String idTypeStr) {
         try {
+            // builder before deleted
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
             RegistrarScopeIdentifier identifier = dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
-            dataRemoveService().removeRegistrarScopeIdentifier(doc.getId(), idType, login);
             RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(identifier);
+            // delete
+            dataRemoveService().removeRegistrarScopeIdentifier(doc.getId(), idType, login);
+            // returned data before deleted
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());
@@ -245,13 +248,15 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(String login) {
         try {
+            // builder before deleted
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
+            // delete
             dataRemoveService().removeRegistrarScopeIdentifiers(doc.getId(), login);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownDigDocException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());

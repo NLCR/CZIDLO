@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -91,9 +91,9 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
             String responseXml = reserveUrnNbnsWithXmlResponse(login, size);
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (AccessException ex) {
-            throw new NotAuthorizedException(ex.getMessage());
+            throw new NoAccessRightsException(ex.getMessage());
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {

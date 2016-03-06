@@ -29,7 +29,7 @@ import javax.ws.rs.core.Context;
 
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.NotAuthorizedException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -81,7 +81,7 @@ public class UrnNbnResource extends ApiV4Resource {
         } catch (WebApplicationException e) {
             throw e;
         } catch (AccessException e) {
-            throw new NotAuthorizedException(e.getMessage());
+            throw new NoAccessRightsException(e.getMessage());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(e);

@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v4;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -49,17 +50,10 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         LOGGER.info("registrar code: " + registrarCode);
         RsId idForResolvation = new RsId(registrarCode, "type", "value");
         String bodyXml = diImportBuilder.minimal(digLibId, WORKING_URL);
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .given().request().body(bodyXml).contentType(ContentType.XML)//
+        given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().post(buildUrl(idForResolvation)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHENTICATED");
+                .when().post(buildUrl(idForResolvation));
     }
 
     @Test
@@ -72,12 +66,12 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
-                .statusCode(401)//
+                .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(rsId)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "NOT_AUTHORIZED");
+        Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHS");
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }

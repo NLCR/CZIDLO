@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -66,17 +67,10 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // insert id for resolvation
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         // try and create id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .body(idToBeCreated.value)//
+        given().request().body(idToBeCreated.value)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+                .when().put(buildUrl(idForResolvation, idToBeCreated.type));
         // check not inserted
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(1));
@@ -95,17 +89,10 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         insertRegistrarScopeId(urnNbn, idToBeUpdated, USER);
         // try and update id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .body(valueNew)//
+        given().request().body(valueNew)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().put(buildUrl(idForResolvation, idToBeUpdated.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+                .when().put(buildUrl(idForResolvation, idToBeUpdated.type));
         // check not updated
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));

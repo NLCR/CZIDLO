@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v4;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -172,16 +173,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
         insertRegistrarScopeId(urnNbn, idToDelete, USER);
         // try and delete id
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .expect()//
-                .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(idForResolvation, idToDelete.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        delete(buildUrl(idForResolvation, idToDelete.type)).then().assertThat().statusCode(401);
         // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
@@ -207,12 +199,12 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         // try and delete id
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .expect()//
-                .statusCode(401)//
+                .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, idToDelete.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
         // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));
