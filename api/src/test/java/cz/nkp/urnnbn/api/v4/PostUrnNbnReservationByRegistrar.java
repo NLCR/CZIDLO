@@ -92,7 +92,7 @@ public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHTS");
         // check that no more reservations created
         UrnNbnReservations reservationsAfter = getUrnNbnReservations(registrarCode);
         assertThat(reservationsAfter.totalReserved, equalTo(reservationsBefore.totalReserved));

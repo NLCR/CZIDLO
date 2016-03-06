@@ -78,7 +78,7 @@ public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(urnNbn, idToBeDeleted.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
         // check that id still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         boolean found = false;

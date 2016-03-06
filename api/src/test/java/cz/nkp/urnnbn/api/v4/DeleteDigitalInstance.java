@@ -92,7 +92,7 @@ public class DeleteDigitalInstance extends ApiV3Tests {
                     .when().delete(buildUrl(id))//
                     .andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHS");
+            Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHTS");
             // check still not deactivated
             DigitalInstance idAfter = getDigitalInstanceOrNull(id);
             assertTrue(idAfter.isActive());
@@ -181,6 +181,7 @@ public class DeleteDigitalInstance extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibraryId", nsContext))//
                     .when().delete(buildUrl(id))//
                     .andReturn().asString();
+            System.err.println(responseXml);
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
             Assert.assertEquals((Long) xmlPath.getLong("@id"), id);
             Assert.assertEquals(Utils.booleanValue(xmlPath.getString("@active")), false);

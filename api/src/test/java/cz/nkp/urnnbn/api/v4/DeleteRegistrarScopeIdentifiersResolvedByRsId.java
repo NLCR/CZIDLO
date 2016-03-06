@@ -161,7 +161,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
         // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));

@@ -106,7 +106,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
         // check not inserted
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(0));
@@ -129,7 +129,7 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
         // check not updated
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertEquals(1, rsIdsFetched.size());

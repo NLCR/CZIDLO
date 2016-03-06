@@ -71,7 +71,7 @@ public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(rsId)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.getString("code"), "NO_ACCESS_RIGHTS");
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }

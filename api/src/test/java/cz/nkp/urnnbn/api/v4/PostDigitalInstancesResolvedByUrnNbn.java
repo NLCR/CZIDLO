@@ -65,7 +65,7 @@ public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
     }
 
     @Test
