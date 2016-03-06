@@ -24,8 +24,6 @@ import cz.nkp.urnnbn.api.Utils;
  *
  */
 public class DeleteUrnnbn extends ApiV3Tests {
-    
-    //TODO: test note in query param (is it even in api specification?), for api v3 as well
 
     private static final Logger LOGGER = Logger.getLogger(DeleteUrnnbn.class.getName());
 
@@ -139,7 +137,7 @@ public class DeleteUrnnbn extends ApiV3Tests {
     }
 
     @Test
-    public void ok() {
+    public void withoutNote() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         DateTime registeredDt = getUrnNbnRegisteredOrNull(urnNbn);
         LOGGER.info(urnNbn);
@@ -151,6 +149,60 @@ public class DeleteUrnnbn extends ApiV3Tests {
                 .when().delete(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
         assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value"));
+        String[] splitUrnNbn = Utils.splitUrnNbn(urnNbn);
+        assertEquals(splitUrnNbn[0], xmlPath.getString("countryCode"));
+        assertEquals(splitUrnNbn[1], xmlPath.getString("registrarCode"));
+        assertEquals(splitUrnNbn[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
+        DateTime.parse(xmlPath.getString("deactivated"));
+        // check state has changed
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
+    }
+
+    @Test
+    public void withtNote() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        DateTime registeredDt = getUrnNbnRegisteredOrNull(urnNbn);
+        String note = "something";
+        LOGGER.info(String.format("%s, note: %s", urnNbn.toString(), note));
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("note", note).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().delete(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        assertEquals(note, xmlPath.getString("deactivationNote"));
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value"));
+        String[] splitUrnNbn = Utils.splitUrnNbn(urnNbn);
+        assertEquals(splitUrnNbn[0], xmlPath.getString("countryCode"));
+        assertEquals(splitUrnNbn[1], xmlPath.getString("registrarCode"));
+        assertEquals(splitUrnNbn[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
+        DateTime.parse(xmlPath.getString("deactivated"));
+        // check state has changed
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
+    }
+
+    @Test
+    public void withtNoteEmpty() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        DateTime registeredDt = getUrnNbnRegisteredOrNull(urnNbn);
+        String note = "";
+        LOGGER.info(String.format("%s, note: %s", urnNbn.toString(), note));
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("note", note).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().delete(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        assertEquals("", xmlPath.getString("deactivationNote"));
         assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value"));
         String[] splitUrnNbn = Utils.splitUrnNbn(urnNbn);
         assertEquals(splitUrnNbn[0], xmlPath.getString("countryCode"));
@@ -212,5 +264,4 @@ public class DeleteUrnnbn extends ApiV3Tests {
         // check state has changed
         assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
     }
-
 }

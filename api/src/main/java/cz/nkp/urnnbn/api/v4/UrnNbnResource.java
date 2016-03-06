@@ -39,6 +39,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 public class UrnNbnResource extends ApiV4Resource {
 
     private static final Logger LOGGER = Logger.getLogger(UrnNbnResource.class.getName());
+    private static final String PARAM_DEACTIVATION_NOTE = "note";
 
     @GET
     @Path("{urnNbn}")
@@ -60,10 +61,9 @@ public class UrnNbnResource extends ApiV4Resource {
     @DELETE
     @Path("{urnNbn}")
     @Produces("text/xml")
-    public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString, @QueryParam("note") String note) {
+    public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString,
+            @QueryParam(PARAM_DEACTIVATION_NOTE) String note) {
         try {
-            // TODO: omezovat delku poznamky? trimovat a nahrazovat prazdny string nullem?
-            // anebo jen zkracovat prilis dlouhe
             checkServerNotReadOnly();
             UrnNbn urnNbn = Parser.parseUrn(urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
