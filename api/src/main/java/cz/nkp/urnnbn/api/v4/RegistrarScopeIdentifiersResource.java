@@ -30,9 +30,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
+import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
+import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -145,17 +146,14 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (AccessException ex) {
             throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
+            // LOGGER.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
+            // LOGGER.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
+            // LOGGER.log(Level.SEVERE, null, ex);
+            throw new RegistrarScopeIdentifierCollision(ex.getMessage());
         }
     }
 
@@ -169,17 +167,14 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (AccessException ex) {
             throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
+            // LOGGER.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
+            // LOGGER.log(Level.SEVERE, null, ex);
             throw new InternalException(ex);
         } catch (IdentifierConflictException ex) {
-            // should never happen here
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
+            // LOGGER.log(Level.SEVERE, null, ex);
+            throw new RegistrarScopeIdentifierCollision(ex.getMessage());
         }
     }
 
@@ -227,7 +222,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(ex.getMessage());
         } catch (RegistrarScopeIdentifierNotDefinedException ex) {
-            throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
+            throw new UnknownRegistrarScopeIdentifier(ex.getMessage());
         }
     }
 

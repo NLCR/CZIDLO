@@ -38,7 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:enumeration value="INCORRECT_PREDECESSOR_RESERVED"/>
             <xs:enumeration value="INVALID_ARCHIVER_ID"/>
             <xs:enumeration value="INVALID_DATA"/>
-            <xs:enumeration value="INVALID_REGISTRAR_SCOPE_IDENTIFIER"/>
+            <xs:enumeration value="UNKNOWN_REGISTRAR_SCOPE_IDENTIFIER"/>
+            <xs:enumeration value="REGISTRAR_SCOPE_IDENTIFIER_COLLISION"/>
             <xs:enumeration value="INVALID_REGISTRAR_SCOPE_ID_TYPE"/>
             <xs:enumeration value="INVALID_REGISTRAR_SCOPE_ID_VALUE"/>
             <xs:enumeration value="INVALID_DIGITAL_INSTANCE_ID"/>

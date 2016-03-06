@@ -153,13 +153,12 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         // try and delete rsId by type, resolved by another rsId
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
-                .statusCode(400)// TODO:APIv4: code 404
+                .statusCode(404)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: INVALID_REGISTRAR_SCOPE_IDENTIFIER rename to NOT_DEFINED
-        Assert.assertEquals(xmlPath.get("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
+        Assert.assertEquals(xmlPath.get("code"), "UNKNOWN_REGISTRAR_SCOPE_IDENTIFIER");
     }
 
     @Test

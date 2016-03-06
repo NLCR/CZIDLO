@@ -38,4 +38,5 @@ public class UnknownDigitalDocumentException extends ApiV4Exception {
                 "Registrar with code '%s' doesn't register digital document with identifier of type '%s' and value '%s'",//
                 registrarCode, idType.toString(), idValue.toString()));
     }
+
 }

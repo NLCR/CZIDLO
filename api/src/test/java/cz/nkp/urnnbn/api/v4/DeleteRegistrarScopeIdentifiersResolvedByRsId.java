@@ -195,7 +195,6 @@ public class DeleteRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().delete(buildUrl(idForResolvation)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        System.err.println(responseXml);
         // check that all ids in response
         for (RsId id : ids) {
             assertThat(xmlPath.getString("id.find { it.@type == \'" + id.type + "\' }"), equalTo(id.value));

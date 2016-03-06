@@ -258,13 +258,12 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeCreated.value).expect()//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(409)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeCreated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
-        assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
+        assertThat(xmlPath.getString("code"), equalTo("REGISTRAR_SCOPE_IDENTIFIER_COLLISION"));
     }
 
     @Test
@@ -280,13 +279,12 @@ public class PutRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .body(idToBeUpdated.value).expect()//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(409)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(urnNbn, idToBeUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
-        assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
+        assertThat(xmlPath.getString("code"), equalTo("REGISTRAR_SCOPE_IDENTIFIER_COLLISION"));
     }
 
     @Test
