@@ -28,7 +28,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -86,16 +86,13 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV2V3R
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
-        } catch (IdentifierConflictException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+        } catch (RegistarScopeIdentifierCollisionException ex) {
+            logger.log(Level.FINE, null, ex);
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
     }
@@ -110,16 +107,13 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV2V3R
         } catch (AccessException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
-        } catch (IdentifierConflictException ex) {
-            // should never happen here
-            logger.log(Level.SEVERE, null, ex);
+        } catch (RegistarScopeIdentifierCollisionException ex) {
+            logger.log(Level.FINE, null, ex);
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         }
     }

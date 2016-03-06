@@ -638,6 +638,7 @@
             <xs:enumeration value="UNKNOWN_URN" />
             <xs:enumeration value="URN_NBN_DEACTIVATED" />
             <xs:enumeration value="INCORRECT_URN_NBN_STATE" />
+            <xs:enumeration value="INTERNAL_ERROR"/>
         </xs:restriction>
     </xs:simpleType>
 

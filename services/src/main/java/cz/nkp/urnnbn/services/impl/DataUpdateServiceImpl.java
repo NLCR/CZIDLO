@@ -31,8 +31,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -56,7 +56,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownRegistrarException, UnknownDigDocException,
-            IdentifierConflictException, AccessException, UnknownUserException {
+            AccessException, UnknownUserException, RegistarScopeIdentifierCollisionException {
         try {
             authorization.checkAccessRightsOrAdmin(id.getRegistrarId(), login);
             Registrar registrar;
@@ -76,7 +76,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (AlreadyPresentException e) {
-                throw new IdentifierConflictException(id.getType().toString(), id.getValue().toString());
+                throw new RegistarScopeIdentifierCollisionException(id);
             }
             try {
                 factory.documentDao().updateDocumentDatestamp(id.getDigDocId());
@@ -251,8 +251,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
-            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity,
-            IdentifierConflictException {
+            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity {
         authorization.checkAdminRights(login);
         new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
         UrnNbn urn;

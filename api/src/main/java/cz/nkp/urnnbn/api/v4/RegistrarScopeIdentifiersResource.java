@@ -39,7 +39,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -146,13 +146,13 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (AccessException ex) {
             throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(ex);
-        } catch (IdentifierConflictException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+        } catch (RegistarScopeIdentifierCollisionException ex) {
+            LOGGER.log(Level.FINE, null, ex);
             throw new RegistrarScopeIdentifierCollision(ex.getMessage());
         }
     }
@@ -167,13 +167,13 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (AccessException ex) {
             throw new NoAccessRightsException(ex.getMessage());
         } catch (UnknownRegistrarException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(ex);
-        } catch (IdentifierConflictException ex) {
-            // LOGGER.log(Level.SEVERE, null, ex);
+        } catch (RegistarScopeIdentifierCollisionException ex) {
+            LOGGER.log(Level.FINE, null, ex);
             throw new RegistrarScopeIdentifierCollision(ex.getMessage());
         }
     }
