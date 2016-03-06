@@ -31,8 +31,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import cz.nkp.urnnbn.api.Action;
-import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalInstanceException;

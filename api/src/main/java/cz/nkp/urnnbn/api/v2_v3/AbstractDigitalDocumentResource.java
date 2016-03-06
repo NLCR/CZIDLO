@@ -26,8 +26,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import cz.nkp.urnnbn.api.Action;
-import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.api.v3.exceptions.UnknownDigitalInstanceException;

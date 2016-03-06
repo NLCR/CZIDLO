@@ -9,8 +9,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cz.nkp.urnnbn.api.Action;
-import cz.nkp.urnnbn.api.ResponseFormat;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidQueryParamValueException;
