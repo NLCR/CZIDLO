@@ -16,12 +16,13 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 
 public class DigitalInstanceAlreadyPresentException extends ApiV4Exception {
 
-    public DigitalInstanceAlreadyPresentException(DigitalInstance instance) {
-        super(Response.Status.FORBIDDEN, "DIGITAL_INSTANCE_ALREADY_PRESENT",
+    public DigitalInstanceAlreadyPresentException(ResponseFormat format, DigitalInstance instance) {
+        super(format, Response.Status.FORBIDDEN, "DIGITAL_INSTANCE_ALREADY_PRESENT",
                 "Digital instance for this digital document is already present in digital library with id=" + instance.getLibraryId()
                         + " (digital instance with id=" + instance.getId() + ")");
     }

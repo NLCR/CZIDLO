@@ -54,13 +54,14 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getDigitalInstanceXmlRecord() {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             return buildDigitalInstanceRecordXml();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -88,41 +89,42 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String deactivateDigitalInstance(@Context HttpServletRequest req) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
-            return deactivateDigitalInstanceReturnXml(login);
+            return deactivateDigitalInstanceReturnXml(format, login);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private String deactivateDigitalInstanceReturnXml(String login) {
+    private String deactivateDigitalInstanceReturnXml(ResponseFormat format, String login) {
         DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
         if (!found.isActive()) {
-            throw new DigitalInstanceAlreadyDeactivatedException(instance);
+            throw new DigitalInstanceAlreadyDeactivatedException(format, instance);
         } else {
-            deactivateDigitalInstanceWithServiceExceptionTranslation(login);
+            deactivateDigitalInstanceWithServiceExceptionTranslation(format, login);
             DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(deactivated, deactivated.getLibraryId());
             return builder.buildDocumentWithResponseHeader().toXML();
         }
     }
 
-    private void deactivateDigitalInstanceWithServiceExceptionTranslation(String login) {
+    private void deactivateDigitalInstanceWithServiceExceptionTranslation(ResponseFormat format, String login) {
         try {
             dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownDigInstException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         }
     }
 }

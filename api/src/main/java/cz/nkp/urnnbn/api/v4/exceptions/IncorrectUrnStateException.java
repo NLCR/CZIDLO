@@ -16,13 +16,15 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 
 public class IncorrectUrnStateException extends ApiV4Exception {
 
     private static final long serialVersionUID = -3179637427845166321L;
 
-    public IncorrectUrnStateException(UrnNbnWithStatus urnNbnWithStatus) {
-        super(Status.FORBIDDEN, "INCORRECT_URN_NBN_STATE", urnNbnWithStatus.getUrn().toString() + ": " + urnNbnWithStatus.getStatus().toString());
+    public IncorrectUrnStateException(ResponseFormat format, UrnNbnWithStatus urnNbnWithStatus) {
+        super(format, Status.FORBIDDEN, "INCORRECT_URN_NBN_STATE", urnNbnWithStatus.getUrn().toString() + ": "
+                + urnNbnWithStatus.getStatus().toString());
     }
 }

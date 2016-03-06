@@ -16,9 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
+
 public class InvalidRegistrarScopeIdValue extends ApiV4Exception {
 
-    public InvalidRegistrarScopeIdValue(String stringValue, String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_REGISTRAR_SCOPE_ID_VALUE", String.format("Incorrect value '%s': %s", stringValue, errorMessage));
+    public InvalidRegistrarScopeIdValue(ResponseFormat format, String stringValue, String errorMessage) {
+        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_SCOPE_ID_VALUE", String.format("Incorrect value '%s': %s", stringValue, errorMessage));
     }
 }

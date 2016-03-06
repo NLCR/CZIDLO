@@ -45,8 +45,9 @@ public class UrnNbnResource extends ApiV4Resource {
     @Path("{urnNbn}")
     @Produces("text/xml")
     public String getUrnNbnXmlRecord(@PathParam("urnNbn") String urnNbnString) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            UrnNbn urnNbn = Parser.parseUrn(urnNbnString);
+            UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                     urnNbn.getDocumentCode(), true);
             return new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
@@ -54,7 +55,7 @@ public class UrnNbnResource extends ApiV4Resource {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -63,9 +64,10 @@ public class UrnNbnResource extends ApiV4Resource {
     @Produces("text/xml")
     public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString,
             @QueryParam(PARAM_DEACTIVATION_NOTE) String note) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
-            UrnNbn urnNbn = Parser.parseUrn(urnNbnString);
+            checkServerNotReadOnly(format);
+            UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                     urnNbn.getDocumentCode(), false);
             switch (urnNbnWithStatus.getStatus()) {
@@ -76,15 +78,15 @@ public class UrnNbnResource extends ApiV4Resource {
                         urnNbnWithStatus.getUrn().getDocumentCode(), true);
                 return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
             default:
-                throw new IncorrectUrnStateException(urnNbnWithStatus);
+                throw new IncorrectUrnStateException(format, urnNbnWithStatus);
             }
         } catch (WebApplicationException e) {
             throw e;
         } catch (AccessException e) {
-            throw new NoAccessRightsException(e.getMessage());
+            throw new NoAccessRightsException(format, e.getMessage());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 

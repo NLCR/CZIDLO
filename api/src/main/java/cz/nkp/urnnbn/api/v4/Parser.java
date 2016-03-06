@@ -34,49 +34,49 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 public class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
 
-    public static UrnNbn parseUrn(String urnPar) {
+    public static UrnNbn parseUrn(ResponseFormat format, String urnPar) {
         try {
             return UrnNbn.valueOf(urnPar.toLowerCase());
         } catch (RuntimeException e) {
             LOGGER.log(Level.INFO, e.getMessage());
-            throw new InvalidUrnException(urnPar, "incorrect syntax: " + e.getMessage());
+            throw new InvalidUrnException(format, urnPar, "incorrect syntax: " + e.getMessage());
         }
     }
 
-    public static RegistrarScopeIdType parseRegistrarScopeIdType(String idTypeStr) {
+    public static RegistrarScopeIdType parseRegistrarScopeIdType(ResponseFormat format, String idTypeStr) {
         try {
             return RegistrarScopeIdType.valueOf(idTypeStr);
         } catch (IllegalArgumentException e) {
-            throw new InvalidRegistrarScopeIdType(idTypeStr, e.getMessage());
+            throw new InvalidRegistrarScopeIdType(format, idTypeStr, e.getMessage());
         }
     }
 
-    public static RegistrarScopeIdValue parseRegistrarScopeIdValue(String idValueStr) {
+    public static RegistrarScopeIdValue parseRegistrarScopeIdValue(ResponseFormat format, String idValueStr) {
         try {
             return RegistrarScopeIdValue.valueOf(idValueStr);
         } catch (IllegalArgumentException e) {
-            throw new InvalidRegistrarScopeIdValue(idValueStr, e.getMessage());
+            throw new InvalidRegistrarScopeIdValue(format, idValueStr, e.getMessage());
         }
     }
 
-    public static long parseDigInstId(String digInstIdStr) {
+    public static long parseDigInstId(ResponseFormat format, String digInstIdStr) {
         try {
             return Long.valueOf(digInstIdStr);
         } catch (RuntimeException e) {
             LOGGER.log(Level.INFO, e.getMessage());
-            throw new InvalidDigInstanceIdException(digInstIdStr, e.getMessage());
+            throw new InvalidDigInstanceIdException(format, digInstIdStr, e.getMessage());
         }
     }
 
-    public static RegistrarCode parseRegistrarCode(String siglaStr) {
+    public static RegistrarCode parseRegistrarCode(ResponseFormat format, String siglaStr) {
         try {
             return RegistrarCode.valueOf(siglaStr);
         } catch (RuntimeException e) {
-            throw new InvalidRegistrarCodeException(siglaStr, e.getMessage());
+            throw new InvalidRegistrarCodeException(format, siglaStr, e.getMessage());
         }
     }
 
-    public static int parseIntQueryParam(String value, String paramName, int minValue, int maxValue) {
+    public static int parseIntQueryParam(ResponseFormat format, String value, String paramName, int minValue, int maxValue) {
         try {
             Integer result = Integer.valueOf(value);
             if (result < minValue) {
@@ -88,38 +88,38 @@ public class Parser {
             return result;
         } catch (RuntimeException e) {
             LOGGER.log(Level.INFO, e.getMessage());
-            throw new InvalidQueryParamValueException(paramName, value, e.getMessage());
+            throw new InvalidQueryParamValueException(format, paramName, value, e.getMessage());
         }
     }
 
-    public static ResponseFormat parseResponseFormat(String value, String paramName) {
+    public static ResponseFormat parseResponseFormat(ResponseFormat format, String value, String paramName) {
         try {
             return ResponseFormat.valueOf(value.toUpperCase());
         } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(paramName, value, e.getMessage());
+            throw new InvalidQueryParamValueException(format, paramName, value, e.getMessage());
         }
     }
 
-    public static Action parseAction(String actionStr, String paramName) {
+    public static Action parseAction(ResponseFormat format, String actionStr, String paramName) {
         try {
             return Action.valueOf(actionStr.toUpperCase());
         } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(paramName, actionStr, e.getMessage());
+            throw new InvalidQueryParamValueException(format, paramName, actionStr, e.getMessage());
         }
     }
 
-    public static boolean parseBooleanQueryParam(String stringValue, String paramName) {
+    public static boolean parseBooleanQueryParam(ResponseFormat format, String stringValue, String paramName) {
         Boolean trueByJre = Boolean.valueOf(stringValue);
         if (trueByJre) {
             return true;
         } else if ("false".equals(stringValue.toLowerCase())) {
             return false;
         } else {
-            throw new InvalidQueryParamValueException(paramName, stringValue, "not boolean value '" + stringValue + "'");
+            throw new InvalidQueryParamValueException(format, paramName, stringValue, "not boolean value '" + stringValue + "'");
         }
     }
 
-    public static long parsePositiveLongQueryParam(String stringValue, String paramName) {
+    public static long parsePositiveLongQueryParam(ResponseFormat format, String stringValue, String paramName) {
         try {
             Long value = Long.valueOf(stringValue);
             if (value <= 0) {
@@ -127,20 +127,20 @@ public class Parser {
             }
             return value;
         } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(paramName, stringValue, e.getMessage());
+            throw new InvalidQueryParamValueException(format, paramName, stringValue, e.getMessage());
         }
     }
 
-    public static URL parseUrl(String string) throws InvalidDataException {
+    public static URL parseUrl(ResponseFormat format, String string) throws InvalidDataException {
         try {
             URL result = new URL(string);
             String protocol = result.getProtocol();
             if (!("http".equals(protocol) || "https".equals(protocol))) {
-                throw new InvalidDataException("unknown protocol '" + protocol + "'");
+                throw new InvalidDataException(format, "unknown protocol '" + protocol + "'");
             }
             return result;
         } catch (MalformedURLException ex) {
-            throw new InvalidDataException("'" + string + "' is not valid url: " + ex.toString());
+            throw new InvalidDataException(format, String.format("%s is not valid url: %s", string, ex.toString()));
         }
     }
 }

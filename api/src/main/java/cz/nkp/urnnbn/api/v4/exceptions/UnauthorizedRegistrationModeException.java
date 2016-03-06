@@ -16,14 +16,15 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public class UnauthorizedRegistrationModeException extends ApiV4Exception {
 
-    public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
-        super(Status.FORBIDDEN, "ILLEGAL_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
+    public UnauthorizedRegistrationModeException(ResponseFormat format, UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
+        super(format, Status.FORBIDDEN, "ILLEGAL_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
     }
 
     private static String errorMessage(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {

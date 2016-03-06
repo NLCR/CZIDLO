@@ -68,22 +68,23 @@ public class DigitalInstancesResource extends ApiV4Resource {
 
     @Path("id/{digInstId}")
     public DigitalInstanceResource getDigitalInstanceResource(@PathParam("digInstId") String digInstIdStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            long id = Parser.parseDigInstId(digInstIdStr);
-            DigitalInstance digitalInstance = getDigitalInstance(id);
+            long id = Parser.parseDigInstId(format, digInstIdStr);
+            DigitalInstance digitalInstance = getDigitalInstance(format, id);
             return new DigitalInstanceResource(digitalInstance);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private DigitalInstance getDigitalInstance(long digitalInstanceId) {
+    private DigitalInstance getDigitalInstance(ResponseFormat format, long digitalInstanceId) {
         DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
         if (instance == null) {
-            throw new UnknownDigitalInstanceException(digitalInstanceId);
+            throw new UnknownDigitalInstanceException(format, digitalInstanceId);
         } else {
             return instance;
         }
@@ -92,13 +93,14 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getDigitalInstancesXmlRecord() {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             return buildDigitalInstancesRecordXml();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -130,25 +132,26 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             if (digDoc == null) {
                 throw new WebApplicationException(Status.BAD_REQUEST);
             }
             String login = req.getRemoteUser();
             Document requestXmlData = ApiModuleConfiguration.instanceOf().getDigInstImportDataValidatingLoaderV4().loadDocument(content);
             DigitalInstance digitalInstance = parseDigitalInstanceFromXml(requestXmlData);
-            String response = addNewDigitalInstanceWithXmlResponse(digitalInstance, login);
+            String response = addNewDigitalInstanceWithXmlResponse(format, digitalInstance, login);
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
-            throw new InvalidDataException(ex);
+            throw new InvalidDataException(format, ex);
         } catch (ParsingException ex) {
-            throw new InvalidDataException(ex);
+            throw new InvalidDataException(format, ex);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -159,33 +162,33 @@ public class DigitalInstancesResource extends ApiV4Resource {
         return result;
     }
 
-    private String addNewDigitalInstanceWithXmlResponse(DigitalInstance digitalInstance, String login) {
+    private String addNewDigitalInstanceWithXmlResponse(ResponseFormat format, DigitalInstance digitalInstance, String login) {
         try {
-            Parser.parseUrl(digitalInstance.getUrl());
-            checkNoOtherDigInstInSameLibraryPresent(digitalInstance);
+            Parser.parseUrl(format, digitalInstance.getUrl());
+            checkNoOtherDigInstInSameLibraryPresent(format, digitalInstance);
             DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digitalInstance, login);
             DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digitalInstance.getLibraryId());
             return builder.buildDocumentWithResponseHeader().toXML();
             // String responseXml = builder.buildDocumentWithResponseHeader().toXML();
             // return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownDigLibException ex) {
-            throw new UnknownDigitalLibraryException(ex.getMessage());
+            throw new UnknownDigitalLibraryException(format, ex.getMessage());
         } catch (UnknownDigDocException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, null, ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         }
     }
 
-    private void checkNoOtherDigInstInSameLibraryPresent(DigitalInstance digInstFromClient) {
+    private void checkNoOtherDigInstInSameLibraryPresent(ResponseFormat format, DigitalInstance digInstFromClient) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
         for (DigitalInstance instance : instances) {
             if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {
-                throw new DigitalInstanceAlreadyPresentException(instance);
+                throw new DigitalInstanceAlreadyPresentException(format, instance);
             }
         }
     }

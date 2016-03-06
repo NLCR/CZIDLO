@@ -16,11 +16,13 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public class UrnNbnDeactivated extends ApiV4Exception {
 
-    public UrnNbnDeactivated(UrnNbn urn) {
-        super(Response.Status.FORBIDDEN, "URN_NBN_DEACTIVATED", urn.toString() + " has been deactivated at " + urn.getDeactivated().toString());
+    public UrnNbnDeactivated(ResponseFormat format, UrnNbn urn) {
+        super(format, Response.Status.FORBIDDEN, "URN_NBN_DEACTIVATED", urn.toString() + " has been deactivated at "
+                + urn.getDeactivated().toString());
     }
 }

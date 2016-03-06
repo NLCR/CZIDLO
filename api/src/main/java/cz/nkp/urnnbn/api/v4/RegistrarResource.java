@@ -54,21 +54,22 @@ public class RegistrarResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getRegistrar(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             boolean addDigitalLibraries = true;
             if (addDigLibsStr != null) {
-                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+                addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
             }
             boolean addCatalogs = true;
             if (addCatalogsStr != null) {
-                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+                addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
             }
             return getRegistrarRecordXml(addDigitalLibraries, addCatalogs);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 

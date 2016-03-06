@@ -78,30 +78,31 @@ public class DigitalDocumentsResource extends ApiV4Resource {
 
     @Path("registrarScopeIdentifier/{idType}/{idValue}")
     public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             LOGGER.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
                     idValueStr, registrar.getCode() });
-            DigitalDocument digitalDocument = getDigitalDocument(idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return new DigitalDocumentResource(digitalDocument, urn);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private DigitalDocument getDigitalDocument(String idTypeStr, String idValueStr) {
-        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(idTypeStr);
-        RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(idValueStr);
+    private DigitalDocument getDigitalDocument(ResponseFormat format, String idTypeStr, String idValueStr) {
+        RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(format, idTypeStr);
+        RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(format, idValueStr);
         RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
         id.setRegistrarId(registrar.getId());
         id.setType(type);
         id.setValue(value);
         DigitalDocument digDoc = dataAccessService().digDocByIdentifier(id);
         if (digDoc == null) {
-            throw new UnknownDigitalDocumentException(registrar.getCode(), type, value);
+            throw new UnknownDigitalDocumentException(format, registrar.getCode(), type, value);
         } else {
             return digDoc;
         }
@@ -110,13 +111,14 @@ public class DigitalDocumentsResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getDigitalDocumentsRecord() {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             return getDigitalDocumentsRecordXml();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -130,59 +132,61 @@ public class DigitalDocumentsResource extends ApiV4Resource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
-            String response = registerDigitalDocumentReturnXml(content, login, registrar.getCode());
+            String response = registerDigitalDocumentReturnXml(format, content, login, registrar.getCode());
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
-            throw new InvalidDataException(ex);
+            throw new InvalidDataException(format, ex);
         } catch (ParsingException ex) {
-            throw new InvalidDataException(ex);
+            throw new InvalidDataException(format, ex);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private String registerDigitalDocumentReturnXml(String content, String login, RegistrarCode registrarCode) throws ValidityException, IOException,
-            ParsingException {
+    private String registerDigitalDocumentReturnXml(ResponseFormat format, String content, String login, RegistrarCode registrarCode)
+            throws ValidityException, IOException, ParsingException {
         Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
-        return registerDigitalDocumentReturnXml(doc, login, registrarCode);
+        return registerDigitalDocumentReturnXml(format, doc, login, registrarCode);
     }
 
-    private String registerDigitalDocumentReturnXml(Document doc, String login, RegistrarCode registrarCode) {
+    private String registerDigitalDocumentReturnXml(ResponseFormat format, Document doc, String login, RegistrarCode registrarCode) {
         try {
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
             UrnNbn urnInData = registrationData.getUrn();
             if (urnInData != null && !urnInData.getRegistrarCode().toString().equals(registrarCode.toString())) {
-                throw new InvalidUrnException(urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString() + "'");
+                throw new InvalidUrnException(format, urnInData.toString(), "Doesn't match expected registrar code '" + registrarCode.toString()
+                        + "'");
             }
             UrnNbn urn = dataImportService().registerDigitalDocument(registrationData, login);
             UrnNbnWithStatus withStatus = getUrnWithStatus(urn, true);
             UrnNbnBuilder builder = new UrnNbnBuilder(withStatus);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (IncorrectPredecessorStatus ex) {
-            throw new IncorrectPredecessorException(ex.getPredecessor());
+            throw new IncorrectPredecessorException(format, ex.getPredecessor());
         } catch (RegistrationModeNotAllowedException ex) {
-            throw new UnauthorizedRegistrationModeException(ex.getMode(), ex.getUrn(), registrar);
+            throw new UnauthorizedRegistrationModeException(format, ex.getMode(), ex.getUrn(), registrar);
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownArchiverException ex) {
-            throw new InvalidArchiverIdException(ex.getMessage());
+            throw new InvalidArchiverIdException(format, ex.getMessage());
         } catch (RegistarScopeIdentifierCollisionException ex) {
-            throw new RegistrarScopeIdentifierCollision(ex.getMessage());
+            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
-            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
+            throw new InvalidUrnException(format, ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {
-            throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());
+            throw new InvalidUrnException(format, ex.getUrn().toString(), ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             LOGGER.log(Level.SEVERE, "unexpected application state", ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         }
     }
 

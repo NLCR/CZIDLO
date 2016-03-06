@@ -44,22 +44,23 @@ public class RegistrarsResource extends ApiV4Resource {
 
     @Path("{registrarCode}")
     public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            Registrar registrar = registrarFromRegistarCode(registrarCodeStr);
+            Registrar registrar = registrarFromRegistarCode(format, registrarCodeStr);
             return new RegistrarResource(registrar);
         } catch (WebApplicationException ex) {
             throw ex;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private Registrar registrarFromRegistarCode(String registrarCodeStr) {
-        RegistrarCode registrarCode = Parser.parseRegistrarCode(registrarCodeStr);
+    private Registrar registrarFromRegistarCode(ResponseFormat format, String registrarCodeStr) {
+        RegistrarCode registrarCode = Parser.parseRegistrarCode(format, registrarCodeStr);
         Registrar registrar = dataAccessService().registrarByCode(registrarCode);
         if (registrar == null) {
-            throw new UnknownRegistrarException(registrarCode);
+            throw new UnknownRegistrarException(format, registrarCode);
         } else {
             return registrar;
         }
@@ -68,21 +69,22 @@ public class RegistrarsResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getRegistrars(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             boolean addDigitalLibraries = false;
             if (addDigLibsStr != null) {
-                addDigitalLibraries = Parser.parseBooleanQueryParam(addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+                addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
             }
             boolean addCatalogs = false;
             if (addCatalogsStr != null) {
-                addCatalogs = Parser.parseBooleanQueryParam(addCatalogsStr, PARAM_CATALOGS);
+                addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
             }
             return getRegistrarsXmlRecord(addDigitalLibraries, addCatalogs);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 

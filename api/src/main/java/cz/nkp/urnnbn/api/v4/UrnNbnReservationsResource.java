@@ -52,13 +52,14 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getUrnNbnReservationsXmlRecord() {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             return buildUrnNbnReservationsXmlRecord();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -83,22 +84,23 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @POST
     @Produces("application/xml")
     public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
-            int size = sizeStr != null ? Parser.parseIntQueryParam(sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()
+            checkServerNotReadOnly(format);
+            int size = sizeStr != null ? Parser.parseIntQueryParam(format, sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()
                     .getUrnReservationMaxSize()) : ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize();
             String login = req.getRemoteUser();
             String responseXml = reserveUrnNbnsWithXmlResponse(login, size);
             return Response.created(null).entity(responseXml).build();
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 

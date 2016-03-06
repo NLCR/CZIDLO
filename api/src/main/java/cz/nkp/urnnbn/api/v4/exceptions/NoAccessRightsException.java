@@ -16,9 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
+
 public class NoAccessRightsException extends ApiV4Exception {
 
-    public NoAccessRightsException(String errorMessage) {
-        super(Status.FORBIDDEN, "NO_ACCESS_RIGHTS", errorMessage);
+    public NoAccessRightsException(ResponseFormat format, String errorMessage) {
+        super(format, Status.FORBIDDEN, "NO_ACCESS_RIGHTS", errorMessage);
     }
 }

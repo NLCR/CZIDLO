@@ -84,19 +84,20 @@ public class DigitalDocumentResource extends ApiV4Resource {
     public Response resolve(@DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,
             @DefaultValue("html") @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr, @Context HttpServletRequest request) {
+        ResponseFormat format2 = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            Action action = Parser.parseAction(actionStr, PARAM_ACTION);
-            ResponseFormat format = Parser.parseResponseFormat(formatStr, PARAM_FORMAT);
+            Action action = Parser.parseAction(format2, actionStr, PARAM_ACTION);
+            ResponseFormat format = Parser.parseResponseFormat(format2, formatStr, PARAM_FORMAT);
             boolean withDigitalInstances = true;
             if (withDigitalInstancesStr != null) {
-                withDigitalInstances = Parser.parseBooleanQueryParam(withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+                withDigitalInstances = Parser.parseBooleanQueryParam(format2, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             }
             return resolve(action, format, request, withDigitalInstances);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format2, e);
         }
     }
 
@@ -104,7 +105,7 @@ public class DigitalDocumentResource extends ApiV4Resource {
         // for deactivated URN:NBNs the redirection is impossible
         if (!urn.isActive()) { // error if force to redirect
             if (action == Action.REDIRECT) {
-                throw new UrnNbnDeactivated(urn);
+                throw new UrnNbnDeactivated(format, urn);
             } else if (action == Action.DECIDE) { // otherwise it is decided to show the recored
                 action = Action.SHOW;
             }
@@ -115,7 +116,7 @@ public class DigitalDocumentResource extends ApiV4Resource {
             // preferuje se dig. inst. z nektere dig. knihovny registratora, kteremu patri katalog, jehoz prefix se shoduje s refererem
             // jinak se pouzije jakakoliv jina (aktivni) digitalni instance
             // pokud neni digitalni instance nalezena, zobrazi se zaznam DD
-            URI digitalInstance = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+            URI digitalInstance = getDigInstUriOrNull(format, request.getHeader(HEADER_REFERER));
             if (digitalInstance != null) {
                 // redirect to digital instance
                 return Response.seeOther(digitalInstance).build();
@@ -123,15 +124,15 @@ public class DigitalDocumentResource extends ApiV4Resource {
                 return showRecordResponse(format, request, withDigitalInstances);
             }
         case REDIRECT:
-            URI uriByReferer = getDigInstUriOrNull(request.getHeader(HEADER_REFERER));
+            URI uriByReferer = getDigInstUriOrNull(format, request.getHeader(HEADER_REFERER));
             if (uriByReferer != null) {
                 return Response.seeOther(uriByReferer).build();
             } else {
-                URI anyInstanceUri = getAnyActiveDigInstanceUri();
+                URI anyInstanceUri = getAnyActiveDigInstanceUri(format);
                 if (anyInstanceUri != null) {
                     return Response.seeOther(anyInstanceUri).build();
                 } else {// no digital instance found
-                    throw new UnknownDigitalInstanceException();
+                    throw new UnknownDigitalInstanceException(format);
                 }
             }
         case SHOW:
@@ -141,26 +142,26 @@ public class DigitalDocumentResource extends ApiV4Resource {
         }
     }
 
-    private URI getAnyActiveDigInstanceUri() {
+    private URI getAnyActiveDigInstanceUri(ResponseFormat format) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         for (DigitalInstance instance : instances) {
             if (instance.isActive()) {
-                return toUri(instance.getUrl());
+                return toUri(format, instance.getUrl());
             }
         }
         return null;
     }
 
-    private URI getDigInstUriOrNull(String refererUrl) {
+    private URI getDigInstUriOrNull(ResponseFormat format, String refererUrl) {
         try {
             List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(doc.getId());
             DigitalInstance instanceByReferer = digInstanceByReferer(allDigitalInstanceds, refererUrl);
             if (instanceByReferer != null) { // prefered uri found
-                return toUri(instanceByReferer.getUrl());
+                return toUri(format, instanceByReferer.getUrl());
             } else { // return any uri
                 for (DigitalInstance instance : allDigitalInstanceds) {
                     if (instance.isActive()) {
-                        return toUri(instance.getUrl());
+                        return toUri(format, instance.getUrl());
                     }
                 }
             }
@@ -212,22 +213,22 @@ public class DigitalDocumentResource extends ApiV4Resource {
         return urlPrefix != null && !urlPrefix.isEmpty() && url.startsWith(urlPrefix);
     }
 
-    private URI toUri(String uriStr) {
+    private URI toUri(ResponseFormat format, String uriStr) {
         try {
             return new URI(uriStr);
         } catch (URISyntaxException ex) {
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         }
     }
 
     private Response showRecordResponse(ResponseFormat format, HttpServletRequest request, boolean withDigitalInstances) {
         switch (format) {
         case HTML:
-            return Response.seeOther(webModuleUri(request)).build();
+            return Response.seeOther(webModuleUri(format, request)).build();
         case XML:
             return buildDigitalDocumentRecordXml(withDigitalInstances);
         default:
-            throw new InvalidQueryParamValueException(PARAM_FORMAT, format.toString(), "");
+            throw new InvalidQueryParamValueException(format, PARAM_FORMAT, format.toString(), "");
         }
     }
 
@@ -238,11 +239,11 @@ public class DigitalDocumentResource extends ApiV4Resource {
      * @param request
      * @return
      */
-    private URI webModuleUri(HttpServletRequest request) {
+    private URI webModuleUri(ResponseFormat format, HttpServletRequest request) {
         try {
             return new URI("http://" + request.getServerName() + ":" + request.getServerPort() + "/" + WEB_MODULE_CONTEXT + "?q=" + urn.toString());
         } catch (URISyntaxException ex) {
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         }
     }
 

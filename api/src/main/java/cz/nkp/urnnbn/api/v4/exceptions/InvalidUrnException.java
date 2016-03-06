@@ -16,9 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
+
 public class InvalidUrnException extends ApiV4Exception {
 
-    public InvalidUrnException(String urnString, String errorMessage) {
-        super(Status.BAD_REQUEST, "INVALID_URN_NBN", urnString + ": " + errorMessage);
+    public InvalidUrnException(ResponseFormat format, String urnString, String errorMessage) {
+        super(format, Status.BAD_REQUEST, "INVALID_URN_NBN", urnString + ": " + errorMessage);
     }
 }

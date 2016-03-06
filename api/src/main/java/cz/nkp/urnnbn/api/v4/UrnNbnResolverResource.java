@@ -36,8 +36,9 @@ public class UrnNbnResolverResource extends ApiV4Resource {
 
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            UrnNbn urnParsed = Parser.parseUrn(urnPar);
+            UrnNbn urnParsed = Parser.parseUrn(format, urnPar);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(),
                     urnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
@@ -45,16 +46,16 @@ public class UrnNbnResolverResource extends ApiV4Resource {
             case ACTIVE:
                 DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
                 if (doc == null) {
-                    throw new UnknownDigitalDocumentException(fetched.getUrn());
+                    throw new UnknownDigitalDocumentException(format, fetched.getUrn());
                 } else {
                     // update resolvations statistics
                     statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
                     return new DigitalDocumentResource(doc, fetched.getUrn());
                 }
             case FREE:
-                throw new UnknownUrnException(urnParsed);
+                throw new UnknownUrnException(format, urnParsed);
             case RESERVED:
-                throw new UnknownDigitalDocumentException(fetched.getUrn());
+                throw new UnknownDigitalDocumentException(format, fetched.getUrn());
             default:
                 throw new RuntimeException();
             }
@@ -62,7 +63,7 @@ public class UrnNbnResolverResource extends ApiV4Resource {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e.getMessage());
+            throw new InternalException(format, e.getMessage());
         }
     }
 }

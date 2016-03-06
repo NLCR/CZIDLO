@@ -6,14 +6,16 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
+
 /**
  *
  * @author Martin Řehánek
  */
 public class InvalidQueryParamValueException extends ApiV4Exception {
 
-    public InvalidQueryParamValueException(String paramName, String paramValue, String message) {
-        super(Status.BAD_REQUEST, "INVALID_QUERY_PARAM_VALUE", "Invalid value '" + paramValue + "' of query parameter '" + paramName + "': "
+    public InvalidQueryParamValueException(ResponseFormat format, String paramName, String paramValue, String message) {
+        super(format, Status.BAD_REQUEST, "INVALID_QUERY_PARAM_VALUE", "Invalid value '" + paramValue + "' of query parameter '" + paramName + "': "
                 + message);
     }
 }

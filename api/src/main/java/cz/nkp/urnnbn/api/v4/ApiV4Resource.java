@@ -64,21 +64,21 @@ public class ApiV4Resource extends Resource {
         return new CatalogsBuilder(catalogs);
     }
 
-    protected Document validDocumentFromString(String content, String schema) {
+    protected Document validDocumentFromString(ResponseFormat format, String content, String schema) {
         try {
             return XOMUtils.loadDocumentValidByExternalXsd(content, schema);
         } catch (ValidityException ex) {
-            throw new InvalidDataException(ex.getMessage());
+            throw new InvalidDataException(format, ex.getMessage());
         } catch (ParsingException ex) {
-            throw new InvalidDataException(ex.getMessage());
+            throw new InvalidDataException(format, ex.getMessage());
         } catch (IOException ex) {
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         }
     }
 
-    protected final void checkServerNotReadOnly() {
+    protected final void checkServerNotReadOnly(ResponseFormat format) {
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
-            throw new MethodForbiddenException();
+            throw new MethodForbiddenException(format);
         }
     }
 

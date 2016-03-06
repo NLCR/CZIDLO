@@ -60,13 +60,14 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @GET
     @Produces("application/xml")
     public String getRegistrarScopeIdentifiers() {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
             return getRegistrarScopeIdentifiersXmlRecord();
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -79,18 +80,19 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String getRegistrarScopeIdentifierValue(@PathParam("idType") String idTypeStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
-            return getRegistrarScopeIdentifierXmlRecord(idType);
+            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
+            return getRegistrarScopeIdentifierXmlRecord(format, idType);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private String getRegistrarScopeIdentifierXmlRecord(RegistrarScopeIdType idType) {
+    private String getRegistrarScopeIdentifierXmlRecord(ResponseFormat format, RegistrarScopeIdType idType) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
         for (RegistrarScopeIdentifier id : identifiers) {
             if (id.getType().equals(idType)) {
@@ -98,25 +100,26 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
                 return builder.buildDocumentWithResponseHeader().toXML();
             }
         }
-        throw new NotDefinedException(idType);
+        throw new NotDefinedException(format, idType);
     }
 
     @PUT
     @Path("/{idType}")
     @Produces("application/xml")
     public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String idValueStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
-            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
-            RegistrarScopeIdValue idValue = Parser.parseRegistrarScopeIdValue(idValueStr);
+            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
+            RegistrarScopeIdValue idValue = Parser.parseRegistrarScopeIdValue(format, idValueStr);
             RegistrarScopeIdentifier oldId = getPresentIdentifierOrNull(idType);
             if (oldId == null) { // insert new value
-                RegistrarScopeIdentifier newId = addNewIdentifier(idType, idValue, login);
+                RegistrarScopeIdentifier newId = addNewIdentifier(format, idType, idValue, login);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId).buildDocumentWithResponseHeader().toXML();
                 return Response.created(null).entity(responseXml).build();
             } else { // update value
-                RegistrarScopeIdentifier newId = updateIdentifier(login, idType, idValue);
+                RegistrarScopeIdentifier newId = updateIdentifier(format, login, idType, idValue);
                 String responseXml = new RegistrarScopeIdentifierBuilder(newId, oldId.getValue()).buildDocumentWithResponseHeader().toXML();
                 return Response.ok().entity(responseXml).build();
             }
@@ -124,7 +127,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
@@ -136,45 +139,45 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier addNewIdentifier(RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
+    private RegistrarScopeIdentifier addNewIdentifier(ResponseFormat format, RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
         try {
             RegistrarScopeIdentifier newId = identifierInstance(type, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
             return newId;
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         } catch (RegistarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollision(ex.getMessage());
+            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
         }
     }
 
-    private RegistrarScopeIdentifier updateIdentifier(String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
+    private RegistrarScopeIdentifier updateIdentifier(ResponseFormat format, String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
         try {
             RegistrarScopeIdentifier id = identifierInstance(type, value);
             dataUpdateService().updateRegistrarScopeIdentifier(login, id);
             return id;
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownRegistrarException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new InternalException(ex);
+            throw new InternalException(format, ex);
         } catch (RegistarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollision(ex.getMessage());
+            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
         }
     }
 
@@ -191,22 +194,23 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
-            return deleteRegistrarScopeIdentifierWithXmlResponse(login, idTypeStr);
+            return deleteRegistrarScopeIdentifierWithXmlResponse(format, login, idTypeStr);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private String deleteRegistrarScopeIdentifierWithXmlResponse(String login, String idTypeStr) {
+    private String deleteRegistrarScopeIdentifierWithXmlResponse(ResponseFormat format, String login, String idTypeStr) {
         try {
             // builder before deleted
-            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(idTypeStr);
+            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
             RegistrarScopeIdentifier identifier = dataAccessService().registrarScopeIdentifier(doc.getId(), idType);
             RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(identifier);
             // delete
@@ -214,34 +218,35 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             // returned data before deleted
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownDigDocException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+            throw new InternalException(format, ex.getMessage());
         } catch (RegistrarScopeIdentifierNotDefinedException ex) {
-            throw new UnknownRegistrarScopeIdentifier(ex.getMessage());
+            throw new UnknownRegistrarScopeIdentifier(format, ex.getMessage());
         }
     }
 
     @DELETE
     @Produces("application/xml")
     public String removeAllIdentifiers(@Context HttpServletRequest req) {
+        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
         try {
-            checkServerNotReadOnly();
+            checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
-            return deleteAllRegistrarScopeIdentifiersWithXmlResponse(login);
+            return deleteAllRegistrarScopeIdentifiersWithXmlResponse(format, login);
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(e);
+            throw new InternalException(format, e);
         }
     }
 
-    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(String login) {
+    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(ResponseFormat format, String login) {
         try {
             // builder before deleted
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
@@ -249,13 +254,13 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             dataRemoveService().removeRegistrarScopeIdentifiers(doc.getId(), login);
             return builder.buildDocumentWithResponseHeader().toXML();
         } catch (UnknownUserException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {
-            throw new NoAccessRightsException(ex.getMessage());
+            throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownDigDocException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, ex.getMessage());
-            throw new InternalException(ex.getMessage());
+            throw new InternalException(format, ex.getMessage());
         }
     }
 }
