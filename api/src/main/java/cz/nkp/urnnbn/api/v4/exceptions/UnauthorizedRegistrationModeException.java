@@ -23,8 +23,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 public class UnauthorizedRegistrationModeException extends ApiV4Exception {
 
     public UnauthorizedRegistrationModeException(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {
-        // TODO: should be 403 (forbidden)
-        super(Status.BAD_REQUEST, "UNAUTHORIZED_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
+        super(Status.FORBIDDEN, "ILLEGAL_REGISTRATION_MODE", errorMessage(mode, urn, registrar));
     }
 
     private static String errorMessage(UrnNbnRegistrationMode mode, UrnNbn urn, Registrar registrar) {

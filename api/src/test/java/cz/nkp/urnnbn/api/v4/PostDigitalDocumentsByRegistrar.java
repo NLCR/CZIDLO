@@ -69,7 +69,7 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHS");
+        Assert.assertEquals(xmlPath.get("code"), "NO_ACCESS_RIGHTS");
     }
 
     @Test
@@ -194,13 +194,13 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(403)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
         // LOGGER.info(responseXml);
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "UNAUTHORIZED_REGISTRATION_MODE");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_REGISTRATION_MODE");
     }
 
     @Test
@@ -246,13 +246,13 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                     .given().request().body(bodyXml).contentType(ContentType.XML)//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(403)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().post(buildUrl(registrarCode)).andReturn().asString();
             // LOGGER.info(responseXml);
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNAUTHORIZED_REGISTRATION_MODE");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_REGISTRATION_MODE");
             // check urn:nbn state
             assertEquals("FREE", getUrnNbnStatus(urnNbn));
         }
@@ -305,13 +305,13 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
             String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                     .given().request().body(bodyXml).contentType(ContentType.XML)//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(403)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().post(buildUrl(registrarCode)).andReturn().asString();
             // LOGGER.info(responseXml);
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "UNAUTHORIZED_REGISTRATION_MODE");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_REGISTRATION_MODE");
         }
     }
 
