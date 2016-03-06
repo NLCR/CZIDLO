@@ -92,7 +92,6 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext)) //
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
 
@@ -108,7 +107,6 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
     }
 
@@ -142,7 +140,6 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename this error code
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
     }
 
@@ -155,12 +152,11 @@ public class DeleteRegistrarScopeIdentifierResolvedByRsId extends ApiV3Tests {
         // try and delete rsId by type, resolved by another rsId
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
                 .expect()//
-                .statusCode(400)// TODO:APIv4: code 404
+                .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().delete(buildUrl(idForResolvation, typeToDelete)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: INVALID_REGISTRAR_SCOPE_IDENTIFIER rename to NOT_DEFINED
         Assert.assertEquals(xmlPath.get("code"), "INVALID_REGISTRAR_SCOPE_IDENTIFIER");
     }
 

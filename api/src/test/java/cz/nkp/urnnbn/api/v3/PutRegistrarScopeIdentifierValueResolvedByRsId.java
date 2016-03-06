@@ -207,7 +207,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext)) //
                 .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
         Assert.assertEquals(xmlPath.get("code"), "INVALID_DIGITAL_DOCUMENT_ID_TYPE");
     }
 
@@ -223,7 +222,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(idForResolvation, idToBeCreatedOrUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
         assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
     }
 
@@ -257,7 +255,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(idForResolvation, idToBeInserted.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename error to INVALID_REGISTRAR_SCOPE_ID_TYPE
             assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_TYPE"));
         }
     }
@@ -298,7 +295,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
             assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
             // check that only id for resolvation was created
             List<RsId> rsIds = getRsIds(urnNbn);
@@ -323,7 +319,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().put(buildUrl(idForResolvation, idtoBeUpdated.type)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            // TODO:APIv4: rename to INVALID_REGISTRAR_SCOPE_ID_VALUE
             assertThat(xmlPath.getString("code"), equalTo("INVALID_DIGITAL_DOCUMENT_ID_VALUE"));
             // check that not updated
             List<RsId> rsIds = getRsIds(urnNbn);
@@ -432,7 +427,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(idForResolvation, idToBeCreated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
         assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
     }
 
@@ -455,7 +449,6 @@ public class PutRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().put(buildUrl(idForResolvation, idToBeUpdated.type)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // TODO:APIv4: rename this error code to something like REGISTRAR_SCOPE_ID_COLLISION
         assertThat(xmlPath.getString("code"), equalTo("INVALID_REGISTRAR_SCOPE_IDENTIFIER"));
     }
 

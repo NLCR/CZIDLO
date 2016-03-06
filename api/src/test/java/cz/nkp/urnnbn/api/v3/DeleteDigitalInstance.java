@@ -177,7 +177,6 @@ public class DeleteDigitalInstance extends ApiV3Tests {
                     .body(hasXPath("/c:response/c:digitalInstance/c:url", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:created", nsContext))//
                     .body(hasXPath("/c:response/c:digitalInstance/c:deactivated", nsContext))//
-                    // TODO:APIv4: should be <digitalLibrary id='12'> just like in GET. Now it is <digitalLibraryId>12</digitalLibraryId>
                     .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibraryId", nsContext))//
                     .when().delete(buildUrl(id))//
                     .andReturn().asString();

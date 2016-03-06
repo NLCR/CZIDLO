@@ -47,7 +47,6 @@ public class GetRegistrars extends ApiV3Tests {
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                 assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries and catalogs not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
@@ -77,7 +76,6 @@ public class GetRegistrars extends ApiV3Tests {
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                 assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
@@ -106,7 +104,6 @@ public class GetRegistrars extends ApiV3Tests {
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                 assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // digital libraries not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
@@ -135,7 +132,6 @@ public class GetRegistrars extends ApiV3Tests {
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                 assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // catalogs present
                 assertEquals(1, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
@@ -164,7 +160,6 @@ public class GetRegistrars extends ApiV3Tests {
         int size = xmlPath.getInt("registrar.size()");
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                 assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
                 // catalogs not present
                 assertEquals(0, xmlPath.getList(String.format("registrar[%d].catalogs", i)).size());
@@ -190,7 +185,6 @@ public class GetRegistrars extends ApiV3Tests {
                     .assertThat().statusCode(200)//
                     .assertThat().contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
                     .assertThat().body(hasXPath(String.format("/c:response/c:registrars/c:registrar[@code='%s']", code), nsContext))//
-                    // TODO:APIv4: until this fixed: https://github.com/NLCR/CZIDLO/issues/134
                     .assertThat().body(hasXPath(//
                             String.format("/c:response/c:registrars/c:registrar[@code='%s']/c:created", code), nsContext))//
                     .assertThat().body(hasXPath(String.format(//
