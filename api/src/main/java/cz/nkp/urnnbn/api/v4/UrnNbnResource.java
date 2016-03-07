@@ -26,9 +26,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -43,14 +48,27 @@ public class UrnNbnResource extends ApiV4Resource {
 
     @GET
     @Path("{urnNbn}")
-    @Produces("text/xml")
-    public String getUrnNbnXmlRecord(@PathParam("urnNbn") String urnNbnString) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getUrnNbn(@PathParam("urnNbn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                     urnNbn.getDocumentCode(), true);
-            return new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
+            switch (format) {
+            case XML: {
+                String xml = new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {

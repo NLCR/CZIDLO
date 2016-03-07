@@ -59,7 +59,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
     }
 
     @Test
-    public void ok() {
+    public void okFormatXml() {
         String registrarCode = getRandomExistingRegistrarCode();
         if (registrarCode != null) {
             LOGGER.info("registrar code: " + registrarCode);
@@ -71,6 +71,75 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
                     .when().get(buildUrl(registrarCode)).andReturn().asString();
             XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
             assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatJson() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info("registrar code: " + registrarCode);
+            String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+                    .expect() //
+                    .statusCode(400) //
+                    .contentType(ContentType.JSON)//
+                    // .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+            // TODO: check data
+            // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
+            // assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatNotSpecified() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info("registrar code: " + registrarCode);
+            with().config(namespaceAwareXmlConfig()) //
+                    .expect() //
+                    .statusCode(200) //
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                    .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
+                    .when().get(buildUrl(registrarCode));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatEmpty() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info("registrar code: " + registrarCode);
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+                    .expect() //
+                    .statusCode(200) //
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                    .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
+                    .when().get(buildUrl(registrarCode));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatInvalid() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info("registrar code: " + registrarCode);
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+                    .expect() //
+                    .statusCode(400) //
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
         } else {
             LOGGER.warning("no registrars available");
         }

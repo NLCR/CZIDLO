@@ -25,15 +25,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnReservationBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnReservationsBuilder;
@@ -50,11 +53,26 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getUrnNbnReservationsXmlRecord() {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getUrnNbnReservationsXmlRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            return buildUrnNbnReservationsXmlRecord();
+            int maxBatchSize = urnReservationService().getMaxBatchSize();
+            List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
+            switch (format) {
+            case XML: {
+                String xml = urnNbnReservationsXmlBuilder(maxBatchSize, reservedUrnNbnList).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -63,14 +81,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
         }
     }
 
-    private final String buildUrnNbnReservationsXmlRecord() throws UnknownRegistrarException {
-        int maxBatchSize = urnReservationService().getMaxBatchSize();
-        List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
-        UrnNbnReservationsBuilder builder = selectBuilder(maxBatchSize, reservedUrnNbnList);
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
-
-    private UrnNbnReservationsBuilder selectBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
+    private UrnNbnReservationsBuilder urnNbnReservationsXmlBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
         int maxPrintSize = ApiModuleConfiguration.instanceOf().getMaxReservedSizeToPrint();
         if (reservedUrnNbnList.size() > maxPrintSize) {
             return new UrnNbnReservationsBuilder(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(),

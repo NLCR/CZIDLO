@@ -27,19 +27,24 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
@@ -109,11 +114,24 @@ public class DigitalDocumentsResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getDigitalDocumentsRecord() {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getDigitalDocumentsRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            return getDigitalDocumentsRecordXml();
+            switch (format) {
+            case XML: {
+                String xml = digitalDocumentsXmlBuilder().buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -122,10 +140,9 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         }
     }
 
-    private String getDigitalDocumentsRecordXml() {
+    private DigitalDocumentsBuilder digitalDocumentsXmlBuilder() {
         int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
-        DigitalDocumentsBuilder builder = new DigitalDocumentsBuilder(digDocsCount);
-        return builder.buildDocumentWithResponseHeader().toXML();
+        return new DigitalDocumentsBuilder(digDocsCount);
     }
 
     @POST

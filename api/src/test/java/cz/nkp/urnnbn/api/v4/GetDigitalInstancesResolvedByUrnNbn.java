@@ -170,4 +170,86 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                 .body(hasXPath(String.format("/c:response/c:digitalInstances/c:digitalInstance[@id=%d]", diDeactivated), nsContext))//
                 .when().get(buildUrl(urnNbn.toUpperCase()));
     }
+
+    @Test
+    public void formatXml() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml") //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()) //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatEmpty() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatInvalid() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        long diDeactivated = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        deactivateDigitalInstance(diDeactivated, USER);
+        long diActive = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        LOGGER.info(urnNbn);
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
+        // assertEquals(2, xmlPath.getInt("@count"));
+        // assertEquals(2, xmlPath.getInt("digitalInstance.size()"));
+        // // deactivated
+        // assertEquals(false, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated))));
+        // DateTime deactivatedCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created",
+        // diDeactivated)));
+        // DateTime deactivatedDeactivated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated",
+        // diDeactivated)));
+        // assertTrue(deactivatedCreated.isBefore(deactivatedDeactivated));
+        // // active
+        // assertEquals(true, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive))));
+        // DateTime activeCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diActive)));
+        // assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
+        // assertTrue(activeCreated.isAfter(deactivatedDeactivated));
+        // TODO: check data
+    }
+
 }

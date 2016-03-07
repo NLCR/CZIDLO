@@ -246,4 +246,73 @@ public class GetUrnnbn extends ApiV3Tests {
         long ddIdLowerCase = xmlPath.getLong("digitalDocumentId");
         assertEquals(ddId, ddIdLowerCase);
     }
+
+    @Test
+    public void formatXml() {
+        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatEmpty() {
+        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn));
+    }
+
+    @Test
+    public void formatInvalid() {
+        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        LOGGER.info(urnNbn);
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        // assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
+        // String[] urnSplit = Utils.splitUrnNbn(urnNbn);
+        // assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
+        // assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
+        // assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
+        // TODO: check data
+    }
 }

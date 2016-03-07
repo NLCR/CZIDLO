@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -32,8 +33,8 @@ public class GetDigitalInstances extends ApiV3Tests {
     }
 
     @Test
-    public void ok() {
-        String responseXml = with().config(namespaceAwareXmlConfig())//
+    public void okFormatXml() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml") //
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -41,6 +42,51 @@ public class GetDigitalInstances extends ApiV3Tests {
                 .when().get(buildUrl()).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
         assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+    }
+
+    @Test
+    public void okFormatJson() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
+                .when().get(buildUrl()).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
+        // assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+        // TODO: check data
+    }
+
+    @Test
+    public void okFormatNotSpecified() {
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
+                .when().get(buildUrl());
+    }
+
+    @Test
+    public void okFormatEmpty() {
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
+                .when().get(buildUrl());
+    }
+
+    @Test
+    public void okFormatInvalid() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl()).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
     }
 
 }

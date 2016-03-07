@@ -79,6 +79,7 @@ public class DigitalDocumentResource extends ApiV4Resource {
         return new DigitalInstancesResource(doc);
     }
 
+    // TODO: format resit tady az nakonec, musi se prekopat rezolvovani
     @GET
     @Produces("application/xml")
     public Response resolve(@DefaultValue("decide") @QueryParam(PARAM_ACTION) String actionStr,

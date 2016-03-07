@@ -14,86 +14,40 @@
  */
 package cz.nkp.urnnbn.api.v4.exceptions;
 
-import java.util.logging.Logger;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
 import cz.nkp.urnnbn.api.v4.ResponseFormat;
-import cz.nkp.urnnbn.xml.apiv4.builders.ErrorResponseBuilder;
+import cz.nkp.urnnbn.api.v4.xml.JsonErrorBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.XmlErrorBuilder;
 
 public class ApiV4Exception extends WebApplicationException {
 
-    private static final Logger LOGGER = Logger.getLogger(ApiV4Exception.class.getName());
-
-    // private final ResponseFormat format;
-    // private final Status status;
-    // private final String errorCode;
-    // private final String errorMessage;
-
     public ApiV4Exception(ResponseFormat format, Status status, String errorCode, String errorMessage) {
         super(buildResponse(format, status, errorCode, errorMessage));
-        // this.status = status;
-        // this.errorCode = errorCode;
-        // this.errorMessage = errorMessage;
     }
 
     private static Response buildResponse(ResponseFormat format, Status status, String errorCode, String errorMessage) {
         switch (format) {
         case XML: {
             ResponseBuilder builder = Response.status(status);
-            builder.entity(buildEntityXml(errorCode, errorMessage));
-            builder.type(MediaType.TEXT_XML);
+            builder.entity(new XmlErrorBuilder(errorCode, errorMessage).buildDocumentWithResponseHeader().toXML());
+            builder.type(MediaType.APPLICATION_XML);
             return builder.build();
         }
         case JSON: {
             ResponseBuilder builder = Response.status(status);
-            builder.entity(buildEntityJson(errorCode, errorMessage));
+            builder.entity(new JsonErrorBuilder(errorCode, errorMessage).toJson());
             builder.type(MediaType.APPLICATION_JSON);
             return builder.build();
         }
         default: {
-            // TODO: zdokumentovat
-            ResponseBuilder builder = Response.status(Response.Status.FORBIDDEN);
-            builder.type(MediaType.TEXT_PLAIN);
-            builder.entity("Unknown format " + format);
-            return builder.build();
+            throw new IllegalFormatError(ResponseFormat.XML, format.toString());
         }
         }
     }
 
-    private static Object buildEntityJson(String errorCode, String errorMessage) {
-        try {
-            JSONObject root = new JSONObject("error");
-            root.put("code", errorCode);
-            root.put("message", errorMessage);
-            return root;
-        } catch (JSONException e) {
-            LOGGER.severe(e.getMessage());
-            return "{}";
-        }
-    }
-
-    private static String buildEntityXml(String errorCode, String errorMessage) {
-        ErrorResponseBuilder builder = new ErrorResponseBuilder(errorCode, errorMessage);
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
-
-    // public Status getStatus() {
-    // return status;
-    // }
-    //
-    // public String getErrorCode() {
-    // return errorCode;
-    // }
-    //
-    // public String getErrorMessage() {
-    // return errorMessage;
-    // }
 }

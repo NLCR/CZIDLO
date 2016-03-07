@@ -130,4 +130,95 @@ public class GetDigitalInstance extends ApiV3Tests {
         }
     }
 
+    @Test
+    public void okFormatXml() {
+        Long id = diIdActive;
+        if (id != null) {
+            LOGGER.info("id: " + id);
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "xml") //
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                    .when().get(buildUrl(id));
+        } else {
+            LOGGER.warning("id not defined, ignoring");
+        }
+    }
+
+    @Test
+    public void okFormatJson() {
+        Long id = diIdActive;
+        if (id != null) {
+            LOGGER.info("id: " + id);
+            String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    // .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary", nsContext))//
+                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary/c:registrar", nsContext))//
+                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalDocument", nsContext))//
+                    .when().get(buildUrl(id)).andReturn().asString();
+            // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
+            // assertEquals(id.longValue(), xmlPath.getLong("@id"));
+            // assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
+            // assertFalse("".equals(xmlPath.getString("url")));
+            // assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
+            // TODO: check data
+        } else {
+            LOGGER.warning("id not defined, ignoring");
+        }
+    }
+
+    @Test
+    public void okFormatNotSpecified() {
+        Long id = diIdActive;
+        if (id != null) {
+            LOGGER.info("id: " + id);
+            with().config(namespaceAwareXmlConfig()) //
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                    .when().get(buildUrl(id));
+        } else {
+            LOGGER.warning("id not defined, ignoring");
+        }
+    }
+
+    @Test
+    public void okFormatEmpty() {
+        Long id = diIdActive;
+        if (id != null) {
+            LOGGER.info("id: " + id);
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
+                    .when().get(buildUrl(id));
+        } else {
+            LOGGER.warning("id not defined, ignoring");
+        }
+    }
+
+    @Test
+    public void okFormatInvalid() {
+        Long id = diIdActive;
+        if (id != null) {
+            LOGGER.info("id: " + id);
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildUrl(id)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+        } else {
+            LOGGER.warning("id not defined, ignoring");
+        }
+    }
+
 }

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidQueryParamValueException;
@@ -108,6 +109,7 @@ public class Parser {
         }
     }
 
+    @Deprecated
     public static boolean parseBooleanQueryParam(ResponseFormat format, String stringValue, String paramName) {
         Boolean trueByJre = Boolean.valueOf(stringValue);
         if (trueByJre) {
@@ -115,18 +117,28 @@ public class Parser {
         } else if ("false".equals(stringValue.toLowerCase())) {
             return false;
         } else {
-            throw new InvalidQueryParamValueException(format, paramName, stringValue, "not boolean value '" + stringValue + "'");
+            throw new InvalidQueryParamValueException(format, paramName, stringValue, "not boolean value");
+        }
+    }
+
+    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(ResponseFormat format, String stringValue, String paramName, boolean defaultValue) {
+        if (stringValue == null || stringValue.isEmpty()) {
+            return defaultValue;
+        }
+        Boolean trueByJre = Boolean.valueOf(stringValue);
+        if (trueByJre) {
+            return true;
+        } else if ("false".equals(stringValue.toLowerCase())) {
+            return false;
+        } else {
+            throw new InvalidQueryParamValueException(format, paramName, stringValue, "not boolean value");
         }
     }
 
     public static long parsePositiveLongQueryParam(ResponseFormat format, String stringValue, String paramName) {
         try {
-            Long value = Long.valueOf(stringValue);
-            if (value <= 0) {
-                throw new RuntimeException(stringValue + " is not positive number");
-            }
-            return value;
-        } catch (RuntimeException e) {
+            return Long.valueOf(stringValue);
+        } catch (NumberFormatException e) {
             throw new InvalidQueryParamValueException(format, paramName, stringValue, e.getMessage());
         }
     }
@@ -141,6 +153,18 @@ public class Parser {
             return result;
         } catch (MalformedURLException ex) {
             throw new InvalidDataException(format, String.format("%s is not valid url: %s", string, ex.toString()));
+        }
+    }
+
+    public static ResponseFormat parseFormatXmlIfNullOrEmpty(String formatStr) {
+        if (formatStr == null || formatStr.isEmpty()) {
+            return ResponseFormat.XML;// defalut
+        } else {
+            try {
+                return ResponseFormat.valueOf(formatStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         }
     }
 }

@@ -22,11 +22,15 @@ import java.util.logging.Logger;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -67,19 +71,27 @@ public class RegistrarsResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getRegistrars(@QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getRegistrars(@QueryParam(PARAM_FORMAT) String formatStr, @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
+            @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
+        boolean addDigitalLibraries = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
+        boolean addCatalogs = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addCatalogsStr, PARAM_CATALOGS, false);
         try {
-            boolean addDigitalLibraries = false;
-            if (addDigLibsStr != null) {
-                addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+            switch (format) {
+            case XML: {
+                String xml = buildRegistrarsXmlRecord(addDigitalLibraries, addCatalogs);
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
             }
-            boolean addCatalogs = false;
-            if (addCatalogsStr != null) {
-                addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
             }
-            return getRegistrarsXmlRecord(addDigitalLibraries, addCatalogs);
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -88,7 +100,7 @@ public class RegistrarsResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarsXmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+    private String buildRegistrarsXmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
         RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
         return builder.buildDocumentWithResponseHeader().toXML();

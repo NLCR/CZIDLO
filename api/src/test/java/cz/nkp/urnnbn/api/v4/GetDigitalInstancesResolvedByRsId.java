@@ -174,4 +174,104 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
+
+    @Test
+    public void formatXml() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml") //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(rsId));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(rsId));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatEmpty() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        LOGGER.info(urnNbn);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
+                .when().get(buildUrl(rsId));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatInvalid() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        LOGGER.info(urnNbn);
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(rsId)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatJson() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        long diDeactivated = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        RsId rsId = new RsId(REGISTRAR, "type", "value");
+        insertRegistrarScopeId(urnNbn, rsId, USER);
+        deactivateDigitalInstance(diDeactivated, USER);
+        long diActive = insertDigitalInstance(urnNbn, digLibId, WORKING_URL, USER);
+        LOGGER.info(urnNbn);
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                .when().get(buildUrl(rsId)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
+        // assertEquals(2, xmlPath.getInt("@count"));
+        // assertEquals(2, xmlPath.getInt("digitalInstance.size()"));
+        // // deactivated
+        // assertEquals(false, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated))));
+        // DateTime deactivatedCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created",
+        // diDeactivated)));
+        // DateTime deactivatedDeactivated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated",
+        // diDeactivated)));
+        // assertTrue(deactivatedCreated.isBefore(deactivatedDeactivated));
+        // // active
+        // assertEquals(true, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diActive))));
+        // DateTime activeCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diActive)));
+        // assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
+        // assertTrue(activeCreated.isAfter(deactivatedDeactivated));
+        // TODO: check data
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
 }

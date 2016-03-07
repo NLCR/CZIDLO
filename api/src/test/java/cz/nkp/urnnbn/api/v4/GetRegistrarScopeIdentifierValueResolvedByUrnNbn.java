@@ -173,4 +173,99 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
 
+    @Test
+    public void formatXml() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId idToBeFetched = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId idToBeFetched = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatEmpty() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId idToBeFetched = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type));
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatInvalid() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId idToBeFetched = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+        // cleanup
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
+    @Test
+    public void formatJson() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        RsId idToBeFetched = new RsId(REGISTRAR, "type1", "value1");
+        RsId idOther = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        insertRegistrarScopeId(urnNbn, idOther, USER);
+        // get rsId by type
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        // // check that only requested id found in response
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idOther.type + "\' }"), isEmptyOrNullString());
+        // // cleanup
+        // TODO: check data
+        deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
+    }
+
 }

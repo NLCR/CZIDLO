@@ -25,11 +25,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
@@ -58,11 +63,24 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getRegistrarScopeIdentifiers() {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getRegistrarScopeIdentifiers(@QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            return getRegistrarScopeIdentifiersXmlRecord();
+            switch (format) {
+            case XML: {
+                String xml = registrarScopeIdentifiersBuilder(doc.getId()).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -71,19 +89,27 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarScopeIdentifiersXmlRecord() {
-        RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
-
     @GET
     @Path("/{idType}")
-    @Produces("application/xml")
-    public String getRegistrarScopeIdentifierValue(@PathParam("idType") String idTypeStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getRegistrarScopeIdentifierValue(@QueryParam(PARAM_FORMAT) String formatStr, @PathParam("idType") String idTypeStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
+        RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         try {
-            RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
-            return getRegistrarScopeIdentifierXmlRecord(format, idType);
+            switch (format) {
+            case XML: {
+                String xml = getRegistrarScopeIdentifierXmlRecord(format, idType);
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {

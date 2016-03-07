@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -195,6 +196,78 @@ public class GetRegistrars extends ApiV3Tests {
         } else {
             LOGGER.warning("no registrars available");
         }
+    }
+
+    @Test
+    public void formatXml() {
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrars", nsContext))//
+                .when().get(buildUrl());
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrars", nsContext))//
+                .when().get(buildUrl());
+    }
+
+    @Test
+    public void formatEmpty() {
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrars", nsContext))//
+                .when().get(buildUrl());
+    }
+
+    @Test
+    public void formatInvalid() {
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl()).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
+                .queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:registrars", nsContext))//
+                .when().get(buildUrl()).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
+        // int size = xmlPath.getInt("registrar.size()");
+        // if (size > 0) {
+        // for (int i = 0; i < size; i++) {
+        // assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
+        // // digital libraries present
+        // assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
+        // // all modes defined and have boolean values
+        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+        // "BY_RESOLVER")));
+        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+        // "BY_REGISTRAR")));
+        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
+        // "BY_RESERVATION")));
+        // }
+        // } else {
+        // LOGGER.warning("no registrars found");
+        // }
+        // TODO: check data
     }
 
 }

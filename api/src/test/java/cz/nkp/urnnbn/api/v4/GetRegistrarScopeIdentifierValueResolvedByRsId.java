@@ -177,4 +177,96 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
     }
 
+    @Test
+    public void formatXml() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type, resolved by another rsId
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(idForResolvation, idToBeFetched.type));
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type, resolved by another rsId
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(idForResolvation, idToBeFetched.type));
+    }
+
+    @Test
+    public void formatEmpty() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type, resolved by another rsId
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(idForResolvation, idToBeFetched.type));
+    }
+
+    @Test
+    public void formatInvalid() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type, resolved by another rsId
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(idForResolvation, idToBeFetched.type)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        RsId idToBeFetched = new RsId(REGISTRAR, "type2", "value2");
+        LOGGER.info(String.format("for resolvation: %s, to be fetched: %s", idForResolvation.type, idToBeFetched.toString()));
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
+        // get rsId by type, resolved by another rsId
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:id", nsContext))//
+                .when().get(buildUrl(idForResolvation, idToBeFetched.type)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
+        // // check that only requested id found in response
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
+        // TODO: check data
+    }
+
 }

@@ -37,6 +37,7 @@ public class UrnNbnResolverResource extends ApiV4Resource {
     @Path("{urn}")
     public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
         ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        // TODO: format resit tady az nakonec, musi se prekopat rezolvovani
         try {
             UrnNbn urnParsed = Parser.parseUrn(format, urnPar);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(),

@@ -100,4 +100,108 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
         }
     }
 
+    @Test
+    public void formatXml() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(registrarCode);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR, USER);
+        }
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbnReservations", nsContext))//
+                .when().get(buildUrl(registrarCode));
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(registrarCode);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR, USER);
+        }
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbnReservations", nsContext))//
+                .when().get(buildUrl(registrarCode));
+    }
+
+    @Test
+    public void formatEmpty() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(registrarCode);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR, USER);
+        }
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbnReservations", nsContext))//
+                .when().get(buildUrl(registrarCode));
+    }
+
+    @Test
+    public void formatInvalid() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(registrarCode);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR, USER);
+        }
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        String registrarCode = REGISTRAR;
+        LOGGER.info("registrar code: " + registrarCode);
+        // make sure that at least some reservations exist
+        UrnNbnReservations reservations = getUrnNbnReservations(registrarCode);
+        if (reservations.totalReserved == 0) {
+            reserveUrnNbns(REGISTRAR, USER);
+        }
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
+                // .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
+                // .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
+                // .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
+        // // reservation size
+        // int maxReservationSize = xmlPath.getInt("maxReservationSize");
+        // int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
+        // assertThat(maxReservationSize, greaterThanOrEqualTo(0));
+        // assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
+        // // reservations total/returned
+        // int reservedTotal = xmlPath.getInt("reserved.@totalSize");
+        // int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
+        // assertThat(reservedReturned, greaterThanOrEqualTo(0));
+        // assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
+        // assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
+        // TODO: check data
+
+    }
+
 }

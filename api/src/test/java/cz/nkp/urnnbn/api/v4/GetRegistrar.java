@@ -192,4 +192,93 @@ public class GetRegistrar extends ApiV3Tests {
             LOGGER.warning("no registrar available");
         }
     }
+
+    @Test
+    public void okFormatXml() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
+                    .when().get(buildUrl(registrarCode));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatNotSpecified() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
+                    .when().get(buildUrl(registrarCode));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void okFormatEmpty() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
+                    .when().get(buildUrl(registrarCode));
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void formatInvalid() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
+
+    @Test
+    public void formatJson() {
+        String registrarCode = getRandomExistingRegistrarCode();
+        if (registrarCode != null) {
+            LOGGER.info(String.format("registrar code: %s", registrarCode));
+            with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
+                    .queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    // .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
+                    // .body(hasXPath("//c:digitalLibraries", nsContext))//
+                    // .body(hasXPath("//c:catalobs", nsContext))//
+                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
+                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
+                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
+                    .when().get(buildUrl(registrarCode));
+            // TODO: check data
+        } else {
+            LOGGER.warning("no registrars available");
+        }
+    }
 }

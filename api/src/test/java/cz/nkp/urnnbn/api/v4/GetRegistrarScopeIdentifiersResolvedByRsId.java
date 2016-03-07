@@ -137,4 +137,81 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         assertThat(xmlPath.getString("id.find { it.@type == \'" + other.type + "\' }"), equalTo(other.value));
     }
 
+    @Test
+    public void formatXml() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(idForResolvation.toString());
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(buildUrl(idForResolvation));
+    }
+
+    @Test
+    public void formatNotSpecified() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(idForResolvation.toString());
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        with().config(namespaceAwareXmlConfig())//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(buildUrl(idForResolvation));
+    }
+
+    @Test
+    public void formatEmpty() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(idForResolvation.toString());
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(buildUrl(idForResolvation));
+    }
+
+    @Test
+    public void formatInvalid() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(idForResolvation.toString());
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+    }
+
+    @Test
+    public void formatJson() {
+        RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
+        LOGGER.info(idForResolvation.toString());
+        RsId other = new RsId(REGISTRAR, "type2", "value2");
+        // insert ids
+        insertRegistrarScopeId(urnNbn, idForResolvation, USER);
+        insertRegistrarScopeId(urnNbn, other, USER);
+        // get all ids
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                .expect()//
+                .statusCode(400)//
+                .contentType(ContentType.JSON)//
+                // .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
+                .when().get(buildUrl(idForResolvation)).andReturn().asString();
+        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
+        // // check that ids found in response
+        // assertEquals(2, xmlPath.getInt("id.size()"));
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));
+        // assertThat(xmlPath.getString("id.find { it.@type == \'" + other.type + "\' }"), equalTo(other.value));
+        // TODO: check data
+    }
+
 }

@@ -21,11 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyDeactivatedException;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -52,11 +58,24 @@ public class DigitalInstanceResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getDigitalInstanceXmlRecord() {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getDigitalInstanceXmlRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            return buildDigitalInstanceRecordXml();
+            switch (format) {
+            case XML: {
+                String xml = digitalInstanceXmlBuilder().buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -65,21 +84,20 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private String buildDigitalInstanceRecordXml() {
-        DigitalDocumentBuilder digDocBuilder = digDocBuilder(instance.getDigDocId());
-        DigitalLibraryBuilder libBuilder = digLibBuilder(instance.getLibraryId());
-        DigitalInstanceBuilder digitalInstanceBuilder = new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
-        return digitalInstanceBuilder.buildDocumentWithResponseHeader().toXML();
+    private DigitalInstanceBuilder digitalInstanceXmlBuilder() {
+        DigitalDocumentBuilder digDocBuilder = digitalDocumentXmlBuilder(instance.getDigDocId());
+        DigitalLibraryBuilder libBuilder = digitalLibraryXmlBuilder(instance.getLibraryId());
+        return new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
     }
 
-    private DigitalDocumentBuilder digDocBuilder(long digDocId) {
+    private DigitalDocumentBuilder digitalDocumentXmlBuilder(long digDocId) {
         DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
         UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
         RegistrarScopeIdentifiersBuilder idsBuilder = registrarScopeIdentifiersBuilder(digDocId);
         return new DigitalDocumentBuilder(digDoc, urn, idsBuilder, null, null, null, null);
     }
 
-    private DigitalLibraryBuilder digLibBuilder(long libraryId) {
+    private DigitalLibraryBuilder digitalLibraryXmlBuilder(long libraryId) {
         DigitalLibrary library = dataAccessService().libraryByInternalId(libraryId);
         Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
         RegistrarBuilder regBuilder = new RegistrarBuilder(registrar, null, null);

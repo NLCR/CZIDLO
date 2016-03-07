@@ -26,8 +26,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -36,8 +38,10 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyPresentException;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalLibraryException;
@@ -91,11 +95,24 @@ public class DigitalInstancesResource extends ApiV4Resource {
     }
 
     @GET
-    @Produces("application/xml")
-    public String getDigitalInstancesXmlRecord() {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    public Response getDigitalInstancesXmlRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            return buildDigitalInstancesRecordXml();
+            switch (format) {
+            case XML: {
+                String xml = xmlInstancesBuilder().buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                // TODO: implement json version
+                throw new JsonVersionNotImplementedError(format);
+            }
+            default:
+                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
@@ -104,21 +121,16 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private String buildDigitalInstancesRecordXml() {
-        DigitalInstancesBuilder builder = instancesBuilder();
-        return builder.buildDocumentWithResponseHeader().toXML();
-    }
-
-    private DigitalInstancesBuilder instancesBuilder() {
+    private DigitalInstancesBuilder xmlInstancesBuilder() {
         if (digDoc == null) {
             return new DigitalInstancesBuilder(dataAccessService().digitalInstancesCount());
         } else {
-            List<DigitalInstanceBuilder> instanceBuilders = instanceBuilders(digDoc);
+            List<DigitalInstanceBuilder> instanceBuilders = xmlInstanceBuilders(digDoc);
             return new DigitalInstancesBuilder(instanceBuilders);
         }
     }
 
-    private List<DigitalInstanceBuilder> instanceBuilders(DigitalDocument doc) {
+    private List<DigitalInstanceBuilder> xmlInstanceBuilders(DigitalDocument doc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
         List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
         for (DigitalInstance instance : instances) {

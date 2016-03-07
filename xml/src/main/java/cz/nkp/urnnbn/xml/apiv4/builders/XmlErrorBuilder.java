@@ -22,18 +22,15 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class ErrorResponseBuilder extends XmlBuilder {
+public class XmlErrorBuilder extends XmlBuilder {
 
     private final String errorCode;
     private final String errorMessage;
 
-    public ErrorResponseBuilder(String errorCode, String errorMessage) {
+    public XmlErrorBuilder(String errorCode, String errorMessage) {
         if (errorCode == null) {
             throw new NullPointerException("errorCode");
         }
-        // if (errorMessage == null) {
-        // throw new NullPointerException("errorMessage");
-        // }
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
