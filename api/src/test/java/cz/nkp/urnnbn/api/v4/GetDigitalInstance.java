@@ -192,12 +192,14 @@ public class GetDigitalInstance extends ApiV3Tests {
         Long id = diIdActive;
         if (id != null) {
             LOGGER.info("id: " + id);
-            with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                     .expect()//
-                    .statusCode(200)//
+                    .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
-                    .when().get(buildUrl(id));
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildUrl(id)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
         } else {
             LOGGER.warning("id not defined, ignoring");
         }

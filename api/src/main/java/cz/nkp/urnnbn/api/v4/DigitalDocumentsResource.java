@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -114,8 +115,8 @@ public class DigitalDocumentsResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getDigitalDocumentsRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getDigitalDocumentsRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }

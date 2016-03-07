@@ -17,6 +17,7 @@ package cz.nkp.urnnbn.api.v4;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -54,9 +55,9 @@ public class RegistrarResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getRegistrar(@QueryParam(PARAM_FORMAT) String formatStr, @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
-            @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getRegistrar(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }

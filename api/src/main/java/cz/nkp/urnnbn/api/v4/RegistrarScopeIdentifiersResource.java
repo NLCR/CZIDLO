@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -63,8 +64,8 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getRegistrarScopeIdentifiers(@QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getRegistrarScopeIdentifiers(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }
@@ -91,8 +92,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     @GET
     @Path("/{idType}")
-    public Response getRegistrarScopeIdentifierValue(@QueryParam(PARAM_FORMAT) String formatStr, @PathParam("idType") String idTypeStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getRegistrarScopeIdentifierValue(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("idType") String idTypeStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }

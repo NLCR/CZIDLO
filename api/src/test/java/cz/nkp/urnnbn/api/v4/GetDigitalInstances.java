@@ -69,12 +69,14 @@ public class GetDigitalInstances extends ApiV3Tests {
 
     @Test
     public void okFormatEmpty() {
-        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                 .expect()//
-                .statusCode(200)//
+                .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
-                .when().get(buildUrl());
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl()).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
     }
 
     @Test

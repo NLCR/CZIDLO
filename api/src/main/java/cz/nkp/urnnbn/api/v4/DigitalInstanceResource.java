@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -58,8 +59,8 @@ public class DigitalInstanceResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getDigitalInstanceXmlRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getDigitalInstanceXmlRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }

@@ -121,6 +121,7 @@ public class Parser {
         }
     }
 
+    // TODO: asi by slo taky vyresit s prazdou hodnotou
     public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(ResponseFormat format, String stringValue, String paramName, boolean defaultValue) {
         if (stringValue == null || stringValue.isEmpty()) {
             return defaultValue;
@@ -156,15 +157,11 @@ public class Parser {
         }
     }
 
-    public static ResponseFormat parseFormatXmlIfNullOrEmpty(String formatStr) {
-        if (formatStr == null || formatStr.isEmpty()) {
-            return ResponseFormat.XML;// defalut
-        } else {
-            try {
-                return ResponseFormat.valueOf(formatStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
-            }
+    public static ResponseFormat parseFormat(String formatStr) {
+        try {
+            return ResponseFormat.valueOf(formatStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalFormatError(ResponseFormat.XML, formatStr);
         }
     }
 }

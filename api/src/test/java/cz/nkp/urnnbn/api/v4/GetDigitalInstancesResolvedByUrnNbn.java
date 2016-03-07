@@ -199,12 +199,14 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
     public void formatEmpty() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                 .expect()//
-                .statusCode(200)//
+                .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
-                .when().get(buildUrl(urnNbn));
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -95,8 +96,8 @@ public class DigitalInstancesResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getDigitalInstancesXmlRecord(@QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormatXmlIfNullOrEmpty(formatStr);
+    public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);
         }

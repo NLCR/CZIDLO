@@ -143,12 +143,14 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
         if (reservations.totalReserved == 0) {
             reserveUrnNbns(REGISTRAR, USER);
         }
-        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                 .expect()//
-                .statusCode(200)//
+                .statusCode(400)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:urnNbnReservations", nsContext))//
-                .when().get(buildUrl(registrarCode));
+                .body(hasXPath("/c:response/c:error", nsContext))//
+                .when().get(buildUrl(registrarCode)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
     }
 
     @Test

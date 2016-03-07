@@ -230,12 +230,14 @@ public class GetRegistrar extends ApiV3Tests {
         String registrarCode = getRandomExistingRegistrarCode();
         if (registrarCode != null) {
             LOGGER.info(String.format("registrar code: %s", registrarCode));
-            with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                     .expect()//
-                    .statusCode(200)//
+                    .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
-                    .when().get(buildUrl(registrarCode));
+                    .body(hasXPath("/c:response/c:error", nsContext))//
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
+            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
         } else {
             LOGGER.warning("no registrars available");
         }
