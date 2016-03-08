@@ -101,11 +101,7 @@ public class Parser {
         }
     }
 
-    // TODO: asi by slo taky vyresit s prazdou hodnotou
-    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(Format format, String stringValue, String paramName, boolean defaultValue) {
-        if (stringValue == null || stringValue.isEmpty()) {
-            return defaultValue;
-        }
+    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(Format format, String stringValue, String paramName) {
         Boolean trueByJre = Boolean.valueOf(stringValue);
         if (trueByJre) {
             return true;
