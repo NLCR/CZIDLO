@@ -16,12 +16,12 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 import cz.nkp.urnnbn.core.RegistrarCode;
 
 public class UnknownRegistrarException extends ApiV4Exception {
 
-    public UnknownRegistrarException(ResponseFormat format, RegistrarCode sigla) {
+    public UnknownRegistrarException(Format format, RegistrarCode sigla) {
         super(format, Status.NOT_FOUND, "UNKNOWN_REGISTRAR", "There is no registrar with sigla '" + sigla + "'");
     }
 }

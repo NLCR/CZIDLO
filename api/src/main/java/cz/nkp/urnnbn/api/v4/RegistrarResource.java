@@ -26,9 +26,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 
 public class RegistrarResource extends ApiV4Resource {
@@ -57,9 +57,9 @@ public class RegistrarResource extends ApiV4Resource {
     @GET
     public Response getRegistrar(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         boolean addDigitalLibraries = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES, true);
         boolean addCatalogs = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addCatalogsStr, PARAM_CATALOGS, true);
@@ -71,10 +71,10 @@ public class RegistrarResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;

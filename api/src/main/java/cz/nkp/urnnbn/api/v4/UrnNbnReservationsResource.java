@@ -31,9 +31,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -55,9 +55,9 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
 
     @GET
     public Response getUrnNbnReservations(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             int maxBatchSize = urnReservationService().getMaxBatchSize();
@@ -69,10 +69,10 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -96,7 +96,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @POST
     @Produces("application/xml")
     public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             int size = sizeStr != null ? Parser.parseIntQueryParam(format, sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()

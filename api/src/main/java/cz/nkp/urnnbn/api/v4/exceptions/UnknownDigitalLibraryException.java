@@ -16,11 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 
 public class UnknownDigitalLibraryException extends ApiV4Exception {
 
-    public UnknownDigitalLibraryException(ResponseFormat format, String errorMessage) {
+    public UnknownDigitalLibraryException(Format format, String errorMessage) {
         super(format, Status.NOT_FOUND, "UNKNOWN_DIGITAL_LIBRARY", errorMessage);
     }
 }

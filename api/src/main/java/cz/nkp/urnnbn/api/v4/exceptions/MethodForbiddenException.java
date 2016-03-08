@@ -16,13 +16,13 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 
 public class MethodForbiddenException extends ApiV4Exception {
 
     private static final long serialVersionUID = -5047481327211239231L;
 
-    public MethodForbiddenException(ResponseFormat format) {
+    public MethodForbiddenException(Format format) {
         super(format, Status.FORBIDDEN, "FORBIDDEN", "This method is (temporarily) not allowed");
     }
 }

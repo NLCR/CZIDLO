@@ -19,13 +19,13 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDigInstanceIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidQueryParamValueException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarCodeException;
-import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdType;
-import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdValue;
+import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdTypeException;
+import cz.nkp.urnnbn.api.v4.exceptions.InvalidRegistrarScopeIdValueException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
@@ -35,7 +35,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 public class Parser {
     private static final Logger LOGGER = Logger.getLogger(Parser.class.getName());
 
-    public static UrnNbn parseUrn(ResponseFormat format, String urnPar) {
+    public static UrnNbn parseUrn(Format format, String urnPar) {
         try {
             return UrnNbn.valueOf(urnPar.toLowerCase());
         } catch (RuntimeException e) {
@@ -44,23 +44,23 @@ public class Parser {
         }
     }
 
-    public static RegistrarScopeIdType parseRegistrarScopeIdType(ResponseFormat format, String idTypeStr) {
+    public static RegistrarScopeIdType parseRegistrarScopeIdType(Format format, String idTypeStr) {
         try {
             return RegistrarScopeIdType.valueOf(idTypeStr);
         } catch (IllegalArgumentException e) {
-            throw new InvalidRegistrarScopeIdType(format, idTypeStr, e.getMessage());
+            throw new InvalidRegistrarScopeIdTypeException(format, idTypeStr, e.getMessage());
         }
     }
 
-    public static RegistrarScopeIdValue parseRegistrarScopeIdValue(ResponseFormat format, String idValueStr) {
+    public static RegistrarScopeIdValue parseRegistrarScopeIdValue(Format format, String idValueStr) {
         try {
             return RegistrarScopeIdValue.valueOf(idValueStr);
         } catch (IllegalArgumentException e) {
-            throw new InvalidRegistrarScopeIdValue(format, idValueStr, e.getMessage());
+            throw new InvalidRegistrarScopeIdValueException(format, idValueStr, e.getMessage());
         }
     }
 
-    public static long parseDigInstId(ResponseFormat format, String digInstIdStr) {
+    public static long parseDigInstId(Format format, String digInstIdStr) {
         try {
             return Long.valueOf(digInstIdStr);
         } catch (RuntimeException e) {
@@ -69,7 +69,7 @@ public class Parser {
         }
     }
 
-    public static RegistrarCode parseRegistrarCode(ResponseFormat format, String siglaStr) {
+    public static RegistrarCode parseRegistrarCode(Format format, String siglaStr) {
         try {
             return RegistrarCode.valueOf(siglaStr);
         } catch (RuntimeException e) {
@@ -77,7 +77,7 @@ public class Parser {
         }
     }
 
-    public static int parseIntQueryParam(ResponseFormat format, String value, String paramName, int minValue, int maxValue) {
+    public static int parseIntQueryParam(Format format, String value, String paramName, int minValue, int maxValue) {
         try {
             Integer result = Integer.valueOf(value);
             if (result < minValue) {
@@ -93,16 +93,16 @@ public class Parser {
         }
     }
 
-    public static ResponseFormat parseResponseFormat(ResponseFormat format, String value, String paramName) {
+    public static Format parseResponseFormat(Format format, String value, String paramName) {
         try {
-            return ResponseFormat.valueOf(value.toUpperCase());
+            return Format.valueOf(value.toUpperCase());
         } catch (RuntimeException e) {
             throw new InvalidQueryParamValueException(format, paramName, value, e.getMessage());
         }
     }
 
     // TODO: asi by slo taky vyresit s prazdou hodnotou
-    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(ResponseFormat format, String stringValue, String paramName, boolean defaultValue) {
+    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(Format format, String stringValue, String paramName, boolean defaultValue) {
         if (stringValue == null || stringValue.isEmpty()) {
             return defaultValue;
         }
@@ -116,7 +116,7 @@ public class Parser {
         }
     }
 
-    public static long parsePositiveLongQueryParam(ResponseFormat format, String stringValue, String paramName) {
+    public static long parsePositiveLongQueryParam(Format format, String stringValue, String paramName) {
         try {
             return Long.valueOf(stringValue);
         } catch (NumberFormatException e) {
@@ -124,7 +124,7 @@ public class Parser {
         }
     }
 
-    public static URL parseUrl(ResponseFormat format, String string) throws InvalidDataException {
+    public static URL parseUrl(Format format, String string) throws InvalidDataException {
         try {
             URL result = new URL(string);
             String protocol = result.getProtocol();
@@ -137,11 +137,11 @@ public class Parser {
         }
     }
 
-    public static ResponseFormat parseFormat(String formatStr) {
+    public static Format parseFormat(String formatStr) {
         try {
-            return ResponseFormat.valueOf(formatStr.toUpperCase());
+            return Format.valueOf(formatStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+            throw new IllegalFormatException(Format.XML, formatStr);
         }
     }
 }

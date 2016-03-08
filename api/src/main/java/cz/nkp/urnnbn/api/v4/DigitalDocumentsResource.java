@@ -41,19 +41,19 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
-import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
+import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
-import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivated;
+import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivatedException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
@@ -89,12 +89,12 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Path("registrarScopeIdentifier/{idType}/{idValue}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
-            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
             UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
@@ -120,12 +120,12 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Path("registrarScopeIdentifier/{idType}/{idValue}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
-            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
             UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
@@ -155,14 +155,14 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
             // allways redirect somwehere
-            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return redirectionResponse(context, urn);
         } else {
             // show data
-            ResponseFormat format = formatStr == null ? ResponseFormat.XML : Parser.parseFormat(formatStr);
-            if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-                throw new JsonVersionNotImplementedError(format);
+            Format format = formatStr == null ? Format.XML : Parser.parseFormat(formatStr);
+            if (format == Format.JSON) { // TODO: remove when implemented
+                throw new JsonVersionNotImplementedException(format);
             }
             boolean withDigitalInstances = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST,
                     true);
@@ -190,7 +190,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             }
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(ResponseFormat.XML, e.getMessage());
+            throw new InternalException(Format.XML, e.getMessage());
         }
     }
 
@@ -206,7 +206,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
     }
 
-    private Response metadataResponse(UrnNbn urn, ResponseFormat format, boolean withDigitalInstances) {
+    private Response metadataResponse(UrnNbn urn, Format format, boolean withDigitalInstances) {
         try {
             UrnNbnWithStatus urnNbnWithState = dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(),
                     true);
@@ -219,7 +219,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
                     return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
                 }
             case DEACTIVATED:
-                throw new UrnNbnDeactivated(format, urnNbnWithState.getUrn());
+                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
             case FREE:
                 throw new UnknownUrnException(format, urnNbnWithState.getUrn());
             case RESERVED:
@@ -235,7 +235,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, Format format, boolean withDigitalInstances) {
         switch (format) {
         case XML: {
             String xml = digitalDocumentsXmlBuilder(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
@@ -243,14 +243,14 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
         case JSON: {
             // TODO: implement json version
-            throw new JsonVersionNotImplementedError(format);
+            throw new JsonVersionNotImplementedException(format);
         }
         default:
             throw new RuntimeException();
         }
     }
 
-    private DigitalDocument getDigitalDocument(ResponseFormat format, String idTypeStr, String idValueStr) {
+    private DigitalDocument getDigitalDocument(Format format, String idTypeStr, String idValueStr) {
         RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(format, idValueStr);
         RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
@@ -267,9 +267,9 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     @GET
     public Response getDigitalDocumentsRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             switch (format) {
@@ -279,10 +279,10 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -301,7 +301,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -319,13 +319,13 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private String registerDigitalDocumentReturnXml(ResponseFormat format, String content, String login, RegistrarCode registrarCode)
+    private String registerDigitalDocumentReturnXml(Format format, String content, String login, RegistrarCode registrarCode)
             throws ValidityException, IOException, ParsingException {
         Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
         return registerDigitalDocumentReturnXml(format, doc, login, registrarCode);
     }
 
-    private String registerDigitalDocumentReturnXml(ResponseFormat format, Document doc, String login, RegistrarCode registrarCode) {
+    private String registerDigitalDocumentReturnXml(Format format, Document doc, String login, RegistrarCode registrarCode) {
         try {
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
             UrnNbn urnInData = registrationData.getUrn();
@@ -346,7 +346,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(format, ex.getMessage());
         } catch (RegistarScopeIdentifierCollisionException ex) {
-            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
+            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(format, ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {

@@ -39,10 +39,10 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyPresentException;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalLibraryException;
@@ -73,7 +73,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
 
     @Path("id/{digInstId}")
     public DigitalInstanceResource getDigitalInstanceResource(@PathParam("digInstId") String digInstIdStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             long id = Parser.parseDigInstId(format, digInstIdStr);
             DigitalInstance digitalInstance = getDigitalInstance(format, id);
@@ -86,7 +86,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private DigitalInstance getDigitalInstance(ResponseFormat format, long digitalInstanceId) {
+    private DigitalInstance getDigitalInstance(Format format, long digitalInstanceId) {
         DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
         if (instance == null) {
             throw new UnknownDigitalInstanceException(format, digitalInstanceId);
@@ -97,9 +97,9 @@ public class DigitalInstancesResource extends ApiV4Resource {
 
     @GET
     public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             switch (format) {
@@ -109,10 +109,10 @@ public class DigitalInstancesResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -145,7 +145,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             if (digDoc == null) {
@@ -175,7 +175,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         return result;
     }
 
-    private String addNewDigitalInstanceWithXmlResponse(ResponseFormat format, DigitalInstance digitalInstance, String login) {
+    private String addNewDigitalInstanceWithXmlResponse(Format format, DigitalInstance digitalInstance, String login) {
         try {
             Parser.parseUrl(format, digitalInstance.getUrl());
             checkNoOtherDigInstInSameLibraryPresent(format, digitalInstance);
@@ -197,7 +197,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private void checkNoOtherDigInstInSameLibraryPresent(ResponseFormat format, DigitalInstance digInstFromClient) {
+    private void checkNoOtherDigInstInSameLibraryPresent(Format format, DigitalInstance digInstFromClient) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
         for (DigitalInstance instance : instances) {
             if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {

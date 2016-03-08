@@ -31,10 +31,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -50,9 +50,9 @@ public class UrnNbnResource extends ApiV4Resource {
     @GET
     @Path("{urnNbn}")
     public Response getUrnNbn(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr, @PathParam("urnNbn") String urnNbnString) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
@@ -65,10 +65,10 @@ public class UrnNbnResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -83,7 +83,7 @@ public class UrnNbnResource extends ApiV4Resource {
     @Produces("text/xml")
     public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString,
             @QueryParam(PARAM_DEACTIVATION_NOTE) String note) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);

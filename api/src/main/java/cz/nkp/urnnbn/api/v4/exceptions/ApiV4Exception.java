@@ -20,17 +20,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 import cz.nkp.urnnbn.api.v4.xml.JsonErrorBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.XmlErrorBuilder;
 
 public class ApiV4Exception extends WebApplicationException {
 
-    public ApiV4Exception(ResponseFormat format, Status status, String errorCode, String errorMessage) {
+    public ApiV4Exception(Format format, Status status, String errorCode, String errorMessage) {
         super(buildResponse(format, status, errorCode, errorMessage));
     }
 
-    private static Response buildResponse(ResponseFormat format, Status status, String errorCode, String errorMessage) {
+    private static Response buildResponse(Format format, Status status, String errorCode, String errorMessage) {
         switch (format) {
         case XML: {
             ResponseBuilder builder = Response.status(status);
@@ -45,7 +45,7 @@ public class ApiV4Exception extends WebApplicationException {
             return builder.build();
         }
         default: {
-            throw new IllegalFormatError(ResponseFormat.XML, format.toString());
+            throw new IllegalFormatException(Format.XML, format.toString());
         }
         }
     }

@@ -33,13 +33,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
-import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
-import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarScopeIdentifier;
+import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarScopeIdentifierException;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -65,9 +65,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     @GET
     public Response getRegistrarScopeIdentifiers(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             switch (format) {
@@ -77,10 +77,10 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -94,9 +94,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     public Response getRegistrarScopeIdentifierValue(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         try {
@@ -107,10 +107,10 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -120,7 +120,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarScopeIdentifierXmlRecord(ResponseFormat format, RegistrarScopeIdType idType) {
+    private String getRegistrarScopeIdentifierXmlRecord(Format format, RegistrarScopeIdType idType) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
         for (RegistrarScopeIdentifier id : identifiers) {
             if (id.getType().equals(idType)) {
@@ -135,7 +135,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String idValueStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -167,7 +167,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier addNewIdentifier(ResponseFormat format, RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
+    private RegistrarScopeIdentifier addNewIdentifier(Format format, RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
         try {
             RegistrarScopeIdentifier newId = identifierInstance(type, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
@@ -184,11 +184,11 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             throw new InternalException(format, ex);
         } catch (RegistarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
+            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 
-    private RegistrarScopeIdentifier updateIdentifier(ResponseFormat format, String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
+    private RegistrarScopeIdentifier updateIdentifier(Format format, String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
         try {
             RegistrarScopeIdentifier id = identifierInstance(type, value);
             dataUpdateService().updateRegistrarScopeIdentifier(login, id);
@@ -205,7 +205,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             throw new InternalException(format, ex);
         } catch (RegistarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollision(format, ex.getMessage());
+            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 
@@ -222,7 +222,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -235,7 +235,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteRegistrarScopeIdentifierWithXmlResponse(ResponseFormat format, String login, String idTypeStr) {
+    private String deleteRegistrarScopeIdentifierWithXmlResponse(Format format, String login, String idTypeStr) {
         try {
             // builder before deleted
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
@@ -254,14 +254,14 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             LOGGER.log(Level.SEVERE, ex.getMessage());
             throw new InternalException(format, ex.getMessage());
         } catch (RegistrarScopeIdentifierNotDefinedException ex) {
-            throw new UnknownRegistrarScopeIdentifier(format, ex.getMessage());
+            throw new UnknownRegistrarScopeIdentifierException(format, ex.getMessage());
         }
     }
 
     @DELETE
     @Produces("application/xml")
     public String removeAllIdentifiers(@Context HttpServletRequest req) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -274,7 +274,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(ResponseFormat format, String login) {
+    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(Format format, String login) {
         try {
             // builder before deleted
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());

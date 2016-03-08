@@ -18,10 +18,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
-import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivated;
+import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivatedException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -34,9 +34,9 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("urn") String urnNbnString) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
@@ -69,9 +69,9 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     @Path("{urn}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("urn") String urnNbnString) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
@@ -110,9 +110,9 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
             return redirectionResponse(context, urnNbnString);
         } else {
             // show data
-            ResponseFormat format = Parser.parseFormat(formatStr);
-            if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-                throw new JsonVersionNotImplementedError(format);
+            Format format = Parser.parseFormat(formatStr);
+            if (format == Format.JSON) { // TODO: remove when implemented
+                throw new JsonVersionNotImplementedException(format);
             }
             boolean withDigitalInstances = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST,
                     true);
@@ -123,7 +123,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     private Response redirectionResponse(HttpServletRequest context, String urnNbnString) {
         try {
             try {
-                UrnNbn urnNbnParsed = Parser.parseUrn(ResponseFormat.XML, urnNbnString);
+                UrnNbn urnNbnParsed = Parser.parseUrn(Format.XML, urnNbnString);
                 UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                         urnNbnParsed.getDocumentCode(), true);
                 switch (fetched.getStatus()) {
@@ -139,7 +139,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
             }
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(ResponseFormat.XML, e.getMessage());
+            throw new InternalException(Format.XML, e.getMessage());
         }
     }
 
@@ -157,7 +157,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
     }
 
-    private Response metadataResponse(String urnNbnString, ResponseFormat format, boolean withDigitalInstances) {
+    private Response metadataResponse(String urnNbnString, Format format, boolean withDigitalInstances) {
         try {
             UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
@@ -169,7 +169,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                     return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
                 }
             case DEACTIVATED:
-                throw new UrnNbnDeactivated(format, urnNbnWithState.getUrn());
+                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
             case FREE:
                 throw new UnknownUrnException(format, urnNbnWithState.getUrn());
             case RESERVED:
@@ -185,12 +185,12 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private UrnNbnWithStatus parse(String urnNbnString, ResponseFormat format) {
+    private UrnNbnWithStatus parse(String urnNbnString, Format format) {
         UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
         return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(), urnNbnParsed.getDocumentCode(), true);
     }
 
-    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, Format format, boolean withDigitalInstances) {
         switch (format) {
         case XML: {
             String xml = digitalDocumentsXmlBuilder(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
@@ -198,7 +198,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         }
         case JSON: {
             // TODO: implement json version
-            throw new JsonVersionNotImplementedError(format);
+            throw new JsonVersionNotImplementedException(format);
         }
         default:
             throw new RuntimeException();

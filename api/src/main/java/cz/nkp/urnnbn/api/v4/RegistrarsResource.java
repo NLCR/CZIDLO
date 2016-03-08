@@ -29,9 +29,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -49,7 +49,7 @@ public class RegistrarsResource extends ApiV4Resource {
 
     @Path("{registrarCode}")
     public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             Registrar registrar = registrarFromRegistarCode(format, registrarCodeStr);
             return new RegistrarResource(registrar);
@@ -61,7 +61,7 @@ public class RegistrarsResource extends ApiV4Resource {
         }
     }
 
-    private Registrar registrarFromRegistarCode(ResponseFormat format, String registrarCodeStr) {
+    private Registrar registrarFromRegistarCode(Format format, String registrarCodeStr) {
         RegistrarCode registrarCode = Parser.parseRegistrarCode(format, registrarCodeStr);
         Registrar registrar = dataAccessService().registrarByCode(registrarCode);
         if (registrar == null) {
@@ -74,9 +74,9 @@ public class RegistrarsResource extends ApiV4Resource {
     @GET
     public Response getRegistrars(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         boolean addDigitalLibraries = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
         boolean addCatalogs = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addCatalogsStr, PARAM_CATALOGS, false);
@@ -88,10 +88,10 @@ public class RegistrarsResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;

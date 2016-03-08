@@ -16,11 +16,13 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 
-public class InvalidRegistrarScopeIdValue extends ApiV4Exception {
+public class JsonVersionNotImplementedException extends ApiV4Exception {
 
-    public InvalidRegistrarScopeIdValue(ResponseFormat format, String stringValue, String errorMessage) {
-        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_SCOPE_ID_VALUE", String.format("Incorrect value '%s': %s", stringValue, errorMessage));
+    public JsonVersionNotImplementedException(Format format) {
+        // TODO: remove after all operations implemented
+        super(format, Status.BAD_REQUEST, "NOT_IMPLEMENTED", "JSON version not implemented yet, try with format=xml");
     }
+
 }

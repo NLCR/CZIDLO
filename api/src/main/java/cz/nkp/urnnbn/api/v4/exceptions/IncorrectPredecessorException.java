@@ -16,12 +16,12 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
+import cz.nkp.urnnbn.api.v4.Format;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 
 public class IncorrectPredecessorException extends ApiV4Exception {
 
-    public IncorrectPredecessorException(ResponseFormat format, UrnNbnWithStatus urn) {
+    public IncorrectPredecessorException(Format format, UrnNbnWithStatus urn) {
         super(format, Status.BAD_REQUEST, getErrorCode(urn), urn.getUrn().toString());
     }
 

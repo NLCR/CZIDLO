@@ -30,9 +30,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyDeactivatedException;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatError;
+import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -60,9 +60,9 @@ public class DigitalInstanceResource extends ApiV4Resource {
 
     @GET
     public Response getDigitalInstanceXmlRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        ResponseFormat format = Parser.parseFormat(formatStr);
-        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedError(format);
+        Format format = Parser.parseFormat(formatStr);
+        if (format == Format.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedException(format);
         }
         try {
             switch (format) {
@@ -72,10 +72,10 @@ public class DigitalInstanceResource extends ApiV4Resource {
             }
             case JSON: {
                 // TODO: implement json version
-                throw new JsonVersionNotImplementedError(format);
+                throw new JsonVersionNotImplementedException(format);
             }
             default:
-                throw new IllegalFormatError(ResponseFormat.XML, formatStr);
+                throw new IllegalFormatException(Format.XML, formatStr);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -108,7 +108,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String deactivateDigitalInstance(@Context HttpServletRequest req) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+        Format format = Format.XML;// TODO: parse format, support xml and json
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -121,7 +121,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private String deactivateDigitalInstanceReturnXml(ResponseFormat format, String login) {
+    private String deactivateDigitalInstanceReturnXml(Format format, String login) {
         DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
         if (!found.isActive()) {
             throw new DigitalInstanceAlreadyDeactivatedException(format, instance);
@@ -133,7 +133,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private void deactivateDigitalInstanceWithServiceExceptionTranslation(ResponseFormat format, String login) {
+    private void deactivateDigitalInstanceWithServiceExceptionTranslation(Format format, String login) {
         try {
             dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {
