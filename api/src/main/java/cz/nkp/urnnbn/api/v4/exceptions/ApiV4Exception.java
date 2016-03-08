@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.v4.Format;
-import cz.nkp.urnnbn.api.v4.xml.JsonErrorBuilder;
+import cz.nkp.urnnbn.api.v4.json.JsonErrorBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.XmlErrorBuilder;
 
 public class ApiV4Exception extends WebApplicationException {

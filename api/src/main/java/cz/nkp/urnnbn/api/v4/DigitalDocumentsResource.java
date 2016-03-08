@@ -164,8 +164,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             if (format == Format.JSON) { // TODO: remove when implemented
                 throw new JsonVersionNotImplementedException(format);
             }
-            boolean withDigitalInstances = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST,
-                    true);
+            boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return metadataResponse(urn, format, withDigitalInstances);

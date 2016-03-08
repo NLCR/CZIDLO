@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.api.v4.xml;
+package cz.nkp.urnnbn.api.v4.json;
 
 import java.util.logging.Logger;
 
@@ -23,8 +23,10 @@ public class JsonErrorBuilder implements JsonBuilder {
     public String toJson() {
         try {
             JSONObject root = new JSONObject();
-            root.put("code", errorCode);
-            root.put("message", errorMessage);
+            JSONObject error = new JSONObject();
+            root.put("error", error);
+            error.put("code", errorCode);
+            error.put("message", errorMessage);
             return root.toString();
         } catch (JSONException e) {
             LOGGER.severe(e.getMessage());

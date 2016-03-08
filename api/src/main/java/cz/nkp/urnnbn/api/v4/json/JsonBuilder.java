@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.api.v4.xml;
+package cz.nkp.urnnbn.api.v4.json;
 
 public interface JsonBuilder {
 

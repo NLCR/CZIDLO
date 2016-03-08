@@ -39,7 +39,6 @@ public class Parser {
         try {
             return UrnNbn.valueOf(urnPar.toLowerCase());
         } catch (RuntimeException e) {
-            // LOGGER.log(Level.INFO, e.getMessage());
             throw new InvalidUrnException(format, urnPar, "incorrect syntax: " + e.getMessage());
         }
     }
@@ -93,15 +92,7 @@ public class Parser {
         }
     }
 
-    public static Format parseResponseFormat(Format format, String value, String paramName) {
-        try {
-            return Format.valueOf(value.toUpperCase());
-        } catch (RuntimeException e) {
-            throw new InvalidQueryParamValueException(format, paramName, value, e.getMessage());
-        }
-    }
-
-    public static boolean parseBooleanQueryParamDefaultIfNullOrEmpty(Format format, String stringValue, String paramName) {
+    public static boolean parseBooleanQueryParam(Format format, String stringValue, String paramName) {
         Boolean trueByJre = Boolean.valueOf(stringValue);
         if (trueByJre) {
             return true;

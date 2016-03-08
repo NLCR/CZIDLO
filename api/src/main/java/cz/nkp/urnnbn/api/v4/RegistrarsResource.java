@@ -73,13 +73,14 @@ public class RegistrarsResource extends ApiV4Resource {
 
     @GET
     public Response getRegistrars(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr, @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
+            @DefaultValue("true") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
+            @DefaultValue("true") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         Format format = Parser.parseFormat(formatStr);
         if (format == Format.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedException(format);
         }
-        boolean addDigitalLibraries = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES, false);
-        boolean addCatalogs = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, addCatalogsStr, PARAM_CATALOGS, false);
+        boolean addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
+        boolean addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
         try {
             switch (format) {
             case XML: {
