@@ -39,21 +39,21 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyPresentException;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalInstanceException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalLibraryException;
+import cz.nkp.urnnbn.api.v4.json.DigitalInstanceBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalInstancesBuilderJson;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.DigitalInstanceUnmarshaller;
 
 @Path("/digitalInstances")
@@ -98,9 +98,6 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @GET
     public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             switch (format) {
             case XML: {
@@ -108,11 +105,11 @@ public class DigitalInstancesResource extends ApiV4Resource {
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
             }
             case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
+                String json = jsonInstancesBuilder().toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             }
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -122,20 +119,39 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private DigitalInstancesBuilder xmlInstancesBuilder() {
+    private DigitalInstancesBuilderXml xmlInstancesBuilder() {
         if (digDoc == null) {
-            return new DigitalInstancesBuilder(dataAccessService().digitalInstancesCount());
+            return new DigitalInstancesBuilderXml(dataAccessService().digitalInstancesCount());
         } else {
-            List<DigitalInstanceBuilder> instanceBuilders = xmlInstanceBuilders(digDoc);
-            return new DigitalInstancesBuilder(instanceBuilders);
+            List<DigitalInstanceBuilderXml> instanceBuilders = xmlInstanceBuilders(digDoc);
+            return new DigitalInstancesBuilderXml(instanceBuilders);
         }
     }
 
-    private List<DigitalInstanceBuilder> xmlInstanceBuilders(DigitalDocument doc) {
+    private List<DigitalInstanceBuilderXml> xmlInstanceBuilders(DigitalDocument doc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-        List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
+        List<DigitalInstanceBuilderXml> result = new ArrayList<DigitalInstanceBuilderXml>(instances.size());
         for (DigitalInstance instance : instances) {
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, instance.getLibraryId());
+            DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(instance, instance.getLibraryId());
+            result.add(builder);
+        }
+        return result;
+    }
+
+    private DigitalInstancesBuilderJson jsonInstancesBuilder() {
+        if (digDoc == null) {
+            return new DigitalInstancesBuilderJson(dataAccessService().digitalInstancesCount());
+        } else {
+            List<DigitalInstanceBuilderJson> instanceBuilders = jsonInstanceBuilders(digDoc);
+            return new DigitalInstancesBuilderJson(instanceBuilders);
+        }
+    }
+
+    private List<DigitalInstanceBuilderJson> jsonInstanceBuilders(DigitalDocument doc) {
+        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
+        List<DigitalInstanceBuilderJson> result = new ArrayList<DigitalInstanceBuilderJson>(instances.size());
+        for (DigitalInstance instance : instances) {
+            DigitalInstanceBuilderJson builder = new DigitalInstanceBuilderJson(instance, instance.getLibraryId());
             result.add(builder);
         }
         return result;
@@ -180,7 +196,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
             Parser.parseUrl(format, digitalInstance.getUrl());
             checkNoOtherDigInstInSameLibraryPresent(format, digitalInstance);
             DigitalInstance digInstInserted = dataImportService().addDigitalInstance(digitalInstance, login);
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(digInstInserted, digitalInstance.getLibraryId());
+            DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(digInstInserted, digitalInstance.getLibraryId());
             return builder.buildDocumentWithResponseHeader().toXML();
             // String responseXml = builder.buildDocumentWithResponseHeader().toXML();
             // return Response.created(null).entity(responseXml).build();

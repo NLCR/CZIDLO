@@ -41,10 +41,10 @@ public abstract class XmlBuilder {
     private static final Logger logger = Logger.getLogger(XmlBuilder.class.getName());
     private static final boolean INCLUDE_SCHEMA = true;
     private static String responseSchema = null;
-    static String CZIDLO_NS = Namespaces.CZIDLO_V4_NS;
+    protected static String CZIDLO_NS = Namespaces.CZIDLO_V4_NS;
     static String IDTYPE_INTERNAL = "INTERNAL";
 
-    abstract Element buildRootElement();
+    protected abstract Element buildRootElement();
 
     private static String getResponseSchema() {
         if (responseSchema == null) {
@@ -72,13 +72,13 @@ public abstract class XmlBuilder {
         return new Document(rootEl);
     }
 
-    Element appendElement(Element root, String elementName) {
+    protected Element appendElement(Element root, String elementName) {
         Element child = new Element(elementName, CZIDLO_NS);
         root.appendChild(child);
         return child;
     }
 
-    final Element appendElementWithContentIfNotNull(Element root, Object content, String elementName) {
+    protected final Element appendElementWithContentIfNotNull(Element root, Object content, String elementName) {
         if (content != null) {
             Element child = new Element(elementName, CZIDLO_NS);
             root.appendChild(child);
@@ -89,13 +89,13 @@ public abstract class XmlBuilder {
         }
     }
 
-    final void appendBuilderResultfNotNull(Element root, XmlBuilder builder) {
+    protected final void appendBuilderResultfNotNull(Element root, XmlBuilder builder) {
         if (builder != null) {
             root.appendChild(builder.buildRootElement());
         }
     }
 
-    final void appendTimestamps(Element rootElement, IdentifiableWithDatestamps entity, String entityName) {
+    protected final void appendTimestamps(Element rootElement, IdentifiableWithDatestamps entity, String entityName) {
         DateTime created = entity.getCreated();
         if (created == null) {
             logger.log(Level.WARNING, "empty value of \"created\" for {0}  with id {1}", new Object[] { entityName, entity.getId() });

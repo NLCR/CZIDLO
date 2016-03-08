@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.apiv4.builders;
+package cz.nkp.urnnbn.xml.apiv4.builders.ie;
 
 import java.util.List;
 
@@ -30,9 +30,9 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
  *
  * @author Martin Řehánek
  */
-class ThesisBuilder extends IntelectualEntityBuilder {
+class MonographVolumeBuilder extends IntelectualEntityBuilderXml {
 
-    public ThesisBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+    public MonographVolumeBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
             SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
@@ -42,16 +42,16 @@ class ThesisBuilder extends IntelectualEntityBuilder {
         Element root = entityElement();
         appendTimestamps(root);
         Element titleInfo = appendElement(root, "titleInfo");
-        appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "title", true);
-        appendEntityIdentifier(titleInfo, IntEntIdType.SUB_TITLE, "subTitle", false);
+        appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "monographTitle", true);
+        appendEntityIdentifier(titleInfo, IntEntIdType.VOLUME_TITLE, "volumeTitle", true);
         appendEntityIdentifier(root, IntEntIdType.CCNB, "ccnb", false);
+        appendEntityIdentifier(root, IntEntIdType.ISBN, "isbn", false);
         appendEntityIdentifier(root, IntEntIdType.OTHER, "otherId", false);
         appendDocumentType(root);
         appendDigitalBorn(root);
         appendPrimaryOriginator(root);
         appendOtherOriginator(root);
         appendPublication(root);
-        appendAgreeAwardingInstitution(root);
         return root;
     }
 }

@@ -1,29 +1,13 @@
-/*
- * Copyright (C) 2011, 2012 Martin Řehánek
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-package cz.nkp.urnnbn.xml.apiv4.builders;
+package cz.nkp.urnnbn.api.v4.json.ie;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import nu.xom.Attribute;
-import nu.xom.Element;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import cz.nkp.urnnbn.api.v4.json.JsonBuilder;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
@@ -32,15 +16,14 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 
-/**
- *
- * @author Martin Řehánek
- */
-public abstract class IntelectualEntityBuilder extends XmlBuilder {
+public abstract class IntelectualEntityBuilderJson extends JsonBuilder {
 
-    private static final Logger logger = Logger.getLogger(IntelectualEntityBuilder.class.getName());
+    @Override
+    protected String getName() {
+        return "todo:iebuilder";
+    }
 
-    public static IntelectualEntityBuilder instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub,
+    public static IntelectualEntityBuilderJson instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub,
             Originator originator, SourceDocument srcDoc) {
         EntityType entityType = entity.getEntityType();
         switch (entityType) {
@@ -72,7 +55,7 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
     protected final SourceDocument srcDoc;
     private final Map<IntEntIdType, String> intEntIdMap = new EnumMap<IntEntIdType, String>(IntEntIdType.class);
 
-    public IntelectualEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+    public IntelectualEntityBuilderJson(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
             SourceDocument srcDoc) {
         this.entity = entity;
         this.identifiers = identifiers;
@@ -86,56 +69,45 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
         }
     }
 
-    Element entityElement() {
-        Element result = new Element("intelectualEntity", CZIDLO_NS);
-        EntityType entityType = entity.getEntityType();
-        result.addAttribute(new Attribute("type", entityType.name()));
-        return result;
+    void appendTimestamps(JSONObject root) throws JSONException {
+        appendTimestamps(root, entity);
     }
 
-    void appendTimestamps(Element root) {
-        appendTimestamps(root, entity, "intelectual entity");
+    void appendDocumentType(JSONObject root) throws JSONException {
+        root.put("documentType", entity.getDocumentType());
     }
 
-    void appendDocumentType(Element root) {
-        appendElementWithContentIfNotNull(root, entity.getDocumentType(), "documentType");
+    void appendDigitalBorn(JSONObject root) throws JSONException {
+        appendElementWithContentIfNotNull(root, entity.isDigitalBorn(), "digitalBorn");
     }
 
-    void appendDigitalBorn(Element root) {
-        Element digitalBorn = appendElementWithContentIfNotNull(root, entity.isDigitalBorn(), "digitalBorn");
-        if (digitalBorn == null) {
-            logger.log(Level.WARNING, "empty value of \"digitalBorn\" for entity {0}", entity.getId());
-        }
-    }
-
-    void appendPrimaryOriginator(Element root) {
+    void appendPrimaryOriginator(JSONObject root) throws JSONException {
         if (originator != null) {
-            Element originatorEl = appendElement(root, "primaryOriginator");
-            Attribute type = new Attribute("type", originator.getType().name());
-            originatorEl.addAttribute(type);
-            originatorEl.appendChild(originator.getValue());
-        } else {
-            // logger.log(Level.WARNING, "empty value of \"originator\" for entity {0}", entity.getId());
+            JSONObject originatorEl = appendElement(root, "primaryOriginator");
+            originatorEl.put("type", originator.getType().name());
+            originatorEl.put("value", originator.getValue());
         }
     }
 
-    void appendOtherOriginator(Element root) {
-        appendElementWithContentIfNotNull(root, entity.getOtherOriginator(), "otherOriginator");
+    void appendOtherOriginator(JSONObject root) throws JSONException {
+        if (entity.getOtherOriginator() != null) {
+            root.put("otherOriginator", entity.getOtherOriginator());
+        }
     }
 
-    void appendPublication(Element root) {
+    void appendPublication(JSONObject root) throws JSONException {
         if (publication != null) {
-            Element pubEl = appendElement(root, "publication");
+            JSONObject pubEl = appendElement(root, "publication");
             appendElementWithContentIfNotNull(pubEl, publication.getPublisher(), "publisher");
             appendElementWithContentIfNotNull(pubEl, publication.getPlace(), "place");
             appendElementWithContentIfNotNull(pubEl, publication.getYear(), "year");
         }
     }
 
-    void appendSourceDocument(Element root) {
+    void appendSourceDocument(JSONObject root) throws JSONException {
         if (srcDoc != null) {
-            Element srcDocEl = appendElement(root, "sourceDocument");
-            Element titleInfo = appendElement(srcDocEl, "titleInfo");
+            JSONObject srcDocEl = appendElement(root, "sourceDocument");
+            JSONObject titleInfo = appendElement(srcDocEl, "titleInfo");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getTitle(), "title");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getVolumeTitle(), "volumeTitle");
             appendElementWithContentIfNotNull(titleInfo, srcDoc.getIssueTitle(), "issueTitle");
@@ -143,28 +115,24 @@ public abstract class IntelectualEntityBuilder extends XmlBuilder {
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIsbn(), "isbn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getIssn(), "issn");
             appendElementWithContentIfNotNull(srcDocEl, srcDoc.getOtherId(), "otherId");
-            Element publicationEl = appendElement(srcDocEl, "publication");
+            JSONObject publicationEl = appendElement(srcDocEl, "publication");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublisher(), "publisher");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationPlace(), "place");
             appendElementWithContentIfNotNull(publicationEl, srcDoc.getPublicationYear(), "year");
-        } else {
-            logger.log(Level.WARNING, "empty value of \"source document\" for entity {0}", entity.getId());
         }
     }
 
-    void appendAgreeAwardingInstitution(Element root) {
-        Element el = appendElementWithContentIfNotNull(root, entity.getDegreeAwardingInstitution(), "degreeAwardingInstitution");
+    void appendAgreeAwardingInstitution(JSONObject root) throws JSONException {
+        appendElementWithContentIfNotNull(root, entity.getDegreeAwardingInstitution(), "degreeAwardingInstitution");
     }
 
-    void appendEntityIdentifier(Element root, IntEntIdType type, String elementName, boolean mandatory) {
+    void appendEntityIdentifier(JSONObject root, IntEntIdType type, String elementName) throws JSONException {
         if (identifiers != null) {
             String value = intEntIdMap.get(type);
             if (value != null) {
-                Element idElement = appendElement(root, elementName);
-                idElement.appendChild(value);
-            } else if (mandatory) {
-                logger.log(Level.WARNING, "empty value of mandatory identifier {0} for entity {1}", new Object[] { type.toString(), entity.getId() });
+                root.put(elementName, value);
             }
         }
     }
+
 }

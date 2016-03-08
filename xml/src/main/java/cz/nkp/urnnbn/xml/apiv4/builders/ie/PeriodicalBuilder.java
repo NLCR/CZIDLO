@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.apiv4.builders;
+package cz.nkp.urnnbn.xml.apiv4.builders.ie;
 
 import java.util.List;
 
@@ -30,9 +30,9 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
  *
  * @author Martin Řehánek
  */
-public class MonographBuilder extends IntelectualEntityBuilder {
+class PeriodicalBuilder extends IntelectualEntityBuilderXml {
 
-    public MonographBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
+    public PeriodicalBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
             SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
@@ -45,7 +45,7 @@ public class MonographBuilder extends IntelectualEntityBuilder {
         appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "title", true);
         appendEntityIdentifier(titleInfo, IntEntIdType.SUB_TITLE, "subTitle", false);
         appendEntityIdentifier(root, IntEntIdType.CCNB, "ccnb", false);
-        appendEntityIdentifier(root, IntEntIdType.ISBN, "isbn", false);
+        appendEntityIdentifier(root, IntEntIdType.ISSN, "issn", false);
         appendEntityIdentifier(root, IntEntIdType.OTHER, "otherId", false);
         appendDocumentType(root);
         appendDigitalBorn(root);

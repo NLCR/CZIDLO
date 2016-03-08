@@ -29,10 +29,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarException;
+import cz.nkp.urnnbn.api.v4.json.RegistrarBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarsBuilderJson;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
@@ -48,8 +48,9 @@ public class RegistrarsResource extends ApiV4Resource {
     private static final String PARAM_CATALOGS = "catalogs";
 
     @Path("{registrarCode}")
-    public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+    public RegistrarResource getRegistrarResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("registrarCode") String registrarCodeStr) {
+        Format format = Parser.parseFormat(formatStr);
         try {
             Registrar registrar = registrarFromRegistarCode(format, registrarCodeStr);
             return new RegistrarResource(registrar);
@@ -76,23 +77,18 @@ public class RegistrarsResource extends ApiV4Resource {
             @DefaultValue("true") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
             @DefaultValue("true") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         boolean addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
         boolean addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
         try {
             switch (format) {
-            case XML: {
-                String xml = buildRegistrarsXmlRecord(addDigitalLibraries, addCatalogs);
+            case XML:
+                String xml = registrarBuilderXml(addDigitalLibraries, addCatalogs).buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = registrarBuilderJson(addDigitalLibraries, addCatalogs).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -102,19 +98,22 @@ public class RegistrarsResource extends ApiV4Resource {
         }
     }
 
-    private String buildRegistrarsXmlRecord(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
-        List<RegistrarBuilder> registrarBuilders = registrarBuilderList(addDigitalLibraries, addCatalogs);
-        RegistrarsBuilder builder = new RegistrarsBuilder(registrarBuilders);
-        return builder.buildDocumentWithResponseHeader().toXML();
+    private RegistrarsBuilder registrarBuilderXml(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+        List<Registrar> registrars = dataAccessService().registrars();
+        List<RegistrarBuilder> registrarBuilders = new ArrayList<RegistrarBuilder>(registrars.size());
+        for (Registrar registrar : registrars) {
+            registrarBuilders.add(registrarBuilderXml(registrar, addDigitalLibraries, addCatalogs));
+        }
+        return new RegistrarsBuilder(registrarBuilders);
     }
 
-    private List<RegistrarBuilder> registrarBuilderList(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
+    private RegistrarsBuilderJson registrarBuilderJson(boolean addDigitalLibraries, boolean addCatalogs) throws DatabaseException {
         List<Registrar> registrars = dataAccessService().registrars();
-        List<RegistrarBuilder> result = new ArrayList<RegistrarBuilder>(registrars.size());
+        List<RegistrarBuilderJson> registrarBuilders = new ArrayList<RegistrarBuilderJson>(registrars.size());
         for (Registrar registrar : registrars) {
-            result.add(registrarBuilder(registrar, addDigitalLibraries, addCatalogs));
+            registrarBuilders.add(registrarBuilderJson(registrar, addDigitalLibraries, addCatalogs));
         }
-        return result;
+        return new RegistrarsBuilderJson(registrarBuilders);
     }
 
 }

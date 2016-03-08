@@ -37,7 +37,7 @@ public class UrnNbnBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("urnNbn", CZIDLO_NS);
         UrnNbn urn = urnWithStatus.getUrn();
         appendElementWithContentIfNotNull(root, urnWithStatus.getStatus().name(), "status");

@@ -28,12 +28,17 @@ import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.MethodForbiddenException;
+import cz.nkp.urnnbn.api.v4.json.CatalogsBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalLibrariesBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarScopeIdentifierBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarScopeIdentifiersBuilderJson;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.xml.apiv4.builders.CatalogsBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalLibrariesBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.CatalogsBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalLibrariesBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
@@ -41,9 +46,11 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
 public abstract class ApiV4Resource extends Resource {
 
+    // because http://stackoverflow.com/questions/5514087/jersey-rest-default-character-encoding/20569571
+    public static final String JSON_WITH_UTF8 = "application/json;charset=utf-8";
     protected static final String PARAM_FORMAT = "format";
 
-    protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {
+    protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilderXml(long digDocId) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);
         List<RegistrarScopeIdentifierBuilder> builders = new ArrayList<RegistrarScopeIdentifierBuilder>(identifiers.size());
         for (RegistrarScopeIdentifier id : identifiers) {
@@ -52,20 +59,45 @@ public abstract class ApiV4Resource extends Resource {
         return new RegistrarScopeIdentifiersBuilder(builders);
     }
 
-    protected RegistrarBuilder registrarBuilder(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) {
-        DigitalLibrariesBuilder libBuilder = withDigitalLibraries ? librariesBuilder(registrar) : null;
-        CatalogsBuilder catBuilder = withCatalogs ? catalogsBuilder(registrar) : null;
+    protected RegistrarBuilder registrarBuilderXml(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) {
+        DigitalLibrariesBuilderXml libBuilder = withDigitalLibraries ? digitalLibrariesBuilderXml(registrar) : null;
+        CatalogsBuilderXml catBuilder = withCatalogs ? catalogsBuilderXml(registrar) : null;
         return new RegistrarBuilder(registrar, libBuilder, catBuilder);
     }
 
-    protected DigitalLibrariesBuilder librariesBuilder(Registrar registrar) {
+    protected DigitalLibrariesBuilderXml digitalLibrariesBuilderXml(Registrar registrar) {
         List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(registrar.getId());
-        return new DigitalLibrariesBuilder(libraries);
+        return new DigitalLibrariesBuilderXml(libraries);
     }
 
-    protected CatalogsBuilder catalogsBuilder(Registrar registrar) {
+    protected CatalogsBuilderXml catalogsBuilderXml(Registrar registrar) {
         List<Catalog> catalogs = dataAccessService().catalogsByRegistrarId(registrar.getId());
-        return new CatalogsBuilder(catalogs);
+        return new CatalogsBuilderXml(catalogs);
+    }
+
+    protected RegistrarScopeIdentifiersBuilderJson registrarScopeIdentifiersBuilderJson(long digDocId) {
+        List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);
+        List<RegistrarScopeIdentifierBuilderJson> builders = new ArrayList<RegistrarScopeIdentifierBuilderJson>(identifiers.size());
+        for (RegistrarScopeIdentifier id : identifiers) {
+            builders.add(new RegistrarScopeIdentifierBuilderJson(id));
+        }
+        return new RegistrarScopeIdentifiersBuilderJson(builders);
+    }
+
+    protected RegistrarBuilderJson registrarBuilderJson(Registrar registrar, boolean withDigitalLibraries, boolean withCatalogs) {
+        DigitalLibrariesBuilderJson libBuilder = withDigitalLibraries ? digitalLibrariesBuilderJson(registrar) : null;
+        CatalogsBuilderJson catBuilder = withCatalogs ? catalogsBuilderJson(registrar) : null;
+        return new RegistrarBuilderJson(registrar, libBuilder, catBuilder);
+    }
+
+    protected DigitalLibrariesBuilderJson digitalLibrariesBuilderJson(Registrar registrar) {
+        List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(registrar.getId());
+        return new DigitalLibrariesBuilderJson(libraries);
+    }
+
+    protected CatalogsBuilderJson catalogsBuilderJson(Registrar registrar) {
+        List<Catalog> catalogs = dataAccessService().catalogsByRegistrarId(registrar.getId());
+        return new CatalogsBuilderJson(catalogs);
     }
 
     protected Document validDocumentFromString(Format format, String content, String schema) {

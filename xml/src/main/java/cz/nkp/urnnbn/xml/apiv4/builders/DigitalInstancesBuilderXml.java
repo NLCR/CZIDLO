@@ -25,27 +25,27 @@ import nu.xom.Element;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstancesBuilder extends XmlBuilder {
+public class DigitalInstancesBuilderXml extends XmlBuilder {
 
     private final long count;
-    private final List<DigitalInstanceBuilder> instanceBuilderList;
+    private final List<DigitalInstanceBuilderXml> instanceBuilderList;
 
-    public DigitalInstancesBuilder(long count) {
+    public DigitalInstancesBuilderXml(long count) {
         this.count = count;
         this.instanceBuilderList = null;
     }
 
-    public DigitalInstancesBuilder(List<DigitalInstanceBuilder> instancesBuilders) {
+    public DigitalInstancesBuilderXml(List<DigitalInstanceBuilderXml> instancesBuilders) {
         this.count = instancesBuilders.size();
         this.instanceBuilderList = instancesBuilders;
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("digitalInstances", CZIDLO_NS);
         root.addAttribute(new Attribute("count", Long.toString(count)));
         if (instanceBuilderList != null) {
-            for (DigitalInstanceBuilder builder : instanceBuilderList) {
+            for (DigitalInstanceBuilderXml builder : instanceBuilderList) {
                 appendBuilderResultfNotNull(root, builder);
             }
         }

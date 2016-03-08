@@ -45,7 +45,7 @@ public class ApiV4Exception extends WebApplicationException {
             return builder.build();
         }
         default: {
-            throw new IllegalFormatException(Format.XML, format.toString());
+            throw new RuntimeException();
         }
         }
     }

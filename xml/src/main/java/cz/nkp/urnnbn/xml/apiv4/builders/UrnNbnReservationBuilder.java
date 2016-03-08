@@ -34,7 +34,7 @@ public class UrnNbnReservationBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("urnNbnReservation", CZIDLO_NS);
         for (UrnNbn urnNbn : urnNbnList) {
             Element urnEl = new Element("urnNbn", CZIDLO_NS);

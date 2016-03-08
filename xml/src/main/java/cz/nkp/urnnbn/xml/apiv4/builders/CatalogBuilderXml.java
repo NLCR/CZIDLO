@@ -24,18 +24,18 @@ import cz.nkp.urnnbn.core.dto.Catalog;
  *
  * @author Martin Řehánek
  */
-public class CatalogBuilder extends XmlBuilder {
+public class CatalogBuilderXml extends XmlBuilder {
 
     private final Catalog catalog;
     private final RegistrarBuilder registrarBuilder;
 
-    public CatalogBuilder(Catalog catalog, RegistrarBuilder registrarBuilder) {
+    public CatalogBuilderXml(Catalog catalog, RegistrarBuilder registrarBuilder) {
         this.catalog = catalog;
         this.registrarBuilder = registrarBuilder;
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("catalog", CZIDLO_NS);
         root.addAttribute(new Attribute("id", catalog.getId().toString()));
         appendElementWithContentIfNotNull(root, catalog.getName(), "name");

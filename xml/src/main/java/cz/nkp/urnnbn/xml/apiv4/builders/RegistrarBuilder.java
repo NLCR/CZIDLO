@@ -28,17 +28,17 @@ import cz.nkp.urnnbn.core.dto.Registrar;
 public class RegistrarBuilder extends XmlBuilder {
 
     private final Registrar registrar;
-    private final DigitalLibrariesBuilder librariesBuilder;
-    private final CatalogsBuilder catalogsBuilder;
+    private final DigitalLibrariesBuilderXml librariesBuilder;
+    private final CatalogsBuilderXml catalogsBuilder;
 
-    public RegistrarBuilder(Registrar registrar, DigitalLibrariesBuilder libsBuilder, CatalogsBuilder catsBuilder) {
+    public RegistrarBuilder(Registrar registrar, DigitalLibrariesBuilderXml libsBuilder, CatalogsBuilderXml catsBuilder) {
         this.registrar = registrar;
         this.librariesBuilder = libsBuilder;
         this.catalogsBuilder = catsBuilder;
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("registrar", CZIDLO_NS);
         root.addAttribute(new Attribute("code", registrar.getCode().toString()));
         root.addAttribute(new Attribute("id", registrar.getId().toString()));

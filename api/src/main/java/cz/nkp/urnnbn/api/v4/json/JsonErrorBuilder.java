@@ -1,13 +1,10 @@
 package cz.nkp.urnnbn.api.v4.json;
 
-import java.util.logging.Logger;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-public class JsonErrorBuilder implements JsonBuilder {
+public class JsonErrorBuilder extends JsonBuilder {
 
-    private static final Logger LOGGER = Logger.getLogger(JsonErrorBuilder.class.getName());
     private final String errorCode;
     private final String errorMessage;
 
@@ -20,17 +17,20 @@ public class JsonErrorBuilder implements JsonBuilder {
     }
 
     @Override
-    public String toJson() {
+    public String getName() {
+        return "error";
+    }
+
+    @Override
+    public JSONObject build() {
         try {
             JSONObject root = new JSONObject();
-            JSONObject error = new JSONObject();
-            root.put("error", error);
-            error.put("code", errorCode);
-            error.put("message", errorMessage);
-            return root.toString();
+            root.put("code", errorCode);
+            root.put("message", errorMessage);
+            return root;
         } catch (JSONException e) {
             LOGGER.severe(e.getMessage());
-            return EMPTY_JSON;
+            return EMPTY_OBJECT;
         }
     }
 

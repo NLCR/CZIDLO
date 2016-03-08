@@ -18,31 +18,23 @@ package cz.nkp.urnnbn.xml.apiv4.builders;
 
 import nu.xom.Attribute;
 import nu.xom.Element;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigitalLibraryBuilder extends XmlBuilder {
+public class DigitalDocumentsBuilderXml extends XmlBuilder {
 
-    private final DigitalLibrary lib;
-    private final RegistrarBuilder registrarBuilder;
+    private final int digDocCount;
 
-    public DigitalLibraryBuilder(DigitalLibrary lib, RegistrarBuilder registrarBuilder) {
-        this.lib = lib;
-        this.registrarBuilder = registrarBuilder;
+    public DigitalDocumentsBuilderXml(int digDocCount) {
+        this.digDocCount = digDocCount;
     }
 
     @Override
-    Element buildRootElement() {
-        Element root = new Element("digitalLibrary", CZIDLO_NS);
-        root.addAttribute(new Attribute("id", lib.getId().toString()));
-        appendElementWithContentIfNotNull(root, lib.getName(), "name");
-        appendElementWithContentIfNotNull(root, lib.getDescription(), "description");
-        appendElementWithContentIfNotNull(root, lib.getUrl(), "url");
-        appendTimestamps(root, lib, "digital library");
-        appendBuilderResultfNotNull(root, registrarBuilder);
+    public Element buildRootElement() {
+        Element root = new Element("digitalDocuments", CZIDLO_NS);
+        root.addAttribute(new Attribute("count", Integer.toString(digDocCount)));
         return root;
     }
 }

@@ -30,10 +30,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.v4.exceptions.DigitalInstanceAlreadyDeactivatedException;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
+import cz.nkp.urnnbn.api.v4.json.DigitalDocumentBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalInstanceBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalLibraryBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarScopeIdentifiersBuilderJson;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
@@ -42,9 +45,9 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalLibraryBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalLibraryBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
 
@@ -61,21 +64,18 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @GET
     public Response getDigitalInstanceXmlRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             switch (format) {
             case XML: {
-                String xml = digitalInstanceXmlBuilder().buildDocumentWithResponseHeader().toXML();
+                String xml = digitalInstanceBuilderXml().buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
             }
             case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
+                String json = digitalInstanceBuilderJson().toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             }
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -85,24 +85,44 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private DigitalInstanceBuilder digitalInstanceXmlBuilder() {
-        DigitalDocumentBuilder digDocBuilder = digitalDocumentXmlBuilder(instance.getDigDocId());
-        DigitalLibraryBuilder libBuilder = digitalLibraryXmlBuilder(instance.getLibraryId());
-        return new DigitalInstanceBuilder(instance, libBuilder, digDocBuilder);
+    private DigitalInstanceBuilderXml digitalInstanceBuilderXml() {
+        DigitalDocumentBuilderXml digDocBuilder = digitalDocumentBuilderXml(instance.getDigDocId());
+        DigitalLibraryBuilderXml libBuilder = digitalLibraryBuilderXml(instance.getLibraryId());
+        return new DigitalInstanceBuilderXml(instance, libBuilder, digDocBuilder);
     }
 
-    private DigitalDocumentBuilder digitalDocumentXmlBuilder(long digDocId) {
+    private DigitalDocumentBuilderXml digitalDocumentBuilderXml(long digDocId) {
         DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
         UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
-        RegistrarScopeIdentifiersBuilder idsBuilder = registrarScopeIdentifiersBuilder(digDocId);
-        return new DigitalDocumentBuilder(digDoc, urn, idsBuilder, null, null, null, null);
+        RegistrarScopeIdentifiersBuilder idsBuilder = registrarScopeIdentifiersBuilderXml(digDocId);
+        return new DigitalDocumentBuilderXml(digDoc, urn, idsBuilder, null, null, null, null);
     }
 
-    private DigitalLibraryBuilder digitalLibraryXmlBuilder(long libraryId) {
+    private DigitalLibraryBuilderXml digitalLibraryBuilderXml(long libraryId) {
         DigitalLibrary library = dataAccessService().libraryByInternalId(libraryId);
         Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
         RegistrarBuilder regBuilder = new RegistrarBuilder(registrar, null, null);
-        return new DigitalLibraryBuilder(library, regBuilder);
+        return new DigitalLibraryBuilderXml(library, regBuilder);
+    }
+
+    private DigitalInstanceBuilderJson digitalInstanceBuilderJson() {
+        DigitalDocumentBuilderJson digDocBuilder = digitalDocumentBuilderJson(instance.getDigDocId());
+        DigitalLibraryBuilderJson libBuilder = digitalLibraryBuilderJson(instance.getLibraryId());
+        return new DigitalInstanceBuilderJson(instance, libBuilder, digDocBuilder);
+    }
+
+    private DigitalDocumentBuilderJson digitalDocumentBuilderJson(long digDocId) {
+        DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
+        UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
+        RegistrarScopeIdentifiersBuilderJson idsBuilder = registrarScopeIdentifiersBuilderJson(digDocId);
+        return new DigitalDocumentBuilderJson(digDoc, urn, idsBuilder, null, null, null, null);
+    }
+
+    private DigitalLibraryBuilderJson digitalLibraryBuilderJson(long libraryId) {
+        DigitalLibrary library = dataAccessService().libraryByInternalId(libraryId);
+        Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
+        RegistrarBuilderJson regBuilder = new RegistrarBuilderJson(registrar, null, null);
+        return new DigitalLibraryBuilderJson(library, regBuilder);
     }
 
     @DELETE
@@ -128,7 +148,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
         } else {
             deactivateDigitalInstanceWithServiceExceptionTranslation(format, login);
             DigitalInstance deactivated = dataAccessService().digInstanceByInternalId(instance.getId());
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(deactivated, deactivated.getLibraryId());
+            DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(deactivated, deactivated.getLibraryId());
             return builder.buildDocumentWithResponseHeader().toXML();
         }
     }

@@ -33,7 +33,7 @@ public class RegistrarsBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("registrars", CZIDLO_NS);
         for (RegistrarBuilder builder : registrarBuilders) {
             root.appendChild(builder.buildRootElement());

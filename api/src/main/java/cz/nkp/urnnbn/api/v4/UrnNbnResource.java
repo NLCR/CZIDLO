@@ -31,11 +31,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectUrnStateException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
+import cz.nkp.urnnbn.api.v4.json.UrnNbnBuilderJson;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -51,24 +50,19 @@ public class UrnNbnResource extends ApiV4Resource {
     @Path("{urnNbn}")
     public Response getUrnNbn(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr, @PathParam("urnNbn") String urnNbnString) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                     urnNbn.getDocumentCode(), true);
             switch (format) {
-            case XML: {
+            case XML:
                 String xml = new UrnNbnBuilder(urnNbnWithStatus).buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = new UrnNbnBuilderJson(urnNbnWithStatus).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;

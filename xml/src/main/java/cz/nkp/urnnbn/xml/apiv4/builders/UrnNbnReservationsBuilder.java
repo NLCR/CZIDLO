@@ -28,7 +28,6 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  */
 public class UrnNbnReservationsBuilder extends XmlBuilder {
 
-    private static final int MAX_RESERVATION_TO_BE_PRINTED = 50;
     private final int maxReservationSize;
     private final int defaultReservationSize;
     private final List<UrnNbn> urnNbnList;
@@ -49,7 +48,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("urnNbnReservations", CZIDLO_NS);
         appendElementWithContentIfNotNull(root, maxReservationSize, "maxReservationSize");
         appendElementWithContentIfNotNull(root, defaultReservationSize, "defaultReservationSize");
@@ -57,7 +56,7 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
         root.appendChild(reservations);
         Attribute size = new Attribute("totalSize", reservedSize.toString());
         reservations.addAttribute(size);
-
+        // urn:nbn list
         if (urnNbnList != null && !urnNbnList.isEmpty()) {
             appendUrnNbnsFromList(reservations);
         }
@@ -67,9 +66,6 @@ public class UrnNbnReservationsBuilder extends XmlBuilder {
     private void appendUrnNbnsFromList(Element root) {
         int counter = 0;
         for (UrnNbn urnNbn : urnNbnList) {
-            if (++counter > MAX_RESERVATION_TO_BE_PRINTED) {
-                break;
-            }
             Element element = new Element("urnNbn", CZIDLO_NS);
             element.appendChild(urnNbn.toString());
             Attribute reserved = new Attribute("reserved", urnNbn.getReserved().toString());

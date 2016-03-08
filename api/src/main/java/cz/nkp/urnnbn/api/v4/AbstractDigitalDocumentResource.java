@@ -5,6 +5,12 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.nkp.urnnbn.api.v4.json.ArchiverBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalDocumentBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalInstanceBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.DigitalInstancesBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.RegistrarBuilderJson;
+import cz.nkp.urnnbn.api.v4.json.ie.IntelectualEntityBuilderJson;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -15,55 +21,96 @@ import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.Publication;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.xml.apiv4.builders.ArchiverBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.IntelectualEntityBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.ArchiverBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstanceBuilderXml;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalInstancesBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.ie.IntelectualEntityBuilderXml;
 
 public abstract class AbstractDigitalDocumentResource extends ApiV4Resource {
 
     protected static final String HEADER_REFERER = "referer";
     protected static final String PARAM_WITH_DIG_INST = "digitalInstances";
 
-    protected DigitalDocumentBuilder digitalDocumentsXmlBuilder(DigitalDocument digDoc, UrnNbn urnNbn, boolean withDigitalInstances) {
-        return new DigitalDocumentBuilder(digDoc, urnNbn,//
-                registrarScopeIdentifiersBuilder(digDoc.getId()),//
-                withDigitalInstances ? digitalInstancesXmlBuilder(digDoc) : null,//
-                registrarXmlBuilder(digDoc.getRegistrarId()), archiverXmlBuilder(digDoc),//
-                intelectualEntityXmlBuilder(digDoc.getIntEntId()));
+    protected DigitalDocumentBuilderXml digitalDocumentBuilderXml(DigitalDocument digDoc, UrnNbn urnNbn, boolean withDigitalInstances) {
+        return new DigitalDocumentBuilderXml(digDoc, urnNbn,//
+                registrarScopeIdentifiersBuilderXml(digDoc.getId()),//
+                withDigitalInstances ? digitalInstancesBuilderXml(digDoc) : null,//
+                registrarBuilderXml(digDoc.getRegistrarId()),//
+                archiverBuilderXml(digDoc),//
+                intelectualEntityBuilderXml(digDoc.getIntEntId()));
     }
 
-    private DigitalInstancesBuilder digitalInstancesXmlBuilder(DigitalDocument digDoc) {
+    private DigitalInstancesBuilderXml digitalInstancesBuilderXml(DigitalDocument digDoc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digDoc.getId());
-        List<DigitalInstanceBuilder> result = new ArrayList<DigitalInstanceBuilder>(instances.size());
+        List<DigitalInstanceBuilderXml> result = new ArrayList<DigitalInstanceBuilderXml>(instances.size());
         for (DigitalInstance instance : instances) {
-            DigitalInstanceBuilder builder = new DigitalInstanceBuilder(instance, null, null);
+            DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(instance, null, null);
             result.add(builder);
         }
-        return new DigitalInstancesBuilder(result);
+        return new DigitalInstancesBuilderXml(result);
     }
 
-    private RegistrarBuilder registrarXmlBuilder(Long registrarId) {
+    private RegistrarBuilder registrarBuilderXml(Long registrarId) {
         return new RegistrarBuilder(dataAccessService().registrarById(registrarId), null, null);
     }
 
-    private ArchiverBuilder archiverXmlBuilder(DigitalDocument digDoc) {
+    private ArchiverBuilderXml archiverBuilderXml(DigitalDocument digDoc) {
         if (digDoc.getRegistrarId() == digDoc.getArchiverId()) {
             return null;
         } else {
-            return new ArchiverBuilder(dataAccessService().archiverById(digDoc.getArchiverId()));
+            return new ArchiverBuilderXml(dataAccessService().archiverById(digDoc.getArchiverId()));
         }
     }
 
-    private IntelectualEntityBuilder intelectualEntityXmlBuilder(long intEntId) {
+    private IntelectualEntityBuilderXml intelectualEntityBuilderXml(long intEntId) {
         IntelectualEntity entity = dataAccessService().entityById(intEntId);
         List<IntEntIdentifier> ieIdentfiers = dataAccessService().intEntIdentifiersByIntEntId(intEntId);
         Publication pub = dataAccessService().publicationByIntEntId(intEntId);
         Originator originator = dataAccessService().originatorByIntEntId(intEntId);
         SourceDocument srcDoc = dataAccessService().sourceDocumentByIntEntId(intEntId);
-        return IntelectualEntityBuilder.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
+        return IntelectualEntityBuilderXml.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
+    }
+
+    protected DigitalDocumentBuilderJson digitalDocumentBuilderJson(DigitalDocument digDoc, UrnNbn urnNbn, boolean withDigitalInstances) {
+        return new DigitalDocumentBuilderJson(digDoc, urnNbn,//
+                registrarScopeIdentifiersBuilderJson(digDoc.getId()),//
+                withDigitalInstances ? digitalInstancesBuilderJson(digDoc) : null,//
+                registrarBuilderJson(digDoc.getRegistrarId()),//
+                archiverBuilderJson(digDoc),//
+                intelectualEntityBuilderJson(digDoc.getIntEntId()));
+    }
+
+    private DigitalInstancesBuilderJson digitalInstancesBuilderJson(DigitalDocument digDoc) {
+        List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digDoc.getId());
+        List<DigitalInstanceBuilderJson> result = new ArrayList<DigitalInstanceBuilderJson>(instances.size());
+        for (DigitalInstance instance : instances) {
+            DigitalInstanceBuilderJson builder = new DigitalInstanceBuilderJson(instance, null, null);
+            result.add(builder);
+        }
+        return new DigitalInstancesBuilderJson(result);
+    }
+
+    private RegistrarBuilderJson registrarBuilderJson(Long registrarId) {
+        return new RegistrarBuilderJson(dataAccessService().registrarById(registrarId), null, null);
+    }
+
+    private ArchiverBuilderJson archiverBuilderJson(DigitalDocument digDoc) {
+        if (digDoc.getRegistrarId() == digDoc.getArchiverId()) {
+            return null;
+        } else {
+            return new ArchiverBuilderJson(dataAccessService().archiverById(digDoc.getArchiverId()));
+        }
+    }
+
+    private IntelectualEntityBuilderJson intelectualEntityBuilderJson(long intEntId) {
+        IntelectualEntity entity = dataAccessService().entityById(intEntId);
+        List<IntEntIdentifier> ieIdentfiers = dataAccessService().intEntIdentifiersByIntEntId(intEntId);
+        Publication pub = dataAccessService().publicationByIntEntId(intEntId);
+        Originator originator = dataAccessService().originatorByIntEntId(intEntId);
+        SourceDocument srcDoc = dataAccessService().sourceDocumentByIntEntId(intEntId);
+        return IntelectualEntityBuilderJson.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
     }
 
     protected URI getAvailableActiveDigitalInstanceOrNull(Long digDocId, Format format, String refererUrl) throws URISyntaxException {

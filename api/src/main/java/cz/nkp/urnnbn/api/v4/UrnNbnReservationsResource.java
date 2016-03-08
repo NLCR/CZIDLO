@@ -31,10 +31,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
+import cz.nkp.urnnbn.api.v4.json.UrnNbnReservationsBuilderJson;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
@@ -56,29 +55,35 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @GET
     public Response getUrnNbnReservations(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             int maxBatchSize = urnReservationService().getMaxBatchSize();
             List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
             switch (format) {
-            case XML: {
+            case XML:
                 String xml = urnNbnReservationsXmlBuilder(maxBatchSize, reservedUrnNbnList).buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = urnNbnReservationsJsonBuilder(maxBatchSize, reservedUrnNbnList).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(format, e);
+        }
+    }
+
+    private UrnNbnReservationsBuilderJson urnNbnReservationsJsonBuilder(int maxBatchSize, List<UrnNbn> reservedUrnNbnList) {
+        int maxPrintSize = ApiModuleConfiguration.instanceOf().getMaxReservedSizeToPrint();
+        if (reservedUrnNbnList.size() > maxPrintSize) {
+            return new UrnNbnReservationsBuilderJson(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(),
+                    reservedUrnNbnList.size(), reservedUrnNbnList.subList(0, maxPrintSize));
+        } else {
+            return new UrnNbnReservationsBuilderJson(maxBatchSize, ApiModuleConfiguration.instanceOf().getUrnReservationDefaultSize(),
+                    reservedUrnNbnList.size(), reservedUrnNbnList);
         }
     }
 

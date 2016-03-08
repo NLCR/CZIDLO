@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
@@ -48,13 +49,10 @@ public class GetDigitalInstances extends ApiV3Tests {
     public void okFormatJson() {
         String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:digitalInstances/@count", nsContext))//
                 .when().get(buildUrl()).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
-        // assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
-        // TODO: check data
+        assertThat(from(responseXml).getInt("digitalInstances.count"), greaterThanOrEqualTo(0));
     }
 
     @Test

@@ -33,7 +33,7 @@ public class RegistrarScopeIdentifiersBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("registrarScopeIdentifiers", CZIDLO_NS);
         for (RegistrarScopeIdentifierBuilder idBuilder : identifierBuilders) {
             appendBuilderResultfNotNull(root, idBuilder);

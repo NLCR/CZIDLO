@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package cz.nkp.urnnbn.xml.apiv4.builders;
+package cz.nkp.urnnbn.xml.apiv4.builders.ie;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
  *
  * @author Martin Řehánek
  */
-class AnalyticalBuilder extends IntelectualEntityBuilder {
+class AnalyticalBuilder extends IntelectualEntityBuilderXml {
 
     public AnalyticalBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
             SourceDocument srcDoc) {

@@ -41,7 +41,7 @@ public class RegistrarScopeIdentifierBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("id", CZIDLO_NS);
         root.addAttribute(new Attribute("type", id.getType().toString()));
         if (previousValue != null) {

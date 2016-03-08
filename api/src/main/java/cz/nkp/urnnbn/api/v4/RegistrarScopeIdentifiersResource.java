@@ -33,13 +33,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
 import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarScopeIdentifierException;
+import cz.nkp.urnnbn.api.v4.json.RegistrarScopeIdentifierBuilderJson;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -66,21 +65,16 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @GET
     public Response getRegistrarScopeIdentifiers(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             switch (format) {
-            case XML: {
-                String xml = registrarScopeIdentifiersBuilder(doc.getId()).buildDocumentWithResponseHeader().toXML();
+            case XML:
+                String xml = registrarScopeIdentifiersBuilderXml(doc.getId()).buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = registrarScopeIdentifiersBuilderJson(doc.getId()).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -95,22 +89,17 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     public Response getRegistrarScopeIdentifierValue(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         try {
             switch (format) {
-            case XML: {
-                String xml = getRegistrarScopeIdentifierXmlRecord(format, idType);
+            case XML:
+                String xml = new RegistrarScopeIdentifierBuilder(findRsid(format, idType)).buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = new RegistrarScopeIdentifierBuilderJson(findRsid(format, idType)).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -120,12 +109,11 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String getRegistrarScopeIdentifierXmlRecord(Format format, RegistrarScopeIdType idType) {
+    private RegistrarScopeIdentifier findRsid(Format format, RegistrarScopeIdType idType) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
         for (RegistrarScopeIdentifier id : identifiers) {
             if (id.getType().equals(idType)) {
-                RegistrarScopeIdentifierBuilder builder = new RegistrarScopeIdentifierBuilder(id);
-                return builder.buildDocumentWithResponseHeader().toXML();
+                return id;
             }
         }
         throw new NotDefinedException(format, idType);
@@ -277,7 +265,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(Format format, String login) {
         try {
             // builder before deleted
-            RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilder(doc.getId());
+            RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilderXml(doc.getId());
             // delete
             dataRemoveService().removeRegistrarScopeIdentifiers(doc.getId(), login);
             return builder.buildDocumentWithResponseHeader().toXML();

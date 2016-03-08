@@ -20,24 +20,25 @@ import nu.xom.Attribute;
 import nu.xom.Element;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.xml.apiv4.builders.ie.IntelectualEntityBuilderXml;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentBuilder extends XmlBuilder {
+public class DigitalDocumentBuilderXml extends XmlBuilder {
 
     private final DigitalDocument doc;
     private final UrnNbn urn;
     private final RegistrarScopeIdentifiersBuilder identifiersBuilder;
-    private final DigitalInstancesBuilder instancesBuilder;
+    private final DigitalInstancesBuilderXml instancesBuilder;
     private final RegistrarBuilder registrarBuilder;
-    private final ArchiverBuilder archiverBuilder;
-    private final IntelectualEntityBuilder entityBuilder;
+    private final ArchiverBuilderXml archiverBuilder;
+    private final IntelectualEntityBuilderXml entityBuilder;
 
-    public DigitalDocumentBuilder(DigitalDocument doc, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder,
-            DigitalInstancesBuilder instancesBuilder, RegistrarBuilder registrarBuilder, ArchiverBuilder archiverBuilder,
-            IntelectualEntityBuilder entityBuilder) {
+    public DigitalDocumentBuilderXml(DigitalDocument doc, UrnNbn urn, RegistrarScopeIdentifiersBuilder identifiersBuilder,
+            DigitalInstancesBuilderXml instancesBuilder, RegistrarBuilder registrarBuilder, ArchiverBuilderXml archiverBuilder,
+            IntelectualEntityBuilderXml entityBuilder) {
         this.doc = doc;
         this.urn = urn;
         this.identifiersBuilder = identifiersBuilder;

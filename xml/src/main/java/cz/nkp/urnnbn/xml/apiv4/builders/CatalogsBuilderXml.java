@@ -16,25 +16,30 @@
  */
 package cz.nkp.urnnbn.xml.apiv4.builders;
 
-import nu.xom.Attribute;
+import java.util.List;
+
 import nu.xom.Element;
+import cz.nkp.urnnbn.core.dto.Catalog;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentsBuilder extends XmlBuilder {
+public class CatalogsBuilderXml extends XmlBuilder {
 
-    private final int digDocCount;
+    private final List<Catalog> catalogs;
 
-    public DigitalDocumentsBuilder(int digDocCount) {
-        this.digDocCount = digDocCount;
+    public CatalogsBuilderXml(List<Catalog> catalogs) {
+        this.catalogs = catalogs;
     }
 
     @Override
-    Element buildRootElement() {
-        Element root = new Element("digitalDocuments", CZIDLO_NS);
-        root.addAttribute(new Attribute("count", Integer.toString(digDocCount)));
+    public Element buildRootElement() {
+        Element root = new Element("catalogs", CZIDLO_NS);
+        for (Catalog catalog : catalogs) {
+            CatalogBuilderXml builder = new CatalogBuilderXml(catalog, null);
+            appendBuilderResultfNotNull(root, builder);
+        }
         return root;
     }
 }

@@ -16,30 +16,33 @@
  */
 package cz.nkp.urnnbn.xml.apiv4.builders;
 
+import nu.xom.Attribute;
 import nu.xom.Element;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class XmlErrorBuilder extends XmlBuilder {
+public class DigitalLibraryBuilderXml extends XmlBuilder {
 
-    private final String errorCode;
-    private final String errorMessage;
+    private final DigitalLibrary lib;
+    private final RegistrarBuilder registrarBuilder;
 
-    public XmlErrorBuilder(String errorCode, String errorMessage) {
-        if (errorCode == null) {
-            throw new NullPointerException("errorCode");
-        }
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
+    public DigitalLibraryBuilderXml(DigitalLibrary lib, RegistrarBuilder registrarBuilder) {
+        this.lib = lib;
+        this.registrarBuilder = registrarBuilder;
     }
 
     @Override
     public Element buildRootElement() {
-        Element root = new Element("error", CZIDLO_NS);
-        appendElementWithContentIfNotNull(root, errorCode, "code");
-        appendElementWithContentIfNotNull(root, errorMessage, "message");
+        Element root = new Element("digitalLibrary", CZIDLO_NS);
+        root.addAttribute(new Attribute("id", lib.getId().toString()));
+        appendElementWithContentIfNotNull(root, lib.getName(), "name");
+        appendElementWithContentIfNotNull(root, lib.getDescription(), "description");
+        appendElementWithContentIfNotNull(root, lib.getUrl(), "url");
+        appendTimestamps(root, lib, "digital library");
+        appendBuilderResultfNotNull(root, registrarBuilder);
         return root;
     }
 }

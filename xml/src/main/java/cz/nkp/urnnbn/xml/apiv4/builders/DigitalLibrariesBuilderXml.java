@@ -16,29 +16,30 @@
  */
 package cz.nkp.urnnbn.xml.apiv4.builders;
 
-import nu.xom.Attribute;
+import java.util.List;
+
 import nu.xom.Element;
-import cz.nkp.urnnbn.core.dto.Archiver;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class ArchiverBuilder extends XmlBuilder {
+public class DigitalLibrariesBuilderXml extends XmlBuilder {
 
-    private final Archiver archiver;
+    private final List<DigitalLibrary> libraryList;
 
-    public ArchiverBuilder(Archiver archiver) {
-        this.archiver = archiver;
+    public DigitalLibrariesBuilderXml(List<DigitalLibrary> libraryList) {
+        this.libraryList = libraryList;
     }
 
     @Override
-    Element buildRootElement() {
-        Element root = new Element("archiver", CZIDLO_NS);
-        root.addAttribute(new Attribute("id", archiver.getId().toString()));
-        appendElementWithContentIfNotNull(root, archiver.getName(), "name");
-        appendElementWithContentIfNotNull(root, archiver.getDescription(), "description");
-        appendTimestamps(root, archiver, "archiver");
+    public Element buildRootElement() {
+        Element root = new Element("digitalLibraries", CZIDLO_NS);
+        for (DigitalLibrary library : libraryList) {
+            DigitalLibraryBuilderXml builder = new DigitalLibraryBuilderXml(library, null);
+            appendBuilderResultfNotNull(root, builder);
+        }
         return root;
     }
 }

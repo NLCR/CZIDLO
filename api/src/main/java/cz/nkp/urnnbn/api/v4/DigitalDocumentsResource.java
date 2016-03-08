@@ -41,7 +41,6 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v4.exceptions.IllegalFormatException;
 import cz.nkp.urnnbn.api.v4.exceptions.IncorrectPredecessorException;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
@@ -54,6 +53,7 @@ import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
 import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivatedException;
+import cz.nkp.urnnbn.api.v4.json.DigitalDocumentsBuilderJson;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
@@ -72,7 +72,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
 import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
-import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentsBuilder;
+import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentsBuilderXml;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.RecordImportUnmarshaller;
 
@@ -121,9 +121,6 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
             UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
@@ -161,9 +158,6 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         } else {
             // show data
             Format format = formatStr == null ? Format.XML : Parser.parseFormat(formatStr);
-            if (format == Format.JSON) { // TODO: remove when implemented
-                throw new JsonVersionNotImplementedException(format);
-            }
             boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
@@ -236,14 +230,12 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, Format format, boolean withDigitalInstances) {
         switch (format) {
-        case XML: {
-            String xml = digitalDocumentsXmlBuilder(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+        case XML:
+            String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
             return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-        }
-        case JSON: {
-            // TODO: implement json version
-            throw new JsonVersionNotImplementedException(format);
-        }
+        case JSON:
+            String json = digitalDocumentBuilderJson(doc, urnNbn, withDigitalInstances).toJson();
+            return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
         default:
             throw new RuntimeException();
         }
@@ -267,21 +259,16 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @GET
     public Response getDigitalDocumentsRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
         try {
             switch (format) {
-            case XML: {
-                String xml = digitalDocumentsXmlBuilder().buildDocumentWithResponseHeader().toXML();
+            case XML:
+                String xml = digitalDocumentsBuilderXml().buildDocumentWithResponseHeader().toXML();
                 return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                // TODO: implement json version
-                throw new JsonVersionNotImplementedException(format);
-            }
+            case JSON:
+                String json = digitalDocumentsBuilderJson().toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
             default:
-                throw new IllegalFormatException(Format.XML, formatStr);
+                throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -291,9 +278,14 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private DigitalDocumentsBuilder digitalDocumentsXmlBuilder() {
+    private DigitalDocumentsBuilderXml digitalDocumentsBuilderXml() {
         int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
-        return new DigitalDocumentsBuilder(digDocsCount);
+        return new DigitalDocumentsBuilderXml(digDocsCount);
+    }
+
+    private DigitalDocumentsBuilderJson digitalDocumentsBuilderJson() {
+        int digDocsCount = dataAccessService().digitalDocumentsCount(registrar.getId());
+        return new DigitalDocumentsBuilderJson(digDocsCount);
     }
 
     @POST

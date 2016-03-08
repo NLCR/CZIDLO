@@ -24,21 +24,21 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
  *
  * @author Martin Řehánek
  */
-public class DigitalInstanceBuilder extends XmlBuilder {
+public class DigitalInstanceBuilderXml extends XmlBuilder {
 
     private final DigitalInstance instance;
-    private final DigitalLibraryBuilder digLibBuilder;
+    private final DigitalLibraryBuilderXml digLibBuilder;
     private final Long digLibId;
-    private final DigitalDocumentBuilder digDocBuilder;
+    private final DigitalDocumentBuilderXml digDocBuilder;
 
-    public DigitalInstanceBuilder(DigitalInstance instance, DigitalLibraryBuilder digLibBuilder, DigitalDocumentBuilder digDocBuilder) {
+    public DigitalInstanceBuilderXml(DigitalInstance instance, DigitalLibraryBuilderXml digLibBuilder, DigitalDocumentBuilderXml digDocBuilder) {
         this.instance = instance;
         this.digLibBuilder = digLibBuilder;
         this.digLibId = null;
         this.digDocBuilder = digDocBuilder;
     }
 
-    public DigitalInstanceBuilder(DigitalInstance instance, Long digLibId) {
+    public DigitalInstanceBuilderXml(DigitalInstance instance, Long digLibId) {
         this.instance = instance;
         this.digLibBuilder = null;
         this.digLibId = digLibId;
@@ -46,7 +46,7 @@ public class DigitalInstanceBuilder extends XmlBuilder {
     }
 
     @Override
-    Element buildRootElement() {
+    public Element buildRootElement() {
         Element root = new Element("digitalInstance", CZIDLO_NS);
         root.addAttribute(new Attribute("id", instance.getId().toString()));
         root.addAttribute(new Attribute("active", instance.isActive().toString()));
