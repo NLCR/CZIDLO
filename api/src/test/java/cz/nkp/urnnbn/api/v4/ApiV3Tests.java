@@ -58,7 +58,7 @@ public abstract class ApiV3Tests {
     final Long ARCHIVER = 134l; // must existe and not be registrar
     final Credentials USER = new Credentials("api_test_user", "0aFukuC"); // must exist and have access rights to REGISTRAR, REGISTRAR2
     final Credentials USER_NO_RIGHTS = new Credentials("nobody", "skgo1dukg");// must exist and not have access rights to REGISTRAR, REGISTRAR2
-    final String WORKING_URL = "https://www.seznam.cz/";
+    final String WORKING_URL = "https://www.google.cz/";
     final int UNKNOWN_DIG_LIB_DI = -1; // digital library with this id must not exist
 
     private final String NAMESPACE = "http://resolver.nkp.cz/v4/";

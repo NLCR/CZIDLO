@@ -31,6 +31,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationDefaultSize;
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
+    private String webSearchUrlPrefix;
     // API V4
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV4;
     private Document digDocRegistrationXsdV4;
@@ -91,6 +92,7 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         urnReservationDefaultSize = loader.loadInt(PropertyKeys.URN_RESERVATION_DEFAULT_SIZE);
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
+        webSearchUrlPrefix = loader.loadString(PropertyKeys.WEB_SEARCH_URL_PREFIX);
     }
 
     // API V4
@@ -219,6 +221,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private XsltXmlTransformer transformerFromXmlFromInputStream(InputStream in) throws ParsingException, IOException, XSLException {
         Document xslt = XOMUtils.loadDocumentWithoutValidation(in);
         return new XsltXmlTransformer(xslt);
+    }
+
+    public String getWebSearchUrlPrefix() {
+        return webSearchUrlPrefix;
     }
 
     public Integer getMaxReservedSizeToPrint() {

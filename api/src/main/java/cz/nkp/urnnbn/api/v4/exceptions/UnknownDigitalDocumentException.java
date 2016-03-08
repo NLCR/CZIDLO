@@ -37,7 +37,7 @@ public class UnknownDigitalDocumentException extends ApiV4Exception {
     public UnknownDigitalDocumentException(ResponseFormat format, RegistrarCode registrarCode, RegistrarScopeIdType idType,
             RegistrarScopeIdValue idValue) {
         super(format, Status.NOT_FOUND, errorCode, String.format(
-                "Registrar with code '%s' doesn't register digital document with identifier of type '%s' and value '%s'",//
+                "Registrar with code '%s' doesn't register digital document with identifier of type '%s' with value '%s'",//
                 registrarCode, idType.toString(), idValue.toString()));
     }
 

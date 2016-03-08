@@ -54,7 +54,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getUrnNbnReservationsXmlRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+    public Response getUrnNbnReservations(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         if (format == ResponseFormat.JSON) { // TODO: remove when implemented
             throw new JsonVersionNotImplementedError(format);

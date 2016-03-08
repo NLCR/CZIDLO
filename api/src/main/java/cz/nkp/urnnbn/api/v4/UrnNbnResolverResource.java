@@ -1,47 +1,47 @@
-/*
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package cz.nkp.urnnbn.api.v4;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.Resource;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedError;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
+import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivated;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 @Path("/resolver")
-public class UrnNbnResolverResource extends ApiV4Resource {
+public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
     private static final Logger LOGGER = Logger.getLogger(UrnNbnResolverResource.class.getName());
 
-    @Path("{urn}")
-    public Resource getDigitalDocumentResource(@PathParam("urn") String urnPar) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
-        // TODO: format resit tady az nakonec, musi se prekopat rezolvovani
+    @Path("{urn}/registrarScopeIdentifiers")
+    public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("urn") String urnNbnString) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            UrnNbn urnParsed = Parser.parseUrn(format, urnPar);
-            UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(),
-                    urnParsed.getDocumentCode(), true);
+            UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
+            UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
+                    urnNbnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
             case DEACTIVATED:
             case ACTIVE:
@@ -49,12 +49,10 @@ public class UrnNbnResolverResource extends ApiV4Resource {
                 if (doc == null) {
                     throw new UnknownDigitalDocumentException(format, fetched.getUrn());
                 } else {
-                    // update resolvations statistics
-                    statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
-                    return new DigitalDocumentResource(doc, fetched.getUrn());
+                    return new RegistrarScopeIdentifiersResource(doc);
                 }
             case FREE:
-                throw new UnknownUrnException(format, urnParsed);
+                throw new UnknownUrnException(format, urnNbnParsed);
             case RESERVED:
                 throw new UnknownDigitalDocumentException(format, fetched.getUrn());
             default:
@@ -64,7 +62,147 @@ public class UrnNbnResolverResource extends ApiV4Resource {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(format, e.getMessage());
+            throw new InternalException(format, e);
         }
     }
+
+    @Path("{urn}/digitalInstances")
+    public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("urn") String urnNbnString) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
+        try {
+            UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
+            UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
+                    urnNbnParsed.getDocumentCode(), true);
+            switch (fetched.getStatus()) {
+            case DEACTIVATED:
+            case ACTIVE:
+                DigitalDocument digDoc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                if (digDoc == null) {
+                    throw new UnknownDigitalDocumentException(format, fetched.getUrn());
+                } else {
+                    return new DigitalInstancesResource(digDoc);
+                }
+            case FREE:
+                throw new UnknownUrnException(format, urnNbnParsed);
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, fetched.getUrn());
+            default:
+                throw new RuntimeException();
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    @GET
+    @Path("{urn}")
+    public Response resolve(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr,
+            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
+        if (formatStr == null) {
+            // allways redirect somwehere
+            return redirectionResponse(context, urnNbnString);
+        } else {
+            // show data
+            ResponseFormat format = Parser.parseFormat(formatStr);
+            if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+                throw new JsonVersionNotImplementedError(format);
+            }
+            boolean withDigitalInstances = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST,
+                    true);
+            return metadataResponse(urnNbnString, format, withDigitalInstances);
+        }
+    }
+
+    private Response redirectionResponse(HttpServletRequest context, String urnNbnString) {
+        try {
+            try {
+                UrnNbn urnNbnParsed = Parser.parseUrn(ResponseFormat.XML, urnNbnString);
+                UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
+                        urnNbnParsed.getDocumentCode(), true);
+                switch (fetched.getStatus()) {
+                case ACTIVE:
+                    return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
+                default:
+                    // redirect to web client
+                    return Response.seeOther(buildWebSearchUri(urnNbnString)).build();
+                }
+            } catch (WebApplicationException e) {
+                // redirect to web client
+                return Response.seeOther(buildWebSearchUri(urnNbnString)).build();
+            }
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(ResponseFormat.XML, e.getMessage());
+        }
+    }
+
+    private Response redirectionResponse(UrnNbn urnNbn, String referer) throws URISyntaxException {
+        // update resolvations statistics
+        statisticService().incrementResolvationStatistics(urnNbn.getRegistrarCode().toString());
+        if (urnNbn.isActive()) {
+            URI digitalInstance = getAvailableActiveDigitalInstanceOrNull(urnNbn.getDigDocId(), null, referer);
+            if (digitalInstance != null) {
+                // redirect to DI
+                return Response.seeOther(digitalInstance).build();
+            }
+        }
+        // otherwise redirect to web client
+        return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
+    }
+
+    private Response metadataResponse(String urnNbnString, ResponseFormat format, boolean withDigitalInstances) {
+        try {
+            UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
+            switch (urnNbnWithState.getStatus()) {
+            case ACTIVE:
+                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                if (doc == null) {
+                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                } else {
+                    return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
+                }
+            case DEACTIVATED:
+                throw new UrnNbnDeactivated(format, urnNbnWithState.getUrn());
+            case FREE:
+                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+            default:
+                throw new RuntimeException();
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    private UrnNbnWithStatus parse(String urnNbnString, ResponseFormat format) {
+        UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
+        return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(), urnNbnParsed.getDocumentCode(), true);
+    }
+
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
+        switch (format) {
+        case XML: {
+            String xml = digitalDocumentsXmlBuilder(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+            return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+        }
+        case JSON: {
+            // TODO: implement json version
+            throw new JsonVersionNotImplementedError(format);
+        }
+        default:
+            throw new RuntimeException();
+        }
+    }
+
 }

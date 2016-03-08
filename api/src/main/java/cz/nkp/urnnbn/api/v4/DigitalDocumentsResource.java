@@ -15,6 +15,8 @@
 package cz.nkp.urnnbn.api.v4;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,6 +52,8 @@ import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollision;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
+import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
+import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivated;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
@@ -72,7 +76,7 @@ import cz.nkp.urnnbn.xml.apiv4.builders.DigitalDocumentsBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv4.unmarshallers.RecordImportUnmarshaller;
 
-public class DigitalDocumentsResource extends ApiV4Resource {
+public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     private static final Logger LOGGER = Logger.getLogger(DigitalDocumentsResource.class.getName());
 
@@ -82,20 +86,167 @@ public class DigitalDocumentsResource extends ApiV4Resource {
         this.registrar = registrar;
     }
 
-    @Path("registrarScopeIdentifier/{idType}/{idValue}")
-    public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
-        ResponseFormat format = ResponseFormat.XML;// TODO: parse format, support xml and json
+    @Path("registrarScopeIdentifier/{idType}/{idValue}/digitalInstances")
+    public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
         try {
-            LOGGER.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
-                    idValueStr, registrar.getCode() });
-            DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
-            UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
-            return new DigitalDocumentResource(digitalDocument, urn);
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+            UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
+                    true);
+            switch (withStatus.getStatus()) {
+            case DEACTIVATED:
+            case ACTIVE:
+                return new DigitalInstancesResource(digitalDocument);
+            case FREE:
+                throw new UnknownUrnException(format, urnNbn);
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, urnNbn);
+            default:
+                throw new RuntimeException();
+            }
         } catch (WebApplicationException e) {
             throw e;
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(format, e);
+        }
+    }
+
+    @Path("registrarScopeIdentifier/{idType}/{idValue}/registrarScopeIdentifiers")
+    public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
+        if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+            throw new JsonVersionNotImplementedError(format);
+        }
+        try {
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+            UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
+                    true);
+            switch (withStatus.getStatus()) {
+            case DEACTIVATED:
+            case ACTIVE:
+                return new RegistrarScopeIdentifiersResource(digitalDocument);
+            case FREE:
+                throw new UnknownUrnException(format, urnNbn);
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, urnNbn);
+            default:
+                throw new RuntimeException();
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    @GET
+    @Path("registrarScopeIdentifier/{idType}/{idValue}")
+    public Response getDigitalDocumentResource(@Context HttpServletRequest context, @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr,
+            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
+        if (formatStr == null) {
+            // allways redirect somwehere
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
+            UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+            return redirectionResponse(context, urn);
+        } else {
+            // show data
+            ResponseFormat format = formatStr == null ? ResponseFormat.XML : Parser.parseFormat(formatStr);
+            if (format == ResponseFormat.JSON) { // TODO: remove when implemented
+                throw new JsonVersionNotImplementedError(format);
+            }
+            boolean withDigitalInstances = Parser.parseBooleanQueryParamDefaultIfNullOrEmpty(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST,
+                    true);
+            DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
+            UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
+            return metadataResponse(urn, format, withDigitalInstances);
+        }
+    }
+
+    private Response redirectionResponse(HttpServletRequest context, UrnNbn urnNbnParsed) {
+        try {
+            try {
+                UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
+                        urnNbnParsed.getDocumentCode(), true);
+                switch (fetched.getStatus()) {
+                case ACTIVE:
+                    return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
+                default:
+                    // redirect to web client
+                    return Response.seeOther(buildWebSearchUri(urnNbnParsed.toString())).build();
+                }
+            } catch (WebApplicationException e) {
+                // redirect to web client
+                return Response.seeOther(buildWebSearchUri(urnNbnParsed.toString())).build();
+            }
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(ResponseFormat.XML, e.getMessage());
+        }
+    }
+
+    private Response redirectionResponse(UrnNbn urnNbn, String referer) throws URISyntaxException {
+        if (urnNbn.isActive()) {
+            URI digitalInstance = getAvailableActiveDigitalInstanceOrNull(urnNbn.getDigDocId(), null, referer);
+            if (digitalInstance != null) {
+                // redirect to DI
+                return Response.seeOther(digitalInstance).build();
+            }
+        }
+        // otherwise redirect to web client
+        return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
+    }
+
+    private Response metadataResponse(UrnNbn urn, ResponseFormat format, boolean withDigitalInstances) {
+        try {
+            UrnNbnWithStatus urnNbnWithState = dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(),
+                    true);
+            switch (urnNbnWithState.getStatus()) {
+            case ACTIVE:
+                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                if (doc == null) {
+                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                } else {
+                    return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
+                }
+            case DEACTIVATED:
+                throw new UrnNbnDeactivated(format, urnNbnWithState.getUrn());
+            case FREE:
+                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+            default:
+                throw new RuntimeException();
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
+        switch (format) {
+        case XML: {
+            String xml = digitalDocumentsXmlBuilder(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+            return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+        }
+        case JSON: {
+            // TODO: implement json version
+            throw new JsonVersionNotImplementedError(format);
+        }
+        default:
+            throw new RuntimeException();
         }
     }
 

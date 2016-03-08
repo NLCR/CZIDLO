@@ -25,7 +25,7 @@ import cz.nkp.urnnbn.api.Utils;
 import cz.nkp.urnnbn.api.pojo.RsId;
 
 /**
- * Tests for DELETE /api/v4/resolver/${URN_NBN}/registrarScopeIdentifiers/${ID_TYPE_2}
+ * Tests for DELETE /api/v4/resolver/${URN_NBN}/registrarScopeIdentifiers/${ID_TYPE}
  *
  */
 public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {

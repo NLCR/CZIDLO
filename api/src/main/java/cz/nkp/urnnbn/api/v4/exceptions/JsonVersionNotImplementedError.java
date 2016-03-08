@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.api.v4.ResponseFormat;
 public class JsonVersionNotImplementedError extends ApiV4Exception {
 
     public JsonVersionNotImplementedError(ResponseFormat format) {
-        // TODO: zdokumentovat
+        //TODO: remove after all operations implemented
         super(format, Status.BAD_REQUEST, "NOT_IMPLEMENTED", "JSON version not implemented yet, try with format=xml");
     }
 

@@ -4,7 +4,6 @@ import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasXPath;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -29,223 +28,103 @@ public class ResolveByUrnNbn extends ApiV3Tests {
 
     private static final Logger LOGGER = Logger.getLogger(ResolveByUrnNbn.class.getName());
 
-    private String urnNbnActiveDiNone;
-    private String urnNbnActiveDiActive;
-    private String urnNbnActiveDiDeactivated;
+    private String urnNbnInvalid;
+    private String urnNbnFree;
+    private String urnNbnReserved;
+
     private String urnNbnDeactivatedDiNone;
-    private String urnNbnDeactivatedDiActive;
     private String urnNbnDeactivatedDiDeactivated;
-    private List<String> urnNbnList;
+    private String urnNbnDeactivatedDiActive;
+
+    private String urnNbnActiveDiNone;
+    private String urnNbnActiveDiDeactivated;
+    private String urnNbnActiveDiActive;
+
+    private List<String> urns;
 
     @BeforeClass
     public void beforeClass() {
         init();
+        urnNbnInvalid = Utils.getRandomItem(URNNBN_INVALID);
+        urnNbnFree = getRandomFreeUrnNbnOrNull(REGISTRAR);
+        urnNbnReserved = getReservedUrnNbn(REGISTRAR, USER);
+
         Long digLibId = getDigitalLibraryIdOrNull(REGISTRAR);
         Long diId = null;
-        // urn active, no di
-        urnNbnActiveDiNone = registerUrnNbn(REGISTRAR, USER);
-        // urn active di active
-        urnNbnActiveDiActive = registerUrnNbn(REGISTRAR, USER);
-        insertDigitalInstance(urnNbnActiveDiActive, digLibId, WORKING_URL, USER);
-        // urn active, di deactivated
-        urnNbnActiveDiDeactivated = registerUrnNbn(REGISTRAR, USER);
-        diId = insertDigitalInstance(urnNbnActiveDiDeactivated, digLibId, WORKING_URL, USER);
-        deactivateDigitalInstance(diId, USER);
-        // urn deactivated no di
+
+        // urn deactivated
         urnNbnDeactivatedDiNone = registerUrnNbn(REGISTRAR, USER);
         deactivateUrnNbn(urnNbnDeactivatedDiNone, USER);
-        // urn deactivated, di active
-        urnNbnDeactivatedDiActive = registerUrnNbn(REGISTRAR, USER);
-        insertDigitalInstance(urnNbnDeactivatedDiActive, digLibId, WORKING_URL, USER);
-        deactivateUrnNbn(urnNbnDeactivatedDiActive, USER);
-        // urn deactivated, di deactivated
         urnNbnDeactivatedDiDeactivated = registerUrnNbn(REGISTRAR, USER);
         diId = insertDigitalInstance(urnNbnDeactivatedDiDeactivated, digLibId, WORKING_URL, USER);
         deactivateDigitalInstance(diId, USER);
         deactivateUrnNbn(urnNbnDeactivatedDiDeactivated, USER);
-        // list
-        urnNbnList = new ArrayList<>();
-        urnNbnList.add(urnNbnActiveDiNone);
-        urnNbnList.add(urnNbnActiveDiActive);
-        urnNbnList.add(urnNbnActiveDiDeactivated);
-        urnNbnList.add(urnNbnDeactivatedDiNone);
-        urnNbnList.add(urnNbnDeactivatedDiActive);
-        urnNbnList.add(urnNbnDeactivatedDiDeactivated);
+        urnNbnDeactivatedDiActive = registerUrnNbn(REGISTRAR, USER);
+        insertDigitalInstance(urnNbnDeactivatedDiActive, digLibId, WORKING_URL, USER);
+        deactivateUrnNbn(urnNbnDeactivatedDiActive, USER);
+
+        // urnnbn active
+        urnNbnActiveDiNone = registerUrnNbn(REGISTRAR, USER);
+        urnNbnActiveDiDeactivated = registerUrnNbn(REGISTRAR, USER);
+        diId = insertDigitalInstance(urnNbnActiveDiDeactivated, digLibId, WORKING_URL, USER);
+        deactivateDigitalInstance(diId, USER);
+        urnNbnActiveDiActive = registerUrnNbn(REGISTRAR, USER);
+        insertDigitalInstance(urnNbnActiveDiActive, digLibId, WORKING_URL, USER);
+
+        urns = new ArrayList<String>();
+        urns.add("urnNbnInvalid");
+        urns.add("urnNbnFree");
+        urns.add("urnNbnReserved");
+        urns.add("urnNbnDeactivatedDiNone");
+        urns.add("urnNbnDeactivatedDiDeactivated");
+        urns.add("urnNbnDeactivatedDiActive");
+        urns.add("urnNbnActiveDiNone");
+        urns.add("urnNbnActiveDiDeactivated");
+        urns.add("urnNbnActiveDiActive");
     }
 
     private String buildUrl(String urnNbn) {
         return buildResolvationPath(urnNbn);
     }
 
-    @Test
-    public void wrongUrnNbnInvalid() {
-        String urnNbn = Utils.getRandomItem(URNNBN_INVALID);
-        if (urnNbn == null) {
-            LOGGER.warning("no invalid urn:nbn found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "INVALID_URN_NBN");
-        }
-    }
+    // format invalid and empty
 
     @Test
-    public void wrongUrnNbnStateFree() {
-        String urnNbn = getRandomFreeUrnNbnOrNull(REGISTRAR);
-        if (urnNbn == null) {
-            LOGGER.warning("no free urn:nbn found, ignoring");
-        } else {
+    public void formatEmpty() {
+        for (String urnNbn : urns) {
             LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(404)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            assertEquals("UNKNOWN_URN_NBN", xmlPath.getString("code"));
-        }
-    }
-
-    @Test
-    public void wrongUrnNbnReserved() {
-        String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
-        if (urnNbn == null) {
-            LOGGER.warning("no reserved urn:nbn found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
-                    .statusCode(404)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            assertEquals("UNKNOWN_DIGITAL_DOCUMENT", xmlPath.getString("code"));
-        }
-    }
-
-    @Test
-    public void wrongParamActionEmpty() {
-        String urnNbn = urnNbnActiveDiActive;
-        if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "")//
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                     .expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "ILLEGAL_FORMAT");
         }
     }
 
     @Test
-    public void wrongParamActionInvalidValue() {
-        String urnNbn = urnNbnActiveDiActive;
-        if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
-        } else {
+    public void formatInvalid() {
+        for (String urnNbn : urns) {
             LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "nonsense")//
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
                     .expect()//
                     .statusCode(400)//
                     .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "ILLEGAL_FORMAT");
         }
     }
 
+    // format not specified
+
     @Test
-    public void wrongParamFormatEmpty() {
-        String urnNbn = urnNbnActiveDiActive;
+    public void formatNotSpecifiedUrnbnInvalid() {
+        String urnNbn = urnNbnInvalid;
         if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
+            LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
-        }
-    }
-
-    @Test
-    public void wrongParamFormatInvalidValue() {
-        String urnNbn = urnNbnActiveDiActive;
-        if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "nonsense")//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
-        }
-    }
-
-    @Test
-    public void wrongParamDigitalInstancesEmpty() {
-        String urnNbn = urnNbnActiveDiActive;
-        if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("digitalInstances", "")//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
-        }
-    }
-
-    @Test
-    public void wrongParamDigitalInstancesInvalidValue() {
-        String urnNbn = urnNbnActiveDiActive;
-        if (urnNbn == null) {
-            LOGGER.warning("no active urn:nbn with active digital instance found, ignoring");
-        } else {
-            LOGGER.info(urnNbn);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("digitalInstances", "notBoolean")//
-                    .expect()//
-                    .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.get("code"), "INVALID_QUERY_PARAM_VALUE");
-        }
-    }
-
-    // action=show
-
-    /**
-     * Allways redirect to czidlo web, as if format=html.
-     */
-    @Test
-    public void actionShowFormatNotSpecified() {
-        for (String urnNbn : urnNbnList) {
-            LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("action", "show")//
+            String responseStr = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.HTML)//
@@ -254,14 +133,14 @@ public class ResolveByUrnNbn extends ApiV3Tests {
         }
     }
 
-    /**
-     * allways redirect to czidlo web
-     */
     @Test
-    public void actionShowFormatHtml() {
-        for (String urnNbn : urnNbnList) {
+    public void formatNotSpecifiedUrnbnFree() {
+        String urnNbn = urnNbnFree;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "html")//
+            String responseStr = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.HTML)//
@@ -270,234 +149,386 @@ public class ResolveByUrnNbn extends ApiV3Tests {
         }
     }
 
-    /**
-     * always return xml record
-     */
     @Test
-    public void actionShowFormatXml() {
-        // urn active id active
-        String urnNbn = urnNbnActiveDiActive;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn active id deactivated
-        urnNbn = urnNbnActiveDiDeactivated;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn active id none
-        urnNbn = urnNbnActiveDiNone;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
-
-        // urn deactivated di active
-        urnNbn = urnNbnDeactivatedDiActive;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn deactivated di deactivated
-        urnNbn = urnNbnDeactivatedDiDeactivated;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn deactivated di none
-        urnNbn = urnNbnDeactivatedDiNone;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
-    }
-
-    // action decide
-
-    /**
-     * Redirect to di url if urn:nbn is active and has active di. Otherwise redirect to czidlo web, as if format=html.
-     */
-    @Test
-    public void actionDecideFormatUnspecified() {
-        for (String urnNbn : urnNbnList) {
+    public void formatNotSpecifiedUrnbnReserved() {
+        String urnNbn = urnNbnReserved;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide")//
+            String responseStr = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.HTML)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            if (urnNbnActiveDiActive.equals(urnNbn)) {
-                assertThat(responseStr, not(containsString("<title>CZIDLO</title>")));
-            } else {
-                assertThat(responseStr, containsString("<title>CZIDLO</title>"));
-            }
+            assertThat(responseStr, containsString("<title>CZIDLO</title>"));
         }
     }
 
-    /**
-     * Redirect to di url if urn:nbn is active and has active di. Otherwise redirect to czidlo web.
-     */
     @Test
-    public void actionDecideFormatHtml() {
-        for (String urnNbn : urnNbnList) {
+    public void formatNotSpecifiedUrnbnDeactivatedDiNone() {
+        String urnNbn = urnNbnDeactivatedDiNone;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "html")//
+            String responseStr = with().config(namespaceAwareXmlConfig())//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.HTML)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            if (urnNbnActiveDiActive.equals(urnNbn)) {
-                assertThat(responseStr, not(containsString("<title>CZIDLO</title>")));
-            } else {
-                assertThat(responseStr, containsString("<title>CZIDLO</title>"));
-            }
+            assertThat(responseStr, containsString("<title>CZIDLO</title>"));
         }
     }
 
-    /**
-     * Redirect to di url if urn:nbn is active and has active di. Otherwise show xml record.
-     */
     @Test
-    public void actionDecideFormatXml() {
-        // urn active id active
-        String urnNbn = urnNbnActiveDiActive;
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.HTML)//
-                .body(not(containsString("<title>CZIDLO</title>")))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-
-        // urn active id deactivated
-        urnNbn = urnNbnActiveDiDeactivated;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn active id none
-        urnNbn = urnNbnActiveDiNone;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
-
-        // urn deactivated di active
-        urnNbn = urnNbnDeactivatedDiActive;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn deactivated di deactivated
-        urnNbn = urnNbnDeactivatedDiDeactivated;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-
-        // urn deactivated di none
-        urnNbn = urnNbnDeactivatedDiNone;
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "decide").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn)).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
+    public void formatNotSpecifiedUrnbnDeactivatedDiDeactivated() {
+        String urnNbn = urnNbnDeactivatedDiDeactivated;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            assertThat(responseStr, containsString("<title>CZIDLO</title>"));
+        }
     }
 
     @Test
-    public void urnNbnCaseInsensitive() {
-        // lower case
-        String urnNbn = registerUrnNbn(REGISTRAR, USER);
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn.toLowerCase())).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(urnNbn, xmlPath.getString("urnNbn.value"));
+    public void formatNotSpecifiedUrnbnDeactivatedDiActive() {
+        String urnNbn = urnNbnDeactivatedDiActive;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig())//
+                    .expect()//
+                    .statusCode(200)//
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            assertThat(responseStr, containsString("<title>CZIDLO</title>"));
+        }
+    }
 
-        // upper case
-        urnNbn = registerUrnNbn(REGISTRAR, USER);
-        LOGGER.info(urnNbn);
-        responseXml = with().config(namespaceAwareXmlConfig()).queryParam("action", "show").queryParam("format", "xml")//
-                .expect()//
-                .statusCode(200)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
-                .when().get(buildUrl(urnNbn.toUpperCase())).andReturn().asString();
-        xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocument");
-        assertEquals(urnNbn, xmlPath.getString("urnNbn.value"));
+    // format=xml
+
+    @Test
+    public void formatXmlUrnbnInvalid() {
+        String urnNbn = urnNbnInvalid;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "INVALID_URN_NBN");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnFree() {
+        String urnNbn = urnNbnFree;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "UNKNOWN_URN_NBN");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnReserved() {
+        String urnNbn = urnNbnReserved;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(404)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "UNKNOWN_DIGITAL_DOCUMENT");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnDeactivatedDiNone() {
+        String urnNbn = urnNbnDeactivatedDiNone;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(403)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "URN_NBN_DEACTIVATED");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnDeactivatedDiDeactivated() {
+        String urnNbn = urnNbnDeactivatedDiDeactivated;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(403)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "URN_NBN_DEACTIVATED");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnDeactivatedDiActive() {
+        String urnNbn = urnNbnDeactivatedDiActive;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(403)//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            LOGGER.info(responseStr);
+            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "URN_NBN_DEACTIVATED");
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnActiveDiNone() {
+        String urnNbn = urnNbnActiveDiNone;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(200)//
+                    .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnActiveDiDeactivated() {
+        String urnNbn = urnNbnActiveDiDeactivated;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(200)//
+                    .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+            assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
+        }
+    }
+
+    @Test
+    public void formatXmlUrnbnActiveDiActive() {
+        String urnNbn = urnNbnActiveDiActive;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                    .expect()//
+                    .statusCode(200)//
+                    .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+            assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
+        }
+    }
+
+    // format=json
+
+    @Test
+    public void formatJsonUrnbnInvalid() {
+        String urnNbn = urnNbnInvalid;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "INVALID_URN_NBN");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnFree() {
+        String urnNbn = urnNbnFree;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "UNKNOWN_URN_NBN");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnReserved() {
+        String urnNbn = urnNbnReserved;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "UNKNOWN_DIGITAL_DOCUMENT");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnDeactivatedDiNone() {
+        String urnNbn = urnNbnDeactivatedDiNone;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnDeactivatedDiDeactivated() {
+        String urnNbn = urnNbnDeactivatedDiDeactivated;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnDeactivatedDiActive() {
+        String urnNbn = urnNbnDeactivatedDiActive;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnActiveDiNone() {
+        String urnNbn = urnNbnActiveDiNone;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            // assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnActiveDiDeactivated() {
+        String urnNbn = urnNbnActiveDiDeactivated;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+            // assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
+            // TODO: check data
+        }
+    }
+
+    @Test
+    public void formatJsonUrnbnActiveDiActive() {
+        String urnNbn = urnNbnActiveDiActive;
+        if (urnNbn == null) {
+            LOGGER.warning("no urn:nbn available, ignoring");
+        } else {
+            LOGGER.info(urnNbn);
+            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+                    .expect()//
+                    .statusCode(400)//
+                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                    .contentType(ContentType.JSON)//
+                    .when().get(buildUrl(urnNbn)).andReturn().asString();
+            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
+            // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
+            // assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
+            // TODO: check data
+        }
     }
 
 }

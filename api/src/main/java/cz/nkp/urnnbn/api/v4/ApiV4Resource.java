@@ -15,6 +15,8 @@
 package cz.nkp.urnnbn.api.v4;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,9 +39,9 @@ import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 
-public class ApiV4Resource extends Resource {
+public abstract class ApiV4Resource extends Resource {
 
-    static final String PARAM_FORMAT = "format";
+    protected static final String PARAM_FORMAT = "format";
 
     protected RegistrarScopeIdentifiersBuilder registrarScopeIdentifiersBuilder(long digDocId) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(digDocId);
@@ -82,6 +84,10 @@ public class ApiV4Resource extends Resource {
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException(format);
         }
+    }
+
+    protected URI buildWebSearchUri(String query) throws URISyntaxException {
+        return new URI(ApiModuleConfiguration.instanceOf().getWebSearchUrlPrefix() + query);
     }
 
 }
