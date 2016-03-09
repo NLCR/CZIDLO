@@ -214,14 +214,11 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
         insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
         // get rsId by type
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type));
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
@@ -233,14 +230,11 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         LOGGER.info(urnNbn + ", type: " + idToBeFetched.type);
         insertRegistrarScopeId(urnNbn, idToBeFetched, USER);
         // get rsId by type
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl(urnNbn, idToBeFetched.type));
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }

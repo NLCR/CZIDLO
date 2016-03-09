@@ -94,12 +94,11 @@ public class ResolveByUrnNbn extends ApiV3Tests {
     public void formatEmpty() {
         for (String urnNbn : urns) {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                     .expect()//
                     .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(urnNbn));
         }
     }
 
@@ -107,12 +106,11 @@ public class ResolveByUrnNbn extends ApiV3Tests {
     public void formatInvalid() {
         for (String urnNbn : urns) {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
                     .expect()//
                     .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .when().get(buildUrl(urnNbn)).andReturn().asString();
-            Assert.assertEquals(XmlPath.from(responseStr).getString("response.error.code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(urnNbn));
         }
     }
 

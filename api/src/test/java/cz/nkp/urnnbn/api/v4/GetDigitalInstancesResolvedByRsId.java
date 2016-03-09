@@ -213,14 +213,10 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         RsId rsId = new RsId(REGISTRAR, "type", "value");
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(rsId)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML).when().get(buildUrl(rsId));
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
@@ -231,14 +227,10 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         RsId rsId = new RsId(REGISTRAR, "type", "value");
         insertRegistrarScopeId(urnNbn, rsId, USER);
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(rsId)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML).when().get(buildUrl(rsId));
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
@@ -254,7 +246,7 @@ public class GetDigitalInstancesResolvedByRsId extends ApiV3Tests {
         LOGGER.info(urnNbn);
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 .when().get(buildUrl(rsId)).andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");

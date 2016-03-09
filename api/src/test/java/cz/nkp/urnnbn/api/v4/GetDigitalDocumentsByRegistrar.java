@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertThat;
@@ -85,11 +86,8 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
                     .expect() //
                     .statusCode(200) //
                     .contentType(ContentType.JSON)//
-                    // .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
                     .when().get(buildUrl(registrarCode)).andReturn().asString();
-            // TODO: check data
-            // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalDocuments");
-            // assertThat(xmlPath.getInt("@count"), greaterThanOrEqualTo(0));
+            assertThat(from(responseJson).getInt("digitalDocuments.count"), greaterThanOrEqualTo(0));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -116,14 +114,10 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         String registrarCode = getRandomExistingRegistrarCode();
         if (registrarCode != null) {
             LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                     .expect() //
                     .statusCode(400) //
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(registrarCode)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML).when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }
@@ -134,14 +128,10 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
         String registrarCode = getRandomExistingRegistrarCode();
         if (registrarCode != null) {
             LOGGER.info("registrar code: " + registrarCode);
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
                     .expect() //
                     .statusCode(400) //
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString)) //
-                    .body(hasXPath("/c:response/c:error", nsContext))//
-                    .when().get(buildUrl(registrarCode)).andReturn().asString();
-            XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-            Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML).when().get(buildUrl(registrarCode));
         } else {
             LOGGER.warning("no registrars available");
         }

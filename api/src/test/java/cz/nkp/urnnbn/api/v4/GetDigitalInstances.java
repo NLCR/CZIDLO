@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -67,26 +66,20 @@ public class GetDigitalInstances extends ApiV3Tests {
 
     @Test
     public void okFormatEmpty() {
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "") //
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl()).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl());
     }
 
     @Test
     public void okFormatInvalid() {
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf") //
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl()).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl());
     }
 
 }

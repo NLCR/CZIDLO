@@ -168,14 +168,11 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
         LOGGER.info(idForResolvation.toString());
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl(idForResolvation));
     }
 
     @Test
@@ -183,14 +180,11 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         RsId idForResolvation = new RsId(REGISTRAR, "type1", "value1");
         LOGGER.info(idForResolvation.toString());
         insertRegistrarScopeId(urnNbn, idForResolvation, USER);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+        with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
                 .expect()//
                 .statusCode(400)//
-                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        Assert.assertEquals(xmlPath.getString("code"), "ILLEGAL_FORMAT");
+                .contentType(ContentType.HTML)//
+                .when().get(buildUrl(idForResolvation));
     }
 
     @Test

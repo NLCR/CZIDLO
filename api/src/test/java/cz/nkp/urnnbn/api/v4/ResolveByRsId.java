@@ -321,12 +321,11 @@ public class ResolveByRsId extends ApiV3Tests {
     public void formatInvalid() {
         for (RsId id : ids) {
             LOGGER.info(id.toString());
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "pdf")//
                     .expect()//
                     .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .when().get(buildUrl(id)).andReturn().asString();
-            Assert.assertEquals(XmlPath.from(responseXml).get("response.error.code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(id));
         }
     }
 
@@ -334,12 +333,11 @@ public class ResolveByRsId extends ApiV3Tests {
     public void formatEmpty() {
         for (RsId id : ids) {
             LOGGER.info(id.toString());
-            String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
+            with().config(namespaceAwareXmlConfig()).queryParam("format", "")//
                     .expect()//
                     .statusCode(400)//
-                    .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                    .when().get(buildUrl(id)).andReturn().asString();
-            Assert.assertEquals(XmlPath.from(responseXml).get("response.error.code"), "ILLEGAL_FORMAT");
+                    .contentType(ContentType.HTML)//
+                    .when().get(buildUrl(id));
         }
     }
 
