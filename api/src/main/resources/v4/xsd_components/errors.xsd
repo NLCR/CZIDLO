@@ -48,7 +48,6 @@
             <xs:enumeration value="URN_NBN_DEACTIVATED" />
             <xs:enumeration value="INCORRECT_URN_NBN_STATE" />
             <xs:enumeration value="INTERNAL_ERROR" />
-            <xs:enumeration value="NOT_IMPLEMENTED" />
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>
