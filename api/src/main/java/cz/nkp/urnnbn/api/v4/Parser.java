@@ -128,7 +128,7 @@ public class Parser {
         try {
             return ResponseFormat.valueOf(formatStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalFormatException(ResponseFormat.XML, formatStr);
+            throw new IllegalFormatException(formatStr);
         }
     }
 }
