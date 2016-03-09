@@ -16,15 +16,15 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class InvalidDataException extends ApiV4Exception {
 
-    public InvalidDataException(Format format, String message) {
+    public InvalidDataException(ResponseFormat format, String message) {
         super(format, Status.BAD_REQUEST, "INVALID_DATA", message);
     }
 
-    public InvalidDataException(Format format, Exception ex) {
+    public InvalidDataException(ResponseFormat format, Exception ex) {
         super(format, Status.BAD_REQUEST, "INVALID_DATA", ex.getMessage());
     }
 }

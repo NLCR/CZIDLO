@@ -16,11 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class JsonVersionNotImplementedException extends ApiV4Exception {
 
-    public JsonVersionNotImplementedException(Format format) {
+    public JsonVersionNotImplementedException(ResponseFormat format) {
         // TODO: remove after all operations implemented
         super(format, Status.BAD_REQUEST, "NOT_IMPLEMENTED", "JSON version not implemented yet, try with format=xml");
     }

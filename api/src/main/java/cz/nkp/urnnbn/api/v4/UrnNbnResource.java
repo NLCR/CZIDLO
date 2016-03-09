@@ -49,7 +49,7 @@ public class UrnNbnResource extends ApiV4Resource {
     @GET
     @Path("{urnNbn}")
     public Response getUrnNbn(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr, @PathParam("urnNbn") String urnNbnString) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
@@ -77,7 +77,8 @@ public class UrnNbnResource extends ApiV4Resource {
     @Produces("text/xml")
     public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString,
             @QueryParam(PARAM_DEACTIVATION_NOTE) String note) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             UrnNbn urnNbn = Parser.parseUrn(format, urnNbnString);

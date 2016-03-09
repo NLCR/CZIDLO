@@ -62,8 +62,8 @@ public class DigitalInstanceResource extends ApiV4Resource {
     }
 
     @GET
-    public Response getDigitalInstanceXmlRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        Format format = Parser.parseFormat(formatStr);
+    public Response getDigitalInstance(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
             case XML: {
@@ -128,7 +128,8 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String deactivateDigitalInstance(@Context HttpServletRequest req) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -141,7 +142,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private String deactivateDigitalInstanceReturnXml(Format format, String login) {
+    private String deactivateDigitalInstanceReturnXml(ResponseFormat format, String login) {
         DigitalInstance found = dataAccessService().digInstanceByInternalId(instance.getId());
         if (!found.isActive()) {
             throw new DigitalInstanceAlreadyDeactivatedException(format, instance);
@@ -153,7 +154,7 @@ public class DigitalInstanceResource extends ApiV4Resource {
         }
     }
 
-    private void deactivateDigitalInstanceWithServiceExceptionTranslation(Format format, String login) {
+    private void deactivateDigitalInstanceWithServiceExceptionTranslation(ResponseFormat format, String login) {
         try {
             dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {

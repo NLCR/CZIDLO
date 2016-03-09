@@ -50,7 +50,7 @@ public class RegistrarsResource extends ApiV4Resource {
     @Path("{registrarCode}")
     public RegistrarResource getRegistrarResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("registrarCode") String registrarCodeStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             Registrar registrar = registrarFromRegistarCode(format, registrarCodeStr);
             return new RegistrarResource(registrar);
@@ -62,7 +62,7 @@ public class RegistrarsResource extends ApiV4Resource {
         }
     }
 
-    private Registrar registrarFromRegistarCode(Format format, String registrarCodeStr) {
+    private Registrar registrarFromRegistarCode(ResponseFormat format, String registrarCodeStr) {
         RegistrarCode registrarCode = Parser.parseRegistrarCode(format, registrarCodeStr);
         Registrar registrar = dataAccessService().registrarByCode(registrarCode);
         if (registrar == null) {
@@ -76,7 +76,7 @@ public class RegistrarsResource extends ApiV4Resource {
     public Response getRegistrars(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("false") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
             @DefaultValue("false") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         boolean addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
         boolean addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
         try {

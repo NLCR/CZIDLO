@@ -72,8 +72,9 @@ public class DigitalInstancesResource extends ApiV4Resource {
     }
 
     @Path("id/{digInstId}")
-    public DigitalInstanceResource getDigitalInstanceResource(@PathParam("digInstId") String digInstIdStr) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+    public DigitalInstanceResource getDigitalInstanceResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+            @PathParam("digInstId") String digInstIdStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             long id = Parser.parseDigInstId(format, digInstIdStr);
             DigitalInstance digitalInstance = getDigitalInstance(format, id);
@@ -86,7 +87,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private DigitalInstance getDigitalInstance(Format format, long digitalInstanceId) {
+    private DigitalInstance getDigitalInstance(ResponseFormat format, long digitalInstanceId) {
         DigitalInstance instance = dataAccessService().digInstanceByInternalId(digitalInstanceId);
         if (instance == null) {
             throw new UnknownDigitalInstanceException(format, digitalInstanceId);
@@ -97,7 +98,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
 
     @GET
     public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
             case XML: {
@@ -161,7 +162,8 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             if (digDoc == null) {
@@ -191,7 +193,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         return result;
     }
 
-    private String addNewDigitalInstanceWithXmlResponse(Format format, DigitalInstance digitalInstance, String login) {
+    private String addNewDigitalInstanceWithXmlResponse(ResponseFormat format, DigitalInstance digitalInstance, String login) {
         try {
             Parser.parseUrl(format, digitalInstance.getUrl());
             checkNoOtherDigInstInSameLibraryPresent(format, digitalInstance);
@@ -213,7 +215,7 @@ public class DigitalInstancesResource extends ApiV4Resource {
         }
     }
 
-    private void checkNoOtherDigInstInSameLibraryPresent(Format format, DigitalInstance digInstFromClient) {
+    private void checkNoOtherDigInstInSameLibraryPresent(ResponseFormat format, DigitalInstance digInstFromClient) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digInstFromClient.getDigDocId());
         for (DigitalInstance instance : instances) {
             if (instance.isActive() && instance.getLibraryId().equals(digInstFromClient.getLibraryId())) {

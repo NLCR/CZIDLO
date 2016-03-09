@@ -16,12 +16,12 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 
 public class NotDefinedException extends ApiV4Exception {
 
-    public NotDefinedException(Format format, RegistrarScopeIdType idType) {
+    public NotDefinedException(ResponseFormat format, RegistrarScopeIdType idType) {
         super(format, Status.NOT_FOUND, "NOT_DEFINED", "No value defined for identifier of type '" + idType.toString() + "'");
     }
 }

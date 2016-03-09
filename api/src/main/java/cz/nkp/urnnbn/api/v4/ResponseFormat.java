@@ -1,5 +1,5 @@
 package cz.nkp.urnnbn.api.v4;
 
-public enum Format {
+public enum ResponseFormat {
     XML, JSON;
 }

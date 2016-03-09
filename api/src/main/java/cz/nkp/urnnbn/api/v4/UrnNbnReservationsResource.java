@@ -54,7 +54,7 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
 
     @GET
     public Response getUrnNbnReservations(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             int maxBatchSize = urnReservationService().getMaxBatchSize();
             List<UrnNbn> reservedUrnNbnList = urnReservationService().getReservedUrnNbnList(registrar.getId());
@@ -101,7 +101,8 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @POST
     @Produces("application/xml")
     public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             int size = sizeStr != null ? Parser.parseIntQueryParam(format, sizeStr, PARAM_SIZE, 1, ApiModuleConfiguration.instanceOf()

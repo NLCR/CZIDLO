@@ -64,7 +64,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
     @GET
     public Response getRegistrarScopeIdentifiers(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
             case XML:
@@ -88,7 +88,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     public Response getRegistrarScopeIdentifierValue(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         try {
             switch (format) {
@@ -109,7 +109,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier findRsid(Format format, RegistrarScopeIdType idType) {
+    private RegistrarScopeIdentifier findRsid(ResponseFormat format, RegistrarScopeIdType idType) {
         List<RegistrarScopeIdentifier> identifiers = dataAccessService().registrarScopeIdentifiers(doc.getId());
         for (RegistrarScopeIdentifier id : identifiers) {
             if (id.getType().equals(idType)) {
@@ -123,7 +123,8 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String idValueStr) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -155,7 +156,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier addNewIdentifier(Format format, RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
+    private RegistrarScopeIdentifier addNewIdentifier(ResponseFormat format, RegistrarScopeIdType type, RegistrarScopeIdValue value, String login) {
         try {
             RegistrarScopeIdentifier newId = identifierInstance(type, value);
             dataImportService().addRegistrarScopeIdentifier(newId, login);
@@ -176,7 +177,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private RegistrarScopeIdentifier updateIdentifier(Format format, String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
+    private RegistrarScopeIdentifier updateIdentifier(ResponseFormat format, String login, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
         try {
             RegistrarScopeIdentifier id = identifierInstance(type, value);
             dataUpdateService().updateRegistrarScopeIdentifier(login, id);
@@ -210,7 +211,8 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -223,7 +225,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteRegistrarScopeIdentifierWithXmlResponse(Format format, String login, String idTypeStr) {
+    private String deleteRegistrarScopeIdentifierWithXmlResponse(ResponseFormat format, String login, String idTypeStr) {
         try {
             // builder before deleted
             RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
@@ -249,7 +251,8 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String removeAllIdentifiers(@Context HttpServletRequest req) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -262,7 +265,7 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         }
     }
 
-    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(Format format, String login) {
+    private String deleteAllRegistrarScopeIdentifiersWithXmlResponse(ResponseFormat format, String login) {
         try {
             // builder before deleted
             RegistrarScopeIdentifiersBuilder builder = registrarScopeIdentifiersBuilderXml(doc.getId());

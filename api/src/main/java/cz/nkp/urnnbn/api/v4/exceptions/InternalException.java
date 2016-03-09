@@ -19,15 +19,15 @@ import java.io.StringWriter;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class InternalException extends ApiV4Exception {
 
-    public InternalException(Format format, String errorMessage) {
+    public InternalException(ResponseFormat format, String errorMessage) {
         super(format, Status.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", errorMessage);
     }
 
-    public InternalException(Format format, Throwable e) {
+    public InternalException(ResponseFormat format, Throwable e) {
         super(format, Status.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", buildMessage(e));
         e.printStackTrace();
     }

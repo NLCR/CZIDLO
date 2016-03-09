@@ -16,11 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class InvalidDigInstanceIdException extends ApiV4Exception {
 
-    public InvalidDigInstanceIdException(Format format, String id, String message) {
+    public InvalidDigInstanceIdException(ResponseFormat format, String id, String message) {
         super(format, Status.BAD_REQUEST, "INVALID_DIGITAL_INSTANCE_ID", "Incorrect syntax in '" + id + "': " + message);
     }
 }

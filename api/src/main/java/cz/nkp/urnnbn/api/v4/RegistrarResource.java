@@ -56,7 +56,7 @@ public class RegistrarResource extends ApiV4Resource {
     public Response getRegistrar(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("true") @QueryParam(PARAM_DIGITAL_LIBRARIES) String addDigLibsStr,
             @DefaultValue("true") @QueryParam(PARAM_CATALOGS) String addCatalogsStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         boolean addDigitalLibraries = Parser.parseBooleanQueryParam(format, addDigLibsStr, PARAM_DIGITAL_LIBRARIES);
         boolean addCatalogs = Parser.parseBooleanQueryParam(format, addCatalogsStr, PARAM_CATALOGS);
         try {

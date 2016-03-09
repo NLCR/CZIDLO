@@ -113,7 +113,7 @@ public abstract class AbstractDigitalDocumentResource extends ApiV4Resource {
         return IntelectualEntityBuilderJson.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
     }
 
-    protected URI getAvailableActiveDigitalInstanceOrNull(Long digDocId, Format format, String refererUrl) throws URISyntaxException {
+    protected URI getAvailableActiveDigitalInstanceOrNull(Long digDocId, ResponseFormat format, String refererUrl) throws URISyntaxException {
         List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(digDocId);
         DigitalInstance instanceByReferer = getDigitalInstanceByRefererOrNull(allDigitalInstanceds, refererUrl);
         // LOGGER.info("by referer:" + instanceByReferer);

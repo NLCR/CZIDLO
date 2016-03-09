@@ -100,7 +100,7 @@ public abstract class ApiV4Resource extends Resource {
         return new CatalogsBuilderJson(catalogs);
     }
 
-    protected Document validDocumentFromString(Format format, String content, String schema) {
+    protected Document validDocumentFromString(ResponseFormat format, String content, String schema) {
         try {
             return XOMUtils.loadDocumentValidByExternalXsd(content, schema);
         } catch (ValidityException ex) {
@@ -112,7 +112,7 @@ public abstract class ApiV4Resource extends Resource {
         }
     }
 
-    protected final void checkServerNotReadOnly(Format format) {
+    protected final void checkServerNotReadOnly(ResponseFormat format) {
         if (ApiModuleConfiguration.instanceOf().isServerReadOnly()) {
             throw new MethodForbiddenException(format);
         }

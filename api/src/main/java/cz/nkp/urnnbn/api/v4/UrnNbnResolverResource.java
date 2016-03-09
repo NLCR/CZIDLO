@@ -33,7 +33,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("urn") String urnNbnString) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
@@ -65,7 +65,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     @Path("{urn}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("urn") String urnNbnString) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
@@ -103,7 +103,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
             return redirectionResponse(context, urnNbnString);
         } else {
             // show data
-            Format format = Parser.parseFormat(formatStr);
+            ResponseFormat format = Parser.parseFormat(formatStr);
             boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             return metadataResponse(urnNbnString, format, withDigitalInstances);
         }
@@ -112,7 +112,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     private Response redirectionResponse(HttpServletRequest context, String urnNbnString) {
         try {
             try {
-                UrnNbn urnNbnParsed = Parser.parseUrn(Format.XML, urnNbnString);
+                UrnNbn urnNbnParsed = Parser.parseUrn(ResponseFormat.XML, urnNbnString);
                 UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                         urnNbnParsed.getDocumentCode(), true);
                 switch (fetched.getStatus()) {
@@ -128,7 +128,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
             }
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(Format.XML, e.getMessage());
+            throw new InternalException(ResponseFormat.XML, e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
     }
 
-    private Response metadataResponse(String urnNbnString, Format format, boolean withDigitalInstances) {
+    private Response metadataResponse(String urnNbnString, ResponseFormat format, boolean withDigitalInstances) {
         try {
             UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
@@ -174,12 +174,12 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private UrnNbnWithStatus parse(String urnNbnString, Format format) {
+    private UrnNbnWithStatus parse(String urnNbnString, ResponseFormat format) {
         UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
         return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(), urnNbnParsed.getDocumentCode(), true);
     }
 
-    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, Format format, boolean withDigitalInstances) {
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
         switch (format) {
         case XML: {
             String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();

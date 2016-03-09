@@ -46,7 +46,6 @@ import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
-import cz.nkp.urnnbn.api.v4.exceptions.JsonVersionNotImplementedException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
@@ -89,12 +88,9 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Path("registrarScopeIdentifier/{idType}/{idValue}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
-        Format format = Parser.parseFormat(formatStr);
-        if (format == Format.JSON) { // TODO: remove when implemented
-            throw new JsonVersionNotImplementedException(format);
-        }
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
-            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
             UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
@@ -120,9 +116,9 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Path("registrarScopeIdentifier/{idType}/{idValue}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
-            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
             UrnNbn urnNbn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             UrnNbnWithStatus withStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(),
                     true);
@@ -152,12 +148,12 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
             // allways redirect somwehere
-            DigitalDocument digitalDocument = getDigitalDocument(Format.XML, idTypeStr, idValueStr);
+            DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return redirectionResponse(context, urn);
         } else {
             // show data
-            Format format = formatStr == null ? Format.XML : Parser.parseFormat(formatStr);
+            ResponseFormat format = formatStr == null ? ResponseFormat.XML : Parser.parseFormat(formatStr);
             boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             DigitalDocument digitalDocument = getDigitalDocument(format, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
@@ -183,7 +179,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             }
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(Format.XML, e.getMessage());
+            throw new InternalException(ResponseFormat.XML, e.getMessage());
         }
     }
 
@@ -199,7 +195,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
     }
 
-    private Response metadataResponse(UrnNbn urn, Format format, boolean withDigitalInstances) {
+    private Response metadataResponse(UrnNbn urn, ResponseFormat format, boolean withDigitalInstances) {
         try {
             UrnNbnWithStatus urnNbnWithState = dataAccessService().urnByRegistrarCodeAndDocumentCode(urn.getRegistrarCode(), urn.getDocumentCode(),
                     true);
@@ -228,7 +224,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, Format format, boolean withDigitalInstances) {
+    private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
         switch (format) {
         case XML:
             String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
@@ -241,7 +237,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private DigitalDocument getDigitalDocument(Format format, String idTypeStr, String idValueStr) {
+    private DigitalDocument getDigitalDocument(ResponseFormat format, String idTypeStr, String idValueStr) {
         RegistrarScopeIdType type = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         RegistrarScopeIdValue value = Parser.parseRegistrarScopeIdValue(format, idValueStr);
         RegistrarScopeIdentifier id = new RegistrarScopeIdentifier();
@@ -258,7 +254,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
 
     @GET
     public Response getDigitalDocumentsRecord(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
-        Format format = Parser.parseFormat(formatStr);
+        ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
             case XML:
@@ -292,7 +288,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
-        Format format = Format.XML;// TODO: parse format, support xml and json
+        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
+        ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
             String login = req.getRemoteUser();
@@ -310,13 +307,13 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private String registerDigitalDocumentReturnXml(Format format, String content, String login, RegistrarCode registrarCode)
+    private String registerDigitalDocumentReturnXml(ResponseFormat format, String content, String login, RegistrarCode registrarCode)
             throws ValidityException, IOException, ParsingException {
         Document doc = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
         return registerDigitalDocumentReturnXml(format, doc, login, registrarCode);
     }
 
-    private String registerDigitalDocumentReturnXml(Format format, Document doc, String login, RegistrarCode registrarCode) {
+    private String registerDigitalDocumentReturnXml(ResponseFormat format, Document doc, String login, RegistrarCode registrarCode) {
         try {
             DigDocRegistrationData registrationData = digDocRegistrationDataFromDoc(doc);
             UrnNbn urnInData = registrationData.getUrn();

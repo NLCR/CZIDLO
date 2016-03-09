@@ -16,12 +16,12 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 public class UnknownUrnException extends ApiV4Exception {
 
-    public UnknownUrnException(Format format, UrnNbn urnNbn) {
+    public UnknownUrnException(ResponseFormat format, UrnNbn urnNbn) {
         super(format, Status.NOT_FOUND, "UNKNOWN_URN_NBN", String.format("%s has not been assigned yet", urnNbn.toString()));
     }
 }

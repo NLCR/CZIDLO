@@ -16,7 +16,7 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
@@ -26,15 +26,16 @@ public class UnknownDigitalDocumentException extends ApiV4Exception {
 
     private static final String errorCode = "UNKNOWN_DIGITAL_DOCUMENT";
 
-    public UnknownDigitalDocumentException(Format format, UrnNbn urn) {
+    public UnknownDigitalDocumentException(ResponseFormat format, UrnNbn urn) {
         super(format, Status.NOT_FOUND, errorCode, "There is no digital document with urn '" + urn + "'");
     }
 
-    public UnknownDigitalDocumentException(Format format, long digDocId) {
+    public UnknownDigitalDocumentException(ResponseFormat format, long digDocId) {
         super(format, Status.NOT_FOUND, errorCode, "There is no digital document with internal id '" + digDocId + "'");
     }
 
-    public UnknownDigitalDocumentException(Format format, RegistrarCode registrarCode, RegistrarScopeIdType idType, RegistrarScopeIdValue idValue) {
+    public UnknownDigitalDocumentException(ResponseFormat format, RegistrarCode registrarCode, RegistrarScopeIdType idType,
+            RegistrarScopeIdValue idValue) {
         super(format, Status.NOT_FOUND, errorCode, String.format(
                 "Registrar with code '%s' doesn't register digital document with identifier of type '%s' with value '%s'",//
                 registrarCode, idType.toString(), idValue.toString()));

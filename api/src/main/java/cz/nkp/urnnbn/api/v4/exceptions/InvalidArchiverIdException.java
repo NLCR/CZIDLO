@@ -16,11 +16,11 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class InvalidArchiverIdException extends ApiV4Exception {
 
-    public InvalidArchiverIdException(Format format, String errorMessage) {
+    public InvalidArchiverIdException(ResponseFormat format, String errorMessage) {
         super(format, Status.BAD_REQUEST, "INVALID_ARCHIVER_ID", errorMessage);
     }
 }

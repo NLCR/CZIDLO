@@ -16,15 +16,15 @@ package cz.nkp.urnnbn.api.v4.exceptions;
 
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.Format;
+import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class UnknownDigitalInstanceException extends ApiV4Exception {
 
-    public UnknownDigitalInstanceException(Format format, long id) {
+    public UnknownDigitalInstanceException(ResponseFormat format, long id) {
         super(format, Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No such digital instance with id " + id);
     }
 
-    public UnknownDigitalInstanceException(Format format) {
+    public UnknownDigitalInstanceException(ResponseFormat format) {
         super(format, Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No active digital instance found");
     }
 }
