@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +15,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -230,9 +232,9 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:digitalInstances", nsContext))//
                 .when().get(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstances");
-        // assertEquals(2, xmlPath.getInt("@count"));
-        // assertEquals(2, xmlPath.getInt("digitalInstance.size()"));
+        JsonPath path = from(responseJson).setRoot("digitalInstances");
+        assertEquals(2, path.getInt("size()"));
+        // TODO: check remaining data
         // // deactivated
         // assertEquals(false, Utils.booleanValue(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.@active", diDeactivated))));
         // DateTime deactivatedCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created",
@@ -245,7 +247,7 @@ public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
         // DateTime activeCreated = DateTime.parse(xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.created", diActive)));
         // assertEquals("", xmlPath.getString(String.format("digitalInstance.find{it.@id=='%s'}.deactivated", diActive)));
         // assertTrue(activeCreated.isAfter(deactivatedDeactivated));
-        // TODO: check data
+
     }
 
 }

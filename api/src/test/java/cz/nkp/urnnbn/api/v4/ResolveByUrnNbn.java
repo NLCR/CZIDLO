@@ -17,6 +17,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -381,8 +382,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
                     .statusCode(400)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "INVALID_URN_NBN");
-            // TODO: check data
+            Assert.assertEquals(from(responseStr).getString("error.code"), "INVALID_URN_NBN");
         }
     }
 
@@ -473,15 +473,13 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
                     .statusCode(200)//
-                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-            // assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
-            // TODO: check data
+            JsonPath path = from(responseJson).setRoot("digitalDocument");
+            assertEquals(0, path.getInt("digitalInstances.size()"));
         }
     }
 
@@ -492,16 +490,14 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
                     .statusCode(200)//
-                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-            // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-            // assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-            // TODO: check data
+            JsonPath path = from(responseJson).setRoot("digitalDocument");
+            assertEquals(1, path.getInt("digitalInstances.size()"));
+            assertEquals(false, Utils.booleanValue(path.getString("digitalInstances[0].active")));
         }
     }
 
@@ -515,13 +511,11 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
                     .statusCode(200)//
-                    // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-            // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-            // assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-            // TODO: check data
+            JsonPath path = from(responseStr).setRoot("digitalDocument");
+            assertEquals(1, path.getInt("digitalInstances.size()"));
+            assertEquals(true, Utils.booleanValue(path.getString("digitalInstances[0].active")));
         }
     }
 

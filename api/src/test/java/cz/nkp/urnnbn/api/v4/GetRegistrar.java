@@ -2,8 +2,11 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.logging.Logger;
 
@@ -12,6 +15,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -260,19 +264,19 @@ public class GetRegistrar extends ApiV3Tests {
         String registrarCode = getRandomExistingRegistrarCode();
         if (registrarCode != null) {
             LOGGER.info(String.format("registrar code: %s", registrarCode));
-            with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
+            String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
                     .queryParam("format", "json")//
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.JSON)//
-                    // .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
-                    // .body(hasXPath("//c:digitalLibraries", nsContext))//
-                    // .body(hasXPath("//c:catalobs", nsContext))//
-                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESOLVER']", nsContext))//
-                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_REGISTRAR']", nsContext))//
-                    // .body(hasXPath("/c:response/c:registrar/c:registrationModes/c:mode[@name='BY_RESERVATION']", nsContext))//
-                    .when().get(buildUrl(registrarCode));
-            // TODO: check data
+                    .when().get(buildUrl(registrarCode)).andReturn().asString();
+            JsonPath path = from(responseJson).setRoot("registrar");
+            assertEquals(registrarCode, path.getString("code"));
+            assertNotNull(path.getString("digitalLibraries"));
+            assertNotNull(path.getString("catalogs"));
+            Utils.booleanValue(path.getString("registrationModes.BY_RESOLVER"));
+            Utils.booleanValue(path.getString("registrationModes.BY_REGISTRAR"));
+            Utils.booleanValue(path.getString("registrationModes.BY_RESERVATION"));
         } else {
             LOGGER.warning("no registrars available");
         }

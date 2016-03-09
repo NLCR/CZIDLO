@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -295,20 +297,16 @@ public class GetUrnnbn extends ApiV3Tests {
 
     @Test
     public void formatJson() {
-        String urnNbn = Utils.getRandomItem(URNNBN_VALID);
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().get(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
-        // assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value").toLowerCase());
-        // String[] urnSplit = Utils.splitUrnNbn(urnNbn);
-        // assertEquals(urnSplit[0], xmlPath.getString("countryCode").toLowerCase());
-        // assertEquals(urnSplit[1], xmlPath.getString("registrarCode").toLowerCase());
-        // assertEquals(urnSplit[2], xmlPath.getString("documentCode").toLowerCase());
-        // TODO: check data
+        JsonPath path = from(responseJson).setRoot("urnNbn");
+        assertEquals(urnNbn, path.getString("value"));
+        assertEquals("ACTIVE", path.getString("status"));
+        assertTrue(DateTime.parse(path.getString("registered")).isBeforeNow());
     }
 }

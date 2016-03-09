@@ -20,6 +20,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -272,47 +273,41 @@ public class ResolveByRsId extends ApiV3Tests {
     public void formatJsonDiNone() {
         RsId id = ddExistsDiNone;
         LOGGER.info(id.toString());
-        String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-        // assertEquals(0, xmlPath.getInt("digitalInstances.@count"));
-        // TODO: check data
+        JsonPath path = from(responseJson).setRoot("digitalDocument");
+        assertEquals(0, path.getInt("digitalInstances.size()"));
     }
 
     @Test
     public void formatJsonDdExistsDiDeactivated() {
         RsId id = ddExistsDiDeactivated;
         LOGGER.info(id.toString());
-        String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-        // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        // assertEquals(false, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-        // TODO: check data
+        JsonPath path = from(responseJson).setRoot("digitalDocument");
+        assertEquals(1, path.getInt("digitalInstances.size()"));
+        assertEquals(false, Utils.booleanValue(path.getString("digitalInstances[0].active")));
     }
 
     @Test
     public void formatJsonDdExistsDiActive() {
-        RsId id = ddExistsDiDeactivated;
+        RsId id = ddExistsDiActive;
         LOGGER.info(id.toString());
-        String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseStr).setRoot("response.digitalDocument");
-        // assertEquals(1, xmlPath.getInt("digitalInstances.@count"));
-        // assertEquals(true, Utils.booleanValue(xmlPath.getString("digitalInstances.digitalInstance[0].@active")));
-        // TODO: check data
+        JsonPath path = from(responseJson).setRoot("digitalDocument");
+        assertEquals(1, path.getInt("digitalInstances.size()"));
+        assertEquals(true, Utils.booleanValue(path.getString("digitalInstances[0].active")));
     }
 
     // format invalid and empty

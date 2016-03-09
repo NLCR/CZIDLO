@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
@@ -15,6 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -179,25 +181,18 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
-                // .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//
-                // .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved", nsContext))//
-                // .body(hasXPath("/c:response/c:urnNbnReservations/c:reserved/@totalSize", nsContext))//
                 .when().get(buildUrl(registrarCode)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbnReservations");
-        // // reservation size
-        // int maxReservationSize = xmlPath.getInt("maxReservationSize");
-        // int defaultReservationSize = xmlPath.getInt("defaultReservationSize");
-        // assertThat(maxReservationSize, greaterThanOrEqualTo(0));
-        // assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
+        JsonPath path = from(responseJson).setRoot("urnNbnReservations");
+        int maxReservationSize = path.getInt("maxReservationSize");
+        int defaultReservationSize = path.getInt("defaultReservationSize");
+        assertThat(maxReservationSize, greaterThanOrEqualTo(0));
+        assertThat(defaultReservationSize, lessThanOrEqualTo(maxReservationSize));
         // // reservations total/returned
-        // int reservedTotal = xmlPath.getInt("reserved.@totalSize");
-        // int reservedReturned = xmlPath.getInt("reserved.urnNbn.size()");
-        // assertThat(reservedReturned, greaterThanOrEqualTo(0));
-        // assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
-        // assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
-        // TODO: check data
-
+        int reservedTotal = path.getInt("reservedTotal");
+        int reservedReturned = path.getInt("reservations.size()");
+        assertThat(reservedReturned, greaterThanOrEqualTo(0));
+        assertThat(reservedTotal, greaterThanOrEqualTo(reservedReturned));
+        assertThat(reservedReturned, lessThanOrEqualTo(MAX_URN_NBN_RESERVATIONS_RETURNED));
     }
 
 }

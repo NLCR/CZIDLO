@@ -2,9 +2,11 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -256,13 +259,10 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(idForResolvation, idToBeFetched.type)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response");
-        // // check that only requested id found in response
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idToBeFetched.type + "\' }"), equalTo(idToBeFetched.value));
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), isEmptyOrNullString());
-        // TODO: check data
+        JsonPath path = from(responseJson).setRoot("id");
+        assertEquals(idToBeFetched.type, path.getString("type"));
+        assertEquals(idToBeFetched.value, path.getString("value"));
     }
 
 }

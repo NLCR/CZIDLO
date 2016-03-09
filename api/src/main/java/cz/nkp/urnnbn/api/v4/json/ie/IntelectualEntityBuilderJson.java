@@ -18,11 +18,6 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 
 public abstract class IntelectualEntityBuilderJson extends JsonBuilder {
 
-    @Override
-    protected String getName() {
-        return "todo:iebuilder";
-    }
-
     public static IntelectualEntityBuilderJson instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub,
             Originator originator, SourceDocument srcDoc) {
         EntityType entityType = entity.getEntityType();

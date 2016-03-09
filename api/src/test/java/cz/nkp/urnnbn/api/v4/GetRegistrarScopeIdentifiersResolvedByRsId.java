@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -200,14 +202,22 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(buildUrl(idForResolvation)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        // // check that ids found in response
-        // assertEquals(2, xmlPath.getInt("id.size()"));
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + idForResolvation.type + "\' }"), equalTo(idForResolvation.value));
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + other.type + "\' }"), equalTo(other.value));
-        // TODO: check data
+        JsonPath path = from(responseJson);
+        int size = path.getInt("size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                String type = path.getString(String.format("registrarScopeIdentifiers[%d].type", i));
+                String value = path.getString(String.format("registrarScopeIdentifiers[%d].value", i));
+                if (idForResolvation.type.equals(type)) {
+                    assertEquals(idForResolvation.value, value);
+                } else if (other.type.equals(type)) {
+                    assertEquals(other.value, value);
+                }
+            }
+        } else {
+            LOGGER.warning("no registrar-scope identifiers found");
+        }
     }
 
 }

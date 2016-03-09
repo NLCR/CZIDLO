@@ -2,8 +2,11 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
@@ -13,6 +16,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -242,27 +246,25 @@ public class GetRegistrars extends ApiV3Tests {
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:registrars", nsContext))//
                 .when().get(buildUrl()).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrars");
-        // int size = xmlPath.getInt("registrar.size()");
-        // if (size > 0) {
-        // for (int i = 0; i < size; i++) {
-        // assertTrue(DateTime.parse(xmlPath.getString(String.format("registrar[%d].created", i))).isBeforeNow());
-        // // digital libraries present
-        // assertEquals(1, xmlPath.getList(String.format("registrar[%d].digitalLibraries", i)).size());
-        // // all modes defined and have boolean values
-        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
-        // "BY_RESOLVER")));
-        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
-        // "BY_REGISTRAR")));
-        // Utils.booleanValue(xmlPath.getString(String.format("registrar[%d].registrationModes.mode.findAll{it.@name =='%s'}.@enabled", i,
-        // "BY_RESERVATION")));
-        // }
-        // } else {
-        // LOGGER.warning("no registrars found");
-        // }
-        // TODO: check data
+
+        JsonPath path = from(responseJson);
+        int size = path.getInt("size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                assertTrue(DateTime.parse(path.getString(String.format("registrars[%d].created", i))).isBeforeNow());
+                // digital libraries present
+                assertThat(path.getList(String.format("registrars[%d].digitalLibraries", i)).size(), greaterThanOrEqualTo(0));
+                // catalogs present
+                assertThat(path.getList(String.format("registrars[%d].catalogs", i)).size(), greaterThanOrEqualTo(0));
+                // registration modes
+                Utils.booleanValue(path.getString(String.format("registrars[%d].registrationModes.BY_RESOLVER", i)));
+                Utils.booleanValue(path.getString(String.format("registrars[%d].registrationModes.BY_REGISTRAR", i)));
+                Utils.booleanValue(path.getString(String.format("registrars[%d].registrationModes.BY_RESERVATION", i)));
+            }
+        } else {
+            LOGGER.warning("no registrars found");
+        }
     }
 
 }

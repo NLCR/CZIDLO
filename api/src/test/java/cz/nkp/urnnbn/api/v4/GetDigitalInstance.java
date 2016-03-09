@@ -2,9 +2,11 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -155,17 +158,14 @@ public class GetDigitalInstance extends ApiV3Tests {
                     .expect()//
                     .statusCode(200)//
                     .contentType(ContentType.JSON)//
-                    // .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
-                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary", nsContext))//
-                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary/c:registrar", nsContext))//
-                    // .body(hasXPath("/c:response/c:digitalInstance/c:digitalDocument", nsContext))//
                     .when().get(buildUrl(id)).andReturn().asString();
-            // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.digitalInstance");
-            // assertEquals(id.longValue(), xmlPath.getLong("@id"));
-            // assertEquals(true, Utils.booleanValue(xmlPath.getString("@active")));
-            // assertFalse("".equals(xmlPath.getString("url")));
-            // assertTrue(DateTime.parse(xmlPath.getString("created")).isBeforeNow());
-            // TODO: check data
+            JsonPath path = from(responseJson).setRoot("digitalInstance");
+            assertEquals(id.longValue(), path.getLong("id"));
+            assertEquals(true, Utils.booleanValue(path.getString("active")));
+            assertFalse("".equals(path.getString("url")));
+            assertNotNull(path.getString("digitalLibrary"));
+            assertNotNull(path.getString("digitalLibrary.registrar"));
+            assertNotNull(path.getString("digitalDocument"));
         } else {
             LOGGER.warning("id not defined, ignoring");
         }

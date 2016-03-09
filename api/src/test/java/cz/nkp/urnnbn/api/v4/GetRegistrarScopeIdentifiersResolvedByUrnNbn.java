@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
@@ -14,6 +15,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
@@ -227,18 +229,26 @@ public class GetRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests {
         insertRegistrarScopeId(urnNbn, rsId1, USER);
         insertRegistrarScopeId(urnNbn, rsId2, USER);
         LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+        String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
-                // .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.registrarScopeIdentifiers");
-        // // check that ids found in response
-        // assertEquals(2, xmlPath.getInt("id.size()"));
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + rsId1.type + "\' }"), equalTo(rsId1.value));
-        // assertThat(xmlPath.getString("id.find { it.@type == \'" + rsId2.type + "\' }"), equalTo(rsId2.value));
-        // TODO: check data
+        JsonPath path = from(responseJson);
+        int size = path.getInt("registrarScopeIdentifiers.size()");
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                String type = path.getString(String.format("registrarScopeIdentifiers[%d].type", i));
+                String value = path.getString(String.format("registrarScopeIdentifiers[%d].value", i));
+                if (rsId1.type.equals(type)) {
+                    assertEquals(rsId1.value, value);
+                } else if (rsId2.type.equals(type)) {
+                    assertEquals(rsId2.value, value);
+                }
+            }
+        } else {
+            LOGGER.warning("no registrar-scope identifiers found");
+        }
         // cleanup
         deleteAllRegistrarScopeIdentifiers(urnNbn, USER);
     }
