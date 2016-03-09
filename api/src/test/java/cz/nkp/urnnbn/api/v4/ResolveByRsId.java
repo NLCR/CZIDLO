@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
@@ -260,13 +261,11 @@ public class ResolveByRsId extends ApiV3Tests {
     public void formatJsondNoDd() {
         RsId id = ddUnknown;
         LOGGER.info(id.toString());
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+        String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)// 404
-                .contentType(ContentType.JSON)//
+                .statusCode(404).contentType(ContentType.JSON)//
                 .when().get(buildUrl(id)).andReturn().asString();
-        // Assert.assertEquals(XmlPath.from(responseXml).get("response.error.code"), "UNKNOWN_DIGITAL_DOCUMENT");
-        // TODO: check data
+        assertEquals("UNKNOWN_DIGITAL_DOCUMENT", from(response).getString("error.code"));
     }
 
     @Test
@@ -275,7 +274,7 @@ public class ResolveByRsId extends ApiV3Tests {
         LOGGER.info(id.toString());
         String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
@@ -290,7 +289,7 @@ public class ResolveByRsId extends ApiV3Tests {
         LOGGER.info(id.toString());
         String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();
@@ -306,7 +305,7 @@ public class ResolveByRsId extends ApiV3Tests {
         LOGGER.info(id.toString());
         String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                 .when().get(buildUrl(id)).andReturn().asString();

@@ -260,7 +260,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByRsId extends ApiV3Tests {
         // get rsId by type, resolved by another rsId
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(idForResolvation, idToBeFetched.type)).andReturn().asString();

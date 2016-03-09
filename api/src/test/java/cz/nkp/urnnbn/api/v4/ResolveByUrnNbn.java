@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v4;
 
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
+import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertEquals;
@@ -394,13 +395,12 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(404)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "UNKNOWN_URN_NBN");
-            // TODO: check data
+            assertEquals("UNKNOWN_URN_NBN", from(response).getString("error.code"));
         }
     }
 
@@ -411,13 +411,12 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(404)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "UNKNOWN_DIGITAL_DOCUMENT");
-            // TODO: check data
+            assertEquals("UNKNOWN_DIGITAL_DOCUMENT", from(response).getString("error.code"));
         }
     }
 
@@ -428,13 +427,12 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(403)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
-            // TODO: check data
+            assertEquals("URN_NBN_DEACTIVATED", from(response).getString("error.code"));
         }
     }
 
@@ -445,13 +443,12 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(403)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
-            // TODO: check data
+            assertEquals("URN_NBN_DEACTIVATED", from(response).getString("error.code"));
         }
     }
 
@@ -462,13 +459,12 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.warning("no urn:nbn available, ignoring");
         } else {
             LOGGER.info(urnNbn);
-            String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
+            String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(403)//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
-            // Assert.assertEquals(XmlPath.from(responseStr).getString("response.code"), "URN_NBN_DEACTIVATED");
-            // TODO: check data
+            assertEquals("URN_NBN_DEACTIVATED", from(response).getString("error.code"));
         }
     }
 
@@ -481,7 +477,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.info(urnNbn);
             String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(200)//
                     // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
@@ -500,7 +496,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.info(urnNbn);
             String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(200)//
                     // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();
@@ -520,7 +516,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
             LOGGER.info(urnNbn);
             String responseStr = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(200)//
                     // .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
                     .contentType(ContentType.JSON)//
                     .when().get(buildUrl(urnNbn)).andReturn().asString();

@@ -257,7 +257,7 @@ public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests
         // get rsId by type
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:id", nsContext))//
                 .when().get(buildUrl(urnNbn, idToBeFetched.type)).andReturn().asString();

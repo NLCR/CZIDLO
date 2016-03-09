@@ -247,7 +247,7 @@ public class GetRegistrars extends ApiV3Tests {
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
                 .queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:registrars", nsContext))//
                 .when().get(buildUrl()).andReturn().asString();

@@ -269,7 +269,7 @@ public class GetRegistrar extends ApiV3Tests {
             with().config(namespaceAwareXmlConfig()).queryParam("digitalLibraries", "true").queryParam("catalogs", "true")//
                     .queryParam("format", "json")//
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(200)//
                     .contentType(ContentType.JSON)//
                     // .body(hasXPath(String.format("/c:response/c:registrar[@code='%s']", registrarCode), nsContext))//
                     // .body(hasXPath("//c:digitalLibraries", nsContext))//

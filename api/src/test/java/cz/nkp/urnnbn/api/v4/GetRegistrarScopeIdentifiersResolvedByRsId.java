@@ -204,7 +204,7 @@ public class GetRegistrarScopeIdentifiersResolvedByRsId extends ApiV3Tests {
         // get all ids
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:registrarScopeIdentifiers", nsContext))//
                 .when().get(buildUrl(idForResolvation)).andReturn().asString();

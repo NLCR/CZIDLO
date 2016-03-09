@@ -16,6 +16,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.Content;

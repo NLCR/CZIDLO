@@ -83,7 +83,7 @@ public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
             LOGGER.info("registrar code: " + registrarCode);
             String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
                     .expect() //
-                    .statusCode(400) //
+                    .statusCode(200) //
                     .contentType(ContentType.JSON)//
                     // .body(hasXPath("/c:response/c:digitalDocuments/@count", nsContext)) //
                     .when().get(buildUrl(registrarCode)).andReturn().asString();

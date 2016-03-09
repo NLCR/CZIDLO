@@ -183,7 +183,7 @@ public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
         }
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:urnNbnReservations/c:maxReservationSize", nsContext))//
                 // .body(hasXPath("/c:response/c:urnNbnReservations/c:defaultReservationSize", nsContext))//

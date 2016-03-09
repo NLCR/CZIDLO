@@ -153,7 +153,7 @@ public class GetDigitalInstance extends ApiV3Tests {
             LOGGER.info("id: " + id);
             String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
                     .expect()//
-                    .statusCode(400)//
+                    .statusCode(200)//
                     .contentType(ContentType.JSON)//
                     // .body(hasXPath("/c:response/c:digitalInstance", nsContext))//
                     // .body(hasXPath("/c:response/c:digitalInstance/c:digitalLibrary", nsContext))//

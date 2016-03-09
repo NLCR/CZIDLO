@@ -305,7 +305,7 @@ public class GetUrnnbn extends ApiV3Tests {
         LOGGER.info(urnNbn);
         String responseJson = with().config(namespaceAwareXmlConfig()).queryParam("format", "json")//
                 .expect()//
-                .statusCode(400)//
+                .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 // .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().get(buildUrl(urnNbn)).andReturn().asString();

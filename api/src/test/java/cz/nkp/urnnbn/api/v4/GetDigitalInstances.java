@@ -47,12 +47,12 @@ public class GetDigitalInstances extends ApiV3Tests {
 
     @Test
     public void okFormatJson() {
-        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
+        String response = with().config(namespaceAwareXmlConfig()).queryParam("format", "json") //
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.JSON)//
                 .when().get(buildUrl()).andReturn().asString();
-        assertThat(from(responseXml).getInt("digitalInstances.count"), greaterThanOrEqualTo(0));
+        assertThat(from(response).getInt("digitalInstances.count"), greaterThanOrEqualTo(0));
     }
 
     @Test
