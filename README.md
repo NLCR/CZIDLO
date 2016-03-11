@@ -1,10 +1,10 @@
-README file for CZIDLO v4.3.alpha
+README file for CZIDLO v4.3
 
 Copyright (C) 2013-2016 Martin Řehánek
 
 #####################################
 #####################################
-#         CZIDLO version 4.3.alpha  #
+#         CZIDLO version 4.3        #
 #####################################
 #####################################
 
@@ -25,13 +25,13 @@ This processed has not been tested though and will not be explained here.
 ## Main features ##
 ###################
 
-- resolving the URN:NBN for given nation space (i. e. redirecting to digital libraries or showing metadata of digital document in user friendly form or in xml).
+- resolving URN:NBN identifiers for national space (i. e. redirecting from stable URN:NBN-based URL to volatile URL in digital library).
 - redirecting according to access origin (HTTP header REFERER)
-- assigning URN:NBN identifiers for given subspace manually or by means of REST API
+- assigning URN:NBN identifiers for given subspace manually (web interface) or through REST API
 - resposibility for subspaces delagated to organisations yet Resolver is still global authority
 - user accounts management and accounts assigned to subspaces
 - OAI-PMH provider
-- possible to edit metadata manually though web interface, managing processes on server through web interface
+- web interface for manual data manipulation, managing processes on server, etc.
 
 
 ####################
@@ -71,6 +71,14 @@ Version 4.2.2:
 
 - urn:nbn deactivation implemented in API v3. With or without note, without predecessor(s)/successor(s).
 
+Version 4.3:
+
+- API v4: all GET operations results also in json (only xml up to now); operation to update digital document and intelectual entity records (only empty fields)
+- new process to check availabilty of digital instances
+- more fields indexed for searching, only title informations up to now, all the metadata from now on.
+- basic Google Analytics integration
+- charts for urn:nbn assignment/resolvation statistics
+
 
 ##################
 ## Installation ##
@@ -79,37 +87,41 @@ Version 4.2.2:
 ### Prerequisites ###
 
 - PostgreSQL database in version 8 or higher.
-- Apache Tomcat in version 6 and higher. Possibly other servlet container, but that has not been tested.
+- Apache Tomcat in version 6 or higher. Possibly other servlet container, but that has not been tested.
 - It is recommended to also use Apache HTTP Server as frontend for Tomcat. This is typical solution for production deployment.
 
-This archive should contain these files:
+This archive should contain following files:
 - `README.TXT` - this file
 - `web.war` - web interface module
 - `api.war` - API module  
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_4.2.2.sql` - sql script for intializing the database (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_4.3.sql` - sql script the database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2). 
-It is NOT sufficient only to run this script to update database. Complete database upgrade is described below.
 - `databaseUpgrader-4.2.2.jar` - java program that replaces plaintext passwords with their encrypted form.
+- `updateDatabase_4.2.2_to_4.3.sql` - sql script for updating core database (from version 4.2.2 to version 4.3). 
+It is NOT sufficient only to run this script to update database. Complete database upgrade is described below.
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.2.2.sql` (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.3.sql` (e. g. by psql) in order to create tables, sequences and indexes.
 
-   Script also creates one administrator account (admin:admin). Since it is not possible yet to change user password, it is very important that this account is removed immediatelly after another administrator account (with publicly unknown password) is created.
+   Script also creates one administrator account (admin:admin). Since it is not possible yet to change user password, it is very important that this account is removed immediatelly
+   after another administrator account (with publicly unknown password) is created.
 
 
-2. Next step is installation of the four web applications. That is done simply by copying `web.war`, `api.war`, `oaiPmhProvider.war` and `processDataServer.war` into `$TOMCAT_HOME/webapps`. Applications are independent so you can choose from multiple deployment options. For example:
+2. Next step is installation of the four web applications. That is done simply by copying `web.war`, `api.war`, `oaiPmhProvider.war` and `processDataServer.war` into `$TOMCAT_HOME/webapps`. 
+   Applications are independent so you can choose from multiple deployment options. For example:
 
    - `web.war` + `processDataServer.war` + `api.war` - if OAI-PMH functionality is not desired
    - `api.war` + `processDataServer.war` only - if only resolving and importing records through API is required
    - each module in different Tomcat (possibly different machines) - for better scalability
 
 
-3. Each of the modules must be connected to single database, that has been set and configured in step 1.
+3. All the applications must be connected to shared database, that has been set and configured in step 1.
 
    The database connection pool is looked-up by JNDI. So this resource must be defined in either:
 
@@ -136,12 +148,12 @@ It is NOT sufficient only to run this script to update database. Complete databa
    ```
 
    Bear in mind that there allways exists default context.xml in each war 
-so it will be copied into `$TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml` when the application is (re)deployed.
+   so it will be copied into `$TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml` when the application is (re)deployed.
 
-4. All modules installed on the same machine should set property `resolver.admin.logFile` to the same file so that admin logs of all modules
-are accessible through web interface.
+4. Application run on same server should set property `resolver.admin.logFile` to the same file so that admin logs of all modules
+   are accessible through web interface.
 
-5. Web applications web and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized. 
+5. Web applications `web` and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized. 
 
    Applications access this database by hibernate (unlike core databese where pure JDBC is used).
 
@@ -174,6 +186,10 @@ Default version of configuration files are contained within application and expl
 - OAI_PMH_PROVIDER: `provider.properties`
 - PROCESS_DATA_SERVER: `processDataServer.properties`, `hibernate.cfg.xml`
 
+Note: Keys in configuration properties files have been renamed since version 4.2.2. Also some new properties were introduced. 
+So don't rely on simply copying configuration from previous version. Migration should be straightforward.
+See https://github.com/NLCR/CZIDLO/commit/20543990df5132b156426f61ae5024ba4f2ef0b1.
+
 
 ###################################
 ## Upgrade from previous version ##
@@ -191,6 +207,20 @@ You should allways backup your database before upgrading it in order to avoid da
 
 Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
+
+##################################
+### Upgrade from version 4.2.2 ###
+##################################
+
+#### Core database ####
+
+1. Use script `updateDatabase_4.2.2_to_4.3.sql`. Be sure to run this script as user that has all neccessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
+Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.2.2_to_4.3.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
+Since there is nontrivial amount of data being processed here (precomputated tables for search) this can take a while. Upgrading database with 1 mil digital documents lasted about 20 minutes on avarage laptop.
+
+#### Process database ####
+
+No need to upgrade.
 
 
 ##################################

@@ -46,7 +46,7 @@ public class ProcessesResource {
      */
     @Path("{id}")
     public ProcessResource getProcessResource(@PathParam("id") String id) {
-        logger.log(Level.INFO, "loading process {0}", id);
+        logger.log(Level.FINE, "loading process {0}", id);
         return new ProcessResource(getProcessById(id));
     }
 
@@ -55,7 +55,7 @@ public class ProcessesResource {
             Long id = Long.valueOf(idStr);
             return processDao.getProcess(id);
         } catch (UnknownRecordException ex) {
-            logger.log(Level.INFO, "Unknown process with id{0}", idStr);
+            logger.log(Level.INFO, "Unknown process {0}", idStr);
             Response response = Response.status(Response.Status.NOT_FOUND).build();
             throw new WebApplicationException(response);
         } catch (NumberFormatException e) {
