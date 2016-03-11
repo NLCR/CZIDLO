@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for POST /api/v4/urnnbn/${URN_NBN}/digitalInstances
  *
  */
-public class PostDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
+public class PostDigitalInstancesResolvedByUrnNbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostDigitalInstancesResolvedByUrnNbn.class.getName());
 

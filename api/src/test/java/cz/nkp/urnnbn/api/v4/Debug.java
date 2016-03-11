@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
  * @author martin
  *
  */
-public class Debug extends ApiV3Tests {
+public class Debug extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(Debug.class.getName());
 

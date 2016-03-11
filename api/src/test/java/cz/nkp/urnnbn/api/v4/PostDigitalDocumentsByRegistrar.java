@@ -32,7 +32,7 @@ import cz.nkp.urnnbn.core.CountryCode;
  * Tests for POST /api/v4/registrars/${REGISTRARS_CODE}/digitalDocuments
  *
  */
-public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
+public class PostDigitalDocumentsByRegistrar extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostDigitalDocumentsByRegistrar.class.getName());
 

@@ -22,7 +22,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v4/registrars/${REGISTRARS_CODE}/digitalDocuments
  *
  */
-public class GetDigitalDocumentsByRegistrar extends ApiV3Tests {
+public class GetDigitalDocumentsByRegistrar extends ApiV4Tests {
     private static final Logger LOGGER = Logger.getLogger(GetDigitalDocumentsByRegistrar.class.getName());
 
     @BeforeClass

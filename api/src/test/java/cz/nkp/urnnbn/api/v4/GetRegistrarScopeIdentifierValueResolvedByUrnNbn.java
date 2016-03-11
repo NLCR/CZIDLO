@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.api.pojo.RsId;
  * Tests for GET /api/v4/resolver/${URN_NBN}/registrarScopeIdentifiers/${ID_TYPE}
  * 
  */
-public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV3Tests {
+public class GetRegistrarScopeIdentifierValueResolvedByUrnNbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrarScopeIdentifierValueResolvedByUrnNbn.class.getName());
 

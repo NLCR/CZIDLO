@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
  * Tests for DELETE /api/v4/digitalInstances/id/${DIGITAL_INSTANCE_ID}
  *
  */
-public class DeleteDigitalInstance extends ApiV3Tests {
+public class DeleteDigitalInstance extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteDigitalInstance.class.getName());
 

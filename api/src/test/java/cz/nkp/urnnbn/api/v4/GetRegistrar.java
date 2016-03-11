@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v4/registrars/${REGISTRAR_CODE}
  *
  */
-public class GetRegistrar extends ApiV3Tests {
+public class GetRegistrar extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetRegistrar.class.getName());
 

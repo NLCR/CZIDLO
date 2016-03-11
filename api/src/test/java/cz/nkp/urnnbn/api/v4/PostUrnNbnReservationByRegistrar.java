@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  * Tests for POST /api/v4/registrars/${REGISTRAR_CODE}/urnNbnReservations
  *
  */
-public class PostUrnNbnReservationByRegistrar extends ApiV3Tests {
+public class PostUrnNbnReservationByRegistrar extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostUrnNbnReservationByRegistrar.class.getName());
 

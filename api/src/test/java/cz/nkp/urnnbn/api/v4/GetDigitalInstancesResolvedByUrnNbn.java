@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v4/urnnbn/${URN_NBN}/digitalInstances
  *
  */
-public class GetDigitalInstancesResolvedByUrnNbn extends ApiV3Tests {
+public class GetDigitalInstancesResolvedByUrnNbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstancesResolvedByUrnNbn.class.getName());
 

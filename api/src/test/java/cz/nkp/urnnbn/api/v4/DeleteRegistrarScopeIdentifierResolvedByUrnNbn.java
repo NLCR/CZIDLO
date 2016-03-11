@@ -28,7 +28,7 @@ import cz.nkp.urnnbn.api.pojo.RsId;
  * Tests for DELETE /api/v4/resolver/${URN_NBN}/registrarScopeIdentifiers/${ID_TYPE}
  *
  */
-public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV3Tests {
+public class DeleteRegistrarScopeIdentifierResolvedByUrnNbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteRegistrarScopeIdentifierResolvedByUrnNbn.class.getName());
 

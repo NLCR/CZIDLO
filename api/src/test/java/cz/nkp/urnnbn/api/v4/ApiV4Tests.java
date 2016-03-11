@@ -44,7 +44,7 @@ import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 
-public abstract class ApiV3Tests {
+public abstract class ApiV4Tests {
 
     private final String LANG_CODE = "cz";
     private final String BASE_URI = "http://localhost";

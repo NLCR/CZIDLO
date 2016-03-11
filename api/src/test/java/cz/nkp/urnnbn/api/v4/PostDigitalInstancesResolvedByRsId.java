@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.api.pojo.RsId;
  * Tests for POST /api/v4/registrars/${REGISTRAR_CODE}/digitalDocuments/registrarScopeIdentifier/${ID_TYPE}/${ID_VALUE}/digitalInstances
  *
  */
-public class PostDigitalInstancesResolvedByRsId extends ApiV3Tests {
+public class PostDigitalInstancesResolvedByRsId extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PostDigitalInstancesResolvedByRsId.class.getName());
 

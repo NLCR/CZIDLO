@@ -24,7 +24,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for DELETE /api/v4/urnnbn/${URN_NBN}
  *
  */
-public class DeleteUrnnbn extends ApiV3Tests {
+public class DeleteUrnnbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(DeleteUrnnbn.class.getName());
 

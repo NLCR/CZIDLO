@@ -22,7 +22,7 @@ import cz.nkp.urnnbn.api.pojo.Metadata;
  * Tests for PUT /api/v4/resolver/${URN_NBN}
  *
  */
-public class PutDigitalDocumentResolvedByUrnNbn extends ApiV3Tests {
+public class PutDigitalDocumentResolvedByUrnNbn extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(PutDigitalDocumentResolvedByUrnNbn.class.getName());
 

@@ -19,7 +19,7 @@ import com.jayway.restassured.path.xml.XmlPath;
  * Tests for GET /api/v4/digitalInstances
  *
  */
-public class GetDigitalInstances extends ApiV3Tests {
+public class GetDigitalInstances extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstances.class.getName());
 

@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.api.Utils;
  * Tests for GET /api/v4/digitalInstances/id/${DIGITAL_INSTANCE_ID}
  *
  */
-public class GetDigitalInstance extends ApiV3Tests {
+public class GetDigitalInstance extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetDigitalInstance.class.getName());
 

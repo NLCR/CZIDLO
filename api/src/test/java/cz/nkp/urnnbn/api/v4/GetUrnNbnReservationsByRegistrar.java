@@ -26,7 +26,7 @@ import cz.nkp.urnnbn.api.pojo.UrnNbnReservations;
  * Tests for GET /api/v4/registrars/${REGISTRAR_CODE}/urnNbnReservations
  *
  */
-public class GetUrnNbnReservationsByRegistrar extends ApiV3Tests {
+public class GetUrnNbnReservationsByRegistrar extends ApiV4Tests {
 
     private static final Logger LOGGER = Logger.getLogger(GetUrnNbnReservationsByRegistrar.class.getName());
 
