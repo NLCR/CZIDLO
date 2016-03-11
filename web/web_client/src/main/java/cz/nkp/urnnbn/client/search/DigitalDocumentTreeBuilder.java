@@ -12,10 +12,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
@@ -42,7 +42,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     private static final boolean EXPAND_TECHNICAL = false;
     private static final boolean EXPAND_DIGITAL_INSTANCES = false;
     private static final boolean EXPAND_REGISTRAR_SCOPE_IDENTIFIERS = false;
-    private static final String API_VERSION = "v3";
+    private static final String API_VERSION = "v4";
 
     private final DataServiceAsync dataService = GWT.create(DataService.class);
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
@@ -127,24 +127,43 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
             panel.add(addDigitalInstanceButton(urnNbn));
         }
 
-        if (withLinkToWebRecord) {
+        if (withLinkToWebRecord) { // for predecessors and successors - redirect to web search of them
             panel.add(new HTML("&nbsp&nbsp"));
-            String url = urlToResolverByUrnNbn(urnNbn, "show", "html");
+            String url = buildUrlToDigDocRecord(urnNbn, null);
             panel.add(openUrlButton(constants.showRecord(), url));
         }
+        // links sto urn:nbn records
         panel.add(new HTML("&nbsp&nbsp"));
-        String url = urlToResolverByUrnNbn(urnNbn, "show", "xml");
-        panel.add(openUrlButton(constants.showRecordInXml(), url));
+        panel.add(buildImageLink(buildUrlToUrnNbnRecord(urnNbn, "xml"), "img/xml.png"));
+        panel.add(new HTML("&nbsp"));
+        panel.add(buildImageLink(buildUrlToUrnNbnRecord(urnNbn, "json"), "img/json.png"));
+
         return panel;
     }
 
-    String urlToResolverByUrnNbn(UrnNbnDTO urn, String action, String format) {
+    String buildUrlToDigDocRecord(UrnNbnDTO urn, String format) {
         StringBuilder result = new StringBuilder();
-        result.append("/api").append('/').append(API_VERSION).append('/').append("resolver").append('/');
-        result.append(urn.toString());
-        result.append("?action=").append(action);
-        if (!action.equals("decide")) {
-            result.append("&format=").append(format);
+        result.append("/api/").append(API_VERSION).append("/resolver/").append(urn.toString());
+        if (format != null) {
+            result.append("?format=").append(format);
+        }
+        return result.toString();
+    }
+
+    String buildUrlToUrnNbnRecord(UrnNbnDTO urn, String format) {
+        StringBuilder result = new StringBuilder();
+        result.append("/api/").append(API_VERSION).append("/urnnbn/").append(urn.toString());
+        if (format != null) {
+            result.append("?format=").append(format);
+        }
+        return result.toString();
+    }
+
+    String buildUrlToDigInstRecord(long id, String format) {
+        StringBuilder result = new StringBuilder();
+        result.append("/api/").append(API_VERSION).append("/digitalInstances/id/").append(id);
+        if (format != null) {
+            result.append("?format=").append(format);
         }
         return result.toString();
     }
@@ -162,11 +181,24 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
             result.add(new HTML("&nbsp&nbsp"));
             result.add(editDocumentButton());
         }
-        // link to record in xml
+        // links to records in xml, json
         result.add(new HTML("&nbsp&nbsp"));
-        String url = urlToResolverByUrnNbn(urnNbn, "show", "xml");
-        result.add(openUrlButton(constants.showRecordInXml(), url));
+        result.add(buildImageLink(buildUrlToDigDocRecord(urnNbn, "xml"), "img/xml.png"));
+        result.add(new HTML("&nbsp"));
+        result.add(buildImageLink(buildUrlToDigDocRecord(urnNbn, "json"), "img/json.png"));
         return result;
+    }
+
+    private Image buildImageLink(final String url, String imageUrl) {
+        Image linkXml = new Image(imageUrl);
+        linkXml.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(url, "_blank", "");
+            }
+        });
+        return linkXml;
     }
 
     private boolean activeUserManagesRegistrar() {
@@ -389,16 +421,12 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         } else {
             panel.add(new HTML("<span style=\"color:grey\">" + constants.deactivatedDigitalInstance() + "</span>"));
         }
+        // digital instance records
         panel.add(new HTML("&nbsp&nbsp"));
-        panel.add(showDigInstMetadataButton(instanceDTO));
+        panel.add(buildImageLink(buildUrlToDigInstRecord(instanceDTO.getId(), "xml"), "img/xml.png"));
+        panel.add(new HTML("&nbsp"));
+        panel.add(buildImageLink(buildUrlToDigInstRecord(instanceDTO.getId(), "json"), "img/json.png"));
         return panel;
-    }
-
-    private Widget showDigInstMetadataButton(DigitalInstanceDTO instanceDTO) {
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append("/api").append('/').append(API_VERSION).append('/').append("digitalInstances").append('/');
-        urlBuilder.append("id").append('/').append(instanceDTO.getId());
-        return openUrlButton(constants.showRecordInXml(), urlBuilder.toString());
     }
 
     private void addDigitalLibrary(TreeItem instanceItem, final DigitalLibraryDTO library) {

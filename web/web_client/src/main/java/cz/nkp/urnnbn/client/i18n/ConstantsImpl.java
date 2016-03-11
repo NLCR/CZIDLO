@@ -274,8 +274,6 @@ public interface ConstantsImpl extends Constants {
 
     String showRecord();
 
-    String showRecordInXml();
-
     String timestampReserved();
 
     String timestampRegistered();
