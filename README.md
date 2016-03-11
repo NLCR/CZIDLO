@@ -91,13 +91,12 @@ Version 4.3:
 - It is recommended to also use Apache HTTP Server as frontend for Tomcat. This is typical solution for production deployment.
 
 This archive should contain following files:
-- `README.TXT` - this file
+- `README.rm` - this file
 - `web.war` - web interface module
 - `api.war` - API module  
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
 - `initDatabase_4.3.sql` - sql script the database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
-
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2). 
