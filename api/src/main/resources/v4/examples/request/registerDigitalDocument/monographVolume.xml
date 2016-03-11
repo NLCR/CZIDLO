@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v4/">
+    <monographVolume>
+        <titleInfo>
+            <!-- název celé monografie (povinný údaj) -->
+            <monographTitle>Slovník naučný</monographTitle>
+            <!-- název svazku (povinný údaj) -->
+            <volumeTitle>D. 8.,S-Szyttler</volumeTitle>
+        </titleInfo>
+        <!-- čČNB svazku. Pokud pro svazek neexistuje, potom čČNB celé monografie -->
+        <ccnb>cnb000000000</ccnb>
+        <!-- ISBN svazku -->
+        <isbn>8090119964</isbn>
+        <!-- jiný globální identifikátor svazku, případně celé monografie -->
+        <otherId>DOI:TODO</otherId>
+        <!-- druh dokumentu -->
+        <documentType>slovník</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>false</digitalBorn>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <primaryOriginator type="AUTHOR">Rieger, František Vladislav</primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Jan Ilustrator</otherOriginator>
+        <!-- informace o publikování -->
+        <publication>
+            <!-- název vydavatele -->
+            <publisher>I. L. Kober</publisher>
+            <!-- místo vydání -->
+            <place>V Praze</place>
+            <!-- rok vydání -->
+            <year>1870</year>
+        </publication>
+    </monographVolume>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="signatura">MP-0001.308,8</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedx</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (v počtu souborů) -->
+            <extent>1218 x jpeg2000;1218 x mods-alto;1 x mods</extent>
+            <!-- rozlišení nastavené na skeneru v dpi-->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+            <!-- barevný model (např. RGB, CMYK)-->
+                <model>RGB</model>
+            <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázk� (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

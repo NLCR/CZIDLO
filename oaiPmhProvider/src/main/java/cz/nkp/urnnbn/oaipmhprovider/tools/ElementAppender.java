@@ -4,12 +4,8 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.tools;
 
-import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
-import cz.nkp.urnnbn.oaipmhprovider.repository.OaiSet;
-import cz.nkp.urnnbn.oaipmhprovider.repository.PresentRecord;
-import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
-import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Dom4jUtils;
 import java.io.IOException;
+
 import org.dom4j.Attribute;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -17,6 +13,12 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.dom4j.XPath;
 import org.joda.time.DateTime;
+
+import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
+import cz.nkp.urnnbn.oaipmhprovider.repository.OaiSet;
+import cz.nkp.urnnbn.oaipmhprovider.repository.PresentRecord;
+import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
+import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Dom4jUtils;
 
 /**
  *

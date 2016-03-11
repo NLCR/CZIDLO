@@ -13,8 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import cz.nkp.urnnbn.api.AbstractRegistrarsResource;
-import cz.nkp.urnnbn.api.Parser;
+import cz.nkp.urnnbn.api.v2_v3.AbstractRegistrarsResource;
+import cz.nkp.urnnbn.api.v2_v3.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.Registrar;
 

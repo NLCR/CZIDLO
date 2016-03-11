@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <error>
+        <code>ILLEGAL_REGISTRATION_MODE</code>
+        <message>cannot register digital document with
+            urn:nbn:cz:tst02-00000p - registration mode BY_RESERVATION
+            not allowed for registrar tst02 (Moravská zemská knihovna -
+            test)</message>
+    </error>
+</response>
+

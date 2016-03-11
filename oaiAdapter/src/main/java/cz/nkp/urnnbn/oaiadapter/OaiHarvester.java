@@ -4,13 +4,11 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -18,6 +16,7 @@ import nu.xom.Node;
 import nu.xom.Nodes;
 import nu.xom.ParsingException;
 import nu.xom.XPathContext;
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
  *

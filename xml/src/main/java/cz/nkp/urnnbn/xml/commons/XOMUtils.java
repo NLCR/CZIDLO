@@ -16,10 +16,21 @@
  */
 package cz.nkp.urnnbn.xml.commons;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import nu.xom.*;
+
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
+import nu.xom.ValidityException;
+import nu.xom.XMLException;
 import nu.xom.xslt.XSLException;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

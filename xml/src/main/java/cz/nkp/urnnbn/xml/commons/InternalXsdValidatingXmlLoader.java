@@ -19,7 +19,9 @@ package cz.nkp.urnnbn.xml.commons;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import nu.xom.ValidityException;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 

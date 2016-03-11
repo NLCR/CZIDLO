@@ -33,11 +33,11 @@ import com.jayway.restassured.path.xml.config.XmlPathConfig;
 import com.jayway.restassured.response.Response;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.pojo.Credentials;
-import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
-import cz.nkp.urnnbn.api.v3.pojo.RsId;
-import cz.nkp.urnnbn.api.v3.pojo.Successor;
-import cz.nkp.urnnbn.api.v3.pojo.UrnNbnReservations;
+import cz.nkp.urnnbn.api.pojo.Credentials;
+import cz.nkp.urnnbn.api.pojo.Predecessor;
+import cz.nkp.urnnbn.api.pojo.RsId;
+import cz.nkp.urnnbn.api.pojo.Successor;
+import cz.nkp.urnnbn.api.pojo.UrnNbnReservations;
 import cz.nkp.urnnbn.api.v3.xml.DigDocRegistrationXmlBuilder;
 import cz.nkp.urnnbn.api.v3.xml.DigInstImportXmlBuilder;
 import cz.nkp.urnnbn.core.CountryCode;

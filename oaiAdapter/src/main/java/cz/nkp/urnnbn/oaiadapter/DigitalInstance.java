@@ -6,8 +6,8 @@ package cz.nkp.urnnbn.oaiadapter;
 
 import java.util.logging.Logger;
 
-import cz.nkp.urnnbn.xml.unmarshallers.DigitalInstanceUnmarshaller;
-import cz.nkp.urnnbn.xml.unmarshallers.validation.LimitedLengthEnhancer;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.DigitalInstanceUnmarshaller;
+import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.LimitedLengthEnhancer;
 
 /**
  *

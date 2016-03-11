@@ -4,7 +4,9 @@
  */
 package cz.nkp.urnnbn.services.exceptions;
 
-import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 
 /**
@@ -13,8 +15,28 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
  */
 public class RegistarScopeIdentifierCollisionException extends Exception {
 
-    public RegistarScopeIdentifierCollisionException(Registrar registrar, RegistrarScopeIdentifier id) {
-        super("digital document with registrar-scope identifier of type '" + id.getType() + "' and value '" + id.getValue()
-                + "' already registered by registrar with code " + registrar.getCode());
+    public RegistarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId, RegistrarCode registrarCode) {
+        super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with code %s",
+                toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), registrarCode.toString()));
     }
+
+    public RegistarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId) {
+        super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with id %d",
+                toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), rsId.getRegistrarId()));
+    }
+
+    private static String toStringOrNull(RegistrarScopeIdValue value) {
+        if (value != null) {
+            return value.toString();
+        }
+        return null;
+    }
+
+    private static String toStringOrNull(RegistrarScopeIdType type) {
+        if (type != null) {
+            return type.toString();
+        }
+        return null;
+    }
+
 }

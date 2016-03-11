@@ -46,7 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:enumeration value="INVALID_REGISTRAR_CODE"/>
             <xs:enumeration value="INVALID_URN_NBN"/>
             <xs:enumeration value="MISSING_PARAMETER"/>
-            <xs:enumeration value="NOT_AUTHENTICATED"/>
             <xs:enumeration value="NOT_AUTHORIZED"/>
             <xs:enumeration value="NOT_DEFINED"/>
             <xs:enumeration value="UNAUTHORIZED_REGISTRATION_MODE"/>
@@ -57,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <xs:enumeration value="UNKNOWN_URN"/>
             <xs:enumeration value="URN_NBN_DEACTIVATED"/>
             <xs:enumeration value="INCORRECT_URN_NBN_STATE"/>
+            <xs:enumeration value="INTERNAL_ERROR"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

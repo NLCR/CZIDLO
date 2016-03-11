@@ -51,6 +51,10 @@
         <servlet-name>index_v3</servlet-name>
         <jsp-file>/index_v3.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>index_v4</servlet-name>
+        <jsp-file>/index_v4.jsp</jsp-file>
+    </servlet>
 
     <servlet>
         <servlet-name>ServletAdaptor-v2</servlet-name>
@@ -120,6 +124,11 @@
         <servlet-name>index_v3</servlet-name>
         <url-pattern>/v3</url-pattern>
         <url-pattern>/v3/</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>index_v4</servlet-name>
+        <url-pattern>/v4</url-pattern>
+        <url-pattern>/v4/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

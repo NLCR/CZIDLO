@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,7 +21,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.pojo.RsId;
+import cz.nkp.urnnbn.api.pojo.RsId;
 
 /**
  * Tests for DELETE /api/v3/resolver/${URN_NBN}/registrarScopeIdentifiers
@@ -96,16 +97,7 @@ public class DeleteRegistrarScopeIdentifiersResolvedByUrnNbn extends ApiV3Tests 
         insertRegistrarScopeId(urnNbn, id1, USER);
         insertRegistrarScopeId(urnNbn, id2, USER);
         // try and delete all ids
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .expect()//
-                .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        delete(buildUrl(urnNbn)).then().assertThat().statusCode(401);
         // check that all ids still present
         List<RsId> rsIdsFetched = getRsIds(urnNbn);
         assertThat(rsIdsFetched.size(), equalTo(2));

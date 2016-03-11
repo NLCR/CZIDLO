@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <digitalInstances count="3">
+        <digitalInstance id="33" active="true">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+            </url>
+            <digitalLibraryId>37</digitalLibraryId>
+            <created>2012-09-03T00:44:34.603+02:00</created>
+        </digitalInstance>
+        <digitalInstance id="34" active="true">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+            </url>
+            <format>jpg;pdf</format>
+            <accessibility>volně přístupné</accessibility>
+            <digitalLibraryId>38</digitalLibraryId>
+            <created>2012-09-19T00:37:25.362+02:00</created>
+        </digitalInstance>
+        <digitalInstance id="35" active="false">
+            <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+            </url>
+            <format>jpg;pdf</format>
+            <accessibility>volně přístupné</accessibility>
+            <digitalLibraryId>12</digitalLibraryId>
+            <created>2012-09-19T00:39:41.117+02:00</created>
+            <deactivated>2012-09-19T00:42:30.334+02:00</deactivated>
+        </digitalInstance>
+    </digitalInstances>
+</response>

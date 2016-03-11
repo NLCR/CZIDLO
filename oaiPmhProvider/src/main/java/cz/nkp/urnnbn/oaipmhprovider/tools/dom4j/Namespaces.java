@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.oaipmhprovider.tools.dom4j;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.dom4j.DocumentHelper;
 import org.dom4j.Namespace;
 
@@ -29,7 +30,7 @@ public class Namespaces {
     // public static final Namespace adm = DocumentHelper.createNamespace("adm", "http://www.qbizm.cz/kramerius-fedora/image-adm-description");
     // public static final Namespace marc21 = DocumentHelper.createNamespace("marc21", "http://www.loc.gov/MARC21/slim");
     public static final Namespace OAI_DC = DocumentHelper.createNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-    public static final Namespace CZIDLO = DocumentHelper.createNamespace("czidlo", cz.nkp.urnnbn.xml.commons.Namespaces.CZIDLO_NS);
+    public static final Namespace CZIDLO = DocumentHelper.createNamespace("czidlo", cz.nkp.urnnbn.xml.commons.Namespaces.CZIDLO_V3_NS);
     private static final Map<String, String> unmodifiablePrefixUriMap;
     private static final Map<String, Namespace> prefixNamespaceMap = new HashMap<String, Namespace>();
 

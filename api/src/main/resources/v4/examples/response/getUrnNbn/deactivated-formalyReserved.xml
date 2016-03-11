@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <urnNbn>
+        <status>DEACTIVATED</status>
+        <value>urn:nbn:cz:tst02-00001o</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>tst02</registrarCode>
+        <documentCode>00001o</documentCode>
+        <digitalDocumentId>89</digitalDocumentId>
+        <reserved>2012-11-20T02:12:07.123+01:00</reserved>
+        <registered>2012-11-25T02:09:02.297+01:00</registered>
+        <deactivated>2012-12-11T12:05:23.591+01:00</deactivated>
+        <predecessor value="urn:nbn:cz:tst02-000004" note="predchudce" />
+        <predecessor value="urn:nbn:cz:tst02-000003" />
+        <successor value="urn:nbn:cz:tst02-000006" note="naslednik" />
+        <successor value="urn:nbn:cz:tst02-000007" />
+    </urnNbn>
+</response>

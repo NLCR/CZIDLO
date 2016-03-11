@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.conf;
 
+import java.io.InputStream;
+import java.util.logging.Logger;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
 import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
-import java.io.InputStream;
-import java.util.logging.Logger;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 /**
  * 
@@ -18,8 +20,8 @@ import javax.servlet.ServletContextListener;
  */
 public class ContextListener implements ServletContextListener {
 
-    private static final String WEB_APP_NAME = "oaiPmhProvider";
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
+    private static final String WEB_APP_NAME = "oaiPmhProvider";
     private static final String PROPERTIES_FILE = "oaiPmhProvider.properties";
     private static final String CZIDLO_TO_OAIDC_XSLT = "czidloToOaiDc.xsl";
 

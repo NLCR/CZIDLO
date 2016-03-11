@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.repository;
 
-import cz.nkp.urnnbn.oaipmhprovider.repository.impl.UrnNbnIdentifier;
-
 /**
  *
  * @author Martin Řehánek

@@ -5,10 +5,11 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>API V2</title>
+        <title>API V3</title>
     </head>
     <body>
-        <h1>API verze 2 pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>
+        <h1>API verze 3 pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>
+        Verze 3 je zastaralá a bude v některé následující verzi CZIDLO odstraněna. Doporučuje se přechod na <a href="/api/v4/">API verze 4</a>.
         
         <p>
         Popis API V3: <a href="https://github.com/NLCR/CZIDLO/wiki/API#verze-3">Github</a><br/>

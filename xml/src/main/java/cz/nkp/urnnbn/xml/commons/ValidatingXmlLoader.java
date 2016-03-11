@@ -19,10 +19,12 @@ package cz.nkp.urnnbn.xml.commons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+
 import org.xml.sax.XMLReader;
 
 /**

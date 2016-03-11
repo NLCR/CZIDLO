@@ -4,13 +4,15 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
-import cz.nkp.urnnbn.oaipmhprovider.OaiException;
-import cz.nkp.urnnbn.oaipmhprovider.tools.ArgumentsChecker;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
+
+import cz.nkp.urnnbn.oaipmhprovider.OaiException;
+import cz.nkp.urnnbn.oaipmhprovider.tools.ArgumentsChecker;
 
 /**
  *

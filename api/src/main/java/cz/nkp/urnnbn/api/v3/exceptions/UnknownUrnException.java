@@ -4,8 +4,9 @@
  */
 package cz.nkp.urnnbn.api.v3.exceptions;
 
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import javax.ws.rs.core.Response.Status;
+
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
  *

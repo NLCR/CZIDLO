@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaipmhprovider.repository.impl;
 
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.oaipmhprovider.repository.Identifier;
 
 /**
  *

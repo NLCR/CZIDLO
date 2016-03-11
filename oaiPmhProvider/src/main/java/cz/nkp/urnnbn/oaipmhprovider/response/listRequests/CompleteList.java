@@ -4,10 +4,11 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response.listRequests;
 
-import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 
 /**
  *

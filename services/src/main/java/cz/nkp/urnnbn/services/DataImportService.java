@@ -15,7 +15,6 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
@@ -85,7 +84,7 @@ public interface DataImportService extends BusinessService {
             UnknownDigLibException, UnknownDigDocException;
 
     public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws UnknownUserException, AccessException,
-            UnknownRegistrarException, UnknownDigDocException, IdentifierConflictException;
+            UnknownRegistrarException, UnknownDigDocException, RegistarScopeIdentifierCollisionException;
 
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
 

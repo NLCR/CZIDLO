@@ -20,7 +20,6 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
@@ -87,7 +86,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     @Override
     public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException,
-            IdentifierConflictException, AccessException, UnknownUserException {
+            AccessException, UnknownUserException, RegistarScopeIdentifierCollisionException {
         try {
             authorization.checkAccessRights(id.getRegistrarId(), login);
             Registrar registrar;
@@ -107,7 +106,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(id.getDigDocId());
             } catch (AlreadyPresentException e) {
-                throw new IdentifierConflictException(id.getType().toString(), id.getValue().toString());
+                throw new RegistarScopeIdentifierCollisionException(id);
             }
             logRegistrarScopeIdCreated(login, id, registrar, urn);
         } catch (DatabaseException ex) {

@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -22,9 +23,9 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.xml.XmlPath;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
-import cz.nkp.urnnbn.api.v3.pojo.RsId;
-import cz.nkp.urnnbn.api.v3.pojo.Successor;
+import cz.nkp.urnnbn.api.pojo.Predecessor;
+import cz.nkp.urnnbn.api.pojo.RsId;
+import cz.nkp.urnnbn.api.pojo.Successor;
 import cz.nkp.urnnbn.core.CountryCode;
 
 /**
@@ -49,17 +50,10 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         String registrarCode = REGISTRAR;
         LOGGER.info(registrarCode);
         String bodyXml = ddRegistrationBuilder.minimal();
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig())//
-                .given().request().body(bodyXml).contentType(ContentType.XML)//
+        given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
                 .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
     }
 
     @Test
@@ -70,9 +64,9 @@ public class PostDigitalDocumentsByRegistrar extends ApiV3Tests {
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER_NO_RIGHTS.login, USER_NO_RIGHTS.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)//
                 .expect()//
-                // .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
+                .statusCode(401)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:error", nsContext))//
                 .when().post(buildUrl(registrarCode)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
         Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHORIZED");

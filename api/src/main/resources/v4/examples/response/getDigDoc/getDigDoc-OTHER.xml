@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <digitalDocument id="13">
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:21:58.006+02:00</created>
+        <intelectualEntity type="OTHER">
+            <created>2012-04-18T23:21:57.926+02:00</created>
+            <titleInfo>
+                <title>Uterque Rheni Circulus, Superior, et Inferior
+                    Electoralis, cum Palatinatu</title>
+                <subTitle>Quos pro Parte includunt Westphalicus, Belgium
+                    Hispanicum, et Lotharingia qua Oriens</subTitle>
+            </titleInfo>
+            <ccnb>cnb123456789</ccnb>
+            <otherId>DOI:10.3892/ijo_00000788</otherId>
+            <documentType>mapa</documentType>
+            <digitalBorn>false</digitalBorn>
+            <primaryOriginator type="AUTHOR">Valk, Gerhard
+            </primaryOriginator>
+            <otherOriginator>Jan Ilustrator</otherOriginator>
+            <publication>
+                <publisher>Gerhard Valk</publisher>
+                <place>Amsterdam</place>
+                <year>1701</year>
+            </publication>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <extent>3 x jpeg2000;3 x mods-alto;1 x mods</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="aleph_id">mzk03:001056568</id>
+            <id type="signatura">Moll-0004.102</id>
+            <id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</id>
+            <id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</id>
+        </registrarScopeIdentifiers>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="3">
+            <name>MK3</name>
+            <description>Mala knihovna 3</description>
+            <created>2012-04-18T23:19:15.842+02:00</created>
+        </archiver>
+        <digitalInstances count="0" />
+    </digitalDocument>
+</response>

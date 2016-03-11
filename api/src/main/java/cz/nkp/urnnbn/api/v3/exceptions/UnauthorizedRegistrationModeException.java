@@ -16,10 +16,11 @@
  */
 package cz.nkp.urnnbn.api.v3.exceptions;
 
+import javax.ws.rs.core.Response.Status;
+
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import javax.ws.rs.core.Response.Status;
 
 /**
  * 

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.ParsingException;

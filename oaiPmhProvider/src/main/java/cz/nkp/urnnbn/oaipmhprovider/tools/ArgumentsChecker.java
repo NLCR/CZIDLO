@@ -4,9 +4,10 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.tools;
 
+import java.util.Map;
+
 import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
 import cz.nkp.urnnbn.oaipmhprovider.OaiException;
-import java.util.Map;
 
 /**
  *

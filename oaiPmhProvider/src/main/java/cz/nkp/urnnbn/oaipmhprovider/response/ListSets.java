@@ -4,16 +4,18 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
-import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
-import cz.nkp.urnnbn.oaipmhprovider.OaiException;
-import cz.nkp.urnnbn.oaipmhprovider.repository.OaiSet;
-import cz.nkp.urnnbn.oaipmhprovider.repository.Repository;
 import java.io.IOException;
 import java.util.Map;
+
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
+
+import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
+import cz.nkp.urnnbn.oaipmhprovider.OaiException;
+import cz.nkp.urnnbn.oaipmhprovider.repository.OaiSet;
+import cz.nkp.urnnbn.oaipmhprovider.repository.Repository;
 
 /**
  * TODO: implement resumption tokens for sets

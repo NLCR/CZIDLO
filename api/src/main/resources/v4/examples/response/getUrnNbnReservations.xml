@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <urnNbnReservations>
+        <maxReservationSize>100</maxReservationSize>
+        <defaultReservationSize>10</defaultReservationSize>
+        <reserved totalSize="8">
+            <urnNbn reserved="2012-10-03T00:22:06.930+02:00">urn:nbn:cz:tst02-00000c</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.051+02:00">urn:nbn:cz:tst02-00000d</urnNbn>
+            <urnNbn reserved="2012-10-03T00:22:07.187+02:00">urn:nbn:cz:tst02-00000e</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.566+02:00">urn:nbn:cz:tst02-00000f</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.632+02:00">urn:nbn:cz:tst02-00000g</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.699+02:00">urn:nbn:cz:tst02-00000h</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.765+02:00">urn:nbn:cz:tst02-00000i</urnNbn>
+            <urnNbn reserved="2012-10-03T01:09:41.832+02:00">urn:nbn:cz:tst02-00000j</urnNbn>
+        </reserved>
+    </urnNbnReservations>
+</response>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v4/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v4/response.xsd">
+    <digitalInstance id="26" active="true">
+        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+        </url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <created>2012-09-03T00:13:01.430+02:00</created>
+        <deactivated>2012-09-03T00:13:01.430+02:00</deactivated>
+        <digitalLibrary id="39">
+            <name>Kramerius 3</name>
+            <description>testovací knihovna</description>
+            <url>http://kramerius3.mzk.cz</url>
+            <created>2012-04-18T23:19:19.605+02:00</created>
+            <registrar code="tst02" id="38">
+                <name>Moravská zemská knihovna - test</name>
+                <description>testovací registrátor</description>
+                <created>2012-04-18T23:19:17.727+02:00</created>
+                <modified>2012-10-29T10:39:30.882+01:00</modified>
+                <registrationModes>
+                    <mode name="BY_RESOLVER" enabled="true" />
+                    <mode name="BY_REGISTRAR" enabled="false" />
+                    <mode name="BY_RESERVATION" enabled="false" />
+                </registrationModes>
+            </registrar>
+        </digitalLibrary>
+        <digitalDocument id="9">
+            <urnNbn>
+                <value>urn:nbn:cz:tst02-000004</value>
+            </urnNbn>
+            <financed>norské fondy</financed>
+            <contractNumber>123</contractNumber>
+            <created>2012-04-18T23:21:56.517+02:00</created>
+            <technicalMetadata>
+                <format version="1.0">jpeg</format>
+                <extent>12 x jpeg2000;12 x mods-alto;1 x mods</extent>
+                <resolution>
+                    <horizontal>1280</horizontal>
+                    <vertical>1024</vertical>
+                </resolution>
+                <compression ratio="0.3">LZW</compression>
+                <color>
+                    <model>RGB</model>
+                    <depth>24</depth>
+                </color>
+                <iccProfile>some ICC profile</iccProfile>
+                <pictureSize>
+                    <width>600</width>
+                    <height>1000</height>
+                </pictureSize>
+            </technicalMetadata>
+            <registrarScopeIdentifiers>
+                <id type="OAI_harvester">1236</id>
+                <id type="K4_uuid">38bfc69d-1d10-4822-b7a4-c7531bb4aedi</id>
+            </registrarScopeIdentifiers>
+        </digitalDocument>
+    </digitalInstance>
+</response>

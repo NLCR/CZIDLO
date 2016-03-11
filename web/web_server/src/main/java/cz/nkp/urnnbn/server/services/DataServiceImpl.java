@@ -54,6 +54,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
         DtotoIntelectualEntityTransformer transformer = new DtotoIntelectualEntityTransformer(entity);
         try {
             checkNotReadOnlyMode();
+            checkUserIsAdmin();
             updateService.updateIntelectualEntity(transformer.getEntity(), transformer.getOriginator(), transformer.getPublication(),
                     transformer.getSrcDoc(), transformer.getIdentifiers(), getUserLogin());
         } catch (Throwable e) {

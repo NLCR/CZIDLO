@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v4/">
+    <otherEntity>
+        <titleInfo>
+            <!-- název (povinný údaj) -->
+            <title>Uterque Rheni Circulus, Superior, et Inferior
+                Electoralis, cum Palatinatu</title>
+            <!-- další názvové údaje -->
+            <subTitle>Quos pro Parte includunt Westphalicus, Belgium
+                Hispanicum, et Lotharingia qua Oriens</subTitle>
+        </titleInfo>
+        <!-- čČNB -->
+        <ccnb>cnb123456789</ccnb>
+        <!-- ISBN (konrétně zde u mapy nemá význam, obecně ale u otherEntity 
+            být může) <isbn/> -->
+        <!-- jiný globální identifikátor intelektuální entity -->
+        <otherId>DOI:10.3892/ijo_00000788</otherId>
+        <!-- druh dokumentu -->
+        <documentType>mapa</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>false</digitalBorn>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <primaryOriginator type="AUTHOR">Valk, Gerhard
+        </primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Jan Ilustrator</otherOriginator>
+        <!-- informace o publikování -->
+        <publication>
+            <!-- název vydavatele -->
+            <publisher>Gerhard Valk</publisher>
+            <!-- místo vydání -->
+            <place>Amsterdam</place>
+            <!-- rok vydání -->
+            <year>1701</year>
+        </publication>
+    </otherEntity>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="aleph_id">mzk03:001056568</id>
+            <id type="signatura">Moll-0004.102</id>
+            <id type="signatura_puvodni">Moll-0090.900,AG.T.VI,1</id>
+            <id type="mapy_mzk_cz_id">mzk03_001_056_568_2619321907</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována pro novou digitalizaci 
+            v rámci NDK zde bude vždy hodnota IOP-NDK -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi digitálního 
+            dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (v počtu souborů) -->
+            <extent>3 x jpeg2000;3 x mods-alto;1 x mods</extent>
+            <!-- rozlišení nastavené na skeneru v dpi -->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model -->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

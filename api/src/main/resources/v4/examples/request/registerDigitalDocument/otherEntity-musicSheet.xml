@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v4/">
+    <otherEntity>
+        <titleInfo>
+            <!-- název (povinný údaj) -->
+            <title>Perličky</title>
+            <!-- další názvové údaje -->
+            <subTitle>úryvky ze známých melodií pro malé a větší
+                klavíristy</subTitle>
+        </titleInfo>
+        <!-- čČNB -->
+        <ccnb>cnb002266563</ccnb>
+        <!-- ISBN (konrétně zde u hudebniny nemá význam, obecně ale u otherEntity 
+            být může) <isbn/> -->
+        <!-- jiný globální identifikátor intelektuální entity -->
+        <otherId>ISMN:979-0-66056-072-3</otherId>
+        <!-- druh dokumentu -->
+        <documentType>hudebnina</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>false</digitalBorn>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Borová, Milada</otherOriginator>
+        <!-- informace o publikování -->
+    </otherEntity>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="aleph_id">mzk03:000056568</id>
+            <id type="signatura">Moll-0005.102</id>
+            <id type="signatura_puvodni">Moll-0090.900,AG.T.VI,2</id>
+            <id type="mapy_mzk_cz_id">mzk03_000_056_568_2619321907</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována pro novou digitalizaci 
+            v rámci NDK zde bude vždy hodnota IOP-NDK -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi digitálního 
+            dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (v počtu souborů) -->
+            <extent>5 x jpeg2000;5 x mods-alto;1 x mods</extent>
+            <!-- rozlišení nastavené na skeneru v dpi -->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model -->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

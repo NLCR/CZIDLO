@@ -308,7 +308,7 @@ public class DigitalDocumentRegistrar {
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
-                throw new RegistarScopeIdentifierCollisionException(registrar, id);
+                throw new RegistarScopeIdentifierCollisionException(id, registrar.getCode());
             }
         }
         return result;

@@ -16,11 +16,12 @@
  */
 package cz.nkp.urnnbn.api.v2;
 
-import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
-import cz.nkp.urnnbn.xml.builders.ErrorResponseBuilder;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
+import cz.nkp.urnnbn.api.v3.exceptions.ApiV3Exception;
+import cz.nkp.urnnbn.xml.apiv3.builders.ErrorResponseBuilder;
 
 /**
  *

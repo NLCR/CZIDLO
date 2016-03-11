@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.api.v3;
 
+import static com.jayway.restassured.RestAssured.delete;
 import static com.jayway.restassured.RestAssured.with;
 import static com.jayway.restassured.matcher.RestAssuredMatchers.matchesXsd;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -40,15 +41,8 @@ public class DeleteUrnnbn extends ApiV3Tests {
     public void notAuthenticated() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         LOGGER.info(urnNbn);
-        // TODO:APIv4: return xml as well
-        // String responseXml =
-        with().config(namespaceAwareXmlConfig()).expect()//
-                .statusCode(401)//
-                // .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:error", nsContext))//
-                .when().delete(buildUrl(urnNbn)).andReturn().asString();
-        // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.error");
-        // Assert.assertEquals(xmlPath.get("code"), "NOT_AUTHENTICATED");
+        // try and delete
+        delete(buildUrl(urnNbn)).then().assertThat().statusCode(401);
         // check state hasn't changed
         assertEquals("ACTIVE", getUrnNbnStatus(urnNbn));
     }
@@ -137,11 +131,12 @@ public class DeleteUrnnbn extends ApiV3Tests {
     }
 
     @Test
-    public void ok() {
+    public void withtNote() {
         String urnNbn = registerUrnNbn(REGISTRAR, USER);
         DateTime registeredDt = getUrnNbnRegisteredOrNull(urnNbn);
-        LOGGER.info(urnNbn);
-        String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(USER.login, USER.password)//
+        String note = "something";
+        LOGGER.info(String.format("%s, note: %s", urnNbn.toString(), note));
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("note", note).auth().basic(USER.login, USER.password)//
                 .expect()//
                 .statusCode(200)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
@@ -149,6 +144,34 @@ public class DeleteUrnnbn extends ApiV3Tests {
                 .when().delete(buildUrl(urnNbn)).andReturn().asString();
         XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
         assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        assertEquals(note, xmlPath.getString("deactivationNote"));
+        assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value"));
+        String[] splitUrnNbn = Utils.splitUrnNbn(urnNbn);
+        assertEquals(splitUrnNbn[0], xmlPath.getString("countryCode"));
+        assertEquals(splitUrnNbn[1], xmlPath.getString("registrarCode"));
+        assertEquals(splitUrnNbn[2], xmlPath.getString("documentCode"));
+        assertThat(xmlPath.getInt("digitalDocumentId"), greaterThanOrEqualTo(0));
+        assertEquals(registeredDt, DateTime.parse(xmlPath.getString("registered")));
+        DateTime.parse(xmlPath.getString("deactivated"));
+        // check state has changed
+        assertEquals("DEACTIVATED", getUrnNbnStatus(urnNbn));
+    }
+
+    @Test
+    public void withtNoteEmpty() {
+        String urnNbn = registerUrnNbn(REGISTRAR, USER);
+        DateTime registeredDt = getUrnNbnRegisteredOrNull(urnNbn);
+        String note = "";
+        LOGGER.info(String.format("%s, note: %s", urnNbn.toString(), note));
+        String responseXml = with().config(namespaceAwareXmlConfig()).queryParam("note", note).auth().basic(USER.login, USER.password)//
+                .expect()//
+                .statusCode(200)//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .when().delete(buildUrl(urnNbn)).andReturn().asString();
+        XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
+        assertEquals("DEACTIVATED", xmlPath.getString("status"));
+        assertEquals("", xmlPath.getString("deactivationNote"));
         assertEquals(urnNbn.toLowerCase(), xmlPath.getString("value"));
         String[] splitUrnNbn = Utils.splitUrnNbn(urnNbn);
         assertEquals(splitUrnNbn[0], xmlPath.getString("countryCode"));

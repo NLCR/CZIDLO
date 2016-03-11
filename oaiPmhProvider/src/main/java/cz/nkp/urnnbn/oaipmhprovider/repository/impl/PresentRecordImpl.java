@@ -4,6 +4,16 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.repository.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -26,24 +36,16 @@ import cz.nkp.urnnbn.oaipmhprovider.repository.PresentRecord;
 import cz.nkp.urnnbn.oaipmhprovider.tools.dom4j.Dom4jUtils;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.Services;
-import cz.nkp.urnnbn.xml.builders.ArchiverBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalDocumentBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstanceBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalInstancesBuilder;
-import cz.nkp.urnnbn.xml.builders.DigitalLibraryBuilder;
-import cz.nkp.urnnbn.xml.builders.IntelectualEntityBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifierBuilder;
-import cz.nkp.urnnbn.xml.builders.RegistrarScopeIdentifiersBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.ArchiverBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstanceBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalInstancesBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.DigitalLibraryBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.IntelectualEntityBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifierBuilder;
+import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
 
 /**
  *

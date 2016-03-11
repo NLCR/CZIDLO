@@ -17,7 +17,6 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
 
 /**
@@ -34,7 +33,7 @@ public class IntelectualEntityUpdater {
     }
 
     void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers)
-            throws UnknownIntelectualEntity, IdentifierConflictException {
+            throws UnknownIntelectualEntity {
         try {
             synchronizeIdentifiers(identifiers, entity.getId());
             updateEntity(entity);
@@ -131,8 +130,7 @@ public class IntelectualEntityUpdater {
         }
     }
 
-    private void synchronizeIdentifiers(Collection<IntEntIdentifier> identifiers, Long entityId) throws UnknownIntelectualEntity, DatabaseException,
-            IdentifierConflictException {
+    private void synchronizeIdentifiers(Collection<IntEntIdentifier> identifiers, Long entityId) throws UnknownIntelectualEntity, DatabaseException {
         if (identifiers != null) {
             IntEntIdsSynchronizationPlan plan = new IntEntIdsSynchronizationPlan(identifiers, entityId, daoFactory.intEntIdentifierDao());
             // insert identifiers
@@ -143,7 +141,7 @@ public class IntelectualEntityUpdater {
                 } catch (RecordNotFoundException ex) {
                     throw new UnknownIntelectualEntity(entityId);
                 } catch (AlreadyPresentException ex) {
-                    throw new IdentifierConflictException(id.getType().toString(), id.getValue());
+                    logger.log(Level.SEVERE, null, ex);
                 }
             }
             // update identifier values

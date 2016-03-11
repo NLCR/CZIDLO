@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
 public class UnknownDigitalInstanceException extends ApiV3Exception {
 
     public UnknownDigitalInstanceException(long id) {
-        super(Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No such digital instance with id " + id);
+        super(Status.NOT_FOUND, "UNKNOWN_DIGITAL_INSTANCE", "No digital instance with id " + id);
     }
 
     public UnknownDigitalInstanceException() {

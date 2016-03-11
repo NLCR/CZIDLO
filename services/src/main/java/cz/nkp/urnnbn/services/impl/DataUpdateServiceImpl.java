@@ -31,8 +31,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.IdentifierConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -56,7 +56,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownRegistrarException, UnknownDigDocException,
-            IdentifierConflictException, AccessException, UnknownUserException {
+            AccessException, UnknownUserException, RegistarScopeIdentifierCollisionException {
         try {
             authorization.checkAccessRightsOrAdmin(id.getRegistrarId(), login);
             Registrar registrar;
@@ -76,7 +76,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (AlreadyPresentException e) {
-                throw new IdentifierConflictException(id.getType().toString(), id.getValue().toString());
+                throw new RegistarScopeIdentifierCollisionException(id);
             }
             try {
                 factory.documentDao().updateDocumentDatestamp(id.getDigDocId());
@@ -251,14 +251,10 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
-            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity,
-            IdentifierConflictException {
-        authorization.checkAdminRights(login);
-        new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
+            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, UnknownIntelectualEntity, AccessException {
         UrnNbn urn;
-        List<DigitalDocument> digDocs;
         try {
-            digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
+            List<DigitalDocument> digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
             // there is allways exactly one digital document, even though data model allows more
             // dig-docs for single int-entity
             if (digDocs == null || digDocs.isEmpty()) {
@@ -266,11 +262,16 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } else {
                 urn = factory.urnDao().getUrnNbnByDigDocId(digDocs.get(0).getId());
             }
+            for (DigitalDocument doc : digDocs) {
+                urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
+                authorization.checkAccessRightsOrAdmin(urn.getRegistrarCode(), login);
+            }
         } catch (RecordNotFoundException e) {
             throw new RuntimeException(e);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
+        new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
         AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
     }
 

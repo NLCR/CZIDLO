@@ -3,8 +3,8 @@ package cz.nkp.urnnbn.api.v3.xml;
 import java.util.List;
 
 import cz.nkp.urnnbn.api.Utils;
-import cz.nkp.urnnbn.api.v3.pojo.Predecessor;
-import cz.nkp.urnnbn.api.v3.pojo.RsId;
+import cz.nkp.urnnbn.api.pojo.Predecessor;
+import cz.nkp.urnnbn.api.pojo.RsId;
 
 public class DigDocRegistrationXmlBuilder {
 

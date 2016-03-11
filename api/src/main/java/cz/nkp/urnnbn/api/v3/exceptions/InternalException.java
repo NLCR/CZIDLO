@@ -6,6 +6,7 @@ package cz.nkp.urnnbn.api.v3.exceptions;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import javax.ws.rs.core.Response.Status;
 
 /**

@@ -4,12 +4,6 @@
  */
 package cz.nkp.urnnbn.api.v3;
 
-import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
-import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,12 +20,17 @@ import javax.ws.rs.core.UriInfo;
 
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v3.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 
 /**
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalDocumentsResource {
+public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v2_v3.AbstractDigitalDocumentsResource {
 
     @Context
     private UriInfo context;
@@ -85,8 +84,8 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.AbstractDigitalD
     @Override
     public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr, idValueStr,
-                    registrar.getCode() });
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
+                    idValueStr, registrar.getCode() });
             DigitalDocument digitalDocument = super.getDigitalDocument(idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return new DigitalDocumentResource(digitalDocument, urn);

@@ -4,12 +4,13 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response;
 
+import java.io.IOException;
+import java.util.Map;
+
 import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ListRequestType;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ResumptionTokenManager;
 import cz.nkp.urnnbn.oaipmhprovider.tools.ElementAppender;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  *
