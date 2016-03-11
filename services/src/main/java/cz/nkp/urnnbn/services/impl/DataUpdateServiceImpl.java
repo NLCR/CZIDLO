@@ -251,13 +251,10 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
-            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, NotAdminException, UnknownIntelectualEntity {
-        authorization.checkAdminRights(login);
-        new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
+            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, UnknownIntelectualEntity, AccessException {
         UrnNbn urn;
-        List<DigitalDocument> digDocs;
         try {
-            digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
+            List<DigitalDocument> digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
             // there is allways exactly one digital document, even though data model allows more
             // dig-docs for single int-entity
             if (digDocs == null || digDocs.isEmpty()) {
@@ -265,11 +262,16 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } else {
                 urn = factory.urnDao().getUrnNbnByDigDocId(digDocs.get(0).getId());
             }
+            for (DigitalDocument doc : digDocs) {
+                urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
+                authorization.checkAccessRightsOrAdmin(urn.getRegistrarCode(), login);
+            }
         } catch (RecordNotFoundException e) {
             throw new RuntimeException(e);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
+        new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
         AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
     }
 

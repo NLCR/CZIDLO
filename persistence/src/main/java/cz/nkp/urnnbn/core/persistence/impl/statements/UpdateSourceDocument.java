@@ -26,11 +26,10 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
 
     @Override
     public String preparedStatement() {
-        return "UPDATE " + SourceDocumentDAO.TABLE_NAME + " SET " + SourceDocumentDAO.ATTR_TITLE + "=?," + SourceDocumentDAO.ATTR_VOLUME_TITLE
-                + "=?," + SourceDocumentDAO.ATTR_ISSUE_TITLE + "=?," + SourceDocumentDAO.ATTR_CCNB + "=?," + SourceDocumentDAO.ATTR_ISBN + "=?,"
-                + SourceDocumentDAO.ATTR_ISSN + "=?," + SourceDocumentDAO.ATTR_OTHER_ID + "=?," + SourceDocumentDAO.ATTR_PUB_PLACE + "=?,"
-                + SourceDocumentDAO.ATTR_PUBLISHER + "=?," + SourceDocumentDAO.ATTR_PUB_YEAR + "=?" + " WHERE " + SourceDocumentDAO.ATTR_INT_ENT_ID
-                + "=?";
+        return String.format("UPDATE %s SET %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=?, %s=? WHERE %s=?", SourceDocumentDAO.TABLE_NAME,
+                SourceDocumentDAO.ATTR_TITLE, SourceDocumentDAO.ATTR_VOLUME_TITLE, SourceDocumentDAO.ATTR_ISSUE_TITLE, SourceDocumentDAO.ATTR_CCNB,
+                SourceDocumentDAO.ATTR_ISBN, SourceDocumentDAO.ATTR_ISSN, SourceDocumentDAO.ATTR_OTHER_ID, SourceDocumentDAO.ATTR_PUBLISHER,
+                SourceDocumentDAO.ATTR_PUB_PLACE, SourceDocumentDAO.ATTR_PUB_YEAR, SourceDocumentDAO.ATTR_INT_ENT_ID);
     }
 
     @Override
@@ -43,8 +42,8 @@ public class UpdateSourceDocument extends AbstractStatement implements Statement
             st.setString(5, srcDoc.getIsbn());
             st.setString(6, srcDoc.getIssn());
             st.setString(7, srcDoc.getOtherId());
-            st.setString(8, srcDoc.getPublicationPlace());
-            st.setString(9, srcDoc.getPublisher());
+            st.setString(8, srcDoc.getPublisher());
+            st.setString(9, srcDoc.getPublicationPlace());
             setIntOrNull(st, 10, srcDoc.getPublicationYear());
             st.setLong(11, srcDoc.getIntEntId());
         } catch (SQLException e) {

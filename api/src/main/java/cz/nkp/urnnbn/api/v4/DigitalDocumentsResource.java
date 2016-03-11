@@ -287,12 +287,12 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @POST
     @Consumes("application/xml")
     @Produces("application/xml")
-    public Response registerDigitalDocument(@Context HttpServletRequest req, String content) {
+    public Response registerDigitalDocument(@Context HttpServletRequest context, String content) {
         // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
-            String login = req.getRemoteUser();
+            String login = context.getRemoteUser();
             String response = registerDigitalDocumentReturnXml(format, content, login, registrar.getCode());
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {

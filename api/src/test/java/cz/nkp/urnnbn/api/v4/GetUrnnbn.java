@@ -144,7 +144,7 @@ public class GetUrnnbn extends ApiV3Tests {
     @Test
     public void urnnbnValidActiveWasReserved() {
         String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
-        registerUrnNbn(REGISTRAR, urnNbn, USER);
+        registerUrnNbnByRegistrar(REGISTRAR, urnNbn, USER);
         LOGGER.info(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//
                 .statusCode(200)//
@@ -194,7 +194,7 @@ public class GetUrnnbn extends ApiV3Tests {
     @Test
     public void urnnbnValidDeactivatedWasReserved() {
         String urnNbn = getReservedUrnNbn(REGISTRAR, USER);
-        registerUrnNbn(REGISTRAR, urnNbn, USER);
+        registerUrnNbnByRegistrar(REGISTRAR, urnNbn, USER);
         deactivateUrnNbn(urnNbn, USER);
         LOGGER.info(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).expect()//

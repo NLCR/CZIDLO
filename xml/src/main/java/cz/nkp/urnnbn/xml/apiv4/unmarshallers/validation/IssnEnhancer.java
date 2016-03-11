@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * Accepts issn in forms like "1234-5678", "1234-567x", "1234-567X", "ISSN: 1234-5678", "ISSN 1234-5678", "ISSN:1234-5678", "issn: 1234-5678", "issn
- * 1234-5678", "issn:1234-5678" and returns issn in standard value "1234-567X", i. e. without any prefix and with potential x in upper cas.
+ * 1234-5678", "issn:1234-5678" and returns issn in standard value "1234-567X", i. e. without any prefix and with potential x in upper case.
  * 
  * @author Martin Řehánek
  */

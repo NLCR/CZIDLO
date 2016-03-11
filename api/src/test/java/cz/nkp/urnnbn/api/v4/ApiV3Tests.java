@@ -337,7 +337,10 @@ public abstract class ApiV3Tests {
     }
 
     String registerUrnNbn(String registrarCode, Credentials credentials) {
-        String bodyXml = ddRegistrationBuilder.minimal();
+        return registerUrnNbn(registrarCode, ddRegistrationBuilder.minimal(), credentials);
+    }
+
+    String registerUrnNbn(String registrarCode, String bodyXml, Credentials credentials) {
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
@@ -350,14 +353,14 @@ public abstract class ApiV3Tests {
         return xmlPath.getString("value");
     }
 
-    void registerUrnNbn(String registrarCode, String urnNbn, Credentials credentials) {
+    void registerUrnNbnByRegistrar(String registrarCode, String urnNbn, Credentials credentials) {
         String bodyXml = ddRegistrationBuilder.withUrnNbn(urnNbn);
         String responseXml = with().config(namespaceAwareXmlConfig()).auth().basic(credentials.login, credentials.password)//
                 .given().request().body(bodyXml).contentType(ContentType.XML)// .body(matchesXsd(registerDdXsdString))//
                 .expect()//
-                // .statusCode(201)//
+                .statusCode(201)//
                 .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
-                // .body(hasXPath("/c:response/c:urnNbn", nsContext))//
+                .body(hasXPath("/c:response/c:urnNbn", nsContext))//
                 .when().post(HTTPS_API_URL + "/registrars/" + registrarCode + "/digitalDocuments")//
                 .andReturn().asString();
         // XmlPath xmlPath = XmlPath.from(responseXml).setRoot("response.urnNbn");
@@ -558,6 +561,15 @@ public abstract class ApiV3Tests {
             result.put(p.urnNbn, list);
         }
         return result;
+    }
+
+    String getMetadata(String urnNbn) {
+        return with().config(namespaceAwareXmlConfig()).queryParam("format", "xml")//
+                .expect()//
+                .statusCode(200)//
+                .body(hasXPath("/c:response/c:digitalDocument", nsContext))//
+                .contentType(ContentType.XML).body(matchesXsd(responseXsdString))//
+                .when().get(buildResolvationPath(urnNbn)).andReturn().asString();
     }
 
 }

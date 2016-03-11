@@ -1,15 +1,19 @@
 package cz.nkp.urnnbn.api.v4;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -17,13 +21,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
+import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
+import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
 import cz.nkp.urnnbn.api.v4.exceptions.UrnNbnDeactivatedException;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.xml.apiv4.unmarshallers.RecordImportUnmarshaller;
 
 @Path("/resolver")
 public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
@@ -191,6 +206,64 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         }
         default:
             throw new RuntimeException();
+        }
+    }
+
+    @PUT
+    @Path("{urn}")
+    @Consumes("application/xml")
+    @Produces("application/xml")
+    public Response updateDigitalDocument(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, String content) {
+        ResponseFormat format = ResponseFormat.XML;
+        try {
+            checkServerNotReadOnly(format);
+            String login = context.getRemoteUser();
+            UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
+            switch (urnNbnWithState.getStatus()) {
+            case ACTIVE:
+                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                if (doc == null) {
+                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                } else {
+                    return updateDigitalDocumentReturnXml(format, content, login, urnNbnWithState.getUrn());
+                }
+            case DEACTIVATED:
+                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
+            case FREE:
+                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+            case RESERVED:
+                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+            default:
+                throw new RuntimeException();
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    private Response updateDigitalDocumentReturnXml(ResponseFormat format, String content, String login, UrnNbn urnNbn) throws ValidityException,
+            ParsingException, IOException, UnknownUserException, AccessException, UnknownDigDocException, UnknownIntelectualEntity {
+        try {
+            Document xml = ApiModuleConfiguration.instanceOf().getDigDocRegistrationDataValidatingLoaderV4().loadDocument(content);
+            RecordImportUnmarshaller unmarshaller = new RecordImportUnmarshaller(xml);
+            boolean modified = new EmptyDigDocAndIeFieldFiller(urnNbn, login).update(unmarshaller, format);
+            DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbn.getDigDocId());
+            if (doc == null) {
+                throw new UnknownDigitalDocumentException(null, urnNbn);
+            } else {
+                return metadataResponse(doc, urnNbn, format, true);
+            }
+        } catch (ValidityException ex) {
+            throw new InvalidDataException(format, ex);
+        } catch (ParsingException ex) {
+            throw new InvalidDataException(format, ex);
+        } catch (UnknownUserException ex) {
+            throw new NoAccessRightsException(format, ex.getMessage());
+        } catch (AccessException ex) {
+            throw new NoAccessRightsException(format, ex.getMessage());
         }
     }
 

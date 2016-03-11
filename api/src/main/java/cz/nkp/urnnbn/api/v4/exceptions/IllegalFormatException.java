@@ -6,10 +6,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import cz.nkp.urnnbn.api.v4.ResponseFormat;
-import cz.nkp.urnnbn.api.v4.json.JsonErrorBuilder;
-import cz.nkp.urnnbn.xml.apiv4.builders.XmlErrorBuilder;
-
 /**
  * The only exception here that does not extend ApiV4Exception. It allways returns html no mether what the specified response format was. The error
  * was in incorrect format specification.

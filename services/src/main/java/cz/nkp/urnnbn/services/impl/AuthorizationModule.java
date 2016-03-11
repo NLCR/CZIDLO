@@ -79,6 +79,19 @@ public class AuthorizationModule {
         }
     }
 
+    public void checkAccessRightsOrAdmin(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
+        try {
+            Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
+            if (!isAdmin(login)) {
+                checkAccessRights(registrar, userByLogin(login));
+            }
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
     /**
      * Verifies that user has access_right to registar.
      *
