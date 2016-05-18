@@ -215,7 +215,7 @@ This will probably require fixing configuration files again, since application s
 
 1. Use script `updateDatabase_4.2.2_to_4.3.sql`. Be sure to run this script as user that has all neccessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
 Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.2.2_to_4.3.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
-Since there is nontrivial amount of data being processed here (precomputated tables for search) this can take a while. Upgrading database with 1 mil digital documents lasted about 20 minutes on avarage laptop.
+Since there is nontrivial amount of data being processed here (precomputated tables for search) this can take a while. Upgrading database with 1 mil digital documents lasted about 20 minutes on average computer.
 
 #### Process database ####
 
