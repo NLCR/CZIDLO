@@ -64,11 +64,13 @@
         <!-- </dependency> -->
 
         <dependency>
+            <!-- Artifact not available in maven central. Install jdbc-stdext-2.0.jar into local repo. See  https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html -->
             <groupId>javax.sql</groupId>
             <artifactId>jdbc-stdext</artifactId>
             <version>2.0</version>
         </dependency>
         <dependency>
+            <!-- Artifact not available in maven central. Install jta-1.0.1B.jar into local repo. See  https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html -->
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
             <version>1.0.1B</version>
