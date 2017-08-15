@@ -959,10 +959,12 @@ CREATE TRIGGER update_urnnbn_assignment_tg AFTER INSERT OR UPDATE  ON UrnNbn FOR
 /* initial filling table search_rsi_preprocessed */
 INSERT INTO urnnbn_assignment_statistics_preprocessed (SELECT * FROM urnnbn_assignment_statistics_view);
 
-
 /**************************************/
 /* Statistics for URN:NBN resolvations */
 /**************************************/
+
+/* cleanup */
+DROP TABLE IF EXISTS urnnbn_resolvation_statistics;
 
 CREATE TABLE urnnbn_resolvation_statistics
 (
