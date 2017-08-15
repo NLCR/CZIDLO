@@ -514,6 +514,9 @@ INSERT INTO urnnbn_assignment_statistics_preprocessed (SELECT * FROM urnnbn_assi
 /* Statistics for URN:NBN resolvations */
 /**************************************/
 
+/* cleanup */
+DROP TABLE IF EXISTS urnnbn_resolvation_statistics;
+
 CREATE TABLE urnnbn_resolvation_statistics
 (
 	registrarCode VARCHAR NOT NULL,
