@@ -788,7 +788,7 @@ DROP TABLE IF EXISTS search_rsi_preprocessed;
 DROP VIEW IF EXISTS search_rsi_view;
 DROP FUNCTION IF EXISTS update_search_rsi_preprocessed_registrarscopeid_tg() CASCADE;
 DROP FUNCTION IF EXISTS update_search_rsi_preprocessed_registrarscopeid() CASCADE;
-DROP FUNCTION IF EXISTS update_search_rsi_preprocessed(NUMERIC,NUMERIC) CASCADE;
+DROP FUNCTION IF EXISTS update_search_rsi_preprocessed(NUMERIC,NUMERIC,VARCHAR) CASCADE;
 
 /* create preprocessed table */ 
 CREATE TABLE search_rsi_preprocessed
