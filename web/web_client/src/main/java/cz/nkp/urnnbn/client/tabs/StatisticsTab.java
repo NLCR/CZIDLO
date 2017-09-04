@@ -100,7 +100,7 @@ public class StatisticsTab extends SingleTabContentPanel {
                                 tabPanel.add(assignmentsWidget, "Přiřazení");
                                 // resolvations tab
                                 resolvationsWidget = new ResolvationsWidget(years, registrars);
-                                tabPanel.add(resolvationsWidget, "Rezolvování");
+                                tabPanel.add(resolvationsWidget, "Resolvování");
                             }
                         });
                     }
