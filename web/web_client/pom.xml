@@ -13,10 +13,6 @@
     <name>CZIDLO - web (client)</name>
     <packaging>war</packaging>
 
-    <properties>
-        <gwtquery.version>1.0.6</gwtquery.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
@@ -62,14 +58,12 @@
             <groupId>com.smartgwt</groupId>
             <artifactId>smartgwt</artifactId>
             <version>5.1p</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.googlecode.gwtquery.bundles</groupId>
             <artifactId>gquery-dnd-bundle</artifactId>
-            <version>${gwtquery.version}</version>
-            <scope>provided</scope>
+            <version>1.0.6</version>
         </dependency>
 
         <dependency>

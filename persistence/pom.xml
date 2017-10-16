@@ -61,10 +61,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4-1201.jdbc41</version>
-            <scope>compile</scope>
+            <version>9.4-1201-jdbc41</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
