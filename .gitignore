@@ -7,7 +7,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.ear
 
@@ -17,10 +17,6 @@ hs_err_pid*
 
 ### GWT ###
 *.class
-
-# Package Files #
-*.jar
-*.war
 
 # gwt caches and compiled units #
 war/gwt_bree/
