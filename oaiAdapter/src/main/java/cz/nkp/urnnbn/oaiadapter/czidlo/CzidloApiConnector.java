@@ -50,6 +50,10 @@ public class CzidloApiConnector {
         return baseUrl;
     }
 
+    public String getLogin() {
+        return credentials.getLogin();
+    }
+
     public String getUrnnbnByRegistrarScopeId(String registrarCode, String idType, String idValue) throws CzidloConnectionException {
         String url = baseUrl
                 + "registrars/" + registrarCode

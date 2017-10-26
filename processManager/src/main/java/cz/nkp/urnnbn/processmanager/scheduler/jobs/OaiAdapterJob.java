@@ -90,12 +90,12 @@ public class OaiAdapterJob extends AbstractJob {
             // oai response -> dd registration XSLT
             String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);
             logger.info("XSL template to transform oai response to DD registration data: " + ddRegistrationXslt);
-            adapter.setMetadataToDigDocRegistrationTemplate(XmlTools.loadXmlFromFile(ddRegistrationXslt));
+            adapter.setMetadataToDdRegistrationXslt(null, XmlTools.loadXmlFromFile(ddRegistrationXslt));
 
             // oai response -> di import XSLT
             String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_XSL_FILE);
             logger.info("XSL template to transform oai response to DI import data: " + diImportXslt);
-            adapter.setMetadataToDigInstImportTemplate(XmlTools.loadXmlFromFile(diImportXslt));
+            adapter.setMetadataToDiImportXslt(null, XmlTools.loadXmlFromFile(diImportXslt));
 
             // XSDs
             String ddRegistrationXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DD_XSD_URL);

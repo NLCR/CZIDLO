@@ -23,15 +23,18 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class XsdProvider {
 
     private final String digDocRegistrationDataXsd;
     private final String digInstImportDataXsd;
+    private final URL digDocRegistrationDataXsdUrl;
+    private final URL digInstImportXsdUrl;
 
     public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
+        this.digDocRegistrationDataXsdUrl = digDocRegistrationDataXsdUrl;
+        this.digInstImportXsdUrl = digInstImportXsdUrl;
         digDocRegistrationDataXsd = loadXsdFromUrl(digDocRegistrationDataXsdUrl);
         digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
     }
@@ -61,5 +64,13 @@ public class XsdProvider {
 
     public String getDigitalInstanceImportDataXsd() {
         return digInstImportDataXsd;
+    }
+
+    public URL getDigDocRegistrationDataXsdUrl() {
+        return digDocRegistrationDataXsdUrl;
+    }
+
+    public URL getDigInstImportXsdUrl() {
+        return digInstImportXsdUrl;
     }
 }

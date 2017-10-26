@@ -17,7 +17,6 @@ import cz.nkp.urnnbn.utils.PropertyLoader;
 
 /**
  * Main class
- * 
  */
 public class App {
 
@@ -58,8 +57,10 @@ public class App {
         adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));
         adapter.setSetSpec(properties.loadStringOrNull(DefinedProperties.OAI_SET));
         // xsl
-        adapter.setMetadataToDigDocRegistrationTemplate(XmlTools.loadXmlFromFile(properties.loadString(DefinedProperties.DD_STYLESHEET)));
-        adapter.setMetadataToDigInstImportTemplate(XmlTools.loadXmlFromFile(properties.loadString(DefinedProperties.DI_STYLESHEET)));
+        File ddRegistrationXslFile = new File(properties.loadString(DefinedProperties.DD_STYLESHEET));
+        adapter.setMetadataToDdRegistrationXslt(ddRegistrationXslFile, XmlTools.loadXmlFromFile(ddRegistrationXslFile.getAbsolutePath()));
+        File diImportXsdFile = new File(properties.loadString(DefinedProperties.DI_STYLESHEET));
+        adapter.setMetadataToDiImportXslt(diImportXsdFile, XmlTools.loadXmlFromFile(diImportXsdFile.getAbsolutePath()));
         // xsd for transformation results
         URL digDocRegistrationDataXsdUrl = properties.loadUrl(DefinedProperties.DD_REGISTRATION_XSD_URL);
         URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DefinedProperties.DI_IMPORT_XSD_URL);

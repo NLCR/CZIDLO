@@ -26,7 +26,6 @@ import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
- * 
  * @author Jan Rychtář
  * @author Martin Řehánek
  */
@@ -44,12 +43,15 @@ public class OaiAdapter {
     private CzidloApiConnector czidloConnector;
 
     // XSLT
-    private String metadataToDigDocRegistrationTemplate;
-    private String metadataToDigInstImportTemplate;
+    private String metadataToDdRegistrationXslt;
+    private File metadataToDdRegistrationXsltFile;
+    private String metadataToDiImportXslt;
+    private File metadataToDiImportXsltFile;
     // XSD
     private XsdProvider xsdProvider;
     // OTHER
     private int limit = -1;
+    //private int limit = 10;//dev only
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
@@ -87,20 +89,14 @@ public class OaiAdapter {
         this.setSpec = setSpec;
     }
 
-    public String getMetadataToDigDocRegistrationTemplate() {
-        return metadataToDigDocRegistrationTemplate;
+    public void setMetadataToDdRegistrationXslt(File xsltFile, String xslt) {
+        this.metadataToDdRegistrationXsltFile = xsltFile;
+        this.metadataToDdRegistrationXslt = xslt;
     }
 
-    public void setMetadataToDigDocRegistrationTemplate(String metadataToImportTemplate) {
-        this.metadataToDigDocRegistrationTemplate = metadataToImportTemplate;
-    }
-
-    public String getMetadataToDigInstImportTemplate() {
-        return metadataToDigInstImportTemplate;
-    }
-
-    public void setMetadataToDigInstImportTemplate(String metadataToDigitalInstanceTemplate) {
-        this.metadataToDigInstImportTemplate = metadataToDigitalInstanceTemplate;
+    public void setMetadataToDiImportXslt(File xsltFile, String xslt) {
+        this.metadataToDiImportXsltFile = xsltFile;
+        this.metadataToDiImportXslt = xslt;
     }
 
     public String getRegistrarCode() {
@@ -141,7 +137,7 @@ public class OaiAdapter {
 
     private Document getDigDocRegistrationTemplateDoc() throws TemplateException {
         try {
-            return XmlTools.getTemplateDocumentFromString(getMetadataToDigDocRegistrationTemplate());
+            return XmlTools.getTemplateDocumentFromString(metadataToDdRegistrationXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-document-registration template: " + ex.getMessage());
         } catch (ParsingException ex) {
@@ -153,7 +149,7 @@ public class OaiAdapter {
 
     private Document getDigInstImportTemplateDoc() throws TemplateException {
         try {
-            return XmlTools.getTemplateDocumentFromString(getMetadataToDigInstImportTemplate());
+            return XmlTools.getTemplateDocumentFromString(metadataToDiImportXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-instance-import template: " + ex.getMessage());
         } catch (ParsingException ex) {
@@ -204,38 +200,38 @@ public class OaiAdapter {
             report("- " + urnnbn);
             report("- URN:NBN status: " + urnnbnStatus);
             switch (urnnbnStatus) {
-            case RESERVED:
-                if (getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
-                    throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", Status.RESERVED,
-                            UrnNbnRegistrationMode.BY_RESERVATION));
-                } else {
-                    registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
-                    return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
-                }
-            case FREE:
-                if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
-                    throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", Status.FREE,
-                            UrnNbnRegistrationMode.BY_REGISTRAR));
-                } else {
-                    registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
-                    return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
-                }
-            case ACTIVE:
-                String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE,
-                        oaiIdentifier);
-                if (urnnbnByRegistrarScopeId != null && !urnnbn.equals(urnnbnByRegistrarScopeId)) {
-                    throw new OaiAdapterException(String.format(
-                            "URN:NBN in digital-document-registration data (%s) doesn't match URN:NBN obtained by OAI_ADAPTER ID (%s)!", urnnbn,
-                            urnnbnByRegistrarScopeId));
-                } else {
-                    return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.ALREADY_REGISTERED);
-                }
-            case DEACTIVATED:
-                return new RecordResult(urnnbn, DigitalDocumentStatus.IS_DEACTIVATED, null);
-            case UNDEFINED:
-                throw new OaiAdapterException("Checking URN:NBN status failed");
-            default:
-                throw new IllegalStateException();
+                case RESERVED:
+                    if (getRegistrationMode() != UrnNbnRegistrationMode.BY_RESERVATION) {
+                        throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", Status.RESERVED,
+                                UrnNbnRegistrationMode.BY_RESERVATION));
+                    } else {
+                        registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
+                    }
+                case FREE:
+                    if (getRegistrationMode() != UrnNbnRegistrationMode.BY_REGISTRAR) {
+                        throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", Status.FREE,
+                                UrnNbnRegistrationMode.BY_REGISTRAR));
+                    } else {
+                        registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
+                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.NOW_REGISTERED);
+                    }
+                case ACTIVE:
+                    String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE,
+                            oaiIdentifier);
+                    if (urnnbnByRegistrarScopeId != null && !urnnbn.equals(urnnbnByRegistrarScopeId)) {
+                        throw new OaiAdapterException(String.format(
+                                "URN:NBN in digital-document-registration data (%s) doesn't match URN:NBN obtained by OAI_ADAPTER ID (%s)!", urnnbn,
+                                urnnbnByRegistrarScopeId));
+                    } else {
+                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, DigitalDocumentStatus.ALREADY_REGISTERED);
+                    }
+                case DEACTIVATED:
+                    return new RecordResult(urnnbn, DigitalDocumentStatus.IS_DEACTIVATED, null);
+                case UNDEFINED:
+                    throw new OaiAdapterException("Checking URN:NBN status failed");
+                default:
+                    throw new IllegalStateException();
             }
         }
     }
@@ -364,22 +360,36 @@ public class OaiAdapter {
             Document digInstImportTemplate = getDigInstImportTemplateDoc();
             report("REPORT:");
             report("------------------------------");
-            report(" OAI data provider");
+            report(" OAI-PMH data provider");
             report(" -----------------");
-            report("  OAI base url: " + getOaiBaseUrl());
+            report("  Base url: " + getOaiBaseUrl());
             report("  Metadata prefix: " + getMetadataPrefix());
-            report("  Set: " + (setSpec == null ? "not defined" : setSpec));
+            report("  Set: " + (setSpec == null ? "none" : setSpec));
+            report(" ");
+            report(" Transformations");
+            report(" -----------------");
+            if (metadataToDdRegistrationXsltFile != null) {
+                report("  Metadata to DD-registration template: " + metadataToDdRegistrationXsltFile.getAbsolutePath());
+            }
+            report("  DD-registration schema location: " + getXsdProvider().getDigDocRegistrationDataXsdUrl().toString());
+            if (metadataToDiImportXsltFile != null) {
+                report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
+            }
+            report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
             report(" ");
             report(" CZIDLO API");
             report(" -----------------");
             report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
+            report("  Registrar code: " + getRegistrarCode());
+            report("  Login: " + getCzidloApiConnector().getLogin());
             report("  Mode: " + getRegistrationMode());
             report("------------------------------");
+            report(" ");
 
             try {
                 if (!czidloConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
                     report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode());
-                    logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[] { getRegistrationMode(), getRegistrarCode() });
+                    logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getRegistrationMode(), getRegistrarCode()});
                     return;
                 }
             } catch (CzidloConnectionException e) {
@@ -393,7 +403,7 @@ public class OaiAdapter {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
             } catch (OaiHarvesterException ex) {
                 report("OaiHarvester initialization failed. " + ex.getMessage() + ", url: " + ex.getMessage());
-                logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[] { ex.getMessage(), ex.getMessage() });
+                logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[]{ex.getMessage(), ex.getMessage()});
                 return;
             }
             int counter = 0;
@@ -424,36 +434,36 @@ public class OaiAdapter {
                     try {
                         RecordResult recordResult = processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
                         switch (recordResult.getDdStatus()) {
-                        case IS_DEACTIVATED:
-                            ddDeactivated++;
-                            break;
-                        case ALREADY_REGISTERED:
-                            ddRegisteredAlready++;
-                            switch (recordResult.getDiStatus()) {
-                            case IMPORTED:
-                                ddRegisteredAlreadyDisImported++;
+                            case IS_DEACTIVATED:
+                                ddDeactivated++;
                                 break;
-                            case UPDATED:
-                                ddRegisteredAlreadyDisUpdated++;
+                            case ALREADY_REGISTERED:
+                                ddRegisteredAlready++;
+                                switch (recordResult.getDiStatus()) {
+                                    case IMPORTED:
+                                        ddRegisteredAlreadyDisImported++;
+                                        break;
+                                    case UPDATED:
+                                        ddRegisteredAlreadyDisUpdated++;
+                                        break;
+                                    case UNCHANGED:
+                                        ddRegisteredAlreadyDisUnchanged++;
+                                        break;
+                                }
                                 break;
-                            case UNCHANGED:
-                                ddRegisteredAlreadyDisUnchanged++;
-                                break;
-                            }
-                            break;
-                        case NOW_REGISTERED:
-                            ddRegisteredNow++;
-                            switch (recordResult.getDiStatus()) {
-                            case IMPORTED:
-                                ddRegisteredNowDisImported++;
-                                break;
-                            case UPDATED:
-                                ddRegisteredNowDisUpdated++;
-                                break;
-                            case UNCHANGED:
-                                ddRegisteredNowDisUnchanged++;
-                                break;
-                            }
+                            case NOW_REGISTERED:
+                                ddRegisteredNow++;
+                                switch (recordResult.getDiStatus()) {
+                                    case IMPORTED:
+                                        ddRegisteredNowDisImported++;
+                                        break;
+                                    case UPDATED:
+                                        ddRegisteredNowDisUpdated++;
+                                        break;
+                                    case UNCHANGED:
+                                        ddRegisteredNowDisUnchanged++;
+                                        break;
+                                }
                         }
 
                         if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
