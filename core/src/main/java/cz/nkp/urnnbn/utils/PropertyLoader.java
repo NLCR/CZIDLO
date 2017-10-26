@@ -16,7 +16,7 @@ import java.util.Properties;
  * Class contains methods for loading and parsing values from properties object (file) supplied in constructor. All the loadSomething methods load
  * (and potentially parse) property by key. If value of this property is missing, the exception is thrown. On the other hand the loadSomethingOrNull
  * alternatives return null if property value is missing.
- * 
+ *
  * @author Martin Řehánek
  */
 public class PropertyLoader {
@@ -42,12 +42,9 @@ public class PropertyLoader {
     }
 
     /**
-     * 
-     * @param key
-     *            string identifying the property
+     * @param key string identifying the property
      * @return value of property identified by key
-     * @throws IllegalArgumentException
-     *             if property for given key is missing
+     * @throws IllegalArgumentException if property for given key is missing
      */
     public String loadString(String key) {
         String result = loadStringOrNull(key);
@@ -62,7 +59,12 @@ public class PropertyLoader {
     }
 
     public String loadStringOrNull(String key) {
-        return properties.getProperty(key);
+        String value = properties.getProperty(key);
+        if (value != null && value.isEmpty()) {
+            return null;
+        } else {
+            return value;
+        }
     }
 
     public Integer loadIntOrNull(String key) {
@@ -100,10 +102,8 @@ public class PropertyLoader {
     }
 
     /**
-     * 
      * @param key
-     * @param mustExist
-     *            if true exception is thrown in case that file doesn't exist
+     * @param mustExist if true exception is thrown in case that file doesn't exist
      * @return
      */
     public File loadFile(String key, boolean mustExist) {
