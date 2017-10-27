@@ -10,7 +10,6 @@ import cz.nkp.urnnbn.xml.apiv3.unmarshallers.DigitalInstanceUnmarshaller;
 import cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation.LimitedLengthEnhancer;
 
 /**
- *
  * @author hanis
  */
 public class DigitalInstance {
@@ -18,7 +17,7 @@ public class DigitalInstance {
     private static final Logger logger = Logger.getLogger(DigitalInstance.class.getName());
 
     private String id;
-    private String digitalLibraryId;
+    private Long digitalLibraryId;
     private String url;
     private String format;
     private String accessibility;
@@ -29,11 +28,11 @@ public class DigitalInstance {
         this.accessibility = "";
     }
 
-    public String getDigitalLibraryId() {
+    public Long getDigitalLibraryId() {
         return digitalLibraryId;
     }
 
-    public void setDigitalLibraryId(String digitalLibraryId) {
+    public void setDigitalLibraryId(Long digitalLibraryId) {
         this.digitalLibraryId = digitalLibraryId;
     }
 
@@ -92,7 +91,63 @@ public class DigitalInstance {
 
     @Override
     public String toString() {
-        return "ID: " + id + ", Library ID: " + digitalLibraryId + ", url: " + url + ", format: " + format + "accessibility: " + accessibility;
+        StringBuilder builder = new StringBuilder();
+        builder.append("DigitalInstance{");
+        boolean someFieldAlreadyPresent = false;
+        if (id != null && !id.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("id='").append(id).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (digitalLibraryId != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("digitalLibraryId='").append(digitalLibraryId).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (url != null && !url.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("url='").append(url).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (format != null && !format.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("format='").append(format).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (accessibility != null && !accessibility.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("accessibility='").append(accessibility).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        builder.append('}');
+        return builder.toString();
     }
 
+    public DigitalInstance withMergedAccessibilityAndFormat(DigitalInstance oldDi) {
+        DigitalInstance merged = new DigitalInstance();
+        merged.setDigitalLibraryId(digitalLibraryId);
+        merged.setUrl(url);
+        merged.setAccessibility(accessibility != null && !accessibility.isEmpty() ? accessibility : oldDi.getAccessibility());
+        merged.setFormat(format != null && !format.isEmpty() ? format : oldDi.getFormat());
+        return merged;
+    }
+
+    public cz.nkp.urnnbn.core.dto.DigitalInstance toCoreDigitalInstance() {
+        cz.nkp.urnnbn.core.dto.DigitalInstance result = new cz.nkp.urnnbn.core.dto.DigitalInstance();
+        result.setAccessibility(accessibility);
+        result.setFormat(format);
+        result.setLibraryId(digitalLibraryId);
+        result.setUrl(url);
+        return result;
+    }
 }

@@ -138,6 +138,14 @@ public class PropertyLoader {
         }
     }
 
+    public boolean loadBooleanTrueIfNullOrEmpty(String key) {
+        if (key == null || key.isEmpty()) {
+            return true;
+        } else {
+            return loadBoolean(key);
+        }
+    }
+
     public Properties getProperties() {
         return properties;
     }

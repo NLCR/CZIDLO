@@ -22,11 +22,13 @@ public class DefinedProperties {
     static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
     static String CZIDLO_API_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
     static String CZIDLO_API_IGNORE_INVALID_CERTIFICATE = "oaiAdapter.czidlo_api.ignoreInvalidCertificate";
-
     // xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
     // xsd for transformation results
     public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
     public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
+    // di import
+    public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.mergeDigitalInstances";
+
 }

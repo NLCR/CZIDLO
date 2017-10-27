@@ -21,7 +21,7 @@ public class DiApiResponseDocHelper {
         DigitalInstance di = new DigitalInstance();
         Nodes libraryIdNodes = diDocFromApiRespons.query("//r:digitalInstance/r:digitalLibrary/@id", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
-            di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
+            di.setDigitalLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
         }
         Nodes urlNodes = diDocFromApiRespons.query("//r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {

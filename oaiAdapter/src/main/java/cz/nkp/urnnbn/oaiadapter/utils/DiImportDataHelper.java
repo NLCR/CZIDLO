@@ -21,7 +21,7 @@ public class DiImportDataHelper {
         DigitalInstance di = new DigitalInstance();
         Nodes libraryIdNodes = diImportData.query("/r:digitalInstance/r:digitalLibraryId", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
-            di.setDigitalLibraryId(libraryIdNodes.get(0).getValue());
+            di.setDigitalLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
         }
         Nodes urlNodes = diImportData.query("/r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {

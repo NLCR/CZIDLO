@@ -65,6 +65,8 @@ public class App {
         URL digDocRegistrationDataXsdUrl = properties.loadUrl(DefinedProperties.DD_REGISTRATION_XSD_URL);
         URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DefinedProperties.DI_IMPORT_XSD_URL);
         adapter.setXsdProvider(new XsdProvider(digDocRegistrationDataXsdUrl, digitalInstanceImportDataXsdUrl));
+        //di
+        adapter.setMergeDigitalInstances(properties.loadBooleanFalseIfNullOrEmpty(DefinedProperties.DI_IMPORT_MERGE_DIS));
 
         // report
         initReportStream(adapter, properties);

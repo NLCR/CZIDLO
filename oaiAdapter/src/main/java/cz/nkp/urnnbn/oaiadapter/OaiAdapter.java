@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.sun.org.apache.regexp.internal.RE;
+import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
@@ -41,7 +43,6 @@ public class OaiAdapter {
     private String registrarCode;
     private UrnNbnRegistrationMode registrationMode;
     private CzidloApiConnector czidloConnector;
-
     // XSLT
     private String metadataToDdRegistrationXslt;
     private File metadataToDdRegistrationXsltFile;
@@ -49,6 +50,8 @@ public class OaiAdapter {
     private File metadataToDiImportXsltFile;
     // XSD
     private XsdProvider xsdProvider;
+    // DI
+    private boolean mergeDigitalInstances = true;
     // OTHER
     private int limit = -1;
     //private int limit = 10;//dev only
@@ -99,6 +102,10 @@ public class OaiAdapter {
         this.metadataToDiImportXslt = xslt;
     }
 
+    public void setMergeDigitalInstances(boolean mergeDigitalInstances) {
+        this.mergeDigitalInstances = mergeDigitalInstances;
+    }
+
     public String getRegistrarCode() {
         return registrarCode;
     }
@@ -137,6 +144,7 @@ public class OaiAdapter {
 
     private Document getDigDocRegistrationTemplateDoc() throws TemplateException {
         try {
+            //TODO: cache, no need to parse it again for every single record
             return XmlTools.getTemplateDocumentFromString(metadataToDdRegistrationXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-document-registration template: " + ex.getMessage());
@@ -149,6 +157,7 @@ public class OaiAdapter {
 
     private Document getDigInstImportTemplateDoc() throws TemplateException {
         try {
+            //TODO: cache, no need to parse it again for every single record
             return XmlTools.getTemplateDocumentFromString(metadataToDiImportXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-instance-import template: " + ex.getMessage());
@@ -239,34 +248,54 @@ public class OaiAdapter {
     private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document diImportData, DigitalDocumentStatus ddStatus)
             throws OaiAdapterException, CzidloConnectionException {
         DigitalInstance newDi = new DiImportDataHelper(diImportData).buildDi();
-        DigitalInstance oldDi = null;
+        //report(diImportData.toXML());
+        DigitalInstance currentDi = null;
         try {
-            oldDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
+            currentDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
         } catch (IOException ex) {
             Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
             Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (oldDi == null) {
+        if (currentDi == null) {
             // di doesnt exist yet
-            report("- DI doesn't exists - importing DI.");
+            report("- DI doesn't exists - creating new DI ...");
             // import
             importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
+            report("- New DI created.");
             return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
         } else {
             // di already exist
-            if (newDi.isChanged(oldDi)) {
-                // di has been changed
-                report("- DI already exists and is modified: " + newDi.getDiff(oldDi) + ".");
-                report("- Deactivating old DI and importing new one.");
+            if (newDi.isChanged(currentDi)) {
+                // di has changed
+                //report("- DI already exists and is diffrent" + newDi.getDiff(currentDi) + ".");
+                report("- DI already exists and is considered different from new DI.");
+                report("- Current DI: " + currentDi.toString());
+                report("- New DI: " + newDi.toString());
+                if (mergeDigitalInstances) {
+                    DigitalInstance mergedDi = newDi.withMergedAccessibilityAndFormat(currentDi);
+                    diImportData = new Document(new DiCreateBuilderXml(mergedDi.toCoreDigitalInstance()).buildRootElement());
+                    //System.err.println(diImportData.toXML());
+                    //report(diImportData.toXML());
+                    report("- Merged DI: " + mergedDi.toString());
+                }
                 // deactivate
-                czidloConnector.deactivateDigitalInstance(oldDi.getId());
+                report("- Deactivating current DI ...");
+                czidloConnector.deactivateDigitalInstance(currentDi.getId());
+                report("- Current DI deactivated.");
                 // import
+                if (mergeDigitalInstances) {
+                    report("- Creating another DI (from new DI merged with old DI) ...");
+                } else {
+                    report("- Creating another DI (from new DI) ...");
+                }
                 importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
+                report("- Another DI created.");
                 return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UPDATED);
             } else {
                 // no change - do nothing
-                report("- DI already exists and is not modified - doing nothing.");
+                report("- DI already exists and is not considered different from new DI - doing nothing.");
+                //report("- old: " + oldDi.toString() + ", new: " + newDi.toString());
                 return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNCHANGED);
             }
         }
@@ -275,7 +304,6 @@ public class OaiAdapter {
     private void importDigitalInstance(Document diImportData, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
-            report("- Digital-instance-import successful - continuing.");
         } catch (IOException ex) {
             throw new OaiAdapterException("IOException occurred during digital-instance-import:", ex);
         } catch (ParsingException ex) {
@@ -360,12 +388,22 @@ public class OaiAdapter {
             Document digInstImportTemplate = getDigInstImportTemplateDoc();
             report("REPORT:");
             report("------------------------------");
+
             report(" OAI-PMH data provider");
             report(" -----------------");
             report("  Base url: " + getOaiBaseUrl());
             report("  Metadata prefix: " + getMetadataPrefix());
             report("  Set: " + (setSpec == null ? "none" : setSpec));
             report(" ");
+
+            report(" CZIDLO API");
+            report(" -----------------");
+            report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
+            report("  Registrar code: " + getRegistrarCode());
+            report("  Login: " + getCzidloApiConnector().getLogin());
+            report("  Mode: " + getRegistrationMode());
+            report(" ");
+
             report(" Transformations");
             report(" -----------------");
             if (metadataToDdRegistrationXsltFile != null) {
@@ -377,12 +415,11 @@ public class OaiAdapter {
             }
             report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
             report(" ");
-            report(" CZIDLO API");
+
+            report(" DI management");
             report(" -----------------");
-            report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
-            report("  Registrar code: " + getRegistrarCode());
-            report("  Login: " + getCzidloApiConnector().getLogin());
-            report("  Mode: " + getRegistrationMode());
+            report("  Merge digital instances: " + mergeDigitalInstances);
+
             report("------------------------------");
             report(" ");
 
