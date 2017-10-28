@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.utils.*;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -22,10 +23,6 @@ import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalInstanceStatus;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
-import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
-import cz.nkp.urnnbn.oaiadapter.utils.DiImportDataHelper;
-import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
  * @author Jan Rychtář
@@ -248,7 +245,7 @@ public class OaiAdapter {
 
     private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document diImportData, DigitalDocumentStatus ddStatus)
             throws OaiAdapterException, CzidloConnectionException {
-        DigitalInstance newDi = new DiImportDataHelper(diImportData).buildDi();
+        DigitalInstance newDi = DiBuilder.buildDiFromImportDigitalInstanceRequest(diImportData);
         //report(diImportData.toXML());
         DigitalInstance currentDi = null;
         try {

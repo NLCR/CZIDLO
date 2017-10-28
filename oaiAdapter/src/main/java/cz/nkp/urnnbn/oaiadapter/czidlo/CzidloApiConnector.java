@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -22,12 +23,11 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-//import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.DiApiResponseDocHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
- * @author hanis, Martin Řehánek
+ * @author Jan Rychtář
+ * @author Martin Řehánek
  */
 public class CzidloApiConnector {
 
@@ -136,11 +136,6 @@ public class CzidloApiConnector {
 
     }
 
-    public Document getDigitailInstanceById(String id) throws IOException, ParsingException {
-        String url = baseUrl + "digitalInstances/id/" + id + "?format=xml";
-        Document document = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
-        return document;
-    }
 
     public UrnnbnStatus getUrnnbnStatus(String urnnbn) {
         String url = baseUrl + "urnnbn/" + urnnbn + "?format=xml";
@@ -311,9 +306,9 @@ public class CzidloApiConnector {
     public DigitalInstance getDigitalInstanceByLibraryId(String urnnbn, DigitalInstance newDi) throws IOException, ParsingException {
         List<String> idList = getDigitalInstancesIdList(urnnbn);
         for (String id : idList) {
-            Document diDoc = getDigitailInstanceById(id);
-            DigitalInstance oldDi = new DiApiResponseDocHelper(diDoc).buildDi();
-            // System.out.println("odi:" + oldDi);
+            String url = baseUrl + "digitalInstances/id/" + id + "?format=xml";
+            Document apiResponseDoc = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
+            DigitalInstance oldDi = DiBuilder.buildDiFromGetDigitalInstanceByLibraryIdResponse(apiResponseDoc);
             if (oldDi.getLibraryId().equals(newDi.getLibraryId())) {
                 return oldDi;
             }

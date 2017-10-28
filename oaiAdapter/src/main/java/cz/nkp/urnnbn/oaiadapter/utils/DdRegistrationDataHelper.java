@@ -14,8 +14,8 @@ import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 
 /**
- *
- * @author hanis
+ * @author Jan Rychtář
+ * @author Martin Řehánek
  */
 public class DdRegistrationDataHelper {
 
@@ -68,24 +68,4 @@ public class DdRegistrationDataHelper {
         return null;
     }
 
-    // public static void main(String[] args) {
-    // //File file = new File("/home/hanis/prace/resolver/oai/parser-test/t.xml");
-    // File file = new File("/home/hanis/prace/resolver/oai/parser-test/docs/digitalDocument2.xml");
-    // //File file = new File("/home/hanis/prace/resolver/oai/parser-test/monograph.xml");
-    //
-    // Builder builder = new Builder();
-    // Document doc = null;
-    // try {
-    // doc = builder.build(file);
-    // } catch (ParsingException ex) {
-    // logger.log(Level.SEVERE, null, ex);
-    // } catch (IOException ex) {
-    // logger.log(Level.SEVERE, null, ex);
-    // }
-    // Refiner.refineDocument(doc);
-    // ImportDocumentHandler.putRegistrarScopeIdentifier(doc, "oai:blablabla");
-    // //String urnnbn = ImportDocumentHandler.getUrnnbnFromDocument(doc);
-    // //System.out.println(urnnbn);
-    // //System.out.println(doc.toXML());
-    // }
 }
