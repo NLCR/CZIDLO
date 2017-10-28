@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -21,7 +22,7 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 import nu.xom.XPathContext;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
+//import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.utils.DiApiResponseDocHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
@@ -270,7 +271,7 @@ public class CzidloApiConnector {
         }
     }
 
-    public void deactivateDigitalInstance(String id) throws CzidloConnectionException {
+    public void deactivateDigitalInstance(Long id) throws CzidloConnectionException {
         try {
             String url = baseUrl + "digitalInstances/id/" + id;
             HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
@@ -313,7 +314,7 @@ public class CzidloApiConnector {
             Document diDoc = getDigitailInstanceById(id);
             DigitalInstance oldDi = new DiApiResponseDocHelper(diDoc).buildDi();
             // System.out.println("odi:" + oldDi);
-            if (oldDi.getDigitalLibraryId().equals(newDi.getDigitalLibraryId())) {
+            if (oldDi.getLibraryId().equals(newDi.getLibraryId())) {
                 return oldDi;
             }
         }

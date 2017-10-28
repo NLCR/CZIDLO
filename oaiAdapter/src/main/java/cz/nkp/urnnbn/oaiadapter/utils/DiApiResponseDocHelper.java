@@ -2,9 +2,9 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import nu.xom.Document;
 import nu.xom.Nodes;
-import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 
 public class DiApiResponseDocHelper {
@@ -13,15 +13,15 @@ public class DiApiResponseDocHelper {
 
     private final Document diDocFromApiRespons;
 
-    public DiApiResponseDocHelper(Document diDocFromApiRespons) {
-        this.diDocFromApiRespons = diDocFromApiRespons;
+    public DiApiResponseDocHelper(Document diDocFromApiResponse) {
+        this.diDocFromApiRespons = diDocFromApiResponse;
     }
 
     public DigitalInstance buildDi() {
         DigitalInstance di = new DigitalInstance();
         Nodes libraryIdNodes = diDocFromApiRespons.query("//r:digitalInstance/r:digitalLibrary/@id", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
-            di.setDigitalLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
+            di.setLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
         }
         Nodes urlNodes = diDocFromApiRespons.query("//r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {
@@ -37,7 +37,7 @@ public class DiApiResponseDocHelper {
         }
         Nodes idNodes = diDocFromApiRespons.query("//r:digitalInstance/@id", CzidloApiConnector.CONTEXT);
         if (idNodes.size() == 1) {
-            di.setId(idNodes.get(0).getValue());
+            di.setId(Long.valueOf(idNodes.get(0).getValue()));
         }
         return di;
     }

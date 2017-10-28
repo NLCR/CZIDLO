@@ -2,9 +2,9 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import nu.xom.Document;
 import nu.xom.Nodes;
-import cz.nkp.urnnbn.oaiadapter.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 
 public class DiImportDataHelper {
@@ -21,7 +21,7 @@ public class DiImportDataHelper {
         DigitalInstance di = new DigitalInstance();
         Nodes libraryIdNodes = diImportData.query("/r:digitalInstance/r:digitalLibraryId", CzidloApiConnector.CONTEXT);
         if (libraryIdNodes.size() == 1) {
-            di.setDigitalLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
+            di.setLibraryId(Long.valueOf(libraryIdNodes.get(0).getValue()));
         }
         Nodes urlNodes = diImportData.query("/r:digitalInstance/r:url", CzidloApiConnector.CONTEXT);
         if (urlNodes.size() == 1) {

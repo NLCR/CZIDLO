@@ -7,7 +7,6 @@ package cz.nkp.urnnbn.core.dto;
 import org.joda.time.DateTime;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class DigitalInstance implements IdentifiableByLongAttribute {
@@ -120,7 +119,73 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
 
     @Override
     public String toString() {
-        return "DigitalInstance{" + "id=" + id + ", digDocId=" + digDocId + ", libraryId=" + libraryId + ", created=" + created + ", deactivated="
-                + deactivated + ", active=" + active + ", url=" + url + ", format=" + format + ", accessibility=" + accessibility + '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append("DigitalInstance{");
+        boolean someFieldAlreadyPresent = false;
+        if (id != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("id='").append(id).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (libraryId != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("libraryId='").append(libraryId).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (digDocId != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("digDocId='").append(digDocId).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (url != null && !url.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("url='").append(url).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (format != null && !format.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("format='").append(format).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (accessibility != null && !accessibility.isEmpty()) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("accessibility='").append(accessibility).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (active != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("active='").append(active).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (created != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("created='").append(created).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (deactivated != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("deactivated='").append(deactivated).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        builder.append('}');
+        return builder.toString();
     }
 }

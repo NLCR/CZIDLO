@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.org.apache.regexp.internal.RE;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -52,9 +52,10 @@ public class OaiAdapter {
     private XsdProvider xsdProvider;
     // DI
     private boolean mergeDigitalInstances = true;
+
     // OTHER
     private int limit = -1;
-    //private int limit = 10;//dev only
+    //private int limit = 11;//dev only
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
@@ -258,32 +259,29 @@ public class OaiAdapter {
             Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (currentDi == null) {
-            // di doesnt exist yet
+            // DI doesnt exist yet
             report("- DI doesn't exists - creating new DI ...");
-            // import
+            // import DI
             importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
             report("- New DI created.");
             return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
         } else {
-            // di already exist
-            if (newDi.isChanged(currentDi)) {
-                // di has changed
-                //report("- DI already exists and is diffrent" + newDi.getDiff(currentDi) + ".");
+            // DI already exist
+            if (!equals(currentDi, newDi)) {
+                // current DI is different from new DI
                 report("- DI already exists and is considered different from new DI.");
                 report("- Current DI: " + currentDi.toString());
                 report("- New DI: " + newDi.toString());
                 if (mergeDigitalInstances) {
-                    DigitalInstance mergedDi = newDi.withMergedAccessibilityAndFormat(currentDi);
-                    diImportData = new Document(new DiCreateBuilderXml(mergedDi.toCoreDigitalInstance()).buildRootElement());
-                    //System.err.println(diImportData.toXML());
-                    //report(diImportData.toXML());
+                    DigitalInstance mergedDi = merge(newDi, currentDi);
+                    diImportData = new Document(new DiCreateBuilderXml(mergedDi).buildRootElement());
                     report("- Merged DI: " + mergedDi.toString());
                 }
-                // deactivate
+                // deactivate current DI
                 report("- Deactivating current DI ...");
                 czidloConnector.deactivateDigitalInstance(currentDi.getId());
                 report("- Current DI deactivated.");
-                // import
+                // import new (possibly merged) DI
                 if (mergeDigitalInstances) {
                     report("- Creating another DI (from new DI merged with old DI) ...");
                 } else {
@@ -295,9 +293,51 @@ public class OaiAdapter {
             } else {
                 // no change - do nothing
                 report("- DI already exists and is not considered different from new DI - doing nothing.");
-                //report("- old: " + oldDi.toString() + ", new: " + newDi.toString());
                 return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.UNCHANGED);
             }
+        }
+    }
+
+    private DigitalInstance merge(DigitalInstance newDi, DigitalInstance currentDi) {
+        DigitalInstance merged = new DigitalInstance();
+        merged.setLibraryId(newDi.getLibraryId());
+        merged.setUrl(newDi.getUrl());
+        //format
+        if (newDi.getAccessibility() == null || newDi.getAccessibility().isEmpty()) {
+            merged.setAccessibility(currentDi.getAccessibility());
+        } else {
+            merged.setAccessibility(newDi.getAccessibility());
+        }
+        //accessiblity
+        if (newDi.getFormat() == null || newDi.getFormat().isEmpty()) {
+            merged.setFormat(currentDi.getFormat());
+        } else {
+            merged.setFormat(newDi.getFormat());
+        }
+        return merged;
+    }
+
+    private boolean equals(DigitalInstance currentDi, DigitalInstance newDi) {
+        //TODO: use params to ignore differences in format and/or accesibility
+        if (!equals(currentDi.getUrl(), newDi.getUrl())) {
+            return false;
+        }
+        if (!equals(currentDi.getFormat(), newDi.getFormat())) {
+            return false;
+        }
+        if (!equals(currentDi.getAccessibility(), newDi.getAccessibility())) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean equals(Object first, Object second) {
+        if (first == null && second == null) {
+            return true;
+        } else if (first != null && second != null && first.equals(second)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -311,7 +351,6 @@ public class OaiAdapter {
         } catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("CzidloConnectionException occurred during Digital-instance-import:", ex);
         }
-
     }
 
     private String registerDigitalDocument(Document digDocRegistrationData, String oaiIdentifier) throws OaiAdapterException {
