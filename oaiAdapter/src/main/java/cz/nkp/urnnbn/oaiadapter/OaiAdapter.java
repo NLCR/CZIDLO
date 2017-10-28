@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.oaiadapter.utils.*;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
@@ -48,11 +49,12 @@ public class OaiAdapter {
     // XSD
     private XsdProvider xsdProvider;
     // DI
-    private boolean mergeDigitalInstances = true;
-
+    private boolean mergeDigitalInstances = DefinedProperties.DI_IMPORT_MERGE_DIS_DEFAULT;
+    private boolean ignoreDifferenceInDiAccessibility = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT;
+    private boolean ignoreDifferenceInDiFormat = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT;
     // OTHER
     private int limit = -1;
-    //private int limit = 11;//dev only
+    //private int limit = 12;//dev only
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
@@ -102,6 +104,15 @@ public class OaiAdapter {
 
     public void setMergeDigitalInstances(boolean mergeDigitalInstances) {
         this.mergeDigitalInstances = mergeDigitalInstances;
+    }
+
+
+    public void setIgnoreDifferenceInDiAccessibility(boolean ignoreDifferenceInDiAccessibility) {
+        this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
+    }
+
+    public void setIgnoreDifferenceInDiFormat(boolean ignoreDifferenceInDiFormat) {
+        this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
     }
 
     public String getRegistrarCode() {
@@ -264,7 +275,7 @@ public class OaiAdapter {
             return new RecordResult(urnnbn, ddStatus, DigitalInstanceStatus.IMPORTED);
         } else {
             // DI already exist
-            if (!equals(currentDi, newDi)) {
+            if (!equals(currentDi, newDi, ignoreDifferenceInDiFormat, ignoreDifferenceInDiAccessibility)) {
                 // current DI is different from new DI
                 report("- DI already exists and is considered different from new DI.");
                 report("- Current DI: " + currentDi.toString());
@@ -314,15 +325,14 @@ public class OaiAdapter {
         return merged;
     }
 
-    private boolean equals(DigitalInstance currentDi, DigitalInstance newDi) {
-        //TODO: use params to ignore differences in format and/or accesibility
+    private boolean equals(DigitalInstance currentDi, DigitalInstance newDi, boolean ignoreDifferentDiFormat, boolean ignoreDifferentDiAccessibility) {
         if (!equals(currentDi.getUrl(), newDi.getUrl())) {
             return false;
         }
-        if (!equals(currentDi.getFormat(), newDi.getFormat())) {
+        if (!ignoreDifferentDiFormat && !equals(currentDi.getFormat(), newDi.getFormat())) {
             return false;
         }
-        if (!equals(currentDi.getAccessibility(), newDi.getAccessibility())) {
+        if (!ignoreDifferentDiAccessibility && !equals(currentDi.getAccessibility(), newDi.getAccessibility())) {
             return false;
         }
         return true;
@@ -455,7 +465,8 @@ public class OaiAdapter {
             report(" DI management");
             report(" -----------------");
             report("  Merge digital instances: " + mergeDigitalInstances);
-
+            report("  Ignore difference in format: " + ignoreDifferenceInDiFormat);
+            report("  Ignore difference in accessiblity: " + ignoreDifferenceInDiFormat);
             report("------------------------------");
             report(" ");
 

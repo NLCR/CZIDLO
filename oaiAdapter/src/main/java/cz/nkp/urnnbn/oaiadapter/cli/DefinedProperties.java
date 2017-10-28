@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
 /**
- *
  * @author rehan
  */
 public class DefinedProperties {
@@ -22,6 +21,9 @@ public class DefinedProperties {
     static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
     static String CZIDLO_API_REGISTRATION_MODE = "oaiAdapter.czidlo_api.registrationMode";
     static String CZIDLO_API_IGNORE_INVALID_CERTIFICATE = "oaiAdapter.czidlo_api.ignoreInvalidCertificate";
+    static boolean CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT = false;
+
+
     // xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
@@ -29,6 +31,11 @@ public class DefinedProperties {
     public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
     public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
     // di import
-    public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.mergeDigitalInstances";
+    public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.diImport.mergeDigitalInstances";
+    public static boolean DI_IMPORT_MERGE_DIS_DEFAULT = false;
+    public static String DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY = "oaiAdapter.diImport.ignoreDifferenceInAccessibility";
+    public static boolean DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT = false;
+    public static String DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT = "oaiAdapter.diImport.ignoreDifferenceInFormat";
+    public static boolean DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT = false;
 
 }

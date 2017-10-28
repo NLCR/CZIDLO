@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.IllegalFormatException;
 import java.util.Properties;
 
 /**
@@ -125,28 +126,47 @@ public class PropertyLoader {
         return dir;
     }
 
+    /**
+     * @param key
+     * @return property boolean value
+     * @throws IllegalArgumentException if property is missing or containes invalid value
+     */
     public boolean loadBoolean(String key) {
         String strValue = loadString(key);
-        return Boolean.parseBoolean(strValue);
+        return parseBoolean(strValue);
     }
 
-    public boolean loadBooleanFalseIfNullOrEmpty(String key) {
-        if (key == null || key.isEmpty()) {
-            return false;
+    /**
+     * @param key
+     * @param defaultValue
+     * @return property boolean value or defaultValue if property is missing
+     */
+    public boolean loadBoolean(String key, boolean defaultValue) {
+        String strValue = loadStringOrNull(key);
+        if (strValue == null || strValue.isEmpty()) {
+            return defaultValue;
         } else {
-            return loadBoolean(key);
+            return parseBoolean(strValue);
         }
     }
 
-    public boolean loadBooleanTrueIfNullOrEmpty(String key) {
-        if (key == null || key.isEmpty()) {
-            return true;
+    private boolean parseBoolean(String strValue) {
+        if (strValue == null || strValue.isEmpty()) {
+            throw new IllegalArgumentException();
         } else {
-            return loadBoolean(key);
+            String strLowerCase = strValue.toLowerCase();
+            if (strLowerCase.equals("true") || strLowerCase.equals("yes")) {
+                return true;
+            } else if (strLowerCase.equals("false") || strLowerCase.equals("no")) {
+                return false;
+            } else {
+                throw new IllegalArgumentException(String.format("'%s' is not valid boolean value"));
+            }
         }
     }
 
     public Properties getProperties() {
         return properties;
     }
+
 }

@@ -104,6 +104,12 @@ public class OaiAdapterJob extends AbstractJob {
             logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
             adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
 
+            //DI import other stuff
+            // TODO: 28.10.17 incorporate new paramethers
+            /*adapter.setMergeDigitalInstances();
+            adapter.setIgnoreDifferenceInDiAccessibility();
+            adapter.setIgnoreDifferenceInDiFormat();*/
+
             // report
             reportStream = fileToOutputStream(createWriteableProcessFile(PARAM_REPORT_FILE));
             adapter.setOutputStream(reportStream);

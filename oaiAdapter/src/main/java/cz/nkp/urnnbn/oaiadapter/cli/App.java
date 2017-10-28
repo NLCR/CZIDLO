@@ -15,6 +15,9 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
+
+import static cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties.*;
+
 /**
  * Main class
  */
@@ -39,31 +42,31 @@ public class App {
     private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
         OaiAdapter adapter = new OaiAdapter();
         // czidlo api
-        Credentials credentials = new Credentials(properties.loadString(DefinedProperties.CZIDLO_API_LOGIN),
-                properties.loadString(DefinedProperties.CZIDLO_API_PASSWORD));
-        boolean ignoreInvalidCertificate = properties.loadBooleanFalseIfNullOrEmpty(DefinedProperties.CZIDLO_API_IGNORE_INVALID_CERTIFICATE);
-        String czidloApiBaseUrl = properties.loadString(DefinedProperties.CZIDLO_API_BASE_URL);
+        Credentials credentials = new Credentials(properties.loadString(CZIDLO_API_LOGIN),
+                properties.loadString(CZIDLO_API_PASSWORD));
+        boolean ignoreInvalidCertificate = properties.loadBoolean(CZIDLO_API_IGNORE_INVALID_CERTIFICATE, CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT);
+        String czidloApiBaseUrl = properties.loadString(CZIDLO_API_BASE_URL);
         adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, credentials, ignoreInvalidCertificate));
-        adapter.setRegistrarCode(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRAR_CODE));
-        adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRATION_MODE)));
-        // adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(DefinedProperties.CZIDLO_API_REGISTRATION_MODE)));
+        adapter.setRegistrarCode(properties.loadString(CZIDLO_API_REGISTRAR_CODE));
+        adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(CZIDLO_API_REGISTRATION_MODE)));
 
         // oai harvester
-        adapter.setOaiBaseUrl(properties.loadString(DefinedProperties.OAI_BASE_URL));
-        adapter.setMetadataPrefix(properties.loadString(DefinedProperties.OAI_METADATA_PREFIX));
-        adapter.setSetSpec(properties.loadStringOrNull(DefinedProperties.OAI_SET));
+        adapter.setOaiBaseUrl(properties.loadString(OAI_BASE_URL));
+        adapter.setMetadataPrefix(properties.loadString(OAI_METADATA_PREFIX));
+        adapter.setSetSpec(properties.loadStringOrNull(OAI_SET));
         // xsl
-        File ddRegistrationXslFile = new File(properties.loadString(DefinedProperties.DD_STYLESHEET));
+        File ddRegistrationXslFile = new File(properties.loadString(DD_STYLESHEET));
         adapter.setMetadataToDdRegistrationXslt(ddRegistrationXslFile, XmlTools.loadXmlFromFile(ddRegistrationXslFile.getAbsolutePath()));
-        File diImportXsdFile = new File(properties.loadString(DefinedProperties.DI_STYLESHEET));
+        File diImportXsdFile = new File(properties.loadString(DI_STYLESHEET));
         adapter.setMetadataToDiImportXslt(diImportXsdFile, XmlTools.loadXmlFromFile(diImportXsdFile.getAbsolutePath()));
         // xsd for transformation results
-        URL digDocRegistrationDataXsdUrl = properties.loadUrl(DefinedProperties.DD_REGISTRATION_XSD_URL);
-        URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DefinedProperties.DI_IMPORT_XSD_URL);
+        URL digDocRegistrationDataXsdUrl = properties.loadUrl(DD_REGISTRATION_XSD_URL);
+        URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DI_IMPORT_XSD_URL);
         adapter.setXsdProvider(new XsdProvider(digDocRegistrationDataXsdUrl, digitalInstanceImportDataXsdUrl));
         //di
-        adapter.setMergeDigitalInstances(properties.loadBooleanFalseIfNullOrEmpty(DefinedProperties.DI_IMPORT_MERGE_DIS));
-
+        adapter.setMergeDigitalInstances(properties.loadBoolean(DI_IMPORT_MERGE_DIS, DI_IMPORT_MERGE_DIS_DEFAULT));
+        adapter.setIgnoreDifferenceInDiAccessibility(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT));
+        adapter.setIgnoreDifferenceInDiFormat(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT));
         // report
         initReportStream(adapter, properties);
         return adapter;
@@ -71,7 +74,7 @@ public class App {
 
     private static void initReportStream(OaiAdapter adapter, PropertyLoader properties) throws Exception {
         try {
-            File reportFile = properties.loadFile(DefinedProperties.REPORT_FILE, false);
+            File reportFile = properties.loadFile(REPORT_FILE, false);
             adapter.setOutputStream(new FileOutputStream(reportFile));
         } catch (FileNotFoundException ex) {
             throw new Exception("Cannot open report file for writing", ex);
