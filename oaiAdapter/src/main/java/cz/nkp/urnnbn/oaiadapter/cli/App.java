@@ -24,10 +24,6 @@ public class App {
 
     public static void main(String[] args) {
         try {
-            // for testing - comment out before commiting changes
-            // args = new String[] {
-            // "/home/martin/zakazky/czidlo2015/oaiAdapter-testovani/4.3/resolver-test2/config-monographs.properties"
-            // };
             if (args.length != 1) {
                 System.err.println(USAGE);
                 return;
