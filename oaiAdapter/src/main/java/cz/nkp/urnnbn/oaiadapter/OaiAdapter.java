@@ -151,7 +151,7 @@ public class OaiAdapter {
         this.xsdProvider = xsdProvider;
     }
 
-    private Document buildDigDocRegistrationTemplateDoc() throws TemplateException {
+    private Document buildDigDocRegistrationXsltDoc() throws TemplateException {
         try {
             return XmlTools.getTemplateDocumentFromString(metadataToDdRegistrationXslt);
         } catch (XSLException ex) {
@@ -163,7 +163,7 @@ public class OaiAdapter {
         }
     }
 
-    private Document buildDigInstImportTemplateDoc() throws TemplateException {
+    private Document buildDigInstImportXsltDoc() throws TemplateException {
         try {
             return XmlTools.getTemplateDocumentFromString(metadataToDiImportXslt);
         } catch (XSLException ex) {
@@ -189,9 +189,9 @@ public class OaiAdapter {
 
     public void run() {
         try {
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, registrationMode, czidloConnector, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
-            Document digDocRegistrationTemplate = buildDigDocRegistrationTemplateDoc();
-            Document digInstImportTemplate = buildDigInstImportTemplateDoc();
+            Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
+            Document digInstImportXslt = buildDigInstImportXsltDoc();
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, registrationMode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("REPORT:");
             report("------------------------------");
 
@@ -278,10 +278,10 @@ public class OaiAdapter {
                     logger.info(String.format("processed %d records", all));
                 }
                 try {
-                    OriginalRecordFromOai record = harvester.getNext();
+                    OaiRecord record = harvester.getNext();
                     all++;
                     try {
-                        RecordResult recordResult = recordProcessor.processRecord(record, digDocRegistrationTemplate, digInstImportTemplate);
+                        RecordResult recordResult = recordProcessor.processRecord(record);
                         switch (recordResult.getDdStatus()) {
                             case IS_DEACTIVATED:
                                 ddDeactivated++;

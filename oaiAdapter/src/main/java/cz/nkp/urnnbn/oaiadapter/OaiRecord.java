@@ -8,14 +8,14 @@ import nu.xom.Document;
 
 /**
  *
- * @author Martin Řehánek <rehan at mzk.cz>
+ * @author Martin Řehánek
  */
-public class OriginalRecordFromOai {
+public class OaiRecord {
 
     private final String identifier;
     private final Document document;
 
-    public OriginalRecordFromOai(String identifier, Document document) {
+    public OaiRecord(String identifier, Document document) {
         this.identifier = identifier;
         this.document = document;
     }

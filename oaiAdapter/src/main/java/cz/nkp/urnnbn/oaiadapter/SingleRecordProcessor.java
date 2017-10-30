@@ -25,11 +25,15 @@ import java.util.logging.Logger;
  */
 public class SingleRecordProcessor {
 
+    // TODO: 30.10.17 note very clean to reference OaiAdapter just because of ReportLogger
     private final OaiAdapter oaiAdapter;
     // CZIDLO API
     private final String registrarCode;
     private final UrnNbnRegistrationMode registrationMode;
     private final CzidloApiConnector czidloConnector;
+    //XSLT
+    private final Document digDocRegistrationTemplate;
+    private final Document digInstImportTemplate;
     //XSD
     private final XsdProvider xsdProvider;
     // DD
@@ -39,11 +43,13 @@ public class SingleRecordProcessor {
     private final boolean ignoreDifferenceInDiAccessibility;
     private final boolean ignoreDifferenceInDiFormat;
 
-    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, UrnNbnRegistrationMode registrationMode, CzidloApiConnector czidloConnector, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, UrnNbnRegistrationMode registrationMode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.oaiAdapter = oaiAdapter;
         this.registrarCode = registrarCode;
         this.registrationMode = registrationMode;
         this.czidloConnector = czidloConnector;
+        this.digDocRegistrationTemplate = digDocRegistrationTemplate;
+        this.digInstImportTemplate = digInstImportTemplate;
         this.xsdProvider = xsdProvider;
         this.registerDigitalDocuments = registerDigitalDocuments;
         this.mergeDigitalInstances = mergeDigitalInstances;
@@ -51,46 +57,36 @@ public class SingleRecordProcessor {
         this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
     }
 
-    public void report(String message) {
+    private void report(String message) {
         oaiAdapter.report(message);
     }
 
-    public void report(String message, Throwable e) {
+    private void report(String message, Throwable e) {
         oaiAdapter.report(message, e);
     }
 
-    public RecordResult processRecord(OriginalRecordFromOai originalRecord, Document digDocRegistrationTemplate, Document digInstImportTemplate)
+    public RecordResult processRecord(OaiRecord oaiRecord)
             throws OaiAdapterException {
         report("------------------------------------------------------");
-        String oaiIdentifier = originalRecord.getIdentifier();
+        String oaiIdentifier = oaiRecord.getIdentifier();
         report("Processing next record - identifier: " + oaiIdentifier);
-
-        // DIGITAL DOCUMENT REGISTRATION
-        Document digDocRegistrationData = null;
+        Document digDocRegistrationData = buildAndValidateDdRegistrationData(oaiRecord, digDocRegistrationTemplate);
+        Document digInstImportData = buildAndValidateDiImportData(oaiRecord, digInstImportTemplate);
         try {
-            digDocRegistrationData = XmlTools.getTransformedDocument(originalRecord.getDocument(), digDocRegistrationTemplate);
-            report("- OAI record successfuly transformed into digital-document-registration data - continuing.");
-            // saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
-        } catch (XSLException ex) {
-            throw new OaiAdapterException("XSLException occurred when transforming record into digital-document-registration data:", ex);
+            RecordResult recordResult = processRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
+            return recordResult;
+        } catch (CzidloConnectionException ex) {
+            throw new OaiAdapterException("Czidlo API error:", ex);
         }
-        try {
-            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
-            checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
-            report("- Digital-document-registration data validation successful - continuing.");
-        } catch (DocumentOperationException ex) {
-            // saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
-            // ".xml");
-            throw new OaiAdapterException("Digital-document-registration data invalid:", ex);
-        }
+    }
 
-        // DIGITAL INSTANCE IMPORT
+    private Document buildAndValidateDiImportData(OaiRecord oaiRecord, Document digInstImportTemplate) throws OaiAdapterException {
         Document digInstImportData = null;
         try {
-            digInstImportData = XmlTools.getTransformedDocument(originalRecord.getDocument(), digInstImportTemplate);
+            digInstImportData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digInstImportTemplate);
             report("- OAI record successfuly transformed to digital-instance-import data - continuing.");
             // File tmpFile = saveToTempFile(digInstImportData, "digitalInstance-" +
-            // originalRecord.getIdentifier(),
+            // oaiRecord.getIdentifier(),
             // ".xml");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data:", ex);
@@ -104,13 +100,28 @@ public class SingleRecordProcessor {
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("Digital-instance-import data invalid:", ex);
         }
+        return digInstImportData;
+    }
 
+    private Document buildAndValidateDdRegistrationData(OaiRecord oaiRecord, Document digDocRegistrationTemplate) throws OaiAdapterException {
+        Document digDocRegistrationData = null;
         try {
-            RecordResult recordResult = processSingleRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
-            return recordResult;
-        } catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("Czidlo API error:", ex);
+            digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
+            report("- OAI record successfuly transformed into digital-oaiRecord-registration data - continuing.");
+            // saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
+        } catch (XSLException ex) {
+            throw new OaiAdapterException("XSLException occurred when transforming record into digital-oaiRecord-registration data:", ex);
         }
+        try {
+            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
+            checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
+            report("- Digital-oaiRecord-registration data validation successful - continuing.");
+        } catch (DocumentOperationException ex) {
+            // saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
+            // ".xml");
+            throw new OaiAdapterException("Digital-oaiRecord-registration data invalid:", ex);
+        }
+        return digDocRegistrationData;
     }
 
     private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
@@ -127,7 +138,7 @@ public class SingleRecordProcessor {
         }
     }
 
-    public RecordResult processSingleRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
+    private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
             throws OaiAdapterException, CzidloConnectionException {
         Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
         DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);

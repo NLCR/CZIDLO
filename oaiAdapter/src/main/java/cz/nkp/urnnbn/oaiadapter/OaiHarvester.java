@@ -159,13 +159,13 @@ public class OaiHarvester {
         return !identifiersStack.isEmpty() || next;
     }
 
-    public OriginalRecordFromOai getNext() throws OaiHarvesterException {
+    public OaiRecord getNext() throws OaiHarvesterException {
         String identifier = getNextId();
         if (identifier == null) {
             return null;
         } else {
             Document document = getRecordDocument(identifier);
-            return new OriginalRecordFromOai(identifier, document);
+            return new OaiRecord(identifier, document);
         }
     }
 
