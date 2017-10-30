@@ -369,8 +369,8 @@
             characters. -->
         <!-- unreserved characters: -->
         <!-- A-Z a-z 0-9 -_.~ -->
-        <!-- reserved characters (must be url-encoded): -->
-        <!-- ! * ' ( ) ; : @ & = + $ , / ? # [ ] -->
+        <!-- reserved characters (all except for '/'): -->
+        <!-- ! * ' ( ) ; : @ & = + $ , ? # [ ] -->
         <!-- i.e. these characters are newly allowed: ? [ ] ; & = # -->
         <xs:restriction base="xs:token">
             <xs:pattern
