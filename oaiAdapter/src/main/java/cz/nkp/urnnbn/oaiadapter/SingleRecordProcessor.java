@@ -66,7 +66,8 @@ public class SingleRecordProcessor {
             throws OaiAdapterException {
         report("------------------------------------------------------");
         String oaiIdentifier = oaiRecord.getIdentifier();
-        report("Processing next record - identifier: " + oaiIdentifier);
+        report("Processing next record");
+        report("- OAI-record identifier: " + oaiIdentifier);
         Document digDocRegistrationData = buildAndValidateDdRegistrationData(oaiRecord, digDocRegistrationTemplate);
         Document digInstImportData = buildAndValidateDiImportData(oaiRecord, digInstImportTemplate);
         try {
@@ -83,24 +84,24 @@ public class SingleRecordProcessor {
         //transformation
         try {
             digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
-            report("- OAI record successfuly transformed into Digital-document-registration data - continuing.");
+            report("- OAI-record -> Digital-document-registration data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new OaiAdapterException("XSLException occurred when transforming record into Digital-document-registration data:", ex);
+            throw new OaiAdapterException("OAI-record -> Digital-document-registration data conversion: ERROR: ", ex);
         }
         //refinement
         try {
             new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
-            report("- Digital-document-registration data refinement successful - continuing.");
+            report("- Digital-document-registration data refinement: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Error in Digital-document-registration data refinement:", ex);
+            throw new OaiAdapterException("Digital-document-registration data refinement: ERROR: ", ex);
         }
         //validation
         try {
             XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
             checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
-            report("- Digital-document-registration data validation successful - continuing.");
+            report("- Digital-document-registration data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-document-registration data invalid:", ex);
+            throw new OaiAdapterException("Digital-document-registration data validation ERROR: ", ex);
         }
         return digDocRegistrationData;
     }
@@ -124,23 +125,23 @@ public class SingleRecordProcessor {
         //transformation
         try {
             digInstImportData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digInstImportTemplate);
-            report("- OAI record successfuly transformed to digital-instance-import data - continuing.");
+            report("- OAI-record -> Digital-instance-import data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data:", ex);
+            throw new OaiAdapterException("OAI-record -> Digital-instance-import data conversion: ERROR", ex);
         }
         //refinement
         try {
             new DiImportRefiner().refineDocument(digInstImportData);
-            report("- Digital-instance-import data refinement successful - continuing.");
+            report("- Digital-instance-import data refinement: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Error in Digital-instance-import data refinement:", ex);
+            throw new OaiAdapterException("Digital-instance-import data refinement: ERROR: ", ex);
         }
         //validation
         try {
             XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
-            report("- Digital-instance-import data validation successful - continuing.");
+            report("- Digital-instance-import data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-instance-import data invalid:", ex);
+            throw new OaiAdapterException("Digital-instance-import data validation: ERROR: ", ex);
         }
         return digInstImportData;
     }
