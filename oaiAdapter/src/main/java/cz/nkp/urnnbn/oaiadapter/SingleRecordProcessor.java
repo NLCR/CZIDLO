@@ -6,10 +6,7 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
-import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
-import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationRefiner;
-import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.utils.*;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -93,6 +90,7 @@ public class SingleRecordProcessor {
         //refinement
         try {
             new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
+            report("- Digital-document-registration data refinement successful - continuing.");
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("Error in Digital-document-registration data refinement:", ex);
         }
@@ -123,21 +121,24 @@ public class SingleRecordProcessor {
 
     private Document buildAndValidateDiImportData(OaiRecord oaiRecord, Document digInstImportTemplate) throws OaiAdapterException {
         Document digInstImportData = null;
+        //transformation
         try {
             digInstImportData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digInstImportTemplate);
             report("- OAI record successfuly transformed to digital-instance-import data - continuing.");
-            // File tmpFile = saveToTempFile(digInstImportData, "digitalInstance-" +
-            // oaiRecord.getIdentifier(),
-            // ".xml");
         } catch (XSLException ex) {
             throw new OaiAdapterException("XSLException occurred when transforming record into digital-instance-import data:", ex);
         }
+        //refinement
+        try {
+            new DiImportRefiner().refineDocument(digInstImportData);
+            report("- Digital-instance-import data refinement successful - continuing.");
+        } catch (DocumentOperationException ex) {
+            throw new OaiAdapterException("Error in Digital-instance-import data refinement:", ex);
+        }
+        //validation
         try {
             XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
             report("- Digital-instance-import data validation successful - continuing.");
-            // File tmpFile = saveToTempFile(digitalInstanceDocument, "digitalInstance-" +
-            // record.getIdentifier(),
-            // ".xml");
         } catch (DocumentOperationException ex) {
             throw new OaiAdapterException("Digital-instance-import data invalid:", ex);
         }

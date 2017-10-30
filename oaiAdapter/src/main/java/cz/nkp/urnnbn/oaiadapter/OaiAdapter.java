@@ -52,6 +52,7 @@ public class OaiAdapter {
     // OTHER
     //private int limit = -1;
     private int limit = 13;//dev only
+
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
