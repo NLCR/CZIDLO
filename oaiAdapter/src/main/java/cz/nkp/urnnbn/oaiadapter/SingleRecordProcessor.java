@@ -73,6 +73,7 @@ public class SingleRecordProcessor {
         }
         try {
             XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
+            checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
             report("- Digital-document-registration data validation successful - continuing.");
         } catch (DocumentOperationException ex) {
             // saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
@@ -106,6 +107,20 @@ public class SingleRecordProcessor {
             return recordResult;
         } catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("Czidlo API error:", ex);
+        }
+    }
+
+    private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
+        try {
+            String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
+            boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
+            if (exists) {
+                throw new DocumentOperationException(String.format(
+                        "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
+                        OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
+            }
+        } catch (Throwable ex) {
+            throw new DocumentOperationException(ex.getMessage());
         }
     }
 
