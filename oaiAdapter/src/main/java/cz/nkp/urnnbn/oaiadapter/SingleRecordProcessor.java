@@ -7,8 +7,8 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
+import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationRefiner;
 import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
-import cz.nkp.urnnbn.oaiadapter.utils.Refiner;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
@@ -80,6 +80,47 @@ public class SingleRecordProcessor {
         }
     }
 
+    private Document buildAndValidateDdRegistrationData(OaiRecord oaiRecord, Document digDocRegistrationTemplate) throws OaiAdapterException {
+        //saveToTempFile(oaiRecord.getDocument(), "oai-" + oaiRecord.getIdentifier(), ".xml");
+        Document digDocRegistrationData = null;
+        //transformation
+        try {
+            digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
+            report("- OAI record successfuly transformed into Digital-document-registration data - continuing.");
+        } catch (XSLException ex) {
+            throw new OaiAdapterException("XSLException occurred when transforming record into Digital-document-registration data:", ex);
+        }
+        //refinement
+        try {
+            new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
+        } catch (DocumentOperationException ex) {
+            throw new OaiAdapterException("Error in Digital-document-registration data refinement:", ex);
+        }
+        //validation
+        try {
+            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
+            checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
+            report("- Digital-document-registration data validation successful - continuing.");
+        } catch (DocumentOperationException ex) {
+            throw new OaiAdapterException("Digital-document-registration data invalid:", ex);
+        }
+        return digDocRegistrationData;
+    }
+
+    private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
+        try {
+            String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
+            boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
+            if (exists) {
+                throw new DocumentOperationException(String.format(
+                        "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
+                        OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
+            }
+        } catch (Throwable ex) {
+            throw new DocumentOperationException(ex.getMessage());
+        }
+    }
+
     private Document buildAndValidateDiImportData(OaiRecord oaiRecord, Document digInstImportTemplate) throws OaiAdapterException {
         Document digInstImportData = null;
         try {
@@ -103,44 +144,8 @@ public class SingleRecordProcessor {
         return digInstImportData;
     }
 
-    private Document buildAndValidateDdRegistrationData(OaiRecord oaiRecord, Document digDocRegistrationTemplate) throws OaiAdapterException {
-        Document digDocRegistrationData = null;
-        try {
-            digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
-            report("- OAI record successfuly transformed into digital-oaiRecord-registration data - continuing.");
-            // saveToTempFile(importDocument, "digitalDocument-" + record.getIdentifier(), ".xml");
-        } catch (XSLException ex) {
-            throw new OaiAdapterException("XSLException occurred when transforming record into digital-oaiRecord-registration data:", ex);
-        }
-        try {
-            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
-            checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
-            report("- Digital-oaiRecord-registration data validation successful - continuing.");
-        } catch (DocumentOperationException ex) {
-            // saveToTempFile(digitalInstanceDocument, "digitalDocument-" + record.getIdentifier(),
-            // ".xml");
-            throw new OaiAdapterException("Digital-oaiRecord-registration data invalid:", ex);
-        }
-        return digDocRegistrationData;
-    }
-
-    private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
-        try {
-            String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
-            boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
-            if (exists) {
-                throw new DocumentOperationException(String.format(
-                        "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
-                        OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
-            }
-        } catch (Throwable ex) {
-            throw new DocumentOperationException(ex.getMessage());
-        }
-    }
-
     private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
             throws OaiAdapterException, CzidloConnectionException {
-        Refiner.refineDocument(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
         DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
         docHelper.putRegistrarScopeIdentifier(oaiIdentifier);
         String urnnbn = docHelper.getUrnnbnFromDocument();
