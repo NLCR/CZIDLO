@@ -4,28 +4,26 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
- * @author hanis
+ * @author Jan Rychtář
+ * @author Martin Řehánek
  */
 public class Refiner {
 
-    private Refiner() {
-    }
-
+    // TODO: 30.10.17 either frow away or properly handle double xsd validation, certainly not with just log if doc is invalid after this
     public static Document refineDocument(Document document, String xsd) {
         Element root = document.getRootElement();
         if ("import".equals(root.getLocalName())) {
-            Refiner.parseImportElement(root);
+            refineImportElement(root);
         }
         try {
             XmlTools.validateByXsdAsString(document, xsd);
@@ -35,7 +33,7 @@ public class Refiner {
         return document;
     }
 
-    private static void parseImportElement(Element importElement) {
+    private static void refineImportElement(Element importElement) {
         Elements importChildren = importElement.getChildElements();
         if (importChildren.size() > 0) {
             Element entityElement = importChildren.get(0);
@@ -43,119 +41,121 @@ public class Refiner {
             if ("monograph".equals(entityName) || "monographVolume".equals(entityName) || "periodical".equals(entityName)
                     || "periodicalVolume".equals(entityName) || "periodicalIssue".equals(entityName) || "analytical".equals(entityName)
                     || "thesis".equals(entityName) || "otherEntity".equals(entityName)) {
-                Refiner.parseEntityElement(entityElement);
+                refineEntityElement(entityElement);
             }
         }
         Element digitalDocumentElement = importElement.getFirstChildElement("digitalDocument", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (digitalDocumentElement != null) {
-            Refiner.parseDigitalDocumentElement(digitalDocumentElement);
+            refineDigitalDocumentElement(digitalDocumentElement);
         }
     }
 
-    private static void parseEntityElement(Element entityElement) {
+    private static void refineEntityElement(Element entityElement) {
         Element titleInfoElement = entityElement.getFirstChildElement("titleInfo", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (titleInfoElement != null) {
-            Refiner.parseTitleInfoElement(titleInfoElement);
+            refineTitleInfoElement(titleInfoElement);
         }
-        Refiner.parseAndMatch(entityElement, "ccnb", "cnb\\d{9}|CNB\\d{9}");
-        Refiner.parseAndMatch(
+        removeIfNoMatch(entityElement, "ccnb", "cnb\\d{9}|CNB\\d{9}");
+        removeIfNoMatch(
                 entityElement,
                 "isbn",
                 "(978){0,1}80\\d([0-9]|){6}\\d[0-9xX]|(978-){0,1}80-\\d([0-9]|-){6}\\d-[0-9xX]|(978\\s){0,1}80\\s\\d([0-9]|\\s){6}\\d\\s[0-9xX]|978-80\\d([0-9]|){6}\\d[0-9xX]");
-        Refiner.parseAndMatch(entityElement, "issn", "\\d{4}-\\d{3}[0-9Xx]{1}");
-        Refiner.parseAndCut(entityElement, "otherId", 50, 1);
-        Refiner.parseAndCut(entityElement, "documentType", 50, 0);
+        removeIfNoMatch(entityElement, "issn", "\\d{4}-\\d{3}[0-9Xx]{1}");
+        cutIfToLongRemoveIfToShort(entityElement, "otherId", 50, 1);
+        cutIfToLongRemoveIfToShort(entityElement, "documentType", 50, 0);
         // TODO:primaryOriginator
-        Refiner.parseAndCut(entityElement, "otherOriginator", 50, 0);
-        Refiner.parseAndMatch(entityElement, "digitalBorn", "true|false|0|1");
-        Refiner.parseAndCut(entityElement, "degreeAwardingInstitution", 50, 0);
+        cutIfToLongRemoveIfToShort(entityElement, "otherOriginator", 50, 0);
+        removeIfNoMatch(entityElement, "digitalBorn", "true|false|0|1");
+        cutIfToLongRemoveIfToShort(entityElement, "degreeAwardingInstitution", 50, 0);
 
         Element publicationElement = entityElement.getFirstChildElement("publication", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (publicationElement != null) {
-            Refiner.parsePublicationElement(publicationElement);
+            refinePublicationElement(publicationElement);
         }
         Element sourceDocumentElement = entityElement.getFirstChildElement("sourceDocument", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (sourceDocumentElement != null) {
-            parseEntityElement(sourceDocumentElement);
+            refineEntityElement(sourceDocumentElement);
         }
     }
 
-    private static void parseTitleInfoElement(Element titleInfoElement) {
-        Refiner.parseAndCut(titleInfoElement, "title", 100, 1);
-        Refiner.parseAndCut(titleInfoElement, "subTitle", 200, 1);
-        Refiner.parseAndCut(titleInfoElement, "monographTitle", 100, 1);
-        Refiner.parseAndCut(titleInfoElement, "volumeTitle", 50, 0);
-        Refiner.parseAndCut(titleInfoElement, "periodicalTitle", 100, 1);
-        Refiner.parseAndCut(titleInfoElement, "issueTitle", 50, 0);
+    private static void refineTitleInfoElement(Element titleInfoElement) {
+        cutIfToLongRemoveIfToShort(titleInfoElement, "title", 100, 1);
+        cutIfToLongRemoveIfToShort(titleInfoElement, "subTitle", 200, 1);
+        cutIfToLongRemoveIfToShort(titleInfoElement, "monographTitle", 100, 1);
+        cutIfToLongRemoveIfToShort(titleInfoElement, "volumeTitle", 50, 0);
+        cutIfToLongRemoveIfToShort(titleInfoElement, "periodicalTitle", 100, 1);
+        cutIfToLongRemoveIfToShort(titleInfoElement, "issueTitle", 50, 0);
     }
 
-    private static void parsePublicationElement(Element publicationElement) {
-        Refiner.parseAndCut(publicationElement, "publisher", 50, 0);
-        Refiner.parseAndCut(publicationElement, "place", 50, 0);
-        Refiner.parseAndMatch(publicationElement, "year", "\\d{1,4}");
+    private static void refinePublicationElement(Element publicationElement) {
+        cutIfToLongRemoveIfToShort(publicationElement, "publisher", 50, 0);
+        cutIfToLongRemoveIfToShort(publicationElement, "place", 50, 0);
+        removeIfNoMatch(publicationElement, "year", "\\d{1,4}");
     }
 
-    private static void parseUrnNbnElement(Element urnNbnElement) {
-        Refiner.parseAndMatch(urnNbnElement, "value", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}");
+    private static void refineUrnNbnElement(Element urnNbnElement) {
+        removeIfNoMatch(urnNbnElement, "value", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}");
     }
 
-    private static void parseDigitalDocumentElement(Element digitalDocumentElement) {
-        Refiner.parseAndMatch(digitalDocumentElement, "archiverId", "\\d*");
+    private static void refineDigitalDocumentElement(Element digitalDocumentElement) {
+        removeIfNoMatch(digitalDocumentElement, "archiverId", "\\d*");
 
         Element urnNbnElement = digitalDocumentElement.getFirstChildElement("urnNbn", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (urnNbnElement != null) {
-            Refiner.parseUrnNbnElement(urnNbnElement);
+            refineUrnNbnElement(urnNbnElement);
         }
-        // Refiner.parseAndMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}");
+        // removeIfNoMatch(digitalDocumentElement, "urnNbn", "urn:nbn:cz:[A-Za-z0-9]{2,6}\\-[A-Za-z0-9]{6}");
         // TODO: registrarScopeIdentifiers
-        Refiner.parseAndCut(digitalDocumentElement, "financed", 100, 1);
+        cutIfToLongRemoveIfToShort(digitalDocumentElement, "financed", 100, 1);
         Element technicalMetadataElement = digitalDocumentElement.getFirstChildElement("technicalMetadata", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (technicalMetadataElement != null) {
-            parseTechnicalMetadataElement(technicalMetadataElement);
+            refineTechnicalMetadataElement(technicalMetadataElement);
         }
     }
 
-    private static void parseTechnicalMetadataElement(Element technicalMetadataElement) {
-        Refiner.parseAndCut(technicalMetadataElement, "format", 20, 1);
-        Refiner.parseAndCut(technicalMetadataElement, "extent", 200, 1);
+    private static void refineTechnicalMetadataElement(Element technicalMetadataElement) {
+        cutIfToLongRemoveIfToShort(technicalMetadataElement, "format", 20, 1);
+        cutIfToLongRemoveIfToShort(technicalMetadataElement, "extent", 200, 1);
         Element resolutionElement = technicalMetadataElement.getFirstChildElement("resolution", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (resolutionElement != null) {
-            if (parseResolutionElement(resolutionElement)) {
-                technicalMetadataElement.removeChild(resolutionElement);
-            }
+            refineResolutionElement(resolutionElement, technicalMetadataElement);
         }
-        Refiner.parseAndCut(technicalMetadataElement, "compression", 50, 1);
+        cutIfToLongRemoveIfToShort(technicalMetadataElement, "compression", 50, 1);
         Element colorElement = technicalMetadataElement.getFirstChildElement("color", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (colorElement != null) {
-            parseColorElement(colorElement);
+            refineColorElement(colorElement);
         }
-        Refiner.parseAndCut(technicalMetadataElement, "iccProfile", 50, 1);
+        cutIfToLongRemoveIfToShort(technicalMetadataElement, "iccProfile", 50, 1);
         Element pictureSizenElement = technicalMetadataElement.getFirstChildElement("pictureSize", CzidloApiConnector.CZIDLO_NAMESPACE);
         if (pictureSizenElement != null) {
-            if (parsePictureSizeElement(pictureSizenElement)) {
-                technicalMetadataElement.removeChild(pictureSizenElement);
-            }
+            refinePictureSizeElement(pictureSizenElement, technicalMetadataElement);
         }
     }
 
-    private static void parseColorElement(Element colorElement) {
-        Refiner.parseAndCut(colorElement, "model", 20, 1);
-        Refiner.parseAndMatch(colorElement, "depth", "\\d*");
+    private static void refineColorElement(Element colorElement) {
+        cutIfToLongRemoveIfToShort(colorElement, "model", 20, 1);
+        removeIfNoMatch(colorElement, "depth", "\\d*");
     }
 
-    private static boolean parseResolutionElement(Element resolutionElement) {
-        boolean hRemoved = Refiner.parseAndMatch(resolutionElement, "horizontal", "\\d*");
-        boolean vRemoved = Refiner.parseAndMatch(resolutionElement, "vertical", "\\d*");
-        return hRemoved || vRemoved;
+    private static void refineResolutionElement(Element resolutionElement, Element parentElement) {
+        boolean hRemoved = removeIfNoMatch(resolutionElement, "horizontal", "\\d*");
+        boolean vRemoved = removeIfNoMatch(resolutionElement, "vertical", "\\d*");
+        // TODO: 30.10.17 should be && not ||
+        if (hRemoved || vRemoved) {
+            parentElement.removeChild(resolutionElement);
+        }
     }
 
-    private static boolean parsePictureSizeElement(Element pictureSizenElement) {
-        boolean wRemoved = Refiner.parseAndMatch(pictureSizenElement, "width", "\\d*");
-        boolean hRemoved = Refiner.parseAndMatch(pictureSizenElement, "height", "\\d*");
-        return wRemoved || hRemoved;
+    private static void refinePictureSizeElement(Element pictureSizenElement, Element parentElement) {
+        boolean wRemoved = removeIfNoMatch(pictureSizenElement, "width", "\\d*");
+        boolean hRemoved = removeIfNoMatch(pictureSizenElement, "height", "\\d*");
+        // TODO: 30.10.17 should be && not ||
+        if (wRemoved || hRemoved) {
+            parentElement.removeChild(pictureSizenElement);
+        }
     }
 
-    private static void parseAndCut(Element parent, String name, int maxLength, int minLength) {
+    private static void cutIfToLongRemoveIfToShort(Element parent, String name, int maxLength, int minLength) {
         Element el = parent.getFirstChildElement(name, CzidloApiConnector.CZIDLO_NAMESPACE);
         if (el != null) {
             String value = el.getValue();
@@ -169,7 +169,7 @@ public class Refiner {
         }
     }
 
-    private static boolean parseAndMatch(Element parent, String name, String regex) {
+    private static boolean removeIfNoMatch(Element parent, String name, String regex) {
         Element el = parent.getFirstChildElement(name, CzidloApiConnector.CZIDLO_NAMESPACE);
         if (el != null) {
             String value = el.getValue();
