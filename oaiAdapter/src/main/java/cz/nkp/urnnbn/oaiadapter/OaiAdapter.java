@@ -43,6 +43,8 @@ public class OaiAdapter {
     private File metadataToDiImportXsltFile;
     // XSD
     private XsdProvider xsdProvider;
+    // DD
+    private boolean registerDigitalDocuments = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_DEFAULT;
     // DI
     private boolean mergeDigitalInstances = DefinedProperties.DI_IMPORT_MERGE_DIS_DEFAULT;
     private boolean ignoreDifferenceInDiAccessibility = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT;
@@ -101,6 +103,9 @@ public class OaiAdapter {
         this.mergeDigitalInstances = mergeDigitalInstances;
     }
 
+    public void setRegisterDigitalDocuments(boolean registerDigitalDocuments) {
+        this.registerDigitalDocuments = registerDigitalDocuments;
+    }
 
     public void setIgnoreDifferenceInDiAccessibility(boolean ignoreDifferenceInDiAccessibility) {
         this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
@@ -184,7 +189,7 @@ public class OaiAdapter {
 
     public void run() {
         try {
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, registrationMode, czidloConnector, xsdProvider, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, registrationMode, czidloConnector, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             Document digDocRegistrationTemplate = buildDigDocRegistrationTemplateDoc();
             Document digInstImportTemplate = buildDigInstImportTemplateDoc();
             report("REPORT:");
@@ -215,6 +220,11 @@ public class OaiAdapter {
                 report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
             }
             report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
+            report(" ");
+
+            report(" DD management");
+            report(" -----------------");
+            report("  Register digital documents: " + registerDigitalDocuments);
             report(" ");
 
             report(" DI management");

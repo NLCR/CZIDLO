@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 /**
  * Created by Martin Řehánek on 30.10.17.
  */
-public class SingleRecordProcessor {
+public class SingleRecordProcessorBak {
 
     private final OaiAdapter oaiAdapter;
     // CZIDLO API
@@ -32,20 +32,17 @@ public class SingleRecordProcessor {
     private final CzidloApiConnector czidloConnector;
     //XSD
     private final XsdProvider xsdProvider;
-    // DD
-    private final boolean registerDigitalDocuments;
     // DI
     private final boolean mergeDigitalInstances;
     private final boolean ignoreDifferenceInDiAccessibility;
     private final boolean ignoreDifferenceInDiFormat;
 
-    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, UrnNbnRegistrationMode registrationMode, CzidloApiConnector czidloConnector, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+    public SingleRecordProcessorBak(OaiAdapter oaiAdapter, String registrarCode, UrnNbnRegistrationMode registrationMode, CzidloApiConnector czidloConnector, XsdProvider xsdProvider, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.oaiAdapter = oaiAdapter;
         this.registrarCode = registrarCode;
         this.registrationMode = registrationMode;
         this.czidloConnector = czidloConnector;
         this.xsdProvider = xsdProvider;
-        this.registerDigitalDocuments = registerDigitalDocuments;
         this.mergeDigitalInstances = mergeDigitalInstances;
         this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
         this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;

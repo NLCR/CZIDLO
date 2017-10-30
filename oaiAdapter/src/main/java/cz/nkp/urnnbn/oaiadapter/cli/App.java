@@ -1,12 +1,5 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
@@ -15,6 +8,12 @@ import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties.*;
 
@@ -63,6 +62,8 @@ public class App {
         URL digDocRegistrationDataXsdUrl = properties.loadUrl(DD_REGISTRATION_XSD_URL);
         URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DI_IMPORT_XSD_URL);
         adapter.setXsdProvider(new XsdProvider(digDocRegistrationDataXsdUrl, digitalInstanceImportDataXsdUrl));
+        //dd
+        adapter.setRegisterDigitalDocuments(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS));
         //di
         adapter.setMergeDigitalInstances(properties.loadBoolean(DI_IMPORT_MERGE_DIS, DI_IMPORT_MERGE_DIS_DEFAULT));
         adapter.setIgnoreDifferenceInDiAccessibility(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT));

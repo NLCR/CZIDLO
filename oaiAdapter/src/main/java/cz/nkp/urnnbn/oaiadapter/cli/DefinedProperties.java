@@ -5,7 +5,7 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
 /**
- * @author rehan
+ * @author Martin Řehánek
  */
 public class DefinedProperties {
 
@@ -23,13 +23,15 @@ public class DefinedProperties {
     static String CZIDLO_API_IGNORE_INVALID_CERTIFICATE = "oaiAdapter.czidlo_api.ignoreInvalidCertificate";
     static boolean CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT = false;
 
-
     // xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
     // xsd for transformation results
     public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
     public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
+    // dd registration
+    public static String DD_REGISTRATION_REGISTER_DDS = "oaiAdapter.ddRegistration.registerDigitalDocuments";
+    public static final boolean DD_REGISTRATION_REGISTER_DDS_DEFAULT = true;
     // di import
     public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.diImport.mergeDigitalInstances";
     public static boolean DI_IMPORT_MERGE_DIS_DEFAULT = false;
