@@ -1,7 +1,5 @@
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
@@ -26,7 +24,6 @@ public class SingleRecordProcessor {
     private final OaiAdapter oaiAdapter;
     // CZIDLO API
     private final String registrarCode;
-    private final UrnNbnRegistrationMode registrationMode;
     private final CzidloApiConnector czidloConnector;
     //XSLT
     private final Document digDocRegistrationTemplate;
@@ -40,10 +37,9 @@ public class SingleRecordProcessor {
     private final boolean ignoreDifferenceInDiAccessibility;
     private final boolean ignoreDifferenceInDiFormat;
 
-    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, UrnNbnRegistrationMode registrationMode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.oaiAdapter = oaiAdapter;
         this.registrarCode = registrarCode;
-        this.registrationMode = registrationMode;
         this.czidloConnector = czidloConnector;
         this.digDocRegistrationTemplate = digDocRegistrationTemplate;
         this.digInstImportTemplate = digInstImportTemplate;
@@ -75,6 +71,8 @@ public class SingleRecordProcessor {
             return recordResult;
         } catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("Czidlo API error:", ex);
+        } catch (IOException e) {
+            throw new OaiAdapterException("IOException:", e);
         }
     }
 
@@ -147,70 +145,74 @@ public class SingleRecordProcessor {
     }
 
     private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
-            throws OaiAdapterException, CzidloConnectionException {
+            throws OaiAdapterException, CzidloConnectionException, IOException {
         DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
-        docHelper.putRegistrarScopeIdentifier(oaiIdentifier);
         String urnnbn = docHelper.getUrnnbnFromDocument();
-        if (urnnbn == null) {
-            if (registrationMode == UrnNbnRegistrationMode.BY_RESOLVER) {
-                urnnbn = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
-                if (urnnbn == null) {
-                    urnnbn = registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
-                    return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
-                } else {
-                    throw new OaiAdapterException(String.format("Cannot find urn:nbn by registrar-scope id %1 -> %2!",
-                            OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier));
-                }
+        if (urnnbn == null) { //no URN:NBN in input data
+            report("- Digital-document-registration data does not contain URN:NBN.");
+            urnnbn = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+            if (urnnbn == null) { //no URN:NBN from registrar-scope-id
+                report("- No digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier);
+                return registerDdIfEnabledAndContinue(oaiIdentifier, null, digDocRegistrationData, digInstImportData);
             } else {
-                throw new OaiAdapterException(String.format("Incorrect mode - document doesn't contain URN:NBN and mode is not %s!",
-                        UrnNbnRegistrationMode.BY_RESOLVER));
+                report("- Digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + " with " + urnnbn);
+                return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
             }
-        } else {
-            if (registrationMode == UrnNbnRegistrationMode.BY_RESOLVER) {
-                throw new OaiAdapterException(String.format("Incorrect mode - document contains URN:NBN and mode is %s!",
-                        UrnNbnRegistrationMode.BY_RESOLVER));
-            }
-            UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
-            report("- " + urnnbn);
-            report("- URN:NBN status: " + urnnbnStatus);
-            switch (urnnbnStatus) {
-                case RESERVED:
-                    if (registrationMode != UrnNbnRegistrationMode.BY_RESERVATION) {
-                        throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", UrnNbnWithStatus.Status.RESERVED,
-                                UrnNbnRegistrationMode.BY_RESERVATION));
-                    } else {
-                        registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
-                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
-                    }
-                case FREE:
-                    if (registrationMode != UrnNbnRegistrationMode.BY_REGISTRAR) {
-                        throw new OaiAdapterException(String.format("Incorrect mode - URN:NBN has status %s and mode is not %s!", UrnNbnWithStatus.Status.FREE,
-                                UrnNbnRegistrationMode.BY_REGISTRAR));
-                    } else {
-                        registerDigitalDocument(digDocRegistrationData, oaiIdentifier);
-                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
-                    }
-                case ACTIVE:
-                    String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE,
-                            oaiIdentifier);
-                    if (urnnbnByRegistrarScopeId != null && !urnnbn.equals(urnnbnByRegistrarScopeId)) {
-                        throw new OaiAdapterException(String.format(
-                                "URN:NBN in digital-document-registration data (%s) doesn't match URN:NBN obtained by OAI_ADAPTER ID (%s)!", urnnbn,
-                                urnnbnByRegistrarScopeId));
-                    } else {
-                        return processDigitalInstance(urnnbn, oaiIdentifier, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
-                    }
-                case DEACTIVATED:
-                    return new RecordResult(urnnbn, RecordResult.DigitalDocumentStatus.IS_DEACTIVATED, null);
-                case UNDEFINED:
-                    throw new OaiAdapterException("Checking URN:NBN status failed");
-                default:
-                    throw new IllegalStateException();
-            }
+        } else { //found URN:NBN in input data
+            report("- Digital-document-registration data does contains " + urnnbn);
+            return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
         }
     }
 
-    private RecordResult processDigitalInstance(String urnnbn, String oaiIdentifier, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus)
+    private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, CzidloConnectionException, IOException {
+        UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
+        report("- URN:NBN status: " + urnnbnStatus);
+        switch (urnnbnStatus) {
+            case DEACTIVATED:
+                return new RecordResult(urnnbn, RecordResult.DigitalDocumentStatus.IS_DEACTIVATED, null);
+            case UNDEFINED:
+                throw new OaiAdapterException("Checking URN:NBN status failed");
+            case RESERVED:
+            case FREE:
+                return registerDdIfEnabledAndContinue(oaiIdentifier, urnnbn, digDocRegistrationData, digInstImportData);
+            case ACTIVE:
+                String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+                if (urnnbnByRegistrarScopeId == null) {
+                    report("- URN:NBN by registrar-scope-id not found");
+                    czidloConnector.putRegistrarScopeIdentifier(urnnbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+                    report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnnbn + ": SUCCESS");
+                    return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
+                } else {
+                    if (!urnnbn.equals(urnnbnByRegistrarScopeId)) {
+                        // TODO: 1.11.17 a neposilat nejak ten stav? protoze tady vim, ze ALREADY_REGISTERED
+                        // nebo mozna jenom warning, nebo pokus o napravu
+                        throw new OaiAdapterException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
+                    } else {
+                        return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
+                    }
+                }
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+
+    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, CzidloConnectionException {
+        if (registerDigitalDocuments) {
+            // TODO: 1.11.17 poresit chyby
+            urnNbn = registerDigitalDocument(digDocRegistrationData);
+            report("- Digital document registered with " + urnNbn);
+            czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+            report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+            return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+        } else {
+            report("- Digital document will not be registered");
+            return new RecordResult(urnNbn, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);
+        }
+    }
+
+
+    private RecordResult processDigitalInstance(String urnnbn, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus)
             throws OaiAdapterException, CzidloConnectionException {
         DigitalInstance newDi = DiBuilder.buildDiFromImportDigitalInstanceRequest(diImportData);
         //report(diImportData.toXML());
@@ -226,7 +228,7 @@ public class SingleRecordProcessor {
             // DI doesnt exist yet
             report("- DI doesn't exists - creating new DI ...");
             // import DI
-            importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
+            importDigitalInstance(diImportData, urnnbn);
             report("- New DI created.");
             return new RecordResult(urnnbn, ddStatus, RecordResult.DigitalInstanceStatus.IMPORTED);
         } else {
@@ -251,7 +253,7 @@ public class SingleRecordProcessor {
                 } else {
                     report("- Creating another DI (from new DI) ...");
                 }
-                importDigitalInstance(diImportData, urnnbn, oaiIdentifier);
+                importDigitalInstance(diImportData, urnnbn);
                 report("- Another DI created.");
                 return new RecordResult(urnnbn, ddStatus, RecordResult.DigitalInstanceStatus.UPDATED);
             } else {
@@ -262,29 +264,29 @@ public class SingleRecordProcessor {
         }
     }
 
-    private String registerDigitalDocument(Document digDocRegistrationData, String oaiIdentifier) throws OaiAdapterException {
+    private String registerDigitalDocument(Document digDocRegistrationData) throws OaiAdapterException {
         try {
             String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
-            report("- Digital-document-registration successful - continuing.");
+            report("- Digital-document-registration SUCCESS");
             return urnnbn;
         } catch (IOException ex) {
-            throw new OaiAdapterException("IOException occurred during Digital-document-registration:", ex);
+            throw new OaiAdapterException("Digital-document-registration ERROR: IOException: ", ex);
         } catch (ParsingException ex) {
-            throw new OaiAdapterException("ParsingException occurred during Digital-document-registration:", ex);
+            throw new OaiAdapterException("Digital-document-registration ERROR: ParsingException: ", ex);
         } catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("CzidloConnectionException occurred during Digital-document-registration:", ex);
+            throw new OaiAdapterException("Digital-document-registration ERROR: CzidloConnectionException: ", ex);
         }
     }
 
-    private void importDigitalInstance(Document diImportData, String urnnbn, String oaiIdentifier) throws OaiAdapterException {
+    private void importDigitalInstance(Document diImportData, String urnnbn) throws OaiAdapterException {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
         } catch (IOException ex) {
-            throw new OaiAdapterException("IOException occurred during digital-instance-import:", ex);
+            throw new OaiAdapterException("Digital-instance-import ERROR: IOException: ", ex);
         } catch (ParsingException ex) {
-            throw new OaiAdapterException("ParsingException occurred during Digital-instance-import:", ex);
+            throw new OaiAdapterException("Digital-instance-import ERROR: ParsingException: ", ex);
         } catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("CzidloConnectionException occurred during Digital-instance-import:", ex);
+            throw new OaiAdapterException("Digital-instance-import ERROR: CzidloConnectionException: ", ex);
         }
     }
 

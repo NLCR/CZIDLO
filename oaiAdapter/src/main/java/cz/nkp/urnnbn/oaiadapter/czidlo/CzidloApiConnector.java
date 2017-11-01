@@ -4,26 +4,19 @@
  */
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import nu.xom.*;
+
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Nodes;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
-import nu.xom.XPathContext;
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 
 /**
  * @author Jan Rychtář
@@ -250,7 +243,6 @@ public class CzidloApiConnector {
         }
     }
 
-    // TODO: why not used??
     public void putRegistrarScopeIdentifier(String urnnbn, String idValue, String idType) throws IOException, CzidloConnectionException {
         String url = baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
         HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);

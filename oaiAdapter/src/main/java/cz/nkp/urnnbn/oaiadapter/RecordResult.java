@@ -28,7 +28,8 @@ public class RecordResult {
     }
 
     public static enum DigitalDocumentStatus {
-        NOW_REGISTERED, ALREADY_REGISTERED, IS_DEACTIVATED
+        // TODO: 1.11.17 rename to REGISTERED_NOW, REGISTERED_ALREADY
+        NOW_REGISTERED, ALREADY_REGISTERED, IS_DEACTIVATED, NOT_REGISTERED
     }
 
 }

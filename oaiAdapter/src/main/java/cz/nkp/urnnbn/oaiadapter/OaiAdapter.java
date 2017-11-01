@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
 import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
@@ -34,7 +33,6 @@ public class OaiAdapter {
     private String setSpec;
     // CZIDLO API
     private String registrarCode;
-    private UrnNbnRegistrationMode registrationMode;
     private CzidloApiConnector czidloConnector;
     // XSLT
     private String metadataToDdRegistrationXslt;
@@ -51,19 +49,12 @@ public class OaiAdapter {
     private boolean ignoreDifferenceInDiFormat = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT;
     // OTHER
     //private int limit = -1;
-    private int limit = 13;//dev only
+    //private int limit = 13;//dev only
+    private int limit = 2;//dev only
 
     private ReportLogger reportLogger;
 
     public OaiAdapter() {
-    }
-
-    public UrnNbnRegistrationMode getRegistrationMode() {
-        return registrationMode;
-    }
-
-    public void setRegistrationMode(UrnNbnRegistrationMode mode) {
-        this.registrationMode = mode;
     }
 
     public String getOaiBaseUrl() {
@@ -192,7 +183,7 @@ public class OaiAdapter {
         try {
             Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             Document digInstImportXslt = buildDigInstImportXsltDoc();
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, registrationMode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("REPORT:");
             report("------------------------------");
 
@@ -208,7 +199,6 @@ public class OaiAdapter {
             report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
             report("  Registrar code: " + getRegistrarCode());
             report("  Login: " + getCzidloApiConnector().getLogin());
-            report("  Mode: " + getRegistrationMode());
             report(" ");
 
             report(" Transformations");
@@ -235,18 +225,6 @@ public class OaiAdapter {
             report("  Ignore difference in accessiblity: " + ignoreDifferenceInDiFormat);
             report("------------------------------");
             report(" ");
-
-            try {
-                if (!czidloConnector.checkRegistrarMode(getRegistrarCode(), getRegistrationMode())) {
-                    report(" Mode " + getRegistrationMode() + " is not enabled for registrar " + getRegistrarCode());
-                    logger.log(Level.SEVERE, "Mode {0} is not enabled for registrar {1}", new Object[]{getRegistrationMode(), getRegistrarCode()});
-                    return;
-                }
-            } catch (CzidloConnectionException e) {
-                report("Czidlo API not available: ", e);
-                logger.log(Level.SEVERE, "Czidlo API not available: ", e);
-                return;
-            }
 
             OaiHarvester harvester = null;
             try {

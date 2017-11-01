@@ -47,7 +47,6 @@ public class App {
         String czidloApiBaseUrl = properties.loadString(CZIDLO_API_BASE_URL);
         adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, credentials, ignoreInvalidCertificate));
         adapter.setRegistrarCode(properties.loadString(CZIDLO_API_REGISTRAR_CODE));
-        adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf(properties.loadString(CZIDLO_API_REGISTRATION_MODE)));
 
         // oai harvester
         adapter.setOaiBaseUrl(properties.loadString(OAI_BASE_URL));
