@@ -145,7 +145,7 @@ public class OaiAdapter {
 
     private Document buildDigDocRegistrationXsltDoc() throws TemplateException {
         try {
-            return XmlTools.getTemplateDocumentFromString(metadataToDdRegistrationXslt);
+            return XmlTools.parseDocumentFromString(metadataToDdRegistrationXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-document-registration template: " + ex.getMessage());
         } catch (ParsingException ex) {
@@ -157,7 +157,7 @@ public class OaiAdapter {
 
     private Document buildDigInstImportXsltDoc() throws TemplateException {
         try {
-            return XmlTools.getTemplateDocumentFromString(metadataToDiImportXslt);
+            return XmlTools.parseDocumentFromString(metadataToDiImportXslt);
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building Digital-instance-import template: " + ex.getMessage());
         } catch (ParsingException ex) {

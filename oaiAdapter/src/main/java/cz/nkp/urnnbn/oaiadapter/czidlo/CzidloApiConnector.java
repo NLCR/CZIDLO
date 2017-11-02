@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import nu.xom.*;
 
@@ -199,7 +198,7 @@ public class CzidloApiConnector {
         if (doc == null) {
             return null;
         } else {
-            List<DigitalInstance> digitalInstances = DiBuilder.buildDisFromGetDigitalInstancesByUrnNbn(doc);
+            List<DigitalInstance> digitalInstances = xmlTools.buildDisFromGetDigitalInstancesByUrnNbn(doc);
             for (DigitalInstance di : digitalInstances) {
                 if (di.isActive() && di.getLibraryId().equals(libraryId)) {
                     return di;

@@ -36,6 +36,8 @@ public class SingleRecordProcessor {
     private final boolean mergeDigitalInstances;
     private final boolean ignoreDifferenceInDiAccessibility;
     private final boolean ignoreDifferenceInDiFormat;
+    //helpers
+    private final XmlTools xmlTools = new XmlTools();
 
     public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.oaiAdapter = oaiAdapter;
@@ -217,7 +219,7 @@ public class SingleRecordProcessor {
 
     private RecordResult processDigitalInstance(String urnnbn, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus)
             throws OaiAdapterException, CzidloApiErrorException, IOException {
-        DigitalInstance newDi = DiBuilder.buildDiFromImportDigitalInstanceRequest(diImportData);
+        DigitalInstance newDi = xmlTools.buildDiFromImportDigitalInstanceRequest(diImportData);
         //report(diImportData.toXML());
         DigitalInstance currentDi = null;
         try {

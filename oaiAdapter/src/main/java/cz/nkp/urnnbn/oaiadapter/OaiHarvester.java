@@ -4,12 +4,10 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import nu.xom.*;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +25,7 @@ public class OaiHarvester {
     private Stack<String> identifiersStack;
     private boolean next = false;
     private String resumptionToken;
+    private final XmlTools xmlTools = new XmlTools();
 
     public OaiHarvester(String oaiBaseUrl, String metadataPrefix) throws OaiHarvesterException {
         this(oaiBaseUrl, metadataPrefix, null);
@@ -79,7 +78,7 @@ public class OaiHarvester {
     private String addIdentifiers(String url) throws OaiHarvesterException {
         Document document = null;
         try {
-            document = getDocument(url);
+            document = xmlTools.fetchDocumentFromUrl(url);
         } catch (ParsingException ex) {
             next = false;
             throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
@@ -119,7 +118,7 @@ public class OaiHarvester {
     private Document getRecordDocument(String identifier) throws OaiHarvesterException {
         String url = getRecordUrl(identifier);
         try {
-            return getDocument(url);
+            return xmlTools.fetchDocumentFromUrl(url);
         } catch (IOException ex) {
             throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
         } catch (ParsingException ex) {
@@ -222,13 +221,6 @@ public class OaiHarvester {
         } catch (OaiHarvesterException ex) {
             logger.log(Level.SEVERE, "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
         }
-    }
-
-
-    private Document getDocument(String url) throws IOException, ParsingException {
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        InputStream is = con.getInputStream();
-        return new Builder().build(is);
     }
 
 }

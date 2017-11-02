@@ -16,6 +16,13 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HttpConnector {
 
+
+    enum HttpMethod {
+
+        GET, HEAD, POST, PUT, DELETE
+
+    }
+
     // TODO: 1.11.17 setConnectTimeout and setReadTimeout for each httpUrlConnection
 
     public ApiResponse httpGet(String url, Credentials credentials, boolean ignoreInvalidApiCertificate) throws IOException {
