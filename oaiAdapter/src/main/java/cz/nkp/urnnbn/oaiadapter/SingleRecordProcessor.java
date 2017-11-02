@@ -72,8 +72,7 @@ public class SingleRecordProcessor {
         }
         /*catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("Czidlo API error:", ex);
-        }*/
-        catch (IOException e) {
+        }*/ catch (IOException e) {
             throw new OaiAdapterException("IOException:", e);
         } catch (ParsingException e) {
             throw new OaiAdapterException("ParsingException:", e);
@@ -176,8 +175,6 @@ public class SingleRecordProcessor {
         switch (urnnbnStatus) {
             case DEACTIVATED:
                 return new RecordResult(urnnbn, RecordResult.DigitalDocumentStatus.IS_DEACTIVATED, null);
-            case UNDEFINED:
-                throw new OaiAdapterException("Checking URN:NBN status failed");
             case RESERVED:
             case FREE:
                 return registerDdIfEnabledAndContinue(oaiIdentifier, urnnbn, digDocRegistrationData, digInstImportData);

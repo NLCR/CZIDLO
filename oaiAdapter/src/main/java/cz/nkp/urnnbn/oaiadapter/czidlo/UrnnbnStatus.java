@@ -17,12 +17,8 @@
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
 /**
- *
  * @author Martin Řehánek
  */
 public enum UrnnbnStatus {
-
-    FREE, RESERVED, ACTIVE, DEACTIVATED,
-    @Deprecated
-    UNDEFINED
+    FREE, RESERVED, ACTIVE, DEACTIVATED
 }
