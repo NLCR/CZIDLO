@@ -65,11 +65,11 @@ public class CzidloApiConnector {
                 + "?format=xml&digitalInstances=" + withDigitalInstances;
         ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, document found
-            Document document = new Builder().build(apiResponse.getBody());
+            Document document = new Builder().build(apiResponse.getBody(), null);
             return document;
         } else {
             try {
-                Document document = new Builder().build(apiResponse.getBody());
+                Document document = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(document);
                 if (apiResponse.getHttpCode() == 404 && "UNKNOWN_DIGITAL_DOCUMENT".equals(apiError.getErrorCode())) { //document not found
                     return null;
@@ -112,11 +112,11 @@ public class CzidloApiConnector {
         String url = baseUrl + "urnnbn/" + urnNbn + "?format=xml";
         ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, record
-            Document document = new Builder().build(apiResponse.getBody());
+            Document document = new Builder().build(apiResponse.getBody(), null);
             return document;
         } else {
             try {//error
-                Document document = new Builder().build(apiResponse.getBody());
+                Document document = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(document);
                 throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
             } catch (ParsingException | IOException e) { //error but failed to parse body
@@ -134,6 +134,7 @@ public class CzidloApiConnector {
      */
     public UrnnbnStatus getUrnnbnStatus(String urnnbn) throws ParsingException, CzidloApiErrorException, IOException {
         Document doc = getUrnnbnDetails(urnnbn);
+        System.err.println(doc.toXML());
         Nodes statusNode = doc.query("/r:response/r:urnNbn/r:status", CONTEXT);
         return UrnnbnStatus.valueOf(statusNode.get(0).getValue());
     }
@@ -149,11 +150,11 @@ public class CzidloApiConnector {
         String url = baseUrl + "resolver/" + urnNbn + "/digitalInstances?format=xml";
         ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, record
-            Document document = new Builder().build(apiResponse.getBody());
+            Document document = new Builder().build(apiResponse.getBody(), null);
             return document;
         } else {
             try {//error
-                Document document = new Builder().build(apiResponse.getBody());
+                Document document = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(document);
                 if (apiResponse.getHttpCode() == 404) { //document not found
                     return null;
@@ -223,11 +224,11 @@ public class CzidloApiConnector {
         String url = baseUrl + "registrars/" + registrarCode + "/digitalDocuments"; //+"?format=xml";
         ApiResponse apiResponse = httpConnector.httpPost(url, digDocRegistrationData.toXML(), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 201) {
-            Document responseDoc = new Builder().build(apiResponse.getBody());
+            Document responseDoc = new Builder().build(apiResponse.getBody(), null);
             return responseDoc.query("/r:response/r:urnNbn/r:value", CONTEXT).get(0).getValue();
         } else {
             try {//error
-                Document errorDoc = new Builder().build(apiResponse.getBody());
+                Document errorDoc = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
                 throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
             } catch (ParsingException | IOException e) { //error but failed to parse body
@@ -249,7 +250,7 @@ public class CzidloApiConnector {
             //ok, imported
         } else {
             try {//error
-                Document errorDoc = new Builder().build(apiResponse.getBody());
+                Document errorDoc = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
                 throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
             } catch (ParsingException | IOException e) { //error but failed to parse body
@@ -272,7 +273,7 @@ public class CzidloApiConnector {
             //ok, set/updated
         } else {
             try {//error
-                Document errorDoc = new Builder().build(apiResponse.getBody());
+                Document errorDoc = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
                 throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
             } catch (ParsingException | IOException e) { //error but failed to parse body
@@ -293,7 +294,7 @@ public class CzidloApiConnector {
             //ok, deactivated
         } else {
             try {//error
-                Document errorDoc = new Builder().build(apiResponse.getBody());
+                Document errorDoc = new Builder().build(apiResponse.getBody(), null);
                 CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
                 throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
             } catch (ParsingException | IOException e) { //error but failed to parse body

@@ -164,7 +164,7 @@ public class SingleRecordProcessor {
                 return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
             }
         } else { //found URN:NBN in input data
-            report("- Digital-document-registration data does contain URN:NBN " + urnnbn);
+            report("- Digital-document-registration data contains URN:NBN: " + urnnbn);
             return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
         }
     }
