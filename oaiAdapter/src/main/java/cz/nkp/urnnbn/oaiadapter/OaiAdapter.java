@@ -253,7 +253,7 @@ public class OaiAdapter {
                 if (limit > 0 && counter++ >= limit) {
                     break;
                 }
-                if (all % 100 == 0) {
+                if (all != 0 && all % 100 == 0) {
                     logger.info(String.format("processed %d records", all));
                 }
                 try {
@@ -318,6 +318,7 @@ public class OaiAdapter {
                     report("STATUS: NOT OK");
                 }
             }
+            logger.info(String.format("processed %d records", all));
             report("=====================================================");
             report("ALL RECORDS: " + all);
             report("RECORDS WITH ERROR: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddDeactivated)));

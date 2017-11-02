@@ -23,8 +23,6 @@ public class CzidloApiConnector {
 
     private static final Logger logger = Logger.getLogger(CzidloApiConnector.class.getName());
 
-    public static final String ERROR_CODE_REGISTAR = "UNKNOWN_REGISTRAR";
-    public static final String ERROR_CODE_DOCUMENT = "UNKNOWN_DIGITAL_DOCUMENT";
     public static final String CZIDLO_NAMESPACE = "http://resolver.nkp.cz/v4/";
     public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
     public final String baseUrl;
@@ -134,7 +132,6 @@ public class CzidloApiConnector {
      */
     public UrnnbnStatus getUrnnbnStatus(String urnnbn) throws ParsingException, CzidloApiErrorException, IOException {
         Document doc = getUrnnbnDetails(urnnbn);
-        System.err.println(doc.toXML());
         Nodes statusNode = doc.query("/r:response/r:urnNbn/r:status", CONTEXT);
         return UrnnbnStatus.valueOf(statusNode.get(0).getValue());
     }
