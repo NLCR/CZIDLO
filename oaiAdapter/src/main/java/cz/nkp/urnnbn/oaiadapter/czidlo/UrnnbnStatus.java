@@ -22,5 +22,7 @@ package cz.nkp.urnnbn.oaiadapter.czidlo;
  */
 public enum UrnnbnStatus {
 
-    FREE, RESERVED, ACTIVE, DEACTIVATED, UNDEFINED
+    FREE, RESERVED, ACTIVE, DEACTIVATED,
+    @Deprecated
+    UNDEFINED
 }

@@ -4,22 +4,17 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
+import nu.xom.*;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nu.xom.Attribute;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Node;
-import nu.xom.Nodes;
-import nu.xom.ParsingException;
-import nu.xom.XPathContext;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
-
 /**
- *
  * @author hanis
  */
 public class OaiHarvester {
@@ -84,7 +79,7 @@ public class OaiHarvester {
     private String addIdentifiers(String url) throws OaiHarvesterException {
         Document document = null;
         try {
-            document = XmlTools.getDocument(url, null, false);
+            document = getDocument(url);
         } catch (ParsingException ex) {
             next = false;
             throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
@@ -124,7 +119,7 @@ public class OaiHarvester {
     private Document getRecordDocument(String identifier) throws OaiHarvesterException {
         String url = getRecordUrl(identifier);
         try {
-            return XmlTools.getDocument(url, null, false);
+            return getDocument(url);
         } catch (IOException ex) {
             throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
         } catch (ParsingException ex) {
@@ -228,4 +223,12 @@ public class OaiHarvester {
             logger.log(Level.SEVERE, "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
         }
     }
+
+
+    private Document getDocument(String url) throws IOException, ParsingException {
+        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        InputStream is = con.getInputStream();
+        return new Builder().build(is);
+    }
+
 }

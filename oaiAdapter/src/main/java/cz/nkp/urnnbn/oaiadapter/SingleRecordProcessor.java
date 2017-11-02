@@ -2,7 +2,7 @@ package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloConnectionException;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiErrorException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.*;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
@@ -69,10 +69,16 @@ public class SingleRecordProcessor {
         try {
             RecordResult recordResult = processRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
             return recordResult;
-        } catch (CzidloConnectionException ex) {
+        }
+        /*catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("Czidlo API error:", ex);
-        } catch (IOException e) {
+        }*/
+        catch (IOException e) {
             throw new OaiAdapterException("IOException:", e);
+        } catch (ParsingException e) {
+            throw new OaiAdapterException("ParsingException:", e);
+        } catch (CzidloApiErrorException e) {
+            throw new OaiAdapterException("CzidloApiErrorException:", e);
         }
     }
 
@@ -145,7 +151,7 @@ public class SingleRecordProcessor {
     }
 
     private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
-            throws OaiAdapterException, CzidloConnectionException, IOException {
+            throws OaiAdapterException, IOException, ParsingException, CzidloApiErrorException {
         DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
         String urnnbn = docHelper.getUrnnbnFromDocument();
         if (urnnbn == null) { //no URN:NBN in input data
@@ -159,12 +165,12 @@ public class SingleRecordProcessor {
                 return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
             }
         } else { //found URN:NBN in input data
-            report("- Digital-document-registration data does contains " + urnnbn);
+            report("- Digital-document-registration data does contain URN:NBN " + urnnbn);
             return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
         }
     }
 
-    private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, CzidloConnectionException, IOException {
+    private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, ParsingException, CzidloApiErrorException {
         UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
         report("- URN:NBN status: " + urnnbnStatus);
         switch (urnnbnStatus) {
@@ -197,7 +203,7 @@ public class SingleRecordProcessor {
     }
 
 
-    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, CzidloConnectionException {
+    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, CzidloApiErrorException {
         if (registerDigitalDocuments) {
             // TODO: 1.11.17 poresit chyby
             urnNbn = registerDigitalDocument(digDocRegistrationData);
@@ -213,12 +219,13 @@ public class SingleRecordProcessor {
 
 
     private RecordResult processDigitalInstance(String urnnbn, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus)
-            throws OaiAdapterException, CzidloConnectionException {
+            throws OaiAdapterException, CzidloApiErrorException, IOException {
         DigitalInstance newDi = DiBuilder.buildDiFromImportDigitalInstanceRequest(diImportData);
         //report(diImportData.toXML());
         DigitalInstance currentDi = null;
         try {
-            currentDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
+            //currentDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
+            currentDi = czidloConnector.getActiveDigitalInstanceByUrnnbnAndLibraryId(urnnbn, newDi.getLibraryId());
         } catch (IOException ex) {
             Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParsingException ex) {
@@ -264,7 +271,7 @@ public class SingleRecordProcessor {
         }
     }
 
-    private String registerDigitalDocument(Document digDocRegistrationData) throws OaiAdapterException {
+    private String registerDigitalDocument(Document digDocRegistrationData) throws OaiAdapterException, CzidloApiErrorException {
         try {
             String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
             report("- Digital-document-registration SUCCESS");
@@ -273,21 +280,23 @@ public class SingleRecordProcessor {
             throw new OaiAdapterException("Digital-document-registration ERROR: IOException: ", ex);
         } catch (ParsingException ex) {
             throw new OaiAdapterException("Digital-document-registration ERROR: ParsingException: ", ex);
-        } catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("Digital-document-registration ERROR: CzidloConnectionException: ", ex);
         }
+        /*catch (CzidloConnectionException ex) {
+            throw new OaiAdapterException("Digital-document-registration ERROR: CzidloConnectionException: ", ex);
+        }*/
     }
 
-    private void importDigitalInstance(Document diImportData, String urnnbn) throws OaiAdapterException {
+    private void importDigitalInstance(Document diImportData, String urnnbn) throws OaiAdapterException, CzidloApiErrorException {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
         } catch (IOException ex) {
             throw new OaiAdapterException("Digital-instance-import ERROR: IOException: ", ex);
-        } catch (ParsingException ex) {
+        }
+        /*catch (ParsingException ex) {
             throw new OaiAdapterException("Digital-instance-import ERROR: ParsingException: ", ex);
         } catch (CzidloConnectionException ex) {
             throw new OaiAdapterException("Digital-instance-import ERROR: CzidloConnectionException: ", ex);
-        }
+        }*/
     }
 
     private DigitalInstance merge(DigitalInstance newDi, DigitalInstance currentDi) {

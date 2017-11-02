@@ -4,17 +4,14 @@
  */
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.utils.DiBuilder;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import nu.xom.*;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,6 +30,8 @@ public class CzidloApiConnector {
     public final String baseUrl;
     private final Credentials credentials;
     private final boolean ignoreInvalidCertificate;
+    private final HttpConnector httpConnector = new HttpConnector();
+    private final XmlTools xmlTools = new XmlTools();
 
     public CzidloApiConnector(String baseUrl, Credentials credentials, boolean ignoreInvalidCertificate) {
         this.baseUrl = "https://" + baseUrl + "/v4/";
@@ -48,263 +47,259 @@ public class CzidloApiConnector {
         return credentials.getLogin();
     }
 
-    public String getUrnnbnByRegistrarScopeId(String registrarCode, String idType, String idValue) throws CzidloConnectionException {
+
+    /**
+     * @param registrarCode
+     * @param registrarScopeIdType
+     * @param registrarScopeIdValue
+     * @param withDigitalInstances
+     * @return digital-document identified by registrar-scope-identifier for given registrar or null if no such digital-document exists
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public Document getDigitalDocumentByRegistrarScopeId(String registrarCode, String registrarScopeIdType, String registrarScopeIdValue, boolean withDigitalInstances) throws CzidloApiErrorException, ParsingException, IOException {
         String url = baseUrl
                 + "registrars/" + registrarCode
-                + "/digitalDocuments/registrarScopeIdentifier/" + idType + "/" + idValue
-                + "?format=xml&digitalInstances=true";
-        Document document;
-        try {
-            document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
-        } catch (IOException ex) {
-            throw new CzidloConnectionException("IOException occured while getting urnnbn by OAI_ADAPTER ID");
-        } catch (ParsingException ex) {
-            throw new CzidloConnectionException("ParsingException occured while getting urnnbn by OAI_ADAPTER ID");
+                + "/digitalDocuments/registrarScopeIdentifier/" + registrarScopeIdType + "/" + registrarScopeIdValue
+                + "?format=xml&digitalInstances=" + withDigitalInstances;
+        ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) { //ok, document found
+            Document document = new Builder().build(apiResponse.getBody());
+            return document;
+        } else {
+            try {
+                Document document = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(document);
+                if (apiResponse.getHttpCode() == 404 && "UNKNOWN_DIGITAL_DOCUMENT".equals(apiError.getErrorCode())) { //document not found
+                    return null;
+                } else { //other error
+                    throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+                }
+            } catch (ParsingException | IOException e) { //other error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
         }
-        Nodes nodes = document.query("//r:digitalDocument/r:urnNbn/r:value", CONTEXT);
-        if (nodes.size() > 0) {
-            return nodes.get(0).getValue();
-        }
-        return null;
     }
 
-    // public static boolean isDocumentAlreadyImported(String registrar, String identifier, String
-    // registarScopeId)
-    // throws IOException, ParsingException {
-    // String url = getDigitalDocumentUrl(registrar, identifier, registarScopeId);
-    // Document document = XmlTools.getDocument(url, true);
-    // Element rootElement = document.getRootElement();
-    // if ("digitalDocument".equals(rootElement.getLocalName())) {
-    // return true;
-    // } else if ("error".equals(rootElement.getLocalName())) {
-    // Nodes codeNode = rootElement.query("//r:code", CONTEXT);
-    // if (codeNode.size() > 0) {
-    // String code = codeNode.get(0).getValue();
-    // //System.out.println("code:" + code);
-    // if (!(ERROR_CODE_DOCUMENT.equals(code) || ERROR_CODE_REGISTAR.equals(code))) {
-    // //TODO spatne error code - neco je spatne ...staci kontrolovat jen tyto dva kody?
-    // throw new RuntimeException();
-    // } else {
-    // return false;
-    // }
-    // } else {
-    // //TODO spatna struktura dokumentu
-    // throw new RuntimeException();
-    // }
-    // } else {
-    // //TODO spatna struktura dokumentu
-    // throw new RuntimeException();
-    // }
-    // }
-    public List<String> getDigitalInstancesIdList(String urnnbn) throws IOException, ParsingException {
-        List<String> list = new ArrayList<>();
-        String url = baseUrl + "resolver/" + urnnbn + "/digitalInstances?format=xml";
-        // System.out.println("getDigitalInstancesIdList " + url);
-        Document document = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
-        Element rootElement = document.getRootElement();
-        Nodes idNodes = rootElement.query("//r:digitalInstance[@active='true']/@id", CONTEXT);
-        // Nodes idNodes = rootElement.query("//r:digitalInstance/r:id", CONTEXT);
-        for (int i = 0; i < idNodes.size(); i++) {
-            list.add(idNodes.get(i).getValue());
+    /**
+     * @param registrarCode
+     * @param registrarScopeIdType
+     * @param registrarScopeIdValue
+     * @return URN:NBN for digital-document identified by registrar-scope-identifier for given registrar or null if no such digital-document exists
+     * @throws ParsingException        in case of parsing xml from API response body (getting digital-document by registrar-scope-id)
+     * @throws CzidloApiErrorException in case of API error response (getting digital-document by registrar-scope-id)
+     * @throws IOException             in case of network error when (getting digital-document by registrar-scope-id)
+     */
+    public String getUrnnbnByRegistrarScopeId(String registrarCode, String registrarScopeIdType, String registrarScopeIdValue)
+            throws ParsingException, IOException, CzidloApiErrorException {
+        Document document = getDigitalDocumentByRegistrarScopeId(registrarCode, registrarScopeIdType, registrarScopeIdValue, false);
+        if (document == null) {
+            return null;
+        } else {
+            return document.query("/r:response/r:digitalDocument/r:urnNbn/r:value", CONTEXT).get(0).getValue();
         }
-        return list;
     }
 
-    public String getErrorMessage(Document document) throws IOException, ParsingException {
-        Element rootElement = document.getRootElement();
-        Nodes codeNodes = rootElement.query("//r:error/r:code", CONTEXT);
-        String code = "";
-        if (codeNodes.size() == 1) {
-            code = codeNodes.get(0).getValue();
+    /**
+     * @param urnNbn
+     * @return URN:NBN details, i.e. state, possibly datestamps, deactivation note, etc.
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public Document getUrnnbnDetails(String urnNbn) throws CzidloApiErrorException, ParsingException, IOException {
+        String url = baseUrl + "urnnbn/" + urnNbn + "?format=xml";
+        ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) { //ok, record
+            Document document = new Builder().build(apiResponse.getBody());
+            return document;
+        } else {
+            try {//error
+                Document document = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(document);
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
         }
-        Nodes messageNodes = rootElement.query("//r:error/r:message", CONTEXT);
-        String message = "";
-        if (messageNodes.size() == 1) {
-            message = messageNodes.get(0).getValue();
+    }
+
+    /**
+     * @param urnnbn
+     * @return
+     * @throws CzidloApiErrorException in case of API error response (getting URN:NBN details)
+     * @throws ParsingException        in case of parsing xml from API response body (getting URN:NBN details)
+     * @throws IOException             in case of network error (getting URN:NBN details)
+     */
+    public UrnnbnStatus getUrnnbnStatus(String urnnbn) throws ParsingException, CzidloApiErrorException, IOException {
+        Document doc = getUrnnbnDetails(urnnbn);
+        Nodes statusNode = doc.query("/r:response/r:urnNbn/r:status", CONTEXT);
+        return UrnnbnStatus.valueOf(statusNode.get(0).getValue());
+    }
+
+    /**
+     * @param urnNbn
+     * @return digital-instances record for digital-document identified by URN:NBN or null if no such digital-document exists
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public Document getDigitalInstancesByUrnnbn(String urnNbn) throws CzidloApiErrorException, ParsingException, IOException {
+        String url = baseUrl + "resolver/" + urnNbn + "/digitalInstances?format=xml";
+        ApiResponse apiResponse = httpConnector.httpGet(url, credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) { //ok, record
+            Document document = new Builder().build(apiResponse.getBody());
+            return document;
+        } else {
+            try {//error
+                Document document = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(document);
+                if (apiResponse.getHttpCode() == 404) { //document not found
+                    return null;
+                } else { //other error
+                    throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+                }
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
         }
-        if (code.isEmpty() && message.isEmpty()) {
+    }
+
+    /**
+     * @param urnnbn
+     * @return list of identifiers of all active digital-instances of digital-document identified by URN:NBN or empty list if no such digital-document exists
+     * @throws CzidloApiErrorException in case of API error response (getting digital-instances record)
+     * @throws ParsingException        in case of parsing xml from API response body (getting digital-instances record)
+     * @throws IOException             in case of network error (getting digital-instances record)
+     */
+    public List<Long> getActiveDigitalInstancesIdList(String urnnbn) throws IOException, ParsingException, CzidloApiErrorException {
+        Document doc = getDigitalInstancesByUrnnbn(urnnbn);
+        if (doc == null) {
+            return Collections.emptyList();
+        } else {
+            Nodes idNodes = doc.query("/r:response/r:digitalInstances/r:digitalInstance[@active='true']/@id", CONTEXT);
+            List<Long> list = new ArrayList<>(idNodes.size());
+            for (int i = 0; i < idNodes.size(); i++) {
+                list.add(Long.valueOf(idNodes.get(i).getValue()));
+            }
+            return list;
+        }
+    }
+
+
+    /**
+     * @param urnnbn
+     * @param libraryId
+     * @return active digital instance of digital-document identifier by URN:NBN or null if no such digital-document od digital-instance exist
+     * @throws CzidloApiErrorException in case of API error response (getting digital-instances record)
+     * @throws ParsingException        in case of parsing xml from API response body (getting digital-instances record)
+     * @throws IOException             in case of network error (getting digital-instances record)
+     */
+    public DigitalInstance getActiveDigitalInstanceByUrnnbnAndLibraryId(String urnnbn, Long libraryId) throws IOException, ParsingException, CzidloApiErrorException {
+        Document doc = getDigitalInstancesByUrnnbn(urnnbn);
+        if (doc == null) {
+            return null;
+        } else {
+            List<DigitalInstance> digitalInstances = DiBuilder.buildDisFromGetDigitalInstancesByUrnNbn(doc);
+            for (DigitalInstance di : digitalInstances) {
+                if (di.isActive() && di.getLibraryId().equals(libraryId)) {
+                    return di;
+                }
+            }
             return null;
         }
-        return code + ": " + message;
-
     }
 
-
-    public UrnnbnStatus getUrnnbnStatus(String urnnbn) {
-        String url = baseUrl + "urnnbn/" + urnnbn + "?format=xml";
-        Document document = null;
-        try {
-            document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
-        } catch (Exception ex) {
-            return UrnnbnStatus.UNDEFINED;
-        }
-        Element rootElement = document.getRootElement();
-        Nodes statusNode = rootElement.query("//r:status", CONTEXT);
-        if (statusNode.size() > 0) {
-            String status = statusNode.get(0).getValue();
-            return UrnnbnStatus.valueOf(status);
-        }
-        return UrnnbnStatus.UNDEFINED;
-    }
-
-    public boolean checkRegistrarMode(String registrarCode, UrnNbnRegistrationMode mode) throws CzidloConnectionException {
-        String url = baseUrl + "registrars/" + registrarCode + "?format=xml";
-        Document document = null;
-        try {
-            document = XmlTools.getDocumentAccept404Data(url, credentials, ignoreInvalidCertificate);
-        } catch (Exception ex) {
-            throw new CzidloConnectionException(ex);
-        }
-        Element rootElement = document.getRootElement();
-        String modeString = "";
-        switch (mode) {
-            case BY_REGISTRAR:
-                modeString = "BY_REGISTRAR";
-                break;
-            case BY_RESOLVER:
-                modeString = "BY_RESOLVER";
-                break;
-            case BY_RESERVATION:
-                modeString = "BY_RESERVATION";
-                break;
-        }
-        Nodes modeEnabledNode = rootElement.query("//r:registrationModes/r:mode[@name='" + modeString + "']/@enabled", CONTEXT);
-        if (modeEnabledNode.size() > 0) {
-            return "true".equals(modeEnabledNode.get(0).getValue());
-        }
-        return false;
-    }
-
-    public List<String> reserveUrnnbnBundle(String registrarCode, int bundleSize) throws IOException, CzidloConnectionException, ParsingException {
-        List<String> urnnbnList = new ArrayList<>();
-        String url = baseUrl + "registrars/" + registrarCode + "/urnNbnReservations?size=" + bundleSize;// + "&format=xml";
-        HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 201) {
-            throw new CzidloConnectionException("URNNBN reservation: response code expected 201, found " + responseCode);
-        }
-        InputStream is = connection.getInputStream();
-        Builder builder = new Builder();
-        Document responseDocument = builder.build(is);
-        Element rootElement = responseDocument.getRootElement();
-        Nodes nodes = rootElement.query("//r:urnNbn", CONTEXT);
-        for (int i = 0; i < nodes.size(); i++) {
-            urnnbnList.add(nodes.get(i).getValue());
-        }
-        return urnnbnList;
-
-    }
-
-    public String registerDigitalDocument(Document digDocRegistrationData, String registrarCode) throws IOException, ParsingException,
-            CzidloConnectionException {
+    /**
+     * @param digDocRegistrationData
+     * @param registrarCode
+     * @return URN:NBN assigned/confirmed to now registered digital document
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public String registerDigitalDocument(Document digDocRegistrationData, String registrarCode) throws IOException, ParsingException, CzidloApiErrorException {
         String url = baseUrl + "registrars/" + registrarCode + "/digitalDocuments"; //+"?format=xml";
-        HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
-        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-        wr.write(digDocRegistrationData.toXML());
-        wr.flush();
-        wr.close();
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 201) {
-            // see https://github.com/NLCR/CZIDLO/issues/111
-            if (responseCode != 200) {
-                logger.warning("Unexpected response code: " + responseCode);
-                Builder builder = new Builder();
-                InputStream in = connection.getErrorStream();
-                if (in != null) {
-                    String message = getErrorMessage(builder.build(in));
-                    if (message == null) {
-                        message = "Registering digital document: response code expected 201, found " + responseCode;
-                    }
-                    throw new CzidloConnectionException(message);
-                } else {
-                    throw new CzidloConnectionException("unexpected response code: " + responseCode);
-                }
-            } else {
-                logger.warning("urn:nbn registration response code should be 201, not 200");
+        ApiResponse apiResponse = httpConnector.httpPost(url, digDocRegistrationData.toXML(), credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 201) {
+            Document responseDoc = new Builder().build(apiResponse.getBody());
+            return responseDoc.query("/r:response/r:urnNbn/r:value", CONTEXT).get(0).getValue();
+        } else {
+            try {//error
+                Document errorDoc = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
             }
         }
-        InputStream is = connection.getInputStream();
-        Builder builder = new Builder();
-        Document responseDocument = builder.build(is);
-        String urnnbn = getAllocatedURNNBN(responseDocument);
-        return urnnbn;
     }
 
-    public void importDigitalInstance(Document diImportData, String urnnbn) throws IOException, ParsingException, CzidloConnectionException {
+    /**
+     * @param diImportData
+     * @param urnnbn
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws IOException             in case of network error
+     */
+    public void importDigitalInstance(Document diImportData, String urnnbn) throws CzidloApiErrorException, IOException {
         String url = baseUrl + "resolver/" + urnnbn + "/digitalInstances";
-        HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
-        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-        wr.write(diImportData.toXML());
-        wr.flush();
-        wr.close();
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 201) { // TODO pokud ok, pak vzdy 201??
-            throw new CzidloConnectionException("Putting digital instance: response code expected 201, found " + responseCode);
+        ApiResponse apiResponse = httpConnector.httpPost(url, diImportData.toXML(), credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 201) {
+            //ok, imported
+        } else {
+            try {//error
+                Document errorDoc = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
         }
     }
 
-    public void putRegistrarScopeIdentifier(String urnnbn, String idValue, String idType) throws IOException, CzidloConnectionException {
+    /**
+     * @param urnnbn
+     * @param idValue
+     * @param idType
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws IOException             in case of network error
+     */
+    public void putRegistrarScopeIdentifier(String urnnbn, String idValue, String idType) throws CzidloApiErrorException, IOException {
         String url = baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
-        HttpsURLConnection connection = XmlTools.getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);
-        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-        wr.write(idValue);
-        wr.flush();
-        wr.close();
-        int responseCode = connection.getResponseCode();
-        if (responseCode != 201) {
-            // TODO: bude tahle metoda delat jen vkladani, nebo i aktualizaci?
-            // 201 - aktualizace, 200 - vlozeni nove hodnoty
-            throw new CzidloConnectionException("Putting registrar scope identifier: response code expected 201, found " + responseCode);
-        }
-    }
-
-    public void deactivateDigitalInstance(Long id) throws CzidloConnectionException {
-        try {
-            String url = baseUrl + "digitalInstances/id/" + id;
-            HttpsURLConnection connection = XmlTools.getAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
-            int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
-                throw new CzidloConnectionException("Removing digital instance: response code expected 200, found " + responseCode);
-            }
-        } catch (IOException ex) {
-            throw new CzidloConnectionException("IOException occured while removing DI with id: " + id);
-        }
-    }
-
-    private String writeInputStream(InputStream is) {
-        Builder builder = new Builder();
-        try {
-            Document responseDocument = builder.build(is);
-            return "RD:" + responseDocument.toXML();
-        } catch (ValidityException ex) {
-            return "V:" + ex.getMessage();
-        } catch (ParsingException ex) {
-            return "P:" + ex.getMessage();
-        } catch (IOException ex) {
-            return "IO:" + ex.getMessage();
-        }
-    }
-
-    public String getAllocatedURNNBN(Document document) {
-        Element rootElement = document.getRootElement();
-        Nodes node = rootElement.query("//r:value", CONTEXT);
-        if (node.size() < 1) {
-            // TODO spatna struktura dokumentu
-            throw new RuntimeException();
-        }
-        return node.get(0).getValue();
-    }
-
-    public DigitalInstance getDigitalInstanceByLibraryId(String urnnbn, DigitalInstance newDi) throws IOException, ParsingException {
-        List<String> idList = getDigitalInstancesIdList(urnnbn);
-        for (String id : idList) {
-            String url = baseUrl + "digitalInstances/id/" + id + "?format=xml";
-            Document apiResponseDoc = XmlTools.getDocument(url, credentials, ignoreInvalidCertificate);
-            DigitalInstance oldDi = DiBuilder.buildDiFromGetDigitalInstanceByLibraryIdResponse(apiResponseDoc);
-            if (oldDi.getLibraryId().equals(newDi.getLibraryId())) {
-                return oldDi;
+        ApiResponse apiResponse = httpConnector.httpPut(url, idValue, credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200 || apiResponse.getHttpCode() == 201) {
+            //ok, set/updated
+        } else {
+            try {//error
+                Document errorDoc = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
             }
         }
-        return null;
     }
+
+    /**
+     * @param digitalInstanceId
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws IOException             in case of network error
+     */
+    public void deactivateDigitalInstance(Long digitalInstanceId) throws CzidloApiErrorException, IOException {
+        String url = baseUrl + "digitalInstances/id/" + digitalInstanceId;
+        ApiResponse apiResponse = httpConnector.httpDelete(url, credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) {
+            //ok, deactivated
+        } else {
+            try {//error
+                Document errorDoc = new Builder().build(apiResponse.getBody());
+                CzidloApiError apiError = xmlTools.parseErrorMessage(errorDoc);
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+            } catch (ParsingException | IOException e) { //error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
+        }
+    }
+
 }

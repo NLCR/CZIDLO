@@ -3,7 +3,12 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import nu.xom.Document;
+import nu.xom.Element;
 import nu.xom.Nodes;
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Martin Řehánek on 28.10.17.
@@ -54,6 +59,37 @@ public class DiBuilder {
             di.setId(Long.valueOf(idNodes.get(0).getValue()));
         }
         return di;
+    }
+
+    public static List<DigitalInstance> buildDisFromGetDigitalInstancesByUrnNbn(Document responseDoc) {
+        Nodes diNodes = responseDoc.query("/r:response/r:digitalInstances/r:digialInstance", CzidloApiConnector.CONTEXT);
+        List<DigitalInstance> result = new ArrayList<>(diNodes.size());
+        for (int i = 0; i < result.size(); i++) {
+            DigitalInstance di = new DigitalInstance();
+            Element diEl = (Element) diNodes.get(i);
+            di.setId(Long.valueOf(diEl.getAttributeValue("id")));
+            di.setLibraryId(Long.valueOf(diEl.query("digitalLibraryId").get(0).getValue()));
+            di.setUrl(diEl.query("url").get(0).getValue());
+            di.setActive(Boolean.valueOf(diEl.getAttributeValue("active")));
+            Nodes formatNodes = diEl.query("format");
+            if (formatNodes.size() > 0) {
+                di.setFormat(formatNodes.get(0).getValue().trim());
+            }
+            Nodes accessibilityNodes = diEl.query("accessibility");
+            if (accessibilityNodes.size() > 0) {
+                di.setAccessibility(accessibilityNodes.get(0).getValue().trim());
+            }
+            Nodes createdNodes = diEl.query("created");
+            if (createdNodes.size() > 0) {
+                di.setCreated(DateTime.parse(createdNodes.get(0).getValue()));
+            }
+            Nodes deactivatedNodes = diEl.query("deactivated");
+            if (deactivatedNodes.size() > 0) {
+                di.setDeactivated(DateTime.parse(deactivatedNodes.get(0).getValue()));
+            }
+            result.add(di);
+        }
+        return result;
     }
 
 
