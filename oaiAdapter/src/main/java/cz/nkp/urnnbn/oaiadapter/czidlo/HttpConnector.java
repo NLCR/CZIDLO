@@ -24,6 +24,8 @@ public class HttpConnector {
                 getReadableAuthConnection(url, credentials, HttpMethod.GET, ignoreInvalidApiCertificate);
         InputStream stream = null;
         try {
+            //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
+            connection.getResponseCode();
             stream = connection.getErrorStream();
             if (stream == null) {
                 stream = connection.getInputStream();
@@ -45,6 +47,8 @@ public class HttpConnector {
         writer.close();
         InputStream stream = null;
         try {
+            //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
+            connection.getResponseCode();
             stream = connection.getErrorStream();
             if (stream == null) {
                 stream = connection.getInputStream();
@@ -67,6 +71,8 @@ public class HttpConnector {
         writer.close();
         InputStream stream = null;
         try {
+            //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
+            connection.getResponseCode();
             stream = connection.getErrorStream();
             if (stream == null) {
                 stream = connection.getInputStream();
@@ -84,6 +90,8 @@ public class HttpConnector {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
         InputStream stream = null;
         try {
+            //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
+            connection.getResponseCode();
             stream = connection.getErrorStream();
             if (stream == null) {
                 stream = connection.getInputStream();

@@ -266,7 +266,7 @@ public class CzidloApiConnector {
      * @throws CzidloApiErrorException in case of API error response
      * @throws IOException             in case of network error
      */
-    public void putRegistrarScopeIdentifier(String urnnbn, String idValue, String idType) throws CzidloApiErrorException, IOException {
+    public void putRegistrarScopeIdentifier(String urnnbn, String idType, String idValue) throws CzidloApiErrorException, IOException {
         String url = baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
         ApiResponse apiResponse = httpConnector.httpPut(url, idValue, credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200 || apiResponse.getHttpCode() == 201) {
