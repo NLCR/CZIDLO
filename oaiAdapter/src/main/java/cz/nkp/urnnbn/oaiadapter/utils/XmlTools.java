@@ -65,13 +65,9 @@ public class XmlTools {
         }
     }
 
-    public static boolean nodeByXpathExists(Document doc, String xpath) throws DocumentOperationException {
-        try {
-            Nodes nodes = doc.query(xpath, CzidloApiConnector.CONTEXT);
-            return nodes.size() > 0;
-        } catch (Throwable ex) {
-            throw new DocumentOperationException(ex.getMessage());
-        }
+    public static boolean nodeByXpathExists(Document doc, String xpath) {
+        Nodes nodes = doc.query(xpath, CzidloApiConnector.CONTEXT);
+        return nodes.size() > 0;
     }
 
     public static String loadXmlFromFile(String xsltFile) throws Exception {

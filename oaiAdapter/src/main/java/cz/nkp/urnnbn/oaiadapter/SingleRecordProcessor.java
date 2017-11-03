@@ -4,7 +4,10 @@ import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiErrorException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
-import cz.nkp.urnnbn.oaiadapter.utils.*;
+import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
+import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationRefiner;
+import cz.nkp.urnnbn.oaiadapter.utils.DiImportRefiner;
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -12,8 +15,6 @@ import nu.xom.xslt.XSLException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Martin Řehánek on 30.10.17.
@@ -60,30 +61,17 @@ public class SingleRecordProcessor {
         oaiAdapter.report(message, e);
     }
 
-    public RecordResult processRecord(OaiRecord oaiRecord)
-            throws OaiAdapterException {
+    public RecordResult processRecord(OaiRecord oaiRecord) throws SingleRecordProcessingException {
         report("------------------------------------------------------");
         String oaiIdentifier = oaiRecord.getIdentifier();
         report("Processing next record");
         report("- OAI-record identifier: " + oaiIdentifier);
         Document digDocRegistrationData = buildAndValidateDdRegistrationData(oaiRecord, digDocRegistrationTemplate);
         Document digInstImportData = buildAndValidateDiImportData(oaiRecord, digInstImportTemplate);
-        try {
-            RecordResult recordResult = processRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
-            return recordResult;
-        }
-        /*catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("Czidlo API error:", ex);
-        }*/ catch (IOException e) {
-            throw new OaiAdapterException("IOException:", e);
-        } catch (ParsingException e) {
-            throw new OaiAdapterException("ParsingException:", e);
-        } catch (CzidloApiErrorException e) {
-            throw new OaiAdapterException("CzidloApiErrorException:", e);
-        }
+        return processRecord(oaiIdentifier, digDocRegistrationData, digInstImportData);
     }
 
-    private Document buildAndValidateDdRegistrationData(OaiRecord oaiRecord, Document digDocRegistrationTemplate) throws OaiAdapterException {
+    private Document buildAndValidateDdRegistrationData(OaiRecord oaiRecord, Document digDocRegistrationTemplate) throws SingleRecordProcessingException {
         //saveToTempFile(oaiRecord.getDocument(), "oai-" + oaiRecord.getIdentifier(), ".xml");
         Document digDocRegistrationData = null;
         //transformation
@@ -91,14 +79,14 @@ public class SingleRecordProcessor {
             digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
             report("- OAI-record -> Digital-document-registration data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new OaiAdapterException("OAI-record -> Digital-document-registration data conversion: ERROR: ", ex);
+            throw new SingleRecordProcessingException("OAI-record -> Digital-document-registration data conversion: ERROR: ", ex);
         }
         //refinement
         try {
             new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
             report("- Digital-document-registration data refinement: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-document-registration data refinement: ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration data refinement: ERROR: ", ex);
         }
         //validation
         try {
@@ -106,58 +94,53 @@ public class SingleRecordProcessor {
             checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
             report("- Digital-document-registration data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-document-registration data validation ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration data validation ERROR: ", ex);
         }
         return digDocRegistrationData;
     }
 
     private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
-        try {
-            String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
-            boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
-            if (exists) {
-                throw new DocumentOperationException(String.format(
-                        "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
-                        OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
-            }
-        } catch (Throwable ex) {
-            throw new DocumentOperationException(ex.getMessage());
+        String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
+        boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
+        if (exists) {
+            throw new DocumentOperationException(String.format(
+                    "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
+                    OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
         }
     }
 
-    private Document buildAndValidateDiImportData(OaiRecord oaiRecord, Document digInstImportTemplate) throws OaiAdapterException {
+    private Document buildAndValidateDiImportData(OaiRecord oaiRecord, Document digInstImportTemplate) throws SingleRecordProcessingException {
         Document digInstImportData = null;
         //transformation
         try {
             digInstImportData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digInstImportTemplate);
             report("- OAI-record -> Digital-instance-import data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new OaiAdapterException("OAI-record -> Digital-instance-import data conversion: ERROR", ex);
+            throw new SingleRecordProcessingException("OAI-record -> Digital-instance-import data conversion: ERROR", ex);
         }
         //refinement
         try {
             new DiImportRefiner().refineDocument(digInstImportData);
             report("- Digital-instance-import data refinement: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-instance-import data refinement: ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import data refinement: ERROR: ", ex);
         }
         //validation
         try {
             XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
             report("- Digital-instance-import data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new OaiAdapterException("Digital-instance-import data validation: ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import data validation: ERROR: ", ex);
         }
         return digInstImportData;
     }
 
-    private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData)
-            throws OaiAdapterException, IOException, ParsingException, CzidloApiErrorException {
+    private RecordResult processRecord(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
         DdRegistrationDataHelper docHelper = new DdRegistrationDataHelper(digDocRegistrationData);
         String urnnbn = docHelper.getUrnnbnFromDocument();
         if (urnnbn == null) { //no URN:NBN in input data
             report("- Digital-document-registration data does not contain URN:NBN.");
-            urnnbn = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+            urnnbn = getUrnnbnByRegistrarScopeId(oaiIdentifier);
             if (urnnbn == null) { //no URN:NBN from registrar-scope-id
                 report("- No digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier);
                 return registerDdIfEnabledAndContinue(oaiIdentifier, null, digDocRegistrationData, digInstImportData);
@@ -171,8 +154,16 @@ public class SingleRecordProcessor {
         }
     }
 
-    private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, ParsingException, CzidloApiErrorException {
-        UrnnbnStatus urnnbnStatus = czidloConnector.getUrnnbnStatus(urnnbn);
+    private String getUrnnbnByRegistrarScopeId(String oaiIdentifier) throws SingleRecordProcessingException {
+        try {
+            return czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+        } catch (ParsingException | IOException | CzidloApiErrorException e) {
+            throw new SingleRecordProcessingException("Getting URN:NBN by registrar-scope-id ERROR", e);
+        }
+    }
+
+    private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
+        UrnnbnStatus urnnbnStatus = getUrnNbnStatus(urnnbn);
         report("- URN:NBN status: " + urnnbnStatus);
         switch (urnnbnStatus) {
             case DEACTIVATED:
@@ -181,17 +172,16 @@ public class SingleRecordProcessor {
             case FREE:
                 return registerDdIfEnabledAndContinue(oaiIdentifier, urnnbn, digDocRegistrationData, digInstImportData);
             case ACTIVE:
-                String urnnbnByRegistrarScopeId = czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+                String urnnbnByRegistrarScopeId = getUrnnbnByRegistrarScopeId(oaiIdentifier);
                 if (urnnbnByRegistrarScopeId == null) {
-                    report("- URN:NBN by registrar-scope-id not found");
-                    czidloConnector.putRegistrarScopeIdentifier(urnnbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
-                    report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnnbn + ": SUCCESS");
+                    report("- URN:NBN by registrar-scope-id: NOT FOUND");
+                    report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ": SUCCESS");
+                    setRegistrarScopeId(urnnbn, oaiIdentifier);
                     return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
                 } else {
+                    report("- URN:NBN by registrar-scope-id: FOUND");
                     if (!urnnbn.equals(urnnbnByRegistrarScopeId)) {
-                        // TODO: 1.11.17 a neposilat nejak ten stav? protoze tady vim, ze ALREADY_REGISTERED
-                        // nebo mozna jenom warning, nebo pokus o napravu
-                        throw new OaiAdapterException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
+                        throw new SingleRecordProcessingException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
                     } else {
                         return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
                     }
@@ -201,14 +191,20 @@ public class SingleRecordProcessor {
         }
     }
 
+    private UrnnbnStatus getUrnNbnStatus(String urnnbn) throws SingleRecordProcessingException {
+        try {
+            return czidloConnector.getUrnnbnStatus(urnnbn);
+        } catch (ParsingException | CzidloApiErrorException | IOException e) {
+            throw new SingleRecordProcessingException("Getting URN:NBN status ERROR", e);
+        }
+    }
 
-    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws OaiAdapterException, IOException, CzidloApiErrorException {
+    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
         if (registerDigitalDocuments) {
-            // TODO: 1.11.17 poresit chyby
             urnNbn = registerDigitalDocument(digDocRegistrationData);
             report("- Digital document registered with " + urnNbn);
-            czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
-            report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+            report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+            setRegistrarScopeId(urnNbn, oaiIdentifier);
             return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
         } else {
             report("- Digital document will not be registered");
@@ -216,20 +212,17 @@ public class SingleRecordProcessor {
         }
     }
 
-
-    private RecordResult processDigitalInstance(String urnnbn, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus)
-            throws OaiAdapterException, CzidloApiErrorException, IOException {
-        DigitalInstance newDi = xmlTools.buildDiFromImportDigitalInstanceRequest(diImportData);
-        //report(diImportData.toXML());
-        DigitalInstance currentDi = null;
+    private void setRegistrarScopeId(String urnNbn, String oaiIdentifier) throws SingleRecordProcessingException {
         try {
-            //currentDi = czidloConnector.getDigitalInstanceByLibraryId(urnnbn, newDi);
-            currentDi = czidloConnector.getActiveDigitalInstanceByUrnnbnAndLibraryId(urnnbn, newDi.getLibraryId());
-        } catch (IOException ex) {
-            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(OaiAdapter.class.getName()).log(Level.SEVERE, null, ex);
+            czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+        } catch (CzidloApiErrorException | IOException e) {
+            throw new SingleRecordProcessingException("Setting registrar-scope-id ERROR", e);
         }
+    }
+
+    private RecordResult processDigitalInstance(String urnnbn, Document diImportData, RecordResult.DigitalDocumentStatus ddStatus) throws SingleRecordProcessingException {
+        DigitalInstance newDi = xmlTools.buildDiFromImportDigitalInstanceRequest(diImportData);
+        DigitalInstance currentDi = getActiveDigitalInstance(urnnbn, newDi.getLibraryId());
         if (currentDi == null) {
             // DI doesnt exist yet
             report("- DI doesn't exists - creating new DI ...");
@@ -250,8 +243,8 @@ public class SingleRecordProcessor {
                     report("- Merged DI: " + mergedDi.toString());
                 }
                 // deactivate current DI
-                report("- Deactivating current DI ...");
-                czidloConnector.deactivateDigitalInstance(currentDi.getId());
+                report("- Deactivating current DI");
+                deactivateDigitalInstance(currentDi);
                 report("- Current DI deactivated.");
                 // import new (possibly merged) DI
                 if (mergeDigitalInstances) {
@@ -264,38 +257,44 @@ public class SingleRecordProcessor {
                 return new RecordResult(urnnbn, ddStatus, RecordResult.DigitalInstanceStatus.UPDATED);
             } else {
                 // no change - do nothing
-                report("- DI already exists and is not considered different from new DI - doing nothing.");
+                report("- DI already exists and is not considered different from new DI: IGNORING");
                 return new RecordResult(urnnbn, ddStatus, RecordResult.DigitalInstanceStatus.UNCHANGED);
             }
         }
     }
 
-    private String registerDigitalDocument(Document digDocRegistrationData) throws OaiAdapterException, CzidloApiErrorException {
+    private void deactivateDigitalInstance(DigitalInstance currentDi) throws SingleRecordProcessingException {
+        try {
+            czidloConnector.deactivateDigitalInstance(currentDi.getId());
+        } catch (CzidloApiErrorException | IOException e) {
+            throw new SingleRecordProcessingException("Deactivating digital instance ERROR", e);
+        }
+    }
+
+    private DigitalInstance getActiveDigitalInstance(String urnnbn, Long libraryId) throws SingleRecordProcessingException {
+        try {
+            return czidloConnector.getActiveDigitalInstanceByUrnnbnAndLibraryId(urnnbn, libraryId);
+        } catch (IOException | ParsingException | CzidloApiErrorException e) {
+            throw new SingleRecordProcessingException("Getting digital instance ERROR", e);
+        }
+    }
+
+    private String registerDigitalDocument(Document digDocRegistrationData) throws SingleRecordProcessingException {
         try {
             String urnnbn = czidloConnector.registerDigitalDocument(digDocRegistrationData, registrarCode);
             report("- Digital-document-registration SUCCESS");
             return urnnbn;
-        } catch (IOException ex) {
-            throw new OaiAdapterException("Digital-document-registration ERROR: IOException: ", ex);
-        } catch (ParsingException ex) {
-            throw new OaiAdapterException("Digital-document-registration ERROR: ParsingException: ", ex);
+        } catch (IOException | ParsingException | CzidloApiErrorException ex) {
+            throw new SingleRecordProcessingException("Digital-document-registration ERROR", ex);
         }
-        /*catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("Digital-document-registration ERROR: CzidloConnectionException: ", ex);
-        }*/
     }
 
-    private void importDigitalInstance(Document diImportData, String urnnbn) throws OaiAdapterException, CzidloApiErrorException {
+    private void importDigitalInstance(Document diImportData, String urnnbn) throws SingleRecordProcessingException {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
-        } catch (IOException ex) {
-            throw new OaiAdapterException("Digital-instance-import ERROR: IOException: ", ex);
+        } catch (IOException | CzidloApiErrorException ex) {
+            throw new SingleRecordProcessingException("Digital-instance-import ERROR: ", ex);
         }
-        /*catch (ParsingException ex) {
-            throw new OaiAdapterException("Digital-instance-import ERROR: ParsingException: ", ex);
-        } catch (CzidloConnectionException ex) {
-            throw new OaiAdapterException("Digital-instance-import ERROR: CzidloConnectionException: ", ex);
-        }*/
     }
 
     private DigitalInstance merge(DigitalInstance newDi, DigitalInstance currentDi) {
@@ -339,7 +338,6 @@ public class SingleRecordProcessor {
             return false;
         }
     }
-
 
     private File saveToTempFile(Document document, String prefix, String suffix) throws IOException {
         File tmpFile = File.createTempFile(prefix, suffix);

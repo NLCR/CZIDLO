@@ -306,7 +306,7 @@ public class OaiAdapter {
                         }
 
                         report("STATUS: OK");
-                    } catch (OaiAdapterException ex) {
+                    } catch (SingleRecordProcessingException ex) {
                         report(ex.getMessage());
                         if (ex.getCause() != null) {
                             report(ex.getCause().getMessage());
