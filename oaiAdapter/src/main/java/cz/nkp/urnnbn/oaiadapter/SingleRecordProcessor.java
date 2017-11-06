@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiErrorException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
@@ -179,9 +181,12 @@ public class SingleRecordProcessor {
                 String urnnbnByRegistrarScopeId = getUrnnbnByRegistrarScopeId(oaiIdentifier);
                 if (urnnbnByRegistrarScopeId == null) {
                     report("- URN:NBN by registrar-scope-id: NOT FOUND");
-                    // TODO: 6.11.17 kontrolovat jeste kod registratora
-                    setRegistrarScopeId(urnnbn, oaiIdentifier);
-                    report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
+                    if (urnMatchesRegistrar(urnnbn, registrarCode)) {
+                        setRegistrarScopeId(urnnbn, oaiIdentifier);
+                        report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
+                    } else {
+                        report("- Not setting registrar-scope-id because document " + urnnbn + " does not belong to registrar " + registrarCode);
+                    }
                     return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
                 } else {
                     report("- URN:NBN by registrar-scope-id: FOUND");
@@ -196,6 +201,10 @@ public class SingleRecordProcessor {
         }
     }
 
+    private boolean urnMatchesRegistrar(String urnnbn, String registrarCode) {
+        return UrnNbn.valueOf(urnnbn).getRegistrarCode().equals(RegistrarCode.valueOf(registrarCode));
+    }
+
     private UrnnbnStatus getUrnNbnStatus(String urnnbn) throws SingleRecordProcessingException {
         try {
             return czidloConnector.getUrnnbnStatus(urnnbn);
@@ -206,12 +215,16 @@ public class SingleRecordProcessor {
 
     private RecordResult registerDdIWithUrnAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
         if (registerDDsWithUrn) {
-            // TODO: 6.11.17 kontrolovat jeste kod registratora
-            urnNbn = registerDigitalDocument(digDocRegistrationData);
-            report("- Digital document registered with " + urnNbn);
-            report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
-            setRegistrarScopeId(urnNbn, oaiIdentifier);
-            return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+            if (urnMatchesRegistrar(urnNbn, registrarCode)) {
+                urnNbn = registerDigitalDocument(digDocRegistrationData);
+                report("- Digital document registered with " + urnNbn);
+                report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+                setRegistrarScopeId(urnNbn, oaiIdentifier);
+                return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+            } else {
+                report("- Digital document is not being registered with " + urnNbn + " now because registrar code is not " + registrarCode);
+                return new RecordResult(urnNbn, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);
+            }
         } else {
             report("- Digital document will not be registered");
             return new RecordResult(urnNbn, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);
