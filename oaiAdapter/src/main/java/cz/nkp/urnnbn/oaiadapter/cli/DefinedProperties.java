@@ -29,8 +29,10 @@ public class DefinedProperties {
     public static String DD_REGISTRATION_XSD_URL = "oaiAdapter.digDocRegistrationXsdUrl";
     public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
     // dd registration
-    public static String DD_REGISTRATION_REGISTER_DDS = "oaiAdapter.ddRegistration.registerDigitalDocuments";
-    public static final boolean DD_REGISTRATION_REGISTER_DDS_DEFAULT = true;
+    public static String DD_REGISTRATION_REGISTER_DDS_WITH_URN = "oaiAdapter.ddRegistration.registerDigitalDocumentsWithUrnNbn";
+    public static final boolean DD_REGISTRATION_REGISTER_DDS_WITH_URN_DEFAULT = true;
+    public static String DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN = "oaiAdapter.ddRegistration.registerDigitalDocumentsWithoutUrnNbn";
+    public static final boolean DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN_DEFAULT = false;
     // di import
     public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.diImport.mergeDigitalInstances";
     public static boolean DI_IMPORT_MERGE_DIS_DEFAULT = false;

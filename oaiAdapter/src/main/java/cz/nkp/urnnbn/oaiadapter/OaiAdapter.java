@@ -41,7 +41,9 @@ public class OaiAdapter {
     // XSD
     private XsdProvider xsdProvider;
     // DD
-    private boolean registerDigitalDocuments = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_DEFAULT;
+    private boolean registerDDsWithUrn = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_WITH_URN_DEFAULT;
+    private boolean registerDDsWithoutUrn = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN_DEFAULT;
+
     // DI
     private boolean mergeDigitalInstances = DefinedProperties.DI_IMPORT_MERGE_DIS_DEFAULT;
     private boolean ignoreDifferenceInDiAccessibility = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT;
@@ -95,8 +97,12 @@ public class OaiAdapter {
         this.mergeDigitalInstances = mergeDigitalInstances;
     }
 
-    public void setRegisterDigitalDocuments(boolean registerDigitalDocuments) {
-        this.registerDigitalDocuments = registerDigitalDocuments;
+    public void setRegisterDDsWithUrn(boolean registerDDsWithUrn) {
+        this.registerDDsWithUrn = registerDDsWithUrn;
+    }
+
+    public void setRegisterDDsWithoutUrn(boolean registerDDsWithoutUrn) {
+        this.registerDDsWithoutUrn = registerDDsWithoutUrn;
     }
 
     public void setIgnoreDifferenceInDiAccessibility(boolean ignoreDifferenceInDiAccessibility) {
@@ -183,7 +189,7 @@ public class OaiAdapter {
         try {
             Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             Document digInstImportXslt = buildDigInstImportXsltDoc();
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDigitalDocuments, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("REPORT:");
             report("------------------------------");
 
@@ -215,7 +221,8 @@ public class OaiAdapter {
 
             report(" DD management");
             report(" -----------------");
-            report("  Register digital documents: " + registerDigitalDocuments);
+            report("  Register digital documents with URN:NBN: " + registerDDsWithUrn);
+            report("  Register digital documents without URN:NBN: " + registerDDsWithoutUrn);
             report(" ");
 
             report(" DI management");

@@ -32,7 +32,9 @@ public class SingleRecordProcessor {
     //XSD
     private final XsdProvider xsdProvider;
     // DD
-    private final boolean registerDigitalDocuments;
+    private boolean registerDDsWithUrn;
+    private boolean registerDDsWithoutUrn;
+    //private final boolean registerDigitalDocuments;
     // DI
     private final boolean mergeDigitalInstances;
     private final boolean ignoreDifferenceInDiAccessibility;
@@ -40,14 +42,16 @@ public class SingleRecordProcessor {
     //helpers
     private final XmlTools xmlTools = new XmlTools();
 
-    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDigitalDocuments, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDDsWithUrn, boolean registerDDsWithoutUrn, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.oaiAdapter = oaiAdapter;
         this.registrarCode = registrarCode;
         this.czidloConnector = czidloConnector;
         this.digDocRegistrationTemplate = digDocRegistrationTemplate;
         this.digInstImportTemplate = digInstImportTemplate;
         this.xsdProvider = xsdProvider;
-        this.registerDigitalDocuments = registerDigitalDocuments;
+
+        this.registerDDsWithUrn = registerDDsWithUrn;
+        this.registerDDsWithoutUrn = registerDDsWithoutUrn;
         this.mergeDigitalInstances = mergeDigitalInstances;
         this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
         this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
@@ -143,7 +147,7 @@ public class SingleRecordProcessor {
             urnnbn = getUrnnbnByRegistrarScopeId(oaiIdentifier);
             if (urnnbn == null) { //no URN:NBN from registrar-scope-id
                 report("- No digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier);
-                return registerDdIfEnabledAndContinue(oaiIdentifier, null, digDocRegistrationData, digInstImportData);
+                return registerDdIWithoutUrnAndContinue(oaiIdentifier, digDocRegistrationData, digInstImportData);
             } else {
                 report("- Digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + " with " + urnnbn);
                 return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
@@ -170,13 +174,14 @@ public class SingleRecordProcessor {
                 return new RecordResult(urnnbn, RecordResult.DigitalDocumentStatus.IS_DEACTIVATED, null);
             case RESERVED:
             case FREE:
-                return registerDdIfEnabledAndContinue(oaiIdentifier, urnnbn, digDocRegistrationData, digInstImportData);
+                return registerDdIWithUrnAndContinue(oaiIdentifier, urnnbn, digDocRegistrationData, digInstImportData);
             case ACTIVE:
                 String urnnbnByRegistrarScopeId = getUrnnbnByRegistrarScopeId(oaiIdentifier);
                 if (urnnbnByRegistrarScopeId == null) {
                     report("- URN:NBN by registrar-scope-id: NOT FOUND");
-                    report("- Inserting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ": SUCCESS");
+                    // TODO: 6.11.17 kontrolovat jeste kod registratora
                     setRegistrarScopeId(urnnbn, oaiIdentifier);
+                    report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
                     return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
                 } else {
                     report("- URN:NBN by registrar-scope-id: FOUND");
@@ -199,8 +204,9 @@ public class SingleRecordProcessor {
         }
     }
 
-    private RecordResult registerDdIfEnabledAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
-        if (registerDigitalDocuments) {
+    private RecordResult registerDdIWithUrnAndContinue(String oaiIdentifier, String urnNbn, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
+        if (registerDDsWithUrn) {
+            // TODO: 6.11.17 kontrolovat jeste kod registratora
             urnNbn = registerDigitalDocument(digDocRegistrationData);
             report("- Digital document registered with " + urnNbn);
             report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
@@ -212,11 +218,24 @@ public class SingleRecordProcessor {
         }
     }
 
+    private RecordResult registerDdIWithoutUrnAndContinue(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
+        if (registerDDsWithUrn) {
+            String urnNbn = registerDigitalDocument(digDocRegistrationData);
+            report("- Digital document registered with " + urnNbn);
+            report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+            setRegistrarScopeId(urnNbn, oaiIdentifier);
+            return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+        } else {
+            report("- Digital document will not be registered");
+            return new RecordResult(null, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);
+        }
+    }
+
     private void setRegistrarScopeId(String urnNbn, String oaiIdentifier) throws SingleRecordProcessingException {
         try {
             czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
         } catch (CzidloApiErrorException | IOException e) {
-            throw new SingleRecordProcessingException("Setting registrar-scope-id ERROR", e);
+            throw new SingleRecordProcessingException("Setting registrar-scope-id: ERROR", e);
         }
     }
 
@@ -267,7 +286,7 @@ public class SingleRecordProcessor {
         try {
             czidloConnector.deactivateDigitalInstance(currentDi.getId());
         } catch (CzidloApiErrorException | IOException e) {
-            throw new SingleRecordProcessingException("Deactivating digital instance ERROR", e);
+            throw new SingleRecordProcessingException("Deactivating digital instance: ERROR", e);
         }
     }
 
@@ -275,7 +294,7 @@ public class SingleRecordProcessor {
         try {
             return czidloConnector.getActiveDigitalInstanceByUrnnbnAndLibraryId(urnnbn, libraryId);
         } catch (IOException | ParsingException | CzidloApiErrorException e) {
-            throw new SingleRecordProcessingException("Getting digital instance ERROR", e);
+            throw new SingleRecordProcessingException("Getting digital instance: ERROR", e);
         }
     }
 
@@ -285,7 +304,7 @@ public class SingleRecordProcessor {
             report("- Digital-document-registration SUCCESS");
             return urnnbn;
         } catch (IOException | ParsingException | CzidloApiErrorException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration ERROR", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration: ERROR", ex);
         }
     }
 
@@ -293,7 +312,7 @@ public class SingleRecordProcessor {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
         } catch (IOException | CzidloApiErrorException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import: ERROR", ex);
         }
     }
 

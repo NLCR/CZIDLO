@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
 import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
@@ -62,7 +61,8 @@ public class App {
         URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DI_IMPORT_XSD_URL);
         adapter.setXsdProvider(new XsdProvider(digDocRegistrationDataXsdUrl, digitalInstanceImportDataXsdUrl));
         //dd
-        adapter.setRegisterDigitalDocuments(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS));
+        adapter.setRegisterDDsWithUrn(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITH_URN));
+        adapter.setRegisterDDsWithoutUrn(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN));
         //di
         adapter.setMergeDigitalInstances(properties.loadBoolean(DI_IMPORT_MERGE_DIS, DI_IMPORT_MERGE_DIS_DEFAULT));
         adapter.setIgnoreDifferenceInDiAccessibility(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT));
