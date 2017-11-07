@@ -185,15 +185,15 @@ public class SingleRecordProcessor {
                         setRegistrarScopeId(urnnbn, oaiIdentifier);
                         report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
                     } else {
-                        report("- Not setting registrar-scope-id because document " + urnnbn + " does not belong to registrar " + registrarCode);
+                        report("- Not setting registrar-scope-id because digital-document with " + urnnbn + " does not belong to registrar " + registrarCode);
                     }
-                    return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
+                    return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_ALREADY);
                 } else {
                     report("- URN:NBN by registrar-scope-id: FOUND");
                     if (!urnnbn.equals(urnnbnByRegistrarScopeId)) {
                         throw new SingleRecordProcessingException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
                     } else {
-                        return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.ALREADY_REGISTERED);
+                        return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_ALREADY);
                     }
                 }
             default:
@@ -220,7 +220,7 @@ public class SingleRecordProcessor {
                 report("- Digital document registered with " + urnNbn);
                 report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
                 setRegistrarScopeId(urnNbn, oaiIdentifier);
-                return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+                return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_NOW);
             } else {
                 report("- Digital document is not being registered with " + urnNbn + " now because registrar code is not " + registrarCode);
                 return new RecordResult(urnNbn, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);
@@ -237,7 +237,7 @@ public class SingleRecordProcessor {
             report("- Digital document registered with " + urnNbn);
             report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
             setRegistrarScopeId(urnNbn, oaiIdentifier);
-            return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.NOW_REGISTERED);
+            return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_NOW);
         } else {
             report("- Digital document will not be registered");
             return new RecordResult(null, RecordResult.DigitalDocumentStatus.NOT_REGISTERED, null);

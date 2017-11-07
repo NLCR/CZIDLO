@@ -28,9 +28,7 @@ public class RecordResult {
     }
 
     public static enum DigitalDocumentStatus {
-        // TODO: 1.11.17 rename to REGISTERED_NOW, REGISTERED_ALREADY
-        // TODO: 6.11.17 mozna zavest specialni stav, pokud URN:NBN patri jinemu registratorovi
-        NOW_REGISTERED, ALREADY_REGISTERED, IS_DEACTIVATED, NOT_REGISTERED
+        REGISTERED_NOW, REGISTERED_ALREADY, IS_DEACTIVATED, NOT_REGISTERED
     }
 
 }

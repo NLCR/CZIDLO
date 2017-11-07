@@ -272,7 +272,7 @@ public class OaiAdapter {
                             case IS_DEACTIVATED:
                                 ddDeactivated++;
                                 break;
-                            case ALREADY_REGISTERED:
+                            case REGISTERED_ALREADY:
                                 ddRegisteredAlready++;
                                 switch (recordResult.getDiStatus()) {
                                     case IMPORTED:
@@ -286,7 +286,7 @@ public class OaiAdapter {
                                         break;
                                 }
                                 break;
-                            case NOW_REGISTERED:
+                            case REGISTERED_NOW:
                                 ddRegisteredNow++;
                                 switch (recordResult.getDiStatus()) {
                                     case IMPORTED:
