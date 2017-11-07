@@ -36,7 +36,6 @@ public class SingleRecordProcessor {
     // DD
     private boolean registerDDsWithUrn;
     private boolean registerDDsWithoutUrn;
-    //private final boolean registerDigitalDocuments;
     // DI
     private final boolean mergeDigitalInstances;
     private final boolean ignoreDifferenceInDiAccessibility;
@@ -232,7 +231,7 @@ public class SingleRecordProcessor {
     }
 
     private RecordResult registerDdIWithoutUrnAndContinue(String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
-        if (registerDDsWithUrn) {
+        if (registerDDsWithoutUrn) {
             String urnNbn = registerDigitalDocument(digDocRegistrationData);
             report("- Digital document registered with " + urnNbn);
             report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
