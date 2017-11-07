@@ -51,8 +51,7 @@ public class OaiAdapter {
     // OTHER
     //private int limit = -1;
     //private int limit = 13;//dev only
-    //private int limit = 2;//dev only
-    private int limit = 1;//dev only
+    private int limit = 3;//dev only
 
     private ReportLogger reportLogger;
 
@@ -190,8 +189,8 @@ public class OaiAdapter {
             Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             Document digInstImportXslt = buildDigInstImportXsltDoc();
             SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
-            report("REPORT:");
-            report("------------------------------");
+            report("Parameters");
+            report("==============================");
 
             report(" OAI-PMH data provider");
             report(" -----------------");
@@ -230,22 +229,28 @@ public class OaiAdapter {
             report("  Merge digital instances: " + mergeDigitalInstances);
             report("  Ignore difference in format: " + ignoreDifferenceInDiFormat);
             report("  Ignore difference in accessiblity: " + ignoreDifferenceInDiFormat);
-            report("------------------------------");
             report(" ");
 
+            report("Initialization");
+            report("==============================");
             OaiHarvester harvester = null;
             try {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
+                report("- OaiHarvester initialized");
+                // TODO: 7.11.17 tady dalsi testy parametru, jako existence registratora, digitalni knihovny, prava, etc.
             } catch (OaiHarvesterException ex) {
                 report("OaiHarvester initialization failed. " + ex.getMessage() + ", url: " + ex.getMessage());
                 logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[]{ex.getMessage(), ex.getMessage()});
                 return;
             }
+            report(" ");
+
             int counter = 0;
 
             int ddRegisteredNow = 0;
             int ddRegisteredAlready = 0;
             int ddDeactivated = 0;
+            int ddNotRegistered = 0;
 
             int ddRegisteredNowDisImported = 0;
             int ddRegisteredNowDisUpdated = 0;
@@ -256,6 +261,11 @@ public class OaiAdapter {
             int ddRegisteredAlreadyDisUnchanged = 0;
 
             int all = 0;
+            int errors = 0;
+
+            report("Records");
+            report("==============================");
+
             while (harvester.hasNext()) {
                 if (limit > 0 && counter++ >= limit) {
                     break;
@@ -264,74 +274,87 @@ public class OaiAdapter {
                     logger.info(String.format("processed %d records", all));
                 }
                 try {
-                    OaiRecord record = harvester.getNext();
-                    all++;
-                    try {
-                        RecordResult recordResult = recordProcessor.processRecord(record);
-                        switch (recordResult.getDdStatus()) {
-                            case IS_DEACTIVATED:
-                                ddDeactivated++;
-                                break;
-                            case REGISTERED_ALREADY:
-                                ddRegisteredAlready++;
-                                switch (recordResult.getDiStatus()) {
-                                    case IMPORTED:
-                                        ddRegisteredAlreadyDisImported++;
-                                        break;
-                                    case UPDATED:
-                                        ddRegisteredAlreadyDisUpdated++;
-                                        break;
-                                    case UNCHANGED:
-                                        ddRegisteredAlreadyDisUnchanged++;
-                                        break;
-                                }
-                                break;
-                            case REGISTERED_NOW:
-                                ddRegisteredNow++;
-                                switch (recordResult.getDiStatus()) {
-                                    case IMPORTED:
-                                        ddRegisteredNowDisImported++;
-                                        break;
-                                    case UPDATED:
-                                        ddRegisteredNowDisUpdated++;
-                                        break;
-                                    case UNCHANGED:
-                                        ddRegisteredNowDisUnchanged++;
-                                        break;
-                                }
-                        }
-
-                        if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
-                            report(String.format("* DD status: %s", recordResult.getDdStatus()));
-                        } else {
-                            Object ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus();
-                            Object diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus();
-                            report(String.format("* DD status: %s, DI status: %s", ddStatussStr, diStatusStr));
-                        }
-                        if (recordResult.getUrnnbn() != null) {
-                            report("* " + recordResult.getUrnnbn());
-                        }
-
-                        report("STATUS: OK");
-                    } catch (SingleRecordProcessingException ex) {
-                        report(ex.getMessage());
-                        if (ex.getCause() != null) {
-                            report(ex.getCause().getMessage());
-                        }
-                        report("STATUS: NOT OK");
+                    if (all > 0) {
+                        report("------------------------------------------------------");
                     }
+                    all++;
+                    OaiRecord record = harvester.getNext();
+                    RecordResult recordResult = recordProcessor.processRecord(record);
+                    switch (recordResult.getDdStatus()) {
+                        case IS_DEACTIVATED:
+                            ddDeactivated++;
+                            break;
+                        case REGISTERED_ALREADY:
+                            ddRegisteredAlready++;
+                            switch (recordResult.getDiStatus()) {
+                                case IMPORTED:
+                                    ddRegisteredAlreadyDisImported++;
+                                    break;
+                                case UPDATED:
+                                    ddRegisteredAlreadyDisUpdated++;
+                                    break;
+                                case UNCHANGED:
+                                    ddRegisteredAlreadyDisUnchanged++;
+                                    break;
+                            }
+                            break;
+                        case REGISTERED_NOW:
+                            ddRegisteredNow++;
+                            switch (recordResult.getDiStatus()) {
+                                case IMPORTED:
+                                    ddRegisteredNowDisImported++;
+                                    break;
+                                case UPDATED:
+                                    ddRegisteredNowDisUpdated++;
+                                    break;
+                                case UNCHANGED:
+                                    ddRegisteredNowDisUnchanged++;
+                                    break;
+                            }
+                        case NOT_REGISTERED:
+                            ddNotRegistered++;
+                            break;
+                    }
+
+                    report("Results");
+                    if (recordResult.getUrnnbn() != null) {
+                        report("* " + recordResult.getUrnnbn());
+                    }
+                    if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
+                        report(String.format("* DD status: %s", recordResult.getDdStatus()));
+                    } else {
+                        Object ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus();
+                        Object diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus();
+                        report("* DD status: " + ddStatussStr);
+                        report("* DI status: " + diStatusStr);
+                    }
+                    report("Status: OK");
+                } catch (SingleRecordProcessingException ex) {
+                    errors++;
+                    report(ex.getMessage());
+                    if (ex.getCause() != null) {
+                        report(ex.getCause().getMessage());
+                    }
+                    report("Status: ERROR");
                 } catch (OaiHarvesterException ex) {
+                    errors++;
                     report(String.format("OaiHarvester exception while getting document from %s: %s: ", ex.getUrl(), ex.getMessage()));
-                    report("STATUS: NOT OK");
+                    report("Status: ERROR");
                 }
             }
+            report(" ");
             logger.info(String.format("processed %d records", all));
+
+            report("Summary");
             report("=====================================================");
-            report("ALL RECORDS: " + all);
-            report("RECORDS WITH ERROR: " + (all - (ddRegisteredAlready + ddRegisteredNow + ddDeactivated)));
-            report("RECORDS WITH URN:NBN DEACTIVATED: " + ddDeactivated);
+            report("RECORDS: " + all);
+            report("ERRORS: " + errors);
+
             report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);
             report("DDs REGISTERED NOW: " + ddRegisteredNow);
+            report("DDs DEACTIVATED: " + ddDeactivated);
+            report("DDs NOT REGISTERED: " + ddNotRegistered);
+
             if (ddRegisteredAlready != 0) {
                 report("-----------------------------------------------------");
                 report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);

@@ -67,7 +67,7 @@ public class SingleRecordProcessor {
     }
 
     public RecordResult processRecord(OaiRecord oaiRecord) throws SingleRecordProcessingException {
-        report("------------------------------------------------------");
+        //report("------------------------------------------------------");
         String oaiIdentifier = oaiRecord.getIdentifier();
         report("Processing next record");
         report("- OAI-record identifier: " + oaiIdentifier);
