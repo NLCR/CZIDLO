@@ -20,5 +20,6 @@ package cz.nkp.urnnbn.oaiadapter.czidlo;
  * @author Martin Řehánek
  */
 public enum UrnnbnStatus {
+    // TODO: 7.11.17 does this enum not exist already in core module?
     FREE, RESERVED, ACTIVE, DEACTIVATED
 }

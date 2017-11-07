@@ -338,7 +338,10 @@ public class OaiAdapter {
             counters.errors++;
             report(ex.getMessage());
             if (ex.getCause() != null) {
-                report(ex.getCause().getMessage());
+                String clauseMessage = ex.getCause().getMessage();
+                if (clauseMessage != null && !clauseMessage.trim().isEmpty()) {
+                    report(clauseMessage.trim());
+                }
             }
             report("Status: ERROR");
         } catch (OaiHarvesterException ex) {

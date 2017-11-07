@@ -23,12 +23,16 @@ public class HttpConnector {
 
     }
 
-    // TODO: 1.11.17 setConnectTimeout and setReadTimeout for each httpUrlConnection
+    private final int CONNECTION_TIMOOUT = 30 * 1000; //30 s
+    private final int READ_TIMOOUT = 60 * 1000; //60 s
+
 
     public ApiResponse httpGet(String url, Credentials credentials, boolean ignoreInvalidApiCertificate) throws IOException {
         HttpURLConnection connection = credentials == null ?
                 (HttpURLConnection) new URL(url).openConnection() :
                 getReadableAuthConnection(url, credentials, HttpMethod.GET, ignoreInvalidApiCertificate);
+        connection.setConnectTimeout(CONNECTION_TIMOOUT);
+        connection.setReadTimeout(READ_TIMOOUT);
         InputStream stream = null;
         try {
             //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
@@ -48,6 +52,8 @@ public class HttpConnector {
 
     public ApiResponse httpPost(String url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
+        connection.setConnectTimeout(CONNECTION_TIMOOUT);
+        connection.setReadTimeout(READ_TIMOOUT);
         OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
         writer.write(data);
         writer.flush();
@@ -72,6 +78,8 @@ public class HttpConnector {
 
     public ApiResponse httpPut(String url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);
+        connection.setConnectTimeout(CONNECTION_TIMOOUT);
+        connection.setReadTimeout(READ_TIMOOUT);
         OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
         writer.write(data);
         writer.flush();
@@ -95,6 +103,8 @@ public class HttpConnector {
 
     public ApiResponse httpDelete(String url, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
+        connection.setConnectTimeout(CONNECTION_TIMOOUT);
+        connection.setReadTimeout(READ_TIMOOUT);
         InputStream stream = null;
         try {
             //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
@@ -134,9 +144,10 @@ public class HttpConnector {
     }
 
     private HttpsURLConnection getAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean doOutput, boolean ignoreInvalidApiCretificate) throws IOException {
-        HttpsURLConnection connection = null;
         URL url = new URL(urlString);
-        connection = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setConnectTimeout(CONNECTION_TIMOOUT);
+        connection.setReadTimeout(READ_TIMOOUT);
         if (ignoreInvalidApiCretificate) {
             connection.setSSLSocketFactory(buildIgnoreAllSslSocketFactory());
         }
