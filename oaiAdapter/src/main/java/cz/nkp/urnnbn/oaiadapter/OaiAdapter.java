@@ -191,53 +191,16 @@ public class OaiAdapter {
             SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("Parameters");
             report("==============================");
-
-            report(" OAI-PMH data provider");
-            report(" -----------------");
-            report("  Base url: " + getOaiBaseUrl());
-            report("  Metadata prefix: " + getMetadataPrefix());
-            report("  Set: " + (setSpec == null ? "none" : setSpec));
-            report(" ");
-
-            report(" CZIDLO API");
-            report(" -----------------");
-            report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
-            report("  Registrar code: " + getRegistrarCode());
-            report("  Login: " + getCzidloApiConnector().getLogin());
-            report(" ");
-
-            report(" Transformations");
-            report(" -----------------");
-            if (metadataToDdRegistrationXsltFile != null) {
-                report("  Metadata to DD-registration template: " + metadataToDdRegistrationXsltFile.getAbsolutePath());
-            }
-            report("  DD-registration schema location: " + getXsdProvider().getDigDocRegistrationDataXsdUrl().toString());
-            if (metadataToDiImportXsltFile != null) {
-                report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
-            }
-            report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
-            report(" ");
-
-            report(" DD management");
-            report(" -----------------");
-            report("  Register digital documents with URN:NBN: " + registerDDsWithUrn);
-            report("  Register digital documents without URN:NBN: " + registerDDsWithoutUrn);
-            report(" ");
-
-            report(" DI management");
-            report(" -----------------");
-            report("  Merge digital instances: " + mergeDigitalInstances);
-            report("  Ignore difference in format: " + ignoreDifferenceInDiFormat);
-            report("  Ignore difference in accessiblity: " + ignoreDifferenceInDiFormat);
-            report(" ");
+            reportParams();
 
             report("Initialization");
             report("==============================");
+            Counters counters = new Counters();
             OaiHarvester harvester = null;
             try {
                 harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
                 report("- OaiHarvester initialized");
-                // TODO: 7.11.17 tady dalsi testy parametru, jako existence registratora, digitalni knihovny, prava, etc.
+                // TODO: 7.11.17 other tests of parameters like existence of registrar, digital library (id), access rights, API availability etc.
             } catch (OaiHarvesterException ex) {
                 report("OaiHarvester initialization failed. " + ex.getMessage() + ", url: " + ex.getMessage());
                 logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[]{ex.getMessage(), ex.getMessage()});
@@ -245,130 +208,21 @@ public class OaiAdapter {
             }
             report(" ");
 
-            int counter = 0;
-
-            int ddRegisteredNow = 0;
-            int ddRegisteredAlready = 0;
-            int ddDeactivated = 0;
-            int ddNotRegistered = 0;
-
-            int ddRegisteredNowDisImported = 0;
-            int ddRegisteredNowDisUpdated = 0;
-            int ddRegisteredNowDisUnchanged = 0;
-
-            int ddRegisteredAlreadyDisImported = 0;
-            int ddRegisteredAlreadyDisUpdated = 0;
-            int ddRegisteredAlreadyDisUnchanged = 0;
-
-            int all = 0;
-            int errors = 0;
-
             report("Records");
             report("==============================");
-
             while (harvester.hasNext()) {
-                if (limit > 0 && counter++ >= limit) {
+                boolean quitNow = processRecord(counters, harvester, recordProcessor);
+                if (quitNow) {
                     break;
                 }
-                if (all != 0 && all % 100 == 0) {
-                    logger.info(String.format("processed %d records", all));
-                }
-                try {
-                    if (all > 0) {
-                        report("------------------------------------------------------");
-                    }
-                    all++;
-                    OaiRecord record = harvester.getNext();
-                    RecordResult recordResult = recordProcessor.processRecord(record);
-                    switch (recordResult.getDdStatus()) {
-                        case IS_DEACTIVATED:
-                            ddDeactivated++;
-                            break;
-                        case REGISTERED_ALREADY:
-                            ddRegisteredAlready++;
-                            switch (recordResult.getDiStatus()) {
-                                case IMPORTED:
-                                    ddRegisteredAlreadyDisImported++;
-                                    break;
-                                case UPDATED:
-                                    ddRegisteredAlreadyDisUpdated++;
-                                    break;
-                                case UNCHANGED:
-                                    ddRegisteredAlreadyDisUnchanged++;
-                                    break;
-                            }
-                            break;
-                        case REGISTERED_NOW:
-                            ddRegisteredNow++;
-                            switch (recordResult.getDiStatus()) {
-                                case IMPORTED:
-                                    ddRegisteredNowDisImported++;
-                                    break;
-                                case UPDATED:
-                                    ddRegisteredNowDisUpdated++;
-                                    break;
-                                case UNCHANGED:
-                                    ddRegisteredNowDisUnchanged++;
-                                    break;
-                            }
-                        case NOT_REGISTERED:
-                            ddNotRegistered++;
-                            break;
-                    }
-
-                    report("Results");
-                    if (recordResult.getUrnnbn() != null) {
-                        report("* " + recordResult.getUrnnbn());
-                    }
-                    if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
-                        report(String.format("* DD status: %s", recordResult.getDdStatus()));
-                    } else {
-                        Object ddStatussStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus();
-                        Object diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus();
-                        report("* DD status: " + ddStatussStr);
-                        report("* DI status: " + diStatusStr);
-                    }
-                    report("Status: OK");
-                } catch (SingleRecordProcessingException ex) {
-                    errors++;
-                    report(ex.getMessage());
-                    if (ex.getCause() != null) {
-                        report(ex.getCause().getMessage());
-                    }
-                    report("Status: ERROR");
-                } catch (OaiHarvesterException ex) {
-                    errors++;
-                    report(String.format("OaiHarvester exception while getting document from %s: %s: ", ex.getUrl(), ex.getMessage()));
-                    report("Status: ERROR");
-                }
             }
+            logger.info(String.format("processed %d records", counters.all));
             report(" ");
-            logger.info(String.format("processed %d records", all));
 
             report("Summary");
             report("=====================================================");
-            report("RECORDS: " + all);
-            report("ERRORS: " + errors);
+            reportSummary(counters);
 
-            report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);
-            report("DDs REGISTERED NOW: " + ddRegisteredNow);
-            report("DDs DEACTIVATED: " + ddDeactivated);
-            report("DDs NOT REGISTERED: " + ddNotRegistered);
-
-            if (ddRegisteredAlready != 0) {
-                report("-----------------------------------------------------");
-                report("DDs REGISTERED ALREADY: " + ddRegisteredAlready);
-                report("	DIs IMPORTED NOW: " + ddRegisteredAlreadyDisImported);
-                report("	DIs UPDATED NOW: " + ddRegisteredAlreadyDisUpdated);
-                report("	DIs UNCHANGED: " + ddRegisteredAlreadyDisUnchanged);
-            }
-            if (ddRegisteredNow != 0) {
-                report("-----------------------------------------------------");
-                report("DDs REGISTERED NOW: " + ddRegisteredNow);
-                report("	DIs IMPORTED NOW: " + ddRegisteredNowDisImported);
-                report("	DIs UPDATED NOW: " + ddRegisteredNowDisUpdated);
-                report("	DIs UNCHANGED: " + ddRegisteredNowDisUnchanged);
-            }
             if (reportLogger != null) {
                 reportLogger.close();
             }
@@ -377,5 +231,168 @@ public class OaiAdapter {
         }
     }
 
+    private void reportParams() {
+        report(" OAI-PMH data provider");
+        report(" -----------------");
+        report("  Base url: " + getOaiBaseUrl());
+        report("  Metadata prefix: " + getMetadataPrefix());
+        report("  Set: " + (setSpec == null ? "none" : setSpec));
+        report(" ");
+
+        report(" CZIDLO API");
+        report(" -----------------");
+        report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
+        report("  Registrar code: " + getRegistrarCode());
+        report("  Login: " + getCzidloApiConnector().getLogin());
+        report(" ");
+
+        report(" Transformations");
+        report(" -----------------");
+        if (metadataToDdRegistrationXsltFile != null) {
+            report("  Metadata to DD-registration template: " + metadataToDdRegistrationXsltFile.getAbsolutePath());
+        }
+        report("  DD-registration schema location: " + getXsdProvider().getDigDocRegistrationDataXsdUrl().toString());
+        if (metadataToDiImportXsltFile != null) {
+            report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
+        }
+        report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
+        report(" ");
+
+        report(" DD management");
+        report(" -----------------");
+        report("  Register digital documents with URN:NBN: " + registerDDsWithUrn);
+        report("  Register digital documents without URN:NBN: " + registerDDsWithoutUrn);
+        report(" ");
+
+        report(" DI management");
+        report(" -----------------");
+        report("  Merge digital instances: " + mergeDigitalInstances);
+        report("  Ignore difference in format: " + ignoreDifferenceInDiFormat);
+        report("  Ignore difference in accessiblity: " + ignoreDifferenceInDiFormat);
+        report(" ");
+    }
+
+    private boolean processRecord(Counters counters, OaiHarvester harvester, SingleRecordProcessor recordProcessor) {
+        if (limit > 0 && counters.all >= limit) {
+            return true;
+        }
+        if (counters.all != 0 && counters.all % 100 == 0) {
+            logger.info(String.format("processed %d records", counters.all));
+        }
+        try {
+            if (counters.all > 0) {
+                report("------------------------------------------------------");
+            }
+            counters.all++;
+            OaiRecord record = harvester.getNext();
+            RecordResult recordResult = recordProcessor.processRecord(record);
+            switch (recordResult.getDdStatus()) {
+                case IS_DEACTIVATED:
+                    counters.ddDeactivated++;
+                    break;
+                case REGISTERED_ALREADY:
+                    counters.ddRegisteredAlready++;
+                    switch (recordResult.getDiStatus()) {
+                        case IMPORTED:
+                            counters.ddRegisteredAlreadyDisImported++;
+                            break;
+                        case UPDATED:
+                            counters.ddRegisteredAlreadyDisUpdated++;
+                            break;
+                        case UNCHANGED:
+                            counters.ddRegisteredAlreadyDisUnchanged++;
+                            break;
+                    }
+                    break;
+                case REGISTERED_NOW:
+                    counters.ddRegisteredNow++;
+                    switch (recordResult.getDiStatus()) {
+                        case IMPORTED:
+                            counters.ddRegisteredNowDisImported++;
+                            break;
+                        case UPDATED:
+                            counters.ddRegisteredNowDisUpdated++;
+                            break;
+                        case UNCHANGED:
+                            counters.ddRegisteredNowDisUnchanged++;
+                            break;
+                    }
+                case NOT_REGISTERED:
+                    counters.ddNotRegistered++;
+                    break;
+            }
+
+            report("Results");
+            if (recordResult.getUrnnbn() != null) {
+                report("* " + recordResult.getUrnnbn());
+            }
+            if (recordResult.getDdStatus() == DigitalDocumentStatus.IS_DEACTIVATED) {
+                report(String.format("* DD status: %s", recordResult.getDdStatus()));
+            } else {
+                Object ddStatusStr = recordResult.getDdStatus() == null ? null : recordResult.getDdStatus();
+                Object diStatusStr = recordResult.getDiStatus() == null ? "IGNORED" : recordResult.getDiStatus();
+                report("* DD status: " + ddStatusStr);
+                report("* DI status: " + diStatusStr);
+            }
+            report("Status: OK");
+        } catch (SingleRecordProcessingException ex) {
+            counters.errors++;
+            report(ex.getMessage());
+            if (ex.getCause() != null) {
+                report(ex.getCause().getMessage());
+            }
+            report("Status: ERROR");
+        } catch (OaiHarvesterException ex) {
+            counters.errors++;
+            report(String.format("OaiHarvester exception while getting document from %s: %s: ", ex.getUrl(), ex.getMessage()));
+            report("Status: ERROR");
+        }
+        return false;
+    }
+
+    private void reportSummary(Counters counters) {
+        report("RECORDS: " + counters.all);
+        report("ERRORS: " + counters.errors);
+
+        report("DDs REGISTERED ALREADY: " + counters.ddRegisteredAlready);
+        report("DDs REGISTERED NOW: " + counters.ddRegisteredNow);
+        report("DDs DEACTIVATED: " + counters.ddDeactivated);
+        report("DDs NOT REGISTERED: " + counters.ddNotRegistered);
+
+        if (counters.ddRegisteredAlready != 0) {
+            report("-----------------------------------------------------");
+            report("DDs REGISTERED ALREADY: " + counters.ddRegisteredAlready);
+            report("	DIs IMPORTED NOW: " + counters.ddRegisteredAlreadyDisImported);
+            report("	DIs UPDATED NOW: " + counters.ddRegisteredAlreadyDisUpdated);
+            report("	DIs UNCHANGED: " + counters.ddRegisteredAlreadyDisUnchanged);
+        }
+        if (counters.ddRegisteredNow != 0) {
+            report("-----------------------------------------------------");
+            report("DDs REGISTERED NOW: " + counters.ddRegisteredNow);
+            report("	DIs IMPORTED NOW: " + counters.ddRegisteredNowDisImported);
+            report("	DIs UPDATED NOW: " + counters.ddRegisteredNowDisUpdated);
+            report("	DIs UNCHANGED: " + counters.ddRegisteredNowDisUnchanged);
+        }
+    }
+
+
+    public static class Counters {
+        int all = 0;
+        int errors = 0;
+
+        int ddRegisteredNow = 0;
+        int ddRegisteredAlready = 0;
+        int ddDeactivated = 0;
+        int ddNotRegistered = 0;
+
+        int ddRegisteredNowDisImported = 0;
+        int ddRegisteredNowDisUpdated = 0;
+        int ddRegisteredNowDisUnchanged = 0;
+
+        int ddRegisteredAlreadyDisImported = 0;
+        int ddRegisteredAlreadyDisUpdated = 0;
+        int ddRegisteredAlreadyDisUnchanged = 0;
+
+    }
 
 }
