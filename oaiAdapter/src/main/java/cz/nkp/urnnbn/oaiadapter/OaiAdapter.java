@@ -49,9 +49,8 @@ public class OaiAdapter {
     private boolean ignoreDifferenceInDiAccessibility = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT;
     private boolean ignoreDifferenceInDiFormat = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT;
     // OTHER
-    //private int limit = -1;
-    //private int limit = 13;//dev only
-    private int limit = 3;//dev only
+    private int limit = -1;
+    //private int limit = 3;//dev only
 
     private ReportLogger reportLogger;
 
