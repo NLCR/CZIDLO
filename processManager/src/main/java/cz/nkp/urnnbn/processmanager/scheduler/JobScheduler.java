@@ -58,18 +58,18 @@ public interface JobScheduler {
      * Informs whether job of process finished correctly provided it is no longer running.
      *
      * @param process
-     *            process with it's jobId set
+     *            process with its jobId set
      * @param jobId
      *            OS specific recyclable job id
      * @param processId
      *            persistent process id
-     * @return true if no longer running OS job representing the process finished it's execution as expected
+     * @return true if no longer running OS job representing the process finished its execution as expected
      * @throws JobException
      */
     public boolean jobFinishedCorrectly(Long jobId, Long processId) throws JobException;
 
     /**
-     * Opens job file and returns it's FileInputStream. The stream has to be closed by client after reading is finished.
+     * Opens job file and returns its FileInputStream. The stream has to be closed by client after reading is finished.
      *
      * @param processId
      *            persistent process id

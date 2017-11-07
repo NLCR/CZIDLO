@@ -20,7 +20,7 @@ public interface UrnNbnReservationService extends BusinessService {
 
     /**
      * This operation reserves certain number of urnNbns. UrnNbns that are reserved are not used for assigning by the application. The registrar is
-     * expected to put those urnNbns into it's metadata records that are ready for import into the Czidlo. When one of those records is imported, the
+     * expected to put those urnNbns into its metadata records that are ready for import into the Czidlo. When one of those records is imported, the
      * application assignes urnNbn, that is present in metadata, to newly created digital instance.
      *
      * @param batchSize

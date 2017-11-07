@@ -29,7 +29,7 @@ class DigitalInstanceImporter extends BusinessServiceImpl {
      * 
      * @param factory
      * @param instance
-     *            Digital instance created by api/web operation without it's id asssigned yet.
+     *            Digital instance created by api/web operation without its id asssigned yet.
      */
     DigitalInstanceImporter(DAOFactory factory, DigitalInstance instance) {
         super(factory);
