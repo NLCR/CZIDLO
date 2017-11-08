@@ -201,8 +201,8 @@ public class OaiAdapter {
                 report("- OaiHarvester initialized");
                 // TODO: 7.11.17 other tests of parameters like existence of registrar, digital library (id), access rights, API availability etc.
             } catch (OaiHarvesterException ex) {
-                report("OaiHarvester initialization failed. " + ex.getMessage() + ", url: " + ex.getMessage());
-                logger.log(Level.SEVERE, "OaiHarvester initialization failed. {0}, url: {1}", new Object[]{ex.getMessage(), ex.getMessage()});
+                report("OaiHarvester initialization failed: " + ex.getMessage() + ", url: " + ex.getUrl());
+                logger.log(Level.SEVERE, "OaiHarvester initialization failed: {0}, url: {1}", new Object[]{ex.getMessage(), ex.getUrl()});
                 return;
             }
             report(" ");

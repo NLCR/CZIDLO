@@ -29,8 +29,12 @@ import java.util.List;
  */
 public class XmlTools {
 
+    // TODO: 8.11.17 use HttpConnector instead
+    @Deprecated
     public Document fetchDocumentFromUrl(String url) throws IOException, ParsingException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        con.setConnectTimeout(30 * 1000);
+        con.setReadTimeout(60 * 1000);
         InputStream is = con.getInputStream();
         return new Builder().build(is);
     }
