@@ -9,27 +9,22 @@ import nu.xom.*;
 
 import java.io.IOException;
 import java.util.Stack;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author hanis
+ * @author Jan Rychtář
+ * @author Martin Řehánek
  */
 public class OaiHarvester {
 
     private static final Logger logger = Logger.getLogger(OaiHarvester.class.getName());
     public static final String OAI_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
-    private String oaiBaseUrl;
-    private String metadataPrefix;
-    private String setSpec;
-    private Stack<String> identifiersStack;
-    private boolean next = false;
+    private final String oaiBaseUrl;
+    private final String metadataPrefix;
+    private final String setSpec;
+    private final Stack<String> identifiersStack;
     private String resumptionToken;
     private final XmlTools xmlTools = new XmlTools();
-
-    public OaiHarvester(String oaiBaseUrl, String metadataPrefix) throws OaiHarvesterException {
-        this(oaiBaseUrl, metadataPrefix, null);
-    }
 
     public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) throws OaiHarvesterException {
         if (oaiBaseUrl == null) {
@@ -42,56 +37,33 @@ public class OaiHarvester {
         this.metadataPrefix = metadataPrefix;
         this.setSpec = setSpec;
 
-        this.next = true;
-        identifiersStack = new Stack<String>();
-        initHarvesting();
+        this.identifiersStack = new Stack<>();
+        listAndStackFirstIdentifiers();
     }
 
-    private boolean isSetSpecified() {
-        return setSpec != null;
+    private void listAndStackFirstIdentifiers() throws OaiHarvesterException {
+        String url = setSpec == null ?
+                oaiBaseUrl + "?verb=ListIdentifiers&metadataPrefix=" + metadataPrefix
+                :
+                oaiBaseUrl + "?verb=ListIdentifiers&metadataPrefix=" + metadataPrefix + "&set=" + setSpec;
+        resumptionToken = listAndStackIdentifiers(url, true);
     }
 
-    private String getListIdentifiersPrefixUrl() {
-        return oaiBaseUrl + "?verb=ListIdentifiers";
-    }
-
-    private String addSet(String url) {
-        if (isSetSpecified()) {
-            return url + "&set=" + setSpec;
-        }
-        return url;
-    }
-
-    private String getRecordUrl(String identifier) {
-        return oaiBaseUrl + "?verb=GetRecord&metadataPrefix=" + metadataPrefix + "&identifier=" + identifier;
-    }
-
-    private String getListIdentifiersUrl() {
-        String url = getListIdentifiersPrefixUrl() + "&metadataPrefix=" + metadataPrefix;
-        return addSet(url);
-    }
-
-    private String getResumptionTokenUrl(String token) {
-        return getListIdentifiersPrefixUrl() + "&resumptionToken=" + token;
-    }
-
-    private String addIdentifiers(String url) throws OaiHarvesterException {
+    private String listAndStackIdentifiers(String url, boolean logTotalSize) throws OaiHarvesterException {
         Document document = null;
         try {
             document = xmlTools.fetchDocumentFromUrl(url);
         } catch (ParsingException ex) {
-            next = false;
             throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
         } catch (IOException ex) {
-            next = false;
             throw new OaiHarvesterException("ListIdentifiers failed while fetching document.", url.toString());
         }
         Element root = document.getRootElement();
         XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
-        // Nodes nodes = root.query("//oai:header/oai:identifier", context);
-        Nodes nodes = root.query("//oai:header", context);
-        for (int i = 0; i < nodes.size(); i++) {
-            Node header = nodes.get(i);
+        // Nodes headerNodes = root.query("//oai:header/oai:identifier", context);
+        Nodes headerNodes = root.query("//oai:header", context);
+        for (int i = 0; i < headerNodes.size(); i++) {
+            Node header = headerNodes.get(i);
             Nodes identifiers = header.query("oai:identifier", context);
             if (identifiers == null || identifiers.size() < 1) {
                 throw new OaiHarvesterException("ListIdentifiers failed - no identifier in header element", url.toString());
@@ -104,21 +76,31 @@ public class OaiHarvester {
             }
             identifiersStack.push(id);
         }
-        Nodes resumption = root.query("//oai:resumptionToken", context);
-        if (resumption.size() > 0) {
-            String token = resumption.get(0).getValue();
+
+        Nodes resumptionTokenNodes = root.query("//oai:resumptionToken", context);
+        if (resumptionTokenNodes.size() > 0) {
+            Element resumptionTokenEl = (Element) resumptionTokenNodes.get(0);
+            if (logTotalSize) {
+                String completeListSize = resumptionTokenEl.getAttributeValue("completeListSize");
+                if (completeListSize != null) {
+                    logger.info("total records: " + completeListSize);
+                }
+            }
+            String token = resumptionTokenEl.getValue();
             if (token.isEmpty()) {
                 return null;
             }
             return token;
+        } else {
+            return null;
         }
-        return null;
     }
 
     private Document getRecordDocument(String identifier) throws OaiHarvesterException {
-        String url = getRecordUrl(identifier);
+        String url = oaiBaseUrl + "?verb=GetRecord&metadataPrefix=" + metadataPrefix + "&identifier=" + identifier;
         try {
-            return xmlTools.fetchDocumentFromUrl(url);
+            Document doc = xmlTools.fetchDocumentFromUrl(url);
+            return doc;
         } catch (IOException ex) {
             throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
         } catch (ParsingException ex) {
@@ -126,35 +108,12 @@ public class OaiHarvester {
         }
     }
 
-    // public List<String> getListIdentifiers(int limit) throws ParsingException, IOException {
-    // URL url = getListIdentifiersUrl();
-    // List<String> list = new ArrayList<String>();
-    // String resumptionToken = addIdentifiers(url, list, limit);
-    // while (resumptionToken != null) {
-    // url = getResumptionTokenUrl(resumptionToken);
-    // resumptionToken = addIdentifiers(url, list, limit);
-    // }
-    // return list;
-    // }
-    private void initHarvesting() throws OaiHarvesterException {
-        String url = getListIdentifiersUrl();
-        String token = addIdentifiers(url);
-        updateResumtionToken(token);
+    public boolean existsNextIdentifier() {
+        return !identifiersStack.isEmpty() || resumptionToken != null;
     }
 
-    private void updateResumtionToken(String token) {
-        if (token == null) {
-            next = false;
-        }
-        this.resumptionToken = token;
-    }
-
-    public boolean hasNext() {
-        return !identifiersStack.isEmpty() || next;
-    }
-
-    public OaiRecord getNext() throws OaiHarvesterException {
-        String identifier = getNextId();
+    public OaiRecord getNextRecord() throws OaiHarvesterException {
+        String identifier = getNextIdentifier();
         if (identifier == null) {
             return null;
         } else {
@@ -163,64 +122,22 @@ public class OaiHarvester {
         }
     }
 
-    private String getNextId() throws OaiHarvesterException {
-        if (!hasNext()) {
+    private String getNextIdentifier() throws OaiHarvesterException {
+        if (!existsNextIdentifier()) {
             return null;
         }
         if (!identifiersStack.isEmpty()) {
             return identifiersStack.pop();
         } else {
-            loadNextIdentifiers();
-            return getNextId();
+            resumptionToken = loadAndStackNextIdentifiers();
+            return getNextIdentifier();
         }
     }
 
-    private void loadNextIdentifiers() throws OaiHarvesterException {
-        String url = getResumptionTokenUrl(resumptionToken);
-        // System.out.println("url: " + url);
-        String token = addIdentifiers(url);
-        // System.out.println("token: " + token);
-        updateResumtionToken(token);
-    }
-
-    public String getOaiBaseUrl() {
-        return oaiBaseUrl;
-    }
-
-    public String getMetadataPrefix() {
-        return metadataPrefix;
-    }
-
-    public String getSetSpec() {
-        return setSpec;
-    }
-
-    public static void main(String[] args) {
-        try {
-            OaiHarvester harvester = new OaiHarvester("http://kramerius.mzk.cz/oaiprovider", "oai_dc", "monograph");
-            // OaiHarvester harvester = new OaiHarvester("http://duha.mzk.cz/oai", "oai_dc");
-            // OaiHarvester harvester = new OaiHarvester("http://oai.mzk.cz/", "marc21",
-            // "collection:mollMaps");
-            int counter = 0;
-            while (harvester.hasNext()) {
-                Document doc = null;
-                try {
-                    doc = harvester.getNext().getDocument();
-                } catch (OaiHarvesterException ex) {
-                    logger.log(Level.SEVERE, "cannot fetch a record: " + ex.getMessage() + ", " + ex.getUrl(), ex);
-                }
-                if (doc != null) {
-                    System.out.println(doc.toXML());
-                    System.out.println("---------------------------------------------------------");
-                    counter++;
-                } else {
-                    System.out.println("doc is null");
-                }
-            }
-            System.out.println(counter);
-        } catch (OaiHarvesterException ex) {
-            logger.log(Level.SEVERE, "cannot initiate oai harvester: " + ex.getMessage() + ", " + ex.getUrl(), ex);
-        }
+    private String loadAndStackNextIdentifiers() throws OaiHarvesterException {
+        String url = oaiBaseUrl + "?verb=ListIdentifiers&resumptionToken=" + resumptionToken;
+        String resumptionToken = listAndStackIdentifiers(url, false);
+        return resumptionToken;
     }
 
 }

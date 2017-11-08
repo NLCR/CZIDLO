@@ -209,7 +209,7 @@ public class OaiAdapter {
 
             report("Records");
             report("==============================");
-            while (harvester.hasNext()) {
+            while (harvester.existsNextIdentifier()) {
                 boolean quitNow = processRecord(counters, harvester, recordProcessor);
                 if (quitNow) {
                     break;
@@ -283,7 +283,7 @@ public class OaiAdapter {
                 report("------------------------------------------------------");
             }
             counters.all++;
-            OaiRecord record = harvester.getNext();
+            OaiRecord record = harvester.getNextRecord();
             RecordResult recordResult = recordProcessor.processRecord(record);
             switch (recordResult.getDdStatus()) {
                 case IS_DEACTIVATED:
