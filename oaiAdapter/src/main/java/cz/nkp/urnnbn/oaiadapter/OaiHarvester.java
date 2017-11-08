@@ -4,7 +4,8 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
+import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
 import nu.xom.*;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class OaiHarvester {
     private final String setSpec;
     private final Stack<String> identifiersStack;
     private String resumptionToken;
-    private final XmlTools xmlTools = new XmlTools();
+    private final HttpConnector httpConnector = new HttpConnector();
 
     public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) throws OaiHarvesterException {
         if (oaiBaseUrl == null) {
@@ -50,61 +51,70 @@ public class OaiHarvester {
     }
 
     private String listAndStackIdentifiers(String url, boolean logTotalSize) throws OaiHarvesterException {
-        Document document = null;
         try {
-            document = xmlTools.fetchDocumentFromUrl(url);
-        } catch (ParsingException ex) {
-            throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString());
-        } catch (IOException ex) {
-            throw new OaiHarvesterException("ListIdentifiers failed while fetching document.", url.toString());
-        }
-        Element root = document.getRootElement();
-        XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
-        // Nodes headerNodes = root.query("//oai:header/oai:identifier", context);
-        Nodes headerNodes = root.query("//oai:header", context);
-        for (int i = 0; i < headerNodes.size(); i++) {
-            Node header = headerNodes.get(i);
-            Nodes identifiers = header.query("oai:identifier", context);
-            if (identifiers == null || identifiers.size() < 1) {
-                throw new OaiHarvesterException("ListIdentifiers failed - no identifier in header element", url.toString());
-            }
-            Node identifier = identifiers.get(0);
-            String id = identifier.getValue();
-            Attribute status = ((Element) header).getAttribute("status");
-            if (status != null && status.getValue().equals("deleted")) {
-                continue;
-            }
-            identifiersStack.push(id);
-        }
-
-        Nodes resumptionTokenNodes = root.query("//oai:resumptionToken", context);
-        if (resumptionTokenNodes.size() > 0) {
-            Element resumptionTokenEl = (Element) resumptionTokenNodes.get(0);
-            if (logTotalSize) {
-                String completeListSize = resumptionTokenEl.getAttributeValue("completeListSize");
-                if (completeListSize != null) {
-                    logger.info("total records: " + completeListSize);
+            Document document = fetchDocument(url);
+            Element root = document.getRootElement();
+            XPathContext context = new XPathContext("oai", OAI_NAMESPACE);
+            // Nodes headerNodes = root.query("//oai:header/oai:identifier", context);
+            Nodes headerNodes = root.query("//oai:header", context);
+            for (int i = 0; i < headerNodes.size(); i++) {
+                Node header = headerNodes.get(i);
+                Nodes identifiers = header.query("oai:identifier", context);
+                if (identifiers == null || identifiers.size() < 1) {
+                    throw new OaiHarvesterException("ListIdentifiers failed - no identifier in header element", url.toString());
                 }
+                Node identifier = identifiers.get(0);
+                String id = identifier.getValue();
+                Attribute status = ((Element) header).getAttribute("status");
+                if (status != null && status.getValue().equals("deleted")) {
+                    continue;
+                }
+                identifiersStack.push(id);
             }
-            String token = resumptionTokenEl.getValue();
-            if (token.isEmpty()) {
+
+            Nodes resumptionTokenNodes = root.query("//oai:resumptionToken", context);
+            if (resumptionTokenNodes.size() > 0) {
+                Element resumptionTokenEl = (Element) resumptionTokenNodes.get(0);
+                if (logTotalSize) {
+                    String completeListSize = resumptionTokenEl.getAttributeValue("completeListSize");
+                    if (completeListSize != null) {
+                        logger.info("total records: " + completeListSize);
+                    }
+                }
+                String token = resumptionTokenEl.getValue();
+                if (token.isEmpty()) {
+                    return null;
+                }
+                return token;
+            } else {
                 return null;
             }
-            return token;
+        } catch (IOException e) {
+            throw new OaiHarvesterException("ListIdentifiers failed while fetching document.", url.toString(), e);
+        } catch (ParsingException e) {
+            throw new OaiHarvesterException("ListIdentifiers failed while parsing document.", url.toString(), e);
+        }
+
+    }
+
+    private Document fetchDocument(String url) throws ParsingException, IOException {
+        ApiResponse apiResponse = httpConnector.httpGet(url, null, false);
+        if (apiResponse.getHttpCode() == 200) {
+            return new Builder().build(apiResponse.getBody(), null);
         } else {
-            return null;
+            throw new IOException("HTTP " + apiResponse.getHttpCode());
         }
     }
 
     private Document getRecordDocument(String identifier) throws OaiHarvesterException {
         String url = oaiBaseUrl + "?verb=GetRecord&metadataPrefix=" + metadataPrefix + "&identifier=" + identifier;
         try {
-            Document doc = xmlTools.fetchDocumentFromUrl(url);
+            Document doc = fetchDocument(url);
             return doc;
         } catch (IOException ex) {
-            throw new OaiHarvesterException("Failed downloading document from url.", url.toString());
+            throw new OaiHarvesterException("Failed downloading document from url.", url.toString(), ex);
         } catch (ParsingException ex) {
-            throw new OaiHarvesterException("Failed parsing document.", url.toString());
+            throw new OaiHarvesterException("Failed parsing document.", url.toString(), ex);
         }
     }
 

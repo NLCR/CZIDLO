@@ -2,7 +2,7 @@ package cz.nkp.urnnbn.oaiadapter.cli;
 
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.czidlo.Credentials;
+import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;

@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.oaiadapter.czidlo;
+package cz.nkp.urnnbn.oaiadapter.utils;
 
 import javax.net.ssl.*;
 import java.io.ByteArrayOutputStream;

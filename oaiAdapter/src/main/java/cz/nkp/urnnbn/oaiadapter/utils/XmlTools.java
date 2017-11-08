@@ -17,9 +17,6 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +25,6 @@ import java.util.List;
  * @author Martin Řehánek
  */
 public class XmlTools {
-
-    // TODO: 8.11.17 use HttpConnector instead
-    @Deprecated
-    public Document fetchDocumentFromUrl(String url) throws IOException, ParsingException {
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        con.setConnectTimeout(30 * 1000);
-        con.setReadTimeout(60 * 1000);
-        InputStream is = con.getInputStream();
-        return new Builder().build(is);
-    }
 
     public static Document parseDocumentFromString(String docStr) throws ParsingException, IOException, XSLException {
         Builder builder = new Builder();

@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter;
 
 /**
- *
  * @author hanis
  */
 public class OaiHarvesterException extends Exception {
@@ -17,6 +16,11 @@ public class OaiHarvesterException extends Exception {
 
     OaiHarvesterException(String msg, String url) {
         super(msg);
+        this.url = url;
+    }
+
+    OaiHarvesterException(String msg, String url, Throwable cause) {
+        super(msg, cause);
         this.url = url;
     }
 

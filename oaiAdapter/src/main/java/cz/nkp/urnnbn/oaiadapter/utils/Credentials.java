@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.oaiadapter.czidlo;
+package cz.nkp.urnnbn.oaiadapter.utils;
 
 public class Credentials {
 

@@ -5,6 +5,9 @@
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
+import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
+import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import nu.xom.*;
 
