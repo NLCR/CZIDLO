@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
 import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
@@ -133,10 +135,10 @@ public class CzidloApiConnector {
      * @throws ParsingException        in case of parsing xml from API response body (getting URN:NBN details)
      * @throws IOException             in case of network error (getting URN:NBN details)
      */
-    public UrnnbnStatus getUrnnbnStatus(String urnnbn) throws ParsingException, CzidloApiErrorException, IOException {
+    public UrnNbnWithStatus.Status getUrnnbnStatus(String urnnbn) throws ParsingException, CzidloApiErrorException, IOException {
         Document doc = getUrnnbnDetails(urnnbn);
         Nodes statusNode = doc.query("/r:response/r:urnNbn/r:status", CONTEXT);
-        return UrnnbnStatus.valueOf(statusNode.get(0).getValue());
+        return UrnNbnWithStatus.Status.valueOf(statusNode.get(0).getValue());
     }
 
     /**

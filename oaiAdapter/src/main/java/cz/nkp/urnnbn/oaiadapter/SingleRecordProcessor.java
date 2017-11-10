@@ -1,11 +1,11 @@
 package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiErrorException;
-import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationDataHelper;
 import cz.nkp.urnnbn.oaiadapter.utils.DdRegistrationRefiner;
 import cz.nkp.urnnbn.oaiadapter.utils.DiImportRefiner;
@@ -23,8 +23,6 @@ import java.io.IOException;
  */
 public class SingleRecordProcessor {
 
-    // TODO: 30.10.17 note very clean to reference OaiAdapter just because of ReportLogger
-    private final OaiAdapter oaiAdapter;
     // CZIDLO API
     private final String registrarCode;
     private final CzidloApiConnector czidloConnector;
@@ -41,16 +39,16 @@ public class SingleRecordProcessor {
     private final boolean ignoreDifferenceInDiAccessibility;
     private final boolean ignoreDifferenceInDiFormat;
     //helpers
+    private final ReportLogger reportLogger;
     private final XmlTools xmlTools = new XmlTools();
 
-    public SingleRecordProcessor(OaiAdapter oaiAdapter, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDDsWithUrn, boolean registerDDsWithoutUrn, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
-        this.oaiAdapter = oaiAdapter;
+    public SingleRecordProcessor(ReportLogger reportLogger, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDDsWithUrn, boolean registerDDsWithoutUrn, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+        this.reportLogger = reportLogger;
         this.registrarCode = registrarCode;
         this.czidloConnector = czidloConnector;
         this.digDocRegistrationTemplate = digDocRegistrationTemplate;
         this.digInstImportTemplate = digInstImportTemplate;
         this.xsdProvider = xsdProvider;
-
         this.registerDDsWithUrn = registerDDsWithUrn;
         this.registerDDsWithoutUrn = registerDDsWithoutUrn;
         this.mergeDigitalInstances = mergeDigitalInstances;
@@ -59,11 +57,15 @@ public class SingleRecordProcessor {
     }
 
     private void report(String message) {
-        oaiAdapter.report(message);
+        if (reportLogger != null) {
+            reportLogger.report(message);
+        }
     }
 
     private void report(String message, Throwable e) {
-        oaiAdapter.report(message, e);
+        if (reportLogger != null) {
+            reportLogger.report(message, e);
+        }
     }
 
     public RecordResult processRecord(OaiRecord oaiRecord) throws SingleRecordProcessingException {
@@ -168,7 +170,7 @@ public class SingleRecordProcessor {
     }
 
     private RecordResult checkUrnNbnStateAndContinue(String urnnbn, String oaiIdentifier, Document digDocRegistrationData, Document digInstImportData) throws SingleRecordProcessingException {
-        UrnnbnStatus urnnbnStatus = getUrnNbnStatus(urnnbn);
+        UrnNbnWithStatus.Status urnnbnStatus = getUrnNbnStatus(urnnbn);
         report("- URN:NBN status: " + urnnbnStatus);
         switch (urnnbnStatus) {
             case DEACTIVATED:
@@ -204,7 +206,7 @@ public class SingleRecordProcessor {
         return UrnNbn.valueOf(urnnbn).getRegistrarCode().equals(RegistrarCode.valueOf(registrarCode));
     }
 
-    private UrnnbnStatus getUrnNbnStatus(String urnnbn) throws SingleRecordProcessingException {
+    private UrnNbnWithStatus.Status getUrnNbnStatus(String urnnbn) throws SingleRecordProcessingException {
         try {
             return czidloConnector.getUrnnbnStatus(urnnbn);
         } catch (ParsingException | CzidloApiErrorException | IOException e) {

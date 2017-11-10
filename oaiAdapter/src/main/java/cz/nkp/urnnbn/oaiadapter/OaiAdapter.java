@@ -171,13 +171,13 @@ public class OaiAdapter {
         }
     }
 
-    public void report(String message) {
+    private void report(String message) {
         if (reportLogger != null) {
             reportLogger.report(message);
         }
     }
 
-    public void report(String message, Throwable e) {
+    private void report(String message, Throwable e) {
         if (reportLogger != null) {
             reportLogger.report(message, e);
         }
@@ -187,7 +187,7 @@ public class OaiAdapter {
         try {
             Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             Document digInstImportXslt = buildDigInstImportXsltDoc();
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(this, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(reportLogger, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("Parameters");
             report("==============================");
             reportParams();
