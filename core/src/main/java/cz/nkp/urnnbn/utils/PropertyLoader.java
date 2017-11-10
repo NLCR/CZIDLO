@@ -139,7 +139,7 @@ public class PropertyLoader {
     /**
      * @param key
      * @param defaultValue
-     * @return property boolean value or defaultValue if property is missing
+     * @return property boolean value or defaultValue if property is missing or empty
      */
     public boolean loadBoolean(String key, boolean defaultValue) {
         String strValue = loadStringOrNull(key);

@@ -16,24 +16,22 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
+import cz.nkp.urnnbn.core.CountryCode;
+import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
+import cz.nkp.urnnbn.oaiadapter.XsdProvider;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
+import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.processmanager.core.ProcessState;
+import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
-import cz.nkp.urnnbn.processmanager.core.ProcessState;
-import cz.nkp.urnnbn.processmanager.core.ProcessType;
-
 /**
- *
  * @author Martin Řehánek
  */
 public class OaiAdapterJob extends AbstractJob {
@@ -65,17 +63,20 @@ public class OaiAdapterJob extends AbstractJob {
             init(context.getMergedJobDataMap(), ProcessType.OAI_ADAPTER);
             logger.info("executing " + OaiAdapterJob.class.getName());
             OaiAdapter adapter = new OaiAdapter();
-
+            //core
+            CountryCode.initialize("CZ");
             // czidlo api
             String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
             logger.info("Czidlo API base url: " + czidloApiBaseUrl);
-            Credentials czidloApicredentials = new Credentials((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN), (String) context
-                    .getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD));
+            Credentials czidloApicredentials = new Credentials(
+                    (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN),
+                    (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD));
             // pozor, kvuli ignoreInvalidCertificate=false tohle nepojede na resolver-test a
             // resolver-test2, kde nejsou platne certifikaty
             adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, czidloApicredentials, false));
-            adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRATION_MODE)));
-            logger.info("registration mode: " + adapter.getRegistrationMode().toString());
+            // TODO: 8.11.17 update according to changes in OaiAdapter
+            //adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRATION_MODE)));
+            //logger.info("registration mode: " + adapter.getRegistrationMode().toString());
             adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRAR_CODE));
             logger.info("registrar code: " + adapter.getRegistrarCode());
 

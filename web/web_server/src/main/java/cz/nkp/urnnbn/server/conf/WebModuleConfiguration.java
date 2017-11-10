@@ -33,7 +33,8 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
     public void initialize(String appName, PropertyLoader loader) throws IOException {
         logger.info("Loading configuration of module " + appName);
         super.initialize(appName, loader);
-        showAlephLinks = loader.loadBooleanFalseIfNullOrEmpty(PropertyKeys.SHOW_ALEPH_LINKS);
+
+        showAlephLinks = loader.loadBoolean(PropertyKeys.SHOW_ALEPH_LINKS, false);
         alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
         alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
         loginPage = loader.loadStringOrNull(PropertyKeys.LOGIN_PAGE);
