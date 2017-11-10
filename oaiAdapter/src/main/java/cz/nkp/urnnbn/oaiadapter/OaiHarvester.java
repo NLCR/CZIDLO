@@ -9,6 +9,7 @@ import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
 import nu.xom.*;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -98,7 +99,7 @@ public class OaiHarvester {
     }
 
     private Document fetchDocument(String url) throws ParsingException, IOException {
-        ApiResponse apiResponse = httpConnector.httpGet(url, null, false);
+        ApiResponse apiResponse = httpConnector.httpGet(new URL(url), null, false);
         if (apiResponse.getHttpCode() == 200) {
             return new Builder().build(apiResponse.getBody(), null);
         } else {

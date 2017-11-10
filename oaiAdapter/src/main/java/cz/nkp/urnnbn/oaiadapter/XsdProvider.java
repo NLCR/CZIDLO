@@ -16,11 +16,11 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import java.io.BufferedReader;
+import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
+import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author Martin Řehánek
@@ -31,6 +31,7 @@ public class XsdProvider {
     private final String digInstImportDataXsd;
     private final URL digDocRegistrationDataXsdUrl;
     private final URL digInstImportXsdUrl;
+    private final HttpConnector httpConnector = new HttpConnector();
 
     public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
         this.digDocRegistrationDataXsdUrl = digDocRegistrationDataXsdUrl;
@@ -39,24 +40,15 @@ public class XsdProvider {
         digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
     }
 
-    // TODO: use cz.nkp.urnnbn.oaiadapter.utils.getDocument instead (dev certificate, etc)
     private String loadXsdFromUrl(URL xsd) throws IOException {
-        URLConnection connection = xsd.openConnection();
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            return response.toString();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
+        ApiResponse apiResponse = httpConnector.httpGet(xsd, null, false);
+        if (apiResponse.getHttpCode() == 200) {
+            return apiResponse.getBody();
+        } else {
+            throw new IOException("HTTP " + apiResponse.getHttpCode());
         }
     }
+
 
     public String getDigitalDocumentRegistrationDataXsd() {
         return digDocRegistrationDataXsd;

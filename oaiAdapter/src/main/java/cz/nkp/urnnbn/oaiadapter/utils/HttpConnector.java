@@ -23,9 +23,10 @@ public class HttpConnector {
     private final int CONNECTION_TIMOOUT = 30 * 1000; //30 s
     private final int READ_TIMOOUT = 60 * 1000; //60 s
 
-    public ApiResponse httpGet(String url, Credentials credentials, boolean ignoreInvalidApiCertificate) throws IOException {
+
+    public ApiResponse httpGet(URL url, Credentials credentials, boolean ignoreInvalidApiCertificate) throws IOException {
         HttpURLConnection connection = credentials == null ?
-                (HttpURLConnection) new URL(url).openConnection() :
+                (HttpURLConnection) url.openConnection() :
                 getReadableAuthConnection(url, credentials, HttpMethod.GET, ignoreInvalidApiCertificate);
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
@@ -46,7 +47,7 @@ public class HttpConnector {
         }
     }
 
-    public ApiResponse httpPost(String url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
+    public ApiResponse httpPost(URL url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.POST, ignoreInvalidCertificate);
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
@@ -71,8 +72,7 @@ public class HttpConnector {
         }
     }
 
-
-    public ApiResponse httpPut(String url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
+    public ApiResponse httpPut(URL url, String data, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.PUT, ignoreInvalidCertificate);
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
@@ -97,7 +97,7 @@ public class HttpConnector {
         }
     }
 
-    public ApiResponse httpDelete(String url, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
+    public ApiResponse httpDelete(URL url, Credentials credentials, boolean ignoreInvalidCertificate) throws IOException {
         HttpsURLConnection connection = getWritableAuthConnection(url, credentials, HttpMethod.DELETE, ignoreInvalidCertificate);
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
@@ -131,16 +131,15 @@ public class HttpConnector {
         return text;
     }
 
-    public HttpsURLConnection getWritableAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean ignoreInvalidApiCretificate) throws IOException {
-        return getAuthConnection(urlString, credentialsm, method, true, ignoreInvalidApiCretificate);
+    public HttpsURLConnection getWritableAuthConnection(URL url, Credentials credentialsm, HttpMethod method, boolean ignoreInvalidApiCretificate) throws IOException {
+        return getAuthConnection(url, credentialsm, method, true, ignoreInvalidApiCretificate);
     }
 
-    public HttpsURLConnection getReadableAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean ignoreInvalidApiCretificate) throws IOException {
-        return getAuthConnection(urlString, credentialsm, method, false, ignoreInvalidApiCretificate);
+    public HttpsURLConnection getReadableAuthConnection(URL url, Credentials credentialsm, HttpMethod method, boolean ignoreInvalidApiCretificate) throws IOException {
+        return getAuthConnection(url, credentialsm, method, false, ignoreInvalidApiCretificate);
     }
 
-    private HttpsURLConnection getAuthConnection(String urlString, Credentials credentialsm, HttpMethod method, boolean doOutput, boolean ignoreInvalidApiCretificate) throws IOException {
-        URL url = new URL(urlString);
+    private HttpsURLConnection getAuthConnection(URL url, Credentials credentialsm, HttpMethod method, boolean doOutput, boolean ignoreInvalidApiCretificate) throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
