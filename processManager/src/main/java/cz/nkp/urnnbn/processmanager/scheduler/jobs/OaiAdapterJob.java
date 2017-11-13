@@ -48,7 +48,8 @@ public class OaiAdapterJob extends AbstractJob {
     public static final String PARAM_DI_XSD_URL = "diXsdUrl";
     // czidlo api
     public static final String PARAM_CZIDLO_API_BASE_URL = "apiBaseUrl";
-    public static final String PARAM_CZIDLO_REGISTRATION_MODE = "registrationMode";
+    //public static final String PARAM_CZIDLO_REGISTRATION_MODE = "registrationMode";
+
     public static final String PARAM_CZIDLO_REGISTRAR_CODE = "registrarCode";
     public static final String PARAM_CZIDLO_API_LOGIN = "login";
     public static final String PARAM_CZIDLO_API_PASSWORD = "password";
@@ -71,9 +72,8 @@ public class OaiAdapterJob extends AbstractJob {
             Credentials czidloApicredentials = new Credentials(
                     (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN),
                     (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD));
-            // pozor, kvuli ignoreInvalidCertificate=false tohle nepojede na resolver-test a
-            // resolver-test2, kde nejsou platne certifikaty
             adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, czidloApicredentials, false));
+
             // TODO: 8.11.17 update according to changes in OaiAdapter
             //adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRATION_MODE)));
             //logger.info("registration mode: " + adapter.getRegistrationMode().toString());
@@ -83,10 +83,10 @@ public class OaiAdapterJob extends AbstractJob {
             // oai provider
             adapter.setOaiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL));
             logger.info("OAI base url: " + adapter.getOaiBaseUrl());
-            adapter.setMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
-            logger.info("OAI metadata prefix: " + adapter.getMetadataPrefix());
-            adapter.setSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
-            logger.info("OAI set: " + (adapter.getSetSpec() == null ? "NOT DEFINED" : adapter.getSetSpec()));
+            adapter.setOaiMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
+            logger.info("OAI metadata prefix: " + adapter.getOaiMetadataPrefix());
+            adapter.setOaiSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
+            logger.info("OAI set: " + (adapter.getOaiSetSpec() == null ? "NOT DEFINED" : adapter.getOaiSetSpec()));
 
             // oai response -> dd registration XSLT
             String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);

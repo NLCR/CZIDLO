@@ -2,9 +2,7 @@ package cz.nkp.urnnbn.oaiadapter.cli;
 
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
+import cz.nkp.urnnbn.oaiadapter.ReportLogger;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
@@ -39,44 +37,50 @@ public class App {
     }
 
     private static OaiAdapter initOaiAdapter(PropertyLoader properties) throws Exception {
-        OaiAdapter adapter = new OaiAdapter();
         //core
         CountryCode.initialize("CZ");
-        // czidlo api
-        Credentials credentials = new Credentials(properties.loadString(CZIDLO_API_LOGIN), properties.loadString(CZIDLO_API_PASSWORD));
-        boolean ignoreInvalidCertificate = properties.loadBoolean(CZIDLO_API_IGNORE_INVALID_CERTIFICATE, CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT);
-        String czidloApiBaseUrl = properties.loadString(CZIDLO_API_BASE_URL);
-        adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, credentials, ignoreInvalidCertificate));
-        adapter.setRegistrarCode(properties.loadString(CZIDLO_API_REGISTRAR_CODE));
+        String registrarCode = properties.loadString(CZIDLO_API_REGISTRAR_CODE);
         // oai harvester
-        adapter.setOaiBaseUrl(properties.loadString(OAI_BASE_URL));
-        adapter.setMetadataPrefix(properties.loadString(OAI_METADATA_PREFIX));
-        adapter.setSetSpec(properties.loadStringOrNull(OAI_SET));
+        String oaiBaseUrl = properties.loadString(OAI_BASE_URL);
+        String oaiMetadataPrefix = properties.loadString(OAI_METADATA_PREFIX);
+        String oaiSetSpec = properties.loadStringOrNull(OAI_SET);
+        // czidlo api
+        String czidloApiBaseUrl = properties.loadString(CZIDLO_API_BASE_URL);
+        String czidloApiLogin = properties.loadString(CZIDLO_API_LOGIN);
+        String czidloApiPassword = properties.loadString(CZIDLO_API_PASSWORD);
+        boolean czidloApiIgnoreInvalidCertificate = properties.loadBoolean(CZIDLO_API_IGNORE_INVALID_CERTIFICATE, CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT);
         // xsl
         File ddRegistrationXslFile = new File(properties.loadString(DD_STYLESHEET));
-        adapter.setMetadataToDdRegistrationXslt(ddRegistrationXslFile, XmlTools.loadXmlFromFile(ddRegistrationXslFile.getAbsolutePath()));
-        File diImportXsdFile = new File(properties.loadString(DI_STYLESHEET));
-        adapter.setMetadataToDiImportXslt(diImportXsdFile, XmlTools.loadXmlFromFile(diImportXsdFile.getAbsolutePath()));
+        String ddRegistrationXsl = XmlTools.loadXmlFromFile(ddRegistrationXslFile.getAbsolutePath());
+        File diImportXslFile = new File(properties.loadString(DI_STYLESHEET));
+        String diImportXsl = XmlTools.loadXmlFromFile(diImportXslFile.getAbsolutePath());
         // xsd for transformation results
-        URL digDocRegistrationDataXsdUrl = properties.loadUrl(DD_REGISTRATION_XSD_URL);
-        URL digitalInstanceImportDataXsdUrl = properties.loadUrl(DI_IMPORT_XSD_URL);
-        adapter.setXsdProvider(new XsdProvider(digDocRegistrationDataXsdUrl, digitalInstanceImportDataXsdUrl));
+        URL ddRegistrationDataXsdUrl = properties.loadUrl(DD_REGISTRATION_XSD_URL);
+        URL diImportDataXsdUrl = properties.loadUrl(DI_IMPORT_XSD_URL);
         //dd
-        adapter.setRegisterDDsWithUrn(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITH_URN));
-        adapter.setRegisterDDsWithoutUrn(properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN));
+        boolean registerDDsWithUrn = properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITH_URN);
+        boolean registerDDsWithoutUrn = properties.loadBoolean(DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN);
         //di
-        adapter.setMergeDigitalInstances(properties.loadBoolean(DI_IMPORT_MERGE_DIS, DI_IMPORT_MERGE_DIS_DEFAULT));
-        adapter.setIgnoreDifferenceInDiAccessibility(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT));
-        adapter.setIgnoreDifferenceInDiFormat(properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT));
-        // report
-        initReportStream(adapter, properties);
-        return adapter;
+        boolean mergeDigitalInstances = properties.loadBoolean(DI_IMPORT_MERGE_DIS, DI_IMPORT_MERGE_DIS_DEFAULT);
+        boolean ignoreDifferenceInDiAccessibility = properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT);
+        boolean ignoreDifferenceInDiFormat = properties.loadBoolean(DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT);
+        //report
+        File reportFile = properties.loadFile(REPORT_FILE, false);
+        //result
+        return new OaiAdapter(registrarCode,
+                oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec,
+                czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, czidloApiIgnoreInvalidCertificate,
+                ddRegistrationXsl, ddRegistrationXslFile, diImportXsl, diImportXslFile,
+                ddRegistrationDataXsdUrl, diImportDataXsdUrl,
+                registerDDsWithUrn, registerDDsWithoutUrn,
+                mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
+                buildReportLogger(reportFile)
+        );
     }
 
-    private static void initReportStream(OaiAdapter adapter, PropertyLoader properties) throws Exception {
+    private static ReportLogger buildReportLogger(File reportFile) throws Exception {
         try {
-            File reportFile = properties.loadFile(REPORT_FILE, false);
-            adapter.setOutputStream(new FileOutputStream(reportFile));
+            return new ReportLogger(new FileOutputStream(reportFile));
         } catch (FileNotFoundException ex) {
             throw new Exception("Cannot open report file for writing", ex);
         }

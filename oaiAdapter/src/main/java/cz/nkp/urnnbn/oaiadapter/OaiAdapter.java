@@ -5,8 +5,8 @@
 package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
-import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
 import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -14,7 +14,7 @@ import nu.xom.xslt.XSLException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,127 +24,70 @@ import java.util.logging.Logger;
  */
 public class OaiAdapter {
 
-    private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
     public static final String REGISTAR_SCOPE_ID_TYPE = "OAI_Adapter";
+    private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
+    //registrar code
+    private final String registrarCode;
     // OAI
-    private String oaiBaseUrl;
-    private String metadataPrefix;
-    private String setSpec;
+    private final String oaiBaseUrl;
+    private final String oaiMetadataPrefix;
+    private final String oaiSetSpec;
     // CZIDLO API
-    private String registrarCode;
-    private CzidloApiConnector czidloConnector;
+    private final String czidloApiBaseUrl;
+    private final String czidloApiLogin;
+    private final String czidloApiPassword;
+    private final boolean czidloApiIgnoreInvalidCertificate;
     // XSLT
-    private String metadataToDdRegistrationXslt;
-    private File metadataToDdRegistrationXsltFile;
-    private String metadataToDiImportXslt;
-    private File metadataToDiImportXsltFile;
-    // XSD
-    private XsdProvider xsdProvider;
+    private final String metadataToDdRegistrationXslt;
+    private final File metadataToDdRegistrationXsltFile;
+    private final String metadataToDiImportXslt;
+    private final File metadataToDiImportXsltFile;
+    //XSD
+    private final URL ddRegistrationDataXsdUrl;
+    private final URL diImportDataXsdUrl;
     // DD
-    private boolean registerDDsWithUrn = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_WITH_URN_DEFAULT;
-    private boolean registerDDsWithoutUrn = DefinedProperties.DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN_DEFAULT;
-
+    private final boolean registerDDsWithUrn;
+    private final boolean registerDDsWithoutUrn;
     // DI
-    private boolean mergeDigitalInstances = DefinedProperties.DI_IMPORT_MERGE_DIS_DEFAULT;
-    private boolean ignoreDifferenceInDiAccessibility = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT;
-    private boolean ignoreDifferenceInDiFormat = DefinedProperties.DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT;
-    // OTHER
-    private int limit = -1;
-    //private int limit = 3;//dev only
+    private final boolean mergeDigitalInstances;
+    private final boolean ignoreDifferenceInDiAccessibility;
+    private final boolean ignoreDifferenceInDiFormat;
+    //report
+    private final ReportLogger reportLogger;
 
-    private ReportLogger reportLogger;
+    //DEV
+    private int devRecordLimit = -1;
+    //private int devRecordLimit = 3;//dev only
 
-    public OaiAdapter() {
-    }
-
-    public String getOaiBaseUrl() {
-        return oaiBaseUrl;
-    }
-
-    public void setOaiBaseUrl(String oaiBaseUrl) {
-        this.oaiBaseUrl = oaiBaseUrl;
-    }
-
-    public String getMetadataPrefix() {
-        return metadataPrefix;
-    }
-
-    public void setMetadataPrefix(String metadataPrefix) {
-        this.metadataPrefix = metadataPrefix;
-    }
-
-    public String getSetSpec() {
-        return setSpec;
-    }
-
-    public void setSetSpec(String setSpec) {
-        this.setSpec = setSpec;
-    }
-
-    public void setMetadataToDdRegistrationXslt(File xsltFile, String xslt) {
-        this.metadataToDdRegistrationXsltFile = xsltFile;
-        this.metadataToDdRegistrationXslt = xslt;
-    }
-
-    public void setMetadataToDiImportXslt(File xsltFile, String xslt) {
-        this.metadataToDiImportXsltFile = xsltFile;
-        this.metadataToDiImportXslt = xslt;
-    }
-
-    public void setMergeDigitalInstances(boolean mergeDigitalInstances) {
-        this.mergeDigitalInstances = mergeDigitalInstances;
-    }
-
-    public void setRegisterDDsWithUrn(boolean registerDDsWithUrn) {
-        this.registerDDsWithUrn = registerDDsWithUrn;
-    }
-
-    public void setRegisterDDsWithoutUrn(boolean registerDDsWithoutUrn) {
-        this.registerDDsWithoutUrn = registerDDsWithoutUrn;
-    }
-
-    public void setIgnoreDifferenceInDiAccessibility(boolean ignoreDifferenceInDiAccessibility) {
-        this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
-    }
-
-    public void setIgnoreDifferenceInDiFormat(boolean ignoreDifferenceInDiFormat) {
-        this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
-    }
-
-    public String getRegistrarCode() {
-        return registrarCode;
-    }
-
-    public void setRegistrarCode(String registrarCode) {
+    public OaiAdapter(String registrarCode,
+                      String oaiBaseUrl, String oaiMetadataPrefix, String oaiSetSpec, String czidloApiBaseUrl,
+                      String czidloApiLogin, String czidloApiPassword, boolean czidloApiIgnoreInvalidCertificate,
+                      String metadataToDdRegistrationXslt, File metadataToDdRegistrationXsltFile, String metadataToDiImportXslt, File metadataToDiImportXsltFile,
+                      URL ddRegistrationDataXsdUrl, URL diImportDataXsdUrl,
+                      boolean registerDDsWithUrn, boolean registerDDsWithoutUrn,
+                      boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat,
+                      ReportLogger reportLogger
+    ) {
         this.registrarCode = registrarCode;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public void setOutputStream(OutputStream os) {
-        this.reportLogger = new ReportLogger(os);
-    }
-
-    public CzidloApiConnector getCzidloApiConnector() {
-        return czidloConnector;
-    }
-
-    public void setCzidloConnector(CzidloApiConnector czidloConnector) {
-        this.czidloConnector = czidloConnector;
-    }
-
-    public XsdProvider getXsdProvider() {
-        return xsdProvider;
-    }
-
-    public void setXsdProvider(XsdProvider xsdProvider) {
-        this.xsdProvider = xsdProvider;
+        this.oaiBaseUrl = oaiBaseUrl;
+        this.oaiMetadataPrefix = oaiMetadataPrefix;
+        this.oaiSetSpec = oaiSetSpec;
+        this.czidloApiBaseUrl = czidloApiBaseUrl;
+        this.czidloApiLogin = czidloApiLogin;
+        this.czidloApiPassword = czidloApiPassword;
+        this.czidloApiIgnoreInvalidCertificate = czidloApiIgnoreInvalidCertificate;
+        this.metadataToDdRegistrationXslt = metadataToDdRegistrationXslt;
+        this.metadataToDdRegistrationXsltFile = metadataToDdRegistrationXsltFile;
+        this.metadataToDiImportXslt = metadataToDiImportXslt;
+        this.metadataToDiImportXsltFile = metadataToDiImportXsltFile;
+        this.ddRegistrationDataXsdUrl = ddRegistrationDataXsdUrl;
+        this.diImportDataXsdUrl = diImportDataXsdUrl;
+        this.registerDDsWithUrn = registerDDsWithUrn;
+        this.registerDDsWithoutUrn = registerDDsWithoutUrn;
+        this.mergeDigitalInstances = mergeDigitalInstances;
+        this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
+        this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
+        this.reportLogger = reportLogger;
     }
 
     private Document buildDigDocRegistrationXsltDoc() throws TemplateException {
@@ -172,22 +115,15 @@ public class OaiAdapter {
     }
 
     private void report(String message) {
-        if (reportLogger != null) {
-            reportLogger.report(message);
-        }
+        reportLogger.report(message);
     }
 
     private void report(String message, Throwable e) {
-        if (reportLogger != null) {
-            reportLogger.report(message, e);
-        }
+        reportLogger.report(message, e);
     }
 
     public void run() {
         try {
-            Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
-            Document digInstImportXslt = buildDigInstImportXsltDoc();
-            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(reportLogger, registrarCode, czidloConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
             report("Parameters");
             report("==============================");
             reportParams();
@@ -196,14 +132,23 @@ public class OaiAdapter {
             report("==============================");
             Counters counters = new Counters();
             OaiHarvester harvester = null;
+            SingleRecordProcessor recordProcessor = null;
             try {
-                harvester = new OaiHarvester(getOaiBaseUrl(), getMetadataPrefix(), getSetSpec());
+                harvester = new OaiHarvester(oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec);
                 report("- OaiHarvester initialized");
+                CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), czidloApiIgnoreInvalidCertificate);
+                Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
+                Document digInstImportXslt = buildDigInstImportXsltDoc();
+                XsdProvider xsdProvider = new XsdProvider(ddRegistrationDataXsdUrl, diImportDataXsdUrl);
+                recordProcessor = new SingleRecordProcessor(reportLogger, registrarCode, czidloApiConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
                 // TODO: 7.11.17 other tests of parameters like existence of registrar, digital library (id), access rights, API availability etc.
             } catch (OaiHarvesterException ex) {
                 report("OaiHarvester initialization failed: " + ex.getMessage() + ", url: " + ex.getUrl());
                 logger.log(Level.SEVERE, "OaiHarvester initialization failed: {0}, url: {1}", new Object[]{ex.getMessage(), ex.getUrl()});
                 return;
+            } catch (IOException e) {
+                report("Initialization error: IOException: " + e.getMessage());
+                logger.log(Level.SEVERE, "Initialization error", e);
             }
             report(" ");
 
@@ -231,18 +176,23 @@ public class OaiAdapter {
     }
 
     private void reportParams() {
+        report(" Core");
+        report(" -----------------");
+        report("  Registrar code: " + registrarCode);
+        report(" ");
+
         report(" OAI-PMH data provider");
         report(" -----------------");
-        report("  Base url: " + getOaiBaseUrl());
-        report("  Metadata prefix: " + getMetadataPrefix());
-        report("  Set: " + (setSpec == null ? "none" : setSpec));
+        report("  Base url: " + oaiBaseUrl);
+        report("  Metadata prefix: " + oaiMetadataPrefix);
+        report("  Set: " + (oaiSetSpec == null ? "none" : oaiSetSpec));
         report(" ");
 
         report(" CZIDLO API");
         report(" -----------------");
-        report("  CZIDLO API base url: " + czidloConnector.getCzidloApiUrl());
-        report("  Registrar code: " + getRegistrarCode());
-        report("  Login: " + getCzidloApiConnector().getLogin());
+        report("  CZIDLO API base url: " + czidloApiBaseUrl);
+        report("  Login: " + czidloApiLogin);
+        report("  Ignore invalid certificate: " + czidloApiIgnoreInvalidCertificate);
         report(" ");
 
         report(" Transformations");
@@ -250,11 +200,11 @@ public class OaiAdapter {
         if (metadataToDdRegistrationXsltFile != null) {
             report("  Metadata to DD-registration template: " + metadataToDdRegistrationXsltFile.getAbsolutePath());
         }
-        report("  DD-registration schema location: " + getXsdProvider().getDigDocRegistrationDataXsdUrl().toString());
+        report("  DD-registration schema location: " + ddRegistrationDataXsdUrl.toString());
         if (metadataToDiImportXsltFile != null) {
             report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
         }
-        report("  DI-import schema location: " + getXsdProvider().getDigInstImportXsdUrl().toString());
+        report("  DI-import schema location: " + diImportDataXsdUrl.toString());
         report(" ");
 
         report(" DD management");
@@ -272,7 +222,7 @@ public class OaiAdapter {
     }
 
     private boolean processRecord(Counters counters, OaiHarvester harvester, SingleRecordProcessor recordProcessor) {
-        if (limit > 0 && counters.all >= limit) {
+        if (devRecordLimit > 0 && counters.all >= devRecordLimit) {
             return true;
         }
         if (counters.all != 0 && counters.all % 100 == 0) {
@@ -377,6 +327,81 @@ public class OaiAdapter {
         }
     }
 
+    public String getRegistrarCode() {
+        return registrarCode;
+    }
+
+    public String getOaiBaseUrl() {
+        return oaiBaseUrl;
+    }
+
+    public String getOaiMetadataPrefix() {
+        return oaiMetadataPrefix;
+    }
+
+    public String getOaiSetSpec() {
+        return oaiSetSpec;
+    }
+
+    public String getCzidloApiBaseUrl() {
+        return czidloApiBaseUrl;
+    }
+
+    public String getCzidloApiLogin() {
+        return czidloApiLogin;
+    }
+
+    public String getCzidloApiPassword() {
+        return czidloApiPassword;
+    }
+
+    public boolean isCzidloApiIgnoreInvalidCertificate() {
+        return czidloApiIgnoreInvalidCertificate;
+    }
+
+    public String getMetadataToDdRegistrationXslt() {
+        return metadataToDdRegistrationXslt;
+    }
+
+    public File getMetadataToDdRegistrationXsltFile() {
+        return metadataToDdRegistrationXsltFile;
+    }
+
+    public String getMetadataToDiImportXslt() {
+        return metadataToDiImportXslt;
+    }
+
+    public File getMetadataToDiImportXsltFile() {
+        return metadataToDiImportXsltFile;
+    }
+
+    public URL getDdRegistrationDataXsdUrl() {
+        return ddRegistrationDataXsdUrl;
+    }
+
+    public URL getDiImportDataXsdUrl() {
+        return diImportDataXsdUrl;
+    }
+
+    public boolean isRegisterDDsWithUrn() {
+        return registerDDsWithUrn;
+    }
+
+    public boolean isRegisterDDsWithoutUrn() {
+        return registerDDsWithoutUrn;
+    }
+
+    public boolean isMergeDigitalInstances() {
+        return mergeDigitalInstances;
+    }
+
+    public boolean isIgnoreDifferenceInDiAccessibility() {
+        return ignoreDifferenceInDiAccessibility;
+    }
+
+    public boolean isIgnoreDifferenceInDiFormat() {
+        return ignoreDifferenceInDiFormat;
+    }
 
     public static class Counters {
         int all = 0;

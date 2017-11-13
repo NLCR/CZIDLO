@@ -4,14 +4,14 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import java.util.logging.Logger;
-
+import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
+import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Nodes;
-import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
+
+import java.util.logging.Logger;
 
 /**
  * @author Jan Rychtář

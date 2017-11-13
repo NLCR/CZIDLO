@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.oaiadapter.czidlo;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
 import cz.nkp.urnnbn.oaiadapter.utils.Credentials;

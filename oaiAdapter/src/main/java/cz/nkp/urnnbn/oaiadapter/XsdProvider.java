@@ -27,17 +27,17 @@ import java.net.URL;
  */
 public class XsdProvider {
 
-    private final String digDocRegistrationDataXsd;
-    private final String digInstImportDataXsd;
-    private final URL digDocRegistrationDataXsdUrl;
+    private final String ddRegistrationDataXsd;
+    private final String diImportDataXsd;
+    private final URL ddRegistrationDataXsdUrl;
     private final URL digInstImportXsdUrl;
     private final HttpConnector httpConnector = new HttpConnector();
 
-    public XsdProvider(URL digDocRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
-        this.digDocRegistrationDataXsdUrl = digDocRegistrationDataXsdUrl;
+    public XsdProvider(URL ddRegistrationDataXsdUrl, URL digInstImportXsdUrl) throws IOException {
+        this.ddRegistrationDataXsdUrl = ddRegistrationDataXsdUrl;
         this.digInstImportXsdUrl = digInstImportXsdUrl;
-        digDocRegistrationDataXsd = loadXsdFromUrl(digDocRegistrationDataXsdUrl);
-        digInstImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
+        ddRegistrationDataXsd = loadXsdFromUrl(ddRegistrationDataXsdUrl);
+        diImportDataXsd = loadXsdFromUrl(digInstImportXsdUrl);
     }
 
     private String loadXsdFromUrl(URL xsd) throws IOException {
@@ -50,16 +50,16 @@ public class XsdProvider {
     }
 
 
-    public String getDigitalDocumentRegistrationDataXsd() {
-        return digDocRegistrationDataXsd;
+    public String getDdRegistrationDataXsd() {
+        return ddRegistrationDataXsd;
     }
 
-    public String getDigitalInstanceImportDataXsd() {
-        return digInstImportDataXsd;
+    public String getDiImportDataXsd() {
+        return diImportDataXsd;
     }
 
-    public URL getDigDocRegistrationDataXsdUrl() {
-        return digDocRegistrationDataXsdUrl;
+    public URL getDdRegistrationDataXsdUrl() {
+        return ddRegistrationDataXsdUrl;
     }
 
     public URL getDigInstImportXsdUrl() {

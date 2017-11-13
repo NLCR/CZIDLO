@@ -42,7 +42,13 @@ public class SingleRecordProcessor {
     private final ReportLogger reportLogger;
     private final XmlTools xmlTools = new XmlTools();
 
-    public SingleRecordProcessor(ReportLogger reportLogger, String registrarCode, CzidloApiConnector czidloConnector, Document digDocRegistrationTemplate, Document digInstImportTemplate, XsdProvider xsdProvider, boolean registerDDsWithUrn, boolean registerDDsWithoutUrn, boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
+    public SingleRecordProcessor(ReportLogger reportLogger,
+                                 String registrarCode,
+                                 CzidloApiConnector czidloConnector,
+                                 Document digDocRegistrationTemplate, Document digInstImportTemplate,
+                                 XsdProvider xsdProvider,
+                                 boolean registerDDsWithUrn, boolean registerDDsWithoutUrn,
+                                 boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat) {
         this.reportLogger = reportLogger;
         this.registrarCode = registrarCode;
         this.czidloConnector = czidloConnector;
@@ -97,7 +103,7 @@ public class SingleRecordProcessor {
         }
         //validation
         try {
-            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDigitalDocumentRegistrationDataXsd());
+            XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDdRegistrationDataXsd());
             checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
             report("- Digital-document-registration data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
@@ -134,7 +140,7 @@ public class SingleRecordProcessor {
         }
         //validation
         try {
-            XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDigitalInstanceImportDataXsd());
+            XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDiImportDataXsd());
             report("- Digital-instance-import data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
             throw new SingleRecordProcessingException("Digital-instance-import data validation: ERROR: ", ex);

@@ -21,7 +21,6 @@ public class DefinedProperties {
     static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
     static String CZIDLO_API_IGNORE_INVALID_CERTIFICATE = "oaiAdapter.czidlo_api.ignoreInvalidCertificate";
     static boolean CZIDLO_API_IGNORE_INVALID_CERTIFICATE_DEFAULT = false;
-
     // xsl transformations
     static String DD_STYLESHEET = "oaiAdapter.digDocRegistrationXsl";
     static String DI_STYLESHEET = "oaiAdapter.digInstImportXsl";
@@ -30,9 +29,7 @@ public class DefinedProperties {
     public static String DI_IMPORT_XSD_URL = "oaiAdapter.digInstImportXsdUrl";
     // dd registration
     public static String DD_REGISTRATION_REGISTER_DDS_WITH_URN = "oaiAdapter.ddRegistration.registerDigitalDocumentsWithUrnNbn";
-    public static final boolean DD_REGISTRATION_REGISTER_DDS_WITH_URN_DEFAULT = true;
     public static String DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN = "oaiAdapter.ddRegistration.registerDigitalDocumentsWithoutUrnNbn";
-    public static final boolean DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN_DEFAULT = false;
     // di import
     public static String DI_IMPORT_MERGE_DIS = "oaiAdapter.diImport.mergeDigitalInstances";
     public static boolean DI_IMPORT_MERGE_DIS_DEFAULT = false;
