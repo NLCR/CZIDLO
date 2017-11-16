@@ -18,17 +18,15 @@ package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
-import cz.nkp.urnnbn.oaiadapter.XsdProvider;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.ReportLogger;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.URL;
 
 /**
@@ -36,86 +34,94 @@ import java.net.URL;
  */
 public class OaiAdapterJob extends AbstractJob {
 
+    //core
+    public static final String PARAM_CZIDLO_REGISTRAR_CODE = "registrarCode";
     public static final String PARAM_REPORT_FILE = "report.txt";
-    // oai
+    //oai
     public static final String PARAM_OAI_BASE_URL = "oaiBaseUrl";
     public static final String PARAM_OAI_METADATA_PREFIX = "oaiMetadataPrefix";
     public static final String PARAM_OAI_SET = "oaiSet";
-    // transformations
-    public static final String PARAM_DD_XSL_FILE = "ddXsl";
-    public static final String PARAM_DI_XSL_FILE = "diXsl";
-    public static final String PARAM_DD_XSD_URL = "ddXsdUrl";
-    public static final String PARAM_DI_XSD_URL = "diXsdUrl";
-    // czidlo api
-    public static final String PARAM_CZIDLO_API_BASE_URL = "apiBaseUrl";
-    //public static final String PARAM_CZIDLO_REGISTRATION_MODE = "registrationMode";
+    //czidlo api
+    public static final String PARAM_CZIDLO_API_BASE_URL = "czidloApiBaseUrl";
+    public static final String PARAM_CZIDLO_API_LOGIN = "czidloApiLogin";
+    public static final String PARAM_CZIDLO_API_PASSWORD = "czidloApiPassword";
+    //xslt
+    public static final String PARAM_DD_REGISTRATION_XSL_FILE = "ddRegistrationXsl";
+    public static final String PARAM_DI_IMPORT_XSL_FILE = "diImportXsl";
+    //xsd
+    public static final String PARAM_DD_REGISTRATION_XSD_URL = "ddRegistrationXsdUrl";
+    public static final String PARAM_DI_IMPORT_XSD_URL = "diImportXsdUrl";
+    // dd registration
+    public static final String PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN = "ddRegistration.registerDigitalDocumentsWithUrnNbn";
+    public static final String PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN = "ddRegistration.registerDigitalDocumentsWithoutUrnNbn";
+    // di import
+    public static final String PARAM_DI_IMPORT_MERGE_DIS = "diImport.mergeDigitalInstances";
+    public static final String PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY = "diImport.ignoreDifferenceInAccessibility";
+    public static final String PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT = "diImport.ignoreDifferenceInFormat";
 
-    public static final String PARAM_CZIDLO_REGISTRAR_CODE = "registrarCode";
-    public static final String PARAM_CZIDLO_API_LOGIN = "login";
-    public static final String PARAM_CZIDLO_API_PASSWORD = "password";
-
-    private OutputStream reportStream = null;
+    private ReportLogger reportLogger;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            // System.setProperty("javax.xml.parsers.SAXParserFactory",
-            // "org.apache.xerces.jaxp.SAXParserFactoryImpl");
+            // System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
             init(context.getMergedJobDataMap(), ProcessType.OAI_ADAPTER);
             logger.info("executing " + OaiAdapterJob.class.getName());
-            OaiAdapter adapter = new OaiAdapter();
             //core
             CountryCode.initialize("CZ");
+            String registrarCode = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRAR_CODE);
+            logger.info("registrar code: " + registrarCode);
+            // oai provider
+            String oaiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL);
+            logger.info("OAI base url: " + oaiBaseUrl);
+            String oaiMetadataPrefix = (String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX);
+            logger.info("OAI metadata prefix: " + oaiMetadataPrefix);
+            String oaiSet = (String) context.getMergedJobDataMap().get(PARAM_OAI_SET);
+            logger.info("OAI set: " + (oaiSet == null ? "NOT DEFINED" : oaiSet));
             // czidlo api
             String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
             logger.info("Czidlo API base url: " + czidloApiBaseUrl);
-            Credentials czidloApicredentials = new Credentials(
-                    (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN),
-                    (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD));
-            adapter.setCzidloConnector(new CzidloApiConnector(czidloApiBaseUrl, czidloApicredentials, false));
-
-            // TODO: 8.11.17 update according to changes in OaiAdapter
-            //adapter.setRegistrationMode(UrnNbnRegistrationMode.valueOf((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRATION_MODE)));
-            //logger.info("registration mode: " + adapter.getRegistrationMode().toString());
-            adapter.setRegistrarCode((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRAR_CODE));
-            logger.info("registrar code: " + adapter.getRegistrarCode());
-
-            // oai provider
-            adapter.setOaiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL));
-            logger.info("OAI base url: " + adapter.getOaiBaseUrl());
-            adapter.setOaiMetadataPrefix((String) context.getMergedJobDataMap().get(PARAM_OAI_METADATA_PREFIX));
-            logger.info("OAI metadata prefix: " + adapter.getOaiMetadataPrefix());
-            adapter.setOaiSetSpec((String) context.getMergedJobDataMap().get(PARAM_OAI_SET));
-            logger.info("OAI set: " + (adapter.getOaiSetSpec() == null ? "NOT DEFINED" : adapter.getOaiSetSpec()));
-
+            String czidloApiLogin = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_LOGIN);
+            logger.info("Czidlo API login: " + czidloApiLogin);
+            String czidloApiPassword = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD);
             // oai response -> dd registration XSLT
-            String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_XSL_FILE);
-            logger.info("XSL template to transform oai response to DD registration data: " + ddRegistrationXslt);
-            adapter.setMetadataToDdRegistrationXslt(null, XmlTools.loadXmlFromFile(ddRegistrationXslt));
-
+            String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSL_FILE);
+            logger.info("XSL template to transform OAI record to DD registration data: " + ddRegistrationXslt);
             // oai response -> di import XSLT
-            String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_XSL_FILE);
-            logger.info("XSL template to transform oai response to DI import data: " + diImportXslt);
-            adapter.setMetadataToDiImportXslt(null, XmlTools.loadXmlFromFile(diImportXslt));
-
+            String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSL_FILE);
+            logger.info("XSL template to transform OAI record to DI import data: " + diImportXslt);
             // XSDs
-            String ddRegistrationXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DD_XSD_URL);
+            URL ddRegistrationXsdUrl = new URL((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSD_URL));
             logger.info("XSD for validation of DD registration data: " + ddRegistrationXsdUrl);
-            String diImportXsdUrl = (String) context.getMergedJobDataMap().get(PARAM_DI_XSD_URL);
+            URL diImportXsdUrl = new URL((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSD_URL));
             logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
-            adapter.setXsdProvider(new XsdProvider(new URL(ddRegistrationXsdUrl), new URL(diImportXsdUrl)));
+            //dd
+            boolean registerDDsWithUrn = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN));
+            logger.info("Register digital documents with urn:nbn: " + registerDDsWithUrn);
+            boolean registerDDsWithoutUrn = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN));
+            logger.info("Register digital documents without urn:nbn: " + registerDDsWithoutUrn);
+            //di
+            boolean mergeDigitalInstances = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_MERGE_DIS));
+            logger.info("Merge digital instances: " + mergeDigitalInstances);
+            boolean ignoreDifferenceInDiAccessibility = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY));
+            logger.info("Ignore difference in DI accessibility: " + ignoreDifferenceInDiAccessibility);
+            boolean ignoreDifferenceInDiFormat = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT));
+            logger.info("Ignore difference in DI format: " + ignoreDifferenceInDiFormat);
+            //report
+            File reportFile = createWriteableProcessFile(PARAM_REPORT_FILE);
+            reportLogger = buildReportLogger(reportFile);
 
-            //DI import other stuff
-            // TODO: 28.10.17 incorporate new paramethers
-            /*adapter.setMergeDigitalInstances();
-            adapter.setIgnoreDifferenceInDiAccessibility();
-            adapter.setIgnoreDifferenceInDiFormat();*/
-
-            // report
-            reportStream = fileToOutputStream(createWriteableProcessFile(PARAM_REPORT_FILE));
-            adapter.setOutputStream(reportStream);
             logger.info("running oai adapter");
-            adapter.run();
+            new OaiAdapter(registrarCode,
+                    oaiBaseUrl, oaiMetadataPrefix, oaiSet,
+                    czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
+                    ddRegistrationXslt, null, diImportXslt, null,
+                    ddRegistrationXsdUrl, diImportXsdUrl,
+                    registerDDsWithUrn, registerDDsWithoutUrn,
+                    mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
+                    reportLogger
+            ).run();
+
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
                 logger.info("process killed");
@@ -131,14 +137,18 @@ public class OaiAdapterJob extends AbstractJob {
         }
     }
 
+    private ReportLogger buildReportLogger(File reportFile) throws Exception {
+        try {
+            return new ReportLogger(new FileOutputStream(reportFile));
+        } catch (FileNotFoundException ex) {
+            throw new Exception("Cannot open report file for writing", ex);
+        }
+    }
+
     @Override
     void close() {
-        if (reportStream != null) {
-            try {
-                reportStream.close();
-            } catch (IOException ex) {
-                throw new RuntimeException();
-            }
+        if (reportLogger != null) {
+            reportLogger.close();
         }
     }
 }

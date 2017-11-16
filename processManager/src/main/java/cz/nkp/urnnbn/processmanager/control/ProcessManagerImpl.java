@@ -16,30 +16,6 @@
  */
 package cz.nkp.urnnbn.processmanager.control;
 
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
-import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
-import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
-
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
 import cz.nkp.urnnbn.processmanager.core.Process;
@@ -49,15 +25,22 @@ import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAO;
 import cz.nkp.urnnbn.processmanager.persistence.AuthorizingProcessDAOImpl;
 import cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException;
 import cz.nkp.urnnbn.processmanager.scheduler.JobListenerImpl;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.AbstractJob;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcesStateUpdater;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.ProcessFileUtils;
-import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.*;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class ProcessManagerImpl implements ProcessManager {
@@ -128,7 +111,7 @@ public class ProcessManagerImpl implements ProcessManager {
             Random rand = new Random();
             Date soon = new Date(new Date().getTime() + 1000 + rand.nextInt(2000));
             Trigger trigger = newTrigger().startAt(soon)
-            // .startNow()
+                    // .startNow()
                     .withSchedule(simpleSchedule().withIntervalInMilliseconds(500).repeatForever()).withIdentity("trigger-jobChecker", "group1")
                     // .startNow()
                     .build();
@@ -172,14 +155,14 @@ public class ProcessManagerImpl implements ProcessManager {
     private String paramsToString(ProcessType processType, String[] params) {
         // use generalParamsString to debug
         switch (processType) {
-        case REGISTRARS_URN_NBN_CSV_EXPORT:
-            return urnNbnExportProcessParamsToString(params);
-        case OAI_ADAPTER:
-            return oaiAdapterProcessParamsToString(params);
-        case DI_URL_AVAILABILITY_CHECK:
-            return diUrlAvailabilityCheckToString(params);
-        default:
-            return null;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return urnNbnExportProcessParamsToString(params);
+            case OAI_ADAPTER:
+                return oaiAdapterProcessParamsToString(params);
+            case DI_URL_AVAILABILITY_CHECK:
+                return diUrlAvailabilityCheckToString(params);
+            default:
+                return null;
         }
     }
 
@@ -287,8 +270,8 @@ public class ProcessManagerImpl implements ProcessManager {
         synchronized (queue) {
             queue.add(process);
         }
-        logger.log(Level.INFO, "adding process (id={0}, type={1}, ownerLogin={2}) to queue {3}", new Object[] { process.getId(), process.getType(),
-                process.getOwnerLogin(), queueName });
+        logger.log(Level.INFO, "adding process (id={0}, type={1}, ownerLogin={2}) to queue {3}", new Object[]{process.getId(), process.getType(),
+                process.getOwnerLogin(), queueName});
     }
 
     void runScheduledProcessIfPossible() {
@@ -353,7 +336,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private void runProcess(Process process) {
         try {
-            logger.log(Level.INFO, "running process {0} ({1})", new Object[] { process.getId(), process.getType().toString() });
+            logger.log(Level.INFO, "running process {0} ({1})", new Object[]{process.getId(), process.getType().toString()});
             JobDetail job = buildJobDetail(process);
             // System.err.println("jobdetail ready");
             Trigger trigger = trigger(process.getId());
@@ -369,60 +352,64 @@ public class ProcessManagerImpl implements ProcessManager {
         // System.err.println(parematersToString(process.getParams()));
         String[] params = process.getParams();
         switch (process.getType()) {
-        case REGISTRARS_URN_NBN_CSV_EXPORT:
-            return newJob(UrnNbnCsvExportJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
-                    .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
-                    .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
-                    .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_BEGIN, params[0])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_END, params[1])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_REGISTRARS_CODES, params[2])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_ENT_TYPES, params[3])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_CCNB, params[4])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISSN, params[5])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISBN, params[6])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE, params[7])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED, params[8])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, params[9])//
-                    .usingJobData(UrnNbnCsvExportJob.PARAM_COUNTRY_CODE, params[10])//
-                    .build();
-        case OAI_ADAPTER:
-            return newJob(OaiAdapterJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
-                    .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
-                    .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
-                    .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                    .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                    .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[0])//
-                    .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[1])//
-                    .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRATION_MODE, params[2])//
-                    .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[3])//
-                    .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[4])//
-                    .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[5])//
-                    .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[6])//
-                    .usingJobData(OaiAdapterJob.PARAM_DD_XSL_FILE, params[7])//
-                    .usingJobData(OaiAdapterJob.PARAM_DI_XSL_FILE, params[8])//
-                    .usingJobData(OaiAdapterJob.PARAM_DD_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
-                    .usingJobData(OaiAdapterJob.PARAM_DI_XSD_URL, Configuration.getDigInstImportXsdUrl())//
-                    .build();
-        case DI_URL_AVAILABILITY_CHECK:
-            return newJob(DiUrlAvailabilityCheckJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
-                    .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
-                    .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
-                    .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_REGISTRAR_CODES, params[0])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_INT_ENT_TYPES, params[1])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_ACTIVE, params[2])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_DEACTIVATED, params[3])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_ACTIVE, params[4])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_DEACTIVATED, params[5])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_FROM, params[6])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_TO, params[7])//
-                    .usingJobData(DiUrlAvailabilityCheckJob.PARAM_COUNTRY_CODE, params[8])//
-                    // .usingJobData(DiUrlAvailabilityCheckJob.PARAM_, params[0])
-                    .build();
-        case TEST:
-        default:
-            return null;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return newJob(UrnNbnCsvExportJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
+                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_BEGIN, params[0])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_END, params[1])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_REGISTRARS_CODES, params[2])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_ENT_TYPES, params[3])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_CCNB, params[4])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISSN, params[5])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISBN, params[6])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE, params[7])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED, params[8])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, params[9])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_COUNTRY_CODE, params[10])//
+                        .build();
+            case OAI_ADAPTER:
+                return newJob(OaiAdapterJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
+                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[0])//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[1])//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[2])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[3])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[4])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[5])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[6])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[7])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getDigInstImportXsdUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, params[8])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, params[9])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, params[10])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, params[11])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, params[12])//
+                        .build();
+            case DI_URL_AVAILABILITY_CHECK:
+                return newJob(DiUrlAvailabilityCheckJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
+                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_REGISTRAR_CODES, params[0])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_INT_ENT_TYPES, params[1])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_ACTIVE, params[2])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_DEACTIVATED, params[3])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_ACTIVE, params[4])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_DEACTIVATED, params[5])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_FROM, params[6])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_TO, params[7])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_COUNTRY_CODE, params[8])//
+                        // .usingJobData(DiUrlAvailabilityCheckJob.PARAM_, params[0])
+                        .build();
+            case TEST:
+            default:
+                return null;
         }
     }
 
@@ -441,7 +428,7 @@ public class ProcessManagerImpl implements ProcessManager {
         Random rand = new Random();
         Date soon = new Date(new Date().getTime() + 1000 + rand.nextInt(2000));
         return newTrigger().startAt(soon).withIdentity("trigger" + persistentId.toString(), "jobTriggers")
-        // .startNow()
+                // .startNow()
                 .build();
     }
 
@@ -538,7 +525,7 @@ public class ProcessManagerImpl implements ProcessManager {
             removed = queue.remove(processToBeRemoved);
         }
         if (removed) {
-            logger.log(Level.INFO, "process {0} removed from {1} queue", new Object[] { processToBeRemoved, queueName });
+            logger.log(Level.INFO, "process {0} removed from {1} queue", new Object[]{processToBeRemoved, queueName});
         }
         return removed;
     }

@@ -93,9 +93,6 @@ public abstract class AbstractJob implements InterruptableJob {
         return ProcessFileUtils.createWriteableProcessFile(processId, filename);
     }
 
-    protected OutputStream fileToOutputStream(File file) throws FileNotFoundException {
-        return new FileOutputStream(file);
-    }
 
     // just for testing
     protected void sleep(long millis) {

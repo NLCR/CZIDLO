@@ -346,8 +346,6 @@ public interface ConstantsImpl extends Constants {
 
     String processOaiAdapterRegistrar();
 
-    String processOaiAdapterRegistrationMode();
-
     String processOaiAdapterOaiBaseUrl();
 
     String processOaiAdapterOaiMetadataPrefix();

@@ -1,29 +1,21 @@
 package cz.nkp.urnnbn.client.processes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
@@ -34,9 +26,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
     private final List<XmlTransformationDTO> diImportTemplates;
     private XmlTransformationDTO selectedDdRegistrationTemplate;
     private XmlTransformationDTO selectedDiImportTemplate;
-    // registration modes
-    private String selecterRegistrationMode = "BY_RESOLVER";
-
+    
     private TextBox oaiBaseUrlTextBox;
     private TextBox oaiMetadataPrefixTextBox;
     private TextBox oaiSetTtextBox;
@@ -87,7 +77,6 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
         result.add(selectRegistrarPanel());
-        result.add(selectRegistrationModePanel());
         result.add(insertOaiBasUrlPanel());
         result.add(insertOaiMetadataPrefixPanel());
         result.add(selectOaiSetPanel());
@@ -103,39 +92,6 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
         result.setSpacing(5);
         result.add(new Label(constants.processOaiAdapterRegistrar() + SEPARATOR));
         result.add(registrarList());
-        return result;
-    }
-
-    private Panel selectRegistrationModePanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.setSpacing(5);
-        result.add(new Label(constants.processOaiAdapterRegistrationMode() + SEPARATOR));
-        result.add(registrationModeListBox());
-        return result;
-    }
-
-    private ListBox registrationModeListBox() {
-        final ListBox result = new ListBox();
-
-        result.addItem(constants.modeByResolver());
-        result.addItem(constants.modeByRegistrar());
-        result.addItem(constants.modeByReservation());
-
-        result.addChangeHandler(new ChangeHandler() {
-
-            @Override
-            public void onChange(ChangeEvent event) {
-                int index = result.getSelectedIndex();
-                switch (index) {
-                case 0:
-                    selecterRegistrationMode = "BY_RESOLVER";
-                case 1:
-                    selecterRegistrationMode = "BY_REGISTRAR";
-                case 2:
-                    selecterRegistrationMode = "BY_RESERVATION";
-                }
-            }
-        });
         return result;
     }
 
@@ -251,11 +207,26 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
             public void onClick(ClickEvent event) {
                 if (selectedRegistrar != null) {
                     String oaiSet = (oaiSetTtextBox.getText() == null || oaiSetTtextBox.getText().isEmpty()) ? null : oaiSetTtextBox.getText();
-                    String ddRegistrationTemplateId = selectedDdRegistrationTemplate == null ? null : selectedDdRegistrationTemplate.getId()
-                            .toString();
+                    //TODO: vzdy musi byt vybrana sablona, jinak neni mozne naplanovat proces
+                    //podobne kontroly i pro dalsi parametry
+                    String ddRegistrationTemplateId = selectedDdRegistrationTemplate == null ? null : selectedDdRegistrationTemplate.getId().toString();
                     String diImportTemplateId = selectedDiImportTemplate == null ? null : selectedDiImportTemplate.getId().toString();
-                    String[] params = new String[] { selectedRegistrar.getCode(), selecterRegistrationMode, oaiBaseUrlTextBox.getText(),
-                            oaiMetadataPrefixTextBox.getText(), oaiSet, ddRegistrationTemplateId, diImportTemplateId };
+
+                    String[] params = new String[]{
+                            selectedRegistrar.getCode(),
+                            oaiBaseUrlTextBox.getText(),
+                            oaiMetadataPrefixTextBox.getText(),
+                            oaiSet,
+                            ddRegistrationTemplateId,
+                            diImportTemplateId,
+                            // TODO: 16.11.17 checkboxes for these
+                            Boolean.FALSE.toString(), //ddRegistrationRegisterDdsWithUrn
+                            Boolean.FALSE.toString(), //ddRegistrationRegisterDdsWithoutUrn
+                            Boolean.FALSE.toString(), //diImportMergeDis
+                            Boolean.TRUE.toString(), //diImportIgnoreDifferenceInAccessibility
+                            Boolean.TRUE.toString() //diImportIgnoreDifferenceInFormat
+                    };
+
                     processService.scheduleProcess(ProcessDTOType.OAI_ADAPTER, params, new AsyncCallback<Void>() {
 
                         @Override

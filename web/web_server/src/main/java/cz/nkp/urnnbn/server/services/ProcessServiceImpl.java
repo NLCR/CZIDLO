@@ -1,21 +1,5 @@
 package cz.nkp.urnnbn.server.services;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -41,6 +25,14 @@ import cz.nkp.urnnbn.shared.exceptions.ServerException;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 import cz.nkp.urnnbn.webcommon.security.MemoryPasswordsStorage;
 
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ProcessServiceImpl extends AbstractService implements ProcessService {
 
     private static final long serialVersionUID = 5647859643995913008L;
@@ -63,23 +55,23 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
             logger.info(user.toString());
             params = updateParamsOnServer(params, processType);
             switch (processType) {
-            case DI_URL_AVAILABILITY_CHECK:
-                if (!user.isSuperAdmin()) {
-                    throw new ServerException("user " + user.getLogin() + ": access denied");
-                }
-                break;
-            case REGISTRARS_URN_NBN_CSV_EXPORT:
-                if (!user.isLoggedUser()) {
-                    throw new ServerException("user " + user.getLogin() + ": access denied");
-                } else {
+                case DI_URL_AVAILABILITY_CHECK:
                     if (!user.isSuperAdmin()) {
-                        checkAccessRights(user.getLogin(), params[2].split(","));
+                        throw new ServerException("user " + user.getLogin() + ": access denied");
                     }
-                }
-                break;
-            // TODO: check acces rights for OAI Adapter and other future processes
-            default:
-                break;
+                    break;
+                case REGISTRARS_URN_NBN_CSV_EXPORT:
+                    if (!user.isLoggedUser()) {
+                        throw new ServerException("user " + user.getLogin() + ": access denied");
+                    } else {
+                        if (!user.isSuperAdmin()) {
+                            checkAccessRights(user.getLogin(), params[2].split(","));
+                        }
+                    }
+                    break;
+                // TODO: check acces rights for OAI Adapter and other future processes
+                default:
+                    break;
             }
             processManager().scheduleNewProcess(user.getLogin(), processType, params);
         } catch (Throwable e) {
@@ -107,47 +99,55 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         return result;
     }
 
-    private String[] updateParamsOnServer(String[] params, ProcessType processType) throws Exception {
+    private String[] updateParamsOnServer(String[] paramsFromClient, ProcessType processType) throws Exception {
         String[] result;
         switch (processType) {
-        case OAI_ADAPTER:
-            String registrarCode = params[0];
-            String registrationMode = params[1];
-            String oaiBaseUrl = params[2];
-            String oaiMetadataprefix = params[3];
-            String oaiSet = params[4];
-            File ddRegistrationXslt = saveTemplateToTempFile(params[5]);
-            File diImportXslt = saveTemplateToTempFile(params[6]);
+            case OAI_ADAPTER:
+                String registrarCode = paramsFromClient[0];
+                String oaiBaseUrl = paramsFromClient[1];
+                String oaiMetadataprefix = paramsFromClient[2];
+                String oaiSet = paramsFromClient[3];
+                File ddRegistrationXslt = saveTemplateToTempFile(paramsFromClient[4]);
+                File diImportXslt = saveTemplateToTempFile(paramsFromClient[5]);
+                Boolean ddRegistrationRegisterDdsWithUrn = Boolean.valueOf(paramsFromClient[6]);
+                Boolean ddRegistrationRegisterDdsWithoutUrn = Boolean.valueOf(paramsFromClient[7]);
+                Boolean diImportMergeDis = Boolean.valueOf(paramsFromClient[8]);
+                Boolean diImportIgnoreDifferenceInAccessibility = Boolean.valueOf(paramsFromClient[9]);
+                Boolean diImportIgnoreDifferenceInFormat = Boolean.valueOf(paramsFromClient[10]);
 
-            result = new String[9];
-            result[0] = getUserLogin();
-            result[1] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
-            result[2] = registrationMode;
-            result[3] = registrarCode;
-            result[4] = oaiBaseUrl;
-            result[5] = oaiMetadataprefix;
-            result[6] = oaiSet;
-            result[7] = ddRegistrationXslt.getAbsolutePath();
-            result[8] = diImportXslt.getAbsolutePath();
-            return result;
-        case REGISTRARS_URN_NBN_CSV_EXPORT:
-            // login and password won't probably be needed here
-            result = new String[params.length + 1];
-            for (int i = 0; i < params.length; i++) {
-                result[i] = params[i];
-            }
-            result[result.length - 1] = CountryCode.getCode();
-            return result;
-        case DI_URL_AVAILABILITY_CHECK:
-            // login and password won't probably be needed here
-            result = new String[params.length + 1];
-            for (int i = 0; i < params.length; i++) {
-                result[i] = params[i];
-            }
-            result[result.length - 1] = CountryCode.getCode();
-            return result;
-        default:
-            return params;
+                result = new String[12];
+                result[0] = registrarCode;
+                result[1] = getUserLogin();
+                result[2] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
+                result[3] = oaiBaseUrl;
+                result[4] = oaiMetadataprefix;
+                result[5] = oaiSet;
+                result[6] = ddRegistrationXslt.getAbsolutePath();
+                result[7] = diImportXslt.getAbsolutePath();
+                result[8] = ddRegistrationRegisterDdsWithUrn.toString();
+                result[9] = ddRegistrationRegisterDdsWithoutUrn.toString();
+                result[10] = diImportMergeDis.toString();
+                result[11] = diImportIgnoreDifferenceInAccessibility.toString();
+                result[12] = diImportIgnoreDifferenceInFormat.toString();
+                return result;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                // login and password won't probably be needed here
+                result = new String[paramsFromClient.length + 1];
+                for (int i = 0; i < paramsFromClient.length; i++) {
+                    result[i] = paramsFromClient[i];
+                }
+                result[result.length - 1] = CountryCode.getCode();
+                return result;
+            case DI_URL_AVAILABILITY_CHECK:
+                // login and password won't probably be needed here
+                result = new String[paramsFromClient.length + 1];
+                for (int i = 0; i < paramsFromClient.length; i++) {
+                    result[i] = paramsFromClient[i];
+                }
+                result[result.length - 1] = CountryCode.getCode();
+                return result;
+            default:
+                return paramsFromClient;
         }
 
     }
@@ -282,12 +282,12 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
     private XmlTransformationType transformType(XmlTransformationDTOType original) {
         switch (original) {
-        case DIGITAL_DOCUMENT_REGISTRATION:
-            return XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION;
-        case DIGITAL_INSTANCE_IMPORT:
-            return XmlTransformationType.DIGITAL_INSTANCE_IMPORT;
-        default:
-            return null;
+            case DIGITAL_DOCUMENT_REGISTRATION:
+                return XmlTransformationType.DIGITAL_DOCUMENT_REGISTRATION;
+            case DIGITAL_INSTANCE_IMPORT:
+                return XmlTransformationType.DIGITAL_INSTANCE_IMPORT;
+            default:
+                return null;
         }
     }
 
@@ -332,12 +332,12 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
     private XmlTransformationDTOType transformTypeToDto(XmlTransformationType original) {
         switch (original) {
-        case DIGITAL_DOCUMENT_REGISTRATION:
-            return XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION;
-        case DIGITAL_INSTANCE_IMPORT:
-            return XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT;
-        default:
-            return null;
+            case DIGITAL_DOCUMENT_REGISTRATION:
+                return XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION;
+            case DIGITAL_INSTANCE_IMPORT:
+                return XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT;
+            default:
+                return null;
         }
     }
 
