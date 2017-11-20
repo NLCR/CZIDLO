@@ -26,10 +26,17 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
     private final List<XmlTransformationDTO> diImportTemplates;
     private XmlTransformationDTO selectedDdRegistrationTemplate;
     private XmlTransformationDTO selectedDiImportTemplate;
-    
+
     private TextBox oaiBaseUrlTextBox;
     private TextBox oaiMetadataPrefixTextBox;
     private TextBox oaiSetTtextBox;
+
+    private CheckBox registerDDsWithUrnCheckbox;
+    private CheckBox registerDDsWithoutUrnCheckbox;
+
+    private CheckBox diImportMergeDisCheckbox;
+    private CheckBox diImportIgnoreDifferenceInAccessibilityCheckbox;
+    private CheckBox diImportIgnoreDifferenceInFormatCheckbox;
 
     private final Label errorLabel = errorLabel(320);
     private RegistrarDTO selectedRegistrar;
@@ -80,10 +87,40 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
         result.add(insertOaiBasUrlPanel());
         result.add(insertOaiMetadataPrefixPanel());
         result.add(selectOaiSetPanel());
-        result.add(selectDdRegistrationPanel());
-        result.add(selectDiImportPanel());
+        result.add(selectDdRegistrationXsltPanel());
+        result.add(selectDiImportXsltPanel());
+        result.add(registerDdPanel());
+        result.add(importDiPanel());
         result.add(buttonsPanel());
         result.add(errorLabel);
+        return result;
+    }
+
+    private Panel importDiPanel() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.setSpacing(5);
+        diImportMergeDisCheckbox = new CheckBox(constants.processOaiAdapterDiImportMergDis());
+        diImportMergeDisCheckbox.setChecked(true);
+        result.add(diImportMergeDisCheckbox);
+        diImportIgnoreDifferenceInAccessibilityCheckbox = new CheckBox(constants.processOaiAdapterDiImportIgnoreDifferenceInAccessibility());
+        diImportIgnoreDifferenceInAccessibilityCheckbox.setChecked(true);
+        result.add(diImportIgnoreDifferenceInAccessibilityCheckbox);
+        diImportIgnoreDifferenceInFormatCheckbox = new CheckBox(constants.processOaiAdapterDiImportIgnoreDifferenceInFormat());
+        diImportIgnoreDifferenceInFormatCheckbox.setChecked(true);
+        result.add(diImportIgnoreDifferenceInFormatCheckbox);
+        return result;
+    }
+
+    private Panel registerDdPanel() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.setSpacing(5);
+        result.add(new Label(constants.processOaiAdapterRegisterDDs() + SEPARATOR));
+        registerDDsWithUrnCheckbox = new CheckBox(constants.processOaiAdapterRegisterDDsWithUrn());
+        registerDDsWithUrnCheckbox.setChecked(true);
+        result.add(registerDDsWithUrnCheckbox);
+        registerDDsWithoutUrnCheckbox = new CheckBox(constants.processOaiAdapterRegisterDDsWithoutUrn());
+        registerDDsWithoutUrnCheckbox.setChecked(false);
+        result.add(registerDDsWithoutUrnCheckbox);
         return result;
     }
 
@@ -122,7 +159,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
         return result;
     }
 
-    private Panel selectDdRegistrationPanel() {
+    private Panel selectDdRegistrationXsltPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
         result.add(new Label(constants.processOaiAdapterDdRegistrationTransformation() + SEPARATOR));
@@ -149,7 +186,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
         return result;
     }
 
-    private Widget selectDiImportPanel() {
+    private Widget selectDiImportXsltPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
         result.add(new Label(constants.processOaiAdapterDiImportTransformation() + SEPARATOR));
@@ -219,12 +256,11 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
                             oaiSet,
                             ddRegistrationTemplateId,
                             diImportTemplateId,
-                            // TODO: 16.11.17 checkboxes for these
-                            Boolean.FALSE.toString(), //ddRegistrationRegisterDdsWithUrn
-                            Boolean.FALSE.toString(), //ddRegistrationRegisterDdsWithoutUrn
-                            Boolean.FALSE.toString(), //diImportMergeDis
-                            Boolean.TRUE.toString(), //diImportIgnoreDifferenceInAccessibility
-                            Boolean.TRUE.toString() //diImportIgnoreDifferenceInFormat
+                            registerDDsWithUrnCheckbox.getValue().toString(),
+                            registerDDsWithoutUrnCheckbox.getValue().toString(),
+                            diImportMergeDisCheckbox.getValue().toString(),
+                            diImportIgnoreDifferenceInAccessibilityCheckbox.getValue().toString(),
+                            diImportIgnoreDifferenceInFormatCheckbox.getValue().toString()
                     };
 
                     processService.scheduleProcess(ProcessDTOType.OAI_ADAPTER, params, new AsyncCallback<Void>() {

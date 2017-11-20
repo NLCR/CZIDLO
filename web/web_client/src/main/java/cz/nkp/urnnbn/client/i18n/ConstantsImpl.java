@@ -356,6 +356,18 @@ public interface ConstantsImpl extends Constants {
 
     String processOaiAdapterDiImportTransformation();
 
+    String processOaiAdapterRegisterDDs();
+
+    String processOaiAdapterRegisterDDsWithUrn();
+
+    String processOaiAdapterRegisterDDsWithoutUrn();
+
+    String processOaiAdapterDiImportMergDis();
+
+    String processOaiAdapterDiImportIgnoreDifferenceInAccessibility();
+
+    String processOaiAdapterDiImportIgnoreDifferenceInFormat();
+
     String processOaiAdapterTransformationsDDRegistrationTitle();
 
     String processOaiAdapterTransformationsDIImportTitle();
@@ -500,5 +512,7 @@ public interface ConstantsImpl extends Constants {
     String chartsRegistrarResolvationsTitle();
 
     String chartsWholeSpan();
+
+
 
 }
