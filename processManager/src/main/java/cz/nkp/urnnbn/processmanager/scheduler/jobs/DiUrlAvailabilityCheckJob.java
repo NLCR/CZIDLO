@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -20,7 +21,6 @@ import org.quartz.JobExecutionException;
 import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.oaiadapter.czidlo.UrnnbnStatus;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob.UrlChecker.Result;
@@ -251,7 +251,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         StringBuilder result = new StringBuilder();
         UrnNbn urnNbn = new UrnNbn(RegistrarCode.valueOf(export.getRegistrarCode()), export.getDocumentCode(), -1L, null);
         result.append('\"').append(urnNbn.toString()).append('\"').append(',');
-        UrnnbnStatus status = export.isUrnActive() ? UrnnbnStatus.ACTIVE : UrnnbnStatus.DEACTIVATED;
+        UrnNbnWithStatus.Status status = export.isUrnActive() ? UrnNbnWithStatus.Status.ACTIVE : UrnNbnWithStatus.Status.DEACTIVATED;
         result.append('\"').append(status.toString()).append('\"').append(',');
         result.append('\"').append(export.getIeType()).append('\"').append(',');
         result.append('\"').append(export.isDiActive()).append('\"').append(',');
