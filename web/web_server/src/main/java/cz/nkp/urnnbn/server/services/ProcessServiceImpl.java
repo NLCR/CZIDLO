@@ -47,13 +47,13 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
     }
 
     @Override
-    public void scheduleProcess(ProcessDTOType type, String[] params) throws ServerException {
+    public void scheduleProcess(ProcessDTOType type, String[] paramsFromClient) throws ServerException {
         try {
             checkNotReadOnlyMode();
             ProcessType processType = new ProcesDtoTypeTransformer(type).transform();
             UserDTO user = getActiveUser();
             logger.info(user.toString());
-            params = updateParamsOnServer(params, processType);
+            String[] processParams = buildProcessParams(paramsFromClient, processType);
             switch (processType) {
                 case DI_URL_AVAILABILITY_CHECK:
                     if (!user.isSuperAdmin()) {
@@ -65,7 +65,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                         throw new ServerException("user " + user.getLogin() + ": access denied");
                     } else {
                         if (!user.isSuperAdmin()) {
-                            checkAccessRights(user.getLogin(), params[2].split(","));
+                            checkAccessRights(user.getLogin(), processParams[2].split(","));
                         }
                     }
                     break;
@@ -73,10 +73,12 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 default:
                     break;
             }
-            processManager().scheduleNewProcess(user.getLogin(), processType, params);
+            processManager().scheduleNewProcess(user.getLogin(), processType, processParams);
         } catch (Throwable e) {
-            logger.log(Level.WARNING, e.getMessage());
-            throw new ServerException(e.getMessage());
+            String message = e.getClass().getName() + ": " + e.getMessage();
+            logger.log(Level.WARNING, message);
+            e.printStackTrace();
+            throw new ServerException(message);
         }
     }
 
@@ -99,7 +101,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         return result;
     }
 
-    private String[] updateParamsOnServer(String[] paramsFromClient, ProcessType processType) throws Exception {
+    private String[] buildProcessParams(String[] paramsFromClient, ProcessType processType) throws Exception {
         String[] result;
         switch (processType) {
             case OAI_ADAPTER:
@@ -115,7 +117,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 Boolean diImportIgnoreDifferenceInAccessibility = Boolean.valueOf(paramsFromClient[9]);
                 Boolean diImportIgnoreDifferenceInFormat = Boolean.valueOf(paramsFromClient[10]);
 
-                result = new String[12];
+                result = new String[13];
                 result[0] = registrarCode;
                 result[1] = getUserLogin();
                 result[2] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
