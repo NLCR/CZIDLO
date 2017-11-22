@@ -246,20 +246,15 @@ public class RegistrarDetailsPanel extends VerticalPanel {
         VerticalPanel result = new VerticalPanel();
         result.setStyleName(css.block());
         // title
-        Label modesHeading = new Label(constants.orderAndVisibility());
+        Label modesHeading = new Label(constants.visibilityTitle());
         modesHeading.setStyleName(css.listHeadingLevel2());
         result.add(modesHeading);
-        // order
-        HorizontalPanel orderPanel = new HorizontalPanel();
-        orderPanel.add(new Label(constants.order() + ":"));
-        orderPanel.add(new HTML("&nbsp"));
-        orderPanel.add(new Label(Long.toString(registrar.getOrder())));
-        result.add(orderPanel);
-        HorizontalPanel hiddenPanel = new HorizontalPanel();
-        hiddenPanel.add(new Label(constants.hidden() + ":"));
-        hiddenPanel.add(new HTML("&nbsp"));
-        hiddenPanel.add(new Label((registrar.isHidden()) ? constants.yes() : constants.no()));
-        result.add(hiddenPanel);
+        //visibility
+        HorizontalPanel visibilityPanel = new HorizontalPanel();
+        visibilityPanel.add(new Label(constants.hidden() + ":"));
+        visibilityPanel.add(new HTML("&nbsp"));
+        visibilityPanel.add(new Label((registrar.isHidden()) ? constants.yes() : constants.no()));
+        result.add(visibilityPanel);
         return result;
     }
 
@@ -287,11 +282,11 @@ public class RegistrarDetailsPanel extends VerticalPanel {
     }
 
     private Button editRegistrarVisiblityAndOrderButton() {
-        return new Button(constants.editOrderAndVisibility(), new ClickHandler() {
+        return new Button(constants.changeVisibility(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                EditArchiverOrderAndVisibilityDialogBox dialogBox = new EditArchiverOrderAndVisibilityDialogBox(RegistrarDetailsPanel.this, registrar);
+                EditArchiverVisibilityDialogBox dialogBox = new EditArchiverVisibilityDialogBox(RegistrarDetailsPanel.this, registrar, true);
                 dialogBox.center();
                 dialogBox.show();
             }

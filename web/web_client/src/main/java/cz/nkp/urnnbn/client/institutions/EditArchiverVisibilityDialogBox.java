@@ -4,31 +4,25 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.forms.institutions.ArchiverVisibilityAndOrderForm;
+import cz.nkp.urnnbn.client.forms.institutions.ArchiverVisibilityForm;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
-public class EditArchiverOrderAndVisibilityDialogBox extends AbstractDialogBox {
+public class EditArchiverVisibilityDialogBox extends AbstractDialogBox {
 
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
     private final RegistrarDetailsPanel superPanel;
-    private final ArchiverVisibilityAndOrderForm archiverForm;
+    private final ArchiverVisibilityForm archiverForm;
     private final Label errorLabel = errorLabel(320);
 
-    public EditArchiverOrderAndVisibilityDialogBox(RegistrarDetailsPanel superPanel, ArchiverDTO archiver) {
+    public EditArchiverVisibilityDialogBox(RegistrarDetailsPanel superPanel, ArchiverDTO archiver, boolean isRegistrar) {
         this.superPanel = superPanel;
-        archiverForm = new ArchiverVisibilityAndOrderForm(archiver);
-        setText(constants.archiver() + " - " + constants.recordAdjustment());
+        archiverForm = new ArchiverVisibilityForm(archiver);
+        setText((isRegistrar ? constants.registrar() : constants.archiver()) + " - " + constants.recordAdjustment());
         setAnimationEnabled(true);
         setWidget(contentPanel());
         center();
@@ -61,7 +55,7 @@ public class EditArchiverOrderAndVisibilityDialogBox extends AbstractDialogBox {
                             if (archiver instanceof RegistrarDTO) {
                                 superPanel.init((RegistrarDTO) archiverForm.getDto());
                             }
-                            EditArchiverOrderAndVisibilityDialogBox.this.hide();
+                            EditArchiverVisibilityDialogBox.this.hide();
                         }
 
                         public void onFailure(Throwable caught) {
@@ -77,7 +71,7 @@ public class EditArchiverOrderAndVisibilityDialogBox extends AbstractDialogBox {
         return new Button(constants.close(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                EditArchiverOrderAndVisibilityDialogBox.this.hide();
+                EditArchiverVisibilityDialogBox.this.hide();
             }
         });
     }

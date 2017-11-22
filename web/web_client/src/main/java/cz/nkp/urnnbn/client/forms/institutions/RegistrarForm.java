@@ -21,7 +21,6 @@ public class RegistrarForm extends Form {
         originalRegistrar.setRegModeByRegistrarAllowed(false);
         originalRegistrar.setRegModeByReservationAllowed(false);
         this.registrarCodeEditable = true;
-        originalRegistrar.setOrder(1L);
         initForm();
     }
 
@@ -63,7 +62,6 @@ public class RegistrarForm extends Form {
         result.setRegModeByReservationAllowed((Boolean) fields.getFieldByKey("modeByReservation").getInsertedValue());
         result.setRegModeByRegistrarAllowed((Boolean) fields.getFieldByKey("modeByRegistrar").getInsertedValue());
         if (originalRegistrar != null) {
-            result.setOrder(originalRegistrar.getOrder());
             result.setHidden(originalRegistrar.isHidden());
         }
         return result;

@@ -17,9 +17,7 @@ public class DtoToArchiverTransformer {
         }
         result.setName(dto.getName());
         result.setDescription(dto.getDescription());
-        result.setOrder(dto.getOrder());
         result.setHidden(dto.isHidden());
-        System.err.println(dto.getOrder());
         return result;
     }
 }

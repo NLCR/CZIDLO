@@ -7,11 +7,11 @@ import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.client.validation.PositiveIntegerValidator;
 
-public class ArchiverVisibilityAndOrderForm extends Form {
+public class ArchiverVisibilityForm extends Form {
 
     private final ArchiverDTO originalArchiver;
 
-    public ArchiverVisibilityAndOrderForm(ArchiverDTO originalArchiver) {
+    public ArchiverVisibilityForm(ArchiverDTO originalArchiver) {
         this.originalArchiver = originalArchiver;
         initForm();
     }
@@ -19,15 +19,12 @@ public class ArchiverVisibilityAndOrderForm extends Form {
     @Override
     public FormFields buildFields() {
         FormFields result = new FormFields();
-        result.addField("order", new TextInputValueField(new PositiveIntegerValidator(), constants.order(), originalArchiver.getOrder().toString(),
-                true));
         result.addField("hidden", new BooleanValueField(constants.hidden(), originalArchiver.isHidden()));
         return result;
     }
 
     @Override
     public ArchiverDTO getDto() {
-        originalArchiver.setOrder(Long.valueOf((String) fields.getFieldByKey("order").getInsertedValue()));
         originalArchiver.setHidden((Boolean) fields.getFieldByKey("hidden").getInsertedValue());
         return originalArchiver;
     }

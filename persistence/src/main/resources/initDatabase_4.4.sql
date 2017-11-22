@@ -1,4 +1,4 @@
-/* SQL script to initialize of database for Resolver in version 4.3 */
+/* SQL script to initialize of database for Resolver in version 4.4 */
   
 /* Drop Indexes */
 
@@ -74,7 +74,6 @@ CREATE TABLE ARCHIVER
 	MODIFIED TIMESTAMP NOT NULL,
 	NAME VARCHAR NOT NULL,
 	DESCRIPTION VARCHAR,
-    ITEM_ORDER NUMERIC DEFAULT 0,
     HIDDEN BOOLEAN DEFAULT false,
 	PRIMARY KEY (ID)
 ) WITHOUT OIDS;

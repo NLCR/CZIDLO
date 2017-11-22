@@ -24,7 +24,6 @@ public interface ArchiverDAO {
     public String ATTR_UPDATED = "modified";
     public String ATTR_NAME = "name";
     public String ATTR_DESCRIPTION = "description";
-    public String ATTR_ORDER = "item_order";
     public String ATTR_HIDDEN = "hidden";
 
     /**

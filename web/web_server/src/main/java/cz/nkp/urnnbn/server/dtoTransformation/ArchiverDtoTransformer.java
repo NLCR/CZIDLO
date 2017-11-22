@@ -21,7 +21,6 @@ public class ArchiverDtoTransformer extends DtoTransformer {
         result.setModifiedMillis(datetTimeToMillisOrNull(original.getModified()));
         result.setName(original.getName());
         result.setDescription(original.getDescription());
-        result.setOrder(original.getOrder());
         result.setHidden(original.isHidden());
         return result;
     }

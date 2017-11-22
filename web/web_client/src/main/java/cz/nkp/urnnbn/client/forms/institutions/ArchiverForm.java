@@ -17,7 +17,6 @@ public class ArchiverForm extends Form {
     public ArchiverForm(ArchiverDTO originalArchiver) {
         if (originalArchiver == null) {
             originalArchiver = new ArchiverDTO();
-            originalArchiver.setOrder(0L);
         }
         this.originalArchiver = originalArchiver;
         initForm();
@@ -39,7 +38,6 @@ public class ArchiverForm extends Form {
         result.setName((String) fields.getFieldByKey("name").getInsertedValue());
         result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
         if (originalArchiver != null) {
-            result.setOrder(originalArchiver.getOrder());
             result.setHidden(originalArchiver.isHidden());
         }
         return result;

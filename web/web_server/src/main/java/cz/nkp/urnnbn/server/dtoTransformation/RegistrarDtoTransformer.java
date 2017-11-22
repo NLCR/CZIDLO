@@ -25,7 +25,6 @@ public class RegistrarDtoTransformer extends DtoTransformer {
         result.setRegModeByRegistrarAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
         result.setRegModeByResolverAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
         result.setRegModeByReservationAllowed(original.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
-        result.setOrder(original.getOrder());
         result.setHidden(original.isHidden());
         return result;
     }

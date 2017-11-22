@@ -1,4 +1,4 @@
-/* SQL script to initialize of database for Resolver in version TODO */
+/* SQL script to initialize of database for Resolver in version 4.2.2 */
   
 /* Drop Indexes */
 

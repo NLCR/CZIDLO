@@ -25,7 +25,6 @@ public class DtoToRegistrarTransformer {
         result.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER, registrar.isRegModeByResolverAllowed());
         result.setRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION, registrar.isRegModeByReservationAllowed());
         result.setHidden(registrar.isHidden());
-        result.setOrder(registrar.getOrder());
         return result;
     }
 }

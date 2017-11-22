@@ -302,7 +302,6 @@ public class InstitutionListPanel extends VerticalPanel {
                     for (int row = 0; row < table.getRowCount(); row++) {
                         CustomHTML<T> widget = (CustomHTML<T>) table.getWidget(row, 0);
                         T archiver = widget.getObject();
-                        archiver.setOrder(Long.valueOf(row + 1));
                         items.add(archiver);
                     }
 

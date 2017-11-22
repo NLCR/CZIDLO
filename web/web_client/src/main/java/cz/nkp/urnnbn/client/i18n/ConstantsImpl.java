@@ -206,7 +206,7 @@ public interface ConstantsImpl extends Constants {
 
     String edit();
 
-    String editOrderAndVisibility();
+    String changeVisibility();
 
     String code();
 
@@ -256,7 +256,7 @@ public interface ConstantsImpl extends Constants {
 
     String showInCatalog();
 
-    String orderAndVisibility();
+    String visibilityTitle();
 
     // URN:NBN registration modes
 
@@ -403,7 +403,6 @@ public interface ConstantsImpl extends Constants {
 
     String logsTabDownloadLogFile();
 
-    String order();
 
     String hidden();
 
