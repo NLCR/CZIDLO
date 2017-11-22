@@ -73,6 +73,7 @@ public class ArchiverDTO implements Serializable {
         this.modifiedMillis = modifiedMillis;
     }
 
+    @Deprecated
     public Long getOrder() {
         return order;
     }

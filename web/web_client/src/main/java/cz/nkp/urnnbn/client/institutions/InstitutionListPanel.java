@@ -1,25 +1,11 @@
 package cz.nkp.urnnbn.client.institutions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.dnd.FlexTableRowDragController;
 import cz.nkp.urnnbn.client.dnd.FlexTableRowDropController;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
@@ -31,6 +17,12 @@ import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Logger;
+
 public class InstitutionListPanel extends VerticalPanel {
 
     private static final Logger logger = Logger.getLogger(InstitutionListPanel.class.getName());
@@ -40,8 +32,8 @@ public class InstitutionListPanel extends VerticalPanel {
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
     private final InstitutionsAdminstrationTab superPanel;
     private final UserDTO user;
-    private ArrayList<RegistrarDTO> registrars = new ArrayList<RegistrarDTO>(0);
-    private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>(0);
+    private ArrayList<RegistrarDTO> registrars = new ArrayList<>(0);
+    private ArrayList<ArchiverDTO> archivers = new ArrayList<>(0);
 
     private static class CustomHTML<T> extends HTML {
 
@@ -76,7 +68,7 @@ public class InstitutionListPanel extends VerticalPanel {
     void loadRegistrars() {
         institutionsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
             public void onSuccess(ArrayList<RegistrarDTO> result) {
-                result = sortByOrder(result);
+                result = sortByName(result);
                 if (!user.isSuperAdmin()) {
                     result = removeHidden(result);
                 }
@@ -100,12 +92,10 @@ public class InstitutionListPanel extends VerticalPanel {
         return result;
     }
 
-    private <T extends ArchiverDTO> ArrayList<T> sortByOrder(ArrayList<T> result) {
+    private <T extends ArchiverDTO> ArrayList<T> sortByName(ArrayList<T> result) {
         Collections.sort(result, new Comparator<ArchiverDTO>() {
             public int compare(ArchiverDTO o1, ArchiverDTO o2) {
-                Long first = o1.getOrder() != null ? o1.getOrder() : 0;
-                Long second = o2.getOrder() != null ? o2.getOrder() : 0;
-                return first.compareTo(second);
+                return o1.getName().compareTo(o2.getName());
             }
         });
         return result;
@@ -116,7 +106,7 @@ public class InstitutionListPanel extends VerticalPanel {
 
             @Override
             public void onSuccess(ArrayList<ArchiverDTO> result) {
-                result = sortByOrder(result);
+                result = sortByName(result);
                 if (!user.isSuperAdmin()) {
                     result = removeHidden(result);
                 }
