@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.accounts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -80,9 +82,19 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
     void reload() {
         clear();
+        sort(registrarsOfUser);
         setText(messages.registrarsAccessRigths(user.getLogin()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
+    }
+
+    private void sort(ArrayList<RegistrarDTO> registrarsOfUser) {
+        Collections.sort(registrarsOfUser, new Comparator<RegistrarDTO>() {
+            @Override
+            public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+                return o1.getCode().compareTo(o2.getCode());
+            }
+        });
     }
 
     private Panel contentPanel() {
@@ -114,6 +126,7 @@ public class UserAccessRightsDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
+                sort(otherRegistrars);
                 new AddRightDialogBox(UserAccessRightsDialogBox.this, user, otherRegistrars).show();
             }
         });
