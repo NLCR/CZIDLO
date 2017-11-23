@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.accounts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -25,7 +27,7 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
 
     private static final Logger LOGGER = Logger.getLogger(UsersAdministrationTab.class.getName());
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private ArrayList<UserDTO> users = new ArrayList<UserDTO>();
+    private ArrayList<UserDTO> users = new ArrayList<>();
 
     public UsersAdministrationTab(TabsPanel superPanel) {
         super(superPanel, "accounts");
@@ -69,7 +71,17 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
         reload();
     }
 
+    private void sort(ArrayList<UserDTO> users) {
+        Collections.sort(users, new Comparator<UserDTO>() {
+            @Override
+            public int compare(UserDTO o1, UserDTO o2) {
+                return o1.getLogin().compareTo(o2.getLogin());
+            }
+        });
+    }
+
     private void reload() {
+        sort(users);
         clear();
         add(contentPanel());
     }
