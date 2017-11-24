@@ -35,8 +35,8 @@ public class ArchiverForm extends Form {
     public ArchiverDTO getDto() {
         ArchiverDTO result = new ArchiverDTO();
         result.setId(originalArchiver.getId());
-        result.setName((String) fields.getFieldByKey("name").getInsertedValue());
-        result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
+        result.setName(getStringFieldValue("name"));
+        result.setDescription(getStringFieldValue("description"));
         if (originalArchiver != null) {
             result.setHidden(originalArchiver.isHidden());
         }

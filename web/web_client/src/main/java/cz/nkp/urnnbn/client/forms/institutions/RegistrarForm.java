@@ -1,14 +1,8 @@
 package cz.nkp.urnnbn.client.forms.institutions;
 
-import cz.nkp.urnnbn.client.forms.BooleanValueField;
-import cz.nkp.urnnbn.client.forms.Field;
-import cz.nkp.urnnbn.client.forms.Form;
-import cz.nkp.urnnbn.client.forms.FormFields;
-import cz.nkp.urnnbn.client.forms.LabelField;
-import cz.nkp.urnnbn.client.forms.TextInputValueField;
-import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.client.validation.IntegerValidator;
+import cz.nkp.urnnbn.client.forms.*;
 import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
 public class RegistrarForm extends Form {
 
@@ -55,12 +49,12 @@ public class RegistrarForm extends Form {
     public RegistrarDTO getDto() {
         RegistrarDTO result = new RegistrarDTO();
         result.setId(originalRegistrar.getId());
-        result.setCode((String) fields.getFieldByKey("code").getInsertedValue());
-        result.setName((String) fields.getFieldByKey("name").getInsertedValue());
-        result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
-        result.setRegModeByResolverAllowed((Boolean) fields.getFieldByKey("modeByResolver").getInsertedValue());
-        result.setRegModeByReservationAllowed((Boolean) fields.getFieldByKey("modeByReservation").getInsertedValue());
-        result.setRegModeByRegistrarAllowed((Boolean) fields.getFieldByKey("modeByRegistrar").getInsertedValue());
+        result.setCode(getStringFieldValue("code"));
+        result.setName(getStringFieldValue("name"));
+        result.setDescription(getStringFieldValue("description"));
+        result.setRegModeByResolverAllowed(getBooleanFieldValue("modeByResolver"));
+        result.setRegModeByReservationAllowed(getBooleanFieldValue("modeByReservation"));
+        result.setRegModeByRegistrarAllowed(getBooleanFieldValue("modeByRegistrar"));
         if (originalRegistrar != null) {
             result.setHidden(originalRegistrar.isHidden());
         }

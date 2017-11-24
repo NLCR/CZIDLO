@@ -60,22 +60,22 @@ public class SourceDocumentForm extends Form {
     @Override
     public SourceDocumentDTO getDto() {
         SourceDocumentDTO result = new SourceDocumentDTO();
-        result.setTitle((String) fields.getFieldByKey("title").getInsertedValue());
-        result.setVolumeTitle((String) fields.getFieldByKey("volumeTitle").getInsertedValue());
-        result.setIssueTitle((String) fields.getFieldByKey("issueTitle").getInsertedValue());
-        result.setCcnb((String) fields.getFieldByKey("ccnb").getInsertedValue());
-        result.setIsbn((String) fields.getFieldByKey("isbn").getInsertedValue());
-        result.setIssn((String) fields.getFieldByKey("issn").getInsertedValue());
-        result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
+        result.setTitle(getStringFieldValue("title"));
+        result.setVolumeTitle(getStringFieldValue("volumeTitle"));
+        result.setIssueTitle(getStringFieldValue("issueTitle"));
+        result.setCcnb(getStringFieldValue("ccnb"));
+        result.setIsbn(getStringFieldValue("isbn"));
+        result.setIssn(getStringFieldValue("issn"));
+        result.setOtherId(getStringFieldValue("otherId"));
         result.setPublication(publicationFromForm());
         return result;
     }
 
     private PublicationDTO publicationFromForm() {
         PublicationDTO result = new PublicationDTO();
-        result.setPublisher((String) fields.getFieldByKey("publisher").getInsertedValue());
-        result.setPublicationPlace((String) fields.getFieldByKey("pubPlace").getInsertedValue());
-        String yearStr = (String) fields.getFieldByKey("pubYear").getInsertedValue();
+        result.setPublisher(getStringFieldValue("publisher"));
+        result.setPublicationPlace(getStringFieldValue("pubPlace"));
+        String yearStr = getStringFieldValue("pubYear");
         if (yearStr != null) {
             result.setPublicationYear(Integer.valueOf(yearStr));
         }

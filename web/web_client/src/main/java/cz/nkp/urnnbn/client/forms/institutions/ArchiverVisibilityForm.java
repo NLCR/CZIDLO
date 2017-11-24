@@ -3,9 +3,7 @@ package cz.nkp.urnnbn.client.forms.institutions;
 import cz.nkp.urnnbn.client.forms.BooleanValueField;
 import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
-import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
-import cz.nkp.urnnbn.client.validation.PositiveIntegerValidator;
 
 public class ArchiverVisibilityForm extends Form {
 
@@ -25,7 +23,7 @@ public class ArchiverVisibilityForm extends Form {
 
     @Override
     public ArchiverDTO getDto() {
-        originalArchiver.setHidden((Boolean) fields.getFieldByKey("hidden").getInsertedValue());
+        originalArchiver.setHidden(getBooleanFieldValue("hidden"));
         return originalArchiver;
     }
 

@@ -17,6 +17,9 @@ ALTER TABLE ARCHIVER DROP COLUMN ITEM_ORDER;
 UPDATE ARCHIVER SET name=replace(name,chr(9),' ') WHERE name LIKE e'%\t%';
 UPDATE ARCHIVER SET name=trim(name) WHERE name LIKE '\ %' OR name LIKE '%\ ';
 
+UPDATE ARCHIVER SET description=replace(description,chr(9),' ') WHERE description LIKE e'%\t%';
+UPDATE ARCHIVER SET description=trim(description) WHERE description LIKE '\ %' OR description LIKE '%\ ';
+
 UPDATE IEIDENTIFIER SET idvalue=replace(idvalue,chr(9),' ') WHERE idvalue LIKE e'%\t%';
 UPDATE IEIDENTIFIER SET idvalue=trim(idvalue) WHERE idvalue LIKE '\ %' OR idvalue LIKE '%\ ';
 

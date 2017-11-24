@@ -4,9 +4,9 @@ import cz.nkp.urnnbn.client.forms.BooleanValueField;
 import cz.nkp.urnnbn.client.forms.Field;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.PrimaryOriginatorDTO;
-import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 
 public class AnalyticalForm extends IntelectualEntityForm {
 
@@ -45,12 +45,12 @@ public class AnalyticalForm extends IntelectualEntityForm {
     public AnalyticalDTO getDto() {
         AnalyticalDTO result = new AnalyticalDTO();
         result.setId(dto.getId());
-        result.setTitle((String) fields.getFieldByKey("title").getInsertedValue());
-        result.setSubTitle((String) fields.getFieldByKey("subTitle").getInsertedValue());
-        result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
-        result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
-        result.setDigitalBorn((Boolean) (fields.getFieldByKey("digitalBorn").getInsertedValue()));
-        result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
+        result.setTitle(getStringFieldValue("title"));
+        result.setSubTitle(getStringFieldValue("subTitle"));
+        result.setOtherId(getStringFieldValue("otherId"));
+        result.setDocumentType(getStringFieldValue("docType"));
+        result.setDigitalBorn(getBooleanFieldValue("digitalBorn"));
+        result.setOtherOriginator(getStringFieldValue("otherOriginator"));
         setPrimaryOriginatorFromFormFields(result);
         return result;
     }

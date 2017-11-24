@@ -28,9 +28,9 @@ public abstract class PublishableEntityForm extends IntelectualEntityForm {
 
     void setPublicationDataFromFormFields(PublishableEntityDTO result) {
         PublicationDTO publication = new PublicationDTO();
-        publication.setPublisher((String) fields.getFieldByKey("publisher").getInsertedValue());
-        publication.setPublicationPlace((String) fields.getFieldByKey("pubPlace").getInsertedValue());
-        String yearStr = (String) fields.getFieldByKey("pubYear").getInsertedValue();
+        publication.setPublisher(getStringFieldValue("publisher"));
+        publication.setPublicationPlace(getStringFieldValue("pubPlace"));
+        String yearStr = getStringFieldValue("pubYear");
         if (yearStr != null) {
             publication.setPublicationYear(Integer.valueOf(yearStr));
         }

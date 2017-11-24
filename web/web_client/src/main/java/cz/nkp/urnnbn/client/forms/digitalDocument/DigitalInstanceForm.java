@@ -42,9 +42,9 @@ public class DigitalInstanceForm extends Form {
         DigitalInstanceDTO result = new DigitalInstanceDTO();
         result.setId(originalDto.getId());
         result.setLibrary((DigitalLibraryDTO) fields.getFieldByKey("library").getInsertedValue());
-        result.setFormat((String) fields.getFieldByKey("format").getInsertedValue());
-        result.setAccessibility((String) fields.getFieldByKey("access").getInsertedValue());
-        result.setUrl((String) fields.getFieldByKey("url").getInsertedValue());
+        result.setFormat(getStringFieldValue("format"));
+        result.setAccessibility(getStringFieldValue("access"));
+        result.setUrl(getStringFieldValue("url"));
         result.setActive(true);
         return result;
     }

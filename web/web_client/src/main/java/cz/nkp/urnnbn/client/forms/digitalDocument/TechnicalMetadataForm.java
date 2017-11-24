@@ -77,18 +77,18 @@ public class TechnicalMetadataForm extends Form {
     @Override
     public TechnicalMetadataDTO getDto() {
         TechnicalMetadataDTO result = new TechnicalMetadataDTO();
-        result.setFormat((String) fields.getFieldByKey("format").getInsertedValue());
-        result.setFormatVersion((String) fields.getFieldByKey("formatVersion").getInsertedValue());
-        result.setExtent((String) fields.getFieldByKey("extent").getInsertedValue());
-        result.setResolutionHorizontal((Integer) fields.getFieldByKey("resHorizontal").getInsertedValue());
-        result.setResolutionVertical((Integer) fields.getFieldByKey("resVertical").getInsertedValue());
-        result.setCompression((String) fields.getFieldByKey("compression").getInsertedValue());
-        result.setCompressionRatio((Double) fields.getFieldByKey("compressionRatio").getInsertedValue());
-        result.setColorModel((String) fields.getFieldByKey("colorModel").getInsertedValue());
-        result.setColorDepth((Integer) fields.getFieldByKey("colorDepth").getInsertedValue());
-        result.setIccProfile((String) fields.getFieldByKey("iccProfile").getInsertedValue());
-        result.setPictureWidth((Integer) fields.getFieldByKey("picWidth").getInsertedValue());
-        result.setPictureHeight((Integer) fields.getFieldByKey("picHeight").getInsertedValue());
+        result.setFormat(getStringFieldValue("format"));
+        result.setFormatVersion(getStringFieldValue("formatVersion"));
+        result.setExtent(getStringFieldValue("extent"));
+        result.setResolutionHorizontal(getIntegerFieldValue("resHorizontal"));
+        result.setResolutionVertical(getIntegerFieldValue("resVertical"));
+        result.setCompression(getStringFieldValue("compression"));
+        result.setCompressionRatio(getDoubleFieldValue("compressionRatio"));
+        result.setColorModel(getStringFieldValue("colorModel"));
+        result.setColorDepth(getIntegerFieldValue("colorDepth"));
+        result.setIccProfile(getStringFieldValue("iccProfile"));
+        result.setPictureWidth(getIntegerFieldValue("picWidth"));
+        result.setPictureHeight(getIntegerFieldValue("picHeight"));
         return result;
     }
 }

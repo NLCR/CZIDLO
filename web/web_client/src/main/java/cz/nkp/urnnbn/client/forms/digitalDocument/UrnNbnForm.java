@@ -33,7 +33,7 @@ public class UrnNbnForm extends Form {
 
     @Override
     public UrnNbnDTO getDto() {
-        String documentCode = (String) fields.getFieldByKey("urnNbn").getInsertedValue();
+        String documentCode = getStringFieldValue("urnNbn");
         return new UrnNbnDTO(countryCode, registrar.getCode(), documentCode, null, true, null, null, null, null, null, null, null);
     }
 }

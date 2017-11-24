@@ -54,15 +54,15 @@ public class PeriodicalIssueForm extends PublishableEntityForm {
     public PeriodicalIssueDTO getDto() {
         PeriodicalIssueDTO result = new PeriodicalIssueDTO();
         result.setId(dto.getId());
-        result.setPeriodicalTitle((String) fields.getFieldByKey("periodicalTitle").getInsertedValue());
-        result.setVolumeTitle((String) fields.getFieldByKey("volumeTitle").getInsertedValue());
-        result.setIssueTitle((String) fields.getFieldByKey("issueTitle").getInsertedValue());
-        result.setCcnb((String) fields.getFieldByKey("ccnb").getInsertedValue());
-        result.setIssn((String) fields.getFieldByKey("issn").getInsertedValue());
-        result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
-        result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
-        result.setDigitalBorn((Boolean) (fields.getFieldByKey("digitalBorn").getInsertedValue()));
-        result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
+        result.setPeriodicalTitle(getStringFieldValue("periodicalTitle"));
+        result.setVolumeTitle(getStringFieldValue("volumeTitle"));
+        result.setIssueTitle(getStringFieldValue("issueTitle"));
+        result.setCcnb(getStringFieldValue("ccnb"));
+        result.setIssn(getStringFieldValue("issn"));
+        result.setOtherId(getStringFieldValue("otherId"));
+        result.setDocumentType(getStringFieldValue("docType"));
+        result.setDigitalBorn(getBooleanFieldValue("digitalBorn"));
+        result.setOtherOriginator(getStringFieldValue("otherOriginator"));
         setPublicationDataFromFormFields(result);
         setPrimaryOriginatorFromFormFields(result);
         return result;

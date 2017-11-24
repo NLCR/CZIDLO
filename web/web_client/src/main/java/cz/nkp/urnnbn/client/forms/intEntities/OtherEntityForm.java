@@ -53,14 +53,14 @@ public class OtherEntityForm extends PublishableEntityForm {
     public OtherEntityDTO getDto() {
         OtherEntityDTO result = new OtherEntityDTO();
         result.setId(dto.getId());
-        result.setTitle((String) fields.getFieldByKey("title").getInsertedValue());
-        result.setSubTitle((String) fields.getFieldByKey("subTitle").getInsertedValue());
-        result.setCcnb((String) fields.getFieldByKey("ccnb").getInsertedValue());
-        result.setIsbn((String) fields.getFieldByKey("isbn").getInsertedValue());
-        result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
-        result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
-        result.setDigitalBorn((Boolean) (fields.getFieldByKey("digitalBorn").getInsertedValue()));
-        result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
+        result.setTitle(getStringFieldValue("title"));
+        result.setSubTitle(getStringFieldValue("subTitle"));
+        result.setCcnb(getStringFieldValue("ccnb"));
+        result.setIsbn(getStringFieldValue("isbn"));
+        result.setOtherId(getStringFieldValue("otherId"));
+        result.setDocumentType(getStringFieldValue("docType"));
+        result.setDigitalBorn(getBooleanFieldValue("digitalBorn"));
+        result.setOtherOriginator(getStringFieldValue("otherOriginator"));
         setPublicationDataFromFormFields(result);
         setPrimaryOriginatorFromFormFields(result);
         return result;

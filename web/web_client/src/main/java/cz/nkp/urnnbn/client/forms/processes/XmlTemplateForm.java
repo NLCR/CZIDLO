@@ -31,9 +31,9 @@ public class XmlTemplateForm extends Form {
     public XmlTransformationDTO getDto() {
         XmlTransformationDTO result = new XmlTransformationDTO();
         result.setType(type);
-        result.setName((String) fields.getFieldByKey("name").getInsertedValue());
-        result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
-        result.setTemplateTemporaryFile((String) fields.getFieldByKey("file").getInsertedValue());
+        result.setName(getStringFieldValue("name"));
+        result.setDescription(getStringFieldValue("description"));
+        result.setTemplateTemporaryFile(getStringFieldValue("file"));
         return result;
     }
 

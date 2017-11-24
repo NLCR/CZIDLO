@@ -58,13 +58,12 @@ public class UserDetailsForm extends Form {
     public UserDTO getDto() {
         UserDTO result = new UserDTO();
         result.setId(originalUser.getId());
-        result.setLogin((String) fields.getFieldByKey("login").getInsertedValue());
+        result.setLogin(getStringFieldValue("login"));
         if (!editForm) {
-            result.setPassword((String) fields.getFieldByKey("password").getInsertedValue());
+            result.setPassword(getStringFieldValue("password"));
         }
-        result.setEmail((String) fields.getFieldByKey("email").getInsertedValue());
-
-        Boolean isAdmin = (Boolean) fields.getFieldByKey("admin").getInsertedValue();
+        result.setEmail(getStringFieldValue("email"));
+        Boolean isAdmin = getBooleanFieldValue("admin");
         if (isAdmin == null || isAdmin == false) {
             result.setRole(ROLE.ADMIN);
         } else {

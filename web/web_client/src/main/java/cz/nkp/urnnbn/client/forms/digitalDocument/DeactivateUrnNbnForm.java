@@ -25,7 +25,7 @@ public class DeactivateUrnNbnForm extends Form {
 
     @Override
     public UrnNbnDTO getDto() {
-        String deactivationNote = (String) fields.getFieldByKey("deactivationNote").getInsertedValue();
+        String deactivationNote = getStringFieldValue("deactivationNote");
         return new UrnNbnDTO(originalDto.getCountryCode(), originalDto.getRegistrarCode(), originalDto.getDocumentCode(), originalDto.getDigdocId(),
                 originalDto.isActive(), null, null, null, null, null, null, deactivationNote);
     }

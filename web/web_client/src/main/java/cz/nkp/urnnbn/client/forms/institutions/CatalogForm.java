@@ -41,9 +41,9 @@ public class CatalogForm extends Form {
         CatalogDTO result = new CatalogDTO();
         result.setId(catalog.getId());
         result.setRegistrarId(catalog.getRegistrarId());
-        result.setName((String) fields.getFieldByKey("name").getInsertedValue());
-        result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
-        result.setUrlPrefix((String) fields.getFieldByKey("urlPrefix").getInsertedValue());
+        result.setName(getStringFieldValue("name"));
+        result.setDescription(getStringFieldValue("description"));
+        result.setUrlPrefix(getStringFieldValue("urlPrefix"));
         return result;
     }
 }

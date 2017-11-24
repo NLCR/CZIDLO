@@ -40,9 +40,9 @@ public class DigitalLibraryForm extends Form {
     public DigitalLibraryDTO getDto() {
         DigitalLibraryDTO result = new DigitalLibraryDTO();
         result.setId(originalLibrary.getId());
-        result.setName((String) fields.getFieldByKey("name").getInsertedValue());
-        result.setDescription((String) fields.getFieldByKey("description").getInsertedValue());
-        result.setUrl((String) fields.getFieldByKey("url").getInsertedValue());
+        result.setName(getStringFieldValue("name"));
+        result.setDescription(getStringFieldValue("description"));
+        result.setUrl(getStringFieldValue("url"));
         return result;
     }
 

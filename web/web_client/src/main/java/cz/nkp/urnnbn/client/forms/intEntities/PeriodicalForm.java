@@ -52,14 +52,14 @@ public class PeriodicalForm extends PublishableEntityForm {
     public PeriodicalDTO getDto() {
         PeriodicalDTO result = new PeriodicalDTO();
         result.setId(dto.getId());
-        result.setTitle((String) fields.getFieldByKey("title").getInsertedValue());
-        result.setSubTitle((String) fields.getFieldByKey("subTitle").getInsertedValue());
-        result.setCcnb((String) fields.getFieldByKey("ccnb").getInsertedValue());
-        result.setIssn((String) fields.getFieldByKey("issn").getInsertedValue());
-        result.setOtherId((String) fields.getFieldByKey("otherId").getInsertedValue());
-        result.setDocumentType((String) fields.getFieldByKey("docType").getInsertedValue());
-        result.setDigitalBorn((Boolean) (fields.getFieldByKey("digitalBorn").getInsertedValue()));
-        result.setOtherOriginator((String) fields.getFieldByKey("otherOriginator").getInsertedValue());
+        result.setTitle(getStringFieldValue("title"));
+        result.setSubTitle(getStringFieldValue("subTitle"));
+        result.setCcnb(getStringFieldValue("ccnb"));
+        result.setIssn(getStringFieldValue("issn"));
+        result.setOtherId(getStringFieldValue("otherId"));
+        result.setDocumentType(getStringFieldValue("docType"));
+        result.setDigitalBorn(getBooleanFieldValue("digitalBorn"));
+        result.setOtherOriginator(getStringFieldValue("otherOriginator"));
         setPublicationDataFromFormFields(result);
         setPrimaryOriginatorFromFormFields(result);
         return result;
