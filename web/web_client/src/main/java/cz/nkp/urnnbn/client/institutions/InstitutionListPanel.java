@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.CzechStringComparator;
 import cz.nkp.urnnbn.client.dnd.FlexTableRowDragController;
 import cz.nkp.urnnbn.client.dnd.FlexTableRowDropController;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
@@ -68,11 +69,10 @@ public class InstitutionListPanel extends VerticalPanel {
     void loadRegistrars() {
         institutionsService.getAllRegistrars(new AsyncCallback<ArrayList<RegistrarDTO>>() {
             public void onSuccess(ArrayList<RegistrarDTO> result) {
-                result = sortByName(result);
                 if (!user.isSuperAdmin()) {
                     result = removeHidden(result);
                 }
-                registrars = result;
+                registrars = sortByName(result);
                 reload();
             }
 
@@ -94,8 +94,10 @@ public class InstitutionListPanel extends VerticalPanel {
 
     private <T extends ArchiverDTO> ArrayList<T> sortByName(ArrayList<T> result) {
         Collections.sort(result, new Comparator<ArchiverDTO>() {
+            private final CzechStringComparator stringComparator = new CzechStringComparator();
+
             public int compare(ArchiverDTO o1, ArchiverDTO o2) {
-                return o1.getName().compareTo(o2.getName());
+                return stringComparator.compare(o1.getName(), o2.getName());
             }
         });
         return result;
@@ -106,11 +108,10 @@ public class InstitutionListPanel extends VerticalPanel {
 
             @Override
             public void onSuccess(ArrayList<ArchiverDTO> result) {
-                result = sortByName(result);
                 if (!user.isSuperAdmin()) {
                     result = removeHidden(result);
                 }
-                archivers = result;
+                archivers = sortByName(result);
                 reload();
             }
 
