@@ -22,8 +22,6 @@
     <inherits name="cz.nkp.urnnbn.web_shared" />
     <inherits name="cz.nkp.urnnbn.web_server" />
 
-    <inherits name='gwtquery.plugins.droppable.Droppable' />
-    <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />
     <inherits name="com.googlecode.gwt.charts.Charts" />
 
 

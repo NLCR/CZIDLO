@@ -1,14 +1,20 @@
 package cz.nkp.urnnbn.client.institutions;
 
+import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import com.google.gwt.view.client.ListDataProvider;
 import cz.nkp.urnnbn.client.CzechStringComparator;
-import cz.nkp.urnnbn.client.dnd.FlexTableRowDragController;
-import cz.nkp.urnnbn.client.dnd.FlexTableRowDropController;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InstitutionsPanelCss;
@@ -18,10 +24,7 @@ import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class InstitutionListPanel extends VerticalPanel {
@@ -132,7 +135,7 @@ public class InstitutionListPanel extends VerticalPanel {
         VerticalPanel result = new VerticalPanel();
         result.setStyleName(css.block());
         result.add(registrarsHeading());
-        result.add(registrarsGrid());
+        result.add(buildRegistrarsGrid());
         if (user.isSuperAdmin()) {
             result.add(addRegistrarButton());
         }
@@ -143,7 +146,7 @@ public class InstitutionListPanel extends VerticalPanel {
         VerticalPanel result = new VerticalPanel();
         result.setStyleName(css.block());
         result.add(archiversHeading());
-        result.add(archiversGrid());
+        result.add(buildArchiversGrid());
         if (user.isSuperAdmin()) {
             result.add(addArchiverButton());
         }
@@ -156,30 +159,35 @@ public class InstitutionListPanel extends VerticalPanel {
         return label;
     }
 
+    @Deprecated
     private Button registrarDeleteButton(final RegistrarDTO registrar) {
         return new Button(constants.delete(), new ClickHandler() {
-
             @Override
-            public void onClick(ClickEvent event) {
-                if (Window.confirm(messages.confirmDeleteRegistrar(registrar.getName()))) {
-                    institutionsService.deleteRegistrar(registrar, new AsyncCallback<Void>() {
-
-                        @Override
-                        public void onSuccess(Void result) {
-                            registrars.remove(registrar);
-                            reload();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            Window.alert(messages.registrarCannotBeDeleted(registrar.getName()) + ": " + caught.getMessage());
-                        }
-                    });
-                }
+            public void onClick(ClickEvent clickEvent) {
+                deleteRegistrar(registrar);
             }
         });
     }
 
+    private void deleteRegistrar(final RegistrarDTO registrar) {
+        if (Window.confirm(messages.confirmDeleteRegistrar(registrar.getName()))) {
+            institutionsService.deleteRegistrar(registrar, new AsyncCallback<Void>() {
+
+                @Override
+                public void onSuccess(Void result) {
+                    registrars.remove(registrar);
+                    reload();
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert(messages.registrarCannotBeDeleted(registrar.getName()) + ": " + caught.getMessage());
+                }
+            });
+        }
+    }
+
+    @Deprecated
     private Button registrarDetailsButton(final RegistrarDTO registrar) {
         return new Button(constants.details(), new ClickHandler() {
 
@@ -247,37 +255,172 @@ public class InstitutionListPanel extends VerticalPanel {
         }
     }
 
-    private class RegistrarsGridHelper implements GridHelper<RegistrarDTO> {
+    private AbsolutePanel buildRegistrarGrid(List<RegistrarDTO> registrars) {
+        final AbsolutePanel panel = new AbsolutePanel();
+        CellTable<RegistrarDTO> table = new CellTable<>();
+        table.setPageSize(registrars.size());
 
-        public Button createDetailsButton(RegistrarDTO item) {
-            return registrarDetailsButton(item);
+        //DATA
+        //name
+        TextColumn<RegistrarDTO> nameColumn = new TextColumn<RegistrarDTO>() {
+            @Override
+            public String getValue(RegistrarDTO object) {
+                return object.getName();
+            }
+        };
+        table.addColumn(nameColumn, constants.title());
+        //code
+        TextColumn<RegistrarDTO> codeColumn = new TextColumn<RegistrarDTO>() {
+            @Override
+            public String getValue(RegistrarDTO registrar) {
+                return registrar.getCode();
+            }
+        };
+        table.addColumn(codeColumn, constants.code());
+
+        //ACTIONS
+        //details button
+        List<HasCell<RegistrarDTO, ?>> actionCells = new LinkedList<>();
+        actionCells.add(new RegistrarActionHasCell(constants.details(), new ActionCell.Delegate<RegistrarDTO>() {
+
+            @Override
+            public void execute(RegistrarDTO object) {
+                superPanel.showRegistrarDetails(object);
+            }
+        }));
+        //delete button
+        if (user.isSuperAdmin()) {
+            actionCells.add(new RegistrarActionHasCell(constants.delete(), new ActionCell.Delegate<RegistrarDTO>() {
+
+                @Override
+                public void execute(RegistrarDTO object) {
+                    deleteRegistrar(object);
+                }
+            }));
         }
+        CompositeCell<RegistrarDTO> actionsCell = new CompositeCell<>(actionCells);
+        Column<RegistrarDTO, RegistrarDTO> actionsColumn = new Column<RegistrarDTO, RegistrarDTO>(actionsCell) {
 
-        public Button createEditButton(RegistrarDTO item) {
-            return null;
-        }
+            @Override
+            public RegistrarDTO getValue(RegistrarDTO object) {
+                return object;
+            }
+        };
+        table.addColumn(actionsColumn);
 
-        public Button createDeleteButton(RegistrarDTO item) {
-            return registrarDeleteButton(item);
-        }
+        // Data provider.
+        ListDataProvider<RegistrarDTO> dataProvider = new ListDataProvider<>(registrars);
+        dataProvider.addDataDisplay(table);
 
-        public void update(List<RegistrarDTO> items, AsyncCallback<Void> callBack) {
-            institutionsService.updateRegistrars(items, callBack);
-        }
+        // Sorting
+        ColumnSortEvent.ListHandler<RegistrarDTO> columnSortHandler = new ColumnSortEvent.ListHandler<>(dataProvider.getList());
+        nameColumn.setSortable(true);
+        codeColumn.setSortable(true);
+        columnSortHandler.setComparator(nameColumn, new Comparator<RegistrarDTO>() {
+            CzechStringComparator stringComparator = new CzechStringComparator();
 
+            public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+                return stringComparator.compare(o1.getName(), o2.getName());
+            }
+        });
+        codeColumn.setSortable(true);
+        columnSortHandler.setComparator(codeColumn, new Comparator<RegistrarDTO>() {
+            public int compare(RegistrarDTO first, RegistrarDTO second) {
+                return first.getCode().compareTo(second.getCode());
+            }
+        });
+        table.addColumnSortHandler(columnSortHandler);
+        // By default sorted by name
+        table.getColumnSortList().push(nameColumn);
+
+        panel.add(table);
+        return panel;
     }
+
+    private AbsolutePanel buildArchiverGrid(ArrayList<ArchiverDTO> archivers) {
+        final AbsolutePanel panel = new AbsolutePanel();
+        CellTable<ArchiverDTO> table = new CellTable<>();
+        table.setPageSize(archivers.size());
+
+        //DATA
+        //name
+        TextColumn<ArchiverDTO> nameColumn = new TextColumn<ArchiverDTO>() {
+            @Override
+            public String getValue(ArchiverDTO object) {
+                return object.getName();
+            }
+        };
+        table.addColumn(nameColumn, constants.title());
+
+        //ACTIONS
+        //details button
+        List<HasCell<ArchiverDTO, ?>> actionCells = new LinkedList<>();
+        actionCells.add(new ArchiverActionHasCell(constants.details(), new ActionCell.Delegate<ArchiverDTO>() {
+
+            @Override
+            public void execute(ArchiverDTO object) {
+                showArchiverDetails(object);
+            }
+        }));
+        if (user.isSuperAdmin()) {
+            //edit button
+            actionCells.add(new ArchiverActionHasCell(constants.edit(), new ActionCell.Delegate<ArchiverDTO>() {
+                @Override
+                public void execute(ArchiverDTO archiver) {
+                    editArchiver(archiver);
+                }
+            }));
+            //delete button
+            actionCells.add(new ArchiverActionHasCell(constants.delete(), new ActionCell.Delegate<ArchiverDTO>() {
+
+                @Override
+                public void execute(ArchiverDTO archiver) {
+                    deleteArchiver(archiver);
+                }
+            }));
+        }
+        CompositeCell<ArchiverDTO> actionsCell = new CompositeCell<>(actionCells);
+        Column<ArchiverDTO, ArchiverDTO> actionsColumn = new Column<ArchiverDTO, ArchiverDTO>(actionsCell) {
+
+            @Override
+            public ArchiverDTO getValue(ArchiverDTO object) {
+                return object;
+            }
+        };
+        table.addColumn(actionsColumn);
+
+        // Data provider.
+        ListDataProvider<ArchiverDTO> dataProvider = new ListDataProvider<>(archivers);
+        dataProvider.addDataDisplay(table);
+
+        // Sorting
+        ColumnSortEvent.ListHandler<ArchiverDTO> columnSortHandler = new ColumnSortEvent.ListHandler<>(dataProvider.getList());
+        nameColumn.setSortable(true);
+        columnSortHandler.setComparator(nameColumn, new Comparator<ArchiverDTO>() {
+            CzechStringComparator stringComparator = new CzechStringComparator();
+
+            public int compare(ArchiverDTO o1, ArchiverDTO o2) {
+                return stringComparator.compare(o1.getName(), o2.getName());
+            }
+        });
+        table.addColumnSortHandler(columnSortHandler);
+        // By default sorted by name
+        table.getColumnSortList().push(nameColumn);
+
+        panel.add(table);
+        return panel;
+    }
+
 
     private <T extends ArchiverDTO> AbsolutePanel getGrid(List<T> list, final GridHelper<T> gridHelper) {
         final AbsolutePanel panel = new AbsolutePanel();
-        final FlexTableRowDragController tableRowDragController = new FlexTableRowDragController(panel);
-        final FlexTable table = new FlexTable();
+
+
+    /*    final FlexTable table = new FlexTable();
         for (int row = 0; row < list.size(); row++) {
             T archiver = list.get(row);
             CustomHTML<T> handle = new CustomHTML<T>(archiver.getName(), archiver);
             table.setWidget(row, 0, handle);
-            if (user.isSuperAdmin()) {
-                tableRowDragController.makeDraggable(handle);
-            }
             Button detailsButton = gridHelper.createDetailsButton(archiver);
             table.setWidget(row, 1, detailsButton);
             if (user.isSuperAdmin()) {
@@ -320,68 +463,86 @@ public class InstitutionListPanel extends VerticalPanel {
                 }
             });
             panel.add(saveButton);
-            FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(table);
-            tableRowDragController.registerDropController(flexTableRowDropController);
+            //FlexTableRowDropController flexTableRowDropController = new FlexTableRowDropController(table);
+            //tableRowDragController.registerDropController(flexTableRowDropController);
         }
+        */
+
         return panel;
     }
 
-    private AbsolutePanel archiversGrid() {
-        return getGrid(archivers, new ArchiversGridHelper());
+    private AbsolutePanel buildArchiversGrid() {
+        //return getGrid(archivers, new ArchiversGridHelper());
+        return buildArchiverGrid(archivers);
     }
 
-    private AbsolutePanel registrarsGrid() {
-        return getGrid(registrars, new RegistrarsGridHelper());
+    private AbsolutePanel buildRegistrarsGrid() {
+        return buildRegistrarGrid(registrars);
     }
 
+    @Deprecated
     private Button archiverEditButton(final ArchiverDTO archiver) {
         return new Button(constants.edit(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                new EditArchiverDialogBox(InstitutionListPanel.this, archiver).show();
+                editArchiver(archiver);
             }
         });
     }
 
+    private void editArchiver(ArchiverDTO archiver) {
+        new EditArchiverDialogBox(InstitutionListPanel.this, archiver).show();
+    }
+
+    @Deprecated
     private Button archiverDeleteButton(final ArchiverDTO archiver) {
         Button result = new Button(constants.delete());
         result.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                if (Window.confirm(messages.confirmDeleteArchiver(archiver.getName()))) {
-                    institutionsService.deleteArchiver(archiver, new AsyncCallback<Void>() {
-
-                        @Override
-                        public void onSuccess(Void result) {
-                            archivers.remove(archiver);
-                            reload();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            Window.alert(messages.archiverCannotBeDeleted(archiver.getName()) + ": " + caught.getMessage());
-                        }
-                    });
-                }
+                deleteArchiver(archiver);
             }
         });
         return result;
     }
 
+    private void deleteArchiver(final ArchiverDTO archiver) {
+        if (Window.confirm(messages.confirmDeleteArchiver(archiver.getName()))) {
+            institutionsService.deleteArchiver(archiver, new AsyncCallback<Void>() {
+
+                @Override
+                public void onSuccess(Void result) {
+                    archivers.remove(archiver);
+                    reload();
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert(messages.archiverCannotBeDeleted(archiver.getName()) + ": " + caught.getMessage());
+                }
+            });
+        }
+    }
+
+    @Deprecated
     private Button archiverDetailsButton(final ArchiverDTO archiver) {
         Button result = new Button(constants.details());
         result.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                ArchiverDetailsDialogBox dialogBox = new ArchiverDetailsDialogBox(archiver);
-                dialogBox.show();
-                dialogBox.center();
+                showArchiverDetails(archiver);
             }
         });
         return result;
+    }
+
+    private void showArchiverDetails(ArchiverDTO archiver) {
+        ArchiverDetailsDialogBox dialogBox = new ArchiverDetailsDialogBox(archiver);
+        dialogBox.show();
+        dialogBox.center();
     }
 
     private int archiverGridColumns() {

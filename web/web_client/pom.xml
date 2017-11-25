@@ -39,15 +39,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.allen-sauer.gwt.dnd</groupId>
-            <artifactId>gwt-dnd</artifactId>
-            <!-- In version 3.2.3 this happens: https://github.com/fredsa/gwt-dnd/issues/180 -->
-            <!-- <version>3.2.3</version> -->
-            <version>3.3.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <!-- for smartgwt:5.1p -->
             <!-- 1. download smartgwt.jar from http://www.smartclient.com/builds/SmartGWT/5.1p/LGPL/2016-01-21 
                 (or newer build) -->
@@ -58,12 +49,6 @@
             <groupId>com.smartgwt</groupId>
             <artifactId>smartgwt</artifactId>
             <version>5.1p</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.googlecode.gwtquery.bundles</groupId>
-            <artifactId>gquery-dnd-bundle</artifactId>
-            <version>1.0.6</version>
         </dependency>
 
         <dependency>
