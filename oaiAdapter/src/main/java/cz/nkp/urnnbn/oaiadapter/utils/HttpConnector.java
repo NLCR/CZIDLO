@@ -30,19 +30,27 @@ public class HttpConnector {
                 getReadableAuthConnection(url, credentials, HttpMethod.GET, ignoreInvalidApiCertificate);
         connection.setConnectTimeout(CONNECTION_TIMOOUT);
         connection.setReadTimeout(READ_TIMOOUT);
-        InputStream stream = null;
-        try {
-            //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
-            connection.getResponseCode();
-            stream = connection.getErrorStream();
-            if (stream == null) {
-                stream = connection.getInputStream();
-            }
-            String body = streamToString(stream);
-            return new ApiResponse(connection.getResponseCode(), body);
-        } finally {
-            if (stream != null) {
-                stream.close();
+        connection.setInstanceFollowRedirects(true);
+
+        //follow redirect even if http -> https or https -> http, for which HttpURLConnection.setFollowRedirects(true) is not enough
+        if (connection.getResponseCode() >= 300 && connection.getResponseCode() < 400) {
+            String location = connection.getHeaderField("Location");
+            return httpGet(new URL(location), credentials, ignoreInvalidApiCertificate);
+        } else {
+            InputStream stream = null;
+            try {
+                //somehow getting response code protects from FileNotFoundException when reading input stream when error stream is null
+                connection.getResponseCode();
+                stream = connection.getErrorStream();
+                if (stream == null) {
+                    stream = connection.getInputStream();
+                }
+                String body = streamToString(stream);
+                return new ApiResponse(connection.getResponseCode(), body);
+            } finally {
+                if (stream != null) {
+                    stream.close();
+                }
             }
         }
     }
