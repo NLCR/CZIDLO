@@ -140,7 +140,12 @@ public class OaiHarvester {
         if (!identifiersStack.isEmpty()) {
             return identifiersStack.pop();
         } else {
-            resumptionToken = loadAndStackNextIdentifiers();
+            try {
+                resumptionToken = loadAndStackNextIdentifiers();
+            } catch (OaiHarvesterException e) { //typically when resumption token expired
+                resumptionToken = null;
+                throw e;
+            }
             return getNextIdentifier();
         }
     }
