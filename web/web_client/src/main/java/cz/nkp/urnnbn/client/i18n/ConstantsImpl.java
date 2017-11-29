@@ -428,6 +428,10 @@ public interface ConstantsImpl extends Constants {
 
     String urnNbnDeactivationDialogTitle();
 
+    String diDeactivationDialogTitle();
+
+    String diDeactivationDialogText();
+
     String predecessors();
 
     String successors();

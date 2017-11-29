@@ -467,18 +467,10 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
             @Override
             public void onClick(ClickEvent event) {
-                dataService.deactivateDigitalInstance(instance, new AsyncCallback<Void>() {
-
-                    @Override
-                    public void onSuccess(Void result) {
-                        refreshSuperPanel();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert(messages.serverError(caught.getMessage()));
-                    }
-                });
+                DeactivateDigitalInstanceDialogBox dialog = new DeactivateDigitalInstanceDialogBox(superPanel, instance);
+                dialog.center();
+                dialog.setPopupPosition(dialog.getPopupLeft(), 105);
+                dialog.show();
             }
         });
         button.addStyleName(css.treeButton());

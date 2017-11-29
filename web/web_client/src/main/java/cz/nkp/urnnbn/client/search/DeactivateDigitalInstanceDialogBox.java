@@ -4,45 +4,37 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.forms.digitalDocument.DeactivateUrnNbnForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
+import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 
-public class DeactivateUrnNbnDialogBox extends AbstractDialogBox {
+public class DeactivateDigitalInstanceDialogBox extends AbstractDialogBox {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final DataServiceAsync dataService = GWT.create(DataService.class);
     private final SearchTab superPanel;
-    private final DeactivateUrnNbnForm form;
     private final Label errorLabel;
+    private final DigitalInstanceDTO digitalInstance;
 
-    public DeactivateUrnNbnDialogBox(SearchTab superPanel, UrnNbnDTO urn) {
+    public DeactivateDigitalInstanceDialogBox(SearchTab superPanel, DigitalInstanceDTO digitalInstance) {
         this.superPanel = superPanel;
-        this.form = new DeactivateUrnNbnForm(urn);
+        this.digitalInstance = digitalInstance;
         this.errorLabel = errorLabel(320);
-        setText(constants.urnNbnDeactivationDialogTitle());
+        setText(constants.diDeactivationDialogTitle());
         setAnimationEnabled(true);
         setPopupPosition(100, 100);
-        setWidget(contentPanel(urn));
+        setWidget(contentPanel());
     }
 
-    private Panel contentPanel(UrnNbnDTO urn) {
+    private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
-        result.add(new HTML(messages.confirmUrnNbnDeactivation(urn.toString())));
-        result.add(form);
+        result.add(new HTML(constants.diDeactivationDialogText()));
+        String html = "<a target=\"_blank\" href=\"" + digitalInstance.getUrl() + "\"" + "\">" + digitalInstance.getUrl() + "</a>";
+        result.add(new HTML(html));
         result.add(errorLabel);
         result.add(buttons());
         return result;
@@ -60,21 +52,19 @@ public class DeactivateUrnNbnDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                if (form.isFilledCorrectly()) {
-                    dataService.deactivateUrnNbn(form.getDto(), new AsyncCallback<Void>() {
+                dataService.deactivateDigitalInstance(digitalInstance, new AsyncCallback<Void>() {
 
-                        @Override
-                        public void onSuccess(Void result) {
-                            superPanel.refresh();
-                            DeactivateUrnNbnDialogBox.this.hide();
-                        }
+                    @Override
+                    public void onSuccess(Void result) {
+                        superPanel.refresh();
+                        DeactivateDigitalInstanceDialogBox.this.hide();
+                    }
 
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            errorLabel.setText(messages.serverError(caught.getMessage()));
-                        }
-                    });
-                }
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        errorLabel.setText(messages.serverError(caught.getMessage()));
+                    }
+                });
             }
         });
     }
@@ -84,7 +74,7 @@ public class DeactivateUrnNbnDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                DeactivateUrnNbnDialogBox.this.hide();
+                DeactivateDigitalInstanceDialogBox.this.hide();
             }
         });
     }
