@@ -19,7 +19,7 @@ public class DeactivateUrnNbnForm extends Form {
     @Override
     public FormFields buildFields() {
         FormFields result = new FormFields();
-        result.addField("deactivationNote", new TextInputValueField(new LimitedLengthValidator(15), constants.note(), "", false));
+        result.addField("deactivationNote", new TextInputValueField(new LimitedLengthValidator(30), constants.note(), "", false));
         return result;
     }
 
