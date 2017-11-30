@@ -63,11 +63,11 @@ public class Parser {
         }
     }
 
-    public static RegistrarCode parseRegistrarCode(String siglaStr) {
+    public static RegistrarCode parseRegistrarCode(String registrarCode) {
         try {
-            return RegistrarCode.valueOf(siglaStr);
+            return RegistrarCode.valueOf(registrarCode);
         } catch (RuntimeException e) {
-            throw new InvalidRegistrarCodeException(siglaStr, e.getMessage());
+            throw new InvalidRegistrarCodeException(registrarCode, e.getMessage());
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author Martin Řehánek
  */
-public class SiglaLibraryIdMapping {
+public class RegistrarCodeLibraryIdMapping {
 
     private static final Map<String, Integer> mapping = new HashMap<String, Integer>();
 
@@ -51,10 +51,10 @@ public class SiglaLibraryIdMapping {
         mapping.put("zlg001", Integer.valueOf(34));
     }
 
-    static int getLibraryId(String sigla) throws SiglaNotFoundException {
-        String s = sigla.toLowerCase();
+    static int getLibraryId(String registrarCode) throws RegistrarCodeNotFoundException {
+        String s = registrarCode.toLowerCase();
         if(!mapping.containsKey(s)) {
-            throw new SiglaNotFoundException("EXC: " + "sigla " +  sigla + " not found");
+            throw new RegistrarCodeNotFoundException("EXC: " + "registrar code " +  registrarCode + " not found");
         }
         return mapping.get(s);
     }

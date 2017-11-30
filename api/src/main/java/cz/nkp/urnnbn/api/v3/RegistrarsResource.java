@@ -51,7 +51,7 @@ public class RegistrarsResource extends AbstractRegistrarsResource {
     }
 
     /**
-     * Sub-resource locator method for {sigla}
+     * Sub-resource locator method for {registrarCode}
      */
     @Path("{registrarCode}")
     public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {

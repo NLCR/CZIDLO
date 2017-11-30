@@ -116,17 +116,13 @@ public class RecordImportBuilder {
     }
 
     private void buildImport(ResultSet resultSet) throws SQLException, IOException {
-        //String urnNbn = updateUrn(enhanceString(resultSet.getString("URNNBN")));
-        //String registrarCode = updateRegistrarCode(enhanceString(resultSet.getString("SIGLA")));
         String urnNbn = enhanceString(resultSet.getString("URNNBN")).toLowerCase();
-        //if(urnNbn)
         String registrarCode = enhanceString(resultSet.getString("SIGLA"));
         try {
             checkIfFits(urnNbn, registrarCode);
-        } catch (SiglaNotFoundException ex) {
+        } catch (RegistrarCodeNotFoundException ex) {
             System.out.println(ex.getMessage());
             return;
-            
         }
         Element importEl = new Element("r:import", RESOLVER);
         String documentTypeString = resultSet.getString("DRUH_DOKUMENTU");
@@ -176,7 +172,7 @@ public class RecordImportBuilder {
         String format = enhanceString(resultSet.getString("FORMAT"));
         try {
             buildDigitalInstanceDocument(url, registrarCode, format, accessibility, urnNbn, documentType);
-        } catch (SiglaNotFoundException ex) {
+        } catch (RegistrarCodeNotFoundException ex) {
             System.out.println("");
         }
             
@@ -184,7 +180,7 @@ public class RecordImportBuilder {
     }
     
     private void buildDigitalInstanceDocument(String url, String registrarCode, String format, 
-            String accessibility, String urnNbn, String documentType) throws SiglaNotFoundException, IOException {
+            String accessibility, String urnNbn, String documentType) throws RegistrarCodeNotFoundException, IOException {
         
         if(url == null) { 
             return;
@@ -198,7 +194,7 @@ public class RecordImportBuilder {
             System.out.println("spatne url " + url);
             return;
         }
-        int digitalLibraryId = SiglaLibraryIdMapping.getLibraryId(registrarCode);
+        int digitalLibraryId = RegistrarCodeLibraryIdMapping.getLibraryId(registrarCode);
 
         Element rootEl = new Element("r:digitalInstance", RESOLVER);
         
@@ -234,12 +230,12 @@ public class RecordImportBuilder {
     
     
 
-    private void checkIfFits(String urnNbn, String registrarCode) throws SiglaNotFoundException {      
+    private void checkIfFits(String urnNbn, String registrarCode) throws RegistrarCodeNotFoundException {
         if(urnNbn.length() < 12) { 
-            throw new SiglaNotFoundException("EXC:urnnmb not valid: " + urnNbn);
+            throw new RegistrarCodeNotFoundException("EXC:urnnmb not valid: " + urnNbn);
         }
         if (!urnNbn.toLowerCase().substring(URNNBN_PREFIX.length()).startsWith(registrarCode.toLowerCase())) {
-            throw new SiglaNotFoundException("EXC:" + urnNbn + " dowsn't fit " + registrarCode);
+            throw new RegistrarCodeNotFoundException("EXC:" + urnNbn + " dowsn't fit " + registrarCode);
         }
     }
 

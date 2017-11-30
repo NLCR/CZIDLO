@@ -21,7 +21,7 @@ import cz.nkp.urnnbn.core.RegistrarCode;
 
 public class UnknownRegistrarException extends ApiV4Exception {
 
-    public UnknownRegistrarException(ResponseFormat format, RegistrarCode sigla) {
-        super(format, Status.NOT_FOUND, "UNKNOWN_REGISTRAR", "There is no registrar with sigla '" + sigla + "'");
+    public UnknownRegistrarException(ResponseFormat format, RegistrarCode code) {
+        super(format, Status.NOT_FOUND, "UNKNOWN_REGISTRAR", "There is no registrar with code '" + code + "'");
     }
 }
