@@ -42,7 +42,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     private static final boolean EXPAND_TECHNICAL = false;
     private static final boolean EXPAND_DIGITAL_INSTANCES = false;
     private static final boolean EXPAND_REGISTRAR_SCOPE_IDENTIFIERS = false;
-    private static final String API_VERSION = "v4";
+    private static final String API_VERSION = "v5";
 
     private final DataServiceAsync dataService = GWT.create(DataService.class);
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
