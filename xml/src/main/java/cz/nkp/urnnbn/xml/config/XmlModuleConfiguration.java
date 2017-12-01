@@ -32,6 +32,7 @@ public class XmlModuleConfiguration {
     private static XmlModuleConfiguration instance = null;
     private String apiV3ResponseXsdLocation;
     private String apiV4ResponseXsdLocation;
+    private String apiV5ResponseXsdLocation;
 
     static public XmlModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -42,8 +43,8 @@ public class XmlModuleConfiguration {
 
     /**
      *
-     * @param properties
-     *            InputStream containing properties
+     * @param loader
+     *
      * @throws IOException
      */
     public void initialize(PropertyLoader loader) throws IOException {
@@ -52,6 +53,8 @@ public class XmlModuleConfiguration {
         logger.log(Level.INFO, "APIv3 response.xsd location: {0}", apiV3ResponseXsdLocation);
         apiV4ResponseXsdLocation = loader.loadString(PropertyKeys.API_V4_RESPONSE_XSD_LOCATION);
         logger.log(Level.INFO, "APIv4 response.xsd location: {0}", apiV4ResponseXsdLocation);
+        apiV5ResponseXsdLocation = loader.loadString(PropertyKeys.API_V5_RESPONSE_XSD_LOCATION);
+        logger.log(Level.INFO, "APIv5 response.xsd location: {0}", apiV5ResponseXsdLocation);
     }
 
     public String getApiV3ResponseXsdLocation() {
@@ -60,5 +63,9 @@ public class XmlModuleConfiguration {
 
     public String getApiV4ResponseXsdLocation() {
         return apiV4ResponseXsdLocation;
+    }
+
+    public String getApiV5ResponseXsdLocation() {
+        return apiV5ResponseXsdLocation;
     }
 }

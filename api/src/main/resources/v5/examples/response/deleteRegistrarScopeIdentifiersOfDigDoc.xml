@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <!--seznam odstraněných identifikátorů -->
+    <registrarScopeIdentifiers>
+        <id type="aleph_id">mzk03:000056568</id>
+        <id type="signatura">Moll-0005.102</id>
+        <id type="signatura_puvodni">Moll-0090.900,AG.T.VI,2</id>
+        <id type="mapy_mzk_cz_id">mzk03_000_056_568_2619321907</id>
+    </registrarScopeIdentifiers>
+</response>

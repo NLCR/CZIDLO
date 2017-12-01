@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v5/">
+    <!-- analytikum (např. článek) -->
+    <analytical>
+        <titleInfo>
+            <!-- název -->
+            <title>O slavných hudebnících</title>
+            <!-- další názvové údaje -->
+            <subTitle>Mozart v ústním podání; Mozart, W. A.</subTitle>
+        </titleInfo>
+        <!-- jiný globální identifikátor analytika -->
+        <otherId>EAN:9770862592005</otherId>
+        <!-- druh dokumentu -->
+        <documentType>novinový článek</documentType>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <primaryOriginator type="AUTHOR">C</primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Jan Ilustrator</otherOriginator>
+        <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o 
+            výtisk periodika -->
+        <sourceDocument>
+            <titleInfo>
+                <title>Lidové noviny</title>
+                <volumeTitle>ročník 1949</volumeTitle>
+                <issueTitle>10.1.1941</issueTitle>
+            </titleInfo>
+            <ccnb>cnb001282114</ccnb>
+            <!-- protože je zdrojovým dokumentem periodikum, je zde issn. 
+                V jiných případech (článek z monografie) by zde mohlo isbn -->
+            <!-- <isbn/> -->
+            <issn>1802-6265</issn>
+            <otherId>ISBN2:0862-5921</otherId>
+            <publication>
+                <publisher>Pavel Váša a František Šelepa</publisher>
+                <place>Brno</place>
+                <year>1941</year>
+            </publication>
+        </sourceDocument>
+    </analytical>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1238</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi digitálního 
+            dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (počet souborů) -->
+            <extent>1 x jpeg2000</extent>
+            <!-- rozlišení nastavené na skeneru v dpi -->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model -->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

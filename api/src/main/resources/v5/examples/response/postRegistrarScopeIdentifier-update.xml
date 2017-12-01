@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <id type="TEST2" previousValue="1234FDg">1234g</id>
+</response>
+
+

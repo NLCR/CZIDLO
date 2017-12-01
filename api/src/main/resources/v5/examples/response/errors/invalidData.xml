@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>INVALID_DATA</code>
+        <message>Error: line 1: cvc-pattern-valid: Value
+            'AZaz09$-_.+!*'():@+,' is not facet-valid with respect to
+            pattern '[A-Za-z0-9_\-:]{1,20}' for type
+            'registarScopeIdTypeType'.
+        </message>
+    </error>
+</response>
+

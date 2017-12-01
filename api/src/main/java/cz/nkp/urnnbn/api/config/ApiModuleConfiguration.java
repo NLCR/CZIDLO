@@ -4,24 +4,23 @@
  */
 package cz.nkp.urnnbn.api.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import nu.xom.Document;
-import nu.xom.ParsingException;
-import nu.xom.ValidityException;
-import nu.xom.xslt.XSLException;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ApplicationConfiguration;
 import cz.nkp.urnnbn.xml.commons.ExternalXsdValitatingXmlLoader;
 import cz.nkp.urnnbn.xml.commons.ValidatingXmlLoader;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.ValidityException;
+import nu.xom.xslt.XSLException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class ApiModuleConfiguration extends ApplicationConfiguration {
@@ -32,6 +31,12 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     private Integer urnReservationMaxSize;
     private Integer maxReservedSizeToPrint;
     private String webSearchUrlPrefix;
+    // API V5
+    private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV5;
+    private Document digDocRegistrationXsdV5;
+    private ValidatingXmlLoader digInstImportDataValidatingLoaderV5;
+    private Document digInstImportXsdV5;
+    private Document responseV5Xsd;
     // API V4
     private ValidatingXmlLoader digDocRegistrationDataValidatingLoaderV4;
     private Document digDocRegistrationXsdV4;
@@ -80,9 +85,8 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
     }
 
     /**
-     *
-     * @param properties
-     *            InputStream containing properties
+     * @param appName
+     * @param loader
      * @throws IOException
      */
     @Override
@@ -93,6 +97,21 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         urnReservationMaxSize = loader.loadInt(PropertyKeys.URN_RESERVATION_MAX_SIZE);
         maxReservedSizeToPrint = loader.loadInt(PropertyKeys.MAX_RESERVED_SIZE_TO_PRINT);
         webSearchUrlPrefix = loader.loadString(PropertyKeys.WEB_SEARCH_URL_PREFIX);
+    }
+
+    // API V5
+    void initDigDocRegistrationXsdV5(InputStream in) throws ParsingException, ValidityException, IOException {
+        digDocRegistrationXsdV5 = XOMUtils.loadDocumentWithoutValidation(in);
+        digDocRegistrationDataValidatingLoaderV5 = new ExternalXsdValitatingXmlLoader(digDocRegistrationXsdV5.toXML());
+    }
+
+    void initDigInstImportXsdV5(InputStream in) throws ParsingException, ValidityException, IOException {
+        digInstImportXsdV5 = XOMUtils.loadDocumentWithoutValidation(in);
+        digInstImportDataValidatingLoaderV5 = new ExternalXsdValitatingXmlLoader(digInstImportXsdV5.toXML());
+    }
+
+    void initResponseV5Xsd(InputStream in) throws ParsingException, IOException, XSLException {
+        this.responseV5Xsd = XOMUtils.loadDocumentWithoutValidation(in);
     }
 
     // API V4
@@ -263,6 +282,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digDocRegistrationDataValidatingLoaderV4;
     }
 
+    public ValidatingXmlLoader getDigDocRegistrationDataValidatingLoaderV5() {
+        return digDocRegistrationDataValidatingLoaderV5;
+    }
+
     public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV3() {
         return digInstImportDataValidatingLoaderV3;
     }
@@ -271,12 +294,20 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digInstImportDataValidatingLoaderV4;
     }
 
+    public ValidatingXmlLoader getDigInstImportDataValidatingLoaderV5() {
+        return digInstImportDataValidatingLoaderV5;
+    }
+
     public Document getResponseV3Xsd() {
         return responseV3Xsd;
     }
 
     public Document getResponseV4Xsd() {
         return responseV4Xsd;
+    }
+
+    public Document getResponseV5Xsd() {
+        return responseV5Xsd;
     }
 
     public Document getDigDocRegistrationXsdV2() {
@@ -291,6 +322,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
         return digDocRegistrationXsdV4;
     }
 
+    public Document getDigDocRegistrationXsdV5() {
+        return digDocRegistrationXsdV5;
+    }
+
     public Document getDigInstImportXsdV2() {
         return digInstImportXsdV2;
     }
@@ -301,6 +336,10 @@ public class ApiModuleConfiguration extends ApplicationConfiguration {
 
     public Document getDigInstImportXsdV4() {
         return digInstImportXsdV4;
+    }
+
+    public Document getDigInstImportXsdV5() {
+        return digInstImportXsdV5;
     }
 
     public XsltXmlTransformer getErrorResponseV3ToV2Transformer() {

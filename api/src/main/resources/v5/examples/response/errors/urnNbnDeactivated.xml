@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>URN_NBN_DEACTIVATED</code>
+        <message>urn:nbn:cz:tst02-00000f has been deactivated at
+            2013-01-08T03:17:32.996+01:00</message>
+    </error>
+</response>

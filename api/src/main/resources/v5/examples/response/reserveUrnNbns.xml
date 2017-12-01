@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <urnNbnReservation>
+        <urnNbn>urn:nbn:cz:boa001-000006</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000007</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000008</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-000009</urnNbn>
+        <urnNbn>urn:nbn:cz:boa001-00000a</urnNbn>
+    </urnNbnReservation>
+</response>

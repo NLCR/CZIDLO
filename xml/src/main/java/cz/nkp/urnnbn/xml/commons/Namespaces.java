@@ -24,5 +24,6 @@ public class Namespaces {
 
     public static String CZIDLO_V3_NS = "http://resolver.nkp.cz/v3/";
     public static String CZIDLO_V4_NS = "http://resolver.nkp.cz/v4/";
+    public static String CZIDLO_V5_NS = "http://resolver.nkp.cz/v5/";
     public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 }

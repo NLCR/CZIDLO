@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v5/">
+    <!-- monografie -->
+    <monograph>
+        <titleInfo>
+            <!-- název (povinný údaj) -->
+            <title>Babička</title>
+            <!-- další názvové údaje -->
+            <subTitle>Obrazy z venkovského života</subTitle>
+        </titleInfo>
+        <!-- čČNB -->
+        <ccnb>cnb002251177</ccnb>
+        <!-- ISBN -->
+        <isbn>8090119964</isbn>
+        <!-- jiný globální identifikátor monografie -->
+        <otherId>DOI:TODO</otherId>
+        <!-- druh dokumentu -->
+        <documentType>kniha</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>false</digitalBorn>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <primaryOriginator type="AUTHOR">Božena Němcová</primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Adolf Kašpar</otherOriginator>
+        <!-- informace o publikování -->
+        <publication>
+            <!-- název vydavatele -->
+            <publisher>Československý spisovatel</publisher>
+            <!-- místo vydání -->
+            <place>V Praze</place>
+            <!-- rok vydání -->
+            <year>2011</year>
+        </publication>
+    </monograph>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1234</id>
+            <id type="signatura">PK-0123.999</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedg</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+        digitálního dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozlišení nastavené na skeneru v dpi-->
+            <!-- rozsah (v počtu souborů) -->
+            <extent>245 x jpeg2000;245 x mods-alto;1 x mods</extent>
+            <!-- rozlišení nastavené na skeneru v dpi-->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model (např. RGB, CMYK)-->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

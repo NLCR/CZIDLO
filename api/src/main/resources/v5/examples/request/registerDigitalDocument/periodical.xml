@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v5/">
+    <!-- periodikum -->
+    <periodical>
+        <titleInfo>
+            <!-- název (povinný údaj) -->
+            <title>Rudé právo</title>
+            <!-- další názvové údaje -->
+            <subTitle>Ústřední orgán Komunistické strany Československa; pražské vydání</subTitle>
+        </titleInfo>
+        <!-- čČNB -->
+        <ccnb>cnb000431774</ccnb>
+        <!-- ISSN -->
+        <issn>0032-6569</issn>
+        <!-- jiný globální identifikátor periodika -->
+        <otherId>SICI:TODO</otherId>
+        <!-- druh dokumentu -->
+        <documentType>noviny</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>false</digitalBorn>
+        <!-- hlavní původce (autor/korporace/akce) -->
+        <primaryOriginator type="CORPORATION">Komunistická strana Československa</primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Jan Ilustrator</otherOriginator>
+        <!-- informace o publikování -->
+        <publication>
+            <!-- název vydavatele -->
+            <publisher>Ústřední výbor KSČ</publisher>
+            <!-- místo vydání -->
+            <place>Praha</place>
+        </publication>
+    </periodical>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora 
+             typ identifikátoru může obsahovat malé a velké písmena, čísla a znaky "-_:"
+             a musí mít celkovou velikost 1-20 znaků
+             hodnota identifikátoru může obsahovat malé a velké písmena, čísla a znaky "$-_.+!*'(),:@"
+             a musí mít celkovou velikost 1-60 znaků
+        -->
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1235</id>
+            <id type="signatura">Nov.-0183.065,Praha,Rok:1949-1995</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedh</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- typ a verze formátu -->
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (v počtu souborů) -->
+            <extent>1234 x jpeg2000;1234 x mods-alto;1 x mods</extent>
+           <!-- rozlišení nastavené na skeneru v dpi-->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model -->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

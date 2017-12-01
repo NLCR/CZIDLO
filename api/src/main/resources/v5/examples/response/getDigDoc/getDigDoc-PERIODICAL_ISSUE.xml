@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <digitalDocument id="10">
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+            <successor value="urn:nbn:cz:tst02-000006" note="naslednik" />
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:21:56.760+02:00</created>
+        <intelectualEntity type="PERIODICAL_ISSUE">
+            <created>2012-04-18T23:21:56.660+02:00</created>
+            <titleInfo>
+                <periodicalTitle>Rudé právo</periodicalTitle>
+                <volumeTitle>ročník 1945</volumeTitle>
+                <issueTitle>16.5.1945</issueTitle>
+            </titleInfo>
+            <ccnb>cnb000431774</ccnb>
+            <issn>0032-6569</issn>
+            <otherId>SICI:TODO</otherId>
+            <documentType>ranní vydání novin</documentType>
+            <digitalBorn>false</digitalBorn>
+            <primaryOriginator type="CORPORATION">Komunistická
+                strana Československa</primaryOriginator>
+            <otherOriginator>Jan Ilustrator</otherOriginator>
+            <publication>
+                <publisher>Ústřední výbor KSČ</publisher>
+                <place>Praha</place>
+                <year>1945</year>
+            </publication>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <extent>12 x jpeg2000;12 x mods-alto;1 x mods</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1237</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedj</id>
+        </registrarScopeIdentifiers>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="3">
+            <name>MK3</name>
+            <description>Mala knihovna 3</description>
+            <created>2012-04-18T23:19:15.842+02:00</created>
+        </archiver>
+        <digitalInstances count="5">
+            <digitalInstance id="28" active="false">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:14:21.785+02:00</created>
+                <deactivated>2012-09-03T00:16:08.074+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="29" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:14:45.052+02:00</created>
+                <deactivated>2012-09-03T00:36:21.269+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="30" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:43:12.078+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="31" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:43:14.424+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="32" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:43:15.849+02:00</created>
+            </digitalInstance>
+        </digitalInstances>
+    </digitalDocument>
+</response>

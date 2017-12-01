@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>INVALID_URN_NBN</code>
+        <message>urn:nbn:cz:tst01-000001: registrar code should be
+            'tst02'</message>
+    </error>
+</response>
+

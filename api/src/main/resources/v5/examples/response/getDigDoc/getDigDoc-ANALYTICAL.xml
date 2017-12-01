@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <digitalDocument id="11">
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:21:57.250+02:00</created>
+        <intelectualEntity type="ANALYTICAL">
+            <created>2012-04-18T23:21:56.938+02:00</created>
+            <modified>2012-04-23T18:51:58.796+02:00</modified>
+            <titleInfo>
+                <title>O slavných hudebnících</title>
+                <subTitle>Mozart v ústním podání; Mozart, W. A.
+                </subTitle>
+            </titleInfo>
+            <otherId>EAN:9770862592005</otherId>
+            <documentType>novinový článek</documentType>
+            <otherOriginator>Jan Ilustrator</otherOriginator>
+            <sourceDocument>
+                <titleInfo>
+                    <title>Lidové noviny</title>
+                    <volumeTitle>ročník 1949</volumeTitle>
+                    <issueTitle>číslo 123</issueTitle>
+                </titleInfo>
+                <otherId>ISBN2:0862-5921</otherId>
+                <publication>
+                    <publisher>Pavel Váša a František Šelepa</publisher>
+                    <place>Brno</place>
+                    <year>1941</year>
+                </publication>
+            </sourceDocument>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <extent>1 x jpeg2000</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1238</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedk</id>
+        </registrarScopeIdentifiers>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="3">
+            <name>MK3</name>
+            <description>Mala knihovna 3</description>
+            <created>2012-04-18T23:19:15.842+02:00</created>
+        </archiver>
+        <digitalInstances count="3">
+            <digitalInstance id="33" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-03T00:44:34.603+02:00</created>
+                <deactivated>2012-09-19T00:37:10.920+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="34" active="false">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-19T00:37:25.362+02:00</created>
+                <deactivated>2012-09-19T00:37:58.322+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="35" active="true">
+                <url>http://kramerius.mzk.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-19T00:39:41.117+02:00</created>
+            </digitalInstance>
+        </digitalInstances>
+    </digitalDocument>
+</response>

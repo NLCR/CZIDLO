@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <digitalDocument id="1">
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+            <predecessor value="urn:nbn:cz:tst02-000004"
+                note="predchudce" />
+            <predecessor value="urn:nbn:cz:tst02-000003" />
+            <successor value="urn:nbn:cz:tst02-000006" note="naslednik" />
+            <successor value="urn:nbn:cz:tst02-000007" />
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:19:19.985+02:00</created>
+        <intelectualEntity type="MONOGRAPH">
+            <created>2012-04-18T23:19:19.778+02:00</created>
+            <modified>2012-04-24T11:59:20.178+02:00</modified>
+            <titleInfo>
+                <title>Babička</title>
+                <subTitle>obrazy z venkovského života</subTitle>
+            </titleInfo>
+            <isbn>8090119964</isbn>
+            <otherId>ffdaf</otherId>
+            <documentType>kniha</documentType>
+            <digitalBorn>true</digitalBorn>
+            <otherOriginator>Adolf Kašpar d</otherOriginator>
+            <publication>
+                <publisher>Československý spisovatelf</publisher>
+                <place>V Praze</place>
+            </publication>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">JPEG</format>
+            <extent>223 stran</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="K4_pid">uuid:123</id>
+            <id type="signatura">3-1275.138</id>
+        </registrarScopeIdentifiers>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="1">
+            <name>MK</name>
+            <description>Mala knihovna </description>
+            <created>2012-04-18T23:19:15.717+02:00</created>
+        </archiver>
+        <digitalInstances count="9">
+            <digitalInstance id="2" active="false">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <created>2012-04-18T23:19:20.218+02:00</created>
+                <deactivated>2012-09-02T22:51:09.822+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="3" active="false">
+                <url>http://kramerius.nkp.cz/search/handle/uuid:123
+                </url>
+                <created>2012-04-18T23:19:20.265+02:00</created>
+                <deactivated>2012-09-02T23:37:33.899+02:00</deactivated>
+            </digitalInstance>
+            <digitalInstance id="19" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:11:53.361+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="20" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:11:56.752+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="21" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:11:57.775+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="22" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:19:37.359+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="23" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:19:38.881+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="24" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:19:39.779+02:00</created>
+            </digitalInstance>
+            <digitalInstance id="25" active="true">
+                <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+                </url>
+                <format>jpg;pdf</format>
+                <accessibility>volně přístupné</accessibility>
+                <created>2012-09-02T14:19:40.541+02:00</created>
+            </digitalInstance>
+        </digitalInstances>
+    </digitalDocument>
+</response>

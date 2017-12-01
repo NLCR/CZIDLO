@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>UNKNOWN_REGISTRAR_SCOPE_IDENTIFIER</code>
+        <message>identifier for type 'uuid' not defined</message>
+    </error>
+</response>
+

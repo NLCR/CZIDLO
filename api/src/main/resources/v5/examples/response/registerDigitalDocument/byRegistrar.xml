@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <urnNbn>
+        <status>ACTIVE</status>
+        <value>urn:nbn:cz:tst02-000100</value>
+        <countryCode>cz</countryCode>
+        <registrarCode>tst02</registrarCode>
+        <documentCode>000100</documentCode>
+        <digitalDocumentId>201</digitalDocumentId>
+        <registered>2013-01-18T00:29:22.431+01:00</registered>
+        <predecessor value="urn:nbn:cz:tst02-00000e" />
+        <predecessor value="urn:nbn:cz:tst02-000002" note="poznamka" />
+    </urnNbn>
+</response>

@@ -23,6 +23,10 @@ public class ContextListener implements ServletContextListener {
     private static final String WEB_APP_NAME = "API";
     private static final Logger logger = Logger.getLogger(ContextListener.class.getName());
     private static final String PROPERTIES_FILE = "api.properties";
+    // API v5
+    private static final String REGISTER_DD_XSD_V5 = "v5/registerDigitalDocument.xsd";
+    private static final String IMPORT_DI_XSD_V5 = "v5/importDigitalInstance.xsd";
+    private static final String API_RESPONSE_V5 = "v5/response.xsd";
     // API v4
     private static final String REGISTER_DD_XSD_V4 = "v4/registerDigitalDocument.xsd";
     private static final String IMPORT_DI_XSD_V4 = "v4/importDigitalInstance.xsd";
@@ -60,6 +64,7 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         loadPropertiesFile();
+        loadApiV5Resources();
         loadApiV4Resources();
         loadApiV3Resources();
         loadApiV2Resources();
@@ -76,6 +81,30 @@ public class ContextListener implements ServletContextListener {
                 XmlModuleConfiguration.instanceOf().initialize(loader);
             }
         }.run(PROPERTIES_FILE);
+    }
+
+    // API v5
+    private void loadApiV5Resources() {
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initDigDocRegistrationXsdV5(in);
+            }
+        }.run(REGISTER_DD_XSD_V5);
+
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initDigInstImportXsdV5(in);
+            }
+        }.run(IMPORT_DI_XSD_V5);
+
+        new ResourceUtilizer(logger) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                ApiModuleConfiguration.instanceOf().initResponseV5Xsd(in);
+            }
+        }.run(API_RESPONSE_V5);
     }
 
     // API v4

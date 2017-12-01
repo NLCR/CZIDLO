@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>REGISTRAR_SCOPE_IDENTIFIER_COLLISION</code>
+        <message>>digital document with registrar-scope identifier of
+            type 'uuid' and value 'bc6dfd10-941f-11e5-a715-005056827e52' already registered by
+            registrar with code tst02</message>
+    </error>
+</response>
+

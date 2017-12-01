@@ -55,6 +55,10 @@
         <servlet-name>index_v4</servlet-name>
         <jsp-file>/index_v4.jsp</jsp-file>
     </servlet>
+    <servlet>
+        <servlet-name>index_v5</servlet-name>
+        <jsp-file>/index_v5.jsp</jsp-file>
+    </servlet>
 
     <servlet>
         <servlet-name>ServletAdaptor-v2</servlet-name>
@@ -111,6 +115,26 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>ServletAdaptor-v5</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <!-- <init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+            </init-param> <init-param> <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+            </init-param> -->
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>cz.nkp.urnnbn.api.v5</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>index</servlet-name>
         <url-pattern>/</url-pattern>
@@ -130,6 +154,11 @@
         <url-pattern>/v4</url-pattern>
         <url-pattern>/v4/</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>index_v5</servlet-name>
+        <url-pattern>/v5</url-pattern>
+        <url-pattern>/v5/</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ServletAdaptor-v2</servlet-name>
@@ -142,6 +171,10 @@
     <servlet-mapping>
         <servlet-name>ServletAdaptor-v4</servlet-name>
         <url-pattern>/v4/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletAdaptor-v5</servlet-name>
+        <url-pattern>/v5/*</url-pattern>
     </servlet-mapping>
 
     <session-config>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2011 - 2017 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Author     : Martin Řehánek
+    Description:
+        This XML Schema (W3C) document contains general response types
+        that are used in schema recordImport.xsd.xml.
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           elementFormDefault="qualified" 
+           targetNamespace="http://resolver.nkp.cz/v5/"
+           xmlns:czidlo="http://resolver.nkp.cz/v5/"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    
+    <xs:include schemaLocation="common.xsd.xml"/>
+    <xs:include schemaLocation="technicalMetadata.xsd.xml"/>
+    <xs:include schemaLocation="errors.xsd.xml"/>
+    
+    <!--OAI response doesn't need czidlo:response element-->
+    <xs:element name="digitalDocument" type="czidlo:digitalDocument"/>
+    
+    <xs:element name="response">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="error" type="czidlo:errorType"/>
+                <xs:element name="digitalInstances" type="czidlo:digitalInstances"/>
+                <xs:element name="digitalInstance" type="czidlo:digitalInstance"/>
+                <xs:element name="registrars" type="czidlo:registrars"/>
+                <xs:element name="registrar" type="czidlo:registrar"/>
+                <xs:element name="urnNbn" type="czidlo:urnNbn"/>
+                <xs:element name="urnNbnReservations" type="czidlo:urnNbnReservations"/>
+                <xs:element name="urnNbnReservation" type="czidlo:urnNbnReservation"/>
+                <xs:element name="digitalDocuments" type="czidlo:digitalDocuments"/>
+                <xs:element name="digitalDocument" type="czidlo:digitalDocument"/>
+                <xs:element name="registrarScopeIdentifiers" type="czidlo:registrarScopeIdentifiers"/>
+                <xs:element name="id" type="czidlo:registrarScopeIdentifier"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:complexType name="digitalInstance">
+        <xs:sequence>
+            <xs:element name="url" type="czidlo:url"/>
+            <xs:element name="format" type="xs:string" minOccurs="0"/>
+            <xs:element name="accessibility" type="xs:string" minOccurs="0"/>
+            <xs:element name="digitalLibraryId" type="xs:int" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="deactivated" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="digitalLibrary" type="czidlo:digitalLibrary" minOccurs="0"/>
+            <xs:element name="digitalDocument" type="czidlo:digitalDocument" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="active" use="required" type="xs:boolean"/>
+        <xs:attribute name="id" use="required" type="xs:int"/>
+    </xs:complexType>
+    
+    <xs:complexType name="digitalInstances">
+        <xs:sequence>
+            <xs:element name="digitalInstance" type="czidlo:digitalInstance" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" use="optional" type="xs:int"/>
+    </xs:complexType>
+    
+    <!-- digital library -->
+    <xs:complexType name="digitalLibrary">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="url" type="czidlo:url" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="registrar" type="czidlo:registrar" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:int"/>
+    </xs:complexType>
+    
+    <!-- catalog -->
+    <xs:complexType name="catalog">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="urlPrefix" type="czidlo:url" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:int"/>
+    </xs:complexType>
+    
+    <!-- registrars -->
+    <xs:complexType name="registrars">
+        <xs:sequence>
+            <xs:element name="registrar" type="czidlo:registrar" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- registrar -->
+    <xs:complexType name="registrar">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="registrationModes" type="czidlo:registrationModes" minOccurs="0"/>
+            <xs:element name="digitalLibraries" minOccurs="0">
+                <xs:complexType> 
+                    <xs:sequence>
+                        <xs:element name="digitalLibrary" type="czidlo:digitalLibrary" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="catalogs" minOccurs="0">
+                <xs:complexType> 
+                    <xs:sequence>
+                        <xs:element name="catalog" type="czidlo:catalog" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="code" use="required" type="xs:string"/>
+        <xs:attribute name="id" use="optional" type="xs:string"/>
+    </xs:complexType>
+    
+    <!-- archiver -->
+    <xs:complexType name="archiver">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="optional" type="xs:string"/>
+    </xs:complexType>
+    
+    <!--registration modes-->
+    <xs:complexType name="registrationModes">
+        <xs:sequence>
+            <xs:element name="mode" type="czidlo:registrationMode" minOccurs="0" maxOccurs="3"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--registration mode-->
+    <xs:complexType name="registrationMode">
+        <xs:attribute name="name" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="BY_REGISTRAR"/>
+                    <xs:enumeration value="BY_RESOLVER"/>
+                    <xs:enumeration value="BY_RESERVATION"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="enabled" use="required" type="xs:boolean"/>
+    </xs:complexType>
+    
+    <!-- digital document -->
+    <xs:complexType name="digitalDocument">
+        <xs:sequence>
+            <xs:element name="urnNbn" type="czidlo:urnNbn"/>
+            <xs:element name="financed" type="xs:string" minOccurs="0"/>
+            <xs:element name="contractNumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="intelectualEntity" type="czidlo:intelectualEntity" minOccurs="0"/>
+            <xs:element name="technicalMetadata" type="czidlo:technicalMetadata"/>
+            <xs:element name="registrarScopeIdentifiers" type="czidlo:registrarScopeIdentifiers" minOccurs="0"/>
+            <xs:element name="registrar" type="czidlo:registrar" minOccurs="0"/>
+            <xs:element name="archiver" type="czidlo:archiver" minOccurs="0"/>
+            <xs:element name="digitalInstances" type="czidlo:digitalInstances" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" use="required" type="xs:int"/>
+    </xs:complexType>
+    
+    <!-- digital documents -->
+    <xs:complexType name="digitalDocuments">
+        <xs:sequence>
+            <xs:element name="digitalDocument" type="czidlo:digitalDocument" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" use="required" type="xs:int"/>
+    </xs:complexType>
+    
+    
+    
+    <!-- urn:nbn reservations -->
+    <xs:complexType name="urnNbnReservations">
+        <xs:sequence>
+            <xs:element name="maxReservationSize" type="xs:int"/> 
+            <xs:element name="defaultReservationSize" type="xs:int"/> 
+            <xs:element name="reserved">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="urnNbn" type="czidlo:urnNbnReserved" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute name="totalSize" use="optional" type="xs:int"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="urnNbnReserved">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="reserved" use="optional" type="xs:dateTime"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    
+    <xs:complexType name="urnNbnReservation">
+        <xs:sequence>
+            <xs:element name="urnNbn" type="czidlo:urnNbnReserved" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!-- intelectual entity -->
+    <xs:complexType name="intelectualEntity">
+        <xs:sequence>
+            <xs:element name="created" type="xs:dateTime"/>
+            <xs:element name="modified" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="titleInfo" type="czidlo:titleInfo"/>
+            <xs:element name="ccnb" type="xs:string" minOccurs="0"/>
+            <xs:element name="isbn" type="xs:string" minOccurs="0"/>
+            <xs:element name="issn" type="xs:string" minOccurs="0"/>
+            <xs:element name="otherId" type="xs:string" minOccurs="0"/>
+            <xs:element name="documentType" type="xs:string" minOccurs="0" />
+            <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" />
+            <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" />
+            <xs:element name="otherOriginator" type="xs:string" minOccurs="0"/>
+            <xs:element name="publication" type="czidlo:publication" minOccurs="0"/>
+            <xs:element name="sourceDocument" type="czidlo:sourceDocument" minOccurs="0"/>
+            <xs:element name="degreeAwardingInstitution" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="type" use="required" type="czidlo:ieType"/>
+    </xs:complexType>
+    
+    <xs:simpleType name="ieType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MONOGRAPH"/>
+            <xs:enumeration value="MONOGRAPH_VOLUME"/>
+            <xs:enumeration value="PERIODICAL"/>
+            <xs:enumeration value="PERIODICAL_VOLUME"/>
+            <xs:enumeration value="PERIODICAL_ISSUE"/>
+            <xs:enumeration value="THESIS"/>
+            <xs:enumeration value="ANALYTICAL"/>
+            <xs:enumeration value="OTHER"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="titleInfo">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string" minOccurs="0"/>
+            <xs:element name="subTitle" type="xs:string" minOccurs="0"/>
+            <xs:element name="monographTitle" type="xs:string" minOccurs="0"/>
+            <xs:element name="periodicalTitle" type="xs:string" minOccurs="0"/>
+            <xs:element name="volumeTitle" type="xs:string" minOccurs="0"/>
+            <xs:element name="issueTitle" type="xs:string" minOccurs="0"/>
+        </xs:sequence> 
+    </xs:complexType>
+    
+</xs:schema>

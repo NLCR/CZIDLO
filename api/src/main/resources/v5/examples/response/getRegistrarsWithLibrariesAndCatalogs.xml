@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <registrars>
+        <registrar code="aba007" id="6">
+            <name>neco</name>
+            <description>ok</description>
+            <created>2012-04-18T23:19:15.988+02:00</created>
+            <modified>2012-10-29T10:49:19.593+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="3">
+                    <name>ABA007 default libraryg</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <url>http://fdfad.com</url>
+                    <created>2012-04-18T23:19:16.026+02:00</created>
+                    <modified>2012-04-27T00:07:45.463+02:00</modified>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="mod000" id="40">
+            <name>reg_mod_vsechny</name>
+            <created>2012-11-09T11:18:59.661+01:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="true" />
+            </registrationModes>
+            <digitalLibraries />
+            <catalogs />
+        </registrar>
+        <registrar code="mod001" id="45">
+            <name>reg_mod_resolverem</name>
+            <created>2012-11-09T11:22:08.556+01:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries />
+            <catalogs />
+        </registrar>
+        <registrar code="mod002" id="46">
+            <name>reg_mod_rezervaci</name>
+            <created>2012-11-09T11:22:28.794+01:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="true" />
+            </registrationModes>
+            <digitalLibraries />
+            <catalogs />
+        </registrar>
+        <registrar code="mod003" id="48">
+            <name>reg_mod_registratorem</name>
+            <created>2012-11-09T11:23:04.718+01:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries />
+            <catalogs />
+        </registrar>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="true" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="38">
+                    <name>Kramerius 4</name>
+                    <description>testovací digitální knihovna
+                    </description>
+                    <url>http://kramerius4.mzk.cz</url>
+                    <created>2012-04-18T23:19:19.574+02:00</created>
+                </digitalLibrary>
+                <digitalLibrary id="39">
+                    <name>Kramerius 3</name>
+                    <description>testovací digitální knihovna
+                    </description>
+                    <url>http://kramerius3.mzk.cz</url>
+                    <created>2012-04-18T23:19:19.605+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs>
+                <catalog id="3">
+                    <name>Aleph mzk</name>
+                    <urlPrefix>http://iris.mzk.cz</urlPrefix>
+                    <created>2012-04-18T23:19:19.622+02:00</created>
+                </catalog>
+            </catalogs>
+        </registrar>
+        <registrar code="aba008" id="7">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.043+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="4">
+                    <name>ABA008 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.070+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="aba010" id="8">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.088+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="5">
+                    <name>ABA010 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.119+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe045" id="9">
+            <name>Vojenský historický ústav – knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.143+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="6">
+                    <name>ABE045 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.175+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abc135" id="10">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.198+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="7">
+                    <name>ABC135 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.233+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe190" id="11">
+            <name>Gender Studies, o.p.s. – knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.255+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="8">
+                    <name>ABE190 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.284+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe310" id="12">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.310+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="9">
+                    <name>ABE310 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.341+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe323" id="13">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.390+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="10">
+                    <name>ABE323 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.418+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe336" id="14">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.442+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="11">
+                    <name>ABE336 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.474+02:00</created>
+                </digitalLibrary>
+                <digitalLibrary id="41">
+                    <name>fadfadf</name>
+                    <created>2012-04-20T17:28:03.612+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="abe343" id="15">
+            <name>Národní archiv v Praze – knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.499+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="12">
+                    <name>ABE343 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.532+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="boa001" id="16">
+            <name>Moravská zemská knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.551+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="13">
+                    <name>Kramerius 4</name>
+                    <description>aktuální verze knihovny Kramerius
+                    </description>
+                    <url>http://kramerius.mzk.cz</url>
+                    <created>2012-04-18T23:19:16.577+02:00</created>
+                </digitalLibrary>
+                <digitalLibrary id="14">
+                    <name>Kramerius 3</name>
+                    <description>předchozí verze knihovny Kramerius
+                    </description>
+                    <url>http://kramerius3.mzk.cz</url>
+                    <created>2012-04-18T23:19:16.609+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs>
+                <catalog id="2">
+                    <name>Aleph MZK</name>
+                    <urlPrefix>http://aleph.mzk.cz</urlPrefix>
+                    <created>2012-04-18T23:19:17.832+02:00</created>
+                </catalog>
+            </catalogs>
+        </registrar>
+        <registrar code="bve301" id="17">
+            <name>Regionální muzeum v Mikulově</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.630+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="15">
+                    <name>BVE301 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.669+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="bve302" id="18">
+            <name>Regionální muzeum v Mikulově</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.687+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="16">
+                    <name>BVE302 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.719+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="cbe301" id="19">
+            <name>Jihočeské muzeum v Českých Budějovicích - knihovna
+            </name>
+            <description></description>
+            <created>2012-04-18T23:19:16.744+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="17">
+                    <name>CBE301 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.775+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="ghe302" id="20">
+            <name>Krajské muzeum Karlovarského kraje, příspěvková
+                organizace, MUZEUM CHEB</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.799+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="18">
+                    <name>GHE302 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.829+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="hka001" id="21">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.843+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="19">
+                    <name>HKA001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.877+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="hke302" id="22">
+            <name>Muzeum východních Čech v Hradci Králové -
+                společenskovědní knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.900+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="20">
+                    <name>HKE302 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.929+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="jhe301" id="23">
+            <name>Muzeum Jindřichohradecka – odborná knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:16.942+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="21">
+                    <name>JHE301 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:16.979+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="kmg001" id="24">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:16.999+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="22">
+                    <name>KMG001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.029+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="ktg503" id="25">
+            <name>Městská knihovna Horažďovice</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.040+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="23">
+                    <name>KTG503 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.061+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="kve303" id="26">
+            <name>Krajské muzeum Karlovarského kraje,p.o.,Muzeum Karlovy
+                Vary - Muzejní knihovna</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.076+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="24">
+                    <name>KVE303 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.108+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="kvg001" id="27">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:17.132+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="25">
+                    <name>KVG001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.174+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="lia001" id="28">
+            <name>Krajská vědecká knihovna v Liberci</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.185+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="26">
+                    <name>LIA001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.214+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="lid001" id="29">
+            <name>Technická univerzita v Liberci - Univerzitní knihovna
+            </name>
+            <description></description>
+            <created>2012-04-18T23:19:17.229+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="27">
+                    <name>LID001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.261+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="ola001" id="30">
+            <name>Vědecká knihovna v Olomouci</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.273+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="28">
+                    <name>OLA001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.309+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="osa001" id="31">
+            <name>název chybí</name>
+            <description>TODO:doplnit název</description>
+            <created>2012-04-18T23:19:17.331+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="29">
+                    <name>OSA001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.363+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="pae302" id="32">
+            <name>Státní okresní archiv Pardubice</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.387+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="30">
+                    <name>PAE302 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.419+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="pna001" id="33">
+            <name>Studijní a vědecká knihovna Plzeňského kraje</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.442+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="31">
+                    <name>PNA001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.475+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="roe301" id="34">
+            <name>Muzeum Dr.Bohuslava Horáka v Rokycanech</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.499+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="32">
+                    <name>ROE301 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.531+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="ulg001" id="35">
+            <name>Severočeská vědecká knihovna v Ústí nad Labem</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.555+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="33">
+                    <name>ULG001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.586+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="zlg001" id="36">
+            <name>Krajská knihovna Františka Bartoše, příspěvková
+                organizace</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.609+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="34">
+                    <name>ZLG001 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.641+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+        <registrar code="tst01" id="37">
+            <name>Národní knihovna České republiky - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.665+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="35">
+                    <name>TST01 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.705+02:00</created>
+                </digitalLibrary>
+                <digitalLibrary id="40">
+                    <name>Kramerius 4</name>
+                    <description>testovací digitální knihovna
+                    </description>
+                    <url>http://kramerius4.mzk.cz</url>
+                    <created>2012-04-18T23:19:19.709+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs>
+                <catalog id="4">
+                    <name>Aleph nkp</name>
+                    <urlPrefix>http://hades.mzk.cz</urlPrefix>
+                    <created>2012-04-18T23:19:19.731+02:00</created>
+                </catalog>
+            </catalogs>
+        </registrar>
+        <registrar code="tst03" id="39">
+            <name>Testovací registrátor</name>
+            <description></description>
+            <created>2012-04-18T23:19:17.762+02:00</created>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="false" />
+                <mode name="BY_REGISTRAR" enabled="true" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+            <digitalLibraries>
+                <digitalLibrary id="37">
+                    <name>TST03 default library</name>
+                    <description>defaultní digitální knihovna
+                        registrátora, prosím o editaci</description>
+                    <created>2012-04-18T23:19:17.786+02:00</created>
+                </digitalLibrary>
+            </digitalLibraries>
+            <catalogs />
+        </registrar>
+    </registrars>
+</response>

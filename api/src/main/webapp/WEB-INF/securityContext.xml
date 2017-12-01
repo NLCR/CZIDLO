@@ -40,6 +40,10 @@
         <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
         <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
         <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
+
+        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
                 
         <session-management>
             <!--This will prevent a user from logging in multiple times - a second login will cause the first to be invalidated.-->

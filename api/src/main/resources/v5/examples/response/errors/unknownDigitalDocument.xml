@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
+    <error>
+        <code>UNKNOWN_DIGITAL_DOCUMENT</code>
+        <message>Registrar with code tst02 doesn't register digital
+            document with identifier of type 'OAI_harvester' and value
+            '1238'</message>
+    </error>
+</response>
