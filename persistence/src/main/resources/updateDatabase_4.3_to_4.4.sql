@@ -48,4 +48,7 @@ UPDATE USERACCOUNT SET email=replace(email,chr(9),' ') WHERE email LIKE e'%\t%';
 UPDATE USERACCOUNT SET email=trim(email) WHERE email LIKE '\ %' OR email LIKE '%\ ';
 
 
-
+/*****************/
+/*  New indexes  */
+/*****************/
+CREATE INDEX DIGITALINSTANCE_URL ON DIGITALINSTANCE (URL);

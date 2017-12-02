@@ -4,37 +4,8 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-
-import org.joda.time.DateTime;
-
-import cz.nkp.urnnbn.core.DiExport;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.UrnNbnExport;
-import cz.nkp.urnnbn.core.UrnNbnExportFilter;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.Content;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.*;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -43,9 +14,12 @@ import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import org.joda.time.DateTime;
+
+import java.util.*;
+import java.util.logging.Level;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAccessService {
@@ -117,7 +91,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.digDocIdDao().getRegistrarScopeIds(id);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<RegistrarScopeIdentifier> emptyList();
+            return Collections.<RegistrarScopeIdentifier>emptyList();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -236,7 +210,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.intEntIdentifierDao().getIdList(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<IntEntIdentifier> emptyList();
+            return Collections.<IntEntIdentifier>emptyList();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -296,7 +270,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.diglLibDao().getLibraries(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigitalLibrary> emptyList();
+            return Collections.<DigitalLibrary>emptyList();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -317,7 +291,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.catalogDao().getCatalogs(registrarId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<Catalog> emptyList();
+            return Collections.<Catalog>emptyList();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -363,7 +337,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.documentDao().getDocumentsOfIntEntity(intEntId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigitalDocument> emptyList();
+            return Collections.<DigitalDocument>emptyList();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -384,7 +358,16 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.digInstDao().getDigitalInstancesOfDigDoc(digDocId);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.WARNING, ex.getMessage());
-            return Collections.<DigitalInstance> emptyList();
+            return Collections.emptyList();
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public List<DigitalInstance> digInstancesByUrl(String url) {
+        try {
+            return factory.digInstDao().getDigitalInstancesByUrl(url);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -539,7 +522,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
 
     @Override
     public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
-            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) {
+                                       boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) {
         try {
             return factory.urnDao().listDiExport(registrarCodes, entityTypes, includeUrnActive, includeUrnDeactivated, includeDiActive,
                     includeDiDeactivated);
@@ -562,7 +545,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
             return factory.documentDao().getDigDocsByRegistrarIdAndTimestamps(registrar.getId(), from, until);
         } catch (RecordNotFoundException ex) {
             logger.log(Level.SEVERE, null, ex);
-            return Collections.<DigitalDocument> emptyList();
+            return Collections.<DigitalDocument>emptyList();
         }
     }
 

@@ -16,16 +16,13 @@ package cz.nkp.urnnbn.api.v5;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
 import cz.nkp.urnnbn.api.v5.exceptions.*;
-import cz.nkp.urnnbn.api.v5.json.DigitalInstanceBuilderJson;
-import cz.nkp.urnnbn.api.v5.json.DigitalInstancesBuilderJson;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.api.v5.json.*;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.xml.apiv5.builders.DigitalInstanceBuilderXml;
-import cz.nkp.urnnbn.xml.apiv5.builders.DigitalInstancesBuilderXml;
+import cz.nkp.urnnbn.xml.apiv5.builders.*;
 import cz.nkp.urnnbn.xml.apiv5.unmarshallers.DigitalInstanceUnmarshaller;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -83,20 +80,14 @@ public class DigitalInstancesResource extends ApiV5Resource {
     }
 
     @GET
-    public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr) {
+    public Response getDigitalInstances(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
+                                        @DefaultValue("") @QueryParam("url") String url) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
-            switch (format) {
-            case XML: {
-                String xml = xmlInstancesBuilder().buildDocumentWithResponseHeader().toXML();
-                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            }
-            case JSON: {
-                String json = jsonInstancesBuilder().toJson();
-                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-            }
-            default:
-                throw new RuntimeException();
+            if (url.isEmpty()) {
+                return buildDigitalInstancesCountRecord(format);
+            } else {
+                return buildDigitalInstancesByUrlRecords(format, url);
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -106,18 +97,83 @@ public class DigitalInstancesResource extends ApiV5Resource {
         }
     }
 
-    private DigitalInstancesBuilderXml xmlInstancesBuilder() {
-        if (digDoc == null) {
-            return new DigitalInstancesBuilderXml(dataAccessService().digitalInstancesCount());
-        } else {
-            List<DigitalInstanceBuilderXml> instanceBuilders = xmlInstanceBuilders(digDoc);
-            return new DigitalInstancesBuilderXml(instanceBuilders);
+    private Response buildDigitalInstancesByUrlRecords(ResponseFormat format, String url) {
+        List<DigitalInstance> digitalInstances = dataAccessService().digInstancesByUrl(url);
+        switch (format) {
+            case XML: {
+                List<DigitalInstanceBuilderXml> diBuilders = createXmlInstanceBuilders(digitalInstances);
+                DigitalInstancesBuilderXml xmlBuilder = new DigitalInstancesBuilderXml(diBuilders);
+                String xml = xmlBuilder.buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                List<DigitalInstanceBuilderJson> diBuilders = createDigitalInstanceBuilders(digitalInstances);
+                DigitalInstancesBuilderJson jsonBuilder = new DigitalInstancesBuilderJson(diBuilders);
+                String json = jsonBuilder.toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+            }
+            default:
+                throw new RuntimeException();
         }
     }
 
-    private List<DigitalInstanceBuilderXml> xmlInstanceBuilders(DigitalDocument doc) {
+    private Response buildDigitalInstancesCountRecord(ResponseFormat format) {
+        switch (format) {
+            case XML: {
+                DigitalInstancesBuilderXml xmlBuilder = null;
+                if (digDoc == null) {
+                    xmlBuilder = new DigitalInstancesBuilderXml(dataAccessService().digitalInstancesCount());
+                } else {
+                    List<DigitalInstanceBuilderXml> instanceBuilders = createXmlInstanceBuilders(digDoc);
+                    xmlBuilder = new DigitalInstancesBuilderXml(instanceBuilders);
+                }
+                String xml = xmlBuilder.buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                DigitalInstancesBuilderJson jsonBuilder = null;
+                if (digDoc == null) {
+                    jsonBuilder = new DigitalInstancesBuilderJson(dataAccessService().digitalInstancesCount());
+                } else {
+                    List<DigitalInstanceBuilderJson> instanceBuilders = createDigitalInstanceBuilders(digDoc);
+                    jsonBuilder = new DigitalInstancesBuilderJson(instanceBuilders);
+                }
+                String json = jsonBuilder.toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+            }
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private List<DigitalInstanceBuilderXml> createXmlInstanceBuilders(List<DigitalInstance> digitalInstances) {
+        List<DigitalInstanceBuilderXml> result = new ArrayList<>(digitalInstances.size());
+        for (DigitalInstance instance : digitalInstances) {
+            DigitalDocumentBuilderXml digDocBuilder = digitalDocumentBuilderXml(instance.getDigDocId());
+            DigitalLibraryBuilderXml libBuilder = digitalLibraryBuilderXml(instance.getLibraryId());
+            DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(instance, libBuilder, digDocBuilder);
+            result.add(builder);
+        }
+        return result;
+    }
+
+    private DigitalDocumentBuilderXml digitalDocumentBuilderXml(long digDocId) {
+        DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
+        UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
+        RegistrarScopeIdentifiersBuilder idsBuilder = registrarScopeIdentifiersBuilderXml(digDocId);
+        return new DigitalDocumentBuilderXml(digDoc, urn, idsBuilder, null, null, null, null);
+    }
+
+    private DigitalLibraryBuilderXml digitalLibraryBuilderXml(long libraryId) {
+        DigitalLibrary library = dataAccessService().libraryByInternalId(libraryId);
+        Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
+        RegistrarBuilder regBuilder = new RegistrarBuilder(registrar, null, null);
+        return new DigitalLibraryBuilderXml(library, regBuilder);
+    }
+
+    private List<DigitalInstanceBuilderXml> createXmlInstanceBuilders(DigitalDocument doc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-        List<DigitalInstanceBuilderXml> result = new ArrayList<DigitalInstanceBuilderXml>(instances.size());
+        List<DigitalInstanceBuilderXml> result = new ArrayList<>(instances.size());
         for (DigitalInstance instance : instances) {
             DigitalInstanceBuilderXml builder = new DigitalInstanceBuilderXml(instance, instance.getLibraryId());
             result.add(builder);
@@ -125,18 +181,34 @@ public class DigitalInstancesResource extends ApiV5Resource {
         return result;
     }
 
-    private DigitalInstancesBuilderJson jsonInstancesBuilder() {
-        if (digDoc == null) {
-            return new DigitalInstancesBuilderJson(dataAccessService().digitalInstancesCount());
-        } else {
-            List<DigitalInstanceBuilderJson> instanceBuilders = jsonInstanceBuilders(digDoc);
-            return new DigitalInstancesBuilderJson(instanceBuilders);
+    private List<DigitalInstanceBuilderJson> createDigitalInstanceBuilders(List<DigitalInstance> digitalInstances) {
+        List<DigitalInstanceBuilderJson> result = new ArrayList<>(digitalInstances.size());
+        for (DigitalInstance instance : digitalInstances) {
+            DigitalDocumentBuilderJson digDocBuilder = createDigitalDocumentBuilderJson(instance.getDigDocId());
+            DigitalLibraryBuilderJson libBuilder = createDigitalLibraryBuilderJson(instance.getLibraryId());
+            DigitalInstanceBuilderJson builder = new DigitalInstanceBuilderJson(instance, libBuilder, digDocBuilder);
+            result.add(builder);
         }
+        return result;
     }
 
-    private List<DigitalInstanceBuilderJson> jsonInstanceBuilders(DigitalDocument doc) {
+    private DigitalDocumentBuilderJson createDigitalDocumentBuilderJson(long digDocId) {
+        DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
+        UrnNbn urn = dataAccessService().urnByDigDocId(digDoc.getId(), true);
+        RegistrarScopeIdentifiersBuilderJson idsBuilder = registrarScopeIdentifiersBuilderJson(digDocId);
+        return new DigitalDocumentBuilderJson(digDoc, urn, idsBuilder, null, null, null, null);
+    }
+
+    private DigitalLibraryBuilderJson createDigitalLibraryBuilderJson(long libraryId) {
+        DigitalLibrary library = dataAccessService().libraryByInternalId(libraryId);
+        Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
+        RegistrarBuilderJson regBuilder = new RegistrarBuilderJson(registrar, null, null);
+        return new DigitalLibraryBuilderJson(library, regBuilder);
+    }
+
+    private List<DigitalInstanceBuilderJson> createDigitalInstanceBuilders(DigitalDocument doc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(doc.getId());
-        List<DigitalInstanceBuilderJson> result = new ArrayList<DigitalInstanceBuilderJson>(instances.size());
+        List<DigitalInstanceBuilderJson> result = new ArrayList<>(instances.size());
         for (DigitalInstance instance : instances) {
             DigitalInstanceBuilderJson builder = new DigitalInstanceBuilderJson(instance, instance.getLibraryId());
             result.add(builder);

@@ -28,22 +28,22 @@ public class DigitalInstancesBuilderJson extends JsonBuilder {
 
     @Override
     public Object build() {
-        if (instanceBuilders != null) {
-            JSONArray array = new JSONArray();
-            for (DigitalInstanceBuilderJson builder : instanceBuilders) {
-                JSONObject built = builder.build();
-                array.put(built);
-            }
-            return array;
-        } else {
-            try {
+        try {
+            if (instanceBuilders != null) {
+                JSONArray array = new JSONArray();
+                for (DigitalInstanceBuilderJson builder : instanceBuilders) {
+                    JSONObject built = builder.build();
+                    array.put(built);
+                }
+                return array;
+            } else {
                 JSONObject root = new JSONObject();
                 root.put("count", count);
                 return root;
-            } catch (JSONException e) {
-                LOGGER.severe(e.getMessage());
-                return EMPTY_OBJECT;
             }
+        } catch (JSONException e) {
+            LOGGER.severe(e.getMessage());
+            return EMPTY_OBJECT;
         }
     }
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.persistence.impl.statements.*;
 import org.joda.time.DateTime;
 
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -29,11 +30,6 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateDigitalInstance;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigInstance;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalInstance;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalInstanceRT;
 
 /**
@@ -107,6 +103,22 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
     public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException {
         try {
             StatementWrapper st = new SelectAllAttrsByTimestamps(TABLE_NAME, ATTR_DEACTIVATED, from, until);
+            DaoOperation operation = new MultipleResultsOperation(st, new DigitalInstanceRT());
+            return (List<DigitalInstance>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    // TODO: test
+    @Override
+    public List<DigitalInstance> getDigitalInstancesByUrl(String url) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByStringAttr(TABLE_NAME, ATTR_URL, url);
             DaoOperation operation = new MultipleResultsOperation(st, new DigitalInstanceRT());
             return (List<DigitalInstance>) runInTransaction(operation);
         } catch (PersistenceException ex) {

@@ -4,42 +4,21 @@
  */
 package cz.nkp.urnnbn.services;
 
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.joda.time.DateTime;
-
-import cz.nkp.urnnbn.core.DiExport;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.UrnNbnExport;
-import cz.nkp.urnnbn.core.UrnNbnExportFilter;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.Content;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.*;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import org.joda.time.DateTime;
+
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * TODO: zbavit se DatabaseException (resp. přeložit na RuntimeException)
- * 
+ *
  * @author Martin Řehánek
  */
 public interface DataAccessService extends BusinessService {
@@ -106,13 +85,12 @@ public interface DataAccessService extends BusinessService {
 
     public List<DigitalInstance> digInstancesByDigDocId(long digDocId);
 
+    public List<DigitalInstance> digInstancesByUrl(String url);
+
     public DigitalLibrary libraryByInternalId(long libraryId);
 
     /**
-     * 
-     * @param login
-     *            login of user performing this operation
-     * @param includePasswords
+     * @param login login of user performing this operation
      * @return
      * @throws UnknownUserException
      * @throws NotAdminException
@@ -120,20 +98,15 @@ public interface DataAccessService extends BusinessService {
     public List<User> users(String login) throws UnknownUserException, NotAdminException;
 
     /**
-     * 
-     * @param login
-     *            login of user that is being lookuped
-     * @param includePassword
+     * @param login login of user that is being lookuped
      * @return
      * @throws UnknownUserException
      */
     public User userByLogin(String login) throws UnknownUserException;
 
     /**
-     * 
      * @param userId
-     * @param login
-     *            login of user performing this operation
+     * @param login  login of user performing this operation
      * @return
      * @throws UnknownUserException
      * @throws NotAdminException
@@ -151,6 +124,6 @@ public interface DataAccessService extends BusinessService {
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances);
 
     public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
-            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated);
+                                       boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated);
 
 }

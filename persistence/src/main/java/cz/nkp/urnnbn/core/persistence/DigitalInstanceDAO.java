@@ -4,16 +4,14 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import org.joda.time.DateTime;
+
+import java.util.List;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public interface DigitalInstanceDAO {
@@ -32,12 +30,10 @@ public interface DigitalInstanceDAO {
     public String ATTR_PUBLISHED = "published";
 
     /**
-     * 
      * @param instance
-     * @return
+     * @return new id
      * @throws DatabaseException
-     * @throws RecordNotFoundException
-     *             if digital document or digital library was not found
+     * @throws RecordNotFoundException if digital document or digital library was not found
      */
     public Long insertDigInstance(DigitalInstance instance) throws DatabaseException, RecordNotFoundException;
 
@@ -46,6 +42,8 @@ public interface DigitalInstanceDAO {
     public List<DigitalInstance> getDigitalInstancesOfDigDoc(long digDocId) throws DatabaseException, RecordNotFoundException;
 
     public List<DigitalInstance> getDigitalInstancesByTimestamps(DateTime from, DateTime until) throws DatabaseException;
+
+    public List<DigitalInstance> getDigitalInstancesByUrl(String url) throws DatabaseException;
 
     public long getTotalCount() throws DatabaseException;
 
