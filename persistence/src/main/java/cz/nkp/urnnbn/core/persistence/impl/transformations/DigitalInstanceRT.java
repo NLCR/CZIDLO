@@ -4,16 +4,16 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 /**
- *
  * @author Martin Řehánek
  */
 public class DigitalInstanceRT implements ResultsetTransformer {
@@ -41,6 +41,7 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         instance.setUrl(resultSet.getString(DigitalInstanceDAO.ATTR_URL));
         instance.setFormat(resultSet.getString(DigitalInstanceDAO.ATTR_FORMAT));
         instance.setAccessibility(resultSet.getString(DigitalInstanceDAO.ATTR_ACCESS));
+        instance.setAccessRestriction(AccessRestriction.values()[resultSet.getInt(DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS)]);
         instance.setActive(resultSet.getBoolean(DigitalInstanceDAO.ATTR_ACTIVE));
         return instance;
     }

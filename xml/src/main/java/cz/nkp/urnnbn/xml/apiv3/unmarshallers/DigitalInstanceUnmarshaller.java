@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.apiv3.unmarshallers;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import nu.xom.Document;
 import nu.xom.Element;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -45,6 +46,7 @@ public class DigitalInstanceUnmarshaller extends Unmarshaller {
         result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root, null)));
         result.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(FORMAT_MAX_LENGTH)));
         result.setAccessibility(elementContentOrNull("accessibility", root, new LimitedLengthEnhancer(ACCESSIBILITY_MAX_LENGTH)));
+        result.setAccessRestriction(AccessRestriction.UNKNOWN);
         result.setActive(Boolean.TRUE);
         return result;
     }

@@ -39,6 +39,7 @@ public class DigitalInstanceBuilderJson extends JsonBuilder {
             appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
             appendElementWithContentIfNotNull(root, instance.getFormat(), "format");
             appendElementWithContentIfNotNull(root, instance.getAccessibility(), "accessibility");
+            appendElementWithContentIfNotNull(root, instance.getAccessRestriction().toString(), "access_restriction");
             appendElementWithContentIfNotNull(root, digLibId, "digitalLibraryId");
             appendElementWithContentIfNotNull(root, instance.getCreated(), "created");
             appendElementWithContentIfNotNull(root, instance.getDeactivated(), "deactivated");

@@ -25,26 +25,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    elementFormDefault="qualified" targetNamespace="http://resolver.nkp.cz/v5/"
-    xmlns:czidlo="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+           elementFormDefault="qualified" targetNamespace="http://resolver.nkp.cz/v5/"
+           xmlns:czidlo="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
     <!--<xs:include schemaLocation="common.xsd.xml"/> -->
     <xs:element name="digitalInstance">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="url" type="czidlo:url" />
-                <xs:element name="digitalLibraryId" type="xs:integer" />
+                <xs:element name="url" type="czidlo:url"/>
+                <xs:element name="digitalLibraryId" type="xs:integer"/>
                 <xs:element name="format" type="xs:string"
-                    minOccurs="0" />
+                            minOccurs="0"/>
                 <xs:element name="accessibility" type="xs:string"
-                    minOccurs="0" />
+                            minOccurs="0"/>
+                <xs:element name="accessRestriction" type="czidlo:accessRestrictionType"
+                            minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
     <xs:simpleType name='nonemptyString'>
         <xs:restriction base='xs:string'>
-            <xs:minLength value='1' />
+            <xs:minLength value='1'/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -52,7 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:simpleType name="urnNbnType">
         <xs:restriction base="xs:string">
             <xs:pattern
-                value="urn:nbn:[A-Za-z]{2}:[A-Za-z0-9]{2,6}\-[A-Za-z0-9]{6}" />
+                    value="urn:nbn:[A-Za-z]{2}:[A-Za-z0-9]{2,6}\-[A-Za-z0-9]{6}"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -60,8 +62,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="registrarScopeIdentifiers">
         <xs:sequence>
             <xs:element name="id"
-                type="czidlo:registrarScopeIdentifier" minOccurs="0"
-                maxOccurs="unbounded" />
+                        type="czidlo:registrarScopeIdentifier" minOccurs="0"
+                        maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -70,9 +72,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:simpleContent>
             <xs:extension base="czidlo:registarScopeIdValueType">
                 <xs:attribute name="type" use="required"
-                    type="czidlo:registarScopeIdTypeType" />
+                              type="czidlo:registarScopeIdTypeType"/>
                 <xs:attribute name="previousValue" use="optional"
-                    type="czidlo:registarScopeIdValueType" />
+                              type="czidlo:registarScopeIdValueType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -83,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <!-- uppercase/lowercase letters, numbers, '_', '-', ':'. Must 
                 start and end with letter or number. Length must be between 1 and 20 characters. -->
             <xs:pattern
-                value="[A-Za-z0-9]{1}[A-Za-z0-9_\-:]{0,18}[A-Za-z0-9]{1}" />
+                    value="[A-Za-z0-9]{1}[A-Za-z0-9_\-:]{0,18}[A-Za-z0-9]{1}"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -102,7 +104,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- i.e. these characters are newly allowed: ? [ ] ; & = # -->
         <xs:restriction base="xs:token">
             <xs:pattern
-                value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,58}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}" />
+                    value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,58}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -111,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="type" use="required"
-                    type="czidlo:originatorTypeType" />
+                              type="czidlo:originatorTypeType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -119,9 +121,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- originator type -->
     <xs:simpleType name="originatorTypeType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="AUTHOR" />
-            <xs:enumeration value="EVENT" />
-            <xs:enumeration value="CORPORATION" />
+            <xs:enumeration value="AUTHOR"/>
+            <xs:enumeration value="EVENT"/>
+            <xs:enumeration value="CORPORATION"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -129,28 +131,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="sourceDocument">
         <xs:sequence>
             <xs:element name="titleInfo" minOccurs="1"
-                maxOccurs="1">
+                        maxOccurs="1">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="title" type="xs:string"
-                            minOccurs="1" maxOccurs="1" />
+                                    minOccurs="1" maxOccurs="1"/>
                         <xs:element name="volumeTitle" type="xs:string"
-                            minOccurs="0" maxOccurs="1" />
+                                    minOccurs="0" maxOccurs="1"/>
                         <xs:element name="issueTitle" type="xs:string"
-                            minOccurs="0" maxOccurs="1" />
+                                    minOccurs="0" maxOccurs="1"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="ccnb" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <xs:element name="isbn" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <xs:element name="issn" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <xs:element name="otherId" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <xs:element name="publication" type="czidlo:publication"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -158,15 +160,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <xs:complexType name="publication">
         <xs:sequence>
             <xs:element name="publisher" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <xs:element name="place" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
             <!--TODO: zminit zmenu v dokumentaci. Rok byval xs:int, teď tam 
                 muze byt string, ale pokud neobsahuje cislo, zahodi se -->
             <!--TODO: projit ostatni data a pokud najdu podobny int, tak 
                 udelat to same -->
             <xs:element name="year" type="xs:string"
-                minOccurs="0" maxOccurs="1" />
+                        minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -175,9 +177,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <xs:restriction base="xs:string">
             <!--starts with http:// or https:// (case insensitive) with total 
                 length at most 2008 characters -->
-            <xs:pattern value="[hH][tT]{2}[pP][sS]{0,1}://.{1,200}" />
+            <xs:pattern value="[hH][tT]{2}[pP][sS]{0,1}://.{1,200}"/>
         </xs:restriction>
     </xs:simpleType>
 
+    <!--accessRestriction-->
+    <xs:simpleType name="accessRestrictionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNKNOWN"/>
+            <xs:enumeration value="UNLIMITED_ACCESS"/>
+            <xs:enumeration value="LIMITED_ACCESS"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>

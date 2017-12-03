@@ -4,15 +4,26 @@ import java.io.Serializable;
 
 public class DigitalInstanceDTO implements Serializable {
 
+    public enum ACCESS_RESTRICTION {
+        UNKNOWN,
+        UNLIMITED_ACCESS,
+        LIMITED_ACCESS
+    }
+
     private static final long serialVersionUID = -9032263437314075051L;
     private Long id;
     private DigitalLibraryDTO library;
     private String created;
     private String deactivated;
+    private Boolean active;
     private String url;
     private String format;
     private String accessibility;
-    private Boolean active;
+    private ACCESS_RESTRICTION accessRestriction;
+
+    public DigitalInstanceDTO() {
+        this.accessRestriction = ACCESS_RESTRICTION.UNKNOWN;
+    }
 
     public Boolean isActive() {
         return active;
@@ -76,6 +87,14 @@ public class DigitalInstanceDTO implements Serializable {
 
     public void setAccessibility(String accessibility) {
         this.accessibility = accessibility;
+    }
+
+    public ACCESS_RESTRICTION getAccessRestriction() {
+        return accessRestriction;
+    }
+
+    public void setAccessRestriction(ACCESS_RESTRICTION accessRestriction) {
+        this.accessRestriction = accessRestriction;
     }
 
     @Override

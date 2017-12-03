@@ -400,6 +400,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         }
         addLabeledItemIfValueNotNull(instanceItem, constants.format(), instanceDTO.getFormat());
         addLabeledItemIfValueNotNull(instanceItem, constants.accessibility(), instanceDTO.getAccessibility());
+        // TODO: 3.12.17 access_restriction
         addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
         addLabeledItemIfValueNotNull(instanceItem, constants.created(), instanceDTO.getCreated());
         addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getDeactivated());

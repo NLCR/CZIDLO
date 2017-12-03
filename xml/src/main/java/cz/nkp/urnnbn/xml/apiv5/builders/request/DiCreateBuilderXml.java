@@ -22,6 +22,7 @@ public class DiCreateBuilderXml extends XmlBuilder {
         appendElementWithContentIfNotNull(root, instance.getLibraryId(), "digitalLibraryId");
         appendElementWithContentIfNotNull(root, instance.getFormat(), "format");
         appendElementWithContentIfNotNull(root, instance.getAccessibility(), "accessibility");
+        appendElementWithContentIfNotNull(root, instance.getAccessRestriction().name(), "accessRestriction");
         return root;
     }
 }

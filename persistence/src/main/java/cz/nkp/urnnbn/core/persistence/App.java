@@ -9,15 +9,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.*;
 import org.joda.time.DateTime;
 
-import cz.nkp.urnnbn.core.DtoBuilder;
-import cz.nkp.urnnbn.core.EntityType;
-import cz.nkp.urnnbn.core.IntEntIdType;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
-import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.dto.Archiver;
 import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -238,6 +232,7 @@ public class App {
             babickaMzk_v_K4mzk.setUrl("http://kramerius.mzk.cz/search/handle/uuid:123");
             babickaMzk_v_K4mzk.setFormat("djvu");
             babickaMzk_v_K4mzk.setAccessibility("veřejně přístupné");
+            babickaMzk_v_K4mzk.setAccessRestriction(AccessRestriction.UNKNOWN);
             babickaMzk_v_K4mzk.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaMzk_v_K4mzk);
             // babicka mzk v K3 mzk
@@ -270,6 +265,7 @@ public class App {
             babickaNkp_v_K4nkp.setLibraryId(nkpK4.getId());
             babickaNkp_v_K4nkp.setFormat("jpg");
             babickaNkp_v_K4nkp.setAccessibility("public");
+            babickaNkp_v_K4nkp.setAccessRestriction(AccessRestriction.UNKNOWN);
             babickaNkp_v_K4nkp.setUrl("http://kramerius.nkp.cz/search/handle/uuid:456");
             babickaNkp_v_K4nkp.setActive(Boolean.TRUE);
             factory.digInstDao().insertDigInstance(babickaNkp_v_K4nkp);

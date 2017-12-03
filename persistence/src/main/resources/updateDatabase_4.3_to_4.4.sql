@@ -4,11 +4,13 @@
 /***************************************/
 /***************************************/
 
+
 /**********************************************************************/
 /* Removing order from registrar/archiver record                      */
 /* https://github.com/NLCR/CZIDLO/issues/166                          */
 /**********************************************************************/
 ALTER TABLE ARCHIVER DROP COLUMN ITEM_ORDER;
+
 
 /**********************************************************************/
 /* Replacing tabs with spaces; trimming leading and trailing spaces   */
@@ -52,3 +54,9 @@ UPDATE USERACCOUNT SET email=trim(email) WHERE email LIKE '\ %' OR email LIKE '%
 /*  New indexes  */
 /*****************/
 CREATE INDEX DIGITALINSTANCE_URL ON DIGITALINSTANCE (URL);
+
+
+/*************************************************/
+/*  New column DIGITALINSTANCE.ACCESSRESTRICTION */
+/*************************************************/
+ALTER TABLE DIGITALINSTANCE ADD COLUMN ACCESSRESTRICTION NUMERIC NOT NULL DEFAULT 0;

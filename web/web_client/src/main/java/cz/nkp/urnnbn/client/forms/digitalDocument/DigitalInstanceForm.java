@@ -1,15 +1,15 @@
 package cz.nkp.urnnbn.client.forms.digitalDocument;
 
-import java.util.ArrayList;
-
 import cz.nkp.urnnbn.client.forms.DigitalLibraryListField;
 import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.client.validation.LimitedLengthUrlValidator;
 import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
+import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
+import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
+
+import java.util.ArrayList;
 
 public class DigitalInstanceForm extends Form {
 
@@ -28,24 +28,25 @@ public class DigitalInstanceForm extends Form {
 
     @Override
     public FormFields buildFields() {
-        FormFields result = new FormFields();
-        result.addField("library", new DigitalLibraryListField(libraries));
-        result.addField("format", new TextInputValueField(new LimitedLengthValidator(100), constants.format(), originalDto.getFormat(), false));
-        result.addField("access", new TextInputValueField(new LimitedLengthValidator(100), constants.accessibility(), originalDto.getAccessibility(),
-                false));
-        result.addField("url", new TextInputValueField(new LimitedLengthUrlValidator(100), constants.url(), originalDto.getUrl(), true));
-        return result;
+        FormFields fields = new FormFields();
+        fields.addField("library", new DigitalLibraryListField(libraries));
+        fields.addField("format", new TextInputValueField(new LimitedLengthValidator(100), constants.format(), originalDto.getFormat(), false));
+        fields.addField("access", new TextInputValueField(new LimitedLengthValidator(100), constants.accessibility(), originalDto.getAccessibility(), false));
+        // TODO: 3.12.17 access_restriction
+        fields.addField("url", new TextInputValueField(new LimitedLengthUrlValidator(100), constants.url(), originalDto.getUrl(), true));
+        return fields;
     }
 
     @Override
     public DigitalInstanceDTO getDto() {
-        DigitalInstanceDTO result = new DigitalInstanceDTO();
-        result.setId(originalDto.getId());
-        result.setLibrary((DigitalLibraryDTO) fields.getFieldByKey("library").getInsertedValue());
-        result.setFormat(getStringFieldValue("format"));
-        result.setAccessibility(getStringFieldValue("access"));
-        result.setUrl(getStringFieldValue("url"));
-        result.setActive(true);
-        return result;
+        DigitalInstanceDTO dto = new DigitalInstanceDTO();
+        dto.setId(originalDto.getId());
+        dto.setLibrary((DigitalLibraryDTO) fields.getFieldByKey("library").getInsertedValue());
+        dto.setFormat(getStringFieldValue("format"));
+        dto.setAccessibility(getStringFieldValue("access"));
+        dto.setAccessRestriction(originalDto.getAccessRestriction());
+        dto.setUrl(getStringFieldValue("url"));
+        dto.setActive(true);
+        return dto;
     }
 }

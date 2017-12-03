@@ -53,6 +53,7 @@ public class DigitalInstanceBuilderXml extends XmlBuilder {
         appendElementWithContentIfNotNull(root, instance.getUrl(), "url");
         appendElementWithContentIfNotNull(root, instance.getFormat(), "format");
         appendElementWithContentIfNotNull(root, instance.getAccessibility(), "accessibility");
+        appendElementWithContentIfNotNull(root, instance.getAccessRestriction().name(), "accessRestriction");
         appendElementWithContentIfNotNull(root, digLibId, "digitalLibraryId");
         appendElementWithContentIfNotNull(root, instance.getCreated(), "created");
         appendElementWithContentIfNotNull(root, instance.getDeactivated(), "deactivated");

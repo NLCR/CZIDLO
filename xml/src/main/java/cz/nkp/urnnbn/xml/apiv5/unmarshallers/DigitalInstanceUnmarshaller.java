@@ -16,6 +16,7 @@
  */
 package cz.nkp.urnnbn.xml.apiv5.unmarshallers;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.xml.apiv5.unmarshallers.validation.LimitedLengthEnhancer;
 import cz.nkp.urnnbn.xml.apiv5.unmarshallers.validation.UrlValidator;
@@ -23,7 +24,6 @@ import nu.xom.Document;
 import nu.xom.Element;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class DigitalInstanceUnmarshaller extends Unmarshaller {
@@ -45,6 +45,8 @@ public class DigitalInstanceUnmarshaller extends Unmarshaller {
         result.setLibraryId(Long.valueOf(elementContentOrNull("digitalLibraryId", root, null)));
         result.setFormat(elementContentOrNull("format", root, new LimitedLengthEnhancer(FORMAT_MAX_LENGTH)));
         result.setAccessibility(elementContentOrNull("accessibility", root, new LimitedLengthEnhancer(ACCESSIBILITY_MAX_LENGTH)));
+        String accessRestritctionStr = elementContentOrNull("accessRestriction", root, null);
+        result.setAccessRestriction(accessRestritctionStr == null ? AccessRestriction.UNKNOWN : AccessRestriction.valueOf(accessRestritctionStr));
         result.setActive(Boolean.TRUE);
         return result;
     }

@@ -27,6 +27,7 @@ public interface DigitalInstanceDAO {
     public String ATTR_URL = "url";
     public String ATTR_FORMAT = "format";
     public String ATTR_ACCESS = "accessibility";
+    public String ATTR_ACCESS_RESTRICTIONS = "accessRestriction";
     public String ATTR_PUBLISHED = "published";
 
     /**

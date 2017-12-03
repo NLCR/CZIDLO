@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.core.dto;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import org.joda.time.DateTime;
 
 /**
@@ -20,6 +21,7 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
     private String url;
     private String format;
     private String accessibility;
+    private AccessRestriction accessRestriction;
 
     public Long getDigDocId() {
         return digDocId;
@@ -95,6 +97,14 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
         this.active = active;
     }
 
+    public AccessRestriction getAccessRestriction() {
+        return accessRestriction;
+    }
+
+    public void setAccessRestriction(AccessRestriction accessRestriction) {
+        this.accessRestriction = accessRestriction;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -162,6 +172,13 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
                 builder.append(", ");
             }
             builder.append("accessibility='").append(accessibility).append('\'');
+            someFieldAlreadyPresent = true;
+        }
+        if (accessRestriction != null) {
+            if (someFieldAlreadyPresent) {
+                builder.append(", ");
+            }
+            builder.append("accessRestriction='").append(accessRestriction).append('\'');
             someFieldAlreadyPresent = true;
         }
         if (active != null) {

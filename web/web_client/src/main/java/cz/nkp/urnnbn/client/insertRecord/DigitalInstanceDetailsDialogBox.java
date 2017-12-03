@@ -42,6 +42,7 @@ public class DigitalInstanceDetailsDialogBox extends AbstractDialogBox {
             grid.setWidget(index, 0, new Label(constants.accessibility() + ':'));
             grid.setWidget(index++, 1, new Label(instance.getAccessibility()));
         }
+        // TODO: 3.12.17 access_restriction
         grid.setWidget(index, 0, new Label(constants.url() + ':'));
         grid.setWidget(index++, 1, new HTML(buildUrlOrNull(instance.getUrl())));
         grid.setWidget(index, 0, new Label(constants.created() + ':'));
@@ -77,6 +78,7 @@ public class DigitalInstanceDetailsDialogBox extends AbstractDialogBox {
         if (instance.getAccessibility() != null) {
             result++;
         }
+        // TODO: 3.12.17 access_restriction
         return result;
     }
 

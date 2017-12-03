@@ -4,17 +4,16 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.DigitalInstanceDAO;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 /**
- *
  * @author Martin Řehánek
  */
 public class InsertDigitalInstance implements StatementWrapper {
@@ -27,9 +26,15 @@ public class InsertDigitalInstance implements StatementWrapper {
 
     @Override
     public String preparedStatement() {
-        return "INSERT into " + DigitalInstanceDAO.TABLE_NAME + "(" + DigitalInstanceDAO.ATTR_ID + "," + DigitalInstanceDAO.ATTR_DIG_DOC_ID + ","
-                + DigitalInstanceDAO.ATTR_LIB_ID + "," + DigitalInstanceDAO.ATTR_URL + "," + DigitalInstanceDAO.ATTR_PUBLISHED + ","
-                + DigitalInstanceDAO.ATTR_ACCESS + ") values(?,?,?,?,?)";
+        return "INSERT into " + DigitalInstanceDAO.TABLE_NAME + "("
+                + DigitalInstanceDAO.ATTR_ID + ","
+                + DigitalInstanceDAO.ATTR_DIG_DOC_ID + ","
+                + DigitalInstanceDAO.ATTR_LIB_ID + ","
+                + DigitalInstanceDAO.ATTR_URL + ","
+                + DigitalInstanceDAO.ATTR_PUBLISHED + ","
+                + DigitalInstanceDAO.ATTR_ACCESS + ","
+                + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS
+                + ") values(?,?,?,?,?,?)";
     }
 
     @Override
@@ -41,6 +46,7 @@ public class InsertDigitalInstance implements StatementWrapper {
             st.setString(4, i.getUrl());
             st.setTimestamp(5, DateTimeUtils.nowTs());
             st.setString(6, i.getAccessibility());
+            st.setInt(7, i.getAccessRestriction().ordinal());
         } catch (SQLException e) {
             // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
