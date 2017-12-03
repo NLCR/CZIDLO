@@ -59,7 +59,7 @@ public class DigitalInstanceDaoPostgres extends AbstractDAO implements DigitalIn
                 Long id = OperationUtils.resultSet2Long(idResultSet);
                 // insert record with id from sequence
                 instance.setId(id);
-                PreparedStatement insert = OperationUtils.preparedStatementFromWrapper(connection, new InsertDigInstance(instance));
+                PreparedStatement insert = OperationUtils.preparedStatementFromWrapper(connection, new InsertDigitalInstance(instance));
                 insert.executeUpdate();
                 return id;
             }

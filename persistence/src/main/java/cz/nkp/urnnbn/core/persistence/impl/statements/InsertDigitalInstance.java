@@ -18,10 +18,10 @@ import java.sql.SQLException;
  */
 public class InsertDigitalInstance implements StatementWrapper {
 
-    private final DigitalInstance i;
+    private final DigitalInstance instance;
 
-    public InsertDigitalInstance(DigitalInstance i) {
-        this.i = i;
+    public InsertDigitalInstance(DigitalInstance instance) {
+        this.instance = instance;
     }
 
     @Override
@@ -30,23 +30,27 @@ public class InsertDigitalInstance implements StatementWrapper {
                 + DigitalInstanceDAO.ATTR_ID + ","
                 + DigitalInstanceDAO.ATTR_DIG_DOC_ID + ","
                 + DigitalInstanceDAO.ATTR_LIB_ID + ","
+                + DigitalInstanceDAO.ATTR_CREATED + ","
+                + DigitalInstanceDAO.ATTR_ACTIVE + ","
                 + DigitalInstanceDAO.ATTR_URL + ","
-                + DigitalInstanceDAO.ATTR_PUBLISHED + ","
+                + DigitalInstanceDAO.ATTR_FORMAT + ","
                 + DigitalInstanceDAO.ATTR_ACCESS + ","
                 + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS
-                + ") values(?,?,?,?,?,?)";
+                + ") values(?,?,?,?,?,?,?,?,?)";
     }
 
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
-            st.setLong(1, i.getId());
-            st.setLong(2, i.getDigDocId());
-            st.setLong(3, i.getLibraryId());
-            st.setString(4, i.getUrl());
-            st.setTimestamp(5, DateTimeUtils.nowTs());
-            st.setString(6, i.getAccessibility());
-            st.setInt(7, i.getAccessRestriction().ordinal());
+            st.setLong(1, instance.getId());
+            st.setLong(2, instance.getDigDocId());
+            st.setLong(3, instance.getLibraryId());
+            st.setTimestamp(4, DateTimeUtils.nowTs());
+            st.setBoolean(5, instance.isActive());
+            st.setString(6, instance.getUrl());
+            st.setString(7, instance.getFormat());
+            st.setString(8, instance.getAccessibility());
+            st.setInt(9, instance.getAccessRestriction().ordinal());
         } catch (SQLException e) {
             // chyba je v prepared statementu nebo v tranfsformaci resultSetu
             throw new SyntaxException(e);
