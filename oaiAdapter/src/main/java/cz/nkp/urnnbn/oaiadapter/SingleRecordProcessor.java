@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.oaiadapter;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -352,11 +353,20 @@ public class SingleRecordProcessor {
         } else {
             merged.setFormat(newDi.getFormat());
         }
+        //access restriction
+        if (newDi.getAccessRestriction() == null || newDi.getAccessRestriction() == AccessRestriction.UNKNOWN) {
+            merged.setAccessRestriction(currentDi.getAccessRestriction());
+        } else {
+            merged.setAccessRestriction(newDi.getAccessRestriction());
+        }
         return merged;
     }
 
     private boolean equals(DigitalInstance currentDi, DigitalInstance newDi, boolean ignoreDifferentDiFormat, boolean ignoreDifferentDiAccessibility) {
         if (!equals(currentDi.getUrl(), newDi.getUrl())) {
+            return false;
+        }
+        if (!equals(currentDi.getAccessRestriction(), newDi.getAccessRestriction())) {
             return false;
         }
         if (!ignoreDifferentDiFormat && !equals(currentDi.getFormat(), newDi.getFormat())) {

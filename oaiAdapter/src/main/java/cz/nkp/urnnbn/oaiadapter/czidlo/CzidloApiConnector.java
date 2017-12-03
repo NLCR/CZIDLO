@@ -27,7 +27,8 @@ public class CzidloApiConnector {
 
     private static final Logger logger = Logger.getLogger(CzidloApiConnector.class.getName());
 
-    public static final String CZIDLO_NAMESPACE = "http://resolver.nkp.cz/v4/";
+    public static final int CZIDLO_API_VERSION = 5; //OAI Adapter should use latest API
+    public static final String CZIDLO_NAMESPACE = String.format("http://resolver.nkp.cz/v%d/", CZIDLO_API_VERSION);
     public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
     public final String baseUrl;
     private final Credentials credentials;
@@ -36,7 +37,7 @@ public class CzidloApiConnector {
     private final XmlTools xmlTools = new XmlTools();
 
     public CzidloApiConnector(String baseUrl, Credentials credentials, boolean ignoreInvalidCertificate) {
-        this.baseUrl = "https://" + baseUrl + "/v4/";
+        this.baseUrl = String.format("https://%s/v%d/", baseUrl, CZIDLO_API_VERSION);
         this.credentials = credentials;
         this.ignoreInvalidCertificate = ignoreInvalidCertificate;
     }

@@ -4,6 +4,7 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
@@ -109,6 +110,12 @@ public class XmlTools {
         if (accessibilityNodes.size() == 1) {
             di.setAccessibility(accessibilityNodes.get(0).getValue());
         }
+        Nodes accessRestrictionNodes = requestDoc.query("/r:digitalInstance/r:accessRestriction", CzidloApiConnector.CONTEXT);
+        if (accessRestrictionNodes.size() == 1) {
+            di.setAccessRestriction(AccessRestriction.valueOf(accessRestrictionNodes.get(0).getValue()));
+        } else {
+            di.setAccessRestriction(AccessRestriction.UNKNOWN);
+        }
         return di;
     }
 
@@ -129,6 +136,12 @@ public class XmlTools {
             Nodes accessibilityNodes = diEl.query("r:accessibility", CzidloApiConnector.CONTEXT);
             if (accessibilityNodes.size() > 0) {
                 di.setAccessibility(accessibilityNodes.get(0).getValue().trim());
+            }
+            Nodes accessRestrictionNodes = diEl.query("r:accessRestriction", CzidloApiConnector.CONTEXT);
+            if (accessRestrictionNodes.size() > 0) {
+                di.setAccessRestriction(AccessRestriction.valueOf(accessRestrictionNodes.get(0).getValue()));
+            } else {
+                di.setAccessRestriction(AccessRestriction.UNKNOWN);
             }
             Nodes createdNodes = diEl.query("r:created", CzidloApiConnector.CONTEXT);
             if (createdNodes.size() > 0) {
