@@ -166,6 +166,14 @@ public interface ConstantsImpl extends Constants {
 
     String accessibility();
 
+    String accessRestriction();
+
+    String accessRestrictionUnknown();
+
+    String accessRestrictionLimited();
+
+    String accessRestrictionUnlimited();
+
     String deactivatedDigitalInstance();
 
     String digitalLibrary();

@@ -1,22 +1,11 @@
 package cz.nkp.urnnbn.client.search;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.TreeItem;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -27,14 +16,11 @@ import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.client.services.InstitutionsService;
 import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
-import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
-import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
-import cz.nkp.urnnbn.shared.dto.UserDTO;
+import cz.nkp.urnnbn.shared.dto.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
@@ -400,7 +386,19 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         }
         addLabeledItemIfValueNotNull(instanceItem, constants.format(), instanceDTO.getFormat());
         addLabeledItemIfValueNotNull(instanceItem, constants.accessibility(), instanceDTO.getAccessibility());
-        // TODO: 3.12.17 access_restriction
+        String accessRestriction = null;
+        switch (instanceDTO.getAccessRestriction()) {
+            case UNKNOWN:
+                accessRestriction = constants.accessRestrictionUnknown();
+                break;
+            case LIMITED_ACCESS:
+                accessRestriction = constants.accessRestrictionLimited();
+                break;
+            case UNLIMITED_ACCESS:
+                accessRestriction = constants.accessRestrictionUnlimited();
+                break;
+        }
+        addLabeledItemIfValueNotNull(instanceItem, constants.accessRestriction(), accessRestriction);
         addDigitalLibrary(instanceItem, instanceDTO.getLibrary());
         addLabeledItemIfValueNotNull(instanceItem, constants.created(), instanceDTO.getCreated());
         addLabeledItemIfValueNotNull(instanceItem, constants.deactivated(), instanceDTO.getDeactivated());
@@ -410,6 +408,19 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     private HorizontalPanel digitalInstancePanel(DigitalInstanceDTO instanceDTO, UrnNbnDTO urn) {
         HorizontalPanel panel = new HorizontalPanel();
         if (instanceDTO.isActive()) {
+            // TODO: 4.12.17 icons for access restriction
+/*            switch (instanceDTO.getAccessRestriction()) {
+                case LIMITED_ACCESS:
+                    panel.add(new HTML("<img src='img/todo.png' alt='limited access'/>"));
+                    break;
+                case UNLIMITED_ACCESS:
+                    panel.add(new HTML("<img src='img/todo.png' alt='unlimited access'/>"));
+                    break;
+                case UNKNOWN:
+                    //nothing
+                    break;
+            }
+*/
             String url = instanceDTO.getUrl();
             panel.add(new HTML("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>"));
             if (activeUserManagesRegistrar()) {
@@ -427,6 +438,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         panel.add(buildImageLink(buildUrlToDigInstRecord(instanceDTO.getId(), "xml"), "img/xml.png"));
         panel.add(new HTML("&nbsp"));
         panel.add(buildImageLink(buildUrlToDigInstRecord(instanceDTO.getId(), "json"), "img/json.png"));
+
+
         return panel;
     }
 
