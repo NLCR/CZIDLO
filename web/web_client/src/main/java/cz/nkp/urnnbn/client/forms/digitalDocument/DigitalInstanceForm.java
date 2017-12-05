@@ -1,9 +1,6 @@
 package cz.nkp.urnnbn.client.forms.digitalDocument;
 
-import cz.nkp.urnnbn.client.forms.DigitalLibraryListField;
-import cz.nkp.urnnbn.client.forms.Form;
-import cz.nkp.urnnbn.client.forms.FormFields;
-import cz.nkp.urnnbn.client.forms.TextInputValueField;
+import cz.nkp.urnnbn.client.forms.*;
 import cz.nkp.urnnbn.client.validation.LimitedLengthUrlValidator;
 import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
@@ -32,8 +29,8 @@ public class DigitalInstanceForm extends Form {
         fields.addField("library", new DigitalLibraryListField(libraries));
         fields.addField("format", new TextInputValueField(new LimitedLengthValidator(100), constants.format(), originalDto.getFormat(), false));
         fields.addField("access", new TextInputValueField(new LimitedLengthValidator(100), constants.accessibility(), originalDto.getAccessibility(), false));
-        // TODO: 3.12.17 access_restriction
         fields.addField("url", new TextInputValueField(new LimitedLengthUrlValidator(100), constants.url(), originalDto.getUrl(), true));
+        fields.addField("accessRestriction", new AccessRestrictionField(originalDto.getAccessRestriction()));
         return fields;
     }
 
@@ -46,6 +43,7 @@ public class DigitalInstanceForm extends Form {
         dto.setAccessibility(getStringFieldValue("access"));
         dto.setAccessRestriction(originalDto.getAccessRestriction());
         dto.setUrl(getStringFieldValue("url"));
+        dto.setAccessRestriction((DigitalInstanceDTO.ACCESS_RESTRICTION) fields.getFieldByKey("accessRestriction").getInsertedValue());
         dto.setActive(true);
         return dto;
     }
