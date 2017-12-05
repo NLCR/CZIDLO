@@ -21,8 +21,8 @@ public class UpdateDigitalInstance implements StatementWrapper {
                 + DigitalInstanceDAO.ATTR_ACTIVE + "=?,"
                 + DigitalInstanceDAO.ATTR_URL + "=?,"
                 + DigitalInstanceDAO.ATTR_FORMAT + "=?,"
-                + DigitalInstanceDAO.ATTR_ACCESS + "=?"
-                + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS + "=?"
+                + DigitalInstanceDAO.ATTR_ACCESS + "=?,"
+                + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTION + "=?"
                 + " WHERE " + DigitalInstanceDAO.ATTR_ID + "=?";
     }
 

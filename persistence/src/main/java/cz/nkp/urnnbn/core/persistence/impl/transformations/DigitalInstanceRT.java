@@ -41,7 +41,7 @@ public class DigitalInstanceRT implements ResultsetTransformer {
         instance.setUrl(resultSet.getString(DigitalInstanceDAO.ATTR_URL));
         instance.setFormat(resultSet.getString(DigitalInstanceDAO.ATTR_FORMAT));
         instance.setAccessibility(resultSet.getString(DigitalInstanceDAO.ATTR_ACCESS));
-        instance.setAccessRestriction(AccessRestriction.values()[resultSet.getInt(DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS)]);
+        instance.setAccessRestriction(AccessRestriction.values()[resultSet.getInt(DigitalInstanceDAO.ATTR_ACCESS_RESTRICTION)]);
         instance.setActive(resultSet.getBoolean(DigitalInstanceDAO.ATTR_ACTIVE));
         return instance;
     }

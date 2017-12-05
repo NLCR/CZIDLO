@@ -35,7 +35,7 @@ public class InsertDigitalInstance implements StatementWrapper {
                 + DigitalInstanceDAO.ATTR_URL + ","
                 + DigitalInstanceDAO.ATTR_FORMAT + ","
                 + DigitalInstanceDAO.ATTR_ACCESS + ","
-                + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTIONS
+                + DigitalInstanceDAO.ATTR_ACCESS_RESTRICTION
                 + ") values(?,?,?,?,?,?,?,?,?)";
     }
 
