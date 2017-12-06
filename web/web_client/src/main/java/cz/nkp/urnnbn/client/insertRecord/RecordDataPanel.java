@@ -188,6 +188,8 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
             public void onClick(ClickEvent event) {
                 if (formsFilledCorrectly()) {
                     importRecord();
+                }else{
+                    logger.info("form not filled correcty");
                 }
             }
         });
@@ -208,7 +210,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         digDoc.setTechnicalMetadata(technicalMetadataForm.getDto());
         UrnNbnDTO urnNbn = urnNbnForm != null ? urnNbnForm.getDto() : null;
         // TODO: identifiers
-        ArrayList<RegistrarScopeIdDTO> identifiers = new ArrayList<RegistrarScopeIdDTO>();
+        ArrayList<RegistrarScopeIdDTO> identifiers = new ArrayList<>();
         dataService.saveRecord(entity, digDoc, urnNbn, identifiers, new AsyncCallback<UrnNbnDTO>() {
 
             @Override

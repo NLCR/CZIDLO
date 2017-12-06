@@ -67,7 +67,11 @@ public abstract class Form extends VerticalPanel {
         Field field = fields.getFieldByKey(fieldName);
         if (field != null) {
             String value = (String) field.getInsertedValue();
-            return value.trim();
+            if (value != null) {
+                return value.trim();
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
