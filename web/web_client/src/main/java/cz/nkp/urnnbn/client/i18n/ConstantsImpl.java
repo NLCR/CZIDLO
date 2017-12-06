@@ -214,7 +214,13 @@ public interface ConstantsImpl extends Constants {
 
     String edit();
 
+    String upload();
+
+    String download();
+
     String changeVisibility();
+
+    String show();
 
     String code();
 
@@ -324,8 +330,6 @@ public interface ConstantsImpl extends Constants {
 
     String uploadXslTemplate();
 
-    String upload();
-
     String DIGITAL_DOCUMENT_REGISTRATION();
 
     String DIGITAL_INSTANCE_IMPORT();
@@ -381,8 +385,6 @@ public interface ConstantsImpl extends Constants {
     String processOaiAdapterTransformationsDIImportTitle();
 
     String processOaiAdapterTransformationList();
-
-    String processOaiAdapterTransformationUpload();
 
     String processOaiAdapterTransformationTitle();
 
@@ -523,7 +525,6 @@ public interface ConstantsImpl extends Constants {
     String chartsRegistrarResolvationsTitle();
 
     String chartsWholeSpan();
-
 
 
 }

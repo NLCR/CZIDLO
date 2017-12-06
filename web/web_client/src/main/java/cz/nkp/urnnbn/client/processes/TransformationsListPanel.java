@@ -1,25 +1,18 @@
 package cz.nkp.urnnbn.client.processes;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
+
+import java.util.List;
 
 public class TransformationsListPanel extends ScrollPanel {
 
@@ -33,7 +26,7 @@ public class TransformationsListPanel extends ScrollPanel {
         super();
         this.superPanel = superPanel;
         this.transformations = transformations;
-        setWidth("600px");
+        setWidth("900px");
         setHeight("100px");
         add(contentPanel());
     }
@@ -49,27 +42,27 @@ public class TransformationsListPanel extends ScrollPanel {
 
     private Widget transformationsListHeader() {
         HorizontalPanel panel = new HorizontalPanel();
-        panel.setWidth("500px");
+        panel.setWidth("800px");
 
         // title
         Widget titelLabel = headerFormated(constants.processOaiAdapterTransformationTitle());
         panel.add(titelLabel);
-        panel.setCellWidth(titelLabel, "20%");
+        panel.setCellWidth(titelLabel, "23%");
 
         // description
         Widget descriptionLabel = headerFormated(constants.processOaiAdapterTransformationDescription());
         panel.add(descriptionLabel);
-        panel.setCellWidth(descriptionLabel, "35%");
+        panel.setCellWidth(descriptionLabel, "30%");
 
         // created
         Widget createdLabel = headerFormated(constants.processOaiAdapterTransformationCreated());
         panel.add(createdLabel);
-        panel.setCellWidth(createdLabel, "30%");
+        panel.setCellWidth(createdLabel, "20%");
 
-        // delete button
+        // buttons
         Widget deleteButtonLabel = headerFormated("");
         panel.add(deleteButtonLabel);
-        panel.setCellWidth(deleteButtonLabel, "15%");
+        panel.setCellWidth(deleteButtonLabel, "27%");
 
         return panel;
     }
@@ -80,46 +73,65 @@ public class TransformationsListPanel extends ScrollPanel {
 
     private Widget transforamtionWidget(XmlTransformationDTO transformation) {
         HorizontalPanel panel = new HorizontalPanel();
-        panel.setWidth("500px");
+        panel.setWidth("800px");
         // panel.setWidth("100%");
 
         // name
         Widget nameLabel = new Label(transformation.getName());
         panel.add(nameLabel);
-        panel.setCellWidth(nameLabel, "20%");
+        panel.setCellWidth(nameLabel, "23%");
 
         // description
         Widget descriptionLabel = new Label(transformation.getDescription());
         panel.add(descriptionLabel);
-        panel.setCellWidth(descriptionLabel, "35%");
+        panel.setCellWidth(descriptionLabel, "30%");
 
         // created
         Label createdLabel = new Label(transformation.getCreated());
         panel.add(createdLabel);
-        panel.setCellWidth(createdLabel, "30%");
+        panel.setCellWidth(createdLabel, "20%");
 
-        // // TODO: just for testing
-        // // type
-        // Label typeLabel = new Label(transformation.getType().toString());
-        // panel.add(typeLabel);
-        // panel.setCellWidth(typeLabel, "10%");
+        // show transformation button
+        Widget showTransformationButton = showTransformationButton(transformation);
+        panel.add(showTransformationButton);
+        panel.setCellWidth(showTransformationButton, "9%");
 
-        // //TODO: implement if required
-        // download template button
-        // Widget downloadTemplateButton =
-        // downloadTemplateButton(transformation);
-        // panel.add(downloadTemplateButton);
-        // panel.setCellWidth(downloadTemplateButton, "15%");
+        // download transformation button
+        Widget downloadTransformationButton = downloadTransformationButton(transformation);
+        panel.add(downloadTransformationButton);
+        panel.setCellWidth(downloadTransformationButton, "9%");
 
-        // remove button
-        Widget removeButton = removeButton(transformation);
-        panel.add(removeButton);
-        panel.setCellWidth(removeButton, "15%");
+        // delete transformation button
+        Widget deleteTransformationButton = deleteTransformationButton(transformation);
+        panel.add(deleteTransformationButton);
+        panel.setCellWidth(deleteTransformationButton, "9%");
 
         return panel;
     }
 
-    private Widget removeButton(final XmlTransformationDTO transformation) {
+    private Widget showTransformationButton(final XmlTransformationDTO transformation) {
+        return new Button(constants.show(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                String url = "/processDataServer/transformations/" + transformation.getId() + "/xslt";
+                Window.open(url, "_blank", "enabled");
+            }
+        });
+    }
+
+    private Widget downloadTransformationButton(final XmlTransformationDTO transformation) {
+        return new Button(constants.download(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                String url = "/processDataServer/transformations/" + transformation.getId() + "/xsltFile";
+                Window.open(url, "_self", "enabled");
+            }
+        });
+    }
+
+    private Widget deleteTransformationButton(final XmlTransformationDTO transformation) {
         return new Button(constants.delete(), new ClickHandler() {
 
             @Override

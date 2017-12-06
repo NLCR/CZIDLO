@@ -71,7 +71,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
         label.addStyleName(css.processListHeading());
         panel.add(label);
 
-        panel.add(new Button(constants.processOaiAdapterTransformationUpload(), new ClickHandler() {
+        panel.add(new Button(constants.upload(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -97,7 +97,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
         Label label = new Label(constants.processOaiAdapterTransformationsDIImportTitle());
         label.addStyleName(css.processListHeading());
         panel.add(label);
-        panel.add(new Button(constants.processOaiAdapterTransformationUpload(), new ClickHandler() {
+        panel.add(new Button(constants.upload(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {

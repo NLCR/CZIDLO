@@ -353,7 +353,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             panel.setCellWidth(stopProcess, "5%");
 
             // stazeni logu
-            Widget downloadLog = downloadLogWidget(process);
+            Widget downloadLog = showLogWidget(process);
             // new Label("stáhnout log");
             panel.add(downloadLog);
             panel.setCellWidth(downloadLog, "8%");
@@ -414,7 +414,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             panel.setCellWidth(stopProcess, "8%");
 
             // stazeni logu
-            Widget downloadLog = downloadLogWidget(process);
+            Widget downloadLog = showLogWidget(process);
             // new Label("stáhnout log");
             panel.add(downloadLog);
             panel.setCellWidth(downloadLog, "8%");
@@ -444,7 +444,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         }
     }
 
-    private Widget downloadLogWidget(final ProcessDTO process) {
+    private Widget showLogWidget(final ProcessDTO process) {
         if (process.getState() != ProcessDTOState.SCHEDULED && process.getState() != ProcessDTOState.CANCELED) {
             return new Button(constants.processShowLog(), new ClickHandler() {
 
