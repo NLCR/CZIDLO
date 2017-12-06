@@ -33,27 +33,27 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("urn") String urnNbnString) {
+                                                                                  @PathParam("urn") String urnNbnString) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                     urnNbnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
-            case DEACTIVATED:
-            case ACTIVE:
-                DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
-                if (doc == null) {
+                case DEACTIVATED:
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                    if (doc == null) {
+                        throw new UnknownDigitalDocumentException(format, fetched.getUrn());
+                    } else {
+                        return new RegistrarScopeIdentifiersResource(doc);
+                    }
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbnParsed);
+                case RESERVED:
                     throw new UnknownDigitalDocumentException(format, fetched.getUrn());
-                } else {
-                    return new RegistrarScopeIdentifiersResource(doc);
-                }
-            case FREE:
-                throw new UnknownUrnException(format, urnNbnParsed);
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, fetched.getUrn());
-            default:
-                throw new RuntimeException();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -65,27 +65,27 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
     @Path("{urn}/digitalInstances")
     public DigitalInstancesResource getDigitalInstancesResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("urn") String urnNbnString) {
+                                                                @PathParam("urn") String urnNbnString) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                     urnNbnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
-            case DEACTIVATED:
-            case ACTIVE:
-                DigitalDocument digDoc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
-                if (digDoc == null) {
+                case DEACTIVATED:
+                case ACTIVE:
+                    DigitalDocument digDoc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                    if (digDoc == null) {
+                        throw new UnknownDigitalDocumentException(format, fetched.getUrn());
+                    } else {
+                        return new DigitalInstancesResource(digDoc);
+                    }
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbnParsed);
+                case RESERVED:
                     throw new UnknownDigitalDocumentException(format, fetched.getUrn());
-                } else {
-                    return new DigitalInstancesResource(digDoc);
-                }
-            case FREE:
-                throw new UnknownUrnException(format, urnNbnParsed);
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, fetched.getUrn());
-            default:
-                throw new RuntimeException();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -98,7 +98,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     @GET
     @Path("{urn}")
     public Response resolve(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr,
-            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
+                            @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
             // allways redirect somwehere
             return redirectionResponse(context, urnNbnString);
@@ -117,11 +117,11 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                 UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(),
                         urnNbnParsed.getDocumentCode(), true);
                 switch (fetched.getStatus()) {
-                case ACTIVE:
-                    return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
-                default:
-                    // redirect to web client
-                    return Response.seeOther(buildWebSearchUri(urnNbnString)).build();
+                    case ACTIVE:
+                        return redirectionResponse(fetched.getUrn(), context.getHeader(HEADER_REFERER));
+                    default:
+                        // redirect to web client
+                        return Response.seeOther(buildWebSearchUri(urnNbnString)).build();
                 }
             } catch (WebApplicationException e) {
                 // redirect to web client
@@ -137,7 +137,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         // update resolvations statistics
         statisticService().incrementResolvationStatistics(urnNbn.getRegistrarCode().toString());
         if (urnNbn.isActive()) {
-            URI digitalInstance = getAvailableActiveDigitalInstanceOrNull(urnNbn.getDigDocId(), null, referer);
+            URI digitalInstance = getAvailableActiveDigitalInstanceOrNull(urnNbn.getDigDocId(), referer);
             if (digitalInstance != null) {
                 // redirect to DI
                 return Response.seeOther(digitalInstance).build();
@@ -151,21 +151,21 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
         try {
             UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
-            case ACTIVE:
-                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
-                if (doc == null) {
-                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
-                } else {
-                    return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
-                }
-            case DEACTIVATED:
-                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
-            case FREE:
-                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
-            default:
-                throw new RuntimeException();
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                    if (doc == null) {
+                        throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                    } else {
+                        return metadataResponse(doc, urnNbnWithState.getUrn(), format, withDigitalInstances);
+                    }
+                case DEACTIVATED:
+                    throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -182,16 +182,16 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
     private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
         switch (format) {
-        case XML: {
-            String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
-            return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-        }
-        case JSON: {
-            String json = digitalDocumentBuilderJson(doc, urnNbn, withDigitalInstances).toJson();
-            return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-        }
-        default:
-            throw new RuntimeException();
+            case XML: {
+                String xml = digitalDocumentBuilderXml(doc, urnNbn, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                String json = digitalDocumentBuilderJson(doc, urnNbn, withDigitalInstances).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+            }
+            default:
+                throw new RuntimeException();
         }
     }
 
@@ -206,21 +206,21 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
             String login = context.getRemoteUser();
             UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
-            case ACTIVE:
-                DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
-                if (doc == null) {
-                    throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
-                } else {
-                    return updateDigitalDocumentReturnXml(format, content, login, urnNbnWithState.getUrn());
-                }
-            case DEACTIVATED:
-                throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
-            case FREE:
-                throw new UnknownUrnException(format, urnNbnWithState.getUrn());
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
-            default:
-                throw new RuntimeException();
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
+                    if (doc == null) {
+                        throw new UnknownDigitalDocumentException(null, urnNbnWithState.getUrn());
+                    } else {
+                        return updateDigitalDocumentReturnXml(format, content, login, urnNbnWithState.getUrn());
+                    }
+                case DEACTIVATED:
+                    throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
+                case FREE:
+                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
+                case RESERVED:
+                    throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;

@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.api.v5;
 
 import cz.nkp.urnnbn.api.v5.json.*;
 import cz.nkp.urnnbn.api.v5.json.ie.IntelectualEntityBuilderJson;
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.xml.apiv5.builders.*;
 import cz.nkp.urnnbn.xml.apiv5.builders.ie.IntelectualEntityBuilderXml;
@@ -67,7 +68,7 @@ public abstract class AbstractDigitalDocumentResource extends ApiV5Resource {
 
     private DigitalInstancesBuilderJson digitalInstancesBuilderJson(DigitalDocument digDoc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digDoc.getId());
-        List<DigitalInstanceBuilderJson> result = new ArrayList<DigitalInstanceBuilderJson>(instances.size());
+        List<DigitalInstanceBuilderJson> result = new ArrayList<>(instances.size());
         for (DigitalInstance instance : instances) {
             DigitalInstanceBuilderJson builder = new DigitalInstanceBuilderJson(instance, null, null);
             result.add(builder);
@@ -96,31 +97,46 @@ public abstract class AbstractDigitalDocumentResource extends ApiV5Resource {
         return IntelectualEntityBuilderJson.instanceOf(entity, ieIdentfiers, pub, originator, srcDoc);
     }
 
-    protected URI getAvailableActiveDigitalInstanceOrNull(Long digDocId, ResponseFormat format, String refererUrl) throws URISyntaxException {
-        List<DigitalInstance> allDigitalInstanceds = dataAccessService().digInstancesByDigDocId(digDocId);
-        DigitalInstance instanceByReferer = getDigitalInstanceByRefererOrNull(allDigitalInstanceds, refererUrl);
-        // LOGGER.info("by referer:" + instanceByReferer);
-        if (instanceByReferer != null) { // prefered uri found
-            return new URI(instanceByReferer.getUrl());
-        } else { // return any uri
-            // LOGGER.info("all instances: " + allDigitalInstanceds.size());
-            for (DigitalInstance instance : allDigitalInstanceds) {
-                // LOGGER.info(instance.toString());
-                if (instance.isActive()) {
-                    return new URI(instance.getUrl());
+    protected URI getAvailableActiveDigitalInstanceOrNull(Long digDocId, String refererUrl) throws URISyntaxException {
+        List<DigitalInstance> instancesAll = dataAccessService().digInstancesByDigDocId(digDocId);
+        List<DigitalInstance> instancesMatchingReferer = filterActiveAndMatchingReferer(instancesAll, refererUrl);
+        List<DigitalInstance> instancesSelected = !instancesMatchingReferer.isEmpty() ? instancesMatchingReferer : instancesAll;
+        // select best DI with respect do accessRestriction
+        DigitalInstance bestDi = null;
+        for (DigitalInstance di : instancesSelected) {
+            if (di.isActive()) {
+                return new URI(di.getUrl());
+            }
+            if (bestDi == null) {
+                bestDi = di;
+            } else { //UNLIMITED_ACCESS > UNKNOWN > LIMITED_ACCESS
+                switch (di.getAccessRestriction()) { //possibly weaker access restriction
+                    case UNLIMITED_ACCESS:
+                        bestDi = di;
+                        break;
+                    case UNKNOWN:
+                        if (bestDi.getAccessRestriction() == AccessRestriction.LIMITED_ACCESS) {
+                            bestDi = di;
+                        }
+                        break;
                 }
             }
         }
-        return null;
+        if (bestDi != null) {
+            return new URI(bestDi.getUrl());
+        } else {
+            return null;
+        }
     }
 
-    private DigitalInstance getDigitalInstanceByRefererOrNull(List<DigitalInstance> allInstances, String refererUrl) {
+    private List<DigitalInstance> filterActiveAndMatchingReferer(List<DigitalInstance> allInstances, String refererUrl) {
+        List<DigitalInstance> instances = new ArrayList<>();
         if (refererUrl != null && !refererUrl.isEmpty()) {
             // vsechny katalogy
             List<Catalog> catalogs = dataAccessService().catalogs();
             // vsechny katalogy, u kterych se shoduje prefix
-            List<Catalog> matching = filterCatalogsByMatchingPrefix(catalogs, refererUrl);
-            for (Catalog catalog : matching) {
+            List<Catalog> matchingCatalogs = filterCatalogsByMatchingPrefix(catalogs, refererUrl);
+            for (Catalog catalog : matchingCatalogs) {
                 // digitalni knihovny vlastnene stejnym registratorem, jako katalog
                 List<DigitalLibrary> libraries = dataAccessService().librariesByRegistrarId(catalog.getRegistrarId());
                 for (DigitalLibrary library : libraries) {
@@ -128,13 +144,13 @@ public abstract class AbstractDigitalDocumentResource extends ApiV5Resource {
                     for (DigitalInstance instance : allInstances) {
                         // instance je ve vhodne knihovne a je aktivni
                         if (instance.getLibraryId() == library.getId() && instance.isActive()) {
-                            return instance;
+                            instances.add(instance);
                         }
                     }
                 }
             }
         }
-        return null;
+        return instances;
     }
 
     private List<Catalog> filterCatalogsByMatchingPrefix(List<Catalog> catalogs, String refererUrl) {
