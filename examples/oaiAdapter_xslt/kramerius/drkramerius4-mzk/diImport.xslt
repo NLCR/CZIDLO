@@ -2,7 +2,7 @@
 
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:czi="http://resolver.nkp.cz/v3/"
+                xmlns:czi="http://resolver.nkp.cz/v5/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -24,18 +24,14 @@
             <xsl:call-template name="digitalLibraryId"/>
             <!--<xsl:call-template name="format"/>-->
             <!--<xsl:call-template name="accessibility"/>-->
+            <xsl:call-template name="accessRestriction"/>
         </czi:digitalInstance>
     </xsl:template>
 
     <xsl:template name="url">
         <czi:url>
-            <!--http://www.digitalniknihovna.cz/mzk/uuid/uuid:71a80bc3-9361-4d5e-8207-179aba225342-->
-            <!--http://kramerius.mzk.cz/search/handle/uuid:71a80bc3-9361-4d5e-8207-179aba225342-->
-            <!--<xsl:value-of
-                    select="concat('http://kramerius.mzk.cz/search/handle/uuid:',//dr:uuid)"/>-->
             <xsl:value-of
-                    select="concat('http://www.digitalniknihovna.cz/mzk/uuid/uuid:',//dr:uuid)"/>
-
+                    select="concat('http://kramerius4.nkp.cz/search/handle/uuid:',//dr:uuid)"/>
         </czi:url>
     </xsl:template>
 
@@ -51,6 +47,21 @@
 
     <xsl:template name="accessibility">
         <czi:accessibility>veřejné</czi:accessibility>
+    </xsl:template>
+
+    <xsl:template name="accessRestriction">
+        <xsl:variable name="policy" select="/dr:record/dr:policy"/>
+        <xsl:choose>
+            <xsl:when test="$policy='policy:private'">
+                <czi:accessRestriction>LIMITED_ACCESS</czi:accessRestriction>
+            </xsl:when>
+            <xsl:when test="$policy='policy:public'">
+                <czi:accessRestriction>UNLIMITED_ACCESS</czi:accessRestriction>
+            </xsl:when>
+            <xsl:otherwise>
+                <czi:accessRestriction>UNKNOWN</czi:accessRestriction>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>

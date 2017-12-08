@@ -2,7 +2,7 @@
 
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:czi="http://resolver.nkp.cz/v3/"
+                xmlns:czi="http://resolver.nkp.cz/v5/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -24,6 +24,7 @@
             <xsl:call-template name="digitalLibraryId"/>
             <!--<xsl:call-template name="format"/>-->
             <!--<xsl:call-template name="accessibility"/>-->
+            <xsl:call-template name="accessRestriction"/>
         </czi:digitalInstance>
     </xsl:template>
 
@@ -46,6 +47,21 @@
 
     <xsl:template name="accessibility">
         <czi:accessibility>veřejné</czi:accessibility>
+    </xsl:template>
+
+    <xsl:template name="accessRestriction">
+        <xsl:variable name="policy" select="/dr:record/dr:policy"/>
+        <xsl:choose>
+            <xsl:when test="$policy='policy:private'">
+                <czi:accessRestriction>LIMITED_ACCESS</czi:accessRestriction>
+            </xsl:when>
+            <xsl:when test="$policy='policy:public'">
+                <czi:accessRestriction>UNLIMITED_ACCESS</czi:accessRestriction>
+            </xsl:when>
+            <xsl:otherwise>
+                <czi:accessRestriction>UNKNOWN</czi:accessRestriction>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>

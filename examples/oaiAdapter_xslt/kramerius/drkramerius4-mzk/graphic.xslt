@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:mods="http://www.loc.gov/mods/v3"
-                xmlns:czi="http://resolver.nkp.cz/v3/"
+                xmlns:czi="http://resolver.nkp.cz/v5/"
                 xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4"
                 exclude-result-prefixes="mods dr">
 
