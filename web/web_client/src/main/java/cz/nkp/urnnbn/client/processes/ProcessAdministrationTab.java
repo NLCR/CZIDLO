@@ -565,7 +565,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    // TODO: 11.12.17 implement
+                    new IndexDocumentsProcessDialogBox(getActiveUser()).open();
                 }
             }));
 
