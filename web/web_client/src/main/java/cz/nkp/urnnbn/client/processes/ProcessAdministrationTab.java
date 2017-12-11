@@ -556,7 +556,9 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             }
         }));
 
-        if (getActiveUser().isLoggedUser() && getActiveUser().isSuperAdmin()) {// admin only
+        // admin only processes
+        if (getActiveUser().isLoggedUser() && getActiveUser().isSuperAdmin()) {
+
             // DI availability check
             result.add(new Button(constants.DI_URL_AVAILABILITY_CHECK(), new ClickHandler() {
 
@@ -566,6 +568,16 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
                     new DiAvailabilityCheckDialogBox(getActiveUser());
                 }
             }));
+
+            // Documents' indexation for web search
+            result.add(new Button(constants.DOCS_INDEXATION(), new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    // TODO: 11.12.17 implement
+                }
+            }));
+
         }
 
         return result;

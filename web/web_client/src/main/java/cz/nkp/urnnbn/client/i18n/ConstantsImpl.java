@@ -324,6 +324,8 @@ public interface ConstantsImpl extends Constants {
 
     String DI_URL_AVAILABILITY_CHECK();
 
+    String DOCS_INDEXATION();
+
     String scheduleProcess();
 
     String xsltFile();
