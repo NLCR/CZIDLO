@@ -50,7 +50,11 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         super(user);
         loadRegistrars();
         reload();
-        center();
+    }
+
+    @Override
+    public void open(){
+        reload();
     }
 
     private void loadRegistrars() {
@@ -83,6 +87,7 @@ public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDia
         setText(messages.processPlaning(constants.REGISTRARS_URN_NBN_CSV_EXPORT()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
+        center();
     }
 
     private Panel contentPanel() {

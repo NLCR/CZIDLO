@@ -51,8 +51,11 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
     public DiAvailabilityCheckDialogBox(UserDTO user) {
         super(user);
         loadRegistrars();
+    }
+
+    @Override
+    public void open(){
         reload();
-        center();
     }
 
     private void loadRegistrars() {
@@ -87,6 +90,7 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
         setText(messages.processPlaning(constants.DI_URL_AVAILABILITY_CHECK()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
+        center();
     }
 
     private Panel contentPanel() {

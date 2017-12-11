@@ -19,4 +19,6 @@ public abstract class AbstractScheduleProcessDialogBox extends AbstractDialogBox
         this.user = user;
     }
 
+    public abstract void open();
+
 }

@@ -48,10 +48,12 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
                 .get(0);
         this.diImportTemplates = diImportTemplates;
         this.selectedDiImportTemplate = (diImportTemplates == null || diImportTemplates.isEmpty()) ? null : diImportTemplates.get(0);
-
         loadRegistrars();
+    }
+
+    @Override
+    public void open() {
         reload();
-        center();
     }
 
     private void loadRegistrars() {
@@ -79,6 +81,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
         setText(messages.processPlaning(constants.OAI_ADAPTER()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
+        center();
     }
 
     private Panel contentPanel() {

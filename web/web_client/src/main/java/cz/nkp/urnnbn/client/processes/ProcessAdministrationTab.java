@@ -1,24 +1,12 @@
 package cz.nkp.urnnbn.client.processes;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
@@ -29,6 +17,9 @@ import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
+
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ProcessAdministrationTab extends SingleTabContentPanel {
 
@@ -540,8 +531,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                // TODO: some show() method or something, just constructor is confusing
-                new ExportUrnNbnListProcessDialogBox(getActiveUser());
+                new ExportUrnNbnListProcessDialogBox(getActiveUser()).open();
             }
         }));
 
@@ -550,9 +540,11 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                // TODO: some show() method or something, just constructor is confusing
-                new OaiAdapterDialogBox(getActiveUser(), xmlTransformationsPanel.getDdRegistrationTransformations(), xmlTransformationsPanel
-                        .getDiImportTransformations());
+                new OaiAdapterDialogBox(
+                        getActiveUser(),
+                        xmlTransformationsPanel.getDdRegistrationTransformations(),
+                        xmlTransformationsPanel.getDiImportTransformations()
+                ).open();
             }
         }));
 
@@ -564,8 +556,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    // TODO: some show() method or something, just constructor is confusing
-                    new DiAvailabilityCheckDialogBox(getActiveUser());
+                    new DiAvailabilityCheckDialogBox(getActiveUser()).open();
                 }
             }));
 
