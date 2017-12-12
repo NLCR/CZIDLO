@@ -107,11 +107,12 @@ public class OaiAdapterJob extends AbstractJob {
             logger.info("Ignore difference in DI accessibility: " + ignoreDifferenceInDiAccessibility);
             boolean ignoreDifferenceInDiFormat = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT));
             logger.info("Ignore difference in DI format: " + ignoreDifferenceInDiFormat);
-            //report
+
+            //prepare report logger
             File reportFile = createWriteableProcessFile(PARAM_REPORT_FILE);
             reportLogger = buildReportLogger(reportFile);
-
-            logger.info("running oai adapter");
+            //run
+            logger.info("running OAI Adapter process");
             new OaiAdapter(registrarCode,
                     oaiBaseUrl, oaiMetadataPrefix, oaiSet,
                     czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
@@ -121,13 +122,12 @@ public class OaiAdapterJob extends AbstractJob {
                     mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
                     reportLogger
             ).run();
-
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
-                logger.info("process killed");
+                logger.info("OAI Adapter process killed");
             } else {
                 context.setResult(ProcessState.FINISHED);
-                logger.info("oai adapter finished, see report");
+                logger.info("OAI Adapter process finished, see report");
             }
         } catch (Throwable ex) {
             logger.error("OAI Adapter process failed", ex);

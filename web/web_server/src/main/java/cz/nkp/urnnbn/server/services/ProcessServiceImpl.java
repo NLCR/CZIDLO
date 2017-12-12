@@ -60,6 +60,11 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                         throw new ServerException("user " + user.getLogin() + ": access denied");
                     }
                     break;
+                case INDEXATION:
+                    if (!user.isSuperAdmin()) {
+                        throw new ServerException("user " + user.getLogin() + ": access denied");
+                    }
+                    break;
                 case REGISTRARS_URN_NBN_CSV_EXPORT:
                     if (!user.isLoggedUser()) {
                         throw new ServerException("user " + user.getLogin() + ": access denied");
@@ -133,6 +138,14 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 result[12] = diImportIgnoreDifferenceInFormat.toString();
                 return result;
             case REGISTRARS_URN_NBN_CSV_EXPORT:
+                // login and password won't probably be needed here
+                result = new String[paramsFromClient.length + 1];
+                for (int i = 0; i < paramsFromClient.length; i++) {
+                    result[i] = paramsFromClient[i];
+                }
+                result[result.length - 1] = CountryCode.getCode();
+                return result;
+            case INDEXATION:
                 // login and password won't probably be needed here
                 result = new String[paramsFromClient.length + 1];
                 for (int i = 0; i < paramsFromClient.length; i++) {

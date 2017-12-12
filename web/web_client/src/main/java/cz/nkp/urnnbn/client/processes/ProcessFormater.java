@@ -2,15 +2,17 @@ package cz.nkp.urnnbn.client.processes;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-
+import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 
 public class ProcessFormater {
 
     private final ProcessDTO process;
+    private final ConstantsImpl constants;
 
-    public ProcessFormater(ProcessDTO process) {
+    public ProcessFormater(ProcessDTO process, ConstantsImpl constants) {
         this.process = process;
+        this.constants = constants;
     }
 
     String getScheduled() {
@@ -19,34 +21,35 @@ public class ProcessFormater {
 
     public Widget getProcessState() {
         switch (process.getState()) {
-        case SCHEDULED:
-            return new HTML("<div style=\"color:blue\">SCHEDULED</style>");
-        case CANCELED:
-            return new HTML("<div style=\"color:red\">CANCELED</style>");
-        case RUNNING:
-            return new HTML("<div style=\"color:green\">RUNNING</style>");
-        case FINISHED:
-            return new HTML("<div style=\"color:black\">FINISHED</style>");
-        case FAILED:
-            return new HTML("<div style=\"color:red\">FAILED</style>");
-        case KILLED:
-            return new HTML("<div style=\"color:red\">KILLED</style>");
-        default:
-            return new HTML("");
+            case SCHEDULED:
+                return new HTML("<div style=\"color:blue\">SCHEDULED</style>");
+            case CANCELED:
+                return new HTML("<div style=\"color:red\">CANCELED</style>");
+            case RUNNING:
+                return new HTML("<div style=\"color:green\">RUNNING</style>");
+            case FINISHED:
+                return new HTML("<div style=\"color:black\">FINISHED</style>");
+            case FAILED:
+                return new HTML("<div style=\"color:red\">FAILED</style>");
+            case KILLED:
+                return new HTML("<div style=\"color:red\">KILLED</style>");
+            default:
+                return new HTML("");
         }
     }
 
     public Widget getProcessType() {
-        // TODO: i18n
         switch (process.getType()) {
-        case OAI_ADAPTER:
-            return new HTML("OAI Adapter");
-        case REGISTRARS_URN_NBN_CSV_EXPORT:
-            return new HTML("Export URN:NBN");
-        case DI_URL_AVAILABILITY_CHECK:
-            return new HTML("DI availabiility check");
-        default:
-            return new HTML("test");
+            case OAI_ADAPTER:
+                return new HTML(constants.OAI_ADAPTER());
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return new HTML(constants.REGISTRARS_URN_NBN_CSV_EXPORT());
+            case DI_URL_AVAILABILITY_CHECK:
+                return new HTML(constants.DI_URL_AVAILABILITY_CHECK());
+            case INDEXATION:
+                return new HTML(constants.DOCS_INDEXATION());
+            default:
+                return new HTML("test");
         }
     }
 

@@ -41,6 +41,11 @@ public enum ProcessType {
     DI_URL_AVAILABILITY_CHECK,
 
     /**
+     * Indexes documents into SOLR for web search.
+     */
+    INDEXATION,
+
+    /**
      * Test process.
      */
     TEST

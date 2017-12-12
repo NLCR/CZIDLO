@@ -89,12 +89,14 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             }
             logger.info("export number of digital instances: " + exportNumOfDigInstances);
             UrnNbnExportFilter filter = extractFilter(context);
+            //run
             runProcess(countryCode, filter, exportNumOfDigInstances);
-            logger.info("finished");
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
+                logger.info("urn:nbn export process killed");
             } else {
                 context.setResult(ProcessState.FINISHED);
+                logger.info("urn:nbn export process finished");
             }
         } catch (Throwable ex) {
             // throw new JobExecutionException(ex);

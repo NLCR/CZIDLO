@@ -294,7 +294,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             panel.setWidth("1000px");
             // panel.setWidth("100%");
 
-            ProcessFormater formater = new ProcessFormater(process);
+            ProcessFormater formater = new ProcessFormater(process, constants);
 
             // id
             Label idLabel = new Label(process.getId().toString());
@@ -361,7 +361,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             panel.setWidth("1000px");
             // panel.setWidth("100%");
 
-            ProcessFormater formater = new ProcessFormater(process);
+            ProcessFormater formater = new ProcessFormater(process, constants);
 
             // id
             Label idLabel = new Label(process.getId().toString());

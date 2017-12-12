@@ -12,14 +12,18 @@ public class ProcesDtoTypeTransformer {
 
     public ProcessType transform() {
         switch (original) {
-        case OAI_ADAPTER:
-            return ProcessType.OAI_ADAPTER;
-        case REGISTRARS_URN_NBN_CSV_EXPORT:
-            return ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT;
-        case DI_URL_AVAILABILITY_CHECK:
-            return ProcessType.DI_URL_AVAILABILITY_CHECK;
-        default:
-            return null;
+            case OAI_ADAPTER:
+                return ProcessType.OAI_ADAPTER;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT;
+            case DI_URL_AVAILABILITY_CHECK:
+                return ProcessType.DI_URL_AVAILABILITY_CHECK;
+            case INDEXATION:
+                return ProcessType.INDEXATION;
+            case TEST:
+                return ProcessType.TEST;
+            default:
+                return null;
         }
     }
 }

@@ -351,61 +351,74 @@ public class ProcessManagerImpl implements ProcessManager {
         String id = process.getId().toString();
         // System.err.println(parematersToString(process.getParams()));
         String[] params = process.getParams();
+        int i = 0;
         switch (process.getType()) {
             case REGISTRARS_URN_NBN_CSV_EXPORT:
                 return newJob(UrnNbnCsvExportJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_BEGIN, params[0])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_END, params[1])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_REGISTRARS_CODES, params[2])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_ENT_TYPES, params[3])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_CCNB, params[4])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISSN, params[5])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISBN, params[6])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE, params[7])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED, params[8])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, params[9])//
-                        .usingJobData(UrnNbnCsvExportJob.PARAM_COUNTRY_CODE, params[10])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_BEGIN, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_END, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_REGISTRARS_CODES, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_ENT_TYPES, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_CCNB, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISSN, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_MISSING_ISBN, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_ACTIVE, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_RETURN_DEACTIVED, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_EXPORT_NUM_OF_DIG_INSTANCES, params[i++])//
+                        .usingJobData(UrnNbnCsvExportJob.PARAM_COUNTRY_CODE, params[i++])//
                         .build();
             case OAI_ADAPTER:
                 return newJob(OaiAdapterJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[0])//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_REGISTRAR_CODE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[1])//
-                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[2])//
-                        .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[3])//
-                        .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[4])//
-                        .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[5])//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[6])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[7])//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_LOGIN, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_CZIDLO_API_PASSWORD, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getDigInstImportXsdUrl())//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, params[8])//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, params[9])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, params[10])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, params[11])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, params[12])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, params[i++])//
                         .build();
             case DI_URL_AVAILABILITY_CHECK:
                 return newJob(DiUrlAvailabilityCheckJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_REGISTRAR_CODES, params[0])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_INT_ENT_TYPES, params[1])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_ACTIVE, params[2])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_DEACTIVATED, params[3])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_ACTIVE, params[4])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_DEACTIVATED, params[5])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_FROM, params[6])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_TO, params[7])//
-                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_COUNTRY_CODE, params[8])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_REGISTRAR_CODES, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_INT_ENT_TYPES, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_ACTIVE, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_URNNBN_STATES_INCLUDE_DEACTIVATED, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_ACTIVE, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_STATES_INCLUDE_DEACTIVATED, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_FROM, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_TO, params[i++])//
+                        .usingJobData(DiUrlAvailabilityCheckJob.PARAM_COUNTRY_CODE, params[i++])//
                         // .usingJobData(DiUrlAvailabilityCheckJob.PARAM_, params[0])
+                        .build();
+            case INDEXATION:
+                return newJob(IndexationJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
+                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//
+                        /*.usingJobData(IndexationJob.PARAM_REGISTRAR_CODES, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_IE_TYPES, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_INDEX_ACTIVE_DOCS, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_INDEX_DEACTIVED_DOCS, params[i++])//*/
                         .build();
             case TEST:
             default:
