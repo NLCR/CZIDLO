@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.utils;
+package cz.nkp.urnnbn.oaiadapter.czidloapi.utils;
 
 import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiError;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiError;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import nu.xom.*;
 import nu.xom.xslt.XSLException;
@@ -19,8 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-//import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 
 /**
  * @author Jan Rychtář

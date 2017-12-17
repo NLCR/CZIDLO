@@ -5,9 +5,9 @@
 package cz.nkp.urnnbn.oaiadapter;
 
 import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
-import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiConnector;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.Credentials;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.XmlTools;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;

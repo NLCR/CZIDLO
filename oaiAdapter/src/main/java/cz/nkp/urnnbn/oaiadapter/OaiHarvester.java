@@ -4,8 +4,8 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
-import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.ApiResponse;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.HttpConnector;
 import nu.xom.*;
 
 import java.io.IOException;

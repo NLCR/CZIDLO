@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.oaiadapter.utils;
+package cz.nkp.urnnbn.oaiadapter.czidloapi.utils;
 
 import nu.xom.Document;
 import nu.xom.Element;

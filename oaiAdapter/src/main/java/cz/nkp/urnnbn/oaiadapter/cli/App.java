@@ -3,7 +3,7 @@ package cz.nkp.urnnbn.oaiadapter.cli;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.ReportLogger;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
 import java.io.File;

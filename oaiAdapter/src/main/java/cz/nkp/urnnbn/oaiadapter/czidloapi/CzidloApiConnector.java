@@ -2,14 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.czidlo;
+package cz.nkp.urnnbn.oaiadapter.czidloapi;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.utils.ApiResponse;
-import cz.nkp.urnnbn.oaiadapter.utils.Credentials;
-import cz.nkp.urnnbn.oaiadapter.utils.HttpConnector;
-import cz.nkp.urnnbn.oaiadapter.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.ApiResponse;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.Credentials;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.HttpConnector;
+import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.XmlTools;
 import nu.xom.*;
 
 import java.io.IOException;

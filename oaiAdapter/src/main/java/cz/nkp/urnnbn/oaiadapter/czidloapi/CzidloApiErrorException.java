@@ -1,4 +1,6 @@
-package cz.nkp.urnnbn.oaiadapter.czidlo;
+package cz.nkp.urnnbn.oaiadapter.czidloapi;
+
+import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiError;
 
 /**
  * Created by Martin Řehánek on 1.11.17.
