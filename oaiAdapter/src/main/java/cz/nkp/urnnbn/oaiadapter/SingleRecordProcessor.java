@@ -96,12 +96,8 @@ public class SingleRecordProcessor {
             throw new SingleRecordProcessingException("OAI-record -> Digital-document-registration data conversion: ERROR: ", ex);
         }
         //refinement
-        try {
-            new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
-            report("- Digital-document-registration data refinement: SUCCESS");
-        } catch (DocumentOperationException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration data refinement: ERROR: ", ex);
-        }
+        new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
+        report("- Digital-document-registration data refinement: SUCCESS");
         //validation
         try {
             XmlTools.validateByXsdAsString(digDocRegistrationData, xsdProvider.getDdRegistrationDataXsd());
@@ -109,6 +105,10 @@ public class SingleRecordProcessor {
             report("- Digital-document-registration data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
             throw new SingleRecordProcessingException("Digital-document-registration data validation ERROR: ", ex);
+        } catch (ParsingException ex) {
+            throw new SingleRecordProcessingException("Digital-document-registration data parsing ERROR: ", ex);
+        } catch (IOException ex) {
+            throw new SingleRecordProcessingException("Digital-document-registration data processing ERROR: ", ex);
         }
         return digDocRegistrationData;
     }
@@ -133,18 +133,16 @@ public class SingleRecordProcessor {
             throw new SingleRecordProcessingException("OAI-record -> Digital-instance-import data conversion: ERROR", ex);
         }
         //refinement
-        try {
-            new DiImportRefiner().refineDocument(digInstImportData);
-            report("- Digital-instance-import data refinement: SUCCESS");
-        } catch (DocumentOperationException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import data refinement: ERROR: ", ex);
-        }
+        new DiImportRefiner().refineDocument(digInstImportData);
+        report("- Digital-instance-import data refinement: SUCCESS");
         //validation
         try {
             XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDiImportDataXsd());
             report("- Digital-instance-import data validation: SUCCESS");
-        } catch (DocumentOperationException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import data validation: ERROR: ", ex);
+        } catch (ParsingException ex) {
+            throw new SingleRecordProcessingException("Digital-instance-import data parsing ERROR: ", ex);
+        } catch (IOException ex) {
+            throw new SingleRecordProcessingException("Digital-instance-import data processing ERROR: ", ex);
         }
         return digInstImportData;
     }

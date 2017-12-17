@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.oaiadapter.utils;
 
-import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -16,7 +15,7 @@ import nu.xom.Elements;
  */
 public class DdRegistrationRefiner extends XmlRefiner {
 
-    public void refineDocument(Document document) throws DocumentOperationException {
+    public void refineDocument(Document document) {
         Element root = document.getRootElement();
         if ("import".equals(root.getLocalName())) {
             refineImportElement(root);

@@ -6,7 +6,6 @@ package cz.nkp.urnnbn.oaiadapter.utils;
 
 import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiConnector;
 import cz.nkp.urnnbn.oaiadapter.czidlo.CzidloApiError;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
@@ -20,6 +19,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+//import cz.nkp.urnnbn.oaiadapter.DocumentOperationException;
 
 /**
  * @author Jan Rychtář
@@ -49,12 +50,13 @@ public class XmlTools {
         return result;
     }
 
-    public static void validateByXsdAsString(Document document, String xsd) throws DocumentOperationException {
-        try {
+    public static void validateByXsdAsString(Document document, String xsd) throws ParsingException, IOException {
+        XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), xsd);
+        /*try {
             XOMUtils.loadDocumentValidByExternalXsd(document.toXML(), xsd);
         } catch (Exception ex) {
             throw new DocumentOperationException(ex.getMessage());
-        }
+        }*/
     }
 
     public static boolean nodeByXpathExists(Document doc, String xpath) {
