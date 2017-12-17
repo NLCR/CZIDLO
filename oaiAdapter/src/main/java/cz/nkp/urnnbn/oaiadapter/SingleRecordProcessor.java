@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiErrorException;
 import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.DdRegistrationRefiner;
 import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.DiImportRefiner;
 import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.XmlTools;
-import cz.nkp.urnnbn.xml.apiv4.builders.request.DiCreateBuilderXml;
+import cz.nkp.urnnbn.xml.apiv5.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
