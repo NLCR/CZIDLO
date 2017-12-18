@@ -48,6 +48,7 @@
         <module>core</module>
         <!-- <module>gdrive</module> -->
         <module>oaiAdapter</module>
+        <module>solr_indexer</module>
         <module>persistence</module>
         <module>processManager</module>
         <module>api</module>
