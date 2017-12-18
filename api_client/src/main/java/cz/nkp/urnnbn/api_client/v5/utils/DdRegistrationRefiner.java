@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.czidloapi.utils;
+package cz.nkp.urnnbn.api_client.v5.utils;
 
-import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiConnector;
+import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;

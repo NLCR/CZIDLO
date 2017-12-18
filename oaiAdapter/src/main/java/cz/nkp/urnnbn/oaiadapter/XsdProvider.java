@@ -16,8 +16,8 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.ApiResponse;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.HttpConnector;
+import cz.nkp.urnnbn.api_client.v5.utils.ApiResponse;
+import cz.nkp.urnnbn.api_client.v5.utils.HttpConnector;
 
 import java.io.IOException;
 import java.net.URL;

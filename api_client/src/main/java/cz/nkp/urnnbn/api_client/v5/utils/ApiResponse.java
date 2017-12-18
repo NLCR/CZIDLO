@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.oaiadapter.czidloapi.utils;
+package cz.nkp.urnnbn.api_client.v5.utils;
 
 /**
  * Created by Martin Řehánek on 1.11.17.

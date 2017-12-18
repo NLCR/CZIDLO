@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.czidloapi.utils;
+package cz.nkp.urnnbn.api_client.v5.utils;
 
+import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
+import cz.nkp.urnnbn.api_client.v5.CzidloApiError;
 import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiConnector;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiError;
 import cz.nkp.urnnbn.xml.commons.XOMUtils;
 import nu.xom.*;
 import nu.xom.xslt.XSLException;

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.czidloapi.CzidloApiConnector;
+import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
 import nu.xom.Attribute;
 import nu.xom.Document;
 import nu.xom.Element;

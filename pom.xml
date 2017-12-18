@@ -35,6 +35,9 @@
         <contributor>
             <name>Ladislav Cubr</name>
         </contributor>
+        <contributor>
+            <name>Zdeněk Vašek</name>
+        </contributor>
     </contributors>
     <issueManagement>
         <system>GitHub</system>
@@ -48,6 +51,7 @@
         <module>persistence</module>
         <module>processManager</module>
         <module>api</module>
+        <module>api_client</module>
         <module>services</module>
         <module>xml</module>
         <!-- <module>legacyRecordsImport</module> -->

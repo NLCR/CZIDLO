@@ -2,14 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.oaiadapter.czidloapi;
+package cz.nkp.urnnbn.api_client.v5;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.ApiResponse;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.Credentials;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.HttpConnector;
-import cz.nkp.urnnbn.oaiadapter.czidloapi.utils.XmlTools;
+import cz.nkp.urnnbn.api_client.v5.utils.ApiResponse;
+import cz.nkp.urnnbn.api_client.v5.utils.Credentials;
+import cz.nkp.urnnbn.api_client.v5.utils.HttpConnector;
+import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import nu.xom.*;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class CzidloApiConnector {
 
     private static final Logger logger = Logger.getLogger(CzidloApiConnector.class.getName());
 
-    public static final int CZIDLO_API_VERSION = 5; //OAI Adapter should use latest API
+    public static final int CZIDLO_API_VERSION = 5; //Connector uses latest API
     public static final String CZIDLO_NAMESPACE = String.format("http://resolver.nkp.cz/v%d/", CZIDLO_API_VERSION);
     public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
     public final String baseUrl;
