@@ -344,6 +344,15 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+        try {
+            return factory.documentDao().getDigDocsByTimestamps(from, until);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public long digitalInstancesCount() {
         try {
             return factory.digInstDao().getTotalCount();

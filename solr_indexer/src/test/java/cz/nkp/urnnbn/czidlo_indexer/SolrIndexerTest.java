@@ -1,14 +1,16 @@
 package cz.nkp.urnnbn.czidlo_indexer;
 
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
+import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.solr_indexer.ReportLogger;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.joda.time.DateTime;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 /**
@@ -35,24 +37,25 @@ public class SolrIndexerTest extends TestCase {
         File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
         String xslt = XmlTools.loadXmlFromFile(xsltFile.getAbsolutePath());
         File reportFile = new File("/tmp/solr_indexer_report.txt");
-        ReportLogger reportLogger = buildReportLogger(reportFile);
+        ReportLogger reportLogger = new ReportLogger(new FileOutputStream(reportFile));
+        //init services
+        Services.init(new PostgresSimpleConnector(
+                "localhost", "czidlo_core", 5432,
+                "czidlo", "czidlo"));
+
+        DateTime from = new DateTime(2017, 8, 16, 0, 0);
+        DateTime to = new DateTime();
 
         SolrIndexer indexer = new SolrIndexer(
                 "localhost:8080/api",
                 "todo", "todo", "todo",
+                Services.instanceOf().dataAccessService(),
                 xslt, xsltFile, reportLogger,
-                null, null
+                from, to
         );
 
         indexer.run();
     }
 
-    private static ReportLogger buildReportLogger(File reportFile) throws Exception {
-        try {
-            return new ReportLogger(new FileOutputStream(reportFile));
-        } catch (FileNotFoundException ex) {
-            throw new Exception("Cannot open report file for writing", ex);
-        }
-    }
 
 }
