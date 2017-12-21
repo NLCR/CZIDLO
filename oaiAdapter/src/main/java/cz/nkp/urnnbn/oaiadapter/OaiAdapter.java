@@ -4,10 +4,10 @@
  */
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
 import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
 import cz.nkp.urnnbn.api_client.v5.utils.Credentials;
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
@@ -136,7 +136,7 @@ public class OaiAdapter {
             try {
                 harvester = new OaiHarvester(oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec);
                 report("- OaiHarvester initialized");
-                CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), czidloApiIgnoreInvalidCertificate);
+                CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), true, czidloApiIgnoreInvalidCertificate);
                 Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
                 Document digInstImportXslt = buildDigInstImportXsltDoc();
                 XsdProvider xsdProvider = new XsdProvider(ddRegistrationDataXsdUrl, diImportDataXsdUrl);

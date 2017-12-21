@@ -30,26 +30,34 @@ public class CzidloApiConnector {
     public static final int CZIDLO_API_VERSION = 5; //Connector uses latest API
     public static final String CZIDLO_NAMESPACE = String.format("http://resolver.nkp.cz/v%d/", CZIDLO_API_VERSION);
     public static final XPathContext CONTEXT = new XPathContext("r", CZIDLO_NAMESPACE);
-    public final String baseUrl;
+    private final String baseUrlHttps;
+    private final String baseUrlHttp;
+    private final boolean alwaysUseHttps;
+
     private final Credentials credentials;
     private final boolean ignoreInvalidCertificate;
     private final HttpConnector httpConnector = new HttpConnector();
     private final XmlTools xmlTools = new XmlTools();
 
-    public CzidloApiConnector(String baseUrl, Credentials credentials, boolean ignoreInvalidCertificate) {
-        this.baseUrl = String.format("https://%s/v%d/", baseUrl, CZIDLO_API_VERSION);
+    public CzidloApiConnector(String baseUrl, Credentials credentials, boolean alwaysUseHttps, boolean ignoreInvalidCertificate) {
+        this.baseUrlHttps = String.format("https://%s/v%d/", baseUrl, CZIDLO_API_VERSION);
+        this.baseUrlHttp = String.format("http://%s/v%d/", baseUrl, CZIDLO_API_VERSION);
         this.credentials = credentials;
+        this.alwaysUseHttps = alwaysUseHttps;
         this.ignoreInvalidCertificate = ignoreInvalidCertificate;
     }
 
     public String getCzidloApiUrl() {
-        return baseUrl;
+        return baseUrlHttps;
     }
 
     public String getLogin() {
         return credentials.getLogin();
     }
 
+    private String baseUrlUnauthenticated() {
+        return alwaysUseHttps ? baseUrlHttps : baseUrlHttp;
+    }
 
     /**
      * @param registrarCode
@@ -62,7 +70,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public Document getDigitalDocumentByRegistrarScopeId(String registrarCode, String registrarScopeIdType, String registrarScopeIdValue, boolean withDigitalInstances) throws CzidloApiErrorException, ParsingException, IOException {
-        String url = baseUrl
+        String url = baseUrlUnauthenticated()
                 + "registrars/" + registrarCode
                 + "/digitalDocuments/registrarScopeIdentifier/" + registrarScopeIdType + "/" + registrarScopeIdValue
                 + "?format=xml&digitalInstances=" + withDigitalInstances;
@@ -94,7 +102,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public Document getDigitalDocumentByInternalId(long internalId, boolean withDigitalInstances) throws CzidloApiErrorException, ParsingException, IOException {
-        String url = baseUrl
+        String url = baseUrlUnauthenticated()
                 + "digitalDocuments/id/" + internalId
                 + "?format=xml&digitalInstances=" + withDigitalInstances;
         ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
@@ -143,7 +151,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public Document getUrnnbnDetails(String urnNbn) throws CzidloApiErrorException, ParsingException, IOException {
-        String url = baseUrl + "urnnbn/" + urnNbn + "?format=xml";
+        String url = baseUrlUnauthenticated() + "urnnbn/" + urnNbn + "?format=xml";
         ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, record
             Document document = new Builder().build(apiResponse.getBody(), null);
@@ -180,7 +188,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public Document getDigitalInstancesByUrnnbn(String urnNbn) throws CzidloApiErrorException, ParsingException, IOException {
-        String url = baseUrl + "resolver/" + urnNbn + "/digitalInstances?format=xml";
+        String url = baseUrlUnauthenticated() + "resolver/" + urnNbn + "/digitalInstances?format=xml";
         ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, record
             Document document = new Builder().build(apiResponse.getBody(), null);
@@ -254,7 +262,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public String registerDigitalDocument(Document digDocRegistrationData, String registrarCode) throws IOException, ParsingException, CzidloApiErrorException {
-        String url = baseUrl + "registrars/" + registrarCode + "/digitalDocuments"; //+"?format=xml";
+        String url = baseUrlHttps + "registrars/" + registrarCode + "/digitalDocuments"; //+"?format=xml";
         ApiResponse apiResponse = httpConnector.httpPost(new URL(url), digDocRegistrationData.toXML(), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 201) {
             Document responseDoc = new Builder().build(apiResponse.getBody(), null);
@@ -277,7 +285,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public void importDigitalInstance(Document diImportData, String urnnbn) throws CzidloApiErrorException, IOException {
-        String url = baseUrl + "resolver/" + urnnbn + "/digitalInstances";
+        String url = baseUrlHttps + "resolver/" + urnnbn + "/digitalInstances";
         ApiResponse apiResponse = httpConnector.httpPost(new URL(url), diImportData.toXML(), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 201) {
             //ok, imported
@@ -300,7 +308,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public void putRegistrarScopeIdentifier(String urnnbn, String idType, String idValue) throws CzidloApiErrorException, IOException {
-        String url = baseUrl + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
+        String url = baseUrlHttps + "resolver/" + urnnbn + "/registrarScopeIdentifiers/" + idType;
         ApiResponse apiResponse = httpConnector.httpPut(new URL(url), idValue, credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200 || apiResponse.getHttpCode() == 201) {
             //ok, set/updated
@@ -321,7 +329,7 @@ public class CzidloApiConnector {
      * @throws IOException             in case of network error
      */
     public void deactivateDigitalInstance(Long digitalInstanceId) throws CzidloApiErrorException, IOException {
-        String url = baseUrl + "digitalInstances/id/" + digitalInstanceId;
+        String url = baseUrlHttps + "digitalInstances/id/" + digitalInstanceId;
         ApiResponse apiResponse = httpConnector.httpDelete(new URL(url), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) {
             //ok, deactivated
