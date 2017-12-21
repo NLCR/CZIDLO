@@ -22,7 +22,8 @@ import javax.ws.rs.core.Response;
 public class UrnNbnDeactivatedException extends ApiV5Exception {
 
     public UrnNbnDeactivatedException(ResponseFormat format, UrnNbn urn) {
-        super(format, Response.Status.FORBIDDEN, "URN_NBN_DEACTIVATED", urn.toString() + " has been deactivated at "
-                + urn.getDeactivated().toString());
+        super(format, Response.Status.FORBIDDEN, "URN_NBN_DEACTIVATED",
+                String.format("The '%s' has been deactivated at %s.", urn, urn.getDeactivated().toString())
+        );
     }
 }

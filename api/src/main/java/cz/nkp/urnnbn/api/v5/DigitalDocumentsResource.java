@@ -72,8 +72,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
                 case DEACTIVATED:
                 case ACTIVE:
                     return new DigitalInstancesResource(digitalDocument);
+                //following options should never happen unless the database is in inconsistent state
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbn);
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, urnNbn);
                 default:
@@ -100,8 +100,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
                 case DEACTIVATED:
                 case ACTIVE:
                     return new RegistrarScopeIdentifiersResource(digitalDocument);
+                //following options should never happen unless the database is in inconsistent state
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbn);
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, urnNbn);
                 default:
@@ -183,8 +183,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
                     }
                 case DEACTIVATED:
                     throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
+                    //following options should never happen unless the database is in inconsistent state
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
                 default:

@@ -27,17 +27,17 @@ public class UnknownDigitalDocumentException extends ApiV5Exception {
     private static final String errorCode = "UNKNOWN_DIGITAL_DOCUMENT";
 
     public UnknownDigitalDocumentException(ResponseFormat format, UrnNbn urn) {
-        super(format, Status.NOT_FOUND, errorCode, "There is no digital document with urn '" + urn + "'");
+        super(format, Status.NOT_FOUND, errorCode, String.format("There is no digital document registered with '%s'.", urn));
     }
 
     public UnknownDigitalDocumentException(ResponseFormat format, long digDocId) {
-        super(format, Status.NOT_FOUND, errorCode, "There is no digital document with internal id '" + digDocId + "'");
+        super(format, Status.NOT_FOUND, errorCode, String.format("There is no digital document registered with internal id '%d'.", digDocId));
     }
 
-    public UnknownDigitalDocumentException(ResponseFormat format, RegistrarCode registrarCode, RegistrarScopeIdType idType,
-                                           RegistrarScopeIdValue idValue) {
+    public UnknownDigitalDocumentException(ResponseFormat format, RegistrarCode registrarCode,
+                                           RegistrarScopeIdType idType, RegistrarScopeIdValue idValue) {
         super(format, Status.NOT_FOUND, errorCode, String.format(
-                "Registrar with code '%s' doesn't register digital document with identifier of type '%s' with value '%s'",//
+                "Registrar with code '%s' does not register digital document with identifier with type '%s' and value '%s'",//
                 registrarCode, idType.toString(), idValue.toString()));
     }
 

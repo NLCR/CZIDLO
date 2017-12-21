@@ -49,7 +49,6 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                         return new RegistrarScopeIdentifiersResource(doc);
                     }
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbnParsed);
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, fetched.getUrn());
                 default:
@@ -81,7 +80,6 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                         return new DigitalInstancesResource(digDoc);
                     }
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbnParsed);
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, fetched.getUrn());
                 default:
@@ -161,7 +159,6 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                 case DEACTIVATED:
                     throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
                 default:
@@ -216,7 +213,6 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
                 case DEACTIVATED:
                     throw new UrnNbnDeactivatedException(format, urnNbnWithState.getUrn());
                 case FREE:
-                    throw new UnknownUrnException(format, urnNbnWithState.getUrn());
                 case RESERVED:
                     throw new UnknownDigitalDocumentException(format, urnNbnWithState.getUrn());
                 default:

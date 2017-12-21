@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<response xmlns="http://resolver.nkp.cz/v5/">
-    <error>
-        <code>UNKNOWN_URN_NBN</code>
-        <message>urn:nbn:cz:boa001-00000d has not been assigned yet
-        </message>
-    </error>
-</response>
