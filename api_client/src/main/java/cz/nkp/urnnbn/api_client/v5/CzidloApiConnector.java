@@ -4,12 +4,12 @@
  */
 package cz.nkp.urnnbn.api_client.v5;
 
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.api_client.v5.utils.ApiResponse;
 import cz.nkp.urnnbn.api_client.v5.utils.Credentials;
 import cz.nkp.urnnbn.api_client.v5.utils.HttpConnector;
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import nu.xom.*;
 
 import java.io.IOException;
@@ -65,6 +65,37 @@ public class CzidloApiConnector {
         String url = baseUrl
                 + "registrars/" + registrarCode
                 + "/digitalDocuments/registrarScopeIdentifier/" + registrarScopeIdType + "/" + registrarScopeIdValue
+                + "?format=xml&digitalInstances=" + withDigitalInstances;
+        ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) { //ok, document found
+            Document document = new Builder().build(apiResponse.getBody(), null);
+            return document;
+        } else {
+            try {
+                Document document = new Builder().build(apiResponse.getBody(), null);
+                CzidloApiError apiError = xmlTools.parseErrorMessage(document);
+                if (apiResponse.getHttpCode() == 404 && "UNKNOWN_DIGITAL_DOCUMENT".equals(apiError.getErrorCode())) { //document not found
+                    return null;
+                } else { //other error
+                    throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+                }
+            } catch (ParsingException | IOException e) { //other error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
+        }
+    }
+
+    /**
+     * @param internalId
+     * @param withDigitalInstances
+     * @return digital-document identified by registrar-scope-identifier for given registrar or null if no such digital-document exists
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public Document getDigitalDocumentByInternalId(long internalId, boolean withDigitalInstances) throws CzidloApiErrorException, ParsingException, IOException {
+        String url = baseUrl
+                + "digitalDocuments/id/" + internalId
                 + "?format=xml&digitalInstances=" + withDigitalInstances;
         ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
         if (apiResponse.getHttpCode() == 200) { //ok, document found
