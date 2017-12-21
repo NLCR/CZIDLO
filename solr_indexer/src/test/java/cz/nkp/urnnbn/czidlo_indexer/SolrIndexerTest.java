@@ -34,6 +34,7 @@ public class SolrIndexerTest extends TestCase {
     }
 
     public void testSolrIndexer() throws Exception {
+
         File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
         String xslt = XmlTools.loadXmlFromFile(xsltFile.getAbsolutePath());
         File reportFile = new File("/tmp/solr_indexer_report.txt");
@@ -47,7 +48,7 @@ public class SolrIndexerTest extends TestCase {
         DateTime to = new DateTime();
 
         SolrIndexer indexer = new SolrIndexer(
-                "localhost:8080/api",
+                "localhost:8080/api", false,
                 "todo", "todo", "todo",
                 Services.instanceOf().dataAccessService(),
                 xslt, xsltFile, reportLogger,

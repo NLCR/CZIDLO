@@ -23,7 +23,7 @@ public class ReportLogger {
     }
 
     public void report(String message, Throwable e) {
-        stream.print(message);
+        stream.print(message + ": ");
         e.printStackTrace(stream);
     }
 

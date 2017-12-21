@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.solr_indexer;
 
 
 import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
+import cz.nkp.urnnbn.api_client.v5.CzidloApiErrorException;
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
@@ -27,6 +28,7 @@ public class SolrIndexer {
 
     // CZIDLO API
     private final String czidloApiBaseUrl;
+    private final boolean czidloApiAlwaysUseHttps;
     // SOLR API
     private final String solrApiBaseUrl;
     private final String solrApiLogin;
@@ -43,6 +45,7 @@ public class SolrIndexer {
     private final DateTime to;
 
     public SolrIndexer(String czidloApiBaseUrl,
+                       boolean czidloApiAlwaysUseHttps,
                        String solrApiBaseUrl,
                        String solrApiLogin,
                        String solrApiPassword,
@@ -52,6 +55,7 @@ public class SolrIndexer {
                        ReportLogger reportLogger,
                        DateTime from, DateTime to) {
         this.czidloApiBaseUrl = czidloApiBaseUrl;
+        this.czidloApiAlwaysUseHttps = czidloApiAlwaysUseHttps;
         this.solrApiBaseUrl = solrApiBaseUrl;
         this.solrApiLogin = solrApiLogin;
         this.solrApiPassword = solrApiPassword;
@@ -83,7 +87,7 @@ public class SolrIndexer {
         CzidloApiConnector czidloApiConnector = null;
         Document digDocRegistrationXslt = null;
         try {
-            czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, false);
+            czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, czidloApiAlwaysUseHttps, false);
             report("- CZIDLO API connector initialized");
             digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             report("- XSLT built");
@@ -93,24 +97,50 @@ public class SolrIndexer {
         }
         report(" ");
 
-        report("Records");
-        report("==============================");
         List<DigitalDocument> digitalDocuments = dataAccessService.digDocsByModificationDate(from, to);
-        report(" matching documents: " + digitalDocuments.size());
+        Counters counters = new Counters(digitalDocuments.size());
+        report("Processing " + counters.getFound() + " records");
+        report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
             UrnNbn urnNbn = dataAccessService.urnByDigDocId(doc.getId(), false);
-            report("processing " + urnNbn.toString());
-            // TODO: 19.12.17 fetch xml from api, index
+            report(" processing " + urnNbn.toString());
+            try {
+                Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(doc.getId(), true);
+                if (ddCzidloDoc == null) {
+                    report(" digital document's xml record not found, ignoring");
+                    counters.incrementErrors();
+                } else {
+                    index(urnNbn, ddCzidloDoc);
+                    counters.incrementIndexed();
+                }
+            } catch (CzidloApiErrorException e) {
+                counters.incrementErrors();
+                report(" CZIDLO API error", e);
+            } catch (ParsingException e) {
+                counters.incrementErrors();
+                report(" Parsing error", e);
+            } catch (IOException e) {
+                counters.incrementErrors();
+                report(" I/O error", e);
+            }
         }
         report(" ");
 
         report("Summary");
         report("=====================================================");
-        // TODO: 18.12.17 summary (how many errors etc)
+        report(" records found    : " + counters.getFound());
+        report(" records processed: " + counters.getProcessed());
+        report(" records indexed  : " + counters.getIndexed());
+        report(" records erroneous: " + counters.getErrors());
 
         if (reportLogger != null) {
             reportLogger.close();
         }
+    }
+
+    private void index(UrnNbn urnNbn, Document ddCzidloDoc) {
+        report("indexing " + urnNbn);
+        // TODO: 21.12.17 implement actual xslt conversion and indexing
     }
 
     private void reportParams() {
