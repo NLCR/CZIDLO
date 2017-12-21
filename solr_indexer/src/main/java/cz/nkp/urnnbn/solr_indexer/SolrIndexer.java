@@ -110,8 +110,13 @@ public class SolrIndexer {
                     report(" digital document's xml record not found, ignoring");
                     counters.incrementErrors();
                 } else {
-                    index(urnNbn, ddCzidloDoc);
-                    counters.incrementIndexed();
+                    try {
+                        Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
+                        index(urnNbn, solrDoc);
+                        counters.incrementIndexed();
+                    } catch (XSLException e) {
+                        report(" XSLT error", e);
+                    }
                 }
             } catch (CzidloApiErrorException e) {
                 counters.incrementErrors();
@@ -138,9 +143,10 @@ public class SolrIndexer {
         }
     }
 
-    private void index(UrnNbn urnNbn, Document ddCzidloDoc) {
+    private void index(UrnNbn urnNbn, Document solrDoc) {
         report("indexing " + urnNbn);
-        // TODO: 21.12.17 implement actual xslt conversion and indexing
+        // TODO: 21.12.17 implement actual solr indexing
+        //System.err.println(solrDoc.toXML());
     }
 
     private void reportParams() {
