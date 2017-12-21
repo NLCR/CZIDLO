@@ -2,7 +2,7 @@
 <response xmlns="http://resolver.nkp.cz/v5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v5/response.xsd">
     <error>
-        <code>INVALID_DIGITAL_INSTANCE_ID</code>
-        <message>Incorrect syntax in '11d1233': For input string: "11d1233".</message>
+        <code>INVALID_DIGITAL_DOCUMENT_ID</code>
+        <message>Incorrect syntax in '1230O': For input string: "1230O".</message>
     </error>
 </response>

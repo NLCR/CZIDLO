@@ -38,8 +38,8 @@ public class RegistrarResource extends ApiV5Resource {
     }
 
     @Path("digitalDocuments")
-    public DigitalDocumentsResource getDigitalDocuments() {
-        return new DigitalDocumentsResource(registrar);
+    public DigitalDocumentsOfRegistrarResource getDigitalDocuments() {
+        return new DigitalDocumentsOfRegistrarResource(registrar);
     }
 
     @Path("urnNbnReservations")

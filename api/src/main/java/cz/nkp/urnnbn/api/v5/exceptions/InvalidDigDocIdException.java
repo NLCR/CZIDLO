@@ -18,9 +18,10 @@ import cz.nkp.urnnbn.api.v5.ResponseFormat;
 
 import javax.ws.rs.core.Response.Status;
 
-public class InvalidDigInstanceIdException extends ApiV5Exception {
+public class InvalidDigDocIdException extends ApiV5Exception {
 
-    public InvalidDigInstanceIdException(ResponseFormat format, String id, String message) {
-        super(format, Status.BAD_REQUEST, "INVALID_DIGITAL_INSTANCE_ID", String.format("Incorrect syntax in '%s': %s.", id, message));
+    public InvalidDigDocIdException(ResponseFormat format, String id, String message) {
+        super(format, Status.BAD_REQUEST, "INVALID_DIGITAL_DOCUMENT_ID",
+                String.format("Incorrect syntax in '%s': %s.", id, message));
     }
 }

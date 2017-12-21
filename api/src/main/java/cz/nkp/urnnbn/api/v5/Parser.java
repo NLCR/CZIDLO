@@ -61,6 +61,15 @@ public class Parser {
         }
     }
 
+    public static long parseDigDocId(ResponseFormat format, String digDocIdStr) {
+        try {
+            return Long.valueOf(digDocIdStr);
+        } catch (RuntimeException e) {
+            LOGGER.log(Level.INFO, e.getMessage());
+            throw new InvalidDigDocIdException(format, digDocIdStr, e.getMessage());
+        }
+    }
+
     public static RegistrarCode parseRegistrarCode(ResponseFormat format, String registrarCode) {
         try {
             return RegistrarCode.valueOf(registrarCode);
