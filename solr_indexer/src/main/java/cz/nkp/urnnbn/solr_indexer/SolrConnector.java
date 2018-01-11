@@ -95,7 +95,7 @@ public class SolrConnector {
         if (!baseUrl.endsWith("/")) {
             builder.append('/');
         }
-        builder.append(collection).append('/');
+        //builder.append(collection).append('/');
         return builder.toString();
     }
 

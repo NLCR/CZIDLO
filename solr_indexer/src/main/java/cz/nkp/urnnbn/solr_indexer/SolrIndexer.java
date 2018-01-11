@@ -11,8 +11,12 @@ import cz.nkp.urnnbn.services.DataAccessService;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.common.SolrException;
 import org.joda.time.DateTime;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -109,7 +113,7 @@ public class SolrIndexer {
         List<DigitalDocument> digitalDocuments = dataAccessService.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
-        //int limit = 3; // TODO: 11.1.18 disable in production
+        int limit = 3;
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
             UrnNbn urnNbn = dataAccessService.urnByDigDocId(doc.getId(), false);
@@ -120,13 +124,12 @@ public class SolrIndexer {
                     report(" digital document's xml record not found, ignoring");
                     counters.incrementErrors();
                 } else {
-                    try {
-                        Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
-                        index(urnNbn, solrDoc);
-                        counters.incrementIndexed();
-                    } catch (XSLException e) {
-                        report(" XSLT error", e);
-                    }
+                    report(" converting");
+                    Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
+                    report(" indexing");
+                    solrConnector.indexFromXmlString(solrDoc.toXML());
+                    report(" indexed");
+                    counters.incrementIndexed();
                 }
             } catch (CzidloApiErrorException e) {
                 counters.incrementErrors();
@@ -137,8 +140,25 @@ public class SolrIndexer {
             } catch (IOException e) {
                 counters.incrementErrors();
                 report(" I/O error", e);
+            } catch (XSLException e) {
+                counters.incrementErrors();
+                report(" XSLT error", e);
+            } catch (ParserConfigurationException e) {
+                counters.incrementErrors();
+                report(" Parser configuration error", e);
+            } catch (SAXException e) {
+                counters.incrementErrors();
+                report(" SAX error", e);
+            } catch (SolrServerException e) {
+                counters.incrementErrors();
+                report(" Solr server error", e);
+            } catch (SolrException e) {
+                counters.incrementErrors();
+                report(" Solr error", e);
             }
-            /*if (counters.getProcessed() == limit) {
+
+            /*// TODO: 11.1.18 disable in production
+            if (counters.getProcessed() == limit) {
                 break;
             }*/
         }
@@ -154,13 +174,6 @@ public class SolrIndexer {
         if (reportLogger != null) {
             reportLogger.close();
         }
-    }
-
-    private void index(UrnNbn urnNbn, Document solrDoc) {
-        report("indexing " + urnNbn);
-        //System.err.println(solrDoc.toXML());
-        // TODO: 21.12.17 implement actual solr indexing
-        //System.err.println(solrDoc.toXML());
     }
 
     private void reportParams() {
