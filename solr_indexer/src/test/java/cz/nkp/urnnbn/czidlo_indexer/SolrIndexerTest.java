@@ -44,7 +44,8 @@ public class SolrIndexerTest extends TestCase {
                 "localhost", "czidlo_core", 5432,
                 "czidlo", "czidlo"));
 
-        DateTime from = new DateTime(2017, 8, 16, 0, 0);
+        //DateTime from = new DateTime(2017, 8, 16, 0, 0);
+        DateTime from = new DateTime(2000, 8, 16, 0, 0);
         DateTime to = new DateTime();
 
         String solrBaseUrl = "localhost:8983/solr";

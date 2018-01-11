@@ -86,6 +86,7 @@ public class SolrIndexer {
     }
 
     public void run() {
+        long start = System.currentTimeMillis();
         report("Parameters");
         report("==============================");
         reportParams();
@@ -170,11 +171,20 @@ public class SolrIndexer {
         report(" records processed: " + counters.getProcessed());
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
+        report(" total duration: " + formatTime(System.currentTimeMillis() - start));
 
         if (reportLogger != null) {
             reportLogger.close();
         }
     }
+
+    private String formatTime(long millis) {
+        long hours = millis / (60 * 60 * 1000);
+        long minutes = millis / (60 * 1000);
+        long seconds = (millis / 1000) % 60;
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
+
 
     private void reportParams() {
         report(" CZIDLO API");
