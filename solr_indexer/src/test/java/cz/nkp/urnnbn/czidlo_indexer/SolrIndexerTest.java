@@ -47,9 +47,16 @@ public class SolrIndexerTest extends TestCase {
         DateTime from = new DateTime(2017, 8, 16, 0, 0);
         DateTime to = new DateTime();
 
+        String solrBaseUrl = "localhost:8983/solr";
+        String solrCollection = "czidlo";
+        boolean solrUseHttps = false;
+        String solrLogin = "solr";
+        String solrPass = "SolrRocks";
+
+
         SolrIndexer indexer = new SolrIndexer(
                 "localhost:8080/api", false,
-                "todo", "todo", "todo",
+                solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPass,
                 Services.instanceOf().dataAccessService(),
                 xslt, xsltFile, reportLogger,
                 from, to

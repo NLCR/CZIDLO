@@ -79,5 +79,20 @@
             <artifactId>services</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <!--solr4j-->
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>7.2.0</version>
+        </dependency>
+
+        <dependency>
+            <!--for Basic Access authentication base64 conversion-->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.11</version>
+        </dependency>
+
     </dependencies>
 </project>

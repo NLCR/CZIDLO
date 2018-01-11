@@ -28,9 +28,11 @@ public class SolrIndexer {
 
     // CZIDLO API
     private final String czidloApiBaseUrl;
-    private final boolean czidloApiAlwaysUseHttps;
+    private final boolean czidloApiUseHttps;
     // SOLR API
     private final String solrApiBaseUrl;
+    private final String solrApiCollection;
+    private final boolean solrApiUseHttps;
     private final String solrApiLogin;
     private final String solrApiPassword;
     //services
@@ -45,8 +47,10 @@ public class SolrIndexer {
     private final DateTime to;
 
     public SolrIndexer(String czidloApiBaseUrl,
-                       boolean czidloApiAlwaysUseHttps,
+                       boolean czidloApiUseHttps,
                        String solrApiBaseUrl,
+                       String solrApiCollection,
+                       boolean solrApiUseHttps,
                        String solrApiLogin,
                        String solrApiPassword,
                        DataAccessService dataAccessService,
@@ -55,8 +59,10 @@ public class SolrIndexer {
                        ReportLogger reportLogger,
                        DateTime from, DateTime to) {
         this.czidloApiBaseUrl = czidloApiBaseUrl;
-        this.czidloApiAlwaysUseHttps = czidloApiAlwaysUseHttps;
+        this.czidloApiUseHttps = czidloApiUseHttps;
         this.solrApiBaseUrl = solrApiBaseUrl;
+        this.solrApiCollection = solrApiCollection;
+        this.solrApiUseHttps = solrApiUseHttps;
         this.solrApiLogin = solrApiLogin;
         this.solrApiPassword = solrApiPassword;
         this.dataAccessService = dataAccessService;
@@ -86,11 +92,14 @@ public class SolrIndexer {
         DataAccessService readService;
         CzidloApiConnector czidloApiConnector = null;
         Document digDocRegistrationXslt = null;
+        SolrConnector solrConnector = null;
         try {
-            czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, czidloApiAlwaysUseHttps, false);
+            czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, czidloApiUseHttps, false);
             report("- CZIDLO API connector initialized");
             digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             report("- XSLT built");
+            solrConnector = new SolrConnector(solrApiBaseUrl, solrApiCollection, solrApiUseHttps, solrApiLogin, solrApiPassword);
+            report("- SOLR API connector initialized");
         } catch (TemplateException e) {
             report("Initialization error: TemplateException: " + e.getMessage());
             logger.log(Level.SEVERE, "Initialization error", e);
@@ -100,6 +109,7 @@ public class SolrIndexer {
         List<DigitalDocument> digitalDocuments = dataAccessService.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
+        //int limit = 3; // TODO: 11.1.18 disable in production
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
             UrnNbn urnNbn = dataAccessService.urnByDigDocId(doc.getId(), false);
@@ -128,6 +138,9 @@ public class SolrIndexer {
                 counters.incrementErrors();
                 report(" I/O error", e);
             }
+            /*if (counters.getProcessed() == limit) {
+                break;
+            }*/
         }
         report(" ");
 
@@ -145,6 +158,7 @@ public class SolrIndexer {
 
     private void index(UrnNbn urnNbn, Document solrDoc) {
         report("indexing " + urnNbn);
+        //System.err.println(solrDoc.toXML());
         // TODO: 21.12.17 implement actual solr indexing
         //System.err.println(solrDoc.toXML());
     }
@@ -152,12 +166,15 @@ public class SolrIndexer {
     private void reportParams() {
         report(" CZIDLO API");
         report(" -----------------");
-        report("  CZIDLO API base url: " + czidloApiBaseUrl);
+        report("  Base url: " + czidloApiBaseUrl);
+        report("  Https: " + czidloApiUseHttps);
         report(" ");
 
         report(" SOLR API");
         report(" -----------------");
-        report("  SOLR API base url: " + solrApiBaseUrl);
+        report("  Base url: " + solrApiBaseUrl);
+        report("  Collection: " + solrApiCollection);
+        report("  Https: " + solrApiUseHttps);
         report("  Login: " + solrApiLogin);
         report(" ");
 
