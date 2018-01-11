@@ -15,76 +15,233 @@
     <xsl:template match="r:digitalDocument">
         <add>
             <doc>
-                <xsl:variable name="ieType" select="r:intelectualEntity/@type"/>
+
+                <!--DIGITAL DOCUMENT-->
 
                 <!--id-->
-                <field name="id">
-                    <xsl:value-of select='@id'/>
+                <field name="dd.id">
+                    <!--<xsl:value-of select='@id'/>-->
+                    <xsl:value-of select='r:urnNbn/r:value'/>
                 </field>
+
+                <!--registrarScopeIds - only value is indexed-->
+                <xsl:for-each select="r:registrarScopeIdentifiers/r:id">
+                    <field name="dd.registrarScopeId">
+                        <xsl:value-of select='.'/>
+                    </field>
+                </xsl:for-each>
+
+                <xsl:if test="r:financed">
+                    <field name="dd.financed">
+                        <xsl:value-of select='r:financed'/>
+                    </field>
+                </xsl:if>
+
+                <xsl:if test="r:contractNumber">
+                    <field name="dd.contractNumber">
+                        <xsl:value-of select='r:contractNumber'/>
+                    </field>
+                </xsl:if>
+
+                <!--INTELECTUAL ENTITY-->
+
+                <xsl:variable name="ieType" select="r:intelectualEntity/@type"/>
 
                 <!--ie.type-->
-                <field name="ie.type">
+                <!--<field name="ie.type">
                     <xsl:value-of select='$ieType'/>
-                </field>
+                </field>-->
 
                 <!--ie.docType-->
-                <xsl:if test="r:intelectualEntity/r:documentType">
+                <!--<xsl:if test="r:intelectualEntity/r:documentType">
                     <field name="ie.docType">
                         <xsl:value-of select='r:intelectualEntity/r:documentType'/>
                     </field>
-                </xsl:if>
-
-                <!--SEARCHABLE FIELDS-->
+                </xsl:if>-->
 
                 <!--title-->
-                <xsl:call-template name="title">
+                <!--<xsl:call-template name="title">
                     <xsl:with-param name="ieType" select="$ieType"/>
-                </xsl:call-template>
+                </xsl:call-template>-->
 
-                <!--isbn-->
-                <xsl:if test="r:intelectualEntity/r:isbn">
-                    <field name="isbn">
-                        <xsl:value-of select='r:intelectualEntity/r:isbn'/>
+                <!--title info-->
+                <xsl:variable name="titleInfo" select="r:intelectualEntity/r:titleInfo"/>
+                <xsl:if test="$titleInfo/r:title">
+                    <field name="ie.title">
+                        <xsl:value-of select='$titleInfo/r:title'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="$titleInfo/r:subTitle">
+                    <field name="ie.subTitle">
+                        <xsl:value-of select='$titleInfo/r:subTitle'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="$titleInfo/r:monographTitle">
+                    <field name="ie.monographTitle">
+                        <xsl:value-of select='$titleInfo/r:monographTitle'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="$titleInfo/r:periodicalTitle">
+                    <field name="ie.periodicalTitle">
+                        <xsl:value-of select='$titleInfo/r:periodicalTitle'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="$titleInfo/r:volumeTitle">
+                    <field name="ie.volumeTitle">
+                        <xsl:value-of select='$titleInfo/r:volumeTitle'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="$titleInfo/r:issueTitle">
+                    <field name="ie.issueTitle">
+                        <xsl:value-of select='$titleInfo/r:issueTitle'/>
                     </field>
                 </xsl:if>
 
-                <!--issn-->
-                <xsl:if test="r:intelectualEntity/r:issn">
-                    <field name="issn">
-                        <xsl:value-of select='r:intelectualEntity/r:issn'/>
-                    </field>
-                </xsl:if>
-
-                <!--ccnb-->
+                <!--identifiers-->
                 <xsl:if test="r:intelectualEntity/r:ccnb">
-                    <field name="ccnb">
+                    <field name="ie.ccnb">
                         <xsl:value-of select='r:intelectualEntity/r:ccnb'/>
                     </field>
                 </xsl:if>
-
-                <!--otherId-->
+                <xsl:if test="r:intelectualEntity/r:isbn">
+                    <field name="ie.isbn">
+                        <xsl:value-of select='r:intelectualEntity/r:isbn'/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:issn">
+                    <field name="ie.issn">
+                        <xsl:value-of select='r:intelectualEntity/r:issn'/>
+                    </field>
+                </xsl:if>
                 <xsl:if test="r:intelectualEntity/r:otherId">
-                    <field name="otherId">
+                    <field name="ie.otherId">
                         <xsl:value-of select='r:intelectualEntity/r:otherId'/>
                     </field>
                 </xsl:if>
 
-                <!--TODO: originator, publication-->
+                <!--originators-->
+                <xsl:if test="r:intelectualEntity/r:primaryOriginator[@type='AUTHOR']">
+                    <field name="ie.primaryOriginator.author">
+                        <xsl:value-of select="r:intelectualEntity/r:primaryOriginator[@type='AUTHOR']"/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:primaryOriginator[@type='EVENT']">
+                    <field name="ie.primaryOriginator.event">
+                        <xsl:value-of select="r:intelectualEntity/r:primaryOriginator[@type='EVENT']"/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:primaryOriginator[@type='CORPORATION']">
+                    <field name="ie.primaryOriginator.corporation">
+                        <xsl:value-of select="r:intelectualEntity/r:primaryOriginator[@type='CORPORATION']"/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:otherOriginator">
+                    <field name="ie.otherOriginator">
+                        <xsl:value-of select="r:intelectualEntity/r:otherOriginator"/>
+                    </field>
+                </xsl:if>
 
-                <!--<xsl:choose>
-                    <xsl:when test="//mods:mods/mods:name[@type='personal']/mods:namePart[not(@type)]">
-                        <xsl:value-of select="//mods:mods/mods:name[@type='personal']/mods:namePart[not(@type)]"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of
-                                select="concat(//mods:mods/mods:name[@type='personal']/mods:namePart[@type='family'],', ', //mods:mods/mods:name[@type='personal']/mods:namePart[@type='given'])"/>
-                    </xsl:otherwise>
-                </xsl:choose>-->
+                <!--publication-->
+                <xsl:if test="r:intelectualEntity/r:publication/r:publisher">
+                    <field name="ie.publication.publisher">
+                        <xsl:value-of select="r:intelectualEntity/r:publication/r:publisher"/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:publication/r:place">
+                    <field name="ie.publication.place">
+                        <xsl:value-of select="r:intelectualEntity/r:publication/r:place"/>
+                    </field>
+                </xsl:if>
+                <xsl:if test="r:intelectualEntity/r:publication/r:year">
+                    <field name="ie.publication.year">
+                        <xsl:value-of select="r:intelectualEntity/r:publication/r:year"/>
+                    </field>
+                </xsl:if>
 
+                <!--source document-->
+                <xsl:apply-templates select="r:intelectualEntity/r:sourceDocument"/>
 
             </doc>
         </add>
     </xsl:template>
+
+
+    <xsl:template match="r:sourceDocument">
+
+        <!--title info-->
+        <xsl:variable name="titleInfo" select="r:titleInfo"/>
+        <xsl:if test="$titleInfo/r:title">
+            <field name="ie.srcDoc.title">
+                <xsl:value-of select='$titleInfo/r:title'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="$titleInfo/r:subTitle">
+            <field name="ie.srcDoc.subTitle">
+                <xsl:value-of select='$titleInfo/r:subTitle'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="$titleInfo/r:monographTitle">
+            <field name="ie.srcDoc.monographTitle">
+                <xsl:value-of select='$titleInfo/r:monographTitle'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="$titleInfo/r:periodicalTitle">
+            <field name="ie.srcDoc.periodicalTitle">
+                <xsl:value-of select='$titleInfo/r:periodicalTitle'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="$titleInfo/r:volumeTitle">
+            <field name="ie.srcDoc.volumeTitle">
+                <xsl:value-of select='$titleInfo/r:volumeTitle'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="$titleInfo/r:issueTitle">
+            <field name="ie.srcDoc.issueTitle">
+                <xsl:value-of select='$titleInfo/r:issueTitle'/>
+            </field>
+        </xsl:if>
+
+        <!--identifiers-->
+        <xsl:if test="r:ccnb">
+            <field name="ie.srcDoc.ccnb">
+                <xsl:value-of select='r:ccnb'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="r:isbn">
+            <field name="ie.srcDoc.isbn">
+                <xsl:value-of select='r:isbn'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="r:issn">
+            <field name="ie.srcDoc.issn">
+                <xsl:value-of select='r:issn'/>
+            </field>
+        </xsl:if>
+        <xsl:if test="r:otherId">
+            <field name="ie.srcDoc.otherId">
+                <xsl:value-of select='r:otherId'/>
+            </field>
+        </xsl:if>
+
+        <!--publication-->
+        <xsl:if test="r:publication/r:publisher">
+            <field name="ie.srcDoc.publication.publisher">
+                <xsl:value-of select="r:publication/r:publisher"/>
+            </field>
+        </xsl:if>
+        <xsl:if test="r:publication/r:place">
+            <field name="ie.srcDoc.publication.place">
+                <xsl:value-of select="r:publication/r:place"/>
+            </field>
+        </xsl:if>
+        <xsl:if test="r:publication/r:year">
+            <field name="ie.srcDoc.publication.year">
+                <xsl:value-of select="r:publication/r:year"/>
+            </field>
+        </xsl:if>
+
+    </xsl:template>
+
 
     <xsl:template name="title">
         <xsl:param name="ieType"/>
