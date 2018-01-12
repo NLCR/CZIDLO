@@ -114,54 +114,59 @@ public class SolrIndexer {
         List<DigitalDocument> digitalDocuments = dataAccessService.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
-        int limit = 3;
+        //int limit = 3;
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
             UrnNbn urnNbn = dataAccessService.urnByDigDocId(doc.getId(), false);
-            report(" processing " + urnNbn.toString());
-            try {
-                Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(doc.getId(), true);
-                if (ddCzidloDoc == null) {
-                    report(" digital document's xml record not found, ignoring");
+            if (urnNbn == null) {
+                report(" digital document with id " + doc.getId() + " is missing URN:NBN");
+                counters.incrementErrors();
+            } else {
+                report(" processing " + urnNbn.toString());
+                try {
+                    Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(doc.getId(), true);
+                    if (ddCzidloDoc == null) {
+                        report(" digital document's xml record not found, ignoring");
+                        counters.incrementErrors();
+                    } else {
+                        report(" converting");
+                        Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
+                        report(" indexing");
+                        solrConnector.indexFromXmlString(solrDoc.toXML());
+                        report(" indexed");
+                        counters.incrementIndexed();
+                    }
+                } catch (CzidloApiErrorException e) {
                     counters.incrementErrors();
-                } else {
-                    report(" converting");
-                    Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
-                    report(" indexing");
-                    solrConnector.indexFromXmlString(solrDoc.toXML());
-                    report(" indexed");
-                    counters.incrementIndexed();
+                    report(" CZIDLO API error", e);
+                } catch (ParsingException e) {
+                    counters.incrementErrors();
+                    report(" Parsing error", e);
+                } catch (IOException e) {
+                    counters.incrementErrors();
+                    report(" I/O error", e);
+                } catch (XSLException e) {
+                    counters.incrementErrors();
+                    report(" XSLT error", e);
+                } catch (ParserConfigurationException e) {
+                    counters.incrementErrors();
+                    report(" Parser configuration error", e);
+                } catch (SAXException e) {
+                    counters.incrementErrors();
+                    report(" SAX error", e);
+                } catch (SolrServerException e) {
+                    counters.incrementErrors();
+                    report(" Solr server error", e);
+                } catch (SolrException e) {
+                    counters.incrementErrors();
+                    report(" Solr error", e);
                 }
-            } catch (CzidloApiErrorException e) {
-                counters.incrementErrors();
-                report(" CZIDLO API error", e);
-            } catch (ParsingException e) {
-                counters.incrementErrors();
-                report(" Parsing error", e);
-            } catch (IOException e) {
-                counters.incrementErrors();
-                report(" I/O error", e);
-            } catch (XSLException e) {
-                counters.incrementErrors();
-                report(" XSLT error", e);
-            } catch (ParserConfigurationException e) {
-                counters.incrementErrors();
-                report(" Parser configuration error", e);
-            } catch (SAXException e) {
-                counters.incrementErrors();
-                report(" SAX error", e);
-            } catch (SolrServerException e) {
-                counters.incrementErrors();
-                report(" Solr server error", e);
-            } catch (SolrException e) {
-                counters.incrementErrors();
-                report(" Solr error", e);
-            }
 
             /*// TODO: 11.1.18 disable in production
             if (counters.getProcessed() == limit) {
                 break;
             }*/
+            }
         }
         report(" ");
 
