@@ -3,7 +3,7 @@
 # Usage:
 # redeploy.sh MODULE_NAME or deploy.sh all
 
-VERSION=4.3.alpha
+VERSION=4.4.pre
 TOMCAT_HOME=/home/martin/software/apache-tomcat-8.0.24
 CZIDLO_ROOT=/home/martin/git/CZIDLO
 

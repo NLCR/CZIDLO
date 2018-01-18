@@ -79,6 +79,10 @@ Version 4.3:
 - basic Google Analytics integration
 - charts for urn:nbn assignment/resolvation statistics
 
+Version 4.3:
+
+TODO
+
 
 ##################
 ## Installation ##
