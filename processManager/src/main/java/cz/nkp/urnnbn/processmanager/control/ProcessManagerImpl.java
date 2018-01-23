@@ -382,7 +382,9 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(OaiAdapterJob.PARAM_OAI_BASE_URL, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_OAI_METADATA_PREFIX, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_OAI_SET, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_ID, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_ID, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getDigInstImportXsdUrl())//
