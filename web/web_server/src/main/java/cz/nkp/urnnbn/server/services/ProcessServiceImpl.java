@@ -114,28 +114,32 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 String oaiBaseUrl = paramsFromClient[1];
                 String oaiMetadataprefix = paramsFromClient[2];
                 String oaiSet = paramsFromClient[3];
-                File ddRegistrationXslt = saveTemplateToTempFile(paramsFromClient[4]);
-                File diImportXslt = saveTemplateToTempFile(paramsFromClient[5]);
+                XmlTransformation ddRegistrationXslt = buildXslTransformation(Long.valueOf(paramsFromClient[4]));
+                File ddRegistrationXsltFile = saveStringToTempFile(ddRegistrationXslt.getXslt(), ddRegistrationXslt.getId());
+                XmlTransformation diImportXslt = buildXslTransformation(Long.valueOf(paramsFromClient[5]));
+                File diImportXsltFile = saveStringToTempFile(diImportXslt.getXslt(), diImportXslt.getId());
                 Boolean ddRegistrationRegisterDdsWithUrn = Boolean.valueOf(paramsFromClient[6]);
                 Boolean ddRegistrationRegisterDdsWithoutUrn = Boolean.valueOf(paramsFromClient[7]);
                 Boolean diImportMergeDis = Boolean.valueOf(paramsFromClient[8]);
                 Boolean diImportIgnoreDifferenceInAccessibility = Boolean.valueOf(paramsFromClient[9]);
                 Boolean diImportIgnoreDifferenceInFormat = Boolean.valueOf(paramsFromClient[10]);
 
-                result = new String[13];
+                result = new String[15];
                 result[0] = registrarCode;
                 result[1] = getUserLogin();
                 result[2] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
                 result[3] = oaiBaseUrl;
                 result[4] = oaiMetadataprefix;
                 result[5] = oaiSet;
-                result[6] = ddRegistrationXslt.getAbsolutePath();
-                result[7] = diImportXslt.getAbsolutePath();
-                result[8] = ddRegistrationRegisterDdsWithUrn.toString();
-                result[9] = ddRegistrationRegisterDdsWithoutUrn.toString();
-                result[10] = diImportMergeDis.toString();
-                result[11] = diImportIgnoreDifferenceInAccessibility.toString();
-                result[12] = diImportIgnoreDifferenceInFormat.toString();
+                result[6] = ddRegistrationXslt.getName();
+                result[7] = ddRegistrationXsltFile.getAbsolutePath();
+                result[8] = diImportXslt.getName();
+                result[9] = diImportXsltFile.getAbsolutePath();
+                result[10] = ddRegistrationRegisterDdsWithUrn.toString();
+                result[11] = ddRegistrationRegisterDdsWithoutUrn.toString();
+                result[12] = diImportMergeDis.toString();
+                result[13] = diImportIgnoreDifferenceInAccessibility.toString();
+                result[14] = diImportIgnoreDifferenceInFormat.toString();
                 return result;
             case REGISTRARS_URN_NBN_CSV_EXPORT:
                 // login and password won't probably be needed here
@@ -167,13 +171,12 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
 
     }
 
-    private File saveTemplateToTempFile(String transformationIdStr) throws Exception {
-        Long id = Long.valueOf(transformationIdStr);
-        XmlTransformation transformation = xmlTransforamtionDao().getTransformation(id);
+    private XmlTransformation buildXslTransformation(Long transformationId) throws Exception {
+        XmlTransformation transformation = xmlTransforamtionDao().getTransformation(transformationId);
         if (!getActiveUser().getLogin().equals(transformation.getOwnerLogin())) {
-            throw new Exception("Transformation " + transformationIdStr + " doesn't belong to user " + getActiveUser());
+            throw new Exception("Transformation " + transformationId + " doesn't belong to user " + getActiveUser());
         }
-        return saveStringToTempFile(transformation.getXslt(), id);
+        return transformation;
     }
 
     private File saveStringToTempFile(String content, Long id) throws IOException {

@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/          http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+    <responseDate>2017-11-08T16:07:58Z</responseDate>
+    <request verb="GetRecord" oaiMetadataPrefix="drkramerius4" identifier="uuid:644c2243-f4f5-11df-b0f1-0050569d679d"/>
+    <GetRecord>
+        <record>
+            <header>
+                <identifier>uuid:644c2243-f4f5-11df-b0f1-0050569d679d</identifier>
+                <datestamp>2011-05-22T20:10:08Z</datestamp>
+                <oaiSetSpec>periodical</oaiSetSpec>
+            </header>
+            <metadata>
+                <dr:record xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4" root="true">
+                    <dr:uuid>644c2243-f4f5-11df-b0f1-0050569d679d</dr:uuid>
+                    <dr:type>PERIODICAL</dr:type>
+                    <dr:policy>policy:private</dr:policy>
+                    <dr:descriptor>
+                        <mods:modsCollection xmlns:mods="http://www.loc.gov/mods/v3">
+                            <mods:mods version="3.3">
+                                <mods:identifier type="urn">urn:sys:000680027 644c2243-f4f5-11df-b0f1-0050569d679d
+                                </mods:identifier>
+                                <mods:identifier type="sici"/>
+                                <mods:identifier type="issn">nema4</mods:identifier>
+                                <mods:identifier type="coden"/>
+                                <mods:subject>
+                                    <mods:topic/>
+                                </mods:subject>
+                                <mods:abstract/>
+                                <mods:location>
+                                    <mods:physicalLocation>BOA001</mods:physicalLocation>
+                                    <mods:shelfLocator>00055-1122.532</mods:shelfLocator>
+                                </mods:location>
+                                <mods:titleInfo>
+                                    <mods:title>Informační gramotnost</mods:title>
+                                    <mods:subTitle/>
+                                    <mods:partName/>
+                                </mods:titleInfo>
+                                <mods:titleInfo type="alternative">
+                                    <mods:title/>
+                                </mods:titleInfo>
+                                <mods:titleInfo type="uniform">
+                                    <mods:title/>
+                                </mods:titleInfo>
+                                <mods:typeOfResource>text</mods:typeOfResource>
+                                <mods:originInfo transliteration="publisher">
+                                    <mods:place>
+                                        <mods:placeTerm type="text">Brno</mods:placeTerm>
+                                    </mods:place>
+                                    <mods:publisher>Moravská zemská knihovna : Pedagogické
+                                        centrum Brno
+                                    </mods:publisher>
+                                    <mods:dateIssued>2003-</mods:dateIssued>
+                                </mods:originInfo>
+                                <mods:originInfo>
+                                    <mods:issuance>continuing</mods:issuance>
+                                    <mods:frequency/>
+                                </mods:originInfo>
+                                <mods:language>
+                                    <mods:languageTerm authority="iso639-2b" type="code">cze</mods:languageTerm>
+                                </mods:language>
+                                <mods:physicalDescription>
+                                    <mods:form type="technique"/>
+                                    <mods:extent/>
+                                    <mods:note/>
+                                </mods:physicalDescription>
+                                <mods:classification authority="ddc"/>
+                                <mods:classification authority="udc"/>
+                                <mods:part>
+                                    <mods:detail type="regularsupplement">
+                                        <mods:title/>
+                                    </mods:detail>
+                                    <mods:detail type="specialSupplement">
+                                        <mods:title/>
+                                    </mods:detail>
+                                </mods:part>
+                                <mods:recordInfo>
+                                    <mods:recordOrigin/>
+                                </mods:recordInfo>
+                                <mods:accessCondition type="restrictionOnAccess"/>
+                            </mods:mods>
+                        </mods:modsCollection>
+                    </dr:descriptor>
+                    <dr:relation>646d17c4-f4f5-11df-b0f1-0050569d679d</dr:relation>
+                    <dr:relation>19c13a28-f4f6-11df-b0f1-0050569d679d</dr:relation>
+                    <dr:relation>66bd2e37-847c-11e0-9e2c-0050569d679d</dr:relation>
+                    <dr:relation>f4ac2ba9-847c-11e0-9e2c-0050569d679d</dr:relation>
+                    <dr:relation>8abebf93-847d-11e0-9e2c-0050569d679d</dr:relation>
+                    <dr:relation>02abbd39-847e-11e0-9e2c-0050569d679d</dr:relation>
+                </dr:record>
+            </metadata>
+        </record>
+    </GetRecord>
+</OAI-PMH>

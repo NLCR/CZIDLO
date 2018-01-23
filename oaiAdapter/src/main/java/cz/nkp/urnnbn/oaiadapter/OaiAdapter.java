@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
 import cz.nkp.urnnbn.api_client.v5.utils.Credentials;
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.oaiadapter.RecordResult.DigitalDocumentStatus;
+import cz.nkp.urnnbn.oaiadapter.cli.XslTemplate;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
@@ -38,10 +39,8 @@ public class OaiAdapter {
     private final String czidloApiPassword;
     private final boolean czidloApiIgnoreInvalidCertificate;
     // XSLT
-    private final String metadataToDdRegistrationXslt;
-    private final File metadataToDdRegistrationXsltFile;
-    private final String metadataToDiImportXslt;
-    private final File metadataToDiImportXsltFile;
+    private final XslTemplate metadataToDdRegistrationXslt;
+    private final XslTemplate metadataToDiImportXslt;
     //XSD
     private final URL ddRegistrationDataXsdUrl;
     private final URL diImportDataXsdUrl;
@@ -62,7 +61,7 @@ public class OaiAdapter {
     public OaiAdapter(String registrarCode,
                       String oaiBaseUrl, String oaiMetadataPrefix, String oaiSetSpec, String czidloApiBaseUrl,
                       String czidloApiLogin, String czidloApiPassword, boolean czidloApiIgnoreInvalidCertificate,
-                      String metadataToDdRegistrationXslt, File metadataToDdRegistrationXsltFile, String metadataToDiImportXslt, File metadataToDiImportXsltFile,
+                      XslTemplate metadataToDdRegistrationXslt, XslTemplate metadataToDiImportXslt,
                       URL ddRegistrationDataXsdUrl, URL diImportDataXsdUrl,
                       boolean registerDDsWithUrn, boolean registerDDsWithoutUrn,
                       boolean mergeDigitalInstances, boolean ignoreDifferenceInDiAccessibility, boolean ignoreDifferenceInDiFormat,
@@ -77,9 +76,7 @@ public class OaiAdapter {
         this.czidloApiPassword = czidloApiPassword;
         this.czidloApiIgnoreInvalidCertificate = czidloApiIgnoreInvalidCertificate;
         this.metadataToDdRegistrationXslt = metadataToDdRegistrationXslt;
-        this.metadataToDdRegistrationXsltFile = metadataToDdRegistrationXsltFile;
         this.metadataToDiImportXslt = metadataToDiImportXslt;
-        this.metadataToDiImportXsltFile = metadataToDiImportXsltFile;
         this.ddRegistrationDataXsdUrl = ddRegistrationDataXsdUrl;
         this.diImportDataXsdUrl = diImportDataXsdUrl;
         this.registerDDsWithUrn = registerDDsWithUrn;
@@ -88,30 +85,6 @@ public class OaiAdapter {
         this.ignoreDifferenceInDiAccessibility = ignoreDifferenceInDiAccessibility;
         this.ignoreDifferenceInDiFormat = ignoreDifferenceInDiFormat;
         this.reportLogger = reportLogger;
-    }
-
-    private Document buildDigDocRegistrationXsltDoc() throws TemplateException {
-        try {
-            return XmlTools.parseDocumentFromString(metadataToDdRegistrationXslt);
-        } catch (XSLException ex) {
-            throw new TemplateException("XSLException occurred during building Digital-document-registration template: " + ex.getMessage());
-        } catch (ParsingException ex) {
-            throw new TemplateException("ParsingException occurred during building Digital-document-registration template: " + ex.getMessage());
-        } catch (IOException ex) {
-            throw new TemplateException("IOException occurred during building Digital-document-registration template: " + ex.getMessage());
-        }
-    }
-
-    private Document buildDigInstImportXsltDoc() throws TemplateException {
-        try {
-            return XmlTools.parseDocumentFromString(metadataToDiImportXslt);
-        } catch (XSLException ex) {
-            throw new TemplateException("XSLException occurred during building Digital-instance-import template: " + ex.getMessage());
-        } catch (ParsingException ex) {
-            throw new TemplateException("ParsingException occurred during building Digital-instance-import template: " + ex.getMessage());
-        } catch (IOException ex) {
-            throw new TemplateException("IOException occurred during building Digital-instance-import template: " + ex.getMessage());
-        }
     }
 
     private void report(String message) {
@@ -131,25 +104,15 @@ public class OaiAdapter {
             report("Initialization");
             report("==============================");
             Counters counters = new Counters();
-            OaiHarvester harvester = null;
-            SingleRecordProcessor recordProcessor = null;
-            try {
-                harvester = new OaiHarvester(oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec);
-                report("- OaiHarvester initialized");
-                CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), true, czidloApiIgnoreInvalidCertificate);
-                Document digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
-                Document digInstImportXslt = buildDigInstImportXsltDoc();
-                XsdProvider xsdProvider = new XsdProvider(ddRegistrationDataXsdUrl, diImportDataXsdUrl);
-                recordProcessor = new SingleRecordProcessor(reportLogger, registrarCode, czidloApiConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
-                // TODO: 7.11.17 other tests of parameters like existence of registrar, digital library (id), access rights, API availability etc.
-            } catch (OaiHarvesterException ex) {
-                report("OaiHarvester initialization failed: " + ex.getMessage() + ", url: " + ex.getUrl());
-                logger.log(Level.SEVERE, "OaiHarvester initialization failed: {0}, url: {1}", new Object[]{ex.getMessage(), ex.getUrl()});
-                return;
-            } catch (IOException e) {
-                report("Initialization error: IOException: " + e.getMessage());
-                logger.log(Level.SEVERE, "Initialization error", e);
-            }
+            OaiHarvester harvester = new OaiHarvester(oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec, reportLogger);
+            report("- OaiHarvester initialized");
+            CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), true, czidloApiIgnoreInvalidCertificate);
+            Document digDocRegistrationXslt = buildXsltDoc(metadataToDdRegistrationXslt, "Digital-document-registration");
+            Document digInstImportXslt = buildXsltDoc(metadataToDiImportXslt, "Digital-instance-import");
+
+            XsdProvider xsdProvider = new XsdProvider(ddRegistrationDataXsdUrl, diImportDataXsdUrl);
+            SingleRecordProcessor recordProcessor = new SingleRecordProcessor(reportLogger, registrarCode, czidloApiConnector, digDocRegistrationXslt, digInstImportXslt, xsdProvider, registerDDsWithUrn, registerDDsWithoutUrn, mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat);
+            // TODO: 7.11.17 other tests of parameters like existence of registrar, digital library (id), access rights, API availability etc.
             report(" ");
 
             report("Records");
@@ -166,12 +129,32 @@ public class OaiAdapter {
             report("Summary");
             report("=====================================================");
             reportSummary(counters);
-
+        } catch (OaiHarvesterException ex) {
+            report("OaiHarvester initialization failed: " + ex.getMessage() + ", url: " + ex.getUrl());
+            logger.log(Level.SEVERE, "OaiHarvester initialization failed: {0}, url: {1}", new Object[]{ex.getMessage(), ex.getUrl()});
+            return;
+        } catch (IOException e) {
+            report("Initialization error: IOException: " + e.getMessage());
+            logger.log(Level.SEVERE, "Initialization error", e);
+        } catch (TemplateException e) {
+            report("Initialization error: : TemplateException: " + e.getMessage());
+            logger.log(Level.SEVERE, "Template initialization error", e);
+        } finally {
             if (reportLogger != null) {
                 reportLogger.close();
             }
-        } catch (TemplateException ex) {
-            logger.log(Level.SEVERE, ex.getMessage());
+        }
+    }
+
+    private Document buildXsltDoc(XslTemplate template, String type) throws TemplateException {
+        try {
+            return XmlTools.parseDocumentFromString(template.getXml());
+        } catch (XSLException ex) {
+            throw new TemplateException(String.format("XSLException occurred during building %s xslt %s: %s ", type, template.getDescription(), ex.getMessage()));
+        } catch (ParsingException ex) {
+            throw new TemplateException(String.format("ParsingException occurred during building %s xslt %s: %s ", type, template.getDescription(), ex.getMessage()));
+        } catch (IOException ex) {
+            throw new TemplateException(String.format("IOException occurred during building %s xslt %s: %s ", type, template.getDescription(), ex.getMessage()));
         }
     }
 
@@ -197,12 +180,19 @@ public class OaiAdapter {
 
         report(" Transformations");
         report(" -----------------");
-        if (metadataToDdRegistrationXsltFile != null) {
-            report("  Metadata to DD-registration template: " + metadataToDdRegistrationXsltFile.getAbsolutePath());
+        if (metadataToDdRegistrationXslt != null && metadataToDdRegistrationXslt.getId() != null) {
+            report("  Metadata to DD-registration template: " + metadataToDdRegistrationXslt.getId());
+        }
+        if (metadataToDdRegistrationXslt != null && metadataToDdRegistrationXslt.getFile() != null) {
+            report("  Metadata to DD-registration template file: " + metadataToDdRegistrationXslt.getFile().getAbsolutePath());
         }
         report("  DD-registration schema location: " + ddRegistrationDataXsdUrl.toString());
-        if (metadataToDiImportXsltFile != null) {
-            report("  Metadata to DI-import template: " + metadataToDiImportXsltFile.getAbsolutePath());
+
+        if (metadataToDiImportXslt != null && metadataToDiImportXslt.getId() != null) {
+            report("  Metadata to DI-import template: " + metadataToDiImportXslt.getId());
+        }
+        if (metadataToDiImportXslt != null && metadataToDiImportXslt.getFile() != null) {
+            report("  Metadata to DI-import template file: " + metadataToDiImportXslt.getFile().getAbsolutePath());
         }
         report("  DI-import schema location: " + diImportDataXsdUrl.toString());
         report(" ");
@@ -360,19 +350,19 @@ public class OaiAdapter {
     }
 
     public String getMetadataToDdRegistrationXslt() {
-        return metadataToDdRegistrationXslt;
+        return metadataToDdRegistrationXslt.getXml();
     }
 
     public File getMetadataToDdRegistrationXsltFile() {
-        return metadataToDdRegistrationXsltFile;
+        return metadataToDdRegistrationXslt.getFile();
     }
 
     public String getMetadataToDiImportXslt() {
-        return metadataToDiImportXslt;
+        return metadataToDiImportXslt.getXml();
     }
 
     public File getMetadataToDiImportXsltFile() {
-        return metadataToDiImportXsltFile;
+        return metadataToDiImportXslt.getFile();
     }
 
     public URL getDdRegistrationDataXsdUrl() {

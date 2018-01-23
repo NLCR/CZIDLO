@@ -16,9 +16,11 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
+import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.ReportLogger;
+import cz.nkp.urnnbn.oaiadapter.cli.XslTemplate;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import org.quartz.JobExecutionContext;
@@ -46,8 +48,10 @@ public class OaiAdapterJob extends AbstractJob {
     public static final String PARAM_CZIDLO_API_LOGIN = "czidloApiLogin";
     public static final String PARAM_CZIDLO_API_PASSWORD = "czidloApiPassword";
     //xslt
-    public static final String PARAM_DD_REGISTRATION_XSL_FILE = "ddRegistrationXsl";
-    public static final String PARAM_DI_IMPORT_XSL_FILE = "diImportXsl";
+    public static final String PARAM_DD_REGISTRATION_XSL_ID = "ddRegistrationXslId";
+    public static final String PARAM_DD_REGISTRATION_XSL_FILE = "ddRegistrationXslFile";
+    public static final String PARAM_DI_IMPORT_XSL_ID = "diImportXslId";
+    public static final String PARAM_DI_IMPORT_XSL_FILE = "diImportXslFile";
     //xsd
     public static final String PARAM_DD_REGISTRATION_XSD_URL = "ddRegistrationXsdUrl";
     public static final String PARAM_DI_IMPORT_XSD_URL = "diImportXsdUrl";
@@ -85,11 +89,13 @@ public class OaiAdapterJob extends AbstractJob {
             logger.info("Czidlo API login: " + czidloApiLogin);
             String czidloApiPassword = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_PASSWORD);
             // oai response -> dd registration XSLT
-            String ddRegistrationXslt = (String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSL_FILE);
-            logger.info("XSL template to transform OAI record to DD registration data: " + ddRegistrationXslt);
+            String ddRegistrationXsltId = (String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSL_ID);
+            File ddRegistrationXsltFile = new File((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSL_FILE));
+            logger.info("XSL template to transform OAI record to DD registration data: " + ddRegistrationXsltId);
             // oai response -> di import XSLT
-            String diImportXslt = (String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSL_FILE);
-            logger.info("XSL template to transform OAI record to DI import data: " + diImportXslt);
+            String diImportXsltId = (String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSL_ID);
+            File diImportXsltXmlFile = new File((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSL_FILE));
+            logger.info("XSL template to transform OAI record to DI import data: " + diImportXsltId);
             // XSDs
             URL ddRegistrationXsdUrl = new URL((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_XSD_URL));
             logger.info("XSD for validation of DD registration data: " + ddRegistrationXsdUrl);
@@ -116,7 +122,8 @@ public class OaiAdapterJob extends AbstractJob {
             new OaiAdapter(registrarCode,
                     oaiBaseUrl, oaiMetadataPrefix, oaiSet,
                     czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
-                    ddRegistrationXslt, null, diImportXslt, null,
+                    new XslTemplate(ddRegistrationXsltId, XmlTools.loadXmlFromFile(ddRegistrationXsltFile.getAbsolutePath()), ddRegistrationXsltFile),
+                    new XslTemplate(ddRegistrationXsltId, XmlTools.loadXmlFromFile(ddRegistrationXsltFile.getAbsolutePath()), ddRegistrationXsltFile),
                     ddRegistrationXsdUrl, diImportXsdUrl,
                     registerDDsWithUrn, registerDDsWithoutUrn,
                     mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,

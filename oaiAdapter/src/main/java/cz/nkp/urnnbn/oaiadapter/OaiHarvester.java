@@ -11,7 +11,6 @@ import nu.xom.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 /**
  * @author Jan Rychtář
@@ -19,7 +18,6 @@ import java.util.logging.Logger;
  */
 public class OaiHarvester {
 
-    private static final Logger logger = Logger.getLogger(OaiHarvester.class.getName());
     public static final String OAI_NAMESPACE = "http://www.openarchives.org/OAI/2.0/";
     private final String oaiBaseUrl;
     private final String metadataPrefix;
@@ -27,8 +25,9 @@ public class OaiHarvester {
     private final Stack<String> identifiersStack;
     private String resumptionToken;
     private final HttpConnector httpConnector = new HttpConnector();
+    private final ReportLogger reportLogger;
 
-    public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec) throws OaiHarvesterException {
+    public OaiHarvester(String oaiBaseUrl, String metadataPrefix, String setSpec, ReportLogger reportLogger) throws OaiHarvesterException {
         if (oaiBaseUrl == null) {
             throw new NullPointerException("oaiBasUrl not specified");
         }
@@ -38,6 +37,7 @@ public class OaiHarvester {
         this.oaiBaseUrl = oaiBaseUrl;
         this.metadataPrefix = metadataPrefix;
         this.setSpec = setSpec;
+        this.reportLogger = reportLogger;
 
         this.identifiersStack = new Stack<>();
         listAndStackFirstIdentifiers();
@@ -79,7 +79,9 @@ public class OaiHarvester {
                 if (logTotalSize) {
                     String completeListSize = resumptionTokenEl.getAttributeValue("completeListSize");
                     if (completeListSize != null) {
-                        logger.info("total records: " + completeListSize);
+                        if (reportLogger != null) {
+                            reportLogger.report("OAI harvester total records: " + completeListSize);
+                        }
                     }
                 }
                 String token = resumptionTokenEl.getValue();

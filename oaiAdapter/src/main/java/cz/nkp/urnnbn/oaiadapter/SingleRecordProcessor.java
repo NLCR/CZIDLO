@@ -1,15 +1,15 @@
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.core.AccessRestriction;
-import cz.nkp.urnnbn.core.RegistrarCode;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
 import cz.nkp.urnnbn.api_client.v5.CzidloApiErrorException;
 import cz.nkp.urnnbn.api_client.v5.utils.DdRegistrationRefiner;
 import cz.nkp.urnnbn.api_client.v5.utils.DiImportRefiner;
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.core.AccessRestriction;
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.apiv5.builders.request.DiCreateBuilderXml;
 import nu.xom.Document;
 import nu.xom.ParsingException;
@@ -92,7 +92,7 @@ public class SingleRecordProcessor {
             digDocRegistrationData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digDocRegistrationTemplate);
             report("- OAI-record -> Digital-document-registration data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new SingleRecordProcessingException("OAI-record -> Digital-document-registration data conversion: ERROR: ", ex);
+            throw new SingleRecordProcessingException("OAI-record -> Digital-document-registration data conversion: ERROR: " + ex.getMessage(), ex);
         }
         //refinement
         new DdRegistrationRefiner().refineDocument(digDocRegistrationData);
@@ -103,11 +103,11 @@ public class SingleRecordProcessor {
             checkNoInternalRegistrarScopeIdFound(digDocRegistrationData);
             report("- Digital-document-registration data validation: SUCCESS");
         } catch (DocumentOperationException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration data validation ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration data validation ERROR: " + ex.getMessage(), ex);
         } catch (ParsingException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration data parsing ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration data parsing ERROR: " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration data processing ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration data processing ERROR: " + ex.getMessage(), ex);
         }
         return digDocRegistrationData;
     }
@@ -129,7 +129,7 @@ public class SingleRecordProcessor {
             digInstImportData = XmlTools.getTransformedDocument(oaiRecord.getDocument(), digInstImportTemplate);
             report("- OAI-record -> Digital-instance-import data conversion: SUCCESS");
         } catch (XSLException ex) {
-            throw new SingleRecordProcessingException("OAI-record -> Digital-instance-import data conversion: ERROR", ex);
+            throw new SingleRecordProcessingException("OAI-record -> Digital-instance-import data conversion: ERROR: " + ex.getMessage(), ex);
         }
         //refinement
         new DiImportRefiner().refineDocument(digInstImportData);
@@ -139,9 +139,9 @@ public class SingleRecordProcessor {
             XmlTools.validateByXsdAsString(digInstImportData, xsdProvider.getDiImportDataXsd());
             report("- Digital-instance-import data validation: SUCCESS");
         } catch (ParsingException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import data parsing ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import data parsing ERROR: " + ex.getMessage(), ex);
         } catch (IOException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import data processing ERROR: ", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import data processing ERROR: " + ex.getMessage(), ex);
         }
         return digInstImportData;
     }
@@ -169,7 +169,7 @@ public class SingleRecordProcessor {
         try {
             return czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
         } catch (ParsingException | IOException | CzidloApiErrorException e) {
-            throw new SingleRecordProcessingException("Getting URN:NBN by registrar-scope-id ERROR", e);
+            throw new SingleRecordProcessingException("Getting URN:NBN by registrar-scope-id ERROR: " + e.getMessage(), e);
         }
     }
 
@@ -214,7 +214,7 @@ public class SingleRecordProcessor {
         try {
             return czidloConnector.getUrnnbnStatus(urnnbn);
         } catch (ParsingException | CzidloApiErrorException | IOException e) {
-            throw new SingleRecordProcessingException("Getting URN:NBN status ERROR", e);
+            throw new SingleRecordProcessingException("Getting URN:NBN status ERROR: " + e.getMessage(), e);
         }
     }
 
@@ -253,7 +253,7 @@ public class SingleRecordProcessor {
         try {
             czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
         } catch (CzidloApiErrorException | IOException e) {
-            throw new SingleRecordProcessingException("Setting registrar-scope-id: ERROR", e);
+            throw new SingleRecordProcessingException("Setting registrar-scope-id: ERROR: " + e.getMessage(), e);
         }
     }
 
@@ -304,7 +304,7 @@ public class SingleRecordProcessor {
         try {
             czidloConnector.deactivateDigitalInstance(currentDi.getId());
         } catch (CzidloApiErrorException | IOException e) {
-            throw new SingleRecordProcessingException("Deactivating digital instance: ERROR", e);
+            throw new SingleRecordProcessingException("Deactivating digital instance: ERROR: " + e.getMessage(), e);
         }
     }
 
@@ -312,7 +312,7 @@ public class SingleRecordProcessor {
         try {
             return czidloConnector.getActiveDigitalInstanceByUrnnbnAndLibraryId(urnnbn, libraryId);
         } catch (IOException | ParsingException | CzidloApiErrorException e) {
-            throw new SingleRecordProcessingException("Getting digital instance: ERROR", e);
+            throw new SingleRecordProcessingException("Getting digital instance: ERROR: " + e.getMessage(), e);
         }
     }
 
@@ -322,7 +322,7 @@ public class SingleRecordProcessor {
             report("- Digital-document-registration SUCCESS");
             return urnnbn;
         } catch (IOException | ParsingException | CzidloApiErrorException ex) {
-            throw new SingleRecordProcessingException("Digital-document-registration: ERROR", ex);
+            throw new SingleRecordProcessingException("Digital-document-registration: ERROR: " + ex.getMessage(), ex);
         }
     }
 
@@ -330,7 +330,7 @@ public class SingleRecordProcessor {
         try {
             czidloConnector.importDigitalInstance(diImportData, urnnbn);
         } catch (IOException | CzidloApiErrorException ex) {
-            throw new SingleRecordProcessingException("Digital-instance-import: ERROR", ex);
+            throw new SingleRecordProcessingException("Digital-instance-import: ERROR: " + ex.getMessage(), ex);
         }
     }
 

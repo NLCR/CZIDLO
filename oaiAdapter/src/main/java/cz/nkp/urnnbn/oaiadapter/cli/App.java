@@ -1,9 +1,9 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
+import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.ReportLogger;
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
 import java.io.File;
@@ -70,7 +70,7 @@ public class App {
         return new OaiAdapter(registrarCode,
                 oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec,
                 czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, czidloApiIgnoreInvalidCertificate,
-                ddRegistrationXsl, ddRegistrationXslFile, diImportXsl, diImportXslFile,
+                new XslTemplate(null, ddRegistrationXsl, ddRegistrationXslFile), new XslTemplate(null, diImportXsl, diImportXslFile),
                 ddRegistrationDataXsdUrl, diImportDataXsdUrl,
                 registerDDsWithUrn, registerDDsWithoutUrn,
                 mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
