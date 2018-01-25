@@ -388,11 +388,11 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getDigInstImportXsdUrl())//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, params[i++])//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, Boolean.valueOf(params[i++]))//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, Boolean.valueOf(params[i++]))//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, Boolean.valueOf(params[i++]))//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, Boolean.valueOf(params[i++]))//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, Boolean.valueOf(params[i++]))//
                         .build();
             case INDEXATION:
                 return newJob(IndexationJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))

@@ -140,7 +140,6 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 result[8] = diImportXslt.getName();
                 result[9] = diImportXsltFile.getAbsolutePath();
                 //dd-registration and di-import flags
-                // TODO: 24.1.18 pass Boolean directly
                 result[10] = ddRegistrationRegisterDdsWithUrn.toString();
                 result[11] = ddRegistrationRegisterDdsWithoutUrn.toString();
                 result[12] = diImportMergeDis.toString();

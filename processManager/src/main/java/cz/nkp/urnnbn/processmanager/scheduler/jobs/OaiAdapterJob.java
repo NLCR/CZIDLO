@@ -102,16 +102,16 @@ public class OaiAdapterJob extends AbstractJob {
             URL diImportXsdUrl = new URL((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_XSD_URL));
             logger.info("XSD for validation of DI import data: " + diImportXsdUrl);
             //dd
-            boolean registerDDsWithUrn = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN));
+            Boolean registerDDsWithUrn = (Boolean) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN);
             logger.info("Register digital documents with urn:nbn: " + registerDDsWithUrn);
-            boolean registerDDsWithoutUrn = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN));
+            Boolean registerDDsWithoutUrn = (Boolean) context.getMergedJobDataMap().get(PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN);
             logger.info("Register digital documents without urn:nbn: " + registerDDsWithoutUrn);
             //di
-            boolean mergeDigitalInstances = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_MERGE_DIS));
+            Boolean mergeDigitalInstances = (Boolean) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_MERGE_DIS);
             logger.info("Merge digital instances: " + mergeDigitalInstances);
-            boolean ignoreDifferenceInDiAccessibility = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY));
+            Boolean ignoreDifferenceInDiAccessibility = (Boolean) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY);
             logger.info("Ignore difference in DI accessibility: " + ignoreDifferenceInDiAccessibility);
-            boolean ignoreDifferenceInDiFormat = Boolean.valueOf((String) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT));
+            Boolean ignoreDifferenceInDiFormat = (Boolean) context.getMergedJobDataMap().get(PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT);
             logger.info("Ignore difference in DI format: " + ignoreDifferenceInDiFormat);
 
             //prepare report logger
