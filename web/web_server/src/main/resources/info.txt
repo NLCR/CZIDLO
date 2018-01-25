@@ -1,0 +1,2 @@
+Configuration in this directory is only used in developer mode. The production configuration can be found
+in web/web_client/src/main/resources, especially web.properties.

@@ -8,14 +8,16 @@ package cz.nkp.urnnbn.oaiadapter.cli;
  * @author Martin Řehánek
  */
 public class DefinedProperties {
-
+    // TODO: 24.1.18 refactor - separate config for cli and for web app
     static String REPORT_FILE = "oaiAdapter.reportFile";
     // oai provider
     static String OAI_BASE_URL = "oaiAdapter.oai.baseUrl";
     static String OAI_SET = "oaiAdapter.oai.setSpec";
     static String OAI_METADATA_PREFIX = "oaiAdapter.oai.metadataPrefix";
     // czidlo api
+    // TODO: 23.1.18 used by other processes as well (indexer), so rename
     public static String CZIDLO_API_BASE_URL = "oaiAdapter.czidlo_api.baseUrl";
+    // TODO: 23.1.18 tohle se puziva jenom v cli, pres web se bere login a password uzivatele, ktery proces spousti
     static String CZIDLO_API_LOGIN = "oaiAdapter.czidlo_api.login";
     static String CZIDLO_API_PASSWORD = "oaiAdapter.czidlo_api.password";
     static String CZIDLO_API_REGISTRAR_CODE = "oaiAdapter.czidlo_api.registrarCode";
@@ -37,5 +39,15 @@ public class DefinedProperties {
     public static boolean DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY_DEFAULT = false;
     public static String DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT = "oaiAdapter.diImport.ignoreDifferenceInFormat";
     public static boolean DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT_DEFAULT = false;
+
+
+    // TODO: 24.1.18 move
+    public static String SOLR_BASE_URL = "solr.baseUrl";
+    public static String SOLR_COLLECTION = "solr.collection";
+    public static String SOLR_USE_HTTPS = "solr.useHttps";//for indexing
+    public static String SOLR_LOGIN = "solr.login";
+    public static String SOLR_PASSWORD = "solr.password";
+
+
 
 }

@@ -16,9 +16,13 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import cz.nkp.urnnbn.oaiadapter.ReportLogger;
+import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.services.DataAccessService;
+import cz.nkp.urnnbn.services.Services;
+import cz.nkp.urnnbn.solr_indexer.ReportLogger;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -34,11 +38,22 @@ import java.text.SimpleDateFormat;
  */
 public class IndexationJob extends AbstractJob {
 
+    //report file
     public static final String PARAM_REPORT_FILE = "report.txt";
+    //czidlo api
+    public static final String PARAM_CZIDLO_API_BASE_URL = "czidloApiBaseUrl";
+    //solr
+    public static final String PARAM_SOLR_BASE_URL = "solrBaseUrl";
+    public static final String PARAM_SOLR_COLLECTION = "solrCollection";
+    public static final String PARAM_SOLR_USE_HTTPS = "solrUseHttps";
+    public static final String PARAM_SOLR_LOGIN = "solrLogin";
+    public static final String PARAM_SOLR_PASSWORD = "solrPassword";
+    //xslt
+    public static final String PARAM_XSL_FILE = "xslFile";
+    //date range
     public static final String PARAM_MODIFICATION_DATE_FROM = "mod_date_from";
     public static final String PARAM_MODIFICATION_DATE_TO = "mod_date_to";
-
-    //possible future params
+    //possible other paramethers
     /*
     public static final String PARAM_REGISTRAR_CODES = "registrar_codes";
     public static final String PARAM_IE_TYPES = "entity_types";
@@ -56,6 +71,25 @@ public class IndexationJob extends AbstractJob {
             // System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
             init(context.getMergedJobDataMap(), ProcessType.INDEXATION);
             logger.info("executing " + IndexationJob.class.getName());
+
+            // czidlo api
+            String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
+            logger.info("Czidlo API base url: " + czidloApiBaseUrl);
+            boolean czidloApiUseHttps = false;
+            //solr
+            String solrBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL);
+            logger.info("Solr base url: " + solrBaseUrl);
+            String solrCollection = (String) context.getMergedJobDataMap().get(PARAM_SOLR_COLLECTION);
+            logger.info("Solr collection: " + solrCollection);
+            String solrLogin = (String) context.getMergedJobDataMap().get(PARAM_SOLR_LOGIN);
+            String solrPassword = (String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD);
+            Boolean solrUseHttps = (Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS);
+            logger.info("Solr use https: " + solrUseHttps);
+            //xslt
+            File czidloToSolrXsltFile = new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE));
+            String czidloToSolrXslt = XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath());
+            //data access service
+            DataAccessService dataAccessService = Services.instanceOf().dataAccessService();
             // modification date from
             String modDateFromStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_FROM);
             logger.info("modification date from: " + modDateFromStr);
@@ -86,7 +120,12 @@ public class IndexationJob extends AbstractJob {
             reportLogger = buildReportLogger(reportFile);
             //run
             logger.info("running Indexer process");
-            run(modDateFrom, modDateTo);
+            new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
+                    solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPassword,
+                    dataAccessService,
+                    czidloToSolrXslt, czidloToSolrXsltFile,
+                    reportLogger, modDateFrom, modDateTo
+            ).run();
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
                 logger.info("Indexer process killed");
@@ -100,12 +139,6 @@ public class IndexationJob extends AbstractJob {
         } finally {
             close();
         }
-    }
-
-    private void run(DateTime modDateFrom, DateTime modDateTo) {
-        // TODO: 12.12.17 actual process implementation here
-        logger.info("sorry, actual process not implemented yet");
-        reportLogger.report("todo: actual report here");
     }
 
     private ReportLogger buildReportLogger(File reportFile) throws Exception {

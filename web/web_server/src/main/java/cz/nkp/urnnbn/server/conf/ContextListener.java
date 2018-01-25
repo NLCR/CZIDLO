@@ -1,16 +1,15 @@
 package cz.nkp.urnnbn.server.conf;
 
+import cz.nkp.urnnbn.utils.PropertyLoader;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.File;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
-import cz.nkp.urnnbn.utils.PropertyLoader;
-
 /**
- * 
  * @author Martin Řehánek
  */
 public class ContextListener implements ServletContextListener {
@@ -18,6 +17,7 @@ public class ContextListener implements ServletContextListener {
     private static final String WEB_APP_NAME = "WEB";
     private static final Logger logger = Logger.getLogger(ServletContextListener.class.getName());
     private static final String WEB_PROPERTIES = "web.properties";
+    private static final String CZIDL_TO_SOLR_XSLT = "czidlo-to-solr.xslt";
 
     abstract class ResourceUtilizer {
 
@@ -45,6 +45,15 @@ public class ContextListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
         loadWebProperties();
+        loadFileResources();
+    }
+
+    private void loadFileResources() {
+        try {
+            WebModuleConfiguration.instanceOf().initializeFileResources(WEB_APP_NAME, new File(getClass().getClassLoader().getResource(CZIDL_TO_SOLR_XSLT).toURI()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadWebProperties() {

@@ -394,6 +394,28 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_ACCESSIBILITY, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT, params[i++])//
                         .build();
+            case INDEXATION:
+                return newJob(IndexationJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
+                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
+                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
+                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
+                        .usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrBaseUrl())//
+                        .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrCollection())
+                        .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrUseHttps())
+                        .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrLogin())
+                        .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrPassword())
+                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())
+                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//
+                        /*
+                        //possibly other params
+                        .usingJobData(IndexationJob.PARAM_REGISTRAR_CODES, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_IE_TYPES, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_INDEX_ACTIVE_DOCS, params[i++])//
+                        .usingJobData(IndexationJob.PARAM_INDEX_DEACTIVED_DOCS, params[i++])//
+                        */
+                        .build();
             case DI_URL_AVAILABILITY_CHECK:
                 return newJob(DiUrlAvailabilityCheckJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
                         .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
@@ -409,18 +431,6 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(DiUrlAvailabilityCheckJob.PARAM_DI_DATESTAMP_TO, params[i++])//
                         .usingJobData(DiUrlAvailabilityCheckJob.PARAM_COUNTRY_CODE, params[i++])//
                         // .usingJobData(DiUrlAvailabilityCheckJob.PARAM_, params[0])
-                        .build();
-            case INDEXATION:
-                return newJob(IndexationJob.class).withIdentity(new JobKey(id, PROCESS_GROUP_JOBS))
-                        .usingJobData(AbstractJob.PARAM_PROCESS_ID_KEY, process.getId())//
-                        .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
-                        .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
-                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
-                        .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//
-                        /*.usingJobData(IndexationJob.PARAM_REGISTRAR_CODES, params[i++])//
-                        .usingJobData(IndexationJob.PARAM_IE_TYPES, params[i++])//
-                        .usingJobData(IndexationJob.PARAM_INDEX_ACTIVE_DOCS, params[i++])//
-                        .usingJobData(IndexationJob.PARAM_INDEX_DEACTIVED_DOCS, params[i++])//*/
                         .build();
             case TEST:
             default:

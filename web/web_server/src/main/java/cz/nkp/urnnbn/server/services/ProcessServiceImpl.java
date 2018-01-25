@@ -125,32 +125,38 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 Boolean diImportIgnoreDifferenceInFormat = Boolean.valueOf(paramsFromClient[10]);
 
                 result = new String[15];
+                //registrar
                 result[0] = registrarCode;
+                //czidlo api credentials
                 result[1] = getUserLogin();
                 result[2] = MemoryPasswordsStorage.instanceOf().getPassword(getUserLogin());
+                //oai configuration
                 result[3] = oaiBaseUrl;
                 result[4] = oaiMetadataprefix;
                 result[5] = oaiSet;
+                //xslt
                 result[6] = ddRegistrationXslt.getName();
                 result[7] = ddRegistrationXsltFile.getAbsolutePath();
                 result[8] = diImportXslt.getName();
                 result[9] = diImportXsltFile.getAbsolutePath();
+                //dd-registration and di-import flags
+                // TODO: 24.1.18 pass Boolean directly
                 result[10] = ddRegistrationRegisterDdsWithUrn.toString();
                 result[11] = ddRegistrationRegisterDdsWithoutUrn.toString();
                 result[12] = diImportMergeDis.toString();
                 result[13] = diImportIgnoreDifferenceInAccessibility.toString();
                 result[14] = diImportIgnoreDifferenceInFormat.toString();
                 return result;
-            case REGISTRARS_URN_NBN_CSV_EXPORT:
-                // login and password won't probably be needed here
-                result = new String[paramsFromClient.length + 1];
-                for (int i = 0; i < paramsFromClient.length; i++) {
-                    result[i] = paramsFromClient[i];
-                }
-                result[result.length - 1] = CountryCode.getCode();
-                return result;
             case INDEXATION:
-                // login and password won't probably be needed here
+                String dateFrom = paramsFromClient[0];
+                String dateTo = paramsFromClient[1];
+
+                result = new String[2];
+                result[0] = dateFrom;
+                result[1] = dateTo;
+                return result;
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                // no czidlo api credentials needed
                 result = new String[paramsFromClient.length + 1];
                 for (int i = 0; i < paramsFromClient.length; i++) {
                     result[i] = paramsFromClient[i];
@@ -158,7 +164,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
                 result[result.length - 1] = CountryCode.getCode();
                 return result;
             case DI_URL_AVAILABILITY_CHECK:
-                // login and password won't probably be needed here
+                // no czidlo api credentials needed
                 result = new String[paramsFromClient.length + 1];
                 for (int i = 0; i < paramsFromClient.length; i++) {
                     result[i] = paramsFromClient[i];
