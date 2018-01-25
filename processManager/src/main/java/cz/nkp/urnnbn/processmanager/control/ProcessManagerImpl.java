@@ -386,8 +386,8 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSL_FILE, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_ID, params[i++])//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSL_FILE, params[i++])//
-                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getDigDocRegistrationXsdUrl())//
-                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getDigInstImportXsdUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_XSD_URL, Configuration.getOaiAdapterDigDocRegistrationXsdUrl())//
+                        .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_XSD_URL, Configuration.getOaiAdapterDigInstImportXsdUrl())//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITH_URN, Boolean.valueOf(params[i++]))//
                         .usingJobData(OaiAdapterJob.PARAM_DD_REGISTRATION_REGISTER_DDS_WITHOUT_URN, Boolean.valueOf(params[i++]))//
                         .usingJobData(OaiAdapterJob.PARAM_DI_IMPORT_MERGE_DIS, Boolean.valueOf(params[i++]))//
@@ -400,11 +400,11 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
                         .usingJobData(IndexationJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrCollection())
-                        .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrUseHttps())
-                        .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrLogin())
-                        .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrPassword())
+                        .usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
+                        .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrIndexerSolrCollection())
+                        .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrIndexerSolrUseHttps())
+                        .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrIndexerSolrLogin())
+                        .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrIndexerSolrPassword())
                         .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//

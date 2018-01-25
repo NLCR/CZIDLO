@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties.*;
+import static cz.nkp.urnnbn.oaiadapter.cli.CliProperties.*;
 
 /**
  * Main class

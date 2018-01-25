@@ -17,7 +17,6 @@
 package cz.nkp.urnnbn.processmanager.conf;
 
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
-import cz.nkp.urnnbn.oaiadapter.cli.DefinedProperties;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
@@ -39,15 +38,15 @@ public class Configuration {
     // configuration for processes
     private static String czidloApiBaseUrl;
     //oai adapter
-    private static String digDocRegistrationXsdUrl;
-    private static String digInstImportXsdUrl;
+    private static String oaiAdapterDigDocRegistrationXsdUrl;
+    private static String oaiAdapterDigInstImportXsdUrl;
     //solr indexer
-    private static String solrBaseUrl;
-    private static String solrCollection;
-    private static Boolean solrUseHttps;
-    private static String solrLogin;
-    private static String solrPassword;
-    private static File czidloToSolrXslt;
+    private static String solrIndexerSolrBaseUrl;
+    private static String solrIndexerSolrCollection;
+    private static Boolean solrIndexerSolrUseHttps;
+    private static String solrIndexerSolrLogin;
+    private static String solrIndexerSolrPassword;
+    private static File solrIndexerCzidloToSolrXslt;
 
     public static void init(InputStream in) throws IOException {
         init(new PropertyLoader(in));
@@ -64,25 +63,21 @@ public class Configuration {
         maxRunningAdminProcesses = loader.loadInt(PropertyKeys.MAX_ADMIN_JOBS);
         maxRunningUserProcesses = loader.loadInt(PropertyKeys.MAX_USER_JOBS);
         // processes - common
-        czidloApiBaseUrl = loader.loadString(DefinedProperties.CZIDLO_API_BASE_URL);
+        czidloApiBaseUrl = loader.loadString(PropertyKeys.CZIDLO_API_BASE_URL);
         // oai adapter
-        digDocRegistrationXsdUrl = loader.loadString(DefinedProperties.DD_REGISTRATION_XSD_URL);
-        digInstImportXsdUrl = loader.loadString(DefinedProperties.DI_IMPORT_XSD_URL);
+        oaiAdapterDigDocRegistrationXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DD_REGISTRATION_XSD_URL);
+        oaiAdapterDigInstImportXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DI_IMPORT_XSD_URL);
         // solr indexer
-        // TODO: 24.1.18 loadStringOrDefault with documented default value "localhost:8983/solr/"
-        solrBaseUrl = loader.loadString(DefinedProperties.SOLR_BASE_URL);
-        // TODO: 24.1.18 loadStringOrDefault with documented default value "czidlo"
-        solrCollection = loader.loadString(DefinedProperties.SOLR_COLLECTION);
-        // TODO: 24.1.18 document default value "false"
-        solrUseHttps = loader.loadBoolean(DefinedProperties.SOLR_USE_HTTPS, false);
-        solrLogin = loader.loadString(DefinedProperties.SOLR_LOGIN);
-        solrPassword = loader.loadString(DefinedProperties.SOLR_PASSWORD);
-        // TODO: 24.1.18 xslt File
+        solrIndexerSolrBaseUrl = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_BASE_URL);
+        solrIndexerSolrCollection = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_COLLECTION);
+        solrIndexerSolrUseHttps = loader.loadBoolean(PropertyKeys.SOLR_INDEXER_SOLR_USE_HTTPS, false);
+        solrIndexerSolrLogin = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_LOGIN);
+        solrIndexerSolrPassword = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_PASSWORD);
     }
 
     public static void initFileResources(File czidloToSolrXslt) {
         logger.info("initFileResources");
-        Configuration.czidloToSolrXslt = czidloToSolrXslt;
+        Configuration.solrIndexerCzidloToSolrXslt = czidloToSolrXslt;
     }
 
     public static File getJobsDir() {
@@ -97,40 +92,40 @@ public class Configuration {
         return maxRunningUserProcesses;
     }
 
-    public static String getDigDocRegistrationXsdUrl() {
-        return digDocRegistrationXsdUrl;
+    public static String getOaiAdapterDigDocRegistrationXsdUrl() {
+        return oaiAdapterDigDocRegistrationXsdUrl;
     }
 
-    public static String getDigInstImportXsdUrl() {
-        return digInstImportXsdUrl;
+    public static String getOaiAdapterDigInstImportXsdUrl() {
+        return oaiAdapterDigInstImportXsdUrl;
     }
 
     public static String getCzidloApiBaseUrl() {
         return czidloApiBaseUrl;
     }
 
-    public static String getSolrBaseUrl() {
-        return solrBaseUrl;
+    public static String getSolrIndexerSolrBaseUrl() {
+        return solrIndexerSolrBaseUrl;
     }
 
-    public static String getSolrCollection() {
-        return solrCollection;
+    public static String getSolrIndexerSolrCollection() {
+        return solrIndexerSolrCollection;
     }
 
-    public static Boolean getSolrUseHttps() {
-        return solrUseHttps;
+    public static Boolean getSolrIndexerSolrUseHttps() {
+        return solrIndexerSolrUseHttps;
     }
 
-    public static String getSolrLogin() {
-        return solrLogin;
+    public static String getSolrIndexerSolrLogin() {
+        return solrIndexerSolrLogin;
     }
 
-    public static String getSolrPassword() {
-        return solrPassword;
+    public static String getSolrIndexerSolrPassword() {
+        return solrIndexerSolrPassword;
     }
 
     public static String getSolrXsltFilename() {
-        return czidloToSolrXslt.getAbsolutePath();
+        return solrIndexerCzidloToSolrXslt.getAbsolutePath();
     }
 
 }

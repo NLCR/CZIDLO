@@ -17,12 +17,22 @@
 package cz.nkp.urnnbn.processmanager.conf;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
 
-    public static final String JOBS_DATA_DIR = "process.scheduler.jobsDataDir";
-    public static final String MAX_ADMIN_JOBS = "process.scheduler.maxRunning.admin";
-    public static final String MAX_USER_JOBS = "process.scheduler.maxRunning.user";
+    static final String JOBS_DATA_DIR = "process.scheduler.jobsDataDir";
+    static final String MAX_ADMIN_JOBS = "process.scheduler.maxRunning.admin";
+    static final String MAX_USER_JOBS = "process.scheduler.maxRunning.user";
+    //COMMON
+    static final String CZIDLO_API_BASE_URL = "process.common.czidloApi.baseUrl";
+    //OAI ADAPTER
+    static final String OAI_ADAPTER_DD_REGISTRATION_XSD_URL = "process.oaiAdapter.digDocRegistrationXsdUrl";
+    static final String OAI_ADAPTER_DI_IMPORT_XSD_URL = "process.oaiAdapter.digInstImportXsdUrl";
+    //SOLR INDEXER
+    static String SOLR_INDEXER_SOLR_BASE_URL = "process.solrIndexer.baseUrl";
+    static String SOLR_INDEXER_SOLR_COLLECTION = "process.solrIndexer.collection";
+    static String SOLR_INDEXER_SOLR_USE_HTTPS = "process.solrIndexer.useHttps";
+    static String SOLR_INDEXER_SOLR_LOGIN = "process.solrIndexer.login";
+    static String SOLR_INDEXER_SOLR_PASSWORD = "process.solrIndexer.password";
 }
