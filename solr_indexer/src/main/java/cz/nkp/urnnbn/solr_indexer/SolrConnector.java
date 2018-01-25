@@ -99,22 +99,25 @@ public class SolrConnector {
         return builder.toString();
     }
 
-    public UpdateResponse indexFromXmlFile(File xmlFile) throws IOException, SAXException, ParserConfigurationException, SolrServerException {
-        return indexFromXmlInputStream(new FileInputStream(xmlFile));
+    public UpdateResponse indexFromXmlFile(File xmlFile, boolean explicitCommit) throws IOException, SAXException, ParserConfigurationException, SolrServerException {
+        return indexFromXmlInputStream(new FileInputStream(xmlFile), explicitCommit);
     }
 
-    public UpdateResponse indexFromXmlString(String xmlString) throws SAXException, ParserConfigurationException, SolrServerException, IOException {
-        return indexFromXmlInputStream(new ByteArrayInputStream(xmlString.getBytes()));
+    public UpdateResponse indexFromXmlString(String xmlString, boolean explicitCommit) throws SAXException, ParserConfigurationException, SolrServerException, IOException {
+        return indexFromXmlInputStream(new ByteArrayInputStream(xmlString.getBytes()), explicitCommit);
     }
 
-    private UpdateResponse indexFromXmlInputStream(InputStream in) throws IOException, SAXException, ParserConfigurationException, SolrServerException {
+    private UpdateResponse indexFromXmlInputStream(InputStream in, boolean explicitCommit) throws IOException, SAXException, ParserConfigurationException, SolrServerException {
         List<SolrInputDocument> solrDoc = getSolrInputDocumentListFromXmlFile(in);
+        UpdateResponse addResponse = null;
         for (SolrInputDocument doc : solrDoc) {
-            // TODO: 15.12.17 what about update response? there can possibly be more updates
-            UpdateResponse addResponse = solrClient.add(collection, doc);
+            //there will always only be on ADD anyway
+            addResponse = solrClient.add(collection, doc);
         }
-        UpdateResponse commitResponse = solrClient.commit(collection);
-        return commitResponse;
+        if (explicitCommit) {
+            solrClient.commit(collection);
+        }
+        return addResponse;
     }
 
     private List<SolrInputDocument> getSolrInputDocumentListFromXmlFile(InputStream in) throws ParserConfigurationException, IOException, SAXException {

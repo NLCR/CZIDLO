@@ -132,7 +132,7 @@ public class SolrIndexer {
                         report(" converting");
                         Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
                         report(" indexing");
-                        solrConnector.indexFromXmlString(solrDoc.toXML());
+                        solrConnector.indexFromXmlString(solrDoc.toXML(), false);
                         report(" indexed");
                         counters.incrementIndexed();
                     }
