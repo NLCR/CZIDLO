@@ -53,7 +53,9 @@ public class OaiAdapter {
     private final boolean ignoreDifferenceInDiFormat;
     //report
     private final ReportLogger reportLogger;
-
+    //run info
+    private boolean stopped = false;
+    
     //DEV
     private int devRecordLimit = -1;
     //private int devRecordLimit = 3;//dev only
@@ -118,6 +120,10 @@ public class OaiAdapter {
             report("Records");
             report("==============================");
             while (harvester.existsNextIdentifier()) {
+                if (stopped) {
+                    report(" stopped ");
+                    break;
+                }
                 boolean quitNow = processRecord(counters, harvester, recordProcessor);
                 if (quitNow) {
                     break;
@@ -391,6 +397,10 @@ public class OaiAdapter {
 
     public boolean isIgnoreDifferenceInDiFormat() {
         return ignoreDifferenceInDiFormat;
+    }
+
+    public void stop() {
+        stopped = true;
     }
 
     public static class Counters {

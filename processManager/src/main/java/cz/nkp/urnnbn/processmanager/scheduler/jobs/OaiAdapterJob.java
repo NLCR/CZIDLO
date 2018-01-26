@@ -25,6 +25,7 @@ import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.UnableToInterruptJobException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,6 +65,15 @@ public class OaiAdapterJob extends AbstractJob {
     public static final String PARAM_DI_IMPORT_IGNORE_DIFFERENCE_IN_FORMAT = "diImport.ignoreDifferenceInFormat";
 
     private ReportLogger reportLogger;
+    private OaiAdapter oaiAdapter;
+
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        super.interrupt();
+        if (oaiAdapter != null) {
+            oaiAdapter.stop();
+        }
+    }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -119,7 +129,7 @@ public class OaiAdapterJob extends AbstractJob {
             reportLogger = buildReportLogger(reportFile);
             //run
             logger.info("running OAI Adapter process");
-            new OaiAdapter(registrarCode,
+            oaiAdapter = new OaiAdapter(registrarCode,
                     oaiBaseUrl, oaiMetadataPrefix, oaiSet,
                     czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
                     new XslTemplate(ddRegistrationXsltId, XmlTools.loadXmlFromFile(ddRegistrationXsltFile.getAbsolutePath()), ddRegistrationXsltFile),
@@ -128,7 +138,8 @@ public class OaiAdapterJob extends AbstractJob {
                     registerDDsWithUrn, registerDDsWithoutUrn,
                     mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
                     reportLogger
-            ).run();
+            );
+            oaiAdapter.run();
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
                 logger.info("OAI Adapter process killed");
