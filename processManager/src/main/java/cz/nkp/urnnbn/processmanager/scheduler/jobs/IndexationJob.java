@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.Services;
+import cz.nkp.urnnbn.solr_indexer.ProgressListener;
 import cz.nkp.urnnbn.solr_indexer.ReportLogger;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
@@ -141,6 +142,21 @@ public class IndexationJob extends AbstractJob {
                     czidloToSolrXslt, czidloToSolrXsltFile,
                     reportLogger, modDateFrom, modDateTo
             );
+
+            solrIndexer.setProgressListener(new ProgressListener() {
+                @Override
+                public void onProgress(int processed, int total) {
+                    if (processed % 100 == 0) {
+                        logger.info(String.format("Processed %d/%d", processed, total));
+                    }
+                }
+
+                @Override
+                public void onFinished(int processed, int total) {
+                    logger.info(String.format("Processed %d/%d", processed, total));
+                }
+            });
+
             if (!interrupted) {
                 solrIndexer.run();
             }

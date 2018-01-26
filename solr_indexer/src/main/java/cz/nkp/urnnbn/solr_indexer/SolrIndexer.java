@@ -52,6 +52,7 @@ public class SolrIndexer {
 
     //run info
     private boolean stopped = false;
+    private ProgressListener progressListener;
 
     public SolrIndexer(String czidloApiBaseUrl,
                        boolean czidloApiUseHttps,
@@ -174,6 +175,9 @@ public class SolrIndexer {
                 break;
             }*/
             }
+            if (progressListener != null) {
+                progressListener.onProgress(counters.getProcessed(), counters.getFound());
+            }
         }
         report(" ");
 
@@ -184,6 +188,9 @@ public class SolrIndexer {
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
         report(" total duration: " + formatTime(System.currentTimeMillis() - start));
+        if (progressListener != null) {
+            progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
     }
 
     private String formatTime(long millis) {
@@ -233,5 +240,7 @@ public class SolrIndexer {
         stopped = true;
     }
 
-
+    public void setProgressListener(ProgressListener progressListener) {
+        this.progressListener = progressListener;
+    }
 }
