@@ -50,6 +50,9 @@ public class SolrIndexer {
     private final DateTime from;
     private final DateTime to;
 
+    //run info
+    private boolean stopped = false;
+
     public SolrIndexer(String czidloApiBaseUrl,
                        boolean czidloApiUseHttps,
                        String solrApiBaseUrl,
@@ -122,6 +125,10 @@ public class SolrIndexer {
                 report(" digital document with id " + doc.getId() + " is missing URN:NBN");
                 counters.incrementErrors();
             } else {
+                if (stopped) {
+                    report(" stopped ");
+                    break;
+                }
                 report(" processing " + urnNbn.toString());
                 try {
                     Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(doc.getId(), true);
@@ -177,10 +184,6 @@ public class SolrIndexer {
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
         report(" total duration: " + formatTime(System.currentTimeMillis() - start));
-
-        if (reportLogger != null) {
-            reportLogger.close();
-        }
     }
 
     private String formatTime(long millis) {
@@ -224,6 +227,10 @@ public class SolrIndexer {
         } catch (IOException ex) {
             throw new TemplateException("IOException occurred during building xsl transformation: " + ex.getMessage());
         }
+    }
+
+    public void stop() {
+        stopped = true;
     }
 
 

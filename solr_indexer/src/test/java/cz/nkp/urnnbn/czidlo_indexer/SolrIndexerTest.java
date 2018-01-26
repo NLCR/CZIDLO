@@ -34,36 +34,42 @@ public class SolrIndexerTest extends TestCase {
     }
 
     public void testSolrIndexer() throws Exception {
+        ReportLogger reportLogger = null;
+        try {
+            File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
+            String xslt = XmlTools.loadXmlFromFile(xsltFile.getAbsolutePath());
+            File reportFile = new File("/tmp/solr_indexer_report.txt");
+            reportLogger = new ReportLogger(new FileOutputStream(reportFile));
+            //init services
+            Services.init(new PostgresSimpleConnector(
+                    "localhost", "czidlo_core", 5432,
+                    "czidlo", "czidlo"));
 
-        File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
-        String xslt = XmlTools.loadXmlFromFile(xsltFile.getAbsolutePath());
-        File reportFile = new File("/tmp/solr_indexer_report.txt");
-        ReportLogger reportLogger = new ReportLogger(new FileOutputStream(reportFile));
-        //init services
-        Services.init(new PostgresSimpleConnector(
-                "localhost", "czidlo_core", 5432,
-                "czidlo", "czidlo"));
+            //DateTime from = new DateTime(2017, 8, 16, 0, 0);
+            DateTime from = new DateTime(2000, 8, 16, 0, 0);
+            DateTime to = new DateTime();
 
-        //DateTime from = new DateTime(2017, 8, 16, 0, 0);
-        DateTime from = new DateTime(2000, 8, 16, 0, 0);
-        DateTime to = new DateTime();
-
-        String solrBaseUrl = "localhost:8983/solr";
-        String solrCollection = "czidlo";
-        boolean solrUseHttps = false;
-        String solrLogin = "solr";
-        String solrPass = "SolrRocks";
+            String solrBaseUrl = "localhost:8983/solr";
+            String solrCollection = "czidlo";
+            boolean solrUseHttps = false;
+            String solrLogin = "solr";
+            String solrPass = "SolrRocks";
 
 
-        SolrIndexer indexer = new SolrIndexer(
-                "localhost:8080/api", false,
-                solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPass,
-                Services.instanceOf().dataAccessService(),
-                xslt, xsltFile, reportLogger,
-                from, to
-        );
+            SolrIndexer indexer = new SolrIndexer(
+                    "localhost:8080/api", false,
+                    solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPass,
+                    Services.instanceOf().dataAccessService(),
+                    xslt, xsltFile, reportLogger,
+                    from, to
+            );
 
-        indexer.run();
+            indexer.run();
+        } finally {
+            if (reportLogger != null) {
+                reportLogger.close();
+            }
+        }
     }
 
 

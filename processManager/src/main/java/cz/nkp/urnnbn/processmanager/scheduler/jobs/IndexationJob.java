@@ -26,6 +26,7 @@ import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.UnableToInterruptJobException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,6 +65,15 @@ public class IndexationJob extends AbstractJob {
     private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
 
     private ReportLogger reportLogger;
+    private SolrIndexer solrIndexer;
+
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        super.interrupt();
+        if (solrIndexer != null) {
+            solrIndexer.stop();
+        }
+    }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -76,6 +86,7 @@ public class IndexationJob extends AbstractJob {
             String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
             logger.info("Czidlo API base url: " + czidloApiBaseUrl);
             boolean czidloApiUseHttps = false;
+
             //solr
             String solrBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL);
             logger.info("Solr base url: " + solrBaseUrl);
@@ -85,15 +96,19 @@ public class IndexationJob extends AbstractJob {
             String solrPassword = (String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD);
             Boolean solrUseHttps = (Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS);
             logger.info("Solr use https: " + solrUseHttps);
+
             //xslt
             File czidloToSolrXsltFile = new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE));
             String czidloToSolrXslt = XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath());
+
             //data access service
             DataAccessService dataAccessService = Services.instanceOf().dataAccessService();
+
             // modification date from
             String modDateFromStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_FROM);
             logger.info("modification date from: " + modDateFromStr);
             DateTime modDateFrom = new DateTime(dateFormat.parse(modDateFromStr));
+
             // modification date to
             String modDateToStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_TO);
             logger.info("modification date to: " + modDateToStr);
@@ -120,12 +135,15 @@ public class IndexationJob extends AbstractJob {
             reportLogger = buildReportLogger(reportFile);
             //run
             logger.info("running Indexer process");
-            new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
+            solrIndexer = new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
                     solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPassword,
                     dataAccessService,
                     czidloToSolrXslt, czidloToSolrXsltFile,
                     reportLogger, modDateFrom, modDateTo
-            ).run();
+            );
+            if (!interrupted) {
+                solrIndexer.run();
+            }
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
                 logger.info("Indexer process killed");
