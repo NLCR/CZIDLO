@@ -15,20 +15,26 @@ public class ReportLogger {
     private PrintStream stream;
 
     public ReportLogger(OutputStream outputStream) {
-        this.stream = new PrintStream(outputStream);
+        this.stream = outputStream == null ? null : new PrintStream(outputStream);
     }
 
     public void report(String message) {
-        stream.println(message);
+        if (stream != null) {
+            stream.println(message);
+        }
     }
 
     public void report(String message, Throwable e) {
-        stream.print(message + ": ");
-        e.printStackTrace(stream);
+        if (stream != null) {
+            stream.print(message + ": ");
+            e.printStackTrace(stream);
+        }
     }
 
     public void close() {
-        stream.close();
+        if (stream != null) {
+            stream.close();
+        }
     }
 
 }

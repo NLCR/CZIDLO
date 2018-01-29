@@ -18,6 +18,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,12 +44,18 @@ public class SolrIndexer {
     // XSLT
     private final String czidloToSolrXslt;
     private final File czidloToSolrXsltFile;
-    //report
-    private final ReportLogger reportLogger;
 
     //run info
     private boolean stopped = false;
     private ProgressListener progressListener;
+    private long initTime;
+
+    //helpers
+    private ReportLogger reportLogger;
+    private CzidloApiConnector czidloApiConnector = null;
+    private SolrConnector solrConnector = null;
+    private Document digDocRegistrationXslt = null;
+
 
     public SolrIndexer(String czidloApiBaseUrl,
                        boolean czidloApiUseHttps,
@@ -60,8 +67,8 @@ public class SolrIndexer {
                        DataProvider dataProvider,
                        String czidloToSolrXslt,
                        File czidloToSolrXsltFile,
-                       ReportLogger reportLogger
-    ) {
+                       OutputStream reportLoggerStream) {
+        long start = System.currentTimeMillis();
         this.czidloApiBaseUrl = czidloApiBaseUrl;
         this.czidloApiUseHttps = czidloApiUseHttps;
         this.solrApiBaseUrl = solrApiBaseUrl;
@@ -72,19 +79,12 @@ public class SolrIndexer {
         this.dataProvider = dataProvider;
         this.czidloToSolrXslt = czidloToSolrXslt;
         this.czidloToSolrXsltFile = czidloToSolrXsltFile;
-        this.reportLogger = reportLogger;
+        init(reportLoggerStream);
+        initTime = System.currentTimeMillis() - start;
     }
 
-    private void report(String message) {
-        reportLogger.report(message);
-    }
-
-    private void report(String message, Throwable e) {
-        reportLogger.report(message, e);
-    }
-
-    public void indexAll(DateTime from, DateTime to) {
-        long start = System.currentTimeMillis();
+    private void init(OutputStream reportLoggerStream) {
+        reportLogger = new ReportLogger(reportLoggerStream);
         report("Parameters");
         report("==============================");
         reportParams();
@@ -92,9 +92,7 @@ public class SolrIndexer {
         report("Initialization");
         report("==============================");
         CountryCode.initialize("CZ");
-        CzidloApiConnector czidloApiConnector = null;
-        Document digDocRegistrationXslt = null;
-        SolrConnector solrConnector = null;
+
         try {
             czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, czidloApiUseHttps, false);
             report("- CZIDLO API connector initialized");
@@ -107,7 +105,19 @@ public class SolrIndexer {
             logger.log(Level.SEVERE, "Initialization error", e);
         }
         report(" ");
+    }
 
+
+    private void report(String message) {
+        reportLogger.report(message);
+    }
+
+    private void report(String message, Throwable e) {
+        reportLogger.report(message, e);
+    }
+
+    public void indexAll(DateTime from, DateTime to) {
+        long start = System.currentTimeMillis();
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
@@ -180,7 +190,8 @@ public class SolrIndexer {
         report(" records processed: " + counters.getProcessed());
         report(" records indexed  : " + counters.getIndexed());
         report(" records erroneous: " + counters.getErrors());
-        report(" total duration: " + formatTime(System.currentTimeMillis() - start));
+        report(" initialization duration: " + formatTime(initTime));
+        report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
         }
@@ -231,6 +242,10 @@ public class SolrIndexer {
 
     public void stop() {
         stopped = true;
+    }
+
+    public void close() {
+        reportLogger.close();
     }
 
     public void setProgressListener(ProgressListener progressListener) {

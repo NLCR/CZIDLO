@@ -24,7 +24,6 @@ import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.solr_indexer.DataProvider;
 import cz.nkp.urnnbn.solr_indexer.ProgressListener;
-import cz.nkp.urnnbn.solr_indexer.ReportLogger;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
@@ -32,8 +31,9 @@ import org.quartz.JobExecutionException;
 import org.quartz.UnableToInterruptJobException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -68,7 +68,6 @@ public class IndexationJob extends AbstractJob {
 
     private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
 
-    private ReportLogger reportLogger;
     private SolrIndexer solrIndexer;
 
     @Override
@@ -144,16 +143,13 @@ public class IndexationJob extends AbstractJob {
             logger.info("return deactivated records: " + returnDeactivated);
             */
 
-            //prepare report logger
-            File reportFile = createWriteableProcessFile(PARAM_REPORT_FILE);
-            reportLogger = buildReportLogger(reportFile);
             //run
             logger.info("running Indexer process");
             solrIndexer = new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
                     solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPassword,
                     dataProvider,
                     czidloToSolrXslt, czidloToSolrXsltFile,
-                    reportLogger
+                    buildReportLoggerOutputStream()
             );
 
             solrIndexer.setProgressListener(new ProgressListener() {
@@ -188,18 +184,19 @@ public class IndexationJob extends AbstractJob {
         }
     }
 
-    private ReportLogger buildReportLogger(File reportFile) throws Exception {
+    private OutputStream buildReportLoggerOutputStream() throws Exception {
         try {
-            return new ReportLogger(new FileOutputStream(reportFile));
-        } catch (FileNotFoundException ex) {
+            File reportFile = createWriteableProcessFile(PARAM_REPORT_FILE);
+            return new FileOutputStream(reportFile);
+        } catch (IOException ex) {
             throw new Exception("Cannot open report file for writing", ex);
         }
     }
 
     @Override
     void close() {
-        if (reportLogger != null) {
-            reportLogger.close();
+        if (solrIndexer != null) {
+            solrIndexer.close();
         }
     }
 
