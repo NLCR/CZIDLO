@@ -116,7 +116,11 @@ public class SolrIndexer {
         reportLogger.report(message, e);
     }
 
-    public void indexAll(DateTime from, DateTime to) {
+    public void indexDocument(long ddInternalId) {
+        indexDocument(ddInternalId, new Counters(1));
+    }
+
+    public void indexDocuments(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
@@ -124,63 +128,11 @@ public class SolrIndexer {
         //int limit = 3;
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
-            UrnNbn urnNbn = dataProvider.urnByDigDocId(doc.getId(), false);
-            if (urnNbn == null) {
-                report(" digital document with id " + doc.getId() + " is missing URN:NBN");
-                counters.incrementErrors();
-            } else {
-                if (stopped) {
-                    report(" stopped ");
-                    break;
-                }
-                report(" processing " + urnNbn.toString());
-                try {
-                    Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(doc.getId(), true);
-                    if (ddCzidloDoc == null) {
-                        report(" digital document's xml record not found, ignoring");
-                        counters.incrementErrors();
-                    } else {
-                        report(" converting");
-                        Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
-                        report(" indexing");
-                        solrConnector.indexFromXmlString(solrDoc.toXML(), false);
-                        report(" indexed");
-                        counters.incrementIndexed();
-                    }
-                } catch (CzidloApiErrorException e) {
-                    counters.incrementErrors();
-                    report(" CZIDLO API error", e);
-                } catch (ParsingException e) {
-                    counters.incrementErrors();
-                    report(" Parsing error", e);
-                } catch (IOException e) {
-                    counters.incrementErrors();
-                    report(" I/O error", e);
-                } catch (XSLException e) {
-                    counters.incrementErrors();
-                    report(" XSLT error", e);
-                } catch (ParserConfigurationException e) {
-                    counters.incrementErrors();
-                    report(" Parser configuration error", e);
-                } catch (SAXException e) {
-                    counters.incrementErrors();
-                    report(" SAX error", e);
-                } catch (SolrServerException e) {
-                    counters.incrementErrors();
-                    report(" Solr server error", e);
-                } catch (SolrException e) {
-                    counters.incrementErrors();
-                    report(" Solr error", e);
-                }
-
-            /*// TODO: 11.1.18 disable in production
-            if (counters.getProcessed() == limit) {
+            if (stopped) {
+                report(" stopped ");
                 break;
-            }*/
             }
-            if (progressListener != null) {
-                progressListener.onProgress(counters.getProcessed(), counters.getFound());
-            }
+            indexDocument(doc.getId(), counters);
         }
         report(" ");
 
@@ -194,6 +146,56 @@ public class SolrIndexer {
         report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
+    }
+
+    private void indexDocument(long ddInternalId, Counters counters) {
+        UrnNbn urnNbn = dataProvider.urnByDigDocId(ddInternalId, false);
+        if (urnNbn == null) {
+            report(" digital document with id " + ddInternalId + " is missing URN:NBN");
+        } else {
+            report(" processing " + urnNbn.toString());
+            try {
+                Document ddCzidloDoc = czidloApiConnector.getDigitalDocumentByInternalId(ddInternalId, true);
+                if (ddCzidloDoc == null) {
+                    report(" digital document's xml record not found, ignoring");
+                    counters.incrementErrors();
+                } else {
+                    report(" converting");
+                    Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
+                    report(" indexing");
+                    solrConnector.indexFromXmlString(solrDoc.toXML(), false);
+                    report(" indexed");
+                    counters.incrementIndexed();
+                }
+            } catch (CzidloApiErrorException e) {
+                counters.incrementErrors();
+                report(" CZIDLO API error", e);
+            } catch (ParsingException e) {
+                counters.incrementErrors();
+                report(" Parsing error", e);
+            } catch (IOException e) {
+                counters.incrementErrors();
+                report(" I/O error", e);
+            } catch (XSLException e) {
+                counters.incrementErrors();
+                report(" XSLT error", e);
+            } catch (ParserConfigurationException e) {
+                counters.incrementErrors();
+                report(" Parser configuration error", e);
+            } catch (SAXException e) {
+                counters.incrementErrors();
+                report(" SAX error", e);
+            } catch (SolrServerException e) {
+                counters.incrementErrors();
+                report(" Solr server error", e);
+            } catch (SolrException e) {
+                counters.incrementErrors();
+                report(" Solr error", e);
+            }
+        }
+        if (progressListener != null) {
+            progressListener.onProgress(counters.getProcessed(), counters.getFound());
         }
     }
 

@@ -167,7 +167,7 @@ public class IndexationJob extends AbstractJob {
             });
 
             if (!interrupted) {
-                solrIndexer.indexAll(modDateFrom, modDateTo);
+                solrIndexer.indexDocuments(modDateFrom, modDateTo);
             }
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
