@@ -20,11 +20,11 @@ import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.solr_indexer.DataProvider;
+import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -85,21 +85,23 @@ public class DigitalDocumentRegistrar {
     private void indexToSolr(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
             // TODO: 29.1.18 z konfigurace
-            String solrBaseUrl = "localhost:8983/solr";
-            String solrCollection = "czidlo";
-            boolean solrUseHttps = false;
-            String solrLogin = "solr";
-            String solrPass = "SolrRocks";
-            String czidloApiBaseUrl = "localhost:8080/api";
+            IndexerConfig config = new IndexerConfig();
+            config.setSolrApiBaseUrl("localhost:8983/solr");
+            config.setSolrApiCollection("czidlo");
+            config.setSolrApiUseHttps(false);
+            config.setSolrApiLogin("solr");
+            config.setSolrApiPassword("SolrRocks");
+            config.setCzidloApiBaseUrl("localhost:8080/api");
+            config.setCzidloApiUseHttps(false);
             //File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
-            File xsltFile = new File("/home/martin/IdeaProjects/CZIDLO/web/web_client/src/main/resources/czidlo-to-solr.xslt");
+            config.setCzidloToSolrXsltFile(new File("/home/martin/IdeaProjects/CZIDLO/web/web_client/src/main/resources/czidlo-to-solr.xslt"));
+            config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
 
-            String xslt = XmlTools.loadXmlFromFile(xsltFile.getAbsolutePath());
             File reportFile = new File("/tmp/solr_indexer_report.txt");
 
-            SolrIndexer indexer = new SolrIndexer(
-                    czidloApiBaseUrl, false,
-                    solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPass,
+            new SolrIndexer(
+                    config,
+                    null,//new FileOutputStream(reportFile)
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
@@ -110,10 +112,8 @@ public class DigitalDocumentRegistrar {
                         public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
                             return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
                         }
-                    },
-                    xslt, xsltFile, new FileOutputStream(reportFile)
-            );
-            indexer.indexDocument(digDocId);
+                    }
+            ).indexDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

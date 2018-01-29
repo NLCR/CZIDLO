@@ -23,6 +23,7 @@ import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.solr_indexer.DataProvider;
+import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
 import cz.nkp.urnnbn.solr_indexer.ProgressListener;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
@@ -85,37 +86,26 @@ public class IndexationJob extends AbstractJob {
             init(context.getMergedJobDataMap(), ProcessType.INDEXATION);
             logger.info("executing " + IndexationJob.class.getName());
 
+            IndexerConfig config = new IndexerConfig();
+
             // czidlo api
-            String czidloApiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL);
-            logger.info("Czidlo API base url: " + czidloApiBaseUrl);
-            boolean czidloApiUseHttps = false;
+            config.setCzidloApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL));
+            logger.info("Czidlo API base url: " + config.getCzidloApiBaseUrl());
+            config.setCzidloApiUseHttps(false);
 
             //solr
-            String solrBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL);
-            logger.info("Solr base url: " + solrBaseUrl);
-            String solrCollection = (String) context.getMergedJobDataMap().get(PARAM_SOLR_COLLECTION);
-            logger.info("Solr collection: " + solrCollection);
-            String solrLogin = (String) context.getMergedJobDataMap().get(PARAM_SOLR_LOGIN);
-            String solrPassword = (String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD);
-            Boolean solrUseHttps = (Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS);
-            logger.info("Solr use https: " + solrUseHttps);
+            config.setSolrApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_SOLR_BASE_URL));
+            logger.info("Solr base url: " + config.getSolrApiBaseUrl());
+            config.setSolrApiCollection((String) context.getMergedJobDataMap().get(PARAM_SOLR_COLLECTION));
+            logger.info("Solr collection: " + config.getSolrApiCollection());
+            config.setSolrApiLogin((String) context.getMergedJobDataMap().get(PARAM_SOLR_LOGIN));
+            config.setSolrApiPassword((String) context.getMergedJobDataMap().get(PARAM_SOLR_PASSWORD));
+            config.setSolrApiUseHttps((Boolean) context.getMergedJobDataMap().get(PARAM_SOLR_USE_HTTPS));
+            logger.info("Solr use https: " + config.getSolrApiUseHttps());
 
             //xslt
-            File czidloToSolrXsltFile = new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE));
-            String czidloToSolrXslt = XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath());
-
-            //data provider
-            DataProvider dataProvider = new DataProvider() {
-                @Override
-                public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                    return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
-                }
-
-                @Override
-                public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                    return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                }
-            };
+            config.setCzidloToSolrXsltFile(new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE)));
+            config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
 
             // modification date from
             String modDateFromStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_FROM);
@@ -143,15 +133,20 @@ public class IndexationJob extends AbstractJob {
             logger.info("return deactivated records: " + returnDeactivated);
             */
 
-            //run
             logger.info("running Indexer process");
-            solrIndexer = new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
-                    solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPassword,
-                    dataProvider,
-                    czidloToSolrXslt, czidloToSolrXsltFile,
-                    buildReportLoggerOutputStream()
-            );
+            solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
+                    new DataProvider() {
+                        @Override
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                        }
 
+                        @Override
+                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                            return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                        }
+                    }
+            );
             solrIndexer.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int processed, int total) {

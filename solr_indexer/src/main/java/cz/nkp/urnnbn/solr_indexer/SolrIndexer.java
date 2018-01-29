@@ -16,7 +16,6 @@ import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -30,61 +29,31 @@ public class SolrIndexer {
 
     private static final Logger logger = Logger.getLogger(SolrIndexer.class.getName());
 
-    // CZIDLO API
-    private final String czidloApiBaseUrl;
-    private final boolean czidloApiUseHttps;
-    // SOLR API
-    private final String solrApiBaseUrl;
-    private final String solrApiCollection;
-    private final boolean solrApiUseHttps;
-    private final String solrApiLogin;
-    private final String solrApiPassword;
-    //services
+    private final IndexerConfig config;
     private final DataProvider dataProvider;
-    // XSLT
-    private final String czidloToSolrXslt;
-    private final File czidloToSolrXsltFile;
+    private final ReportLogger reportLogger;
 
-    //run info
+    //status info
     private boolean stopped = false;
     private ProgressListener progressListener;
     private long initTime;
 
     //helpers
-    private ReportLogger reportLogger;
     private CzidloApiConnector czidloApiConnector = null;
     private SolrConnector solrConnector = null;
     private Document digDocRegistrationXslt = null;
 
 
-    public SolrIndexer(String czidloApiBaseUrl,
-                       boolean czidloApiUseHttps,
-                       String solrApiBaseUrl,
-                       String solrApiCollection,
-                       boolean solrApiUseHttps,
-                       String solrApiLogin,
-                       String solrApiPassword,
-                       DataProvider dataProvider,
-                       String czidloToSolrXslt,
-                       File czidloToSolrXsltFile,
-                       OutputStream reportLoggerStream) {
+    public SolrIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
         long start = System.currentTimeMillis();
-        this.czidloApiBaseUrl = czidloApiBaseUrl;
-        this.czidloApiUseHttps = czidloApiUseHttps;
-        this.solrApiBaseUrl = solrApiBaseUrl;
-        this.solrApiCollection = solrApiCollection;
-        this.solrApiUseHttps = solrApiUseHttps;
-        this.solrApiLogin = solrApiLogin;
-        this.solrApiPassword = solrApiPassword;
+        this.config = config;
+        this.reportLogger = new ReportLogger(reportLoggerStream);
         this.dataProvider = dataProvider;
-        this.czidloToSolrXslt = czidloToSolrXslt;
-        this.czidloToSolrXsltFile = czidloToSolrXsltFile;
-        init(reportLoggerStream);
-        initTime = System.currentTimeMillis() - start;
+        init();
+        this.initTime = System.currentTimeMillis() - start;
     }
 
-    private void init(OutputStream reportLoggerStream) {
-        reportLogger = new ReportLogger(reportLoggerStream);
+    private void init() {
         report("Parameters");
         report("==============================");
         reportParams();
@@ -94,11 +63,19 @@ public class SolrIndexer {
         CountryCode.initialize("CZ");
 
         try {
-            czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, null, czidloApiUseHttps, false);
+            czidloApiConnector = new CzidloApiConnector(
+                    config.getCzidloApiBaseUrl(),
+                    null,
+                    config.getCzidloApiUseHttps(),
+                    false);
             report("- CZIDLO API connector initialized");
             digDocRegistrationXslt = buildDigDocRegistrationXsltDoc();
             report("- XSLT built");
-            solrConnector = new SolrConnector(solrApiBaseUrl, solrApiCollection, solrApiUseHttps, solrApiLogin, solrApiPassword);
+            solrConnector = new SolrConnector(
+                    config.getSolrApiBaseUrl(),
+                    config.getSolrApiCollection(),
+                    config.getSolrApiUseHttps(),
+                    config.getSolrApiLogin(), config.getSolrApiPassword());
             report("- SOLR API connector initialized");
         } catch (TemplateException e) {
             report("Initialization error: TemplateException: " + e.getMessage());
@@ -210,29 +187,29 @@ public class SolrIndexer {
     private void reportParams() {
         report(" CZIDLO API");
         report(" -----------------");
-        report("  Base url: " + czidloApiBaseUrl);
-        report("  Https: " + czidloApiUseHttps);
+        report("  Base url: " + config.getCzidloApiBaseUrl());
+        report("  Https: " + config.getCzidloApiUseHttps());
         report(" ");
 
         report(" SOLR API");
         report(" -----------------");
-        report("  Base url: " + solrApiBaseUrl);
-        report("  Collection: " + solrApiCollection);
-        report("  Https: " + solrApiUseHttps);
-        report("  Login: " + solrApiLogin);
+        report("  Base url: " + config.getSolrApiBaseUrl());
+        report("  Collection: " + config.getSolrApiCollection());
+        report("  Https: " + config.getSolrApiUseHttps());
+        report("  Login: " + config.getSolrApiLogin());
         report(" ");
 
         report(" Transformations");
         report(" -----------------");
-        if (czidloToSolrXsltFile != null) {
-            report("  CZIDLO record to SOLR transformation: " + czidloToSolrXsltFile.getAbsolutePath());
+        if (config.getCzidloToSolrXsltFile() != null) {
+            report("  CZIDLO record to SOLR transformation: " + config.getCzidloToSolrXsltFile().getAbsolutePath());
         }
         report(" ");
     }
 
     private Document buildDigDocRegistrationXsltDoc() throws TemplateException {
         try {
-            return XmlTools.parseDocumentFromString(czidloToSolrXslt);
+            return XmlTools.parseDocumentFromString(config.getCzidloToSolrXslt());
         } catch (XSLException ex) {
             throw new TemplateException("XSLException occurred during building xsl transformation: " + ex.getMessage());
         } catch (ParsingException ex) {
