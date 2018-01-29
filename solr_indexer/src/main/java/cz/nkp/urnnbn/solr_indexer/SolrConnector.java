@@ -34,6 +34,7 @@ import java.util.Map;
  */
 public class SolrConnector {
 
+    private static final int COMMIT_WITHIN_MS = 15000; //15 seconds
     private final int CONNECTION_TIMEOUT = 10000;
     private final int SOCKET_TIMEOUT = 60000;
 
@@ -112,7 +113,7 @@ public class SolrConnector {
         UpdateResponse addResponse = null;
         for (SolrInputDocument doc : solrDoc) {
             //there will always only be on ADD anyway
-            addResponse = solrClient.add(collection, doc);
+            addResponse = solrClient.add(collection, doc, COMMIT_WITHIN_MS);
         }
         if (explicitCommit) {
             solrClient.commit(collection);

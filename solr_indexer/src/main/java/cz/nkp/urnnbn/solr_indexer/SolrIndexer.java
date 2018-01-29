@@ -12,6 +12,7 @@ import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
