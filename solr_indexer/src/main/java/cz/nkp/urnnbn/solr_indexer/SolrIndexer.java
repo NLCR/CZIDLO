@@ -117,7 +117,7 @@ public class SolrIndexer {
     }
 
     public void indexDocument(long ddInternalId) {
-        indexDocument(ddInternalId, new Counters(1));
+        indexDocument(ddInternalId, new Counters(1), true);
     }
 
     public void indexDocuments(DateTime from, DateTime to) {
@@ -132,7 +132,7 @@ public class SolrIndexer {
                 report(" stopped ");
                 break;
             }
-            indexDocument(doc.getId(), counters);
+            indexDocument(doc.getId(), counters, false);
         }
         report(" ");
 
@@ -149,7 +149,7 @@ public class SolrIndexer {
         }
     }
 
-    private void indexDocument(long ddInternalId, Counters counters) {
+    private void indexDocument(long ddInternalId, Counters counters, boolean explicitCommit) {
         UrnNbn urnNbn = dataProvider.urnByDigDocId(ddInternalId, false);
         if (urnNbn == null) {
             report(" digital document with id " + ddInternalId + " is missing URN:NBN");
@@ -164,7 +164,7 @@ public class SolrIndexer {
                     report(" converting");
                     Document solrDoc = XmlTools.getTransformedDocument(ddCzidloDoc, digDocRegistrationXslt);
                     report(" indexing");
-                    solrConnector.indexFromXmlString(solrDoc.toXML(), false);
+                    solrConnector.indexFromXmlString(solrDoc.toXML(), explicitCommit);
                     report(" indexed");
                     counters.incrementIndexed();
                 }
