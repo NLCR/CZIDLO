@@ -4,18 +4,16 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
+import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
+import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import org.joda.time.DateTime;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import org.joda.time.DateTime;
-
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
-import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
-import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
-
 /**
- *
  * @author Martin Řehánek
  */
 public class SelectAllAttrsByTimestamps implements StatementWrapper {
@@ -35,16 +33,24 @@ public class SelectAllAttrsByTimestamps implements StatementWrapper {
     @Override
     public String preparedStatement() {
         if (from != null && until != null) {
-            return "SELECT * from " + tableName + " WHERE " + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
+            return "SELECT * from " + tableName + " WHERE "
+                    + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
                     + " OR " + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)" + " OR "
-                    + "(extract(seconds from AGE(" + timstampAttrName + ",?)) >1" + " AND " + "extract (seconds from AGE(?," + timstampAttrName
-                    + ")) >1)";
+                    + "("
+                    + "AGE(" + timstampAttrName + ",?) >interval '1 seconds'"
+                    + " AND "
+                    + "AGE(?," + timstampAttrName + ") >interval '1 seconds'"
+                    + ")";
         } else if (from != null) { // until == null
-            return "SELECT * from " + tableName + " WHERE " + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
-                    + " OR " + "AGE(" + timstampAttrName + ",?) >interval '1 seconds'";
+            return "SELECT * from " + tableName + " WHERE "
+                    + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
+                    + " OR "
+                    + "AGE(" + timstampAttrName + ",?) >interval '1 seconds'";
         } else if (until != null) {// from == null
-            return "SELECT * from " + tableName + " WHERE " + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
-                    + " OR " + "AGE(?," + timstampAttrName + ") >interval '1 seconds'";
+            return "SELECT * from " + tableName + " WHERE "
+                    + "date_trunc('second'," + timstampAttrName + ")=date_trunc('second',?::timestamp)"
+                    + " OR "
+                    + "AGE(?," + timstampAttrName + ") >interval '1 seconds'";
         } else { // both null - select all records
             return "SELECT * from " + tableName;
         }
