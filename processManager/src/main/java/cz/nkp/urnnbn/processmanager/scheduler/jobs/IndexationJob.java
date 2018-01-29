@@ -17,10 +17,12 @@
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
 import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
-import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.Services;
+import cz.nkp.urnnbn.solr_indexer.DataProvider;
 import cz.nkp.urnnbn.solr_indexer.ProgressListener;
 import cz.nkp.urnnbn.solr_indexer.ReportLogger;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
@@ -34,6 +36,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * @author Martin Řehánek
@@ -102,8 +105,18 @@ public class IndexationJob extends AbstractJob {
             File czidloToSolrXsltFile = new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE));
             String czidloToSolrXslt = XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath());
 
-            //data access service
-            DataAccessService dataAccessService = Services.instanceOf().dataAccessService();
+            //data provider
+            DataProvider dataProvider = new DataProvider() {
+                @Override
+                public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                    return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
+                }
+
+                @Override
+                public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                    return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                }
+            };
 
             // modification date from
             String modDateFromStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_FROM);
@@ -138,9 +151,9 @@ public class IndexationJob extends AbstractJob {
             logger.info("running Indexer process");
             solrIndexer = new SolrIndexer(czidloApiBaseUrl, czidloApiUseHttps,
                     solrBaseUrl, solrCollection, solrUseHttps, solrLogin, solrPassword,
-                    dataAccessService,
+                    dataProvider,
                     czidloToSolrXslt, czidloToSolrXsltFile,
-                    reportLogger, modDateFrom, modDateTo
+                    reportLogger
             );
 
             solrIndexer.setProgressListener(new ProgressListener() {
@@ -158,7 +171,7 @@ public class IndexationJob extends AbstractJob {
             });
 
             if (!interrupted) {
-                solrIndexer.run();
+                solrIndexer.indexAll(modDateFrom, modDateTo);
             }
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);

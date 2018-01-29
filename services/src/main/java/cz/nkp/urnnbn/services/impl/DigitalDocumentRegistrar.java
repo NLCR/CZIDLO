@@ -4,24 +4,11 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -29,17 +16,15 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
+import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class DigitalDocumentRegistrar {
@@ -80,11 +65,27 @@ public class DigitalDocumentRegistrar {
             persistUrnNbnWithRollback(urn, transactionLog, digDocId);
             persistUrnNbnPredecessorsWithRollback(urn, transactionLog);
             try {
-                return factory.urnDao().getUrnNbnByDigDocId(digDocId);
+                UrnNbn urnNbn = factory.urnDao().getUrnNbnByDigDocId(digDocId);
+                indexToSolr(urnNbn);
+                return urnNbn;
             } catch (DatabaseException ex) {
                 throw new RuntimeException(ex);
             } catch (RecordNotFoundException ex) {
                 throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    private void indexToSolr(UrnNbn urnNbn) { //this should never break the import itself
+        if (urnNbn == null) {
+            logger.log(Level.SEVERE, "URN:NBN is null");
+        } else {
+            try {
+                SolrIndexer indexer;
+                //SolrIndexer indexer = new SolrIndexer();
+                //indexer.run();
+            } catch (Throwable e) {
+                logger.log(Level.SEVERE, "Error indexing {0} ", urnNbn.toString());
             }
         }
     }
@@ -240,18 +241,18 @@ public class DigitalDocumentRegistrar {
         try {
             persistPredecessors(data.getPredecessors(), urn);
             if (!data.getPredecessors().isEmpty()) {
-                logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[] { data.getPredecessors().size(), urn.toString() });
+                logger.log(Level.INFO, "{0} predecessors of {1} inserted", new Object[]{data.getPredecessors().size(), urn.toString()});
             } else {
                 logger.log(Level.INFO, "no predecessors for {0}", urn.toString());
             }
         } catch (IncorrectPredecessorStatus ex) {
             logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back",
-                    new Object[] { data.getPredecessors().size(), urn.toString() });
+                    new Object[]{data.getPredecessors().size(), urn.toString()});
             rollbackTransaction(transactionLog);
             throw ex;
         } catch (Throwable ex) {
             logger.log(Level.INFO, "failed to insert {0} predecessors of {1}, rolling back",
-                    new Object[] { data.getPredecessors().size(), urn.toString() });
+                    new Object[]{data.getPredecessors().size(), urn.toString()});
             rollbackTransaction(transactionLog);
             throw new RuntimeException(ex);
         }
@@ -325,14 +326,14 @@ public class DigitalDocumentRegistrar {
                 checkPredecessorNotFreeOrReserved(predecessor);
                 factory.urnDao().insertUrnNbnPredecessor(predecessor.getUrn(), successor, predecessor.getNote());
             } catch (IncorrectPredecessorStatus e) {
-                logger.log(Level.INFO, "predecessor {0} of {1} has incorrect status ({2}", new Object[] { predecessor, successor,
-                        e.getPredecessor().getStatus() });
+                logger.log(Level.INFO, "predecessor {0} of {1} has incorrect status ({2}", new Object[]{predecessor, successor,
+                        e.getPredecessor().getStatus()});
                 throw e;
             } catch (RecordNotFoundException e) {
-                logger.log(Level.WARNING, "{0} or {1} doesn't exist", new Object[] { predecessor.getUrn().toString(), successor.toString() });
+                logger.log(Level.WARNING, "{0} or {1} doesn't exist", new Object[]{predecessor.getUrn().toString(), successor.toString()});
             } catch (AlreadyPresentException e) {
-                logger.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[] {
-                        predecessor.getUrn().toString(), successor.toString() });
+                logger.log(Level.WARNING, "Predecessor - successor relation {0} - {1} already present, ignoring", new Object[]{
+                        predecessor.getUrn().toString(), successor.toString()});
             }
         }
     }
@@ -430,11 +431,11 @@ public class DigitalDocumentRegistrar {
     private void reactivateUrnNbns(List<UrnNbn> predecessorsDeactivated, UrnNbn urn) {
         for (UrnNbn predecessor : predecessorsDeactivated) {
             try {
-                logger.log(Level.INFO, "reactivating deactivated predecessor {0} of {1}", new Object[] { predecessor.toString(), urn.toString() });
+                logger.log(Level.INFO, "reactivating deactivated predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
                 factory.urnDao().reactivateUrnNbn(predecessor.getRegistrarCode(), predecessor.getDocumentCode());
             } catch (Throwable ex) {
                 logger.log(Level.SEVERE, "rollback: Failed to reactivat predecessor {0} of {1}",
-                        new Object[] { predecessor.toString(), urn.toString() });
+                        new Object[]{predecessor.toString(), urn.toString()});
             }
         }
     }
@@ -445,14 +446,14 @@ public class DigitalDocumentRegistrar {
             if (predecessor.getStatus() == Status.ACTIVE) {
                 try {
                     UrnNbn urnDeactivated = predecessor.getUrn();
-                    logger.log(Level.INFO, "deactivating {0} (predecessor of {1})", new Object[] { urnDeactivated, urn });
+                    logger.log(Level.INFO, "deactivating {0} (predecessor of {1})", new Object[]{urnDeactivated, urn});
                     factory.urnDao().deactivateUrnNbn(urnDeactivated.getRegistrarCode(), urnDeactivated.getDocumentCode(), null);
                     predecessorsDeactivated.add(urnDeactivated);
                 } catch (DatabaseException ex) {
-                    logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[] { predecessor.toString(), urn.toString() });
+                    logger.log(Level.INFO, "error deactivating predecessor {0} of {1}", new Object[]{predecessor.toString(), urn.toString()});
                 }
             } else {
-                logger.log(Level.INFO, "predecessor {0} of {1} already deactivated", new Object[] { predecessor, urn });
+                logger.log(Level.INFO, "predecessor {0} of {1} already deactivated", new Object[]{predecessor, urn});
             }
         }
         transactionLog.setPredecessorsDeactivated(predecessorsDeactivated);

@@ -7,12 +7,10 @@ import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.services.DataAccessService;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
@@ -41,15 +39,12 @@ public class SolrIndexer {
     private final String solrApiLogin;
     private final String solrApiPassword;
     //services
-    private final DataAccessService dataAccessService;
+    private final DataProvider dataProvider;
     // XSLT
     private final String czidloToSolrXslt;
     private final File czidloToSolrXsltFile;
     //report
     private final ReportLogger reportLogger;
-    //params
-    private final DateTime from;
-    private final DateTime to;
 
     //run info
     private boolean stopped = false;
@@ -62,11 +57,11 @@ public class SolrIndexer {
                        boolean solrApiUseHttps,
                        String solrApiLogin,
                        String solrApiPassword,
-                       DataAccessService dataAccessService,
+                       DataProvider dataProvider,
                        String czidloToSolrXslt,
                        File czidloToSolrXsltFile,
-                       ReportLogger reportLogger,
-                       DateTime from, DateTime to) {
+                       ReportLogger reportLogger
+    ) {
         this.czidloApiBaseUrl = czidloApiBaseUrl;
         this.czidloApiUseHttps = czidloApiUseHttps;
         this.solrApiBaseUrl = solrApiBaseUrl;
@@ -74,12 +69,10 @@ public class SolrIndexer {
         this.solrApiUseHttps = solrApiUseHttps;
         this.solrApiLogin = solrApiLogin;
         this.solrApiPassword = solrApiPassword;
-        this.dataAccessService = dataAccessService;
+        this.dataProvider = dataProvider;
         this.czidloToSolrXslt = czidloToSolrXslt;
         this.czidloToSolrXsltFile = czidloToSolrXsltFile;
         this.reportLogger = reportLogger;
-        this.from = from;
-        this.to = to;
     }
 
     private void report(String message) {
@@ -90,7 +83,7 @@ public class SolrIndexer {
         reportLogger.report(message, e);
     }
 
-    public void run() {
+    public void indexAll(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
         report("Parameters");
         report("==============================");
@@ -99,7 +92,6 @@ public class SolrIndexer {
         report("Initialization");
         report("==============================");
         CountryCode.initialize("CZ");
-        DataAccessService readService;
         CzidloApiConnector czidloApiConnector = null;
         Document digDocRegistrationXslt = null;
         SolrConnector solrConnector = null;
@@ -116,13 +108,13 @@ public class SolrIndexer {
         }
         report(" ");
 
-        List<DigitalDocument> digitalDocuments = dataAccessService.digDocsByModificationDate(from, to);
+        List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
         //int limit = 3;
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
-            UrnNbn urnNbn = dataAccessService.urnByDigDocId(doc.getId(), false);
+            UrnNbn urnNbn = dataProvider.urnByDigDocId(doc.getId(), false);
             if (urnNbn == null) {
                 report(" digital document with id " + doc.getId() + " is missing URN:NBN");
                 counters.incrementErrors();
