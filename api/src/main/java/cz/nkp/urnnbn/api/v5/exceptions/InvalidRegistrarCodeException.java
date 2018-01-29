@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response.Status;
 
 public class InvalidRegistrarCodeException extends ApiV5Exception {
 
-    public InvalidRegistrarCodeException(ResponseFormat format, String registarCode, String message) {
-        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_CODE", "Incorrect syntax in '" + registarCode + "': " + message);
+    public InvalidRegistrarCodeException(ResponseFormat format, String registrarCode, String message) {
+        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_CODE", "Incorrect syntax in '" + registrarCode + "': " + message);
     }
 }

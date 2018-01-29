@@ -31,7 +31,7 @@ import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -68,7 +68,7 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistarScopeIdentifierCollisionException,
+    public UrnNbn run() throws AccessException, UrnNotFromRegistrarException, UrnUsedException, RegistrarScopeIdentifierCollisionException,
             UnknownArchiverException, RegistrationModeNotAllowedException, UnknownRegistrarException, IncorrectPredecessorStatus {
         synchronized (DigitalDocumentRegistrar.class) {
             checkPredecessorsFromSameRegistrar();
@@ -207,11 +207,11 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digDocId) throws RegistarScopeIdentifierCollisionException {
+    private void persistDigDocIdentifiersWithRollback(RollbackRecord transactionLog, long digDocId) throws RegistrarScopeIdentifierCollisionException {
         try {
             List<RegistrarScopeIdentifier> ids = persistRegistrarScopeIdentifiers(digDocId);
             logger.log(Level.INFO, "registrar-scope identifiers inserted: {0}", registrarScopeIdListToString(ids));
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             // no need to specifically remove identifiers so far imported
             // because it will be removed together with registrar in cascade
             logger.info("failed to import registrar-scope identifiers, rolling back");
@@ -296,7 +296,7 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private List<RegistrarScopeIdentifier> persistRegistrarScopeIdentifiers(long digDocInternalId) throws RegistarScopeIdentifierCollisionException,
+    private List<RegistrarScopeIdentifier> persistRegistrarScopeIdentifiers(long digDocInternalId) throws RegistrarScopeIdentifierCollisionException,
             DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
         List<RegistrarScopeIdentifier> result = new ArrayList<RegistrarScopeIdentifier>();
@@ -308,7 +308,7 @@ public class DigitalDocumentRegistrar {
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
-                throw new RegistarScopeIdentifierCollisionException(id, registrar.getCode());
+                throw new RegistrarScopeIdentifierCollisionException(id, registrar.getCode());
             }
         }
         return result;

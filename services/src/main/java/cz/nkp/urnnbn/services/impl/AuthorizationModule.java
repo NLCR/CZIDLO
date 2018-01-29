@@ -32,14 +32,14 @@ public class AuthorizationModule {
     }
 
     /**
-     * Verifies that user has access_right to registar.
+     * Verifies that user has access_right to registrar.
      *
      * @param registrarId
-     *            internal id of registar
+     *            internal id of registrar
      * @param login
      *            login of user that is supposed to have access right to registrar
      * @throws AccessException
-     *             if access right of user to registar doesn't exist
+     *             if access right of user to registrar doesn't exist
      * @throws UnknownUserException
      *             if no such user with this login exists
      */
@@ -55,14 +55,14 @@ public class AuthorizationModule {
     }
 
     /**
-     * Verifies that user has access_right to registar or is administrator.
+     * Verifies that user has access_right to registrar or is administrator.
      *
      * @param registrarId
-     *            internal id of registar
+     *            internal id of registrar
      * @param login
      *            login of user that is supposed to have access right to registrar
      * @throws AccessException
-     *             if access right of user to registar doesn't exist
+     *             if access right of user to registrar doesn't exist
      * @throws UnknownUserException
      *             if no such user with this login exists
      */
@@ -93,14 +93,14 @@ public class AuthorizationModule {
     }
 
     /**
-     * Verifies that user has access_right to registar.
+     * Verifies that user has access_right to registrar.
      *
      * @param registrarCode
      *            code of registrar
      * @param login
      *            login of user that is supposed to have access right to registrar
      * @throws AccessException
-     *             if access right of user to registar doesn't exist
+     *             if access right of user to registrar doesn't exist
      * @throws UnknownUserException
      *             if no such user with this login exists
      */

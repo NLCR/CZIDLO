@@ -27,6 +27,7 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.xml.apiv5.builders.DigitalDocumentsBuilderXml;
 import cz.nkp.urnnbn.xml.apiv5.builders.UrnNbnBuilder;
@@ -307,8 +308,8 @@ public class DigitalDocumentsOfRegistrarResource extends AbstractDigitalDocument
             throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(format, ex.getMessage());
-        } catch (RegistarScopeIdentifierCollisionException ex) {
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
+            throw new cz.nkp.urnnbn.api.v5.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(format, ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {

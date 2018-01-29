@@ -330,8 +330,8 @@ public class RegistrarStatisticsWidget extends WidgetWithStatisticsService {
     private String getCurrentGraphValueColor() {
         if (selectedRegistrar != null) {
             if (chartValueColorMap != null) {
-                String registarCode = selectedRegistrar.getCode();
-                String colorByRegistrar = chartValueColorMap.get(registarCode);
+                String registrarCode = selectedRegistrar.getCode();
+                String colorByRegistrar = chartValueColorMap.get(registrarCode);
                 if (colorByRegistrar != null) {
                     return colorByRegistrar;
                 }

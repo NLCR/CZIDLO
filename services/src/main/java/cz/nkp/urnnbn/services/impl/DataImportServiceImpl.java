@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
 import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
@@ -48,7 +48,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     @Override
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException,
-            UrnUsedException, UnknownRegistrarException, RegistarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
+            UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
             RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
         UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData).run();
@@ -86,7 +86,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     @Override
     public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException,
-            AccessException, UnknownUserException, RegistarScopeIdentifierCollisionException {
+            AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException {
         try {
             authorization.checkAccessRights(id.getRegistrarId(), login);
             Registrar registrar;
@@ -106,7 +106,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(id.getDigDocId());
             } catch (AlreadyPresentException e) {
-                throw new RegistarScopeIdentifierCollisionException(id);
+                throw new RegistrarScopeIdentifierCollisionException(id);
             }
             logRegistrarScopeIdCreated(login, id, registrar, urn);
         } catch (DatabaseException ex) {

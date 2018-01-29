@@ -225,11 +225,11 @@ public class UserDaoPostgresTest extends AbstractDaoTest {
 
     public void testDeleteUser_notReferencedFromRegistrar() throws Exception {
         // user without registrar
-        User userWithoutRegistar = userPersisted();
-        assertEquals(0, registrarDao.getRegistrarsManagedByUser(userWithoutRegistar.getId()).size());
-        userDao.deleteUser(userWithoutRegistar.getId());
+        User userWithoutRegistrar = userPersisted();
+        assertEquals(0, registrarDao.getRegistrarsManagedByUser(userWithoutRegistrar.getId()).size());
+        userDao.deleteUser(userWithoutRegistrar.getId());
         try {
-            registrarDao.getRegistrarsManagedByUser(userWithoutRegistar.getId()).size();
+            registrarDao.getRegistrarsManagedByUser(userWithoutRegistrar.getId()).size();
             fail();
         } catch (RecordNotFoundException e) {
             // OK

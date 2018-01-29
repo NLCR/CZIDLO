@@ -13,14 +13,14 @@ import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
  *
  * @author Martin Řehánek
  */
-public class RegistarScopeIdentifierCollisionException extends Exception {
+public class RegistrarScopeIdentifierCollisionException extends Exception {
 
-    public RegistarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId, RegistrarCode registrarCode) {
+    public RegistrarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId, RegistrarCode registrarCode) {
         super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with code %s",
                 toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), registrarCode.toString()));
     }
 
-    public RegistarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId) {
+    public RegistrarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId) {
         super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with id %d",
                 toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), rsId.getRegistrarId()));
     }

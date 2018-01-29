@@ -383,20 +383,20 @@
     <!-- registrar scope identifier and type -->
     <xs:complexType name="registrarScopeIdentifierType">
         <xs:simpleContent>
-            <xs:extension base="czidlo:registarScopeIdValueType">
-                <xs:attribute name="type" use="required" type="czidlo:registarScopeIdTypeType"/>
+            <xs:extension base="czidlo:registrarScopeIdValueType">
+                <xs:attribute name="type" use="required" type="czidlo:registrarScopeIdTypeType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <!-- identifier value -->
-    <xs:simpleType name="registarScopeIdValueType">
+    <xs:simpleType name="registrarScopeIdValueType">
         <xs:restriction base="xs:string">
             <!-- $ - _ . + ! * ' ( ) , : @ -->
             <xs:pattern value="[A-Za-z0-9$\-_\.+!\*'\(\),:@]{1,60}"/>
         </xs:restriction>
     </xs:simpleType>
     <!-- identifier type -->
-    <xs:simpleType name="registarScopeIdTypeType">
+    <xs:simpleType name="registrarScopeIdTypeType">
         <xs:restriction base="xs:token">
             <xs:pattern value="[A-Za-z0-9_\-:]{2,20}"/>
         </xs:restriction>

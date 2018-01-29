@@ -220,7 +220,7 @@
             <plugin>
                 <!-- Disable tests with -Dmaven.test.skip=true unless you 
                     have api.war(this version) dedicated for api testing deployed and available 
-                    with user accounts, registars and other configuration matching what is defined 
+                    with user accounts, registrars and other configuration matching what is defined
                     in cz.nkp.urnnbn.api.v4.ApiV3Tests and cz.nkp.urnnbn.api.v4.ApiV4Tests -->
                 <!-- Sometimes if tests fail it is caused by previous tests 
                     failing/crashing and leaving data in registrarScopeId table. In such case 

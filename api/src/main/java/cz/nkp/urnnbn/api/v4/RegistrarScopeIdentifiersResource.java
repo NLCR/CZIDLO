@@ -36,7 +36,6 @@ import javax.ws.rs.core.Response.Status;
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
-import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownRegistrarScopeIdentifierException;
 import cz.nkp.urnnbn.api.v4.json.RegistrarScopeIdentifierBuilderJson;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
@@ -44,7 +43,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -171,9 +170,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+            throw new cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 
@@ -192,9 +191,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+            throw new cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 

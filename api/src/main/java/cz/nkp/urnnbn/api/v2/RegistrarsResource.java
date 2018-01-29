@@ -78,7 +78,7 @@ public class RegistrarsResource extends AbstractRegistrarsResource {
     public RegistrarResource getRegistrarResource(@PathParam("registrarCode") String registrarCodeStr) {
         try {
             try {
-                Registrar registrar = registrarFromRegistarCode(registrarCodeStr);
+                Registrar registrar = registrarFromRegistrarCode(registrarCodeStr);
                 return new RegistrarResource(registrar);
             } catch (WebApplicationException e) {
                 throw e;

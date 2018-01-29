@@ -47,7 +47,7 @@ public abstract class AbstractRegistrarsResource extends ApiV2V3Resource {
         return result;
     }
 
-    protected Registrar registrarFromRegistarCode(String registrarCodeStr) {
+    protected Registrar registrarFromRegistrarCode(String registrarCodeStr) {
         RegistrarCode registrarCode = Parser.parseRegistrarCode(registrarCodeStr);
         Registrar registrar = dataAccessService().registrarByCode(registrarCode);
         if (registrar == null) {

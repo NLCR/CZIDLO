@@ -34,7 +34,7 @@ public interface UserDAO {
 
     public Long insertUser(User user) throws DatabaseException, AlreadyPresentException;
 
-    public void insertAdministrationRight(long registarId, long userId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
+    public void insertAdministrationRight(long registrarId, long userId) throws DatabaseException, RecordNotFoundException, AlreadyPresentException;
 
     public User getUserById(long id) throws DatabaseException, RecordNotFoundException;
 
@@ -52,5 +52,5 @@ public interface UserDAO {
 
     public void deleteAllUsers() throws DatabaseException;
 
-    public void deleteAdministrationRight(long registarId, long userId) throws DatabaseException, RecordNotFoundException;
+    public void deleteAdministrationRight(long registrarId, long userId) throws DatabaseException, RecordNotFoundException;
 }

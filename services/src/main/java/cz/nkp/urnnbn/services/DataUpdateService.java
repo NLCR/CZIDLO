@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
 import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
@@ -40,7 +40,7 @@ import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 public interface DataUpdateService extends BusinessService {
 
     public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownUserException, AccessException,
-            UnknownRegistrarException, UnknownDigDocException, RegistarScopeIdentifierCollisionException;
+            UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
 
     public void updateDigitalDocument(DigitalDocument doc, String login) throws UnknownUserException, AccessException, UnknownDigDocException;
 

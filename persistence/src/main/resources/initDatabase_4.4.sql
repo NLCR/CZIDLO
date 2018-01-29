@@ -815,7 +815,7 @@ SELECT
    COALESCE(registrarscopeid.idValue, '') AS searchable
 FROM registrarscopeid INNER JOIN digitaldocument ON registrarscopeid.digitalDocumentId = digitaldocument.id;
 
-/* function to update preprocessed table record by registarId, ddId, idType */
+/* function to update preprocessed table record by registrarId, ddId, idType */
 CREATE OR REPLACE FUNCTION update_search_rsi_preprocessed(NUMERIC, NUMERIC, VARCHAR) RETURNS void AS $BODY$
 BEGIN
    IF (EXISTS (SELECT ieId FROM search_rsi_view WHERE regId=$1 AND ddId=$2 AND type=$3)) THEN

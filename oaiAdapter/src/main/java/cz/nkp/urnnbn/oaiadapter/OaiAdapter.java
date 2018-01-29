@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class OaiAdapter {
 
-    public static final String REGISTAR_SCOPE_ID_TYPE = "OAI_Adapter";
+    public static final String REGISTRAR_SCOPE_ID_TYPE = "OAI_Adapter";
     private static final Logger logger = Logger.getLogger(OaiAdapter.class.getName());
     //registrar code
     private final String registrarCode;
@@ -55,7 +55,7 @@ public class OaiAdapter {
     private final ReportLogger reportLogger;
     //run info
     private boolean stopped = false;
-    
+
     //DEV
     private int devRecordLimit = -1;
     //private int devRecordLimit = 3;//dev only

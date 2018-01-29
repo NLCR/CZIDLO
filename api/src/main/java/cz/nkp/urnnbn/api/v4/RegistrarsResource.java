@@ -52,7 +52,7 @@ public class RegistrarsResource extends ApiV4Resource {
             @PathParam("registrarCode") String registrarCodeStr) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
-            Registrar registrar = registrarFromRegistarCode(format, registrarCodeStr);
+            Registrar registrar = registrarFromRegistrarCode(format, registrarCodeStr);
             return new RegistrarResource(registrar);
         } catch (WebApplicationException ex) {
             throw ex;
@@ -62,7 +62,7 @@ public class RegistrarsResource extends ApiV4Resource {
         }
     }
 
-    private Registrar registrarFromRegistarCode(ResponseFormat format, String registrarCodeStr) {
+    private Registrar registrarFromRegistrarCode(ResponseFormat format, String registrarCodeStr) {
         RegistrarCode registrarCode = Parser.parseRegistrarCode(format, registrarCodeStr);
         Registrar registrar = dataAccessService().registrarByCode(registrarCode);
         if (registrar == null) {

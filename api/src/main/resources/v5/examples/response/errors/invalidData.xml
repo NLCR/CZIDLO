@@ -6,7 +6,7 @@
         <message>Error: line 1: cvc-pattern-valid: Value
             'AZaz09$-_.+!*'():@+,' is not facet-valid with respect to
             pattern '[A-Za-z0-9_\-:]{1,20}' for type
-            'registarScopeIdTypeType'.
+            'registrarScopeIdTypeType'.
         </message>
     </error>
 </response>

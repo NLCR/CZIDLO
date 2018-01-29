@@ -10,7 +10,7 @@ package cz.nkp.urnnbn.services.exceptions;
  */
 public class RegistrarRightCollisionException extends Exception {
 
-    public RegistrarRightCollisionException(Long userId, Long registarId) {
-        super("user " + userId + " already has access right to registar " + registarId);
+    public RegistrarRightCollisionException(Long userId, Long registrarId) {
+        super("user " + userId + " already has access right to registrar " + registrarId);
     }
 }

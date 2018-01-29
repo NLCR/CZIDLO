@@ -119,7 +119,7 @@ public interface DataAccessService extends BusinessService {
 
     public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until);
 
-    public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registarCode);
+    public List<UrnNbn> urnNbnsOfRegistrar(RegistrarCode registrarCode);
 
     public Content contentByNameAndLanguage(String name, String language) throws ContentNotFoundException;
 

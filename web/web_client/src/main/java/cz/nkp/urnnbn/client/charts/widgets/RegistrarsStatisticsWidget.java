@@ -294,7 +294,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
             List<Integer> periods = selectedYear != null ? months : years;
             int totalVolume = selectedYear == null ? sumAllStatistics() : sumStatistics(selectedYear);
             Map<String, Integer> volumeByRegistrar = computeStatisticsByRegistrar(currentData, registrarCodes);
-            this.registrarColorMap = buildRegistarColorMap(volumeByRegistrar);
+            this.registrarColorMap = buildRegistrarColorMap(volumeByRegistrar);
             if (columnChart != null) {
                 Map<Integer, Integer> aggregatedData = agregate(periods, currentData);
                 String title = buildColumnChartTitle();
@@ -324,7 +324,7 @@ public class RegistrarsStatisticsWidget extends WidgetWithStatisticsService {
         }
     }
 
-    private Map<String, String> buildRegistarColorMap(Map<String, Integer> volumeByRegistrar) {
+    private Map<String, String> buildRegistrarColorMap(Map<String, Integer> volumeByRegistrar) {
         Map<String, String> result = new HashMap<>();
         if (graphValueColors != null) {
             List<RegistrarWithStatistic> list = new ArrayList<>();

@@ -44,7 +44,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -100,7 +100,7 @@ public abstract class AbstractDigitalDocumentsResource extends ApiV2V3Resource {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(ex.getMessage());
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             throw new InvalidRegistrarScopeIdentifier(ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(ex.getUrn().toString(), ex.getMessage());

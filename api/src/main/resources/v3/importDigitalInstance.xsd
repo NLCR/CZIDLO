@@ -64,17 +64,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- registrar-scope identifier -->
     <xs:complexType name="registrarScopeIdentifier">
         <xs:simpleContent>
-            <xs:extension base="czidlo:registarScopeIdValueType">
+            <xs:extension base="czidlo:registrarScopeIdValueType">
                 <xs:attribute name="type" use="required"
-                    type="czidlo:registarScopeIdTypeType" />
+                    type="czidlo:registrarScopeIdTypeType" />
                 <xs:attribute name="previousValue" use="optional"
-                    type="czidlo:registarScopeIdValueType" />
+                    type="czidlo:registrarScopeIdValueType" />
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
 
     <!-- registrar-scope type -->
-    <xs:simpleType name="registarScopeIdTypeType">
+    <xs:simpleType name="registrarScopeIdTypeType">
         <xs:restriction base="xs:token">
             <!-- uppercase/lowercase letters, numbers, '_', '-', ':'. Must 
                 start and end with letter or number. Length must be between 1 and 20 characters. -->
@@ -84,7 +84,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </xs:simpleType>
 
     <!-- registrar-scope value -->
-    <xs:simpleType name="registarScopeIdValueType">
+    <xs:simpleType name="registrarScopeIdValueType">
         <!-- In API V2 were allowed only these characters: A-Z a-z 0-9 $ 
             - _ . + ! * ' ( ) , : @ -->
         <!-- Now all reserved and unreserved URI characters as specified 

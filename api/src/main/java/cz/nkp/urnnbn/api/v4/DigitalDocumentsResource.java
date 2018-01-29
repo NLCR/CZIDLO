@@ -47,7 +47,6 @@ import cz.nkp.urnnbn.api.v4.exceptions.InvalidArchiverIdException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidDataException;
 import cz.nkp.urnnbn.api.v4.exceptions.InvalidUrnException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
-import cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnauthorizedRegistrationModeException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownDigitalDocumentException;
 import cz.nkp.urnnbn.api.v4.exceptions.UnknownUrnException;
@@ -64,7 +63,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.RegistarScopeIdentifierCollisionException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
 import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
@@ -333,8 +332,8 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             throw new NoAccessRightsException(format, ex.getMessage());
         } catch (UnknownArchiverException ex) {
             throw new InvalidArchiverIdException(format, ex.getMessage());
-        } catch (RegistarScopeIdentifierCollisionException ex) {
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
+            throw new cz.nkp.urnnbn.api.v4.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         } catch (UrnNotFromRegistrarException ex) {
             throw new InvalidUrnException(format, ex.getUrn().toString(), ex.getMessage());
         } catch (UrnUsedException ex) {

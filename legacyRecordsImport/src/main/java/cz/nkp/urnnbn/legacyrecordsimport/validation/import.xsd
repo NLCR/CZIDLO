@@ -377,20 +377,20 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     <!-- registrar scope identifier and type -->
     <xs:complexType name="registrarScopeIdentifierType">
         <xs:simpleContent>
-            <xs:extension base="r:registarScopeIdValueType">
-                <xs:attribute name="type" use="required" type="r:registarScopeIdTypeType"/>
+            <xs:extension base="r:registrarScopeIdValueType">
+                <xs:attribute name="type" use="required" type="r:registrarScopeIdTypeType"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
     <!-- identifier value -->
-    <xs:simpleType name="registarScopeIdValueType">
+    <xs:simpleType name="registrarScopeIdValueType">
         <xs:restriction base="xs:string">
             <!-- $ - _ . + ! * ' ( ) , : @ -->
             <xs:pattern value="[A-Za-z0-9$\-_\.+!\*'\(\),:@]{1,60}"/>
         </xs:restriction>
     </xs:simpleType>
     <!-- identifier type -->
-    <xs:simpleType name="registarScopeIdTypeType">
+    <xs:simpleType name="registrarScopeIdTypeType">
         <xs:restriction base="xs:token">
             <xs:pattern value="[A-Za-z0-9_\-:]{2,20}"/>
         </xs:restriction>

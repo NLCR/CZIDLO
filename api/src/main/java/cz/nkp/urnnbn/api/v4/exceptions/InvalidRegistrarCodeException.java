@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.api.v4.ResponseFormat;
 
 public class InvalidRegistrarCodeException extends ApiV4Exception {
 
-    public InvalidRegistrarCodeException(ResponseFormat format, String registarCode, String message) {
-        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_CODE", "Incorrect syntax in '" + registarCode + "': " + message);
+    public InvalidRegistrarCodeException(ResponseFormat format, String registrarCode, String message) {
+        super(format, Status.BAD_REQUEST, "INVALID_REGISTRAR_CODE", "Incorrect syntax in '" + registrarCode + "': " + message);
     }
 }

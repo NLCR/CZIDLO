@@ -21,6 +21,7 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
 import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
 import cz.nkp.urnnbn.xml.apiv5.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv5.builders.RegistrarScopeIdentifiersBuilder;
@@ -154,9 +155,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV5Resource {
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+            throw new cz.nkp.urnnbn.api.v5.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 
@@ -175,9 +176,9 @@ public class RegistrarScopeIdentifiersResource extends ApiV5Resource {
         } catch (UnknownDigDocException ex) {
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
-        } catch (RegistarScopeIdentifierCollisionException ex) {
+        } catch (RegistrarScopeIdentifierCollisionException ex) {
             LOGGER.log(Level.FINE, null, ex);
-            throw new RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
+            throw new cz.nkp.urnnbn.api.v5.exceptions.RegistrarScopeIdentifierCollisionException(format, ex.getMessage());
         }
     }
 

@@ -183,11 +183,11 @@ public class UserDaoPostgres extends AbstractDAO implements UserDAO {
         }
     }
 
-    public void deleteAdministrationRight(long registarId, long userId) throws DatabaseException, RecordNotFoundException {
+    public void deleteAdministrationRight(long registrarId, long userId) throws DatabaseException, RecordNotFoundException {
         try {
             checkRecordExists(TABLE_NAME, ATTR_ID, userId);
-            checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registarId);
-            deleteRecordsByLongAndLong(TABLE_USER_REGISTRAR_NAME, USER_REGISTRAR_ATTR_REGISTRAR_ID, registarId, USER_REGISTRAR_ATTR_USER_ID, userId);
+            checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, registrarId);
+            deleteRecordsByLongAndLong(TABLE_USER_REGISTRAR_NAME, USER_REGISTRAR_ATTR_REGISTRAR_ID, registrarId, USER_REGISTRAR_ATTR_USER_ID, userId);
         } catch (RecordReferencedException ex) {
             // cannot happen
             logger.log(Level.SEVERE, null, ex);

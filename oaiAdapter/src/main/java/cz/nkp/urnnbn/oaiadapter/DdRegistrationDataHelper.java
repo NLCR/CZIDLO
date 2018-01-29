@@ -50,7 +50,7 @@ public class DdRegistrationDataHelper {
             digitalDocumentElement.insertChild(registrarScopeIdentifiersElement, position);
         }
         Element oaiAdapterScopeElement = new Element("r:id", CzidloApiConnector.CZIDLO_NAMESPACE);
-        oaiAdapterScopeElement.addAttribute(new Attribute("type", OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
+        oaiAdapterScopeElement.addAttribute(new Attribute("type", OaiAdapter.REGISTRAR_SCOPE_ID_TYPE));
         oaiAdapterScopeElement.appendChild(oaiIdentifier);
         registrarScopeIdentifiersElement.appendChild(oaiAdapterScopeElement);
         return ddRegistrationData;

@@ -113,12 +113,12 @@ public class SingleRecordProcessor {
     }
 
     private void checkNoInternalRegistrarScopeIdFound(Document digDocRegistrationData) throws DocumentOperationException {
-        String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTAR_SCOPE_ID_TYPE);
+        String xpath = String.format("/r:import/r:digitalDocument/r:registrarScopeIdentifiers/r:id[@type='%s']", OaiAdapter.REGISTRAR_SCOPE_ID_TYPE);
         boolean exists = XmlTools.nodeByXpathExists(digDocRegistrationData, xpath);
         if (exists) {
             throw new DocumentOperationException(String.format(
                     "found registrar-scope-id with type '%s', which is reserved for OAI Adapter and must not be used in input data",
-                    OaiAdapter.REGISTAR_SCOPE_ID_TYPE));
+                    OaiAdapter.REGISTRAR_SCOPE_ID_TYPE));
         }
     }
 
@@ -153,10 +153,10 @@ public class SingleRecordProcessor {
             report("- Digital-document-registration data does not contain URN:NBN.");
             urnnbn = getUrnnbnByRegistrarScopeId(oaiIdentifier);
             if (urnnbn == null) { //no URN:NBN from registrar-scope-id
-                report("- No digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier);
+                report("- No digital document found for registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ":" + oaiIdentifier);
                 return registerDdIWithoutUrnAndContinue(oaiIdentifier, digDocRegistrationData, digInstImportData);
             } else {
-                report("- Digital document found for registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + " with " + urnnbn);
+                report("- Digital document found for registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + " with " + urnnbn);
                 return checkUrnNbnStateAndContinue(urnnbn, oaiIdentifier, digDocRegistrationData, digInstImportData);
             }
         } else { //found URN:NBN in input data
@@ -167,7 +167,7 @@ public class SingleRecordProcessor {
 
     private String getUrnnbnByRegistrarScopeId(String oaiIdentifier) throws SingleRecordProcessingException {
         try {
-            return czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+            return czidloConnector.getUrnnbnByRegistrarScopeId(registrarCode, OaiAdapter.REGISTRAR_SCOPE_ID_TYPE, oaiIdentifier);
         } catch (ParsingException | IOException | CzidloApiErrorException e) {
             throw new SingleRecordProcessingException("Getting URN:NBN by registrar-scope-id ERROR: " + e.getMessage(), e);
         }
@@ -188,7 +188,7 @@ public class SingleRecordProcessor {
                     report("- URN:NBN by registrar-scope-id: NOT FOUND");
                     if (urnMatchesRegistrar(urnnbn, registrarCode)) {
                         setRegistrarScopeId(urnnbn, oaiIdentifier);
-                        report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
+                        report("- Setting registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ":" + oaiIdentifier + ": SUCCESS");
                     } else {
                         report("- Not setting registrar-scope-id because digital-document with " + urnnbn + " does not belong to registrar " + registrarCode);
                     }
@@ -196,7 +196,7 @@ public class SingleRecordProcessor {
                 } else {
                     report("- URN:NBN by registrar-scope-id: FOUND");
                     if (!urnnbn.equals(urnnbnByRegistrarScopeId)) {
-                        throw new SingleRecordProcessingException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
+                        throw new SingleRecordProcessingException(urnnbn + " (from input data) does not match " + urnnbnByRegistrarScopeId + " (from registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + ")");
                     } else {
                         return processDigitalInstance(urnnbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_ALREADY);
                     }
@@ -223,7 +223,7 @@ public class SingleRecordProcessor {
             if (urnMatchesRegistrar(urnNbn, registrarCode)) {
                 urnNbn = registerDigitalDocument(digDocRegistrationData);
                 report("- Digital document registered with " + urnNbn);
-                report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+                report("- Setting registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
                 setRegistrarScopeId(urnNbn, oaiIdentifier);
                 return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_NOW);
             } else {
@@ -240,7 +240,7 @@ public class SingleRecordProcessor {
         if (registerDDsWithoutUrn) {
             String urnNbn = registerDigitalDocument(digDocRegistrationData);
             report("- Digital document registered with " + urnNbn);
-            report("- Setting registrar-scope-id " + OaiAdapter.REGISTAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
+            report("- Setting registrar-scope-id " + OaiAdapter.REGISTRAR_SCOPE_ID_TYPE + ": " + oaiIdentifier + " to DD with " + urnNbn + ": SUCCESS");
             setRegistrarScopeId(urnNbn, oaiIdentifier);
             return processDigitalInstance(urnNbn, digInstImportData, RecordResult.DigitalDocumentStatus.REGISTERED_NOW);
         } else {
@@ -251,7 +251,7 @@ public class SingleRecordProcessor {
 
     private void setRegistrarScopeId(String urnNbn, String oaiIdentifier) throws SingleRecordProcessingException {
         try {
-            czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTAR_SCOPE_ID_TYPE, oaiIdentifier);
+            czidloConnector.putRegistrarScopeIdentifier(urnNbn, OaiAdapter.REGISTRAR_SCOPE_ID_TYPE, oaiIdentifier);
         } catch (CzidloApiErrorException | IOException e) {
             throw new SingleRecordProcessingException("Setting registrar-scope-id: ERROR: " + e.getMessage(), e);
         }
