@@ -35,4 +35,11 @@ public class PropertyKeys {
     public static final String DB_LOGIN = "czidlo.db.login";
     public static final String DB_PASSWORD = "czidlo.db.password";
     public static final String ADMIN_LOG_FILE = "czidlo.admin.logFile";
+
+    public static final String INDEXER_CZIDLO_API_BASE_URL = "indexer.czidloApi.baseUrl";
+    public static final String INDEXER_SOLR_BASE_URL = "indexer.solr.baseUrl";
+    public static final String INDEXER_SOLR_COLLECTION = "indexer.solr.collection";
+    public static final String INDEXER_SOLR_USE_HTTPS = "indexer.solr.useHttps";
+    public static final String INDEXER_SOLR_LOGIN = "indexer.solr.login";
+    public static final String INDEXER_SOLR_PASSWORD = "indexer.solr.password";
 }

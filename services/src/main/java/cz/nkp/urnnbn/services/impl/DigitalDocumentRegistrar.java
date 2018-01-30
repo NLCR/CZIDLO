@@ -4,7 +4,6 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
@@ -17,14 +16,9 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
-import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.solr_indexer.DataProvider;
-import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
-import org.joda.time.DateTime;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,10 +34,12 @@ public class DigitalDocumentRegistrar {
     private final DigDocRegistrationData data;
     private final IntelectualEntityMerger merger;
     private final UrnNbnFinder finder;
+    private final SolrIndexer solrIndexer;
 
-    DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data) throws UnknownRegistrarException {
-        this.data = data;
+    DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data, SolrIndexer solrIndexer) throws UnknownRegistrarException {
         this.factory = factory;
+        this.data = data;
+        this.solrIndexer = solrIndexer;
         this.merger = new IntelectualEntityMerger(factory);
         this.finder = initFinder(factory, data);
     }
@@ -84,36 +80,7 @@ public class DigitalDocumentRegistrar {
 
     private void indexToSolr(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            // TODO: 29.1.18 z konfigurace
-            IndexerConfig config = new IndexerConfig();
-            config.setSolrApiBaseUrl("localhost:8983/solr");
-            config.setSolrApiCollection("czidlo");
-            config.setSolrApiUseHttps(false);
-            config.setSolrApiLogin("solr");
-            config.setSolrApiPassword("SolrRocks");
-            config.setCzidloApiBaseUrl("localhost:8080/api");
-            config.setCzidloApiUseHttps(false);
-            //File xsltFile = new File("src/main/resources/czidlo-to-solr.xslt");
-            config.setCzidloToSolrXsltFile(new File("/home/martin/IdeaProjects/CZIDLO/web/web_client/src/main/resources/czidlo-to-solr.xslt"));
-            config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
-
-            File reportFile = new File("/tmp/solr_indexer_report.txt");
-
-            new SolrIndexer(
-                    config,
-                    null,//new FileOutputStream(reportFile)
-                    new DataProvider() {
-                        @Override
-                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                            return Services.instanceOf().dataAccessService().digDocsByModificationDate(from, until);
-                        }
-
-                        @Override
-                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                            return Services.instanceOf().dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                        }
-                    }
-            ).indexDocument(digDocId);
+            solrIndexer.indexDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

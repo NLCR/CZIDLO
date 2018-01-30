@@ -5,45 +5,28 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.AdminLogger;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.IncorrectPredecessorStatus;
-import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarRightCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrationModeNotAllowedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-import cz.nkp.urnnbn.services.exceptions.UrnNotFromRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UrnUsedException;
+import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 
 /**
  * TODO: test
- * 
+ *
  * @author Martin Řehánek
  */
 public class DataImportServiceImpl extends BusinessServiceImpl implements DataImportService {
 
-    public DataImportServiceImpl(DatabaseConnector conn) {
+    private final SolrIndexer solrIndexer;
+
+    public DataImportServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer) {
         super(conn);
+        this.solrIndexer = solrIndexer;
     }
 
     @Override
@@ -51,7 +34,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
             RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
-        UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData).run();
+        UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, solrIndexer).run();
         AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
         return urnNbn;
     }

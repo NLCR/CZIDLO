@@ -16,15 +16,10 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-
+import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
+import cz.nkp.urnnbn.processmanager.core.ProcessType;
+import cz.nkp.urnnbn.services.Services;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -34,13 +29,14 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.UnableToInterruptJobException;
 
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
-import cz.nkp.urnnbn.processmanager.core.ProcessType;
-import cz.nkp.urnnbn.services.Services;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
 
 /**
- *
  * @author Martin Řehánek
  */
 public abstract class AbstractJob implements InterruptableJob {
@@ -108,7 +104,7 @@ public abstract class AbstractJob implements InterruptableJob {
     }
 
     Services initServices() {
-        Services.init(initDatabaseConnector());
+        Services.init(initDatabaseConnector(), null);
         return Services.instanceOf();
     }
 

@@ -38,7 +38,7 @@ public class RepositoryImpl implements Repository {
     }
 
     private RepositoryImpl() {
-        Services.init(DatabaseConnectorFactory.getJndiPoolledConnector());
+        Services.init(DatabaseConnectorFactory.getJndiPoolledConnector(), null);
         backend = Services.instanceOf();
     }
 

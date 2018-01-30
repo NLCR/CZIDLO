@@ -58,7 +58,6 @@ public class Configuration {
 
     public static void init(PropertyLoader loader) throws IOException {
         logger.info("init");
-        Services.init(new PostgresPooledConnector());
         jobsDir = loader.loadDir(PropertyKeys.JOBS_DATA_DIR);
         maxRunningAdminProcesses = loader.loadInt(PropertyKeys.MAX_ADMIN_JOBS);
         maxRunningUserProcesses = loader.loadInt(PropertyKeys.MAX_USER_JOBS);
@@ -73,6 +72,13 @@ public class Configuration {
         solrIndexerSolrUseHttps = loader.loadBoolean(PropertyKeys.SOLR_INDEXER_SOLR_USE_HTTPS, false);
         solrIndexerSolrLogin = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_LOGIN);
         solrIndexerSolrPassword = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_PASSWORD);
+
+        /*IndexerConfig indexerConfig = new IndexerConfig();
+        indexerConfig.setCzidloApiBaseUrl(czidloApiBaseUrl);
+        indexerConfig.setCzidloApiUseHttps(false);
+        */
+
+        Services.init(new PostgresPooledConnector(), null);
     }
 
     public static void initFileResources(File czidloToSolrXslt) {
