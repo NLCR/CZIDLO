@@ -4,35 +4,33 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class IntelectualEntityUpdater {
 
     private static final Logger logger = Logger.getLogger(IntelectualEntityUpdater.class.getName());
     private final DAOFactory daoFactory;
+    private final SolrIndexer solrIndexer;
 
-    public IntelectualEntityUpdater(DAOFactory daoFactory) {
+    public IntelectualEntityUpdater(DAOFactory daoFactory, SolrIndexer solrIndexer) {
         this.daoFactory = daoFactory;
+        this.solrIndexer = solrIndexer;
     }
 
-    void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers)
+    void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, UrnNbn urnNbn, Long ddId)
             throws UnknownIntelectualEntity {
         try {
             synchronizeIdentifiers(identifiers, entity.getId());
@@ -40,8 +38,18 @@ public class IntelectualEntityUpdater {
             synchronizeOriginator(originator, entity.getId());
             synchronizePublication(publication, entity.getId());
             synchronizeSrcDoc(srcDoc, entity.getId());
+            reindexDigitalDocument(ddId, urnNbn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
+        try {
+            solrIndexer.indexDocument(digDocId);
+            logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
         }
     }
 

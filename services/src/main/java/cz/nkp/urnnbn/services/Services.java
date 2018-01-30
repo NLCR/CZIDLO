@@ -44,7 +44,7 @@ public class Services {
         }
         solrIndexer = new SolrIndexer(
                 indexerConfig,
-                null,//new FileOutputStream(reportFile)
+                null,
                 new DataProvider() {
                     @Override
                     public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
@@ -106,7 +106,7 @@ public class Services {
 
     public DataUpdateService dataUpdateService() {
         if (dataUpdate == null) {
-            dataUpdate = new DataUpdateServiceImpl(connector);
+            dataUpdate = new DataUpdateServiceImpl(connector, solrIndexer);
         }
         return dataUpdate;
     }

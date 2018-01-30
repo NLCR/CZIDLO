@@ -4,54 +4,33 @@
  */
 package cz.nkp.urnnbn.services.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.core.AdminLogger;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.Content;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUpdateService {
 
     private static final Logger LOGGER = Logger.getLogger(DataUpdateServiceImpl.class.getName());
 
-    public DataUpdateServiceImpl(DatabaseConnector conn) {
+    private final SolrIndexer solrIndexer;
+
+    public DataUpdateServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer) {
         super(conn);
+        this.solrIndexer = solrIndexer;
     }
 
     @Override
@@ -107,10 +86,20 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             factory.documentDao().updateDocument(doc);
             UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
             AdminLogger.getLogger().info(String.format("User %s updated digital-document of %s.", login, urn));
+            reindexDigitalDocument(doc.getId(), urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
             throw new UnknownDigDocException(doc.getId());
+        }
+    }
+
+    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
+        try {
+            solrIndexer.indexDocument(digDocId);
+            LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
         }
     }
 
@@ -250,9 +239,14 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
-            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, UnknownIntelectualEntity, AccessException {
-        UrnNbn urn;
+    public void updateIntelectualEntity(IntelectualEntity entity,
+                                        Originator originator,
+                                        Publication publication,
+                                        SourceDocument srcDoc,
+                                        Collection<IntEntIdentifier> identifiers,
+                                        String login) throws UnknownUserException, UnknownIntelectualEntity, AccessException {
+        UrnNbn urn = null;
+        Long digDocId = null;
         try {
             List<DigitalDocument> digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
             // there is allways exactly one digital document, even though data model allows more
@@ -264,6 +258,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             }
             for (DigitalDocument doc : digDocs) {
                 urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
+                digDocId = doc.getId();
                 authorization.checkAccessRightsOrAdmin(urn.getRegistrarCode(), login);
             }
         } catch (RecordNotFoundException e) {
@@ -271,7 +266,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
-        new IntelectualEntityUpdater(factory).run(entity, originator, publication, srcDoc, identifiers);
+        new IntelectualEntityUpdater(factory, solrIndexer).run(entity, originator, publication, srcDoc, identifiers, urn, digDocId);
         AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
     }
 
