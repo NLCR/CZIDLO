@@ -58,6 +58,8 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
                 }
                 if (isUrnNbn(token)) {
                     builder.append("\"").append(token).append("\"");
+                } else if (isUrl(token)) {
+                    builder.append("\"").append(token).append("\"");
                 } else {
                     token = normalizeIfIsbn(token);
                     token = normalizeIfIssn(token);
@@ -71,6 +73,10 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
         /*LOGGER.info("query: " + query);
         LOGGER.info("refined: " + refined);*/
         return refined;
+    }
+
+    private boolean isUrl(String token) {
+        return token.startsWith("http://") || token.startsWith("https://");
     }
 
     private boolean isUrnNbn(String string) {
