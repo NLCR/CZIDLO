@@ -76,7 +76,7 @@ public class SolrIndexerTest extends TestCase {
                 "czidlo",
                 false);
         String urnNbnField = "dd.id";
-        SolrDocumentList result = solrConnector.searchInAllFields("Babička", 0, 3, urnNbnField);
+        SolrDocumentList result = solrConnector.searchInAllFields("Babička", 0L, 3, urnNbnField);
         System.out.println(result);
         for (int i = 0; i < result.size(); i++) {
             SolrDocument solrDocument = result.get(i);

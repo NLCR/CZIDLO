@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
 import cz.nkp.urnnbn.solr_indexer.SolrConnector;
+import cz.nkp.urnnbn.solr_indexer.SolrUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
@@ -23,79 +24,60 @@ import java.util.logging.Logger;
 public class SearchServiceImpl extends AbstractService implements SearchService {
 
     private static final long serialVersionUID = 1750995108864579331L;
-    private static final Logger logger = Logger.getLogger(SearchServiceImpl.class.getName());
-    private static final int MAX_QUERY_LENGTH = 200;
+    private static final Logger LOGGER = Logger.getLogger(SearchServiceImpl.class.getName());
+    private static final ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<>(0);
+    private static final int MAX_QUERY_TOKENS = 20;
 
-    private static ArrayList<Long> EMPTY_LONG_LIST = new ArrayList<Long>(0);
-    private static ArrayList<DigitalInstanceDTO> EMPTY_DI_LIST = new ArrayList<DigitalInstanceDTO>(0);
-    private static final int FULLTEXT_SEARCH_HARD_LIMIT = 100;
-
-    @Override
-    public ArrayList<Long> searchMetadata(String query) throws ServerException {
-        try {
-            // logger.info(String.format("query: \"%s\"", query));
-            if (query != null && !query.isEmpty()) {
-                if (query.length() > MAX_QUERY_LENGTH) {
-                    query = query.substring(0, MAX_QUERY_LENGTH);
-                }
-                String[] queryTokens = query.split("\\s");
-                if (queryTokens.length != 0) {
-                    return new ArrayList<Long>(readService.intEntIdsByFulltextSearch(queryTokens, FULLTEXT_SEARCH_HARD_LIMIT));
-                }
-            }
-            return EMPTY_LONG_LIST;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
-            throw new ServerException(e.getMessage());
-        }
-    }
-
-    @Override
-    public ArrayList<IntelectualEntityDTO> getIntelectualEntities(ArrayList<Long> identifiers) throws ServerException {
-        try {
-            ArrayList<IntelectualEntityDTO> result = new ArrayList<IntelectualEntityDTO>(identifiers.size());
-            for (Long id : identifiers) {
-                IntelectualEntity entity = readService.entityById(id);
-                result.add(transformedEntity(entity));
-            }
-            return result;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
-            throw new ServerException(e.getMessage());
-        }
-    }
-
-    @Override
-    public IntelectualEntityDTO getIntelectualEntity(Long intEntId) throws ServerException {
-        try {
-            IntelectualEntity entity = readService.entityById(intEntId);
-            return transformedEntity(entity);
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
-            throw new ServerException(e.getMessage());
-        }
-    }
 
     @Override
     public SearchResult search(String query, long start, int rows) throws ServerException {
         try {
-
             // TODO: 31.1.18 z konfigurace
-
             SolrConnector solrConnector = new SolrConnector(
-                    "localhost:8983/solr",
+                    //"localhost:8983/solr",
+                    "localhost:1234/solr",
                     "czidlo",
                     false);
 
             String urnNbnField = "dd.id";
-            // TODO: 30.1.18 upravit query, odstranit uvozovky apod
-            SolrDocumentList docList = solrConnector.searchInAllFields(query, start, rows, urnNbnField);
+            String queryRefined = refineQuery(query);
+            SolrDocumentList docList = solrConnector.searchInAllFields(queryRefined, start, rows, urnNbnField);
             return toSearchResults(docList, urnNbnField);
         } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
         }
     }
+
+    private String refineQuery(String query) {
+        String[] tokens = query.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int counter = 0;
+        for (String token : tokens) {
+            if (++counter < MAX_QUERY_TOKENS) {
+                if (isUrnNbn(token)) {
+                    builder.append("\"").append(token).append("\"");
+                } else {
+                    //ordinary token
+                    // TODO: 31.1.18 possibly handle specially looking tokens like isbn, issn
+                    // TODO: 31.1.18 possibly prefer title over other fields
+                    // TODO: 31.1.18
+                    builder.append(SolrUtils.escapeSolrSpecialChars(token));
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    private boolean isUrnNbn(String string) {
+        try {
+            UrnNbn.valueOf(string);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
 
     private SearchResult toSearchResults(SolrDocumentList docList, String urnNbnField) {
         SearchResult result = new SearchResult();
@@ -123,31 +105,6 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             return transformedEntity(readService.entityById(digDoc.getIntEntId()));
         } else {
             return null;
-        }
-    }
-
-    @Override
-    public IntelectualEntityDTO searchByUrnNbn(String query) throws ServerException {
-        // logger.info("searching for \"" + query + "\" (urn:nbn)");
-        try {
-            UrnNbn urnNbn;
-            try {
-                urnNbn = UrnNbn.valueOf(query);
-            } catch (Throwable e) {
-                return null;
-            }
-            UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
-            if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
-                DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
-                //Set<Long> result = new HashSet<Long>();
-                //result.add(digDoc.getIntEntId());
-                return transformedEntity(readService.entityById(digDoc.getIntEntId()));
-            } else {
-                return null;
-            }
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, null, e);
-            throw new ServerException(e.getMessage());
         }
     }
 
