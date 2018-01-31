@@ -1,33 +1,24 @@
 package cz.nkp.urnnbn.server.services;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
+import cz.nkp.urnnbn.shared.SearchResult;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import cz.nkp.urnnbn.solr_indexer.SolrConnector;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SearchServiceImpl extends AbstractService implements SearchService {
 
@@ -86,6 +77,56 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
     }
 
     @Override
+    public SearchResult search(String query, long start, int rows) throws ServerException {
+        try {
+
+            // TODO: 31.1.18 z konfigurace
+
+            SolrConnector solrConnector = new SolrConnector(
+                    "localhost:8983/solr",
+                    "czidlo",
+                    false);
+
+            String urnNbnField = "dd.id";
+            // TODO: 30.1.18 upravit query, odstranit uvozovky apod
+            SolrDocumentList docList = solrConnector.searchInAllFields(query, start, rows, urnNbnField);
+            return toSearchResults(docList, urnNbnField);
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, null, e);
+            throw new ServerException(e.getMessage());
+        }
+    }
+
+    private SearchResult toSearchResults(SolrDocumentList docList, String urnNbnField) {
+        SearchResult result = new SearchResult();
+        result.setNumFound(docList.getNumFound());
+        result.setStart(docList.getStart());
+        ArrayList<IntelectualEntityDTO> ieList = new ArrayList<>();
+        for (int i = 0; i < docList.size(); i++) {
+            SolrDocument solrDocument = docList.get(i);
+            UrnNbn urnNbn = UrnNbn.valueOf((String) solrDocument.getFieldValue(urnNbnField));
+            IntelectualEntityDTO intelectualEntityDTO = urnNbnToIntelectualEntityDTO(urnNbn);
+            if (intelectualEntityDTO != null) {
+                ieList.add(intelectualEntityDTO);
+            }
+        }
+        result.setIntelectualEntities(ieList);
+        return result;
+    }
+
+    private IntelectualEntityDTO urnNbnToIntelectualEntityDTO(UrnNbn urnNbn) {
+        UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
+            DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
+            //Set<Long> result = new HashSet<>();
+            //result.add(digDoc.getIntEntId());
+            return transformedEntity(readService.entityById(digDoc.getIntEntId()));
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public IntelectualEntityDTO searchByUrnNbn(String query) throws ServerException {
         // logger.info("searching for \"" + query + "\" (urn:nbn)");
         try {
@@ -98,8 +139,8 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             UrnNbnWithStatus urnFetched = readService.urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
             if (urnFetched.getStatus() == Status.ACTIVE || urnFetched.getStatus() == Status.DEACTIVATED) {
                 DigitalDocument digDoc = readService.digDocByInternalId(urnFetched.getUrn().getDigDocId());
-                Set<Long> result = new HashSet<Long>();
-                result.add(digDoc.getIntEntId());
+                //Set<Long> result = new HashSet<Long>();
+                //result.add(digDoc.getIntEntId());
                 return transformedEntity(readService.entityById(digDoc.getIntEntId()));
             } else {
                 return null;
@@ -117,17 +158,17 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
         List<IntEntIdentifier> enityIds = getIntEntIdentifiers(entity);
         ArrayList<DigitalDocumentDTO> docs = transformedDigitalDocuments(entity);
         switch (entity.getEntityType()) {
-        case MONOGRAPH:
-        case MONOGRAPH_VOLUME:
-        case PERIODICAL:
-        case PERIODICAL_VOLUME:
-        case PERIODICAL_ISSUE:
-        case OTHER:
-        case THESIS:
-            publication = getPublication(entity);
-            break;
-        case ANALYTICAL:
-            srcDoc = getSourceDocument(entity);
+            case MONOGRAPH:
+            case MONOGRAPH_VOLUME:
+            case PERIODICAL:
+            case PERIODICAL_VOLUME:
+            case PERIODICAL_ISSUE:
+            case OTHER:
+            case THESIS:
+                publication = getPublication(entity);
+                break;
+            case ANALYTICAL:
+                srcDoc = getSourceDocument(entity);
         }
         return DtoTransformer.transformIntelectualEntity(entity, enityIds, publication, originator, srcDoc, docs);
     }
@@ -155,7 +196,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             return readService.registrarScopeIdentifiers(digitalDocument.getId());
         } catch (Throwable e) {
             log("error getting registrar-scope identifiers of dd " + digitalDocument.getId());
-            return Collections.<RegistrarScopeIdentifier> emptyList();
+            return Collections.<RegistrarScopeIdentifier>emptyList();
         }
     }
 
@@ -164,7 +205,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             return readService.digDocsOfIntEnt(entity.getId());
         } catch (Throwable e) {
             log("error getting digital documents for ie" + entity.getId());
-            return Collections.<DigitalDocument> emptyList();
+            return Collections.<DigitalDocument>emptyList();
         }
     }
 
@@ -234,7 +275,7 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
             return readService.intEntIdentifiersByIntEntId(entity.getId());
         } catch (Throwable e) {
             log("error getting identifiers for ie" + entity.getId());
-            return Collections.<IntEntIdentifier> emptyList();
+            return Collections.<IntEntIdentifier>emptyList();
         }
     }
 

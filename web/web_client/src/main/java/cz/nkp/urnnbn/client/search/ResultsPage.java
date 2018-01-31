@@ -1,28 +1,23 @@
 package cz.nkp.urnnbn.client.search;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.client.services.SearchServiceAsync;
+import cz.nkp.urnnbn.shared.SearchResult;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
- * 
  * @author Martin Řehánek
  */
 public class ResultsPage extends ScrollPanel {
@@ -37,26 +32,65 @@ public class ResultsPage extends ScrollPanel {
 
     private final SearchTab searchPanel;
     private final UserDTO user;
-    private final ArrayList<Long> intEntIdentifiers;
-    private ArrayList<IntelectualEntityDTO> entities;
+    private final String query;
+    private final long start;
+    private final int rows;
+
+    private List<IntelectualEntityDTO> entities;
     private boolean dataLoaded = false;
 
-    public ResultsPage(SearchTab searchPanel, UserDTO user, ArrayList<Long> intEntIdentifiers) {
+
+    public ResultsPage(SearchTab searchPanel, UserDTO user, String query, long start, int rows) {
         super();
         this.searchPanel = searchPanel;
         this.user = user;
-        this.intEntIdentifiers = intEntIdentifiers;
+        this.query = query;
+        this.start = start;
+        this.rows = rows;
     }
 
     @Override
     protected void onLoad() {
         super.onLoad();
+        //LOGGER.info("loaded: " + query + ": " + start);
     }
 
     public void onSelected() {
+        //LOGGER.info("selected: " + query + ": " + start);
         if (!dataLoaded) {
             loadData();
         }
+    }
+
+    private void loadData() {
+        showProcessingWheel();
+        searchService.search(query, start, rows, new AsyncCallback<SearchResult>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                Window.alert(messages.serverError(throwable.getMessage()));
+                clear();
+            }
+
+            @Override
+            public void onSuccess(SearchResult searchResult) {
+                entities = searchResult.getIntelectualEntities();
+                dataLoaded = true;
+                showData();
+            }
+        });
+    }
+
+    private void showProcessingWheel() {
+        clear();
+        add(processingWheelPanel());
+    }
+
+    private Panel processingWheelPanel() {
+        VerticalPanel result = new VerticalPanel();
+        result.setStyleName(css.paginationProcessWheelPanel());
+        Image booksImg = new Image("img/ajax-loader.gif");
+        result.add(booksImg);
+        return result;
     }
 
     private void showData() {
@@ -75,39 +109,6 @@ public class ResultsPage extends ScrollPanel {
             contentPanel.add(entityTree);
         }
         add(contentPanel);
-    }
-
-    private void loadData() {
-        showProcessingWheel();
-        searchService.getIntelectualEntities(intEntIdentifiers, new AsyncCallback<ArrayList<IntelectualEntityDTO>>() {
-
-            @Override
-            public void onSuccess(ArrayList<IntelectualEntityDTO> result) {
-                entities = result;
-                dataLoaded = true;
-                showData();
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                Window.alert(messages.serverError(caught.getMessage()));
-                clear();
-            }
-        });
-
-    }
-
-    private void showProcessingWheel() {
-        clear();
-        add(processingWheelPanel());
-    }
-
-    private Panel processingWheelPanel() {
-        VerticalPanel result = new VerticalPanel();
-        result.setStyleName(css.paginationProcessWheelPanel());
-        Image booksImg = new Image("img/ajax-loader.gif");
-        result.add(booksImg);
-        return result;
     }
 
     private void appendDocuments(TreeItem entityItem, ArrayList<DigitalDocumentDTO> documents) {

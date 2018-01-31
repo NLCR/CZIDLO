@@ -1,17 +1,14 @@
 package cz.nkp.urnnbn.czidlo_indexer;
 
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
-//import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
-//import cz.nkp.urnnbn.services.Services;
-import cz.nkp.urnnbn.solr_indexer.ReportLogger;
-import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+import cz.nkp.urnnbn.solr_indexer.SolrConnector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.joda.time.DateTime;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 
-import java.io.File;
-import java.io.FileOutputStream;
+//import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
+//import cz.nkp.urnnbn.services.Services;
 
 /**
  * Unit test for simple App.
@@ -71,6 +68,21 @@ public class SolrIndexerTest extends TestCase {
                 reportLogger.close();
             }
         }*/
+    }
+
+    public void testSolrConnector() throws Exception {
+        SolrConnector solrConnector = new SolrConnector(
+                "localhost:8983/solr",
+                "czidlo",
+                false);
+        String urnNbnField = "dd.id";
+        SolrDocumentList result = solrConnector.searchInAllFields("Babička", 0, 3, urnNbnField);
+        System.out.println(result);
+        for (int i = 0; i < result.size(); i++) {
+            SolrDocument solrDocument = result.get(i);
+            String urnNbn = (String) solrDocument.getFieldValue(urnNbnField);
+            System.out.println(urnNbn);
+        }
     }
 
 

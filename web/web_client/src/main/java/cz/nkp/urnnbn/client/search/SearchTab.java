@@ -1,32 +1,12 @@
 package cz.nkp.urnnbn.client.search;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -39,11 +19,16 @@ import cz.nkp.urnnbn.client.services.SearchServiceAsync;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.ConfigurationData;
+import cz.nkp.urnnbn.shared.SearchResult;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.logging.Logger;
 
 public class SearchTab extends SingleTabContentPanel implements DigitalInstanceRefreshable {
 
@@ -156,71 +141,95 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
             sendGaSearchEvent(query);
         }
         showProcessingWheel();
-        if (query.toLowerCase().startsWith("urn:nbn:")) {
-            searchService.searchByUrnNbn(query, new AsyncCallback<IntelectualEntityDTO>() {
+        //LOGGER.log(Level.INFO, "searching: " + query);
 
-                @Override
-                public void onSuccess(IntelectualEntityDTO result) {
-                    if (result == null) {
-                        showNoResults(queryTrimmed);
-                    } else {
-                        showSingleResult(result);
-                    }
-                }
+        searchService.search(queryTrimmed, 0, 0, new AsyncCallback<SearchResult>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                //LOGGER.log(Level.INFO, "error: ", throwable);
+                Window.alert(messages.serverError(throwable.getMessage()));
+                hideProcessingSearchAnimation();
+            }
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    Window.alert(messages.serverError(caught.getMessage()));
-                    hideProcessingSearchAnimation();
+            @Override
+            public void onSuccess(SearchResult searchResult) {
+                Long numFound = searchResult.getNumFound();
+                if (searchResult.getNumFound() == 0) {
+                    showNoResults(queryTrimmed);
+                } else if (searchResult.getNumFound() == 1) {
+                    showSingleResultFromId(queryTrimmed);
+                } else {
+                    //pagination
+                    showResultsWithPagination(queryTrimmed, searchResult);
                 }
-            });
-        } else {
-            searchService.searchMetadata(query, new AsyncCallback<ArrayList<Long>>() {
-
-                @Override
-                public void onSuccess(ArrayList<Long> idList) {
-                    if (idList.isEmpty()) {
-                        showNoResults(queryTrimmed);
-                    } else if (idList.size() == 1) {
-                        showSingleResultFromId(idList.get(0));
-                    } else {
-                        showResultsWithPagination(queryTrimmed, idList);
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    Window.alert(messages.serverError(caught.getMessage()));
-                    hideProcessingSearchAnimation();
-                }
-            });
-        }
+            }
+        });
     }
 
     private native void sendGaSearchEvent(String query) /*-{
                                                           $wnd.ga('send', 'event', 'search', query);
                                                           }-*/;
 
-    private void showSingleResultFromId(Long intEntId) {
+    private void showSingleResultFromId(final String queryTrimmed) {
         searchResultsPanel.clear();
         VerticalPanel processingWheelPanel = new VerticalPanel();
         processingWheelPanel.setStyleName(css.paginationProcessWheelPanel());
         Image booksImg = new Image("img/ajax-loader.gif");
         processingWheelPanel.add(booksImg);
         searchResultsPanel.add(processingWheelPanel);
-        searchService.getIntelectualEntity(intEntId, new AsyncCallback<IntelectualEntityDTO>() {
-
+        searchService.search(queryTrimmed, 0, 1, new AsyncCallback<SearchResult>() {
             @Override
-            public void onSuccess(IntelectualEntityDTO result) {
-                showSingleResult(result);
+            public void onFailure(Throwable throwable) {
+                Window.alert(messages.serverError(throwable.getMessage()));
+                hideProcessingSearchAnimation();
             }
 
             @Override
-            public void onFailure(Throwable caught) {
-                Window.alert(messages.serverError(caught.getMessage()));
-                searchResultsPanel.clear();
+            public void onSuccess(SearchResult searchResult) {
+                if (searchResult.getNumFound() == 0) {
+                    showNoResults(queryTrimmed);
+                } else {
+                    showSingleResult(searchResult.getIntelectualEntities().get(0));
+                }
             }
         });
+    }
+
+    private void showResultsWithPagination(String request, SearchResult searchResult) {
+        searchResultsPanel.clear();
+        searchPaginationPanel = new TabPanel();
+
+        long first = 0;
+        long afterLast = Math.min(ITEMS_PER_PAGE, searchResult.getNumFound());
+        searchResultsPages = new LinkedList<ResultsPage>();
+        //LOGGER.info("first=" + first + ", afterLast=" + afterLast);
+
+        while (true) {
+            //LOGGER.info("tab=" + ++tabCounter + ", first=" + first + ", afterLast=" + afterLast);
+            String tabCaption = "" + (first + 1) + "-" + afterLast;
+            ResultsPage page = new ResultsPage(this, superPanel.getActiveUser(), request, first, ITEMS_PER_PAGE);
+            searchResultsPages.add(page);
+            searchPaginationPanel.add(page, tabCaption);
+            if (afterLast == searchResult.getNumFound()) {
+                //LOGGER.info("last tab");
+                break;
+            } else {
+                first = afterLast;
+                afterLast = Math.min(afterLast + ITEMS_PER_PAGE, searchResult.getNumFound());
+            }
+        }
+
+        searchPaginationPanel.addStyleName(css.resultsPagesPanel());
+        searchResultsPanel.add(searchPaginationPanel);
+        // load data on tab selection
+        searchPaginationPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+            @Override
+            public void onSelection(SelectionEvent<Integer> event) {
+                searchResultsPages.get(event.getSelectedItem()).onSelected();
+            }
+        });
+        searchPaginationPanel.selectTab(0);
     }
 
     private void hideProcessingSearchAnimation() {
@@ -238,45 +247,6 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
         Image booksImg = new Image("img/ajax-loader.gif");
         result.add(booksImg);
         return result;
-    }
-
-    private void showResultsWithPagination(String request, ArrayList<Long> intEntIdentifiers) {
-        searchResultsPanel.clear();
-        searchPaginationPanel = new TabPanel();
-        if (!intEntIdentifiers.isEmpty()) {
-            int first = 0;
-            int afterLast = Math.min(ITEMS_PER_PAGE, intEntIdentifiers.size());
-            // int tabCounter = 0;
-            searchResultsPages = new LinkedList<ResultsPage>();
-            // LOGGER.info("first=" + first + ", afterLast=" + afterLast);
-            while (true) {
-                // logger.info("tab=" + ++tabCounter + ", first=" + first + ", afterLast=" + afterLast);
-                ArrayList<Long> subList = new ArrayList<Long>(intEntIdentifiers.subList(first, afterLast));
-                String tabCaption = "" + (first + 1) + "-" + afterLast;
-                ResultsPage page = new ResultsPage(this, superPanel.getActiveUser(), subList);
-                searchResultsPages.add(page);
-                searchPaginationPanel.add(page, tabCaption);
-                if (afterLast == intEntIdentifiers.size()) {
-                    // logger.info("last tab");
-                    break;
-                } else {
-                    first = afterLast;
-                    afterLast = Math.min(afterLast + ITEMS_PER_PAGE, intEntIdentifiers.size());
-                }
-            }
-
-            searchPaginationPanel.addStyleName(css.resultsPagesPanel());
-            searchResultsPanel.add(searchPaginationPanel);
-            // load data on tab selection
-            searchPaginationPanel.addSelectionHandler(new SelectionHandler<Integer>() {
-
-                @Override
-                public void onSelection(SelectionEvent<Integer> event) {
-                    searchResultsPages.get(event.getSelectedItem()).onSelected();
-                }
-            });
-            searchPaginationPanel.selectTab(0);
-        }
     }
 
     private void showSingleResult(IntelectualEntityDTO entity) {
@@ -335,7 +305,6 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
     @Override
     public void onDeselected() {
         // TODO Auto-generated method stub
-
     }
 
     @Override

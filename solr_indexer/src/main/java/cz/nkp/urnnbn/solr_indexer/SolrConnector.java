@@ -181,4 +181,21 @@ public class SolrConnector {
         QueryResponse response = solrClient.query(collection, queryParams);
         return response.getResults();
     }
+
+    public SolrDocumentList searchInAllFields(String query, Long start, Integer rows, String outputFieldList) throws IOException, SolrServerException {
+        Map<String, String> queryParamMap = new HashMap<>();
+        queryParamMap.put("q", query);
+        queryParamMap.put("start", Long.toString(start));
+        if (rows != null) {
+            queryParamMap.put("rows", Integer.toString(rows));
+        }
+        if (outputFieldList != null) {
+            queryParamMap.put("fl", outputFieldList);
+        }
+        MapSolrParams queryParams = new MapSolrParams(queryParamMap);
+        QueryResponse response = solrClient.query(collection, queryParams);
+        return response.getResults();
+    }
+
+
 }

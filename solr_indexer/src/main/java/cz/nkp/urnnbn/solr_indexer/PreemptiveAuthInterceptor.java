@@ -26,22 +26,18 @@ public class PreemptiveAuthInterceptor implements HttpRequestInterceptor {
     @Override
     public void process(final HttpRequest request, final HttpContext context)
             throws HttpException, IOException {
-        final AuthState authState = (AuthState) context
-                .getAttribute(HttpClientContext.TARGET_AUTH_STATE);
+        final AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
 
         if (authState != null && authState.getAuthScheme() == null) {
-            final CredentialsProvider credsProvider = (CredentialsProvider) context
-                    .getAttribute(HttpClientContext.CREDS_PROVIDER);
-            final HttpHost targetHost = (HttpHost) context
-                    .getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
-            final Credentials creds = credsProvider
-                    .getCredentials(new AuthScope(targetHost.getHostName(),
-                            targetHost.getPort()));
+            final CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
+            final HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
+            final Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
             if (creds == null) {
-                throw new HttpException(
-                        "No credentials for preemptive authentication");
+                //ignore because the PreemptiveAuthInterceptor is added even to nonauthenticated client HttpClientUtil.addRequestInterceptor(new PreemptiveAuthInterceptor());
+                //throw new HttpException("No credentials for preemptive authentication");
+            } else {
+                request.addHeader(authScheme.authenticate(creds, request, context));
             }
-            request.addHeader(authScheme.authenticate(creds, request, context));
         } else if (logger.isDebugEnabled()) {
             logger.debug("authState is null. No preemptive authentication.");
         }
