@@ -16,7 +16,11 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 
     private static final Logger logger = Logger.getLogger(WebModuleConfiguration.class.getName());
     private static WebModuleConfiguration instance = null;
-    //simple data resources
+    //solr
+    private String solrBaseUrl;
+    private String solrCollection;
+    private boolean solrUseHttps;
+    //other
     private boolean showAlephLinks;
     private String alephUrl;
     private String alephBase;
@@ -36,7 +40,11 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
     public void initialize(String appName, PropertyLoader loader) throws IOException {
         logger.info("Loading configuration of module " + appName);
         super.initialize(appName, loader);
-
+        //solr
+        solrBaseUrl = loader.loadString(PropertyKeys.SOLR_BASE_URL);
+        solrCollection = loader.loadString(PropertyKeys.SOLR_COLLECTION);
+        solrUseHttps = loader.loadBoolean(PropertyKeys.SOLR_USE_HTTPS, false);
+        //other
         showAlephLinks = loader.loadBoolean(PropertyKeys.SHOW_ALEPH_LINKS, false);
         alephUrl = loader.loadStringOrNull(PropertyKeys.ALEPH_URL);
         alephBase = loader.loadStringOrNull(PropertyKeys.ALEPH_BASE);
@@ -85,6 +93,18 @@ public class WebModuleConfiguration extends ApplicationConfiguration {
 
     public File getCzidloToSolrXslt() {
         return czidloToSolrXslt;
+    }
+
+    public String getSolrBaseUrl() {
+        return solrBaseUrl;
+    }
+
+    public String getSolrCollection() {
+        return solrCollection;
+    }
+
+    public boolean getSolrUseHttps() {
+        return solrUseHttps;
     }
 
     public ConfigurationData toConfigurationData() {

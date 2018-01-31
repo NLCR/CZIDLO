@@ -4,6 +4,7 @@ import cz.nkp.urnnbn.client.services.SearchService;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus.Status;
 import cz.nkp.urnnbn.core.dto.*;
+import cz.nkp.urnnbn.server.conf.WebModuleConfiguration;
 import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
 import cz.nkp.urnnbn.shared.SearchResult;
 import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
@@ -32,13 +33,10 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
     @Override
     public SearchResult search(String query, long start, int rows) throws ServerException {
         try {
-            // TODO: 31.1.18 z konfigurace
             SolrConnector solrConnector = new SolrConnector(
-                    //"localhost:8983/solr",
-                    "localhost:1234/solr",
-                    "czidlo",
-                    false);
-
+                    WebModuleConfiguration.instanceOf().getSolrBaseUrl(),
+                    WebModuleConfiguration.instanceOf().getSolrCollection(),
+                    WebModuleConfiguration.instanceOf().getSolrUseHttps());
             String urnNbnField = "dd.id";
             String queryRefined = refineQuery(query);
             SolrDocumentList docList = solrConnector.searchInAllFields(queryRefined, start, rows, urnNbnField);

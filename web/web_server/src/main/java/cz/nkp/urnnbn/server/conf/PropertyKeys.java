@@ -8,4 +8,7 @@ public class PropertyKeys {
     protected static final String LOGIN_PAGE = "web.login.page";
     protected static final String GA_TRACKING_CODE = "web.gaTrackingCode";
 
+    protected static final String SOLR_BASE_URL = "web.solr.baseUrl";
+    protected static final String SOLR_COLLECTION = "web.solr.collection";
+    protected static final String SOLR_USE_HTTPS = "web.solr.useHttps";
 }
