@@ -29,4 +29,14 @@ public class SolrUtilsTest extends TestCase {
         assertEquals("first\\/second\\/third", SolrUtils.escapeSolrSpecialChars("first/second/third"));
     }
 
+    public void testSplitByWhitespaces() {
+        String regexp = "\\s+";
+        assertEquals(2, "first second".split(regexp).length);
+        assertEquals(2, "first       second".split(regexp).length);
+        assertEquals(2, "first\tsecond".split(regexp).length);
+        assertEquals(2, "first\t\tsecond".split(regexp).length);
+        assertEquals(2, "first\t\n\tsecond".split(regexp).length);
+        assertEquals(2, "first\t \tsecond".split(regexp).length);
+    }
+
 }

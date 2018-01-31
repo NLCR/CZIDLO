@@ -48,23 +48,28 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
     }
 
     private String refineQuery(String query) {
-        String[] tokens = query.split(" ");
+        String[] tokens = query.split("\\s+");
         StringBuilder builder = new StringBuilder();
         int counter = 0;
         for (String token : tokens) {
             if (++counter < MAX_QUERY_TOKENS) {
+                if (counter > 1) {
+                    builder.append(" || ");
+                }
                 if (isUrnNbn(token)) {
                     builder.append("\"").append(token).append("\"");
                 } else {
                     //ordinary token
                     // TODO: 31.1.18 possibly handle specially looking tokens like isbn, issn
                     // TODO: 31.1.18 possibly prefer title over other fields
-                    // TODO: 31.1.18
                     builder.append(SolrUtils.escapeSolrSpecialChars(token));
                 }
             }
         }
-        return builder.toString();
+        String refined = builder.toString();
+        /*LOGGER.info("query: " + query);
+        LOGGER.info("refined: " + refined);*/
+        return refined;
     }
 
     private boolean isUrnNbn(String string) {
