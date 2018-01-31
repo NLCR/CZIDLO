@@ -161,6 +161,14 @@
                 <!--source document-->
                 <xsl:apply-templates select="r:intelectualEntity/r:sourceDocument"/>
 
+
+                <!--DIGITAL INSTANCE-->
+                <xsl:for-each select="r:digitalInstances/r:digitalInstance">
+                    <field name="di.url">
+                        <xsl:value-of select='r:url'/>
+                    </field>
+                </xsl:for-each>
+
             </doc>
         </add>
     </xsl:template>
