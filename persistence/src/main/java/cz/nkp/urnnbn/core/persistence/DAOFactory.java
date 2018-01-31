@@ -4,31 +4,11 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
+import cz.nkp.urnnbn.core.persistence.impl.postgres.*;
+
 import java.util.logging.Logger;
 
-import cz.nkp.urnnbn.core.persistence.impl.postgres.ArchiverDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.CatalogDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.ContentDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalDocumentDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalInstanceDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.DigitalLibraryDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.IntEntIdentifierDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.IntelectualEntityDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.OriginatorDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresConnector;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.PublicationDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.RegistrarScopeIdentifierDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.SearchDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.SourceDocumentDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnGeneratorDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbnReservedDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UrnNbntatisticDaoPostgres;
-import cz.nkp.urnnbn.core.persistence.impl.postgres.UserDaoPostgres;
-
 /**
- *
  * @author Martin Řehánek
  */
 public class DAOFactory {
@@ -54,7 +34,6 @@ public class DAOFactory {
     private UrnNbnReservedDAO urnReservedDao;
     private ContentDAO contentDao;
     private UrnNbnStatisticDAO statisticDao;
-    private SearchDAO searchDao;
     // cache
     private final boolean postgresImplemantation;
     private final boolean oracleImplementation;
@@ -263,14 +242,4 @@ public class DAOFactory {
         return statisticDao;
     }
 
-    public SearchDAO searchDao() {
-        if (searchDao == null) {
-            if (postgresImplemantation) {
-                searchDao = new SearchDaoPostgres(connector);
-            } else if (oracleImplementation) {
-                throw new UnsupportedOperationException("Oracle implementation not available");
-            }
-        }
-        return searchDao;
-    }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.*;
@@ -160,36 +156,6 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    @Override
-    public List<Long> intEntIdsByFulltextSearch(String[] queryTokens, int hardLimit) {
-        try {
-            List<Long> result = search(queryTokens, hardLimit);
-            int size = Math.min(result.size(), hardLimit);
-            return result.subList(0, size);
-        } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    public List<Long> intEntIdsByFulltextSearch(String[] queryTokens) {
-        try {
-            return search(queryTokens, null);
-        } catch (DatabaseException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private List<Long> search(String[] queryTokens, Integer limit) throws DatabaseException {
-        Set<Long> ids = new HashSet<>();
-        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfIe(queryTokens, limit));
-        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfDd(queryTokens, limit));
-        ids.addAll(factory.searchDao().listIeIdsByFulltextSearchOfRsi(queryTokens, limit));
-        List<Long> result = new ArrayList<>();
-        result.addAll(ids);
-        return result;
     }
 
     @Override

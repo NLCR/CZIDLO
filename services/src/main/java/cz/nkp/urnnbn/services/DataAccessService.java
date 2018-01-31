@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.*;
@@ -45,10 +41,6 @@ public interface DataAccessService extends BusinessService {
     public IntelectualEntity entityById(long id);
 
     public List<IntelectualEntity> entitiesByIdValue(String value);
-
-    public List<Long> intEntIdsByFulltextSearch(String[] tokens, int hardLimit);
-
-    public List<Long> intEntIdsByFulltextSearch(String[] tokens);
 
     public List<IntelectualEntity> entitiesByIdValues(List<Long> ids);
 

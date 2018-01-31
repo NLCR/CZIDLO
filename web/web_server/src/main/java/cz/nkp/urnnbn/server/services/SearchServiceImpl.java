@@ -59,8 +59,9 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
                 if (isUrnNbn(token)) {
                     builder.append("\"").append(token).append("\"");
                 } else {
-                    //ordinary token
-                    // TODO: 31.1.18 possibly handle specially looking tokens like isbn, issn
+                    token = normalizeIfIsbn(token);
+                    token = normalizeIfIssn(token);
+                    token = normalizeIfCcnb(token);
                     // TODO: 31.1.18 possibly prefer title over other fields
                     builder.append(SolrUtils.escapeSolrSpecialChars(token));
                 }
@@ -81,6 +82,46 @@ public class SearchServiceImpl extends AbstractService implements SearchService 
         }
     }
 
+    private String normalizeIfCcnb(String token) {
+        String[] prefixes = new String[]{"čnb", "ččnb", "ccnb"};
+        String standardPrefix = "cnb";
+        for (String prefix : prefixes) {
+            if (token.startsWith(prefix)) {
+                String normalized = standardPrefix + token.substring(prefix.length());
+                // LOGGER.info("CCNB normalized: '" + normalized + "'");
+                return normalized;
+            }
+        }
+        // no prefix found
+        return token;
+    }
+
+    private String normalizeIfIssn(String query) {
+        String[] prefixes = new String[]{"issn", "issn:"};
+        for (String prefix : prefixes) {
+            if (query.startsWith(prefix)) {
+                String normalized = query.substring(prefix.length());
+                // LOGGER.info("ISSN normalized: '" + normalized + "'");
+                return normalized;
+            }
+        }
+        // no prefix found
+        return query;
+    }
+
+    private String normalizeIfIsbn(String query) {
+        // query = query.toUpperCase();
+        String[] preficies = new String[]{"isbn", "isbn:"};
+        for (String prefix : preficies) {
+            if (query.startsWith(prefix)) {
+                String normalized = query.substring(prefix.length());
+                // LOGGER.info("ISBN normalized: '" + normalized + "'");
+                return normalized;
+            }
+        }
+        // no prefix found
+        return query;
+    }
 
     private SearchResult toSearchResults(SolrDocumentList docList, String urnNbnField) {
         SearchResult result = new SearchResult();

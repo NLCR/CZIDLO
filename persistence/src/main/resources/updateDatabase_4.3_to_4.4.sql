@@ -60,3 +60,46 @@ CREATE INDEX DIGITALINSTANCE_URL ON DIGITALINSTANCE (URL);
 /*  New column DIGITALINSTANCE.ACCESSRESTRICTION */
 /*************************************************/
 ALTER TABLE DIGITALINSTANCE ADD COLUMN ACCESSRESTRICTION NUMERIC NOT NULL DEFAULT 0;
+
+
+/**********************************/
+/*          SEARCH cleanup        */
+/**********************************/
+/* INTELECTUAL ENTITY */
+DROP TRIGGER IF EXISTS update_search_ie_preprocessed_intelectualentity_tg ON intelectualentity CASCADE;
+DROP TRIGGER IF EXISTS update_search_ie_preprocessed_ieidentifier_tg ON ieidentifier CASCADE;
+DROP TRIGGER IF EXISTS update_search_ie_preprocessed_originator_tg ON originator CASCADE;
+DROP TRIGGER IF EXISTS update_search_ie_preprocessed_publication_tg ON publication CASCADE;
+DROP TRIGGER IF EXISTS update_search_ie_preprocessed_sourcedocument_tg ON sourcedocument CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_intelectualentity_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_ieidentifier_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_originator_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_publication_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_sourcedocument_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_intelectualentity() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_ieidentifier() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_originator() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_publication() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed_sourcedocument() CASCADE;
+DROP FUNCTION IF EXISTS update_search_ie_preprocessed(NUMERIC) CASCADE;
+DROP INDEX IF EXISTS search_ie_preprocessed_fulltext_idx;
+DROP TABLE IF EXISTS search_ie_preprocessed;
+DROP VIEW IF EXISTS search_ie_view;
+
+/* DIGITAL DOCUMENT */
+DROP TRIGGER IF EXISTS update_search_dd_preprocessed_digitaldocument_tg ON digitaldocument CASCADE;
+DROP FUNCTION IF EXISTS update_search_dd_preprocessed_digitaldocument_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_dd_preprocessed_digitaldocument() CASCADE;
+DROP FUNCTION IF EXISTS update_search_dd_preprocessed(NUMERIC,NUMERIC) CASCADE;
+DROP INDEX IF EXISTS search_dd_preprocessed_fulltext_idx;
+DROP TABLE IF EXISTS search_dd_preprocessed;
+DROP VIEW IF EXISTS search_dd_view;
+
+/* REGISTRAR-SCOPE ID */
+DROP TRIGGER IF EXISTS update_search_rsi_preprocessed_registrarscopeid_tg ON registrarscopeid CASCADE;
+DROP FUNCTION IF EXISTS update_search_rsi_preprocessed_registrarscopeid_tg() CASCADE;
+DROP FUNCTION IF EXISTS update_search_rsi_preprocessed_registrarscopeid() CASCADE;
+DROP FUNCTION IF EXISTS update_search_rsi_preprocessed(NUMERIC,NUMERIC,VARCHAR) CASCADE;
+DROP INDEX IF EXISTS search_rsi_preprocessed_fulltext_idx;
+DROP TABLE IF EXISTS search_rsi_preprocessed;
+DROP VIEW IF EXISTS search_rsi_view;
