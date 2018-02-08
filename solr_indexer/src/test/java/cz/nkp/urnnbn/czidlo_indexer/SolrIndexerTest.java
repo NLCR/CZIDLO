@@ -70,7 +70,7 @@ public class SolrIndexerTest extends TestCase {
         }*/
     }
 
-    public void testSolrConnector() throws Exception {
+    /*public void testSolrConnector() throws Exception {
         SolrConnector solrConnector = new SolrConnector(
                 "localhost:8983/solr",
                 "czidlo",
@@ -83,7 +83,7 @@ public class SolrIndexerTest extends TestCase {
             String urnNbn = (String) solrDocument.getFieldValue(urnNbnField);
             System.out.println(urnNbn);
         }
-    }
+    }*/
 
 
 }

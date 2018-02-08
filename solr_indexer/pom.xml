@@ -30,7 +30,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>cz.nkp.urnnbn.oaiadapter.cli.App</mainClass>
+                            <mainClass>cz.nkp.urnnbn.solr_indexer.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
