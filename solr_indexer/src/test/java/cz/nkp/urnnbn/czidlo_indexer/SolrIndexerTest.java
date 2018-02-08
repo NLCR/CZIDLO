@@ -50,8 +50,8 @@ public class SolrIndexerTest extends TestCase {
             String solrBaseUrl = "localhost:8983/solr";
             String solrCollection = "czidlo";
             boolean solrUseHttps = false;
-            String solrLogin = "solr";
-            String solrPass = "SolrRocks";
+            String solrLogin = "czidloIndexer";
+            String solrPass = "czidloRolls";
 
 
             SolrIndexer indexer = new SolrIndexer(

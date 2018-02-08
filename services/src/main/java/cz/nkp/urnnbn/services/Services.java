@@ -26,6 +26,7 @@ public class Services {
     private static final Integer DEFAULT_MAX_URN_RESERVATION_SIZE = 100;
     private final DatabaseConnector connector;
     private final Integer urnNbnReservationMaxSize;
+
     private final SolrIndexer solrIndexer;
     private DataAccessService dataAccess;
     private DataImportService dataImport;
@@ -42,32 +43,45 @@ public class Services {
         } else {
             this.urnNbnReservationMaxSize = urnNbnReservationMaxSize;
         }
-        solrIndexer = indexerConfig == null ? null :
-                new SolrIndexer(
-                        indexerConfig,
-                        null,
-                        new DataProvider() {
-                            @Override
-                            public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                                return dataAccessService().digDocsByModificationDate(from, until);
-                            }
-
-                            @Override
-                            public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                                return dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                            }
+        if (indexerConfig == null) {
+            solrIndexer = null;
+            logger.warning("Solr indexer config is null, ignoring Solr indexer initialization");
+        } else {
+            logger.info("initializing Solr indexer");
+            solrIndexer = new SolrIndexer(
+                    indexerConfig,
+                    null,
+                    new DataProvider() {
+                        @Override
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                            return dataAccessService().digDocsByModificationDate(from, until);
                         }
-                );
+
+                        @Override
+                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                            return dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                        }
+                    }
+            );
+        }
     }
 
     public static void init(DatabaseConnector con, Integer urnNbnReservationMaxSize, IndexerConfig indexerConfig) {
-        logger.info("Initializing");
-        instance = new Services(con, urnNbnReservationMaxSize, indexerConfig);
+        if (instance == null) {
+            logger.info("Initializing");
+            instance = new Services(con, urnNbnReservationMaxSize, indexerConfig);
+        } else {
+            logger.info("Already initialized");
+        }
     }
 
     public static void init(DatabaseConnector con, IndexerConfig indexerConfig) {
-        logger.info("Initializing");
-        instance = new Services(con, null, indexerConfig);
+        if (instance == null) {
+            logger.info("Initializing");
+            instance = new Services(con, null, indexerConfig);
+        } else {
+            logger.info("Already initialized");
+        }
     }
 
     public static Services instanceOf() {

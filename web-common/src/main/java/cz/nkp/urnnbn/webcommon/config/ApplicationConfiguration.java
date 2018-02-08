@@ -75,6 +75,7 @@ public abstract class ApplicationConfiguration {
 
         if (!initIndexer) {
             indexerConfig = null;
+            appLogger.log(Level.WARNING, "Solr indexer will not be initialized");
         }
         if (develMode) {
             Services.init(DatabaseConnectorFactory.getDevelConnector(), indexerConfig);
