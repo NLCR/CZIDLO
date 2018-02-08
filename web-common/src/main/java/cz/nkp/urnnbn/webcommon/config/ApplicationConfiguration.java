@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.utils.PropertyLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +44,7 @@ public abstract class ApplicationConfiguration {
         AdminLogger.initializeLogger(webAppName, adminLogFile);
         CountryCode.initialize(languageCode);
 
+        boolean initIndexer = true;
         IndexerConfig indexerConfig = new IndexerConfig();
         indexerConfig.setCzidloApiBaseUrl(loader.loadString(PropertyKeys.INDEXER_CZIDLO_API_BASE_URL));
         indexerConfig.setCzidloApiUseHttps(false);
@@ -53,12 +55,27 @@ public abstract class ApplicationConfiguration {
         indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
 
         try {
-            indexerConfig.setCzidloToSolrXsltFile(new File(getClass().getClassLoader().getResource(CZIDL_TO_SOLR_XSLT).toURI()));
-            indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(indexerConfig.getCzidloToSolrXsltFile().getAbsolutePath()));
+            URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDL_TO_SOLR_XSLT);
+            if (czidloToSolrXsltFileResource != null) { //because not all web modules contain this file
+                try {
+                    File czidloToSolrXsltFile = new File(czidloToSolrXsltFileResource.toURI());
+                    indexerConfig.setCzidloToSolrXsltFile(czidloToSolrXsltFile);
+                    indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath()));
+                } catch (IllegalArgumentException e) {
+                    initIndexer = false;
+                    appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDL_TO_SOLR_XSLT);
+                }
+            } else {
+                initIndexer = false;
+                appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDL_TO_SOLR_XSLT);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        if (!initIndexer) {
+            indexerConfig = null;
+        }
         if (develMode) {
             Services.init(DatabaseConnectorFactory.getDevelConnector(), indexerConfig);
         } else {

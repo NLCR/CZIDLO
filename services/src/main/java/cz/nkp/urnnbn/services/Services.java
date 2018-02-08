@@ -42,21 +42,22 @@ public class Services {
         } else {
             this.urnNbnReservationMaxSize = urnNbnReservationMaxSize;
         }
-        solrIndexer = new SolrIndexer(
-                indexerConfig,
-                null,
-                new DataProvider() {
-                    @Override
-                    public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
-                        return dataAccessService().digDocsByModificationDate(from, until);
-                    }
+        solrIndexer = indexerConfig == null ? null :
+                new SolrIndexer(
+                        indexerConfig,
+                        null,
+                        new DataProvider() {
+                            @Override
+                            public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                                return dataAccessService().digDocsByModificationDate(from, until);
+                            }
 
-                    @Override
-                    public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
-                        return dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
-                    }
-                }
-        );
+                            @Override
+                            public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                                return dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                            }
+                        }
+                );
     }
 
     public static void init(DatabaseConnector con, Integer urnNbnReservationMaxSize, IndexerConfig indexerConfig) {

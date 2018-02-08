@@ -40,8 +40,7 @@ public class OaiPmhConfiguration extends ApplicationConfiguration {
 
     /**
      *
-     * @param properties
-     *            InputStream containing properties
+     * @param loader
      * @throws IOException
      */
     @Override
