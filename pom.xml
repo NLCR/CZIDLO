@@ -61,6 +61,7 @@
         <module>web</module>
         <module>processDataServer</module>
         <module>oaiPmhProvider</module>
+        <module>cliUtils</module>
 
     </modules>
 
