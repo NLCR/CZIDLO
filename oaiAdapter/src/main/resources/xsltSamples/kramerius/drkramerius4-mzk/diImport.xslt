@@ -30,8 +30,13 @@
 
     <xsl:template name="url">
         <czi:url>
+            <!--http://www.digitalniknihovna.cz/mzk/uuid/uuid:71a80bc3-9361-4d5e-8207-179aba225342-->
+            <!--http://kramerius.mzk.cz/search/handle/uuid:71a80bc3-9361-4d5e-8207-179aba225342-->
+            <!--<xsl:value-of
+                    select="concat('http://kramerius.mzk.cz/search/handle/uuid:',//dr:uuid)"/>-->
             <xsl:value-of
-                    select="concat('http://kramerius4.nkp.cz/search/handle/uuid:',//dr:uuid)"/>
+                    select="concat('http://www.digitalniknihovna.cz/mzk/uuid/uuid:',//dr:uuid)"/>
+
         </czi:url>
     </xsl:template>
 
