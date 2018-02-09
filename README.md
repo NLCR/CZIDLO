@@ -349,7 +349,7 @@ If installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must
 1. unpack file `solr-7.2.1-czidlo.zip` into directory from now on called SOLR_HOME
 2. start Solr server with `$SOLR_HOME/bin/solr start`
 3. check that Solr server is running correctly with `$SOLR_HOME/bin/solr status`
-4. create preconfigured czidlo solr-core with `$SOLR_HOME/bin/solr create -c czidlo -d czidlo -n solrconfig.xml` 
+4. create preconfigured czidlo solr-core with `$SOLR_HOME/bin/solr create -c czidlo -d $SOLR_HOME/server/solr/czidlo -n solrconfig.xml` 
 5. stop Solr server with `$SOLR_HOME/bin/solr stop` 
 6. enable security configuration by renaming file `$SOLR_HOME/server/solr/security.json.disabled` to `$SOLR_HOME/server/solr/security.json`
 7. change default login and password for solr indexer (czidloIndexer:czidloRolls) in all configuration files 
