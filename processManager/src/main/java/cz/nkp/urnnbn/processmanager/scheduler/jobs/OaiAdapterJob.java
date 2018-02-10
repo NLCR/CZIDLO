@@ -133,7 +133,7 @@ public class OaiAdapterJob extends AbstractJob {
                     oaiBaseUrl, oaiMetadataPrefix, oaiSet,
                     czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
                     new XslTemplate(ddRegistrationXsltId, XmlTools.loadXmlFromFile(ddRegistrationXsltFile.getAbsolutePath()), ddRegistrationXsltFile),
-                    new XslTemplate(ddRegistrationXsltId, XmlTools.loadXmlFromFile(ddRegistrationXsltFile.getAbsolutePath()), ddRegistrationXsltFile),
+                    new XslTemplate(diImportXsltId, XmlTools.loadXmlFromFile(diImportXsltXmlFile.getAbsolutePath()), diImportXsltXmlFile),
                     ddRegistrationXsdUrl, diImportXsdUrl,
                     registerDDsWithUrn, registerDDsWithoutUrn,
                     mergeDigitalInstances, ignoreDifferenceInDiAccessibility, ignoreDifferenceInDiFormat,
