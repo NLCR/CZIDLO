@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>cliUtils</artifactId>
-    <version>4.4-pre</version>
+    <version>4.4</version>
     <packaging>jar</packaging>
     <name>CZIDLO - CLI Utils</name>
 
