@@ -1,4 +1,4 @@
-/* SQL script to initialize of database for Resolver in version 4.4 */
+/* SQL script to initialize CZIDLO core database for CZIDLO versions 4.4 - 4.4.1 */
   
 /* Drop Indexes */
 

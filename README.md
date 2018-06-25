@@ -1,4 +1,4 @@
-README file for CZIDLO v4.4
+README file for CZIDLO v4.4.1
 
 Copyright (C) 2013-2018 Martin Řehánek
 
