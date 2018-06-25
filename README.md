@@ -1,11 +1,11 @@
 README file for CZIDLO v4.4
 
-Copyright (C) 2013-2016 Martin Řehánek
+Copyright (C) 2013-2018 Martin Řehánek
 
 
 #####################################
 #####################################
-#         CZIDLO version 4.4        #
+#         CZIDLO version 4.4.1      #
 #####################################
 #####################################
 
@@ -21,6 +21,7 @@ This document describes installation of this system on Linux server.
 Since all the middleware (database, servlet container, web server) is available on multiple platforms, it should be possible to install the system on different platform.
 
 This processed has not been tested though and will not be explained here.
+
 
 ###################
 ## Main features ##
@@ -87,6 +88,9 @@ Version 4.4:
 - some tuning of web interface
 - OAI Adapter reworked, source code and report cleaned up. Parameters changed, enabled merging of digital instances. 
 
+Version 4.4.1
+- fixed bug in scheduling OAI Adapter from web interface
+
 
 ##################
 ## Installation ##
@@ -104,7 +108,7 @@ This archive should contain following files:
 - `api.war` - API module  
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_4.4.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_4.4-4.4.1.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2). 
@@ -118,7 +122,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.4.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.4-4.4.1.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
 
    Script also creates one administrator account (admin:admin). Since it is not possible yet to change user password, it is very important that this account is removed immediately
    after another administrator account (with publicly unknown password) is created.
@@ -203,8 +207,8 @@ See https://github.com/NLCR/CZIDLO/commit/20543990df5132b156426f61ae5024ba4f2ef0
 
 
 ###################################
-## Upgrade from previous version ##
-###################################
+## Upgrade from previous versions ##
+####################################
 
 Previous versions of CZIDLO (formerly called URN:NBN Resolver) may or may not differ in core database structure.
 
@@ -218,6 +222,24 @@ You should allways backup your database before upgrading it in order to avoid da
 
 Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
+
+
+##################################
+### Upgrade from version 4.4.1 ###
+##################################
+
+#### Core database ####
+
+No need to upgrade.
+
+#### Process database ####
+
+No need to upgrade.
+
+#### Solr server ####
+
+No need to upgrade.
+
 
 ##################################
 ### Upgrade from version 4.3   ###
