@@ -114,7 +114,7 @@ This archive should contain following files:
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2). 
 - `databaseUpgrader-4.2.2.jar` - java program that replaces plaintext passwords with their encrypted form.
 - `updateDatabase_4.2.2_to_4.3.sql` - sql script for updating core database (from version 4.2.2 to version 4.3).
-- `updateDatabase_4.3_to_4.4.sql` - sql script for updating core database (from version 4.3 to version 4.4).
+- `updateDatabase_4.3_to_4.4-4.4.1.sql` - sql script for updating core database (from version 4.3 to versions 4.4 and 4.4.1).
 - `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
 - `cliUtils.jar` - command line application with some utilities
  
@@ -247,8 +247,8 @@ No need to upgrade.
 
 #### Core database ####
 
-1. Use script `updateDatabase_4.3_to_4.4.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
-Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.3_to_4.4.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
+1. Use script `updateDatabase_4.3_to_4.4-4.4.1.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
+Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.3_to_4.4-4.4.1.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
 There is significantly less data processing compared to 4.2.2->4.3 database upgrade. Upgrading database with 1 mil digital documents shouldn't last more than few seconds.
 
 #### Process database ####
