@@ -1,11 +1,11 @@
-README file for CZIDLO v4.4.1
+README file for CZIDLO v4.5-alpha
 
 Copyright (C) 2013-2018 Martin Řehánek
 
 
 #####################################
 #####################################
-#         CZIDLO version 4.4.1      #
+#         CZIDLO version 4.5-alpha      #
 #####################################
 #####################################
 
@@ -90,6 +90,9 @@ Version 4.4:
 
 Version 4.4.1
 - fixed bug in scheduling OAI Adapter from web interface
+
+Version 4.5-alpha
+- increased max length of registrar-scope id value frome 60 to 80
 
 
 ##################
