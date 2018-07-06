@@ -103,7 +103,7 @@ public class DdRegistrationRefiner extends XmlRefiner {
 
     private void refineRegistrarScopeIdentifier(Element registrarScopeIdentifierEl, Element parentEl) {
         String typeRegexp = "[A-Za-z0-9]{1}[A-Za-z0-9_\\-:]{0,18}[A-Za-z0-9]{1}";
-        String valueRegexp = "[A-Za-z0-9]{1}[A-Za-z0-9\\-_\\.~!\\*'\\(\\);:@&=+$,\\?#\\[\\]]{0,58}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}";
+        String valueRegexp = "[A-Za-z0-9]{1}[A-Za-z0-9\\-_\\.~!\\*'\\(\\);:@&=+$,\\?#\\[\\]]{0,78}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}";
         removeAttributeIfValueNoMatch(registrarScopeIdentifierEl, "previousValue", valueRegexp);
         boolean typeRemoved = removeAttributeIfValueNoMatch(registrarScopeIdentifierEl, "type", typeRegexp);
         if (typeRemoved) {

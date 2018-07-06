@@ -15,10 +15,10 @@ public class RegistrarScopeIdValue {
     private static final int MIN_LENGTH = 1;
     private static final int MAX_LENGTH = 60;
     /*
-     * Min length 1, max length 60, can contain small, big letters, numbers, and following characters: :?#[]@!$&'()*+,;=-._~ I.e. all reserved and
+     * Min length 1, max length 70, can contain small, big letters, numbers, and following characters: :?#[]@!$&'()*+,;=-._~ I.e. all reserved and
      * unreserved characters as specified inrfc3986, except for '/'. Must start and end with letter/number.
      */
-    private static final String REGEXP = "^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,58}[a-zA-Z0-9]{1}$|[a-zA-Z0-9]{1}";
+    private static final String REGEXP = "^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,78}[a-zA-Z0-9]{1}$|[a-zA-Z0-9]{1}";
     private static final Pattern PATTERN = Pattern.compile(REGEXP);
     private String value;
 

@@ -86,16 +86,16 @@ public abstract class ApiV5Tests {
             "x?x", "x#x", "x[x", "x]x", "x@x", "x!x", "x$x", "x&x", "x'x", "x(x", "x)x", "x*x", "x+x", "x,x", "x;x", "x=x", "x.x", "x~x" };
 
     // registrar-scope-id valid/invalid value examples according to regex
-    // ^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,58}[a-zA-Z0-9]{1}$
+    // ^[a-zA-Z0-9]{1}[a-zA-Z0-9:\\?#\\[\\]@!\\$&'\\(\\)\\*\\+,;=\\-\\._~]{0,78}[a-zA-Z0-9]{1}$
     final String[] RSID_VALUES_VALID = new String[] { "a", "A", "0", "aA0",
-            "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6",//
+            "aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6aaaaaaaaa7aaaaaaaaa8",//
             // contains valid character
             "x:x", "x?x", "x#x", "x[x", "x]x", "x@x", "x!x", "x$x", "x&x", "x'x", "x(x", "x)x", "x*x", "x+x", "x,x", "x;x", "x=x", "x-x", "x.x",
             "x_x", "x~x" };
 
     final String[] RSID_VALUES_INVALID = new String[] {
             // to long
-            "aaaaaaaaa1bbbbbbbbb2ccccccccc3ddddddddd4eeeeeeeee5eeeeeeeee6x",//
+            "aaaaaaaaa1bbbbbbbbb2ccccccccc3ddddddddd4eeeeeeeee5eeeeeeeee6aaaaaaaaa7aaaaaaaaa8x",//
             // starts with valid character
             ":x", "?x", "#x", "[x", "]x", "@x", "!x", "$x", "&x", "'x", "(x", ")x", "*x", "+x", ",x", ";x", "=x", "-x", ".x", "_x", "~x",//
             // ends with valid character

@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             - _ . + ! * ' ( ) , : @ -->
         <!-- Now all reserved and unreserved URI characters as specified 
             in RFC 3986 (sections 2.2 and 2.3) are allowed, except for '/'. Must start 
-            and end with number letter (capital or not). Leng must be between 1 and 60 
+            and end with number letter (capital or not). Leng must be between 1 and 80
             characters. -->
         <!-- unreserved characters: -->
         <!-- A-Z a-z 0-9 -_.~ -->
@@ -89,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <!-- i.e. these characters are newly allowed: ? [ ] ; & = # -->
         <xs:restriction base="xs:token">
             <xs:pattern
-                    value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,58}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}"/>
+                    value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,78}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}"/>
         </xs:restriction>
     </xs:simpleType>
 
