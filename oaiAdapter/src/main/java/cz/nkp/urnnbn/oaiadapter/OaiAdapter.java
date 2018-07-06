@@ -61,8 +61,8 @@ public class OaiAdapter {
     //private int devRecordLimit = 3;//dev only
 
     public OaiAdapter(String registrarCode,
-                      String oaiBaseUrl, String oaiMetadataPrefix, String oaiSetSpec, String czidloApiBaseUrl,
-                      String czidloApiLogin, String czidloApiPassword, boolean czidloApiIgnoreInvalidCertificate,
+                      String oaiBaseUrl, String oaiMetadataPrefix, String oaiSetSpec,
+                      String czidloApiBaseUrl, String czidloApiLogin, String czidloApiPassword, boolean czidloApiIgnoreInvalidCertificate,
                       XslTemplate metadataToDdRegistrationXslt, XslTemplate metadataToDiImportXslt,
                       URL ddRegistrationDataXsdUrl, URL diImportDataXsdUrl,
                       boolean registerDDsWithUrn, boolean registerDDsWithoutUrn,
@@ -108,6 +108,9 @@ public class OaiAdapter {
             Counters counters = new Counters();
             OaiHarvester harvester = new OaiHarvester(oaiBaseUrl, oaiMetadataPrefix, oaiSetSpec, reportLogger);
             report("- OaiHarvester initialized");
+            if (czidloApiPassword == null) {
+                throw new IOException("CZIDLO API password for user " + czidloApiLogin + " not available. If you are using web scheduler, try logging out and in again.");
+            }
             CzidloApiConnector czidloApiConnector = new CzidloApiConnector(czidloApiBaseUrl, new Credentials(czidloApiLogin, czidloApiPassword), true, czidloApiIgnoreInvalidCertificate);
             Document digDocRegistrationXslt = buildXsltDoc(metadataToDdRegistrationXslt, "Digital-document-registration");
             Document digInstImportXslt = buildXsltDoc(metadataToDiImportXslt, "Digital-instance-import");
