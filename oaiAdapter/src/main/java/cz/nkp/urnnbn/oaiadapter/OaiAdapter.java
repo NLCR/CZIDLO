@@ -265,6 +265,7 @@ public class OaiAdapter {
                             counters.ddRegisteredNowDisUnchanged++;
                             break;
                     }
+                    break;
                 case NOT_REGISTERED:
                     counters.ddNotRegistered++;
                     break;
