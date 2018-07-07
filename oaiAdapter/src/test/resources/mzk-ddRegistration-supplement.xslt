@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:mods="http://www.loc.gov/mods/v3"
-                xmlns:czi="http://resolver.nkp.cz/v4/"
+                xmlns:czi="http://resolver.nkp.cz/v5/"
                 xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4"
                 exclude-result-prefixes="mods dr">
 
@@ -42,7 +42,7 @@
     <xsl:template name="title">
         <czi:title>
             <xsl:call-template name="cutString">
-                <xsl:with-param name="string" select="//mods:mods/mods:titleInfo/mods:title"/>
+                <xsl:with-param name="string" select="//mods:mods/mods:titleInfo/mods:partName"/>
                 <xsl:with-param name="maxLength" select="100"/>
             </xsl:call-template>
         </czi:title>

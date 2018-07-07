@@ -2,7 +2,7 @@
 
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:czi="http://resolver.nkp.cz/v4/"
+                xmlns:czi="http://resolver.nkp.cz/v5/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:dr="http://registrdigitalizace.cz/schemas/drkramerius/v4"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -16,7 +16,10 @@
                 doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
     />
 
-    <xsl:variable name="digitalLibraryId">48</xsl:variable>
+    <!-- K4 NKP (resolver-test2) -->
+    <xsl:variable name="digitalLibraryId">41</xsl:variable>
+    <!--<xsl:variable name="digitalLibraryId">48</xsl:variable>-->
+
 
     <xsl:template match="/">
         <czi:digitalInstance>
