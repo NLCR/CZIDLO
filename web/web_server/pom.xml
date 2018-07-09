@@ -6,7 +6,7 @@
     <parent>
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
-        <version>4.5-alpha</version>
+        <version>4.5</version>
     </parent>
 
     <artifactId>web_server</artifactId>
