@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1>API verze 2 pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>
-        Verze 2 je zastaralá a bude v některé následující verzi CZIDLO odstraněna. Doporučuje se přechod na <a href="/api/v4/">API verze 4</a>.  
+        Verze 2 je zastaralá a bude v některé následující verzi CZIDLO odstraněna. Doporučuje se přechod na <a href="/api/v5/">API verze 5</a>.
         
         <p>
         Popis API V2: <a href="https://github.com/NLCR/CZIDLO/wiki/API#verze-2">Github</a><br/>
