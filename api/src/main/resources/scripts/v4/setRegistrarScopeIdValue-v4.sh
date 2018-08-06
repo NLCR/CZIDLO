@@ -1,8 +1,8 @@
 #!/bin/bash
-source inc.sh
+source ../inc.sh
 
 init_tmp_files
-define_creditentials /home/martin/secret/resolver/nkpAdmin
+define_creditentials /home/martin/secret/resolver-test1/mzk-rehan
 
 URNNBN=urn:nbn:cz:tst02-000001
 ID_TYPE=someIdType2
