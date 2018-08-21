@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>processDataServer</artifactId>
-    <version>4.5</version>
+    <version>{czidlo_version}</version>
     <packaging>war</packaging>
     <name>CZIDLO - processDataServer</name>
 

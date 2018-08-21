@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>czidlo</artifactId>
-    <version>4.5</version>
+    <version>{czidlo_version}</version>
     <packaging>pom</packaging>
     <name>CZIDLO</name>
     <description>Application for administration of national librarian URN:NBN registry</description>
@@ -44,6 +44,10 @@
         <url>https://github.com/NLCR/CZIDLO/issues/</url>
     </issueManagement>
 
+    <properties>
+        <czidlo_version>4.6.alpha</czidlo_version>
+    </properties>
+
     <modules>
         <module>core</module>
         <!-- <module>gdrive</module> -->
@@ -62,7 +66,6 @@
         <module>processDataServer</module>
         <module>oaiPmhProvider</module>
         <module>cliUtils</module>
-
     </modules>
 
 </project>
