@@ -1,9 +1,12 @@
 package cz.nkp.urnnbn.client.processes;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
+
+import java.util.Date;
 
 public class ProcessFormater {
 
@@ -16,8 +19,78 @@ public class ProcessFormater {
     }
 
     String getScheduled() {
-        return process.getScheduled();
+        return formatDateTime(process.getScheduled());
     }
+
+    String getStarted() {
+        return formatDateTime(process.getStarted());
+    }
+
+    String getFinished() {
+        return formatDateTime(process.getFinished());
+    }
+
+    private String formatDateTime(Long millis) {
+        if (millis == null) {
+            return null;
+        } else {
+            Date now = new Date();
+            Date then = new Date(millis);
+            if (isToday(then, now)) {
+                return DateTimeFormat.getFormat("HH:mm:ss").format(then);
+            } else if (isSameYear(then, now)) {
+                return DateTimeFormat.getFormat("dd. M. HH:mm").format(then);
+            } else { //another year
+                return DateTimeFormat.getFormat("dd. M. yyyy").format(then);
+            }
+        }
+    }
+
+    private boolean isSameYear(Date then, Date now) {
+        return then.getYear() == now.getYear();
+    }
+
+    private boolean isToday(Date then, Date now) {
+        return then.getYear() == now.getYear() &&
+                then.getMonth() == now.getMonth() &&
+                then.getDay() == now.getDay();
+    }
+
+    String getDuration() {
+        if (process.getStarted() != null && process.getFinished() != null) {
+            long start = process.getStarted();
+            long end = process.getFinished();
+            long duration = end - start;
+            return formatDuration(duration);
+        } else {
+            return null;
+        }
+    }
+
+    private String formatDuration(long duration) {
+        long hours = duration / 3600000;
+        duration = duration % 3600000;
+        long minutes = duration / 60000;
+        duration = duration % 60000;
+        long seconds = duration / 1000;
+        duration = duration % 1000;
+        long millis = duration;
+        StringBuilder builder = new StringBuilder();
+        if (hours != 0) {
+            builder.append(hours).append("h");
+        }
+        if (minutes != 0) {
+            builder.append(' ').append(minutes).append("m");
+        }
+        if (seconds != 0) {
+            builder.append(' ').append(seconds).append("s");
+        }
+        if (millis != 0 && (hours == 0 && minutes == 0)) {
+            builder.append(' ').append(millis).append("ms");
+        }
+        return builder.toString();
+    }
+
 
     public Widget getProcessState() {
         switch (process.getState()) {
@@ -71,3 +144,5 @@ public class ProcessFormater {
         }
     }
 }
+
+

@@ -13,9 +13,9 @@ public class ProcessDTO implements Serializable {
     private ProcessDTOState state;
     private String[] params;
     // timestamps
-    private String scheduled;
-    private String started;
-    private String finished;
+    private Long scheduled;
+    private Long started;
+    private Long finished;
 
     public Long getId() {
         return id;
@@ -57,27 +57,27 @@ public class ProcessDTO implements Serializable {
         this.params = params;
     }
 
-    public String getScheduled() {
+    public Long getScheduled() {
         return scheduled;
     }
 
-    public void setScheduled(String scheduled) {
+    public void setScheduled(Long scheduled) {
         this.scheduled = scheduled;
     }
 
-    public String getStarted() {
+    public Long getStarted() {
         return started;
     }
 
-    public void setStarted(String started) {
+    public void setStarted(Long started) {
         this.started = started;
     }
 
-    public String getFinished() {
+    public Long getFinished() {
         return finished;
     }
 
-    public void setFinished(String finished) {
+    public void setFinished(Long finished) {
         this.finished = finished;
     }
 

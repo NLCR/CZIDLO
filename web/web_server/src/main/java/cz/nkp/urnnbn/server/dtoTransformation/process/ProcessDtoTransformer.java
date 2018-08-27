@@ -20,9 +20,9 @@ public class ProcessDtoTransformer extends DtoTransformer {
             result.setId(original.getId());
             result.setOwnerLogin(original.getOwnerLogin());
             result.setParams(original.getParams());
-            result.setScheduled(dateToStringOrNull(original.getScheduled()));
-            result.setStarted(dateToStringOrNull(original.getStarted()));
-            result.setFinished(dateToStringOrNull(original.getFinished()));
+            result.setScheduled(dateToMillisOrNull(original.getScheduled()));
+            result.setStarted(dateToMillisOrNull(original.getStarted()));
+            result.setFinished(dateToMillisOrNull(original.getFinished()));
             result.setType(new ProcessTypeDtoTransformer(original.getType()).transform());
             result.setState(new ProcessStateDtoTransformer(original.getState()).transform());
             return result;

@@ -1,49 +1,38 @@
 package cz.nkp.urnnbn.server.dtoTransformation;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.*;
+import cz.nkp.urnnbn.server.dtoTransformation.entities.EntityDtoTransformer;
+import cz.nkp.urnnbn.shared.dto.*;
+import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.server.dtoTransformation.entities.EntityDtoTransformer;
-import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
-import cz.nkp.urnnbn.shared.dto.CatalogDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
-import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public abstract class DtoTransformer {
 
     public abstract Object transform();
 
-    public static IntelectualEntityDTO transformIntelectualEntity(IntelectualEntity entity, List<IntEntIdentifier> enityIds, Publication publication,
-            Originator originator, SourceDocument srcDoc, ArrayList<DigitalDocumentDTO> docs) {
+    public static IntelectualEntityDTO transformIntelectualEntity(IntelectualEntity entity,
+                                                                  List<IntEntIdentifier> enityIds,
+                                                                  Publication publication,
+                                                                  Originator originator,
+                                                                  SourceDocument srcDoc,
+                                                                  ArrayList<DigitalDocumentDTO> docs) {
         EntityDtoTransformer entityTransformer = EntityDtoTransformer.instanceOf(entity, enityIds, publication, originator, srcDoc, docs);
         return entityTransformer.transform();
     }
 
-    public static DigitalDocumentDTO transformDigitalDocument(DigitalDocument doc, UrnNbn urn, Registrar registrar, Archiver archiver,
-            ArrayList<DigitalInstanceDTO> digitalInstances, List<RegistrarScopeIdentifier> registrarScopeIds) {
+    public static DigitalDocumentDTO transformDigitalDocument(DigitalDocument doc,
+                                                              UrnNbn urn,
+                                                              Registrar registrar,
+                                                              Archiver archiver,
+                                                              ArrayList<DigitalInstanceDTO> digitalInstances,
+                                                              List<RegistrarScopeIdentifier> registrarScopeIds) {
         return new DigialDocumentDtoTransformer(doc, urn, registrar, archiver, digitalInstances, registrarScopeIds).transform();
     }
 
@@ -55,11 +44,11 @@ public abstract class DtoTransformer {
         }
     }
 
-    public String dateToStringOrNull(Date date) {
+    public Long dateToMillisOrNull(Date date) {
         if (date == null) {
             return null;
         } else {
-            return dateTimeToStringOrNull(new DateTime(date.getTime()));
+            return date.getTime();
         }
     }
 
