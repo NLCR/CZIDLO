@@ -122,6 +122,26 @@ public class ProcessFormater {
         }
     }
 
+    public String getProcessStateHtml() {
+        switch (process.getState()) {
+            case SCHEDULED:
+                return "<div style=\"color:blue\">SCHEDULED</style>";
+            case CANCELED:
+                return "<div style=\"color:red\">CANCELED</style>";
+            case RUNNING:
+                return "<div style=\"color:green\">RUNNING</style>";
+            case FINISHED:
+                return "<div style=\"color:black\">FINISHED</style>";
+            case FAILED:
+                return "<div style=\"color:red\">FAILED</style>";
+            case KILLED:
+                return "<div style=\"color:red\">KILLED</style>";
+            default:
+                return "";
+        }
+    }
+
+
     public Widget getProcessType() {
         switch (process.getType()) {
             case OAI_ADAPTER:

@@ -3,6 +3,9 @@ package cz.nkp.urnnbn.client.processes;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
@@ -66,8 +69,8 @@ public class ProcessTableWidget extends Composite {
         };
         table.addColumn(typeColumn, constants.processType());
 
+        //owner
         if (!limitToMyProcesses) {
-            //owner
             TextColumn<ProcessDTO> ownerColumn = new TextColumn<ProcessDTO>() {
                 @Override
                 public String getValue(ProcessDTO process) {
@@ -78,14 +81,21 @@ public class ProcessTableWidget extends Composite {
         }
 
         //state
-        TextColumn<ProcessDTO> stateColumn = new TextColumn<ProcessDTO>() {
+        Column<ProcessDTO, SafeHtml> stateColumn = new Column<ProcessDTO, SafeHtml>(new SafeHtmlCell()) {
+
             @Override
-            public String getValue(ProcessDTO process) {
-                return process.getState().toString();
+            public SafeHtml getValue(final ProcessDTO process) {
+                SafeHtmlBuilder builder = new SafeHtmlBuilder();
+                builder.append(new SafeHtml() {
+                    @Override
+                    public String asString() {
+                        return new ProcessFormater(process, constants).getProcessStateHtml();
+                    }
+                });
+                return builder.toSafeHtml();
             }
         };
         table.addColumn(stateColumn, constants.processStatus());
-        // TODO: 27.8.18 stylovani, barva podle stavu
 
         //scheduled time
         TextColumn<ProcessDTO> scheduledColumn = new TextColumn<ProcessDTO>() {
