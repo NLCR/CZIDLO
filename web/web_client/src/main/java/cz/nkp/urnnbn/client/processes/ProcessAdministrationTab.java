@@ -289,135 +289,70 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     }
 
     private Widget processWidget(ProcessDTO process) {
-        if (showProcessesOfAllUsers()) {
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.setWidth("1000px");
-            // panel.setWidth("100%");
+        boolean showProcessesOfAllUsers = showProcessesOfAllUsers();
 
-            ProcessFormater formater = new ProcessFormater(process, constants);
+        HorizontalPanel panel = new HorizontalPanel();
+        panel.setWidth("1000px");
+        // panel.setWidth("100%");
+        ProcessFormater formater = new ProcessFormater(process, constants);
 
-            // id
-            Label idLabel = new Label(process.getId().toString());
-            panel.add(idLabel);
-            // panel.setCellWidth(idLabel, "40px");
-            panel.setCellWidth(idLabel, "2%");
+        // id
+        Label idLabel = new Label(process.getId().toString());
+        panel.add(idLabel);
+        // panel.setCellWidth(idLabel, "40px");
+        panel.setCellWidth(idLabel, "2%");
 
-            // typ procesu
-            Widget typeLabel = formater.getProcessType();
-            panel.add(typeLabel);
-            panel.setCellWidth(typeLabel, "13%");
+        // typ procesu
+        Widget typeLabel = formater.getProcessType();
+        panel.add(typeLabel);
+        panel.setCellWidth(typeLabel, "13%");
 
+        if (showProcessesOfAllUsers) {
             // owner
             Label ownerLabel = new Label(process.getOwnerLogin());
             panel.add(ownerLabel);
             // panel.setCellWidth(idLabel, "40px");
             panel.setCellWidth(ownerLabel, "3%");
-
-            // //parametry
-            // Label paramLabel = new Label(formater.getParams());
-            // panel.add(paramLabel);
-            // panel.setCellWidth(paramLabel, "5%");
-
-            // stav procesu
-            Widget stateLabel = formater.getProcessState();
-            panel.add(stateLabel);
-            panel.setCellWidth(stateLabel, "8%");
-
-            // cas naplanovani
-            Label scheduledLabel = new Label(formater.getScheduled());
-            panel.add(scheduledLabel);
-            panel.setCellWidth(scheduledLabel, "10%");
-
-            // cas spusteni
-            Label startedLabel = new Label(process.getStarted());
-            panel.add(startedLabel);
-            panel.setCellWidth(startedLabel, "10%");
-
-            // cas ukonceni
-            Label finishedLabel = new Label(process.getStarted());
-            panel.add(finishedLabel);
-            panel.setCellWidth(finishedLabel, "10%");
-
-            // tlacitko na zastaveni procesu
-            Widget stopProcess = deletOrKillProcessWidget(process);
-            panel.add(stopProcess);
-            panel.setCellWidth(stopProcess, "5%");
-
-            // stazeni logu
-            Widget downloadLog = showLogWidget(process);
-            // new Label("stáhnout log");
-            panel.add(downloadLog);
-            panel.setCellWidth(downloadLog, "8%");
-
-            // stazeni vystupu
-            Widget downloadResults = downloadOutputWidget(process);
-            // new Label("stáhnout výstup");
-            panel.add(downloadResults);
-            panel.setCellWidth(downloadResults, "10%");
-
-            return panel;
-        } else {
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.setWidth("1000px");
-            // panel.setWidth("100%");
-
-            ProcessFormater formater = new ProcessFormater(process, constants);
-
-            // id
-            Label idLabel = new Label(process.getId().toString());
-            panel.add(idLabel);
-            // panel.setCellWidth(idLabel, "40px");
-            panel.setCellWidth(idLabel, "2%");
-
-            // typ procesu
-            Widget typeLabel = formater.getProcessType();
-            panel.add(typeLabel);
-            panel.setCellWidth(typeLabel, "13%");
-
-            // //parametry
-            // Label paramLabel = new Label(formater.getParams());
-            // panel.add(paramLabel);
-            // panel.setCellWidth(paramLabel, "5%");
-
-            // stav procesu
-            Widget stateLabel = formater.getProcessState();
-            panel.add(stateLabel);
-            panel.setCellWidth(stateLabel, "8%");
-
-            // cas naplanovani
-            Label scheduledLabel = new Label(formater.getScheduled());
-            panel.add(scheduledLabel);
-            panel.setCellWidth(scheduledLabel, "10%");
-
-            // cas spusteni
-            Label startedLabel = new Label(process.getStarted());
-            panel.add(startedLabel);
-            panel.setCellWidth(startedLabel, "10%");
-
-            // cas ukonceni
-            Label finishedLabel = new Label(process.getFinished());
-            panel.add(finishedLabel);
-            panel.setCellWidth(finishedLabel, "10%");
-
-            // tlacitko na zastaveni procesu
-            Widget stopProcess = deletOrKillProcessWidget(process);
-            panel.add(stopProcess);
-            panel.setCellWidth(stopProcess, "8%");
-
-            // stazeni logu
-            Widget downloadLog = showLogWidget(process);
-            // new Label("stáhnout log");
-            panel.add(downloadLog);
-            panel.setCellWidth(downloadLog, "8%");
-
-            // stazeni vystupu
-            Widget downloadResults = downloadOutputWidget(process);
-            // new Label("stáhnout výstup");
-            panel.add(downloadResults);
-            panel.setCellWidth(downloadResults, "10%");
-
-            return panel;
         }
+
+        // stav procesu
+        Widget stateLabel = formater.getProcessState();
+        panel.add(stateLabel);
+        panel.setCellWidth(stateLabel, "8%");
+
+        // cas naplanovani
+        Label scheduledLabel = new Label(formater.getScheduled());
+        panel.add(scheduledLabel);
+        panel.setCellWidth(scheduledLabel, "10%");
+
+        // cas spusteni
+        Label startedLabel = new Label(process.getStarted());
+        panel.add(startedLabel);
+        panel.setCellWidth(startedLabel, "10%");
+
+        // cas ukonceni
+        Label finishedLabel = new Label(process.getFinished());
+        panel.add(finishedLabel);
+        panel.setCellWidth(finishedLabel, "10%");
+
+        // tlacitko na zastaveni procesu
+        Widget stopProcess = deletOrKillProcessWidget(process);
+        panel.add(stopProcess);
+        panel.setCellWidth(stopProcess, showProcessesOfAllUsers ? "5%" : "8%");
+
+        // stazeni logu
+        Widget downloadLog = showLogWidget(process);
+        // new Label("stáhnout log");
+        panel.add(downloadLog);
+        panel.setCellWidth(downloadLog, "8%");
+
+        // stazeni vystupu
+        Widget downloadResults = downloadOutputWidget(process);
+        // new Label("stáhnout výstup");
+        panel.add(downloadResults);
+        panel.setCellWidth(downloadResults, "10%");
+
+        return panel;
     }
 
     private Widget downloadOutputWidget(final ProcessDTO process) {
