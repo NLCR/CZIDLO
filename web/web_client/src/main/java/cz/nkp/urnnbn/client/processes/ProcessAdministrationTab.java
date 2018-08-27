@@ -395,7 +395,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             panel.setCellWidth(startedLabel, "10%");
 
             // cas ukonceni
-            Label finishedLabel = new Label(process.getStarted());
+            Label finishedLabel = new Label(process.getFinished());
             panel.add(finishedLabel);
             panel.setCellWidth(finishedLabel, "10%");
 
