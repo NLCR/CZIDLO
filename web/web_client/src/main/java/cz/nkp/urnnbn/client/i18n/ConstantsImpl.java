@@ -348,6 +348,8 @@ public interface ConstantsImpl extends Constants {
 
     String processFinished();
 
+    String processDuration();
+
     String processDownloadOutput();
 
     String processShowLog();

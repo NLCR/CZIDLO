@@ -121,9 +121,7 @@ public class ProcessTableWidget extends Composite {
                 return new ProcessFormater(process, constants).getDurationFormatted();
             }
         };
-        // TODO: 27.8.18 I18N
-        table.addColumn(durationColumn, "duration");
-        //table.addColumn(durationColumn, constants.process);
+        table.addColumn(durationColumn, constants.processDuration());
 
         //ACTIONS
         List<HasCell<ProcessDTO, ?>> actionCells = new LinkedList<>();
