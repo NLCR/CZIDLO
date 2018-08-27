@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client.processes;
 
+import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,7 +28,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     private final ProcessAdministrationCss css = initCss();
     private final Timer processesRefreshTimer = initProcessRefreshTimer();
-    private static final int TIMER_INTERVAL = 1000;
+    private static final int TIMER_INTERVAL = 5000;
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private List<ProcessDTO> processes;
     private final XmlTransformationsPanel xmlTransformationsPanel;
@@ -107,8 +108,32 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
         // process list
-        result.add(processListHeading());
-        result.add(processListPanel());
+        // TODO: 28.8.18 cleanup unused list
+        /*result.add(processListHeading());
+        result.add(processListPanel());*/
+        // process table
+        result.add(new ProcessTableWidget(processes, constants,
+                new ActionCell.Delegate<ProcessDTO>() {
+                    @Override
+                    public void execute(ProcessDTO processDTO) {
+                        //deletOrKillProcessWidget(processDTO);
+                        deletOrKillProcess(processDTO);
+                    }
+                },
+                new ActionCell.Delegate<ProcessDTO>() {
+                    @Override
+                    public void execute(ProcessDTO processDTO) {
+                        //showLogWidget(processDTO);
+                        showLog(processDTO);
+                    }
+                },
+                new ActionCell.Delegate<ProcessDTO>() {
+                    @Override
+                    public void execute(ProcessDTO processDTO) {
+                        //downloadOutputWidget(processDTO);
+                        downloadOutput(processDTO);
+                    }
+                }));
         // planning processes
         result.add(planProcessHeading());
         result.add(planProcessPanel());
@@ -289,7 +314,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         panel.setCellWidth(finishedLabel, "10%");
 
         // trvani
-        Label durationLabel = new Label(formater.getDuration());
+        Label durationLabel = new Label(formater.getDurationFormatted());
         panel.add(durationLabel);
         panel.setCellWidth(durationLabel, "10%");
 
@@ -328,6 +353,13 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         }
     }
 
+    private void downloadOutput(final ProcessDTO process) {
+        if (process.getState() == ProcessDTOState.FINISHED) {
+            String url = "/processDataServer/processes/" + process.getId() + "/output";
+            Window.open(url, "_self", "enabled");
+        }
+    }
+
     private Widget showLogWidget(final ProcessDTO process) {
         if (process.getState() != ProcessDTOState.SCHEDULED && process.getState() != ProcessDTOState.CANCELED) {
             return new Button(constants.processShowLog(), new ClickHandler() {
@@ -340,6 +372,13 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             });
         } else {
             return new Label("");
+        }
+    }
+
+    private void showLog(final ProcessDTO process) {
+        if (process.getState() != ProcessDTOState.SCHEDULED && process.getState() != ProcessDTOState.CANCELED) {
+            String url = "/processDataServer/processes/" + process.getId() + "/log";
+            Window.open(url, "_blank", "enabled");
         }
     }
 
@@ -404,6 +443,53 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
                             Window.alert(messages.serverError(caught.getMessage()));
                         }
                     });
+                }
+            });
+        }
+    }
+
+
+    private void deletOrKillProcess(final ProcessDTO process) {
+        if (process.getState() == ProcessDTOState.SCHEDULED) {
+            processService.cancelScheduledProcess(process.getId(), new AsyncCallback<Boolean>() {
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    // nothing, process list will be updated in at most
+                    // on second anyway
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert(messages.serverError(caught.getMessage()));
+                }
+            });
+        } else if (process.getState() == ProcessDTOState.RUNNING) {
+            processService.killRunningProcess(process.getId(), new AsyncCallback<Boolean>() {
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    // nothing, process list will be updated in at most
+                    // on second anyway
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert(messages.serverError(caught.getMessage()));
+                }
+            });
+        } else {
+            processService.deleteFinishedProcess(process.getId(), new AsyncCallback<Void>() {
+
+                @Override
+                public void onSuccess(Void result) {
+                    // nothing, process list will be updated in at most
+                    // on second anyway
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert(messages.serverError(caught.getMessage()));
                 }
             });
         }

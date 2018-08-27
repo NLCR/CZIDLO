@@ -56,7 +56,18 @@ public class ProcessFormater {
                 then.getDay() == now.getDay();
     }
 
-    String getDuration() {
+    Long getDurationMillis() {
+        if (process.getStarted() != null && process.getFinished() != null) {
+            long start = process.getStarted();
+            long end = process.getFinished();
+            long duration = end - start;
+            return duration;
+        } else {
+            return null;
+        }
+    }
+
+    String getDurationFormatted() {
         if (process.getStarted() != null && process.getFinished() != null) {
             long start = process.getStarted();
             long end = process.getFinished();
