@@ -24,17 +24,19 @@ public class ProcessTableWidget extends Composite {
 
     private final List<ProcessDTO> processes;
     private final ConstantsImpl constants;
+    private final boolean limitToMyProcesses;
     private final ActionCell.Delegate<ProcessDTO> deleteProcessAction;
     private final ActionCell.Delegate<ProcessDTO> showLogAction;
     private final ActionCell.Delegate<ProcessDTO> downloadOutputAction;
 
 
     public ProcessTableWidget(List<ProcessDTO> processes, ConstantsImpl constants,
-                              ActionCell.Delegate<ProcessDTO> deleteProcessAction,
+                              boolean limitToMyProcesses, ActionCell.Delegate<ProcessDTO> deleteProcessAction,
                               ActionCell.Delegate<ProcessDTO> showLogAction,
                               ActionCell.Delegate<ProcessDTO> downloadOutputAction) {
         this.processes = processes;
         this.constants = constants;
+        this.limitToMyProcesses = limitToMyProcesses;
         this.deleteProcessAction = deleteProcessAction;
         this.showLogAction = showLogAction;
         this.downloadOutputAction = downloadOutputAction;
@@ -64,15 +66,16 @@ public class ProcessTableWidget extends Composite {
         };
         table.addColumn(typeColumn, constants.processType());
 
-        //TODO: filtrovat (jen moje)
-        //owner
-        TextColumn<ProcessDTO> ownerColumn = new TextColumn<ProcessDTO>() {
-            @Override
-            public String getValue(ProcessDTO process) {
-                return process.getOwnerLogin();
-            }
-        };
-        table.addColumn(ownerColumn, constants.user());
+        if (!limitToMyProcesses) {
+            //owner
+            TextColumn<ProcessDTO> ownerColumn = new TextColumn<ProcessDTO>() {
+                @Override
+                public String getValue(ProcessDTO process) {
+                    return process.getOwnerLogin();
+                }
+            };
+            table.addColumn(ownerColumn, constants.user());
+        }
 
         //state
         TextColumn<ProcessDTO> stateColumn = new TextColumn<ProcessDTO>() {

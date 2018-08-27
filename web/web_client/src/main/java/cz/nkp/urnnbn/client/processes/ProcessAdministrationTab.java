@@ -111,8 +111,11 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         // TODO: 28.8.18 cleanup unused list
         /*result.add(processListHeading());
         result.add(processListPanel());*/
+        if (getActiveUser().isSuperAdmin()) {
+            result.add(limitListCheckBox());
+        }
         // process table
-        result.add(new ProcessTableWidget(processes, constants,
+        result.add(new ProcessTableWidget(processes, constants,limitToMyProcess,
                 new ActionCell.Delegate<ProcessDTO>() {
                     @Override
                     public void execute(ProcessDTO processDTO) {
