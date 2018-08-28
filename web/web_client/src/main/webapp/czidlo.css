@@ -72,3 +72,8 @@
 	/* 	background: orange !important; */
 	border-color: #92c1f0 !important;
 }
+
+.czidloImgBtn {
+    margin: 6px;
+    padding: 4px;
+}

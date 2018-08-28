@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.client.processes;
 
-import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
+import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -28,21 +28,29 @@ public class ProcessTableWidget extends Composite {
     private final List<ProcessDTO> processes;
     private final ConstantsImpl constants;
     private final boolean limitToMyProcesses;
-    private final ActionCell.Delegate<ProcessDTO> deleteProcessAction;
-    private final ActionCell.Delegate<ProcessDTO> showLogAction;
-    private final ActionCell.Delegate<ProcessDTO> downloadOutputAction;
 
+    private final ProcessButtonAction.Operation cancelProcessOperation;
+    private final ProcessButtonAction.Operation stopProcessOperation;
+    private final ProcessButtonAction.Operation deleteProcessOperation;
+    private final ProcessButtonAction.Operation showLogOperation;
+    private final ProcessButtonAction.Operation downloadOutputOperation;
 
     public ProcessTableWidget(List<ProcessDTO> processes, ConstantsImpl constants,
-                              boolean limitToMyProcesses, ActionCell.Delegate<ProcessDTO> deleteProcessAction,
-                              ActionCell.Delegate<ProcessDTO> showLogAction,
-                              ActionCell.Delegate<ProcessDTO> downloadOutputAction) {
+                              boolean limitToMyProcesses,
+                              ProcessButtonAction.Operation cancelProcessOperation,
+                              ProcessButtonAction.Operation stopProcessOperation,
+                              ProcessButtonAction.Operation deleteProcessOperation,
+                              ProcessButtonAction.Operation showLogOperation,
+                              ProcessButtonAction.Operation downloadOutputOperation
+    ) {
         this.processes = processes;
         this.constants = constants;
         this.limitToMyProcesses = limitToMyProcesses;
-        this.deleteProcessAction = deleteProcessAction;
-        this.showLogAction = showLogAction;
-        this.downloadOutputAction = downloadOutputAction;
+        this.cancelProcessOperation = cancelProcessOperation;
+        this.stopProcessOperation = stopProcessOperation;
+        this.deleteProcessOperation = deleteProcessOperation;
+        this.showLogOperation = showLogOperation;
+        this.downloadOutputOperation = downloadOutputOperation;
         initWidget(buildTable());
     }
 
@@ -136,40 +144,30 @@ public class ProcessTableWidget extends Composite {
         //ACTIONS
         List<HasCell<ProcessDTO, ?>> actionCells = new LinkedList<>();
 
-        //delete process
-        // TODO: 27.8.18 separate buttons
-        actionCells.add(new ProcessActionHasCell(constants.processCancel() + "/" + constants.processStop() + "/" + constants.processDelete(), deleteProcessAction));
-        /*actionCells.add(new ProcessActionHasCell(constants.delete(), new ActionCell.Delegate<ProcessDTO>() {
+        //cancel process
+        actionCells.add(new ProcessButtonHasCell(new ProcessButtonAction("img/process_cancel.png", constants.processCancel(),
+                cancelProcessOperation,
+                ProcessDTOState.SCHEDULED)));
 
-            @Override
-            public void execute(ProcessDTO process) {
-                //TODO: delete
-            }
-        }));*/
+        //stop process
+        actionCells.add(new ProcessButtonHasCell(new ProcessButtonAction("img/process_stop.png", constants.processStop(),
+                stopProcessOperation,
+                ProcessDTOState.RUNNING)));
+
+        //delete process
+        actionCells.add(new ProcessButtonHasCell(new ProcessButtonAction("img/process_delete.png", constants.processDelete(),
+                deleteProcessOperation,
+                ProcessDTOState.FINISHED, ProcessDTOState.CANCELED, ProcessDTOState.FAILED, ProcessDTOState.KILLED)));
 
         //show log
-        // TODO: 27.8.18 show only for proper states
-        actionCells.add(new ProcessActionHasCell(constants.processShowLog(), showLogAction));
-        /*actionCells.add(new ProcessActionHasCell(constants.processShowLog(), new ActionCell.Delegate<ProcessDTO>() {
-
-            @Override
-            public void execute(ProcessDTO process) {
-                //TODO: show log
-            }
-        }));*/
-
+        actionCells.add(new ProcessButtonHasCell(new ProcessButtonAction("img/process_show_log.png", constants.processShowLog(),
+                showLogOperation,
+                ProcessDTOState.RUNNING, ProcessDTOState.CANCELED, ProcessDTOState.FINISHED, ProcessDTOState.FAILED, ProcessDTOState.KILLED)));
 
         //download output
-        // TODO: 27.8.18 show only for proper states
-        actionCells.add(new ProcessActionHasCell(constants.processDownloadOutput(), downloadOutputAction));
-        /*actionCells.add(new ProcessActionHasCell(constants.processDownloadOutput(), new ActionCell.Delegate<ProcessDTO>() {
-
-            @Override
-            public void execute(ProcessDTO process) {
-                //TODO: download output
-            }
-        }));*/
-
+        actionCells.add(new ProcessButtonHasCell(new ProcessButtonAction("img/process_download_output.png", constants.processDownloadOutput(),
+                downloadOutputOperation,
+                ProcessDTOState.FINISHED)));
 
         CompositeCell<ProcessDTO> actionsCell = new CompositeCell<>(actionCells);
         Column<ProcessDTO, ProcessDTO> actionsColumn = new Column<ProcessDTO, ProcessDTO>(actionsCell) {
@@ -180,7 +178,6 @@ public class ProcessTableWidget extends Composite {
             }
         };
         table.addColumn(actionsColumn);
-
 
         // Data provider.
         ListDataProvider<ProcessDTO> dataProvider = new ListDataProvider<>(processes);
