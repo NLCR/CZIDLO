@@ -4,7 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>czidlo</artifactId>
-    <version>{czidlo_version}</version>
+    <version>4.6.alpha2</version>
+    <!--<version>${czidlo_version}</version>-->
     <packaging>pom</packaging>
     <name>CZIDLO</name>
     <description>Application for administration of national librarian URN:NBN registry</description>
@@ -45,7 +46,7 @@
     </issueManagement>
 
     <properties>
-        <czidlo_version>4.6.alpha</czidlo_version>
+        <czidlo_version>4.6.alpha2</czidlo_version>
     </properties>
 
     <modules>

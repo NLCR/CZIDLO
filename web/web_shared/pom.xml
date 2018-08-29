@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
-        <version>{czidlo_version}</version>
+        <version>4.6.alpha2</version>
+        <!--upgrade to maven 3.5 might fix this-->
+        <!--<version>${czidlo_version}</version>-->
     </parent>
 
     <artifactId>web_shared</artifactId>
     <name>CZIDLO - web (shared)</name>
+    <version>4.6.alpha2</version>
+    <!--<version>${czidlo_version}</version>-->
     <packaging>jar</packaging>
 
     <build>
