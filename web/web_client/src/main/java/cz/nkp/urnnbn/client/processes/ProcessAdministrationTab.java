@@ -18,7 +18,7 @@ import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class ProcessAdministrationTab extends SingleTabContentPanel {
@@ -53,6 +53,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     public ProcessAdministrationTab(TabsPanel superPanel) {
         super(superPanel, "processes");
         if (getActiveUser().isSuperAdmin()) {
+            // TODO: 30.8.18 handle limitToMyProcess in table widget. Now it does not work properly, because table is not being re-drawn every second 
             limitToMyProcess = false;
         }
         xmlTransformationsPanel = new XmlTransformationsPanel(this);
@@ -60,6 +61,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     @Override
     public void onLoad() {
+        // TODO: 30.8.18 properly handle tab hiding, i.e. disable fetching process list when switched to another tab
         loadProcesses();
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
@@ -73,8 +75,14 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
             @Override
             public void onSuccess(List<ProcessDTO> result) {
-                processes = result;
-                reload();
+                if (processes != null) {
+                    LOGGER.fine("loaded " + processes.size() + " processes");
+                }
+
+                if (processes == null || foundDifference(processes, result)) {
+                    processes = result;
+                    reload();
+                }
             }
 
             @Override
@@ -91,6 +99,47 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         } else {
             processService.getUsersProcesses(callback);
         }
+    }
+
+    private boolean foundDifference(List<ProcessDTO> originalProcesses, List<ProcessDTO> newProcesses) {
+
+        //search for added or changed processes
+        Map<Long, ProcessDTO> originalProcessMap = new HashMap<>();
+        for (ProcessDTO process : originalProcesses) {
+            originalProcessMap.put(process.getId(), process);
+        }
+        for (ProcessDTO newProcess : newProcesses) {
+            if (!originalProcessMap.keySet().contains(newProcess.getId())) {
+                //new process
+                return true;
+            } else {
+                //existing process
+                if (foundDifference(newProcess, originalProcessMap.get(newProcess.getId()))) {
+                    return true;
+                }
+            }
+        }
+
+        //search for removed processes
+        Set<Long> newProcessIds = new HashSet<>();
+        for (ProcessDTO process : newProcesses) {
+            newProcessIds.add(process.getId());
+        }
+        for (ProcessDTO originalProcess : originalProcesses) {
+            if (!newProcessIds.contains(originalProcess.getId())) {
+                return true;
+            }
+        }
+
+        //otherwise
+        return false;
+    }
+
+    private boolean foundDifference(ProcessDTO newProcesses, ProcessDTO oldProcesses) {
+        if (newProcesses.getState() != oldProcesses.getState()) {
+            return true;
+        }
+        return false;
     }
 
     private void reload() {
