@@ -45,7 +45,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
             @Override
             public void run() {
-                loadProcesses();
+                loadProcesses(false);
             }
         };
     }
@@ -53,7 +53,6 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     public ProcessAdministrationTab(TabsPanel superPanel) {
         super(superPanel, "processes");
         if (getActiveUser().isSuperAdmin()) {
-            // TODO: 30.8.18 handle limitToMyProcess in table widget. Now it does not work properly, because table is not being re-drawn every second 
             limitToMyProcess = false;
         }
         xmlTransformationsPanel = new XmlTransformationsPanel(this);
@@ -62,7 +61,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     @Override
     public void onLoad() {
         // TODO: 30.8.18 properly handle tab hiding, i.e. disable fetching process list when switched to another tab
-        loadProcesses();
+        loadProcesses(false);
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
 
@@ -70,7 +69,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         return getActiveUser().isSuperAdmin() && !limitToMyProcess;
     }
 
-    private void loadProcesses() {
+    private void loadProcesses(final boolean forceReload) {
         AsyncCallback<List<ProcessDTO>> callback = new AsyncCallback<List<ProcessDTO>>() {
 
             @Override
@@ -79,7 +78,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
                     LOGGER.fine("loaded " + processes.size() + " processes");
                 }
 
-                if (processes == null || foundDifference(processes, result)) {
+                if (forceReload || processes == null || foundDifference(processes, result)) {
                     processes = result;
                     reload();
                 }
@@ -161,7 +160,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         }
         // process table
         // TODO: 28.8.18 add to scrollpanel or some other way solve possible hundreds of processes hiding other stuff in the panel
-        // TODO: 28.8.18 keep table state (sorting) througout table re-creation every second when new process data arrives
+        // TODO: 28.8.18 keep table state (sorting) throughout table re-creation every second when new process data arrives
         panel.add(new ProcessTableWidget(processes, constants, limitToMyProcess,
                 new ProcessButtonAction.Operation() {
                     @Override
@@ -210,7 +209,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             @Override
             public void onClick(ClickEvent event) {
                 limitToMyProcess = ((CheckBox) event.getSource()).getValue();
-                loadProcesses();
+                loadProcesses(true);
             }
         });
         return checkbox;
