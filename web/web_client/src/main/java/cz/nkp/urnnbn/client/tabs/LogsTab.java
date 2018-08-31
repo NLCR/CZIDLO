@@ -1,9 +1,5 @@
 package cz.nkp.urnnbn.client.tabs;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,13 +10,16 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
 import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.resources.LogsPanelCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.LogsService;
 import cz.nkp.urnnbn.client.services.LogsServiceAsync;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class LogsTab extends SingleTabContentPanel {
 
@@ -29,7 +28,8 @@ public class LogsTab extends SingleTabContentPanel {
     private static final String ADMIN_LOG_URL = "/processDataServer/adminLog";
     private final LogsServiceAsync logsService = GWT.create(LogsService.class);
     private final LogsPanelCss css = initCss();
-    private Timer refreshTabTimer = null;
+    //private Timer logRefreshTimer = null;
+    private Timer logRefreshTimer = initTimer();
     private List<String> adminLogsList = new ArrayList<String>();
     private long adminLogsLastUpdated = 0;
 
@@ -79,35 +79,23 @@ public class LogsTab extends SingleTabContentPanel {
 
     @Override
     public void onLoad() {
-        LOGGER.info("onLoad");
+        LOGGER.fine("onLoad");
         reload();
-        startTimerIfNotRunningAlready();
+        loadAdminLogsIfChanged();
     }
 
     @Override
     public void onSelected() {
-        // LOGGER.fine("onSelected");
+        LOGGER.fine("onSelected");
         super.onSelected();
-        startTimerIfNotRunningAlready();
+        logRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
 
     @Override
     public void onDeselected() {
-        stopTimerIfRunning();
-    }
-
-    private void startTimerIfNotRunningAlready() {
-        if (refreshTabTimer == null) {
-            refreshTabTimer = initTimer();
-            refreshTabTimer.scheduleRepeating(TIMER_INTERVAL);
-        }
-    }
-
-    private void stopTimerIfRunning() {
-        if (refreshTabTimer != null) {
-            refreshTabTimer.cancel();
-            refreshTabTimer = null;
-        }
+        LOGGER.fine("onSelected");
+        super.onDeselected();
+        logRefreshTimer.cancel();
     }
 
     private Timer initTimer() {
@@ -125,12 +113,14 @@ public class LogsTab extends SingleTabContentPanel {
 
             @Override
             public void onSuccess(Long result) {
-                // logger.info("Admin logs last updated: " + result);
+                //LOGGER.fine("admin logs last updated: " + result);
                 if (result > adminLogsLastUpdated) {
                     adminLogsLastUpdated = result;
+                    LOGGER.fine("updating admin logs now");
                     loadAdminLogs();
+                } else {
+                    LOGGER.fine("no need to update admin logs now");
                 }
-
             }
 
             private void loadAdminLogs() {
@@ -138,15 +128,17 @@ public class LogsTab extends SingleTabContentPanel {
 
                     @Override
                     public void onSuccess(List<String> result) {
+                        adminLogsList = result;
                         if (adminLogsList != null) {
-                            // logger.info("Admin logs loaded");
-                            adminLogsList = result;
                             reload();
+                        } else {
+                            adminLogsLastUpdated = 0;
                         }
                     }
 
                     @Override
                     public void onFailure(Throwable caught) {
+                        adminLogsLastUpdated = 0;
                         if (caught instanceof SessionExpirationException) {
                             Utils.sessionExpirationRedirect();
                         } else {
