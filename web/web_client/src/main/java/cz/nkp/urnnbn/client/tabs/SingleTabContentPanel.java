@@ -1,14 +1,13 @@
 package cz.nkp.urnnbn.client.tabs;
 
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ScrollPanel;
-
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
+
+import java.util.ArrayList;
 
 public abstract class SingleTabContentPanel extends ScrollPanel {
 
@@ -44,7 +43,9 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
         }
     }
 
-    public abstract void onDeselected();
+    public void onDeselected() {
+        //nothing here, but not abstract method to be consistent with onSelected
+    }
 
     private native void gaPageEvent(String tabName) /*-{
                                                     $wnd.ga('send', 'pageview',tabName);

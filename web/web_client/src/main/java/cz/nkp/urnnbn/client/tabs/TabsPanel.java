@@ -1,7 +1,5 @@
 package cz.nkp.urnnbn.client.tabs;
 
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -13,7 +11,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-
 import cz.nkp.urnnbn.client.accounts.UsersAdministrationTab;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -25,6 +22,8 @@ import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
+
+import java.util.ArrayList;
 
 public class TabsPanel extends Composite {
 
@@ -126,6 +125,7 @@ public class TabsPanel extends Composite {
 
         private TabLayoutPanel rootPanel;
         private ArrayList<SingleTabContentPanel> panels = new ArrayList<SingleTabContentPanel>();
+        private Integer previouslySelectedPanelIndex = null;
 
         public PanelsBuilder(TabLayoutPanel rootPanel) {
             this.rootPanel = rootPanel;
@@ -146,6 +146,13 @@ public class TabsPanel extends Composite {
                         SingleTabContentPanel selectedPanel = panels.get(selected);
                         selectedPanel.onSelected();
                     }
+                    if (previouslySelectedPanelIndex != null) {
+                        if (previouslySelectedPanelIndex < panels.size()) {
+                            SingleTabContentPanel previouslySelectedPanel = panels.get(previouslySelectedPanelIndex);
+                            previouslySelectedPanel.onDeselected();
+                        }
+                    }
+                    previouslySelectedPanelIndex = selected;
                 }
             });
         }

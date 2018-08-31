@@ -27,7 +27,7 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     private final ProcessAdministrationCss css = initCss();
     private final Timer processesRefreshTimer = initProcessRefreshTimer();
-    private static final int TIMER_INTERVAL = 1000;
+    private static final int TIMER_INTERVAL = 500;
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private List<ProcessDTO> processes;
     private final XmlTransformationsPanel xmlTransformationsPanel;
@@ -56,13 +56,6 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
             limitToMyProcess = false;
         }
         xmlTransformationsPanel = new XmlTransformationsPanel(this);
-    }
-
-    @Override
-    public void onLoad() {
-        // TODO: 30.8.18 properly handle tab hiding, i.e. disable fetching process list when switched to another tab
-        loadProcesses(false);
-        processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
 
     private boolean showProcessesOfAllUsers() {
@@ -350,14 +343,22 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     }
 
     @Override
+    public void onLoad() {
+        //LOGGER.finer("onLoad");
+    }
+
+    @Override
     public void onSelected() {
-        // LOGGER.fine("onSelected");
+        LOGGER.finer("onSelected");
         super.onSelected();
+        loadProcesses(false);
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
     }
 
     @Override
     public void onDeselected() {
+        super.onDeselected();
+        LOGGER.finer("onDeselected");
         processesRefreshTimer.cancel();
     }
 
