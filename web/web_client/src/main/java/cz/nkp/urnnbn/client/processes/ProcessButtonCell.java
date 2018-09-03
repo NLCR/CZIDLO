@@ -47,7 +47,8 @@ public class ProcessButtonCell extends AbstractCell<ProcessDTO> {
                 int imgSize = 14;
                 safeHtmlBuilder.appendHtmlConstant("<button ")
                         .appendHtmlConstant("type=\"button\" ")
-                        .appendHtmlConstant("style=\"margin: 2px;padding: 2px;\" ")
+                        .appendHtmlConstant("class=\"czidloImgBtn\" ")
+                        //.appendHtmlConstant("style=\"margin: 2px;padding: 2px; cursor:pointer;\" ")
                         .appendHtmlConstant(">")
                         .appendHtmlConstant("<img src=\"" + action.getBtnImgUrl() + "\" title=\"" + action.getHint() + "\" width=\"" + imgSize + "px\"" + "/>")
                         .appendHtmlConstant("</button>").toSafeHtml();

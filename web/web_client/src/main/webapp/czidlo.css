@@ -74,6 +74,7 @@
 }
 
 .czidloImgBtn {
-    margin: 6px;
-    padding: 4px;
+    margin: 2px;
+    padding: 2px;
+    cursor: pointer;
 }
