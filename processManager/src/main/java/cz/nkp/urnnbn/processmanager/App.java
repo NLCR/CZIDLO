@@ -103,7 +103,7 @@ public class App {
         // }
         // manager.scheduleNewProcess("nkpAdmin", ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT, new String[]{"tst01"});
         manager.scheduleNewProcess("superAdmin", ProcessType.OAI_ADAPTER, new String[] { "oaiAdapter-rehan-test", "dlhIob5z",
-                UrnNbnRegistrationMode.BY_REGISTRAR.toString(), "duha", "http://duha-devel.mzk.cz/oai", "oai_dc", null,
+                UrnNbnRegistrationMode.BY_REGISTRAR.toString(), "duha", "http://duha.mzk.cz/oai", "oai_dc", null,
                 "/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_import.xsl",
                 "/home/martin/NetBeansProjects/oaiAdapter/src/main/resources/cz/nkp/urnnbn/oaiadapter/stylesheets/dc_duha_digital_instance.xsl",
                 "/home/martin/tmp/oaiAdapter/report.txt" });

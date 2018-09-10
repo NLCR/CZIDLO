@@ -338,13 +338,13 @@ public class SingleRecordProcessor {
         DigitalInstance merged = new DigitalInstance();
         merged.setLibraryId(newDi.getLibraryId());
         merged.setUrl(newDi.getUrl());
-        //format
+        //accessiblity
         if (newDi.getAccessibility() == null || newDi.getAccessibility().isEmpty()) {
             merged.setAccessibility(currentDi.getAccessibility());
         } else {
             merged.setAccessibility(newDi.getAccessibility());
         }
-        //accessiblity
+        //format
         if (newDi.getFormat() == null || newDi.getFormat().isEmpty()) {
             merged.setFormat(currentDi.getFormat());
         } else {
