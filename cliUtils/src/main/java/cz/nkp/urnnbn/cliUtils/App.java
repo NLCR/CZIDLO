@@ -74,7 +74,7 @@ public class App {
                 builder.append('\t').append("Result of this action is credentials containing login, Base64-encoded hash of password+salt and Base64-encoded salt. " +
                         "This should be put in security.json in authentication section for BasicAuthPlugin. For example:").append('\n');
                 builder.append("\"credentials\": {").append('\n');
-                builder.append('\t').append("\"solrUser123\": \"IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c=\"").append('\n');
+                builder.append('\t').append("\"czidloIndexer\": \"IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c=\"").append('\n');
                 builder.append("}").append('\n');
                 break;
         }

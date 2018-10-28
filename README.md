@@ -213,9 +213,9 @@ There is also new database required since version 3.0. It stores data of externa
 
 Initialization of this database is described in section installation (item 5) of this document.
 
-Concrete actions needed to upgrade database(s) to current version 4.2.2 are described bellow.
+Concrete actions needed to upgrade database(s) to work correctly with current version 4.5 are described bellow.
 
-You should allways backup your database before upgrading it in order to avoid data loss if something goes wrong.
+You should always backup your database before upgrading it in order to avoid data loss if something goes wrong.
 
 Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
@@ -282,7 +282,7 @@ Proceed with Solr installation as described in chapter Solr installation.
 1. Use script `updateDatabase_4.2.2_to_4.3.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
 Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.2.2_to_4.3.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
 Since there is nontrivial amount of data being processed here (precomputed tables for search) this can take a while. Upgrading database with 1 mil digital documents lasted about 20 minutes on average computer.
-2. Proceed as described in "Upgrade from version 4.2.2" section of this document.
+2. Proceed as described in "Upgrade from version 4.3" section of this document.
 
 #### Process database ####
 
@@ -391,7 +391,8 @@ If installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must
 in properties `indexer.solr.login`, `indexer.solr.password`, `process.solrIndexer.login` and `process.solrIndexer.password`.
 8. use `cliUtils.jar` to generate credentials for new login and pasword and change configuration file `$SOLR_HOME/server/solr/security.json` accordingly:
 for example: `java -jar cliUtils.jar build_solr_BasicAuthPlugin_credentials login password`
-9. start Solr server with `$SOLR_HOME/bin/solr start` 
+9. update `$SOLR_HOME/server/solr/security.json` with new credentials
+10. start Solr server with `$SOLR_HOME/bin/solr start`
 
 Solr server needn't be visible to the client browser, application `web` works as a proxy. 
 When all applications are properly deployed (especially web, api) you should schedule indexation process for all the content.
