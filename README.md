@@ -390,7 +390,7 @@ If installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must
 7. change default login and password for solr indexer (czidloIndexer:czidloRolls) in all configuration files 
 in properties `indexer.solr.login`, `indexer.solr.password`, `process.solrIndexer.login` and `process.solrIndexer.password`.
 8. use `cliUtils.jar` to generate credentials for new login and pasword and change configuration file `$SOLR_HOME/server/solr/security.json` accordingly:
-for example: `java -jar cliUtils.jar build_solr_BasicAuthPlugin_credentials login password`
+for example: `java -jar cliUtils.jar build_solr_basic-auth-plugin_credentials login password`
 9. update `$SOLR_HOME/server/solr/security.json` with new credentials
 10. start Solr server with `$SOLR_HOME/bin/solr start`
 

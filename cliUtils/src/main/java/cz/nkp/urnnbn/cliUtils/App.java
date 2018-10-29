@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class App {
 
-    private static final String ACTION_BUILD_SOLR_PASSWORD_HASH = "build_solr_BasicAuthPlugin_credentials";
+    private static final String ACTION_BUILD_SOLR_PASSWORD_HASH = ";";
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -70,7 +70,7 @@ public class App {
         builder.append("Usage: java -jar cliUtils.jar ").append(action);
         switch (action) {
             case ACTION_BUILD_SOLR_PASSWORD_HASH:
-                builder.append("LOGIN PASSWORD").append('\n');
+                builder.append(" LOGIN PASSWORD").append('\n');
                 builder.append('\t').append("Result of this action is credentials containing login, Base64-encoded hash of password+salt and Base64-encoded salt. " +
                         "This should be put in security.json in authentication section for BasicAuthPlugin. For example:").append('\n');
                 builder.append("\"credentials\": {").append('\n');
