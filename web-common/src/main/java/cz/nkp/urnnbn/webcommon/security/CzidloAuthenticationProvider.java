@@ -4,24 +4,22 @@
  */
 package cz.nkp.urnnbn.webcommon.security;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
+import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.services.AuthenticationService;
+import cz.nkp.urnnbn.services.Services;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import cz.nkp.urnnbn.core.dto.User;
-import cz.nkp.urnnbn.services.AuthenticationService;
-import cz.nkp.urnnbn.services.Services;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class CzidloAuthenticationProvider implements AuthenticationProvider {
@@ -31,8 +29,8 @@ public class CzidloAuthenticationProvider implements AuthenticationProvider {
     static final List<GrantedAuthority> USER = new ArrayList<GrantedAuthority>();
 
     static {
-        ADMIN.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-        USER.add(new GrantedAuthorityImpl("ROLE_USER"));
+        ADMIN.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        USER.add(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

@@ -20,7 +20,7 @@
     <properties>
         <!-- TODO: mozna hodit do parent modulu -->
         <apache.commons-io.version>2.3</apache.commons-io.version>
-        <spring.version>3.2.2.RELEASE</spring.version>
+        <spring.version>5.1.1.RELEASE</spring.version>
         <apache.commons-collections.version>3.2.1</apache.commons-collections.version>
         <!--<gwtVersion>2.7.0</gwtVersion>-->
     </properties>

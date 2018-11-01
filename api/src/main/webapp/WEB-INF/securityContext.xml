@@ -1,17 +1,16 @@
-
 <beans:beans xmlns="http://www.springframework.org/schema/security"
-    xmlns:beans="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans.xsd
                     http://www.springframework.org/schema/security
-                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+                    http://www.springframework.org/schema/security/spring-security.xsd">
 
 <!--    <http use-expressions="true">
         <intercept-url pattern="/**" access="permitAll" />
         <form-login />
     </http>-->
-    
+
     <!-- TODO: vsechny staticke a neutorizovane zdroje -->
 <!--    <http pattern="**" security="none"/>-->
     <!-- nahore docasne zakazna bezpecnost pro vsechno -->
@@ -19,32 +18,33 @@
     <http pattern="/test/test.jsp*" security="none"/>
 <!--    <http pattern="/test/login.jsp" security="none"/>
     <http pattern="/test/logout.jsp*" security="none"/>-->
-  
+
 <!--    <http auto-config='true'>-->
     <http>
         <http-basic/>
 <!--        <form-login login-page='/test/login.jsp'/>-->
 <!--<form-login/>-->
-        <intercept-url pattern="/test/admin.jsp" access="ROLE_ADMIN" />
-        <intercept-url pattern="/test/user.jsp" access="ROLE_USER" />
+        <intercept-url pattern="/test/admin.jsp" access="hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/test/user.jsp" access="hasRole('ROLE_USER')" />
         <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
 <!--        <intercept-url pattern="/test/logout.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" />-->
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
-        <intercept-url pattern="/v2/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
-        
-        <intercept-url pattern="/v3/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
-        <intercept-url pattern="/v3/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
-        <intercept-url pattern="/v3/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
-        
-        <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
-        <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
-        <intercept-url pattern="/v4/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
+        <!--test-->
+        <intercept-url pattern="/v2/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v2/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v2/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="DELETE" requires-channel="https"/>
 
-        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="PUT" requires-channel="https"/>
-        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="POST" requires-channel="https"/>
-        <intercept-url pattern="/v5/**" access="ROLE_USER, ROLE_ADMIN" method="DELETE" requires-channel="https"/>
-                
+        <intercept-url pattern="/v3/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v3/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v3/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="DELETE" requires-channel="https"/>
+
+        <intercept-url pattern="/v4/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v4/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v4/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="DELETE" requires-channel="https"/>
+
+        <intercept-url pattern="/v5/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="PUT" requires-channel="https"/>
+        <intercept-url pattern="/v5/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="POST" requires-channel="https"/>
+        <intercept-url pattern="/v5/**" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" method="DELETE" requires-channel="https"/>
+
         <session-management>
             <!--This will prevent a user from logging in multiple times - a second login will cause the first to be invalidated.-->
             <concurrency-control max-sessions="1" />
@@ -57,7 +57,7 @@
     <authentication-manager>
         <authentication-provider ref='authenticationProvider'/>
     </authentication-manager>
-    
+
     <beans:bean id="authenticationProvider" class="cz.nkp.urnnbn.webcommon.security.CzidloAuthenticationProvider"/>
-    <beans:bean id="logListener" class="cz.nkp.urnnbn.webcommon.security.SecurityListener"/>     
+    <beans:bean id="logListener" class="cz.nkp.urnnbn.webcommon.security.SecurityListener"/>
 </beans:beans>
