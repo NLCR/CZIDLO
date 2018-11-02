@@ -1,25 +1,18 @@
 package cz.nkp.urnnbn.client.institutions;
 
-import java.util.logging.Logger;
-
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
-
-import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
-import cz.nkp.urnnbn.client.services.UserAccountService;
-import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 
-public class InstitutionsAdminstrationTab extends SingleTabContentPanel {
+import java.util.logging.Logger;
 
-    private static final Logger LOGGER = Logger.getLogger(InstitutionsAdminstrationTab.class.getName());
-    private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
+public class InstitutionsAdministrationTab extends SingleTabContentPanel {
+
+    private static final Logger LOGGER = Logger.getLogger(InstitutionsAdministrationTab.class.getName());
     private Panel activePanel;
 
-    public InstitutionsAdminstrationTab(TabsPanel superPanel) {
+    public InstitutionsAdministrationTab(TabsPanel superPanel) {
         super(superPanel, "registrars");
     }
 
@@ -48,13 +41,13 @@ public class InstitutionsAdminstrationTab extends SingleTabContentPanel {
 
     @Override
     public void onSelected() {
-        // LOGGER.fine("onSelected");
+        //LOGGER.fine("onSelected");
         super.onSelected();
     }
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
-
+        //LOGGER.fine("onDeSelected");
+        super.onDeselected();
     }
 }

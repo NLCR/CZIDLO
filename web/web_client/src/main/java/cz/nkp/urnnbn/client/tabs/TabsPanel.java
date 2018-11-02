@@ -15,7 +15,7 @@ import cz.nkp.urnnbn.client.accounts.UsersAdministrationTab;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.insertRecord.DataInputTab;
-import cz.nkp.urnnbn.client.institutions.InstitutionsAdminstrationTab;
+import cz.nkp.urnnbn.client.institutions.InstitutionsAdministrationTab;
 import cz.nkp.urnnbn.client.processes.ProcessAdministrationTab;
 import cz.nkp.urnnbn.client.search.SearchTab;
 import cz.nkp.urnnbn.client.services.UserAccountService;
@@ -91,7 +91,7 @@ public class TabsPanel extends Composite {
         }
 
         // institutions tab
-        builder.appendPanel(new InstitutionsAdminstrationTab(this), constants.tabInstitutionsLabel());
+        builder.appendPanel(new InstitutionsAdministrationTab(this), constants.tabInstitutionsLabel());
 
         // statistics tab
         builder.appendPanel(new StatisticsTab(this), constants.tabStatisticsLabel());

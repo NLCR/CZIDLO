@@ -37,12 +37,12 @@ public class InstitutionListPanel extends VerticalPanel {
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final InstitutionsPanelCss css = InstitutionsResources.loadCss();
     private final InstitutionsServiceAsync institutionsService = GWT.create(InstitutionsService.class);
-    private final InstitutionsAdminstrationTab superPanel;
+    private final InstitutionsAdministrationTab superPanel;
     private final UserDTO user;
     private ArrayList<RegistrarDTO> registrars = new ArrayList<>(0);
     private ArrayList<ArchiverDTO> archivers = new ArrayList<>(0);
 
-    public InstitutionListPanel(InstitutionsAdminstrationTab superPanel, UserDTO user) {
+    public InstitutionListPanel(InstitutionsAdministrationTab superPanel, UserDTO user) {
         this.superPanel = superPanel;
         this.user = user;
     }
