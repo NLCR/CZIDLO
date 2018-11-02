@@ -316,7 +316,9 @@ public interface ConstantsImpl extends Constants {
 
     String processListShowMyOnlyButton();
 
-    String processPlanning();
+    String processDefinitions();
+
+    String processInstances();
 
     String REGISTRARS_URN_NBN_CSV_EXPORT();
 

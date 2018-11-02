@@ -1,21 +1,10 @@
 package cz.nkp.urnnbn.client.processes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
@@ -28,6 +17,11 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
 public class XmlTransformationsPanel extends VerticalPanel {
 
     private static final Logger logger = Logger.getLogger(XmlTransformationsPanel.class.getName());
@@ -36,8 +30,8 @@ public class XmlTransformationsPanel extends VerticalPanel {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final SingleTabContentPanel superPanel;
 
-    private List<XmlTransformationDTO> ddRegistrationTransformations = Collections.<XmlTransformationDTO> emptyList();
-    private List<XmlTransformationDTO> diImportTransformations = Collections.<XmlTransformationDTO> emptyList();
+    private List<XmlTransformationDTO> ddRegistrationTransformations = Collections.<XmlTransformationDTO>emptyList();
+    private List<XmlTransformationDTO> diImportTransformations = Collections.<XmlTransformationDTO>emptyList();
 
     private ProcessAdministrationCss initCss() {
         Resources resources = GWT.create(Resources.class);
@@ -54,16 +48,16 @@ public class XmlTransformationsPanel extends VerticalPanel {
 
     void reload() {
         clear();
-        // add(templateManagementHeader());
+        add(templateManagementHeader());
         add(ddRegistrationTemplateManagementPanel());
         add(diImportTemplateManagementPanel());
     }
 
-    // private Widget templateManagementHeader() {
-    // Label label = new Label("Správa šablon pro oai adapter");
-    // label.addStyleName(css.processListHeading());
-    // return label;
-    // }
+    private Widget templateManagementHeader() {
+        Label label = new Label("Správa šablon pro oai adapter");
+        label.addStyleName(css.processListHeading());
+        return label;
+    }
 
     private Widget ddRegistrationTemplateManagementPanel() {
         VerticalPanel panel = new VerticalPanel();
@@ -86,7 +80,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
     private Widget ddRegistrationTemplatesPanel() {
         Panel result = new VerticalPanel();
         Label label = new Label(constants.processOaiAdapterTransformationList());
-        label.addStyleName(css.planProcessHeading());
+        label.addStyleName(css.processDefinitionsHeading());
         result.add(label);
         result.add(new TransformationsListPanel(this, ddRegistrationTransformations));
         return result;
@@ -111,7 +105,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
     private Widget diImportTemplatesPanel() {
         Panel result = new VerticalPanel();
         Label label = new Label(constants.processOaiAdapterTransformationList());
-        label.addStyleName(css.planProcessHeading());
+        label.addStyleName(css.processDefinitionsHeading());
         result.add(label);
         result.add(new TransformationsListPanel(this, diImportTransformations));
         return result;
@@ -140,12 +134,12 @@ public class XmlTransformationsPanel extends VerticalPanel {
                 diImportTransformations = new ArrayList<XmlTransformationDTO>();
                 for (XmlTransformationDTO transformation : transformations) {
                     switch (transformation.getType()) {
-                    case DIGITAL_DOCUMENT_REGISTRATION:
-                        ddRegistrationTransformations.add(transformation);
-                        break;
-                    case DIGITAL_INSTANCE_IMPORT:
-                        diImportTransformations.add(transformation);
-                        break;
+                        case DIGITAL_DOCUMENT_REGISTRATION:
+                            ddRegistrationTransformations.add(transformation);
+                            break;
+                        case DIGITAL_INSTANCE_IMPORT:
+                            diImportTransformations.add(transformation);
+                            break;
                     }
                 }
             }

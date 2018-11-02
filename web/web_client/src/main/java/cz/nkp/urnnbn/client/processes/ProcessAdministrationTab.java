@@ -135,25 +135,45 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     }
 
     private void reload() {
-        // if (this.processListScrollPanel != null) {
-        // System.err.println("reading position: " +
-        // this.processListScrollPanel.getScrollPosition());
-        // this.scrollbarPosition =
-        // this.processListScrollPanel.getScrollPosition();
-        // }
         clear();
         add(contentPanel());
     }
 
     private Panel contentPanel() {
         VerticalPanel panel = new VerticalPanel();
-        //limit procesess only for mine
+        //EXISTING PROCESSES DEFINITIONS
+        panel.add(new HTML("<br>"));
+        panel.add(processDefinitionsHeader());
+        panel.add(processDefinitionsPanel());
+
+        panel.add(new HTML("<br>"));
+
+        //EXISTING INSTANCES OF PROCESSES
+        panel.add(new HTML("<br>"));
+        panel.add(processInstancesHeader());
+        panel.add(processInstancesPanel());
+        return panel;
+    }
+
+    private Label processDefinitionsHeader() {
+        Label label = new Label(constants.processDefinitions());
+        label.addStyleName(css.processDefinitionsHeading());
+        return label;
+    }
+
+    private Label processInstancesHeader() {
+        Label label = new Label(constants.processInstances());
+        label.addStyleName(css.processInstancesHeading());
+        return label;
+    }
+
+    private IsWidget processInstancesPanel() {
+        VerticalPanel panel = new VerticalPanel();
+        //limit to only those scheduled by me
         if (getActiveUser().isSuperAdmin()) {
             panel.add(limitListCheckBox());
         }
         // process table
-        // TODO: 28.8.18 add to scrollpanel or some other way solve possible hundreds of processes hiding other stuff in the panel
-        // TODO: 28.8.18 keep table state (sorting) throughout table re-creation every second when new process data arrives
         panel.add(new ProcessTableWidget(processes, constants, limitToMyProcess,
                 new ProcessButtonAction.Operation() {
                     @Override
@@ -186,12 +206,69 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
                     }
                 }));
 
-        // planning processes
-        panel.add(planProcessHeading());
-        panel.add(planProcessPanel());
-        panel.add(new HTML("<br>"));
-        panel.add(xmlTransformationsPanel);
         return panel;
+    }
+
+    private IsWidget processDefinitionsPanel() {
+        Grid result = new Grid(4, 5);
+        int row = 0;
+        addProcessDefinition(result, row++, constants.OAI_ADAPTER(), new Operation() {
+                    @Override
+                    public void run() {
+                        new OaiAdapterDialogBox(
+                                getActiveUser(),
+                                xmlTransformationsPanel.getDdRegistrationTransformations(),
+                                xmlTransformationsPanel.getDiImportTransformations()
+                        ).open();
+                    }
+                }, new Operation() {
+                    @Override
+                    public void run() {
+                        //TODO: config
+                    }
+                }
+        );
+        addProcessDefinition(result, row++, constants.REGISTRARS_URN_NBN_CSV_EXPORT(), new Operation() {
+            @Override
+            public void run() {
+                new ExportUrnNbnListProcessDialogBox(getActiveUser()).open();
+            }
+        }, null);
+        addProcessDefinition(result, row++, constants.DI_URL_AVAILABILITY_CHECK(), new Operation() {
+            @Override
+            public void run() {
+                new DiAvailabilityCheckDialogBox(getActiveUser()).open();
+            }
+        }, null);
+        addProcessDefinition(result, row++, constants.DOCS_INDEXATION(), new Operation() {
+            @Override
+            public void run() {
+                new IndexDocumentsProcessDialogBox(getActiveUser()).open();
+            }
+        }, null);
+        return result;
+    }
+
+    private void addProcessDefinition(Grid grid, int row, String processName, final Operation scheduleAction, final Operation configAction) {
+        //TODO: i18n
+        Button scheduleBtn = new Button("Plánovat proces", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                scheduleAction.run();
+            }
+        });
+        scheduleBtn.setEnabled(scheduleAction != null);
+        Button configBtn = new Button("Nastavení", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                configAction.run();
+            }
+        });
+        configBtn.setEnabled(configAction != null);
+
+        grid.setWidget(row, 0, new Label(processName));
+        grid.setWidget(row, 2, scheduleBtn);
+        grid.setWidget(row, 3, configBtn);
     }
 
     private Widget limitListCheckBox() {
@@ -284,64 +361,6 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         }
     }
 
-    private Label planProcessHeading() {
-        Label label = new Label(constants.processPlanning());
-        label.addStyleName(css.planProcessHeading());
-        return label;
-    }
-
-    private Widget planProcessPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.setSpacing(10);
-
-        // EXPORT URN:NBN LIST OF REGISTRAR
-        result.add(new Button(constants.REGISTRARS_URN_NBN_CSV_EXPORT(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                new ExportUrnNbnListProcessDialogBox(getActiveUser()).open();
-            }
-        }));
-
-        // OAI Adapter
-        result.add(new Button(constants.OAI_ADAPTER(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                new OaiAdapterDialogBox(
-                        getActiveUser(),
-                        xmlTransformationsPanel.getDdRegistrationTransformations(),
-                        xmlTransformationsPanel.getDiImportTransformations()
-                ).open();
-            }
-        }));
-
-        // admin only processes
-        if (getActiveUser().isLoggedUser() && getActiveUser().isSuperAdmin()) {
-
-            // DI availability check
-            result.add(new Button(constants.DI_URL_AVAILABILITY_CHECK(), new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    new DiAvailabilityCheckDialogBox(getActiveUser()).open();
-                }
-            }));
-
-            // Documents' indexation for web search
-            result.add(new Button(constants.DOCS_INDEXATION(), new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    new IndexDocumentsProcessDialogBox(getActiveUser()).open();
-                }
-            }));
-
-        }
-
-        return result;
-    }
-
     @Override
     public void onLoad() {
         //LOGGER.finer("onLoad");
@@ -360,6 +379,10 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
         super.onDeselected();
         LOGGER.finer("onDeselected");
         processesRefreshTimer.cancel();
+    }
+
+    public interface Operation {
+        void run();
     }
 
 }

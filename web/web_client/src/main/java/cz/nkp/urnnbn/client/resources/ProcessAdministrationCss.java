@@ -6,6 +6,8 @@ public interface ProcessAdministrationCss extends CssResource {
 
     public String processListHeading();
 
-    public String planProcessHeading();
+    public String processDefinitionsHeading();
+
+    public String processInstancesHeading();
 
 }
