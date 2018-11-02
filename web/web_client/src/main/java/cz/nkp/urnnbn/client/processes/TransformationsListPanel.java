@@ -35,7 +35,7 @@ public class TransformationsListPanel extends ScrollPanel {
         VerticalPanel result = new VerticalPanel();
         result.add(transformationsListHeader());
         for (XmlTransformationDTO transformation : transformations) {
-            result.add(transforamtionWidget(transformation));
+            result.add(transformationWidget(transformation));
         }
         return result;
     }
@@ -71,7 +71,7 @@ public class TransformationsListPanel extends ScrollPanel {
         return new HTML("<div style=\"color:grey\">" + string + "</style>");
     }
 
-    private Widget transforamtionWidget(XmlTransformationDTO transformation) {
+    private Widget transformationWidget(XmlTransformationDTO transformation) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setWidth("800px");
         // panel.setWidth("100%");

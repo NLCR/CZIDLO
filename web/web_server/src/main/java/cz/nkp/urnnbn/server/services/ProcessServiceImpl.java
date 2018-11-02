@@ -42,7 +42,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         return ProcessManagerImpl.instanceOf();
     }
 
-    private XmlTransformationDAO xmlTransforamtionDao() {
+    private XmlTransformationDAO xmlTransformationDao() {
         return XmlTransformationDAOImpl.instanceOf();
     }
 
@@ -177,7 +177,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
     }
 
     private XmlTransformation buildXslTransformation(Long transformationId) throws Exception {
-        XmlTransformation transformation = xmlTransforamtionDao().getTransformation(transformationId);
+        XmlTransformation transformation = xmlTransformationDao().getTransformation(transformationId);
         if (!getActiveUser().getLogin().equals(transformation.getOwnerLogin())) {
             throw new Exception("Transformation " + transformationId + " doesn't belong to user " + getActiveUser());
         }
@@ -278,7 +278,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
             transformation.setType(transformType(original.getType()));
             transformation.setXslt(fileToString(original.getTemplateTemporaryFile()));
             removeFile(original.getTemplateTemporaryFile());
-            xmlTransforamtionDao().saveTransformation(transformation);
+            xmlTransformationDao().saveTransformation(transformation);
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
@@ -317,7 +317,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
     @Override
     public List<XmlTransformationDTO> getXmlTransformationsOfUser() throws ServerException, SessionExpirationException {
         try {
-            List<XmlTransformation> original = xmlTransforamtionDao().getTransformationsOfUser(getUserLogin());
+            List<XmlTransformation> original = xmlTransformationDao().getTransformationsOfUser(getUserLogin());
             return transformTransformations(original);
         } catch (SessionExpirationException e) {
             throw e;
@@ -367,7 +367,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
     @Override
     public void deleteXmlTransformation(XmlTransformationDTO transformation) throws ServerException {
         try {
-            xmlTransforamtionDao().deleteTransformation(transformation.getId());
+            xmlTransformationDao().deleteTransformation(transformation.getId());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
