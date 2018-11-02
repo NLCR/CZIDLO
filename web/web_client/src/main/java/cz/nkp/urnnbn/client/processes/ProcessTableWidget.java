@@ -97,7 +97,7 @@ public class ProcessTableWidget extends Composite {
                 builder.append(new SafeHtml() {
                     @Override
                     public String asString() {
-                        return new ProcessFormater(process, constants).getProcessStateHtml();
+                        return new ProcessFormatter(process, constants).getProcessStateHtml();
                     }
                 });
                 return builder.toSafeHtml();
@@ -109,7 +109,7 @@ public class ProcessTableWidget extends Composite {
         TextColumn<ProcessDTO> scheduledColumn = new TextColumn<ProcessDTO>() {
             @Override
             public String getValue(ProcessDTO process) {
-                return new ProcessFormater(process, constants).getScheduled();
+                return new ProcessFormatter(process, constants).getScheduled();
             }
         };
         table.addColumn(scheduledColumn, constants.processPlanned());
@@ -118,7 +118,7 @@ public class ProcessTableWidget extends Composite {
         TextColumn<ProcessDTO> startedColumn = new TextColumn<ProcessDTO>() {
             @Override
             public String getValue(ProcessDTO process) {
-                return new ProcessFormater(process, constants).getStarted();
+                return new ProcessFormatter(process, constants).getStarted();
             }
         };
         table.addColumn(startedColumn, constants.processStarted());
@@ -127,7 +127,7 @@ public class ProcessTableWidget extends Composite {
         TextColumn<ProcessDTO> finishedColumn = new TextColumn<ProcessDTO>() {
             @Override
             public String getValue(ProcessDTO process) {
-                return new ProcessFormater(process, constants).getFinished();
+                return new ProcessFormatter(process, constants).getFinished();
             }
         };
         table.addColumn(finishedColumn, constants.processFinished());
@@ -136,7 +136,7 @@ public class ProcessTableWidget extends Composite {
         TextColumn<ProcessDTO> durationColumn = new TextColumn<ProcessDTO>() {
             @Override
             public String getValue(ProcessDTO process) {
-                return new ProcessFormater(process, constants).getDurationFormatted();
+                return new ProcessFormatter(process, constants).getDurationFormatted();
             }
         };
         table.addColumn(durationColumn, constants.processDuration());
@@ -270,8 +270,8 @@ public class ProcessTableWidget extends Composite {
         columnSortHandler.setComparator(durationColumn, new Comparator<ProcessDTO>() {
 
             public int compare(ProcessDTO o1, ProcessDTO o2) {
-                Long first = new ProcessFormater(o1, constants).getDurationMillis();
-                Long second = new ProcessFormater(o2, constants).getDurationMillis();
+                Long first = new ProcessFormatter(o1, constants).getDurationMillis();
+                Long second = new ProcessFormatter(o2, constants).getDurationMillis();
                 if (first != null && second != null) {
                     return first.compareTo(second);
                 } else if (first == null && second == null) {

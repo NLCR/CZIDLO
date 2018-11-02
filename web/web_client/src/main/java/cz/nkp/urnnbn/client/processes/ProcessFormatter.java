@@ -5,12 +5,12 @@ import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 
-public class ProcessFormater extends AbstractFormater {
+public class ProcessFormatter extends AbstractFormatter {
 
     private final ProcessDTO process;
     private final ConstantsImpl constants;
 
-    public ProcessFormater(ProcessDTO process, ConstantsImpl constants) {
+    public ProcessFormatter(ProcessDTO process, ConstantsImpl constants) {
         this.process = process;
         this.constants = constants;
     }

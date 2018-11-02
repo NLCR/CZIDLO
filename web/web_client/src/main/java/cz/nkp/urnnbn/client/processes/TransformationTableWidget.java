@@ -68,7 +68,7 @@ public class TransformationTableWidget extends Composite {
         TextColumn<XmlTransformationDTO> createdColumn = new TextColumn<XmlTransformationDTO>() {
             @Override
             public String getValue(XmlTransformationDTO transformation) {
-                return new TransformationFormater(transformation, constants).getCreated();
+                return new TransformationFormatter(transformation, constants).getCreated();
             }
         };
         table.addColumn(createdColumn, constants.processOaiAdapterTransformationCreated());

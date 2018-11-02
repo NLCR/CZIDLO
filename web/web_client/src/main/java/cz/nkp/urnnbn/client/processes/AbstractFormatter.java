@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by Martin Řehánek on 2.11.18.
  */
-public class AbstractFormater {
+public class AbstractFormatter {
     String formatDateTime(Long millis) {
         if (millis == null) {
             return null;
