@@ -11,7 +11,6 @@ import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
-import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
@@ -21,16 +20,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class XmlTransformationsPanel extends VerticalPanel {
+/**
+ * Created by Martin Řehánek on 2.11.18.
+ */
+public class OaiAdapterConfigPanel extends VerticalPanel {
 
-    private static final Logger logger = Logger.getLogger(XmlTransformationsPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OaiAdapterConfigPanel.class.getName());
     private final ProcessAdministrationCss css = initCss();
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-    private final SingleTabContentPanel superPanel;
+    private final ProcessAdministrationTab superPanel;
 
-    private List<XmlTransformationDTO> ddRegistrationTransformations = Collections.<XmlTransformationDTO>emptyList();
-    private List<XmlTransformationDTO> diImportTransformations = Collections.<XmlTransformationDTO>emptyList();
+    private List<XmlTransformationDTO> ddRegistrationTransformations = Collections.emptyList();
+    private List<XmlTransformationDTO> diImportTransformations = Collections.emptyList();
 
     private ProcessAdministrationCss initCss() {
         Resources resources = GWT.create(Resources.class);
@@ -39,18 +41,40 @@ public class XmlTransformationsPanel extends VerticalPanel {
         return result;
     }
 
-    public XmlTransformationsPanel(SingleTabContentPanel superPanel) {
-        super();
+    public OaiAdapterConfigPanel(ProcessAdministrationTab superPanel) {
         this.superPanel = superPanel;
+        //xmlTransformationsPanel = new XmlTransformationsPanel(superPanel);
+    }
+
+    public void onLoad() {
+        reloadTransformations();
         reload();
     }
 
     void reload() {
         clear();
-        add(templateManagementHeader());
-        add(ddRegistrationTemplateManagementPanel());
-        add(diImportTemplateManagementPanel());
+        add(contentPanel());
     }
+
+
+    private IsWidget contentPanel() {
+        VerticalPanel result = new VerticalPanel();
+        //TODO: i18n
+        result.add(new Button("← Zpět na správu procesů", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                superPanel.showProcessAdmin();
+            }
+        }));
+        //result.add(new Label("OAI Adapeter config"));
+        result.add(templateManagementHeader());
+        result.add(ddRegistrationTemplateManagementPanel());
+        result.add(diImportTemplateManagementPanel());
+
+        //result.add(xmlTransformationsPanel);
+        return result;
+    }
+
 
     private Widget templateManagementHeader() {
         //TODO:i18n
@@ -69,7 +93,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-//                new UploadXmlTemplateDialogBox(XmlTransformationsPanel.this, XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION).show();
+                new UploadXmlTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION).show();
             }
         }));
         panel.add(new HTML("<br>"));
@@ -81,7 +105,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
         /*Label label = new Label(constants.processOaiAdapterTransformationList());
         label.addStyleName(css.processDefinitionsHeading());
         result.add(label);*/
-        //result.add(new TransformationsListPanel(this, ddRegistrationTransformations));
+        result.add(new TransformationsListPanel(this, ddRegistrationTransformations));
         return result;
     }
 
@@ -95,7 +119,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                //new UploadXmlTemplateDialogBox(XmlTransformationsPanel.this, XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT).show();
+                new UploadXmlTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT).show();
             }
         }));
         return panel;
@@ -106,13 +130,8 @@ public class XmlTransformationsPanel extends VerticalPanel {
         /*Label label = new Label(constants.processOaiAdapterTransformationList());
         label.addStyleName(css.processDefinitionsHeading());
         result.add(label);*/
-        //result.add(new TransformationsListPanel(this, diImportTransformations));
+        result.add(new TransformationsListPanel(this, diImportTransformations));
         return result;
-    }
-
-    @Override
-    public void onLoad() {
-        reloadTransformations();
     }
 
     void reloadTransformations() {
@@ -144,7 +163,7 @@ public class XmlTransformationsPanel extends VerticalPanel {
                 if (caught instanceof SessionExpirationException) {
                     Utils.sessionExpirationRedirect();
                 } else {
-                    logger.severe("Error loading XSLTs: " + caught.getMessage());
+                    LOGGER.severe("Error loading XSLTs: " + caught.getMessage());
                 }
             }
         });
@@ -157,4 +176,6 @@ public class XmlTransformationsPanel extends VerticalPanel {
     public List<XmlTransformationDTO> getDiImportTransformations() {
         return diImportTransformations;
     }
+
+
 }
