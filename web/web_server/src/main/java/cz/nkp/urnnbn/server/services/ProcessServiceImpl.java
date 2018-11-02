@@ -345,11 +345,11 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         return result;
     }
 
-    private String transformaDate(Date created) {
+    private Long transformaDate(Date created) {
         if (created == null) {
             return null;
         } else {
-            return created.toString();
+            return created.getTime();
         }
     }
 

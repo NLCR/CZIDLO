@@ -10,7 +10,7 @@ public class XmlTransformationDTO implements Serializable {
     private String description;
     private String ownerLogin;
     private XmlTransformationDTOType type;
-    private String created;
+    private Long created;
     private String templateTemporaryFile;
 
     public Long getId() {
@@ -53,11 +53,11 @@ public class XmlTransformationDTO implements Serializable {
         this.type = type;
     }
 
-    public String getCreated() {
+    public Long getCreated() {
         return created;
     }
 
-    public void setCreated(String created) {
+    public void setCreated(Long created) {
         this.created = created;
     }
 
