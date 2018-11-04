@@ -1,8 +1,9 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.mainPanel;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.processes.AbstractFormatter;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 
 public class ProcessFormatter extends AbstractFormatter {

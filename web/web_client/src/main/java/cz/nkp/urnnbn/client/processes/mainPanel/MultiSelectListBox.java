@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.mainPanel;
 
 import java.util.ArrayList;
 import java.util.List;

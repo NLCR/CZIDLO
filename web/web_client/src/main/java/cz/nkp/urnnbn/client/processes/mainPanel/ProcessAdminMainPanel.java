@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.mainPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
+import cz.nkp.urnnbn.client.processes.*;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;

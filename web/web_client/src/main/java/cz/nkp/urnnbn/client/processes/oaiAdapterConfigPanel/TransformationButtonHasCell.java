@@ -1,9 +1,8 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
-import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 /**

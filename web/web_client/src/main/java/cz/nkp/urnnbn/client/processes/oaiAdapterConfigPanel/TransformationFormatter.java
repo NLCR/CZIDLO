@@ -1,6 +1,7 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel;
 
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
+import cz.nkp.urnnbn.client.processes.AbstractFormatter;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 public class TransformationFormatter extends AbstractFormatter {

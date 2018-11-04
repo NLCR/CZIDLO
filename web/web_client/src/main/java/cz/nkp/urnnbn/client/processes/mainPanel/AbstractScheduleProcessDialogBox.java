@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.mainPanel;
 
 import com.google.gwt.core.client.GWT;
 

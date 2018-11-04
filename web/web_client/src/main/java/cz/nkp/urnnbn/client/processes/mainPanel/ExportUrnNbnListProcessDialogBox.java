@@ -1,4 +1,10 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.mainPanel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -6,44 +12,48 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
-import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
+import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-
-public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialogBox {
+public class ExportUrnNbnListProcessDialogBox extends AbstractScheduleProcessDialogBox {
 
     private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
     protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<>();
+    private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
     private final Label errorLabel = errorLabel(320);
 
+    private MultiSelectListBox absenceOfIdentifiersListBox;
+    private MultiSelectListBox registrarsListBox;
+    private MultiSelectListBox documentTypeListBox;
     private TextInputValueField beginDate;
     private TextInputValueField endDate;
+    private ListBox activationFlag;
+    private CheckBox numberOfDigitalInstances;
 
-    /*private MultiSelectListBox registrarsListBox;
-    private MultiSelectListBox documentTypeListBox;
-    private ListBox activationFlag;*/
-
-    public IndexDocumentsProcessDialogBox(UserDTO user) {
+    public ExportUrnNbnListProcessDialogBox(UserDTO user) {
         super(user);
         loadRegistrars();
         reload();
     }
 
     @Override
-    public void open() {
+    public void open(){
         reload();
     }
 
@@ -74,7 +84,7 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
 
     void reload() {
         clear();
-        setText(messages.processPlaning(constants.DOCS_INDEXATION()));
+        setText(messages.processPlaning(constants.REGISTRARS_URN_NBN_CSV_EXPORT()));
         setAnimationEnabled(true);
         setWidget(contentPanel());
         center();
@@ -83,9 +93,11 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
         result.add(selectDateRangePanel());
-        //result.add(selectRegistrarsPanel());
-        //result.add(selectTypeOfDocumentPanel());
-        //result.add(selectActivationFlag());
+        result.add(selectRegistrarsPanel());
+        result.add(selectTypeOfDocumentPanel());
+        result.add(selectAbsenceOfIdentifiers());
+        result.add(numberOfDigitalInstancesCheckbox());
+        result.add(selectActivationFlag());
         result.add(buttonsPanel());
         result.add(errorLabel);
         return result;
@@ -104,15 +116,15 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
         return result;
     }
 
-   /*private Panel selectRegistrarsPanel() {
+    private Panel selectRegistrarsPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(new Label(constants.registrar() + SEPARATOR));
         initRegistrarsList();
         result.add(registrarsListBox);
         return result;
-    }*/
+    }
 
-    /*private Panel selectTypeOfDocumentPanel() {
+    private Panel selectTypeOfDocumentPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(new Label(constants.documentType() + SEPARATOR));
         documentTypeListBox = new MultiSelectListBox();
@@ -129,9 +141,28 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
         }
         result.add(documentTypeListBox);
         return result;
-    }*/
+    }
 
-    /*private Panel selectActivationFlag() {
+    private Panel selectAbsenceOfIdentifiers() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.add(new Label(constants.absenceOfIdentifiers() + SEPARATOR));
+        absenceOfIdentifiersListBox = new MultiSelectListBox();
+        absenceOfIdentifiersListBox.addItem("CNB");
+        absenceOfIdentifiersListBox.addItem("ISSN");
+        absenceOfIdentifiersListBox.addItem("ISBN");
+        result.add(absenceOfIdentifiersListBox);
+        return result;
+    }
+
+    private Panel numberOfDigitalInstancesCheckbox() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.add(new Label(constants.includeNumberOfDigitalInstances() + SEPARATOR));
+        numberOfDigitalInstances = new CheckBox();
+        result.add(numberOfDigitalInstances);
+        return result;
+    }
+
+    private Panel selectActivationFlag() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(new Label(constants.activityFlag() + SEPARATOR));
         activationFlag = new ListBox();
@@ -140,7 +171,7 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
         activationFlag.addItem(constants.activityDeactivatedOnly());
         result.add(activationFlag);
         return result;
-    }*/
+    }
 
     private Panel buttonsPanel() {
         HorizontalPanel result = new HorizontalPanel();
@@ -150,23 +181,26 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
         return result;
     }
 
-    /*private void initRegistrarsList() {
+    private void initRegistrarsList() {
         registrarsListBox = new MultiSelectListBox();
         for (int i = 0; i < registrarsOfUser.size(); i++) {
             RegistrarDTO registrar = registrarsOfUser.get(i);
             registrarsListBox.addItem(registrar.getCode());
             registrarsListBox.setItemSelected(i, true);
         }
-    }*/
+    }
 
     private Button scheduleProcessButton() {
         return new Button(constants.scheduleProcess(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                String begin = (String) beginDate.getInsertedValue();
-                String end = (String) endDate.getInsertedValue();
+                List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
 
-                /*String registrars = null;
+                Boolean missingCnb = idents.contains("CNB");
+                Boolean missingIssn = idents.contains("ISSN");
+                Boolean missingIsbn = idents.contains("ISBN");
+
+                String registrars = null;
                 List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
                 if (selectedRegistrars.size() > 0) {
                     StringBuilder regs = new StringBuilder();
@@ -190,16 +224,21 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
                     }
                     entityTypes = types.toString();
                 }
+
+                String begin = (String) beginDate.getInsertedValue();
+                String end = (String) endDate.getInsertedValue();
+
                 int activitySelectedIndex = activationFlag.getSelectedIndex();
                 Boolean returnActive = activitySelectedIndex == 0 || activitySelectedIndex == 1;
-                Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;*/
+                Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;
+                Boolean exportNumberOfDigitalInstances = numberOfDigitalInstances.getValue();
 
-                String[] params = new String[]{begin, end};
-                //String[] params = new String[]{begin, end, registrars, entityTypes, returnActive.toString(), returnDeactivated.toString()};
-                processService.scheduleProcess(ProcessDTOType.INDEXATION, params, new AsyncCallback<Void>() {
+                String[] params = new String[] { begin, end, registrars, entityTypes, missingCnb.toString(), missingIssn.toString(),
+                        missingIsbn.toString(), returnActive.toString(), returnDeactivated.toString(), exportNumberOfDigitalInstances.toString() };
+                processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
                     public void onSuccess(Void result) {
-                        IndexDocumentsProcessDialogBox.this.hide();
+                        ExportUrnNbnListProcessDialogBox.this.hide();
                     }
 
                     public void onFailure(Throwable caught) {
@@ -214,9 +253,8 @@ public class IndexDocumentsProcessDialogBox extends AbstractScheduleProcessDialo
         return new Button(constants.close(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                IndexDocumentsProcessDialogBox.this.hide();
+                ExportUrnNbnListProcessDialogBox.this.hide();
             }
         });
     }
-
 }

@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.client.processes;
 
+import cz.nkp.urnnbn.client.processes.mainPanel.ProcessAdminMainPanel;
+import cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel.ProcessAdminOaiAdapterConfigPanel;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 

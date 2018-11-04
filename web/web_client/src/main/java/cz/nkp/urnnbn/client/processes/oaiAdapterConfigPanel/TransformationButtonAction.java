@@ -1,24 +1,20 @@
-package cz.nkp.urnnbn.client.processes;
+package cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel;
 
-import cz.nkp.urnnbn.shared.dto.process.ProcessDTO;
-import cz.nkp.urnnbn.shared.dto.process.ProcessDTOState;
+import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 /**
  * Created by Martin Řehánek on 28.8.18.
  */
-public class ProcessButtonAction {
+public class TransformationButtonAction {
 
     private final String btnImgUrl;
     private final String hint;
     private final Operation operation;
-    private final ProcessDTOState[] states;
 
-
-    public ProcessButtonAction(String btnImgUrl, String hint, Operation operation, ProcessDTOState... states) {
+    public TransformationButtonAction(String btnImgUrl, String hint, Operation operation) {
         this.btnImgUrl = btnImgUrl;
         this.hint = hint;
         this.operation = operation;
-        this.states = states;
     }
 
     public String getBtnImgUrl() {
@@ -33,11 +29,7 @@ public class ProcessButtonAction {
         return operation;
     }
 
-    public ProcessDTOState[] getStates() {
-        return states;
-    }
-
     public interface Operation {
-        void run(ProcessDTO process);
+        void run(XmlTransformationDTO process);
     }
 }
