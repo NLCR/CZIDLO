@@ -22,9 +22,9 @@ import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ProcessAdministrationPanel extends VerticalPanel {
+public class ProcessAdminMainPanel extends VerticalPanel {
 
-    private static final Logger LOGGER = Logger.getLogger(ProcessAdministrationPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProcessAdminMainPanel.class.getName());
 
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
@@ -41,7 +41,7 @@ public class ProcessAdministrationPanel extends VerticalPanel {
     private boolean limitToMyProcess = true;
 
 
-    public ProcessAdministrationPanel(ProcessAdministrationTab superPanel, UserDTO user) {
+    public ProcessAdminMainPanel(ProcessAdministrationTab superPanel, UserDTO user) {
         this.superPanel = superPanel;
         this.user = user;
         if (user.isSuperAdmin()) {
@@ -49,14 +49,18 @@ public class ProcessAdministrationPanel extends VerticalPanel {
         }
     }
 
-    public void onLoad() {
-        super.onLoad();
+    public void onSelected() {
+        LOGGER.finer("onSelected");
         loadProcesses(false);
         processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);
-        /*loadRegistrars();
-        loadArchivers();
-        reload();*/
     }
+
+
+    public void onDeselected() {
+        LOGGER.finer("onDeselected");
+        processesRefreshTimer.cancel();
+    }
+
 
     private ProcessAdministrationCss initCss() {
         Resources resources = GWT.create(Resources.class);
@@ -245,7 +249,7 @@ public class ProcessAdministrationPanel extends VerticalPanel {
                 }, new ProcessAdministrationTab.Operation() {
                     @Override
                     public void run() {
-                        superPanel.showOaiAdapterConfigPanel();
+                        superPanel.selectOaiAdapterConfigPanel();
                     }
                 }
         );
@@ -382,10 +386,4 @@ public class ProcessAdministrationPanel extends VerticalPanel {
         }
     }
 
-    @Override
-    public void clear() {
-        LOGGER.finer("clear");
-        processesRefreshTimer.cancel();
-        super.clear();
-    }
 }

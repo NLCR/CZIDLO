@@ -1,6 +1,5 @@
 package cz.nkp.urnnbn.client.processes;
 
-import com.google.gwt.user.client.ui.Panel;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 
@@ -10,56 +9,60 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     private static final Logger LOGGER = Logger.getLogger(ProcessAdministrationTab.class.getName());
 
-    private Panel activePanel;
-
+    private ProcessAdminMainPanel mainPanel;
+    private ProcessAdminOaiAdapterConfigPanel oaiAdapterConfigPanel;
+    boolean mainPanelSelected = false;
 
     public ProcessAdministrationTab(TabsPanel superPanel) {
         super(superPanel, "processes");
     }
 
-
     @Override
     public void onLoad() {
-        //LOGGER.finer("onLoad");
-        showProcessAdmin();
+        LOGGER.finer("onLoad");
+        oaiAdapterConfigPanel = new ProcessAdminOaiAdapterConfigPanel(this);
+        mainPanel = new ProcessAdminMainPanel(this, getActiveUser());
+        //init process admin panel without selecting it and thus acitvating periodical server requests
+        add(mainPanel);
+        mainPanelSelected = true;
     }
 
-    public void showProcessAdmin() {
-        detachActivePanel();
-        /*if (processPanel == null) {
-            processPanel = new ProcessAdministrationPanel(this, getActiveUser());
-        }*/
-        activePanel = new ProcessAdministrationPanel(this, getActiveUser());
-        add(activePanel);
+    public void selectProcessAdminPanel() {
+        oaiAdapterConfigPanel.onDeselected();
+        oaiAdapterConfigPanel.removeFromParent();
+        add(mainPanel);
+        mainPanel.onSelected();
+        mainPanelSelected = true;
     }
 
-    public void showOaiAdapterConfigPanel() {
-        detachActivePanel();
-        activePanel = new OaiAdapterConfigPanel(this);
-        add(activePanel);
-    }
-
-    private void detachActivePanel() {
-        if (activePanel != null) {
-            activePanel.clear();
-            activePanel.removeFromParent();
-        }
-        clear();
+    public void selectOaiAdapterConfigPanel() {
+        mainPanel.onDeselected();
+        mainPanel.removeFromParent();
+        add(oaiAdapterConfigPanel);
+        oaiAdapterConfigPanel.onSelected();
+        mainPanelSelected = false;
     }
 
     @Override
     public void onSelected() {
         LOGGER.finer("onSelected");
         super.onSelected();
-        /*loadProcesses(false);
-        processesRefreshTimer.scheduleRepeating(TIMER_INTERVAL);*/
+        if (mainPanelSelected) {
+            mainPanel.onSelected();
+        } else {
+            oaiAdapterConfigPanel.onSelected();
+        }
     }
 
     @Override
     public void onDeselected() {
-        super.onDeselected();
         LOGGER.finer("onDeselected");
-        //processesRefreshTimer.cancel();
+        if (mainPanelSelected) {
+            mainPanel.onDeselected();
+        } else {
+            oaiAdapterConfigPanel.onDeselected();
+        }
+        super.onDeselected();
     }
 
     public interface Operation {

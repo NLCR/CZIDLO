@@ -20,10 +20,10 @@ public class TransformationsListPanel extends ScrollPanel {
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final List<XmlTransformationDTO> transformations;
-    private final OaiAdapterConfigPanel superPanel;
+    private final ProcessAdminOaiAdapterConfigPanel superPanel;
 
     //TODO: mozna spojit s transformationTableWidget
-    public TransformationsListPanel(OaiAdapterConfigPanel superPanel, List<XmlTransformationDTO> transformations) {
+    public TransformationsListPanel(ProcessAdminOaiAdapterConfigPanel superPanel, List<XmlTransformationDTO> transformations) {
         super();
         this.superPanel = superPanel;
         this.transformations = transformations;
