@@ -13,13 +13,15 @@ import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
-import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION;
+import static cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT;
 
 /**
  * Created by Martin Řehánek on 2.11.18.
@@ -68,7 +70,7 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
         //HEADER
         result.add(header());
         //CONFIG
-        result.add(ddRegistrationTemplateManagementPanel());
+        result.add(ddRegistrationPanel());
         result.add(diImportTemplateManagementPanel());
         return result;
     }
@@ -81,39 +83,14 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
         return label;
     }
 
-    private Widget ddRegistrationTemplateManagementPanel() {
-        VerticalPanel panel = new VerticalPanel();
-        Label label = new Label(constants.processOaiAdapterTransformationsDDRegistrationTitle());
-        label.addStyleName(css.processListHeading());
-        panel.add(label);
-        panel.add(new TransformationsPanel(this, ddRegistrationTransformations));
-        //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
-        panel.add(new Button(constants.upload(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                new AddTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION).show();
-            }
-        }));
-        panel.add(new HTML("<br>"));
-        return panel;
+    private Widget ddRegistrationPanel() {
+        return new TransformationsPanel(this, css,
+                DIGITAL_DOCUMENT_REGISTRATION, constants.processOaiAdapterTransformationsDDRegistrationTitle(), ddRegistrationTransformations);
     }
 
     private Widget diImportTemplateManagementPanel() {
-        VerticalPanel panel = new VerticalPanel();
-        Label label = new Label(constants.processOaiAdapterTransformationsDIImportTitle());
-        label.addStyleName(css.processListHeading());
-        panel.add(label);
-        panel.add(new TransformationsPanel(this, diImportTransformations));
-        //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
-        panel.add(new Button(constants.upload(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                new AddTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT).show();
-            }
-        }));
-        return panel;
+        return new TransformationsPanel(this, css,
+                DIGITAL_INSTANCE_IMPORT, constants.processOaiAdapterTransformationsDIImportTitle(), diImportTransformations);
     }
 
     void reloadTransformations() {

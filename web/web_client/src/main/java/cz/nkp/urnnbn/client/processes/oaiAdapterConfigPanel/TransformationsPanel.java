@@ -1,16 +1,18 @@
 package cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
+import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
+import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 
 import java.util.List;
 
@@ -19,12 +21,18 @@ public class TransformationsPanel extends ScrollPanel {
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
-    private final List<XmlTransformationDTO> transformations;
     private final OaiAdapterConfigPanel superPanel;
+    private final ProcessAdministrationCss css;
+    private final XmlTransformationDTOType type;
+    private final String title;
+    private final List<XmlTransformationDTO> transformations;
 
-    public TransformationsPanel(OaiAdapterConfigPanel superPanel, List<XmlTransformationDTO> transformations) {
+    public TransformationsPanel(OaiAdapterConfigPanel superPanel, ProcessAdministrationCss css, XmlTransformationDTOType type, String title, List<XmlTransformationDTO> transformations) {
         super();
         this.superPanel = superPanel;
+        this.css = css;
+        this.type = type;
+        this.title = title;
         this.transformations = transformations;
         setWidth("900px");
         add(contentPanel());
@@ -32,6 +40,12 @@ public class TransformationsPanel extends ScrollPanel {
 
     private Widget contentPanel() {
         VerticalPanel result = new VerticalPanel();
+        //title
+        Label label = new Label(title);
+        //TODO: prejmenovat a upravit styl
+        label.addStyleName(css.processListHeading());
+        result.add(label);
+        //table
         result.add(new TransformationTableWidget(transformations, constants,
                         new TransformationButtonAction.Operation() {
                             @Override
@@ -66,6 +80,16 @@ public class TransformationsPanel extends ScrollPanel {
                         }
                 )
         );
+        //add new transformation button
+        //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
+        result.add(new Button(constants.upload(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                new AddTemplateDialogBox(superPanel, type).show();
+            }
+        }));
+        result.add(new HTML("<br>"));
         return result;
     }
 
