@@ -1,38 +1,30 @@
 package cz.nkp.urnnbn.client.institutions;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.googlecode.gwt.charts.client.ChartLoader;
 import com.googlecode.gwt.charts.client.ChartPackage;
-
 import cz.nkp.urnnbn.client.charts.widgets.topLevel.RegistrarWidget;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InstitutionsPanelCss;
-import cz.nkp.urnnbn.client.services.InstitutionsService;
-import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.client.services.GwtStatisticsService;
 import cz.nkp.urnnbn.client.services.GwtStatisticsServiceAsync;
+import cz.nkp.urnnbn.client.services.InstitutionsService;
+import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
 import cz.nkp.urnnbn.shared.charts.Registrar;
 import cz.nkp.urnnbn.shared.dto.CatalogDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class RegistrarDetailsPanel extends VerticalPanel {
 
@@ -482,7 +474,8 @@ public class RegistrarDetailsPanel extends VerticalPanel {
     }
 
     private Button backToInsitutionsButton() {
-        Button result = new Button("Zpět na seznam institucí");
+        //TODO: i18n
+        Button result = new Button("← Zpět na seznam institucí");
         result.addClickHandler(new ClickHandler() {
 
             @Override
