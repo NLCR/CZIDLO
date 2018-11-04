@@ -1,7 +1,7 @@
 package cz.nkp.urnnbn.client.processes;
 
-import cz.nkp.urnnbn.client.processes.mainPanel.ProcessAdminMainPanel;
-import cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel.ProcessAdminOaiAdapterConfigPanel;
+import cz.nkp.urnnbn.client.processes.mainPanel.MainPanel;
+import cz.nkp.urnnbn.client.processes.oaiAdapterConfigPanel.OaiAdapterConfigPanel;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 
@@ -11,8 +11,8 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
 
     private static final Logger LOGGER = Logger.getLogger(ProcessAdministrationTab.class.getName());
 
-    private ProcessAdminMainPanel mainPanel;
-    private ProcessAdminOaiAdapterConfigPanel oaiAdapterConfigPanel;
+    private MainPanel mainPanel;
+    private OaiAdapterConfigPanel oaiAdapterConfigPanel;
     boolean mainPanelSelected = false;
 
     public ProcessAdministrationTab(TabsPanel superPanel) {
@@ -22,8 +22,8 @@ public class ProcessAdministrationTab extends SingleTabContentPanel {
     @Override
     public void onLoad() {
         LOGGER.finer("onLoad");
-        oaiAdapterConfigPanel = new ProcessAdminOaiAdapterConfigPanel(this);
-        mainPanel = new ProcessAdminMainPanel(this, getActiveUser());
+        oaiAdapterConfigPanel = new OaiAdapterConfigPanel(this);
+        mainPanel = new MainPanel(this, getActiveUser());
         //init process admin panel without selecting it and thus acitvating periodical server requests
         add(mainPanel);
         mainPanelSelected = true;

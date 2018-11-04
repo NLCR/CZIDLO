@@ -14,21 +14,19 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 import java.util.List;
 
-public class TransformationsListPanel extends ScrollPanel {
+public class TransformationsPanel extends ScrollPanel {
 
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
     private final List<XmlTransformationDTO> transformations;
-    private final ProcessAdminOaiAdapterConfigPanel superPanel;
+    private final OaiAdapterConfigPanel superPanel;
 
-    //TODO: mozna spojit s transformationTableWidget
-    public TransformationsListPanel(ProcessAdminOaiAdapterConfigPanel superPanel, List<XmlTransformationDTO> transformations) {
+    public TransformationsPanel(OaiAdapterConfigPanel superPanel, List<XmlTransformationDTO> transformations) {
         super();
         this.superPanel = superPanel;
         this.transformations = transformations;
         setWidth("900px");
-        //setHeight("500px");
         add(contentPanel());
     }
 

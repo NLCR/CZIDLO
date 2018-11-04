@@ -24,9 +24,9 @@ import java.util.logging.Logger;
 /**
  * Created by Martin Řehánek on 2.11.18.
  */
-public class ProcessAdminOaiAdapterConfigPanel extends VerticalPanel {
+public class OaiAdapterConfigPanel extends VerticalPanel {
 
-    private static final Logger LOGGER = Logger.getLogger(ProcessAdminOaiAdapterConfigPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OaiAdapterConfigPanel.class.getName());
     private final ProcessAdministrationCss css = initCss();
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
@@ -42,7 +42,7 @@ public class ProcessAdminOaiAdapterConfigPanel extends VerticalPanel {
         return result;
     }
 
-    public ProcessAdminOaiAdapterConfigPanel(ProcessAdministrationTab superPanel) {
+    public OaiAdapterConfigPanel(ProcessAdministrationTab superPanel) {
         this.superPanel = superPanel;
     }
 
@@ -86,12 +86,13 @@ public class ProcessAdminOaiAdapterConfigPanel extends VerticalPanel {
         Label label = new Label(constants.processOaiAdapterTransformationsDDRegistrationTitle());
         label.addStyleName(css.processListHeading());
         panel.add(label);
-        panel.add(new TransformationsListPanel(this, ddRegistrationTransformations));
+        panel.add(new TransformationsPanel(this, ddRegistrationTransformations));
+        //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
         panel.add(new Button(constants.upload(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                new UploadXmlTemplateDialogBox(ProcessAdminOaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION).show();
+                new AddTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_DOCUMENT_REGISTRATION).show();
             }
         }));
         panel.add(new HTML("<br>"));
@@ -103,12 +104,13 @@ public class ProcessAdminOaiAdapterConfigPanel extends VerticalPanel {
         Label label = new Label(constants.processOaiAdapterTransformationsDIImportTitle());
         label.addStyleName(css.processListHeading());
         panel.add(label);
-        panel.add(new TransformationsListPanel(this, diImportTransformations));
+        panel.add(new TransformationsPanel(this, diImportTransformations));
+        //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
         panel.add(new Button(constants.upload(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                new UploadXmlTemplateDialogBox(ProcessAdminOaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT).show();
+                new AddTemplateDialogBox(OaiAdapterConfigPanel.this, XmlTransformationDTOType.DIGITAL_INSTANCE_IMPORT).show();
             }
         }));
         return panel;

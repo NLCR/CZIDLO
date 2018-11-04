@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
-import cz.nkp.urnnbn.client.processes.mainPanel.ExportUrnNbnListProcessDialogBox;
+import cz.nkp.urnnbn.client.processes.mainPanel.ScheduleProcessExportUrnNbnListDialogBox;
 import cz.nkp.urnnbn.client.resources.SearchPanelCss;
 import cz.nkp.urnnbn.client.services.ConfigurationService;
 import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
@@ -88,7 +88,7 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
             @Override
             public void onClick(ClickEvent event) {
                 // new DiAvailabilityCheckDialogBox(getActiveUser());
-                new ExportUrnNbnListProcessDialogBox(getActiveUser());
+                new ScheduleProcessExportUrnNbnListDialogBox(getActiveUser());
             }
         });
     }

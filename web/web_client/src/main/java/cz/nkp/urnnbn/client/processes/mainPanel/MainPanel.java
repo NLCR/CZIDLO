@@ -23,9 +23,9 @@ import cz.nkp.urnnbn.shared.exceptions.SessionExpirationException;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ProcessAdminMainPanel extends VerticalPanel {
+public class MainPanel extends VerticalPanel {
 
-    private static final Logger LOGGER = Logger.getLogger(ProcessAdminMainPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MainPanel.class.getName());
 
     private final ConstantsImpl constants = GWT.create(ConstantsImpl.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);
@@ -42,7 +42,7 @@ public class ProcessAdminMainPanel extends VerticalPanel {
     private boolean limitToMyProcess = true;
 
 
-    public ProcessAdminMainPanel(ProcessAdministrationTab superPanel, UserDTO user) {
+    public MainPanel(ProcessAdministrationTab superPanel, UserDTO user) {
         this.superPanel = superPanel;
         this.user = user;
         if (user.isSuperAdmin()) {
@@ -238,7 +238,7 @@ public class ProcessAdminMainPanel extends VerticalPanel {
         addProcessDefinition(result, row++, constants.OAI_ADAPTER(), new ProcessAdministrationTab.Operation() {
                     @Override
                     public void run() {
-                        new OaiAdapterDialogBox(
+                        new ScheduleProcessOaiAdapterDialogBox(
                                 user,
                                 //TODO: rozmyslet, kam tahle data patri
                                 null, null
@@ -257,19 +257,19 @@ public class ProcessAdminMainPanel extends VerticalPanel {
         addProcessDefinition(result, row++, constants.REGISTRARS_URN_NBN_CSV_EXPORT(), new ProcessAdministrationTab.Operation() {
             @Override
             public void run() {
-                new ExportUrnNbnListProcessDialogBox(user).open();
+                new ScheduleProcessExportUrnNbnListDialogBox(user).open();
             }
         }, null);
         addProcessDefinition(result, row++, constants.DI_URL_AVAILABILITY_CHECK(), new ProcessAdministrationTab.Operation() {
             @Override
             public void run() {
-                new DiAvailabilityCheckDialogBox(user).open();
+                new ScheduleProcessDiAvailabilityCheckDialogBox(user).open();
             }
         }, null);
         addProcessDefinition(result, row++, constants.DOCS_INDEXATION(), new ProcessAdministrationTab.Operation() {
             @Override
             public void run() {
-                new IndexDocumentsProcessDialogBox(user).open();
+                new ScheduleProcessIndexDocumentsDialogBox(user).open();
             }
         }, null);
         return result;

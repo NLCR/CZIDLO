@@ -30,7 +30,7 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 
-public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogBox {
+public class ScheduleProcessDiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogBox {
     private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
     protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
@@ -48,7 +48,7 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
     private CheckBox diStatesIncludeActive;
     private CheckBox diStatesIncludeDeactivated;
 
-    public DiAvailabilityCheckDialogBox(UserDTO user) {
+    public ScheduleProcessDiAvailabilityCheckDialogBox(UserDTO user) {
         super(user);
         loadRegistrars();
     }
@@ -249,7 +249,7 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
                 processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
 
                     public void onSuccess(Void result) {
-                        DiAvailabilityCheckDialogBox.this.hide();
+                        ScheduleProcessDiAvailabilityCheckDialogBox.this.hide();
                     }
 
                     public void onFailure(Throwable caught) {
@@ -265,7 +265,7 @@ public class DiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogB
         return new Button(constants.close(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                DiAvailabilityCheckDialogBox.this.hide();
+                ScheduleProcessDiAvailabilityCheckDialogBox.this.hide();
             }
         });
     }

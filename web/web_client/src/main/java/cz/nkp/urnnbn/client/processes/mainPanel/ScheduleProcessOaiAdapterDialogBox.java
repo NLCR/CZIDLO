@@ -17,7 +17,7 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
+public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
@@ -41,7 +41,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
     private final Label errorLabel = errorLabel(320);
     private RegistrarDTO selectedRegistrar;
 
-    public OaiAdapterDialogBox(UserDTO user, List<XmlTransformationDTO> ddRegistrationTemplates, List<XmlTransformationDTO> diImportTemplates) {
+    public ScheduleProcessOaiAdapterDialogBox(UserDTO user, List<XmlTransformationDTO> ddRegistrationTemplates, List<XmlTransformationDTO> diImportTemplates) {
         super(user);
         this.ddRegistrationTemplates = ddRegistrationTemplates;
         this.selectedDdRegistrationTemplate = (ddRegistrationTemplates == null || ddRegistrationTemplates.isEmpty()) ? null : ddRegistrationTemplates
@@ -270,7 +270,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
                         @Override
                         public void onSuccess(Void result) {
-                            OaiAdapterDialogBox.this.hide();
+                            ScheduleProcessOaiAdapterDialogBox.this.hide();
                         }
 
                         @Override
@@ -288,7 +288,7 @@ public class OaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                OaiAdapterDialogBox.this.hide();
+                ScheduleProcessOaiAdapterDialogBox.this.hide();
             }
         });
     }

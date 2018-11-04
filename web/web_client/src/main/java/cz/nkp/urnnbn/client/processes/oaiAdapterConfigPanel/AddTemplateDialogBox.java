@@ -16,15 +16,15 @@ import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 
-public class UploadXmlTemplateDialogBox extends AbstractDialogBox {
+public class AddTemplateDialogBox extends AbstractDialogBox {
 
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
-    private final ProcessAdminOaiAdapterConfigPanel superPanel;
+    private final OaiAdapterConfigPanel superPanel;
     private final XmlTemplateForm xmlTemplateForm;
 
     private final Label errorLabel = errorLabel(320);
 
-    public UploadXmlTemplateDialogBox(ProcessAdminOaiAdapterConfigPanel superPanel, XmlTransformationDTOType type) {
+    public AddTemplateDialogBox(OaiAdapterConfigPanel superPanel, XmlTransformationDTOType type) {
         this.superPanel = superPanel;
         setText(title(type));
         xmlTemplateForm = new XmlTemplateForm(type);
@@ -72,7 +72,7 @@ public class UploadXmlTemplateDialogBox extends AbstractDialogBox {
 
                         @Override
                         public void onSuccess(Void result) {
-                            UploadXmlTemplateDialogBox.this.hide();
+                            AddTemplateDialogBox.this.hide();
                             superPanel.reloadTransformations();
                         }
 
@@ -91,7 +91,7 @@ public class UploadXmlTemplateDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                UploadXmlTemplateDialogBox.this.hide();
+                AddTemplateDialogBox.this.hide();
             }
         });
     }
