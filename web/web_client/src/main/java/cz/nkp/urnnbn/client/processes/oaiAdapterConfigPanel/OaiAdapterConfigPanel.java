@@ -103,8 +103,8 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
             }
 
             private void sortAndSaveTransformations(List<XmlTransformationDTO> transformations) {
-                ddRegistrationTransformations = new ArrayList<XmlTransformationDTO>();
-                diImportTransformations = new ArrayList<XmlTransformationDTO>();
+                ddRegistrationTransformations = new ArrayList<>();
+                diImportTransformations = new ArrayList<>();
                 for (XmlTransformationDTO transformation : transformations) {
                     switch (transformation.getType()) {
                         case DIGITAL_DOCUMENT_REGISTRATION:
@@ -126,14 +126,6 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
                 }
             }
         });
-    }
-
-    public List<XmlTransformationDTO> getDdRegistrationTransformations() {
-        return ddRegistrationTransformations;
-    }
-
-    public List<XmlTransformationDTO> getDiImportTransformations() {
-        return diImportTransformations;
     }
 
 

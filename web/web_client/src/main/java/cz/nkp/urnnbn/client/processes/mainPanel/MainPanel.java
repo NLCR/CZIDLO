@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.Utils;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
-import cz.nkp.urnnbn.client.processes.*;
+import cz.nkp.urnnbn.client.processes.ProcessAdministrationTab;
 import cz.nkp.urnnbn.client.resources.ProcessAdministrationCss;
 import cz.nkp.urnnbn.client.resources.Resources;
 import cz.nkp.urnnbn.client.services.ProcessService;
@@ -86,7 +86,7 @@ public class MainPanel extends VerticalPanel {
             @Override
             public void onSuccess(List<ProcessDTO> result) {
                 if (processes != null) {
-                    LOGGER.fine("loaded " + processes.size() + " processes");
+                    //LOGGER.fine("loaded " + processes.size() + " processes");
                 }
 
                 if (forceReload || processes == null || foundDifference(processes, result)) {
@@ -238,14 +238,7 @@ public class MainPanel extends VerticalPanel {
         addProcessDefinition(result, row++, constants.OAI_ADAPTER(), new ProcessAdministrationTab.Operation() {
                     @Override
                     public void run() {
-                        new ScheduleProcessOaiAdapterDialogBox(
-                                user,
-                                //TODO: rozmyslet, kam tahle data patri
-                                null, null
-
-                                /*xmlTransformationsPanel.getDdRegistrationTransformations(),
-                                xmlTransformationsPanel.getDiImportTransformations()*/
-                        ).open();
+                        new ScheduleProcessOaiAdapterDialogBox(user).open();
                     }
                 }, new ProcessAdministrationTab.Operation() {
                     @Override

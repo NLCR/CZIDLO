@@ -16,16 +16,19 @@ import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessDialogBox {
 
+    private static final Logger LOGGER = Logger.getLogger(ScheduleProcessOaiAdapterDialogBox.class.getName());
+
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
-    // templates
-    private final List<XmlTransformationDTO> ddRegistrationTemplates;
-    private final List<XmlTransformationDTO> diImportTemplates;
-    private XmlTransformationDTO selectedDdRegistrationTemplate;
-    private XmlTransformationDTO selectedDiImportTemplate;
+    private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<>();
+    // transformations
+    private List<XmlTransformationDTO> ddRegistrationTransformations;
+    private List<XmlTransformationDTO> diImportTransformations;
+    private XmlTransformationDTO selectedDdRegistrationTransformation;
+    private XmlTransformationDTO selectedDiImportTransformation;
 
     private TextBox oaiBaseUrlTextBox;
     private TextBox oaiMetadataPrefixTextBox;
@@ -41,19 +44,38 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     private final Label errorLabel = errorLabel(320);
     private RegistrarDTO selectedRegistrar;
 
-    public ScheduleProcessOaiAdapterDialogBox(UserDTO user, List<XmlTransformationDTO> ddRegistrationTemplates, List<XmlTransformationDTO> diImportTemplates) {
+    public ScheduleProcessOaiAdapterDialogBox(UserDTO user) {
         super(user);
-        this.ddRegistrationTemplates = ddRegistrationTemplates;
-        this.selectedDdRegistrationTemplate = (ddRegistrationTemplates == null || ddRegistrationTemplates.isEmpty()) ? null : ddRegistrationTemplates
-                .get(0);
-        this.diImportTemplates = diImportTemplates;
-        this.selectedDiImportTemplate = (diImportTemplates == null || diImportTemplates.isEmpty()) ? null : diImportTemplates.get(0);
         loadRegistrars();
+        loadTemplates();
     }
 
-    @Override
-    public void open() {
-        reload();
+    private void loadTemplates() {
+        processService.getXmlTransformationsOfUser(new AsyncCallback<List<XmlTransformationDTO>>() {
+
+            @Override
+            public void onSuccess(List<XmlTransformationDTO> result) {
+                //LOGGER.info("templates loaded");
+                ddRegistrationTransformations = new ArrayList<>();
+                diImportTransformations = new ArrayList<>();
+                for (XmlTransformationDTO transformation : result) {
+                    switch (transformation.getType()) {
+                        case DIGITAL_DOCUMENT_REGISTRATION:
+                            ddRegistrationTransformations.add(transformation);
+                            break;
+                        case DIGITAL_INSTANCE_IMPORT:
+                            diImportTransformations.add(transformation);
+                            break;
+                    }
+                }
+                reload();
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                errorLabel.setText(messages.serverError(caught.getMessage()));
+            }
+        });
     }
 
     private void loadRegistrars() {
@@ -62,6 +84,7 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
 
             @Override
             public void onSuccess(ArrayList<RegistrarDTO> result) {
+                //LOGGER.info("registrars loaded");
                 registrarsOfUser = result;
                 if (!registrarsOfUser.isEmpty()) {
                     selectedRegistrar = registrarsOfUser.get(0);
@@ -76,7 +99,13 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
         });
     }
 
+    @Override
+    public void open() {
+        reload();
+    }
+
     void reload() {
+        //LOGGER.info("reload");
         clear();
         setText(messages.processPlaning(constants.OAI_ADAPTER()));
         setAnimationEnabled(true);
@@ -172,20 +201,25 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
 
     private ListBox ddRegistrationTemplatesList() {
         final ListBox result = new ListBox();
-        if (ddRegistrationTemplates != null) {
-            for (XmlTransformationDTO transformation : ddRegistrationTemplates) {
-                result.addItem(transformation.getName());
-            }
-        }
-
         result.addChangeHandler(new ChangeHandler() {
 
             @Override
             public void onChange(ChangeEvent event) {
                 int index = result.getSelectedIndex();
-                selectedDdRegistrationTemplate = ddRegistrationTemplates.get(index);
+                selectedDdRegistrationTransformation = ddRegistrationTransformations.get(index);
             }
         });
+        if (ddRegistrationTransformations != null) {
+            for (XmlTransformationDTO transformation : ddRegistrationTransformations) {
+                result.addItem(transformation.getName());
+            }
+            if (!ddRegistrationTransformations.isEmpty()) {
+                //this does not work, ChangeHandler.onChange is not fired here
+                result.setSelectedIndex(0);
+                //so it must by done manually like this:
+                selectedDdRegistrationTransformation = ddRegistrationTransformations.get(0);
+            }
+        }
         return result;
     }
 
@@ -199,20 +233,25 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
 
     private ListBox diImportTemplatesList() {
         final ListBox result = new ListBox();
-        if (diImportTemplates != null) {
-            for (XmlTransformationDTO transformation : diImportTemplates) {
-                result.addItem(transformation.getName());
-            }
-        }
-
         result.addChangeHandler(new ChangeHandler() {
 
             @Override
             public void onChange(ChangeEvent event) {
                 int index = result.getSelectedIndex();
-                selectedDiImportTemplate = diImportTemplates.get(index);
+                selectedDiImportTransformation = diImportTransformations.get(index);
             }
         });
+        if (diImportTransformations != null) {
+            for (XmlTransformationDTO transformation : diImportTransformations) {
+                result.addItem(transformation.getName());
+            }
+            if (!diImportTransformations.isEmpty()) {
+                //this does not work, ChangeHandler.onChange is not fired here
+                result.setSelectedIndex(0);
+                //so it must by done manually like this:
+                selectedDiImportTransformation = diImportTransformations.get(0);
+            }
+        }
         return result;
     }
 
@@ -249,8 +288,8 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
                     String oaiSet = (oaiSetTtextBox.getText() == null || oaiSetTtextBox.getText().isEmpty()) ? null : oaiSetTtextBox.getText();
                     //TODO: vzdy musi byt vybrana sablona, jinak neni mozne naplanovat proces
                     //podobne kontroly i pro dalsi parametry
-                    String ddRegistrationTemplateId = selectedDdRegistrationTemplate == null ? null : selectedDdRegistrationTemplate.getId().toString();
-                    String diImportTemplateId = selectedDiImportTemplate == null ? null : selectedDiImportTemplate.getId().toString();
+                    String ddRegistrationTemplateId = selectedDdRegistrationTransformation == null ? null : selectedDdRegistrationTransformation.getId().toString();
+                    String diImportTemplateId = selectedDiImportTransformation == null ? null : selectedDiImportTransformation.getId().toString();
 
                     String[] params = new String[]{
                             selectedRegistrar.getCode(),
@@ -265,7 +304,6 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
                             diImportIgnoreDifferenceInAccessibilityCheckbox.getValue().toString(),
                             diImportIgnoreDifferenceInFormatCheckbox.getValue().toString()
                     };
-
                     processService.scheduleProcess(ProcessDTOType.OAI_ADAPTER, params, new AsyncCallback<Void>() {
 
                         @Override
