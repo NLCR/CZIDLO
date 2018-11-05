@@ -16,7 +16,7 @@ import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTOType;
 
-public class AddTemplateDialogBox extends AbstractDialogBox {
+public class AddTransformationDialogBox extends AbstractDialogBox {
 
     private final ProcessServiceAsync processService = GWT.create(ProcessService.class);
     private final OaiAdapterConfigPanel superPanel;
@@ -24,7 +24,7 @@ public class AddTemplateDialogBox extends AbstractDialogBox {
 
     private final Label errorLabel = errorLabel(320);
 
-    public AddTemplateDialogBox(OaiAdapterConfigPanel superPanel, XmlTransformationDTOType type) {
+    public AddTransformationDialogBox(OaiAdapterConfigPanel superPanel, XmlTransformationDTOType type) {
         this.superPanel = superPanel;
         setText(title(type));
         xmlTemplateForm = new XmlTemplateForm(type);
@@ -72,7 +72,7 @@ public class AddTemplateDialogBox extends AbstractDialogBox {
 
                         @Override
                         public void onSuccess(Void result) {
-                            AddTemplateDialogBox.this.hide();
+                            AddTransformationDialogBox.this.hide();
                             superPanel.reloadTransformations();
                         }
 
@@ -91,7 +91,7 @@ public class AddTemplateDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                AddTemplateDialogBox.this.hide();
+                AddTransformationDialogBox.this.hide();
             }
         });
     }

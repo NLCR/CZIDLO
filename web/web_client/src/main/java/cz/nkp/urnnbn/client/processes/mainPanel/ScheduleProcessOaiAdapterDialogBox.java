@@ -47,15 +47,15 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     public ScheduleProcessOaiAdapterDialogBox(UserDTO user) {
         super(user);
         loadRegistrars();
-        loadTemplates();
+        loadTransformations();
     }
 
-    private void loadTemplates() {
+    private void loadTransformations() {
         processService.getXmlTransformationsOfUser(new AsyncCallback<List<XmlTransformationDTO>>() {
 
             @Override
             public void onSuccess(List<XmlTransformationDTO> result) {
-                //LOGGER.info("templates loaded");
+                //LOGGER.info("transformations loaded");
                 ddRegistrationTransformations = new ArrayList<>();
                 diImportTransformations = new ArrayList<>();
                 for (XmlTransformationDTO transformation : result) {

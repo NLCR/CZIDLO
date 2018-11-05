@@ -86,7 +86,7 @@ public class TransformationsPanel extends ScrollPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                new AddTemplateDialogBox(superPanel, type).show();
+                new AddTransformationDialogBox(superPanel, type).show();
             }
         }));
         result.add(new HTML("<br>"));
