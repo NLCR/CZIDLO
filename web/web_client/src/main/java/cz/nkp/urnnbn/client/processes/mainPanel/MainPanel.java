@@ -269,15 +269,14 @@ public class MainPanel extends VerticalPanel {
     }
 
     private void addProcessDefinition(Grid grid, int row, String processName, final ProcessAdministrationTab.Operation scheduleAction, final ProcessAdministrationTab.Operation configAction) {
-        //TODO: i18n
-        Button scheduleBtn = new Button("Plánovat proces", new ClickHandler() {
+        Button scheduleBtn = new Button(constants.processManagerScheduleProcess(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 scheduleAction.run();
             }
         });
         scheduleBtn.setEnabled(scheduleAction != null);
-        Button configBtn = new Button("Nastavení", new ClickHandler() {
+        Button configBtn = new Button(constants.processManagerProcessSettings(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 configAction.run();

@@ -338,6 +338,10 @@ public interface ConstantsImpl extends Constants {
 
     String DIGITAL_INSTANCE_IMPORT();
 
+    String processManagerScheduleProcess();
+
+    String processManagerProcessSettings();
+
     String processId();
 
     String processType();
