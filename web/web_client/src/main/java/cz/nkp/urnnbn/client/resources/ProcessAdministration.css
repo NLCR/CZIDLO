@@ -1,19 +1,27 @@
 @CHARSET "UTF-8";
 
-.processListHeading {
-	font-weight: bold;
-	font-size: 20px;
-	margin: 5px;
-}
-
+/*MAIN PANEL*/
 .processDefinitionsHeading {
-	font-weight: bold;
-	font-size: 20px;
+    font-weight: bold;
+	font-size: 18px;
 	margin: 5px;
 }
 
 .processInstancesHeading {
-	font-weight: bold;
-	font-size: 20px;
+    font-weight: bold;
+	font-size: 18px;
 	margin: 5px;
+}
+
+/* PROCESS CONFIG  */
+.processConfigH1 {
+    font-weight: bold;
+    font-size: 20px;
+    margin: 10px;
+}
+
+.processConfigH2 {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 5px;
 }

@@ -386,11 +386,13 @@ public interface ConstantsImpl extends Constants {
 
     String processOaiAdapterDiImportIgnoreDifferenceInFormat();
 
+    String processOaiAdapterConfigTitle();
+
+    String processOaiAdapterConfigBackButtonText();
+
     String processOaiAdapterTransformationsDDRegistrationTitle();
 
     String processOaiAdapterTransformationsDIImportTitle();
-
-    String processOaiAdapterTransformationList();
 
     String processOaiAdapterTransformationTitle();
 

@@ -60,13 +60,6 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
 
     private IsWidget contentPanel() {
         VerticalPanel result = new VerticalPanel();
-        //TODO: i18n
-        result.add(new Button("← Zpět na správu procesů", new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                superPanel.selectProcessAdminPanel();
-            }
-        }));
         //HEADER
         result.add(header());
         //CONFIG
@@ -77,10 +70,19 @@ public class OaiAdapterConfigPanel extends VerticalPanel {
 
 
     private Widget header() {
-        //TODO:i18n
-        Label label = new Label("Nastavení procesu OAI Adapter");
-        label.addStyleName(css.processListHeading());
-        return label;
+        VerticalPanel result = new VerticalPanel();
+        Button btnBack = new Button(constants.processOaiAdapterConfigBackButtonText(), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                superPanel.selectProcessAdminPanel();
+            }
+        });
+        Label heading = new Label(constants.processOaiAdapterConfigTitle());
+        heading.addStyleName(css.processConfigH1());
+
+        result.add(btnBack);
+        result.add(heading);
+        return result;
     }
 
     private Widget ddRegistrationPanel() {

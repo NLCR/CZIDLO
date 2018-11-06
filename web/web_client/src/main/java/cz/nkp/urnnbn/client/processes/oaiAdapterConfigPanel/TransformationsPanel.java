@@ -42,8 +42,7 @@ public class TransformationsPanel extends ScrollPanel {
         VerticalPanel result = new VerticalPanel();
         //title
         Label label = new Label(title);
-        //TODO: prejmenovat a upravit styl
-        label.addStyleName(css.processListHeading());
+        label.addStyleName(css.processConfigH2());
         result.add(label);
         //table
         result.add(new TransformationTableWidget(transformations, constants,
