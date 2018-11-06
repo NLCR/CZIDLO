@@ -81,7 +81,7 @@ public class TransformationsPanel extends ScrollPanel {
         );
         //add new transformation button
         //TODO: image button s "+" a hint namísto Nahrát z constants.upload(), tak Přidat transformaci
-        result.add(new Button(constants.upload(), new ClickHandler() {
+        result.add(new Button(constants.add(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
