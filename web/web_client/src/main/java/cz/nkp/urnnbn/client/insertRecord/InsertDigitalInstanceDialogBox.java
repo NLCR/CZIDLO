@@ -1,27 +1,20 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.OnUpdate;
+import cz.nkp.urnnbn.client.Operation;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalInstanceForm;
-import cz.nkp.urnnbn.client.search.SearchTab;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
 import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
+
+import java.util.ArrayList;
 
 public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
 
@@ -29,31 +22,12 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
     private final UrnNbnDTO urnNbn;
     private final DigitalInstanceForm form;
     private final Label errorLabel = errorLabel(320);
-    private final OnUpdate<DigitalInstanceDTO> onUpdate;
+    private final Operation<DigitalInstanceDTO> afterUpdateOperation;
 
-    public InsertDigitalInstanceDialogBox(final RecordDataPanel superPanel, UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries) {
+    public InsertDigitalInstanceDialogBox(UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries, Operation<DigitalInstanceDTO> afterUpdateOperation) {
         this.urnNbn = urnNbn;
         this.form = new DigitalInstanceForm(libraries);
-        this.onUpdate = new OnUpdate<DigitalInstanceDTO>() {
-
-            public void onUpdate(DigitalInstanceDTO instance) {
-                superPanel.addDigitalInstance(instance);
-            }
-
-        };
-        init();
-    }
-
-    public InsertDigitalInstanceDialogBox(final SearchTab superPanel, UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries) {
-        this.urnNbn = urnNbn;
-        this.form = new DigitalInstanceForm(libraries);
-        this.onUpdate = new OnUpdate<DigitalInstanceDTO>() {
-
-            public void onUpdate(DigitalInstanceDTO instance) {
-                superPanel.refresh();
-            }
-
-        };
+        this.afterUpdateOperation = afterUpdateOperation;
         init();
     }
 
@@ -89,8 +63,8 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
 
                         @Override
                         public void onSuccess(DigitalInstanceDTO result) {
-                            InsertDigitalInstanceDialogBox.this.onUpdate.onUpdate(result);
-                            InsertDigitalInstanceDialogBox.this.hide();
+                            afterUpdateOperation.run(result);
+                            closeDialog();
                         }
 
                         @Override
@@ -108,8 +82,12 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                InsertDigitalInstanceDialogBox.this.hide();
+                closeDialog();
             }
         });
+    }
+
+    private void closeDialog() {
+        hide();
     }
 }

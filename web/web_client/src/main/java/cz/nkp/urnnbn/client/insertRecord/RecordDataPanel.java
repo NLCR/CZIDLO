@@ -1,23 +1,13 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.DigitalInstanceRefreshable;
+import cz.nkp.urnnbn.client.Operation;
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalDocumentForm;
 import cz.nkp.urnnbn.client.forms.digitalDocument.TechnicalMetadataForm;
@@ -27,23 +17,15 @@ import cz.nkp.urnnbn.client.forms.intEntities.SourceDocumentForm;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.InsertRecordPanelCss;
-import cz.nkp.urnnbn.client.services.ConfigurationService;
-import cz.nkp.urnnbn.client.services.ConfigurationServiceAsync;
-import cz.nkp.urnnbn.client.services.DataService;
-import cz.nkp.urnnbn.client.services.DataServiceAsync;
-import cz.nkp.urnnbn.client.services.InstitutionsService;
-import cz.nkp.urnnbn.client.services.InstitutionsServiceAsync;
+import cz.nkp.urnnbn.client.services.*;
 import cz.nkp.urnnbn.shared.ConfigurationData;
 import cz.nkp.urnnbn.shared.UrnNbnRegistrationMode;
-import cz.nkp.urnnbn.shared.dto.ArchiverDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
+import cz.nkp.urnnbn.shared.dto.*;
 import cz.nkp.urnnbn.shared.dto.ie.AnalyticalDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
+
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRefreshable {
 
@@ -86,7 +68,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
     }
 
     public RecordDataPanel(DataInputTab superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
-            IntelectualEntityForm intelectualEntForm, SourceDocumentForm srcDocForm, String intelectualEntType) {
+                           IntelectualEntityForm intelectualEntForm, SourceDocumentForm srcDocForm, String intelectualEntType) {
         this.superPanel = superPanel;
         this.intelectualEntType = intelectualEntType;
         this.intelectualEntForm = intelectualEntForm;
@@ -115,7 +97,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
     }
 
     public RecordDataPanel(DataInputTab superPanel, RegistrarDTO registrar, UrnNbnRegistrationMode registrationMode,
-            IntelectualEntityForm entityForm, String typeName) {
+                           IntelectualEntityForm entityForm, String typeName) {
         this(superPanel, registrar, registrationMode, entityForm, null, typeName);
     }
 
@@ -188,7 +170,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
             public void onClick(ClickEvent event) {
                 if (formsFilledCorrectly()) {
                     importRecord();
-                }else{
+                } else {
                     logger.info("form not filled correcty");
                 }
             }
@@ -330,7 +312,12 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
 
             @Override
             public void onClick(ClickEvent event) {
-                new InsertDigitalInstanceDialogBox(RecordDataPanel.this, urnNbnAssigned, librariesOfRegistrar).show();
+                new InsertDigitalInstanceDialogBox(urnNbnAssigned, librariesOfRegistrar, new Operation<DigitalInstanceDTO>() {
+                    @Override
+                    public void run(DigitalInstanceDTO di) {
+                        addDigitalInstance(di);
+                    }
+                }).show();
             }
         });
     }

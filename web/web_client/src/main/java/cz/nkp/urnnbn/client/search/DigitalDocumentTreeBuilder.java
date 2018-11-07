@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.Operation;
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
@@ -233,12 +234,14 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
                     }
 
                     public void onSuccess(ArrayList<DigitalLibraryDTO> libraries) {
-                        InsertDigitalInstanceDialogBox dialog = new InsertDigitalInstanceDialogBox(superPanel, urn, libraries);
-                        dialog.show();
+                        new InsertDigitalInstanceDialogBox(urn, libraries, new Operation<DigitalInstanceDTO>() {
+                            @Override
+                            public void run(DigitalInstanceDTO di) {
+                                superPanel.refresh();
+                            }
+                        }).show();
                     }
-
                 });
-
             }
         });
         button.addStyleName(css.treeButton());
