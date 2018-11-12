@@ -68,7 +68,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException,
+    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException,
             AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException {
         try {
             authorization.checkAccessRights(id.getRegistrarId(), login);
@@ -82,16 +82,27 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             try {
                 urn = factory.urnDao().getUrnNbnByDigDocId(id.getDigDocId());
             } catch (RecordNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new UnknownDigDocException(id.getDigDocId());
             }
+            //insert
             try {
                 factory.digDocIdDao().insertRegistrarScopeId(id);
             } catch (RecordNotFoundException e) {
-                throw new UnknownDigDocException(id.getDigDocId());
+                //registrar or digital document not found, but that has been checked already
+                throw new RuntimeException(e);
             } catch (AlreadyPresentException e) {
                 throw new RegistrarScopeIdentifierCollisionException(id);
             }
+            //retrieve result
+            RegistrarScopeIdentifier result;
+            try {
+                result = factory.digDocIdDao().getRegistrarScopeId(id.getDigDocId(), id.getType());
+            } catch (RecordNotFoundException e) {
+                //not found after inserted just now
+                throw new RuntimeException(e);
+            }
             logRegistrarScopeIdCreated(login, id, registrar, urn);
+            return result;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

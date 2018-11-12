@@ -48,7 +48,7 @@ public interface DataImportService extends BusinessService {
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws UnknownUserException, AccessException,
             UnknownDigLibException, UnknownDigDocException;
 
-    public void addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws UnknownUserException, AccessException,
+    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
 
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
