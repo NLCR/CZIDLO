@@ -20,6 +20,8 @@ public interface DataService extends RemoteService {
 
     RegistrarScopeIdDTO addRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException;
 
+    RegistrarScopeIdDTO updateRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException;
+
     void removeRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException;
 
     DigitalInstanceDTO saveDigitalInstance(UrnNbnDTO urn, DigitalInstanceDTO instance) throws ServerException;

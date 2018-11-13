@@ -51,6 +51,9 @@ public interface DataImportService extends BusinessService {
     public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
 
+    public RegistrarScopeIdentifier updateRegistrarScopeIdentifier(RegistrarScopeIdentifier rsId, String login) throws UnknownUserException, AccessException,
+            UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
+
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
 
     public Registrar insertNewRegistrar(Registrar registrar, String login) throws UnknownUserException, NotAdminException,

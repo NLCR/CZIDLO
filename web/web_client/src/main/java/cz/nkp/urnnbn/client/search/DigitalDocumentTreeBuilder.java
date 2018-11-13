@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.Operation;
 import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
+import cz.nkp.urnnbn.client.editRecord.EditRegistrarScopeIdDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.insertRecord.InsertDigitalInstanceDialogBox;
@@ -405,11 +406,20 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         return btn;
     }
 
-    private Button editRsIdButton(RegistrarScopeIdDTO idDTO) {
+    private Button editRsIdButton(final RegistrarScopeIdDTO idDTO) {
         Button btn = new Button(constants.edit());
         btn.addStyleName(css.treeButton());
-        btn.setEnabled(false);
-        // TODO: 13.11.18 implement
+        btn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                new EditRegistrarScopeIdDialogBox(idDTO, new Operation<RegistrarScopeIdDTO>() {
+                    @Override
+                    public void run(RegistrarScopeIdDTO id) {
+                        superPanel.refresh();
+                    }
+                }).show();
+            }
+        });
         return btn;
     }
 

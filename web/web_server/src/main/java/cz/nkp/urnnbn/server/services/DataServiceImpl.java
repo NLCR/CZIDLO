@@ -94,6 +94,18 @@ public class DataServiceImpl extends AbstractService implements DataService {
     }
 
     @Override
+    public RegistrarScopeIdDTO updateRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException {
+        try {
+            checkNotReadOnlyMode();
+            RegistrarScopeIdentifier updated = createService.updateRegistrarScopeIdentifier(new DtoToRegistrarScopeIdTransformer(rsId).transform(), getUserLogin());
+            return new RegistrarScopeIdDtoTransformer(updated).transform();
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, null, e);
+            throw new ServerException(e.getMessage());
+        }
+    }
+
+    @Override
     public DigitalInstanceDTO saveDigitalInstance(UrnNbnDTO urn, DigitalInstanceDTO instance) throws ServerException {
         try {
             checkNotReadOnlyMode();

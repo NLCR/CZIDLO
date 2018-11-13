@@ -68,40 +68,82 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     }
 
     @Override
-    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier id, String login) throws UnknownRegistrarException, UnknownDigDocException,
+    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier rsId, String login) throws UnknownRegistrarException, UnknownDigDocException,
             AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException {
         try {
-            authorization.checkAccessRights(id.getRegistrarId(), login);
+            authorization.checkAccessRights(rsId.getRegistrarId(), login);
             Registrar registrar;
             try {
-                registrar = factory.registrarDao().getRegistrarById(id.getRegistrarId());
+                registrar = factory.registrarDao().getRegistrarById(rsId.getRegistrarId());
             } catch (RecordNotFoundException e) {
-                throw new UnknownRegistrarException(id.getRegistrarId());
+                throw new UnknownRegistrarException(rsId.getRegistrarId());
             }
             UrnNbn urn;
             try {
-                urn = factory.urnDao().getUrnNbnByDigDocId(id.getDigDocId());
+                urn = factory.urnDao().getUrnNbnByDigDocId(rsId.getDigDocId());
             } catch (RecordNotFoundException e) {
-                throw new UnknownDigDocException(id.getDigDocId());
+                throw new UnknownDigDocException(rsId.getDigDocId());
             }
             //insert
             try {
-                factory.digDocIdDao().insertRegistrarScopeId(id);
+                factory.digDocIdDao().insertRegistrarScopeId(rsId);
             } catch (RecordNotFoundException e) {
                 //registrar or digital document not found, but that has been checked already
                 throw new RuntimeException(e);
             } catch (AlreadyPresentException e) {
-                throw new RegistrarScopeIdentifierCollisionException(id);
+                // TODO: 13.11.18 tohle ma byt jiny typ vyjimky, jde o to, ze pro digitalni dokument existuje identikator daneho typu, hodnota neni podstatna
+                throw new RegistrarScopeIdentifierCollisionException(rsId);
             }
             //retrieve result
             RegistrarScopeIdentifier result;
             try {
-                result = factory.digDocIdDao().getRegistrarScopeId(id.getDigDocId(), id.getType());
+                result = factory.digDocIdDao().getRegistrarScopeId(rsId.getDigDocId(), rsId.getType());
             } catch (RecordNotFoundException e) {
                 //not found after inserted just now
                 throw new RuntimeException(e);
             }
-            logRegistrarScopeIdCreated(login, id, registrar, urn);
+            logRegistrarScopeIdCreated(login, rsId, registrar, urn);
+            return result;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public RegistrarScopeIdentifier updateRegistrarScopeIdentifier(RegistrarScopeIdentifier rsId, String login) throws UnknownUserException, AccessException,
+            UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException {
+        try {
+            authorization.checkAccessRights(rsId.getRegistrarId(), login);
+            Registrar registrar;
+            try {
+                registrar = factory.registrarDao().getRegistrarById(rsId.getRegistrarId());
+            } catch (RecordNotFoundException e) {
+                throw new UnknownRegistrarException(rsId.getRegistrarId());
+            }
+            UrnNbn urn;
+            try {
+                urn = factory.urnDao().getUrnNbnByDigDocId(rsId.getDigDocId());
+            } catch (RecordNotFoundException e) {
+                throw new UnknownDigDocException(rsId.getDigDocId());
+            }
+            //update
+            try {
+                factory.digDocIdDao().updateRegistrarScopeIdValue(rsId);
+            } catch (RecordNotFoundException e) {
+                //registrar or digital document not found, but that has been checked already
+                throw new RuntimeException(e);
+            } catch (AlreadyPresentException e) {
+                throw new RegistrarScopeIdentifierCollisionException(rsId);
+            }
+            //retrieve result
+            RegistrarScopeIdentifier result;
+            try {
+                result = factory.digDocIdDao().getRegistrarScopeId(rsId.getDigDocId(), rsId.getType());
+            } catch (RecordNotFoundException e) {
+                //not found after inserted just now
+                throw new RuntimeException(e);
+            }
+            logRegistrarScopeIdCreated(login, rsId, registrar, urn);
             return result;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

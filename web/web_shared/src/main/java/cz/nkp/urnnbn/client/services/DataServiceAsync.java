@@ -17,6 +17,8 @@ public interface DataServiceAsync {
 
     void addRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId, AsyncCallback<RegistrarScopeIdDTO> callback);
 
+    void updateRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId, AsyncCallback<RegistrarScopeIdDTO> callback);
+
     void removeRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId, AsyncCallback<Void> callback);
 
     void saveDigitalInstance(UrnNbnDTO urn, DigitalInstanceDTO instance, AsyncCallback<DigitalInstanceDTO> callback);

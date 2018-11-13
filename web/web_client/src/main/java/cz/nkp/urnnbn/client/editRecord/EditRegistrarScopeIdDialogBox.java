@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.client.insertRecord;
+package cz.nkp.urnnbn.client.editRecord;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,24 +14,24 @@ import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 
 import java.util.logging.Logger;
 
-public class InsertRegistrarScopeIdDialogBox extends AbstractDialogBox {
+public class EditRegistrarScopeIdDialogBox extends AbstractDialogBox {
 
-    private static final Logger logger = Logger.getLogger(InsertRegistrarScopeIdDialogBox.class.getName());
+    private static final Logger logger = Logger.getLogger(EditRegistrarScopeIdDialogBox.class.getName());
     private final DataServiceAsync dataService = GWT.create(DataService.class);
     private final RegistrarScopeIdForm form;
     private final Label errorLabel = errorLabel(320);
-    private final Operation<RegistrarScopeIdDTO> onInserted;
+    private final Operation<RegistrarScopeIdDTO> onUpdated;
     private Button btnSave;
     private Button btnClose;
 
-    public InsertRegistrarScopeIdDialogBox(Long registrarId, Long digDocId, Operation<RegistrarScopeIdDTO> onInserted) {
-        this.form = new RegistrarScopeIdForm(registrarId, digDocId);
-        this.onInserted = onInserted;
+    public EditRegistrarScopeIdDialogBox(RegistrarScopeIdDTO originalDto, Operation<RegistrarScopeIdDTO> onUpdated) {
+        this.form = new RegistrarScopeIdForm(originalDto);
+        this.onUpdated = onUpdated;
         init();
     }
 
     private void init() {
-        setText(constants.registrarScopeId() + " - " + constants.recordInsertion());
+        setText(constants.registrarScopeId() + " - " + constants.recordAdjustment());
         setAnimationEnabled(true);
         setWidget(contentPanel());
         center();
@@ -55,18 +55,18 @@ public class InsertRegistrarScopeIdDialogBox extends AbstractDialogBox {
     }
 
     private Button saveButton() {
-        return new Button(constants.insert(), new ClickHandler() {
+        return new Button(constants.save(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 if (form.isFilledCorrectly()) {
                     btnClose.setEnabled(false);
                     btnSave.setEnabled(false);
-                    dataService.addRegistrarScopeIdentifier(form.getDto(), new AsyncCallback<RegistrarScopeIdDTO>() {
+                    dataService.updateRegistrarScopeIdentifier(form.getDto(), new AsyncCallback<RegistrarScopeIdDTO>() {
 
                         @Override
                         public void onSuccess(RegistrarScopeIdDTO registrarScopeIdDTO) {
-                            onInserted.run(registrarScopeIdDTO);
+                            onUpdated.run(registrarScopeIdDTO);
                             closeDialog();
                         }
 
