@@ -383,11 +383,25 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
         }
     }
 
-    private Button deleteRsIdButton(RegistrarScopeIdDTO idDTO) {
+    private Button deleteRsIdButton(final RegistrarScopeIdDTO idDTO) {
         Button btn = new Button(constants.delete());
         btn.addStyleName(css.treeButton());
-        btn.setEnabled(false);
-        // TODO: 13.11.18 implement
+        btn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                dataService.removeRegistrarScopeIdentifier(idDTO, new AsyncCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        superPanel.refresh();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert(messages.serverError(caught.getMessage()));
+                    }
+                });
+            }
+        });
         return btn;
     }
 
