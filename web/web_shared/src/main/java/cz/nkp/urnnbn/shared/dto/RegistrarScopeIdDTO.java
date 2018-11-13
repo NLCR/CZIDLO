@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.shared.dto;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class RegistrarScopeIdDTO implements Serializable {
 
@@ -51,5 +52,22 @@ public class RegistrarScopeIdDTO implements Serializable {
                 ", type='" + type + '\'' +
                 ", value='" + value + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegistrarScopeIdDTO)) return false;
+        RegistrarScopeIdDTO that = (RegistrarScopeIdDTO) o;
+        return Objects.equals(digDocId, that.digDocId) &&
+                Objects.equals(registrarId, that.registrarId) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(digDocId, registrarId, type, value);
     }
 }

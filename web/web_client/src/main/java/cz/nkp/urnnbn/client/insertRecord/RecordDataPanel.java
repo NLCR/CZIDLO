@@ -284,11 +284,11 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         heading.setStyleName(css.heading());
         result.add(heading);
         //registrar-scope ids
-        Grid rsIdGrid = new Grid(registrarScopeIds.size(), 1);
+        Grid rsIdGrid = new Grid(registrarScopeIds.size(), 2);
         for (int i = 0; i < registrarScopeIds.size(); i++) {
             RegistrarScopeIdDTO rsId = registrarScopeIds.get(i);
             rsIdGrid.setWidget(i, 0, new Label(rsId.getType() + ":" + rsId.getValue()));
-            // TODO: 13.11.18 mozna tlacitka delete a/nebo edit
+            rsIdGrid.setWidget(i, 1, deleteRsIdButton(rsId));
         }
         result.add(rsIdGrid);
         //add new rsid button
@@ -309,6 +309,32 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         });
         result.add(addBtn);
         return result;
+    }
+
+    private Button deleteRsIdButton(final RegistrarScopeIdDTO rsId) {
+        final Button btn = new Button(constants.delete());
+        btn.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                btn.setEnabled(false);
+                dataService.removeRegistrarScopeIdentifier(rsId, new AsyncCallback<Void>() {
+
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                removeRsId(rsId);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                Window.alert(messages.serverError(caught.getMessage()));
+                                btn.setEnabled(true);
+                            }
+                        }
+                );
+
+            }
+        });
+        return btn;
     }
 
 
@@ -366,8 +392,13 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         reloadPanelAfterRecordInserted();
     }
 
-    private void addRegistarScopeId(RegistrarScopeIdDTO id) {
-        registrarScopeIds.add(id);
+    private void addRegistarScopeId(RegistrarScopeIdDTO rsId) {
+        registrarScopeIds.add(rsId);
+        reloadPanelAfterRecordInserted();
+    }
+
+    private void removeRsId(RegistrarScopeIdDTO rsId) {
+        registrarScopeIds.remove(rsId);
         reloadPanelAfterRecordInserted();
     }
 

@@ -1,8 +1,6 @@
 package cz.nkp.urnnbn.server.services;
 
 import cz.nkp.urnnbn.client.services.DataService;
-import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
@@ -76,14 +74,20 @@ public class DataServiceImpl extends AbstractService implements DataService {
     public RegistrarScopeIdDTO addRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException {
         try {
             checkNotReadOnlyMode();
-            // TODO: 7.11.18 use transformer, also dto should have timestamps
-            RegistrarScopeIdentifier toBeInserted = new RegistrarScopeIdentifier();
-            toBeInserted.setType(RegistrarScopeIdType.valueOf(rsId.getType()));
-            toBeInserted.setValue(RegistrarScopeIdValue.valueOf(rsId.getValue()));
-            toBeInserted.setDigDocId(rsId.getDigDocId());
-            toBeInserted.setRegistrarId(rsId.getRegistrarId());
-            RegistrarScopeIdentifier inserted = createService.addRegistrarScopeIdentifier(toBeInserted, getUserLogin());
+            RegistrarScopeIdentifier inserted = createService.addRegistrarScopeIdentifier(new DtoToRegistrarScopeIdTransformer(rsId).transform(), getUserLogin());
             return new RegistrarScopeIdDtoTransformer(inserted).transform();
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, null, e);
+            throw new ServerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void removeRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException {
+        try {
+            checkNotReadOnlyMode();
+            RegistrarScopeIdentifier transformed = new DtoToRegistrarScopeIdTransformer(rsId).transform();
+            deleteService.removeRegistrarScopeIdentifier(transformed.getDigDocId(), transformed.getType(), getUserLogin());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());
