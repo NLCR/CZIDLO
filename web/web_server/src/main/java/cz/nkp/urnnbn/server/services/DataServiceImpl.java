@@ -29,8 +29,7 @@ public class DataServiceImpl extends AbstractService implements DataService {
         // TODO: mozna jeste server-side validace validatory
         // TODO: jinak by nekdo mohl podstrcit js volani se spatnymi parametry
         // TODO: a spadlo by to bud tady (ocekavane cislo)
-        // TODO: nebo v transformeru nebo az na urovni databaze (moc dlouhy
-        // string)
+        // TODO: nebo v transformeru nebo az na urovni databaze (moc dlouhy string)
         DigitalDocument transformed = new DtosToDigitalDocumentTransformer(doc, technical).transform();
         try {
             checkNotReadOnlyMode();

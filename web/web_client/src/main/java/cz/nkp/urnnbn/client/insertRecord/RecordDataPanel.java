@@ -165,48 +165,48 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
     }
 
     private Button insertRecordButton() {
-        return new Button(constants.insert(), new ClickHandler() {
-
+        final Button btnInsert = new Button(constants.insert());
+        btnInsert.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick(ClickEvent event) {
+            public void onClick(ClickEvent clickEvent) {
                 if (formsFilledCorrectly()) {
-                    importRecord();
+                    btnInsert.setEnabled(false);
+                    IntelectualEntityDTO entity = intelectualEntForm.getDto();
+                    if (srcDocform != null) {
+                        ((AnalyticalDTO) entity).setSourceDocument(srcDocform.getDto());
+                    }
+                    DigitalDocumentDTO digDoc = digitalDocForm.getDto();
+                    digDoc.setRegistrar(registrar);
+                    digDoc.setTechnicalMetadata(technicalMetadataForm.getDto());
+                    UrnNbnDTO urnNbn = urnNbnForm != null ? urnNbnForm.getDto() : null;
+                    //rsIds are not being inserted in this step
+                    ArrayList<RegistrarScopeIdDTO> identifiers = new ArrayList<>();
+                    dataService.saveRecord(entity, digDoc, urnNbn, identifiers, new AsyncCallback<UrnNbnDTO>() {
+
+                        @Override
+                        public void onSuccess(UrnNbnDTO result) {
+                            RecordDataPanel.this.urnNbnAssigned = result;
+                            reloadPanelAfterRecordInserted();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(messages.serverError(caught.getMessage()));
+                            btnInsert.setEnabled(true);
+                        }
+                    });
+
                 } else {
                     logger.info("form not filled correcty");
                 }
             }
         });
+        return btnInsert;
     }
 
     private boolean formsFilledCorrectly() {
         return intelectualEntForm.isFilledCorrectly() & (srcDocform == null || srcDocform.isFilledCorrectly()) & digitalDocForm.isFilledCorrectly()
                 & technicalMetadataForm.isFilledCorrectly() & (urnNbnForm == null || urnNbnForm.isFilledCorrectly());
-    }
-
-    private void importRecord() {
-        IntelectualEntityDTO entity = intelectualEntForm.getDto();
-        if (srcDocform != null) {
-            ((AnalyticalDTO) entity).setSourceDocument(srcDocform.getDto());
-        }
-        DigitalDocumentDTO digDoc = digitalDocForm.getDto();
-        digDoc.setRegistrar(registrar);
-        digDoc.setTechnicalMetadata(technicalMetadataForm.getDto());
-        UrnNbnDTO urnNbn = urnNbnForm != null ? urnNbnForm.getDto() : null;
-        //rsIds are not being inserted in this step
-        ArrayList<RegistrarScopeIdDTO> identifiers = new ArrayList<>();
-        dataService.saveRecord(entity, digDoc, urnNbn, identifiers, new AsyncCallback<UrnNbnDTO>() {
-
-            @Override
-            public void onSuccess(UrnNbnDTO result) {
-                RecordDataPanel.this.urnNbnAssigned = result;
-                reloadPanelAfterRecordInserted();
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                errorLabel.setText(messages.serverError(caught.getMessage()));
-            }
-        });
     }
 
     private void reloadPanelAfterRecordInserted() {
