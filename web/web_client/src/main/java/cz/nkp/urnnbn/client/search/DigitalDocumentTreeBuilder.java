@@ -11,6 +11,7 @@ import cz.nkp.urnnbn.client.editRecord.EditDigitalInstanceDialogBox;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.insertRecord.InsertDigitalInstanceDialogBox;
+import cz.nkp.urnnbn.client.insertRecord.InsertRegistrarScopeIdDialogBox;
 import cz.nkp.urnnbn.client.institutions.ArchiverDetailsDialogBox;
 import cz.nkp.urnnbn.client.institutions.DigitalLibraryDetailsDialogBox;
 import cz.nkp.urnnbn.client.services.DataService;
@@ -107,7 +108,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
             panel.add(new HTML("<span style=\"color:grey;text-decoration:line-through;\">" + urnNbn.toString() + "</span>&nbsp&nbsp"));
         }
         // button to deactivate urn:nbn and add new digital instance
-        if (urnNbn.isActive() && activeUserManagesRegistrar()) {
+        if (urnNbn.isActive() && (activeUser().isSuperAdmin() || activeUserManagesRegistrar())) {
             panel.add(new HTML("&nbsp&nbsp"));
             panel.add(deactivateUrnNbnButton(urnNbn));
             panel.add(new HTML("&nbsp&nbsp"));
@@ -208,7 +209,6 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     }
 
     private Button deactivateUrnNbnButton(final UrnNbnDTO urnNbn) {
-
         Button button = new Button(constants.deactivate(), new ClickHandler() {
 
             @Override
@@ -344,13 +344,80 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 
     private void addRegistrarScopeIdentifiers(TreeItem rootItem) {
         ArrayList<RegistrarScopeIdDTO> idList = dto.getRegistrarScopeIdList();
-        if (idList != null && !idList.isEmpty()) {
-            TreeItem idsItem = addItemIfNotNull(rootItem, new HTML("<i>registrar-scope</i>&nbsp;" + constants.identifiers()));
-            for (RegistrarScopeIdDTO idDTO : idList) {
-                idsItem.addItem(new HTML("<span class=\"" + css.attrLabel() + "\">" + idDTO.getType() + ": </span>" + idDTO.getValue()));
+        boolean canEdit = activeUser().isSuperAdmin() || activeUserManagesRegistrar();
+        boolean showIdsPanel = (idList != null && idList.isEmpty()) || canEdit;
+        if (showIdsPanel) {
+            HorizontalPanel idsPanel = new HorizontalPanel();
+            idsPanel.add(new HTML("<i>registrar-scope</i>&nbsp;" + constants.identifiers()));
+            if (canEdit) {
+                idsPanel.add(new HTML("&nbsp&nbsp"));
+                idsPanel.add(addRsIdButton());
             }
-            idsItem.setState(EXPAND_REGISTRAR_SCOPE_IDENTIFIERS);
+            //identifiers
+            if (idList != null && !idList.isEmpty()) {
+                TreeItem idsItem = new TreeItem(idsPanel);
+                idsItem.setState(EXPAND_REGISTRAR_SCOPE_IDENTIFIERS);
+                for (RegistrarScopeIdDTO idDTO : idList) {
+                    idsItem.addItem(buildRsIdItem(idDTO, canEdit));
+                }
+                rootItem.addItem(idsItem);
+            } else {
+                rootItem.addItem(idsPanel);
+            }
         }
+    }
+
+    private Widget buildRsIdItem(RegistrarScopeIdDTO rsId, boolean canEdit) {
+        Widget core = new HTML("<span class=\"" + css.attrLabel() + "\">" + rsId.getType() + ":</span>" + rsId.getValue());
+        if (canEdit) {
+            HorizontalPanel panel = new HorizontalPanel();
+            panel.add(core);
+            panel.add(new HTML("&nbsp&nbsp"));
+            panel.add(editRsIdButton(rsId));
+            panel.add(new HTML("&nbsp&nbsp"));
+            panel.add(deleteRsIdButton(rsId));
+            panel.add(new HTML("&nbsp&nbsp"));
+            return panel;
+        } else {
+            return core;
+        }
+    }
+
+    private Button deleteRsIdButton(RegistrarScopeIdDTO idDTO) {
+        Button btn = new Button(constants.delete());
+        btn.addStyleName(css.treeButton());
+        btn.setEnabled(false);
+        // TODO: 13.11.18 implement
+        return btn;
+    }
+
+    private Button editRsIdButton(RegistrarScopeIdDTO idDTO) {
+        Button btn = new Button(constants.edit());
+        btn.addStyleName(css.treeButton());
+        btn.setEnabled(false);
+        // TODO: 13.11.18 implement
+        return btn;
+    }
+
+    private Button addRsIdButton() {
+        Button btn = new Button(constants.add());
+        btn.addStyleName(css.treeButton());
+        btn.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Long registrarId = dto.getRegistrar().getId();
+                Long digDocId = dto.getId();
+
+                new InsertRegistrarScopeIdDialogBox(registrarId, digDocId, new Operation<RegistrarScopeIdDTO>() {
+                    @Override
+                    public void run(RegistrarScopeIdDTO id) {
+                        superPanel.refresh();
+                    }
+                }).show();
+            }
+        });
+        return btn;
     }
 
     private void addDigitalInstances(UrnNbnDTO urn, TreeItem rootItem) {
@@ -426,7 +493,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
 */
             String url = instanceDTO.getUrl();
             panel.add(new HTML("<a href =\"" + url + "\" target=\"_blank\">" + url + "</a>"));
-            if (activeUserManagesRegistrar()) {
+            if (activeUser().isSuperAdmin() || activeUserManagesRegistrar()) {
                 panel.add(new HTML("&nbsp&nbsp"));
                 panel.add(editDigitalInstanceButton(urn, instanceDTO));
                 panel.add(new HTML("&nbsp&nbsp"));
@@ -458,10 +525,8 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
                     dialogBox.center();
                 }
             });
-
             addLabeledItemAndButtonIfValueNotNull(instanceItem, constants.digitalLibrary(), library.getName(), button);
         }
-
     }
 
     private Button editDigitalInstanceButton(final UrnNbnDTO urn, final DigitalInstanceDTO instance) {
