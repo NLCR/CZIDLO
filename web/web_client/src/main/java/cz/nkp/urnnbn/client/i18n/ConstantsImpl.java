@@ -264,6 +264,8 @@ public interface ConstantsImpl extends Constants {
 
     String digitalInstances();
 
+    String registrarScopeIds();
+
     String insertNewRecord();
 
     String insertDigitalInstance();

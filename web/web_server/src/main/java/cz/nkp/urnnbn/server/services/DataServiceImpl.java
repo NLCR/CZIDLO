@@ -1,31 +1,25 @@
 package cz.nkp.urnnbn.server.services;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import cz.nkp.urnnbn.client.services.DataService;
+import cz.nkp.urnnbn.core.RegistrarScopeIdType;
+import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.server.dtoTransformation.*;
+import cz.nkp.urnnbn.server.dtoTransformation.entities.DtotoIntelectualEntityTransformer;
+import cz.nkp.urnnbn.shared.dto.*;
+import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
+import cz.nkp.urnnbn.shared.exceptions.ServerException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import cz.nkp.urnnbn.client.services.DataService;
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.server.dtoTransformation.DtoToDigitalInstanceTransformer;
-import cz.nkp.urnnbn.server.dtoTransformation.DtoToUrnNbnTransformer;
-import cz.nkp.urnnbn.server.dtoTransformation.DtoTransformer;
-import cz.nkp.urnnbn.server.dtoTransformation.DtosToDigitalDocumentTransformer;
-import cz.nkp.urnnbn.server.dtoTransformation.RecordImportTransformer;
-import cz.nkp.urnnbn.server.dtoTransformation.entities.DtotoIntelectualEntityTransformer;
-import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
-import cz.nkp.urnnbn.shared.dto.TechnicalMetadataDTO;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
-import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
-import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataServiceImpl extends AbstractService implements DataService {
 
@@ -65,8 +59,9 @@ public class DataServiceImpl extends AbstractService implements DataService {
 
     @Override
     public UrnNbnDTO saveRecord(IntelectualEntityDTO intEnt, DigitalDocumentDTO digDoc, UrnNbnDTO urnNbn,
-            ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException {
+                                ArrayList<RegistrarScopeIdDTO> registrarScopeIdentifiers) throws ServerException {
         try {
+
             checkNotReadOnlyMode();
             UrnNbn assigned = createService.registerDigitalDocument(
                     new RecordImportTransformer(intEnt, digDoc, urnNbn, registrarScopeIdentifiers).transform(), getUserLogin());
@@ -78,7 +73,25 @@ public class DataServiceImpl extends AbstractService implements DataService {
     }
 
     @Override
-    public DigitalInstanceDTO saveDigitalInstance(DigitalInstanceDTO instance, UrnNbnDTO urn) throws ServerException {
+    public RegistrarScopeIdDTO addRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException {
+        try {
+            checkNotReadOnlyMode();
+            // TODO: 7.11.18 use transformer, also dto should have timestamps
+            RegistrarScopeIdentifier toBeInserted = new RegistrarScopeIdentifier();
+            toBeInserted.setType(RegistrarScopeIdType.valueOf(rsId.getType()));
+            toBeInserted.setValue(RegistrarScopeIdValue.valueOf(rsId.getValue()));
+            toBeInserted.setDigDocId(rsId.getDigDocId());
+            toBeInserted.setRegistrarId(rsId.getRegistrarId());
+            RegistrarScopeIdentifier inserted = createService.addRegistrarScopeIdentifier(toBeInserted, getUserLogin());
+            return new RegistrarScopeIdDtoTransformer(inserted).transform();
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, null, e);
+            throw new ServerException(e.getMessage());
+        }
+    }
+
+    @Override
+    public DigitalInstanceDTO saveDigitalInstance(UrnNbnDTO urn, DigitalInstanceDTO instance) throws ServerException {
         try {
             checkNotReadOnlyMode();
             DigitalInstance transformed = new DtoToDigitalInstanceTransformer(instance, urn).transform();

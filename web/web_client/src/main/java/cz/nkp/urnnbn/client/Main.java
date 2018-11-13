@@ -62,10 +62,9 @@ public class Main implements EntryPoint {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        logger.severe("Error obtaining user credentials: " + caught.getMessage());
+                        logger.severe("Error obtaining configuration: " + caught.getMessage());
                     }
                 });
-
             }
 
             public void onFailure(Throwable caught) {

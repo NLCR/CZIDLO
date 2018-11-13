@@ -52,9 +52,10 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
     // actual data
     private final String intelectualEntType;
     private UrnNbnDTO urnNbnAssigned;
-    private ArrayList<ArchiverDTO> archivers = new ArrayList<ArchiverDTO>();
-    private ArrayList<DigitalLibraryDTO> librariesOfRegistrar = new ArrayList<DigitalLibraryDTO>();
-    private final ArrayList<DigitalInstanceDTO> digitalInstances = new ArrayList<DigitalInstanceDTO>();
+    private ArrayList<ArchiverDTO> archivers = new ArrayList<>();
+    private ArrayList<DigitalLibraryDTO> librariesOfRegistrar = new ArrayList<>();
+    private final ArrayList<DigitalInstanceDTO> digitalInstances = new ArrayList<>();
+    private final ArrayList<RegistrarScopeIdDTO> registrarScopeIds = new ArrayList<>();
     private final RegistrarDTO registrar;
     UrnNbnRegistrationMode registrationMode;
 
@@ -191,7 +192,7 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         digDoc.setRegistrar(registrar);
         digDoc.setTechnicalMetadata(technicalMetadataForm.getDto());
         UrnNbnDTO urnNbn = urnNbnForm != null ? urnNbnForm.getDto() : null;
-        // TODO: identifiers
+        //rsIds are not being inserted in this step
         ArrayList<RegistrarScopeIdDTO> identifiers = new ArrayList<>();
         dataService.saveRecord(entity, digDoc, urnNbn, identifiers, new AsyncCallback<UrnNbnDTO>() {
 
@@ -227,6 +228,8 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         add(technicalMetadataForm);
         add(assignedUrnNbnPanel());
         add(new HTML("<br/>"));
+        add(registrarScopeIdsPanel());
+        add(new HTML("<br/>"));
         add(digitalInstancesPanel());
         add(new HTML("<br/>"));
         add(backToInitialConfigurationButton(constants.insertNewRecord()));
@@ -243,25 +246,71 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
 
     private Panel digitalInstancesPanel() {
         VerticalPanel result = new VerticalPanel();
-        result.add(digitalInstancesHeading());
-        Grid insstancesGrid = new Grid(digitalInstances.size(), 4);
+        //heading
+        Label heading = new Label(constants.digitalInstances());
+        heading.setStyleName(css.heading());
+        result.add(heading);
+        //digital instances
+        Grid diGrid = new Grid(digitalInstances.size(), 4);
         for (int i = 0; i < digitalInstances.size(); i++) {
             DigitalInstanceDTO instance = digitalInstances.get(i);
-            insstancesGrid.setWidget(i, 0, new Label(instance.getUrl()));
-            insstancesGrid.setWidget(i, 1, digitalInstanceDetailsButton(instance));
-            insstancesGrid.setWidget(i, 2, editDigitalInstanceButton(instance));
-            insstancesGrid.setWidget(i, 3, deactivateDigitalInstanceButton(instance));
+            diGrid.setWidget(i, 0, new Label(instance.getUrl()));
+            diGrid.setWidget(i, 1, digitalInstanceDetailsButton(instance));
+            diGrid.setWidget(i, 2, editDigitalInstanceButton(instance));
+            diGrid.setWidget(i, 3, deactivateDigitalInstanceButton(instance));
         }
-        result.add(insstancesGrid);
-        result.add(addDigitalInstanceButton());
+        result.add(diGrid);
+        //add new di button
+        Button addDiButton = new Button(constants.add(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                new InsertDigitalInstanceDialogBox(urnNbnAssigned, librariesOfRegistrar, new Operation<DigitalInstanceDTO>() {
+                    @Override
+                    public void run(DigitalInstanceDTO di) {
+                        addDigitalInstance(di);
+                    }
+                }).show();
+            }
+        });
+        result.add(addDiButton);
         return result;
     }
 
-    private Widget digitalInstancesHeading() {
-        Label result = new Label(constants.digitalInstances());
-        result.setStyleName(css.heading());
+    private Panel registrarScopeIdsPanel() {
+        VerticalPanel result = new VerticalPanel();
+        //heading
+        Label heading = new Label(constants.registrarScopeIds());
+        heading.setStyleName(css.heading());
+        result.add(heading);
+        //registrar-scope ids
+        Grid rsIdGrid = new Grid(registrarScopeIds.size(), 1);
+        for (int i = 0; i < registrarScopeIds.size(); i++) {
+            RegistrarScopeIdDTO rsId = registrarScopeIds.get(i);
+            rsIdGrid.setWidget(i, 0, new Label(rsId.getType() + ":" + rsId.getValue()));
+            // TODO: 13.11.18 mozna tlacitka delete a/nebo edit
+        }
+        result.add(rsIdGrid);
+        //add new rsid button
+        Button addBtn = new Button(constants.add(), new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Long registrarId = registrar.getId();
+                Long digDocId = urnNbnAssigned.getDigdocId();
+
+                new InsertRegistrarScopeIdDialogBox(registrarId, digDocId, new Operation<RegistrarScopeIdDTO>() {
+                    @Override
+                    public void run(RegistrarScopeIdDTO id) {
+                        addRegistarScopeId(id);
+                    }
+                }).show();
+            }
+        });
+        result.add(addBtn);
         return result;
     }
+
 
     private Button digitalInstanceDetailsButton(final DigitalInstanceDTO instance) {
         return new Button(constants.details(), new ClickHandler() {
@@ -307,21 +356,6 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
         });
     }
 
-    private Button addDigitalInstanceButton() {
-        return new Button(constants.add(), new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                new InsertDigitalInstanceDialogBox(urnNbnAssigned, librariesOfRegistrar, new Operation<DigitalInstanceDTO>() {
-                    @Override
-                    public void run(DigitalInstanceDTO di) {
-                        addDigitalInstance(di);
-                    }
-                }).show();
-            }
-        });
-    }
-
     public void addDigitalInstance(DigitalInstanceDTO instance) {
         digitalInstances.add(instance);
         reloadPanelAfterRecordInserted();
@@ -329,6 +363,11 @@ public class RecordDataPanel extends VerticalPanel implements DigitalInstanceRef
 
     public void removeDigitalInstance(DigitalInstanceDTO instance) {
         digitalInstances.remove(instance);
+        reloadPanelAfterRecordInserted();
+    }
+
+    private void addRegistarScopeId(RegistrarScopeIdDTO id) {
+        registrarScopeIds.add(id);
         reloadPanelAfterRecordInserted();
     }
 

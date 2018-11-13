@@ -7,34 +7,32 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
 import cz.nkp.urnnbn.client.Operation;
-import cz.nkp.urnnbn.client.forms.digitalDocument.DigitalInstanceForm;
+import cz.nkp.urnnbn.client.forms.digitalDocument.RegistrarScopeIdForm;
 import cz.nkp.urnnbn.client.services.DataService;
 import cz.nkp.urnnbn.client.services.DataServiceAsync;
-import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
-import cz.nkp.urnnbn.shared.dto.DigitalLibraryDTO;
-import cz.nkp.urnnbn.shared.dto.UrnNbnDTO;
+import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 
-import java.util.ArrayList;
+import java.util.logging.Logger;
 
-public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
+public class InsertRegistrarScopeIdDialogBox extends AbstractDialogBox {
 
+    private static final Logger logger = Logger.getLogger(InsertRegistrarScopeIdDialogBox.class.getName());
     private final DataServiceAsync dataService = GWT.create(DataService.class);
-    private final UrnNbnDTO urnNbn;
-    private final DigitalInstanceForm form;
+    private final RegistrarScopeIdForm form;
     private final Label errorLabel = errorLabel(320);
-    private final Operation<DigitalInstanceDTO> onUpdated;
+    private final Operation<RegistrarScopeIdDTO> onInserted;
     private Button btnSave;
     private Button btnClose;
 
-    public InsertDigitalInstanceDialogBox(UrnNbnDTO urnNbn, ArrayList<DigitalLibraryDTO> libraries, Operation<DigitalInstanceDTO> onUpdated) {
-        this.urnNbn = urnNbn;
-        this.form = new DigitalInstanceForm(libraries);
-        this.onUpdated = onUpdated;
+    public InsertRegistrarScopeIdDialogBox(Long registrarId, Long digDocId, Operation<RegistrarScopeIdDTO> onInserted) {
+        this.form = new RegistrarScopeIdForm(registrarId, digDocId);
+        this.onInserted = onInserted;
         init();
     }
 
     private void init() {
-        setText(constants.digitalInstance() + " - " + constants.recordInsertion());
+        setText("registrar-scope id" + " - " + constants.recordInsertion());
+        //setText(constants.digitalInstance() + " - " + constants.recordInsertion());
         setAnimationEnabled(true);
         setWidget(contentPanel());
         center();
@@ -65,19 +63,19 @@ public class InsertDigitalInstanceDialogBox extends AbstractDialogBox {
                 if (form.isFilledCorrectly()) {
                     btnClose.setEnabled(false);
                     btnSave.setEnabled(false);
-                    dataService.saveDigitalInstance(urnNbn, form.getDto(), new AsyncCallback<DigitalInstanceDTO>() {
+                    dataService.addRegistrarScopeIdentifier(form.getDto(), new AsyncCallback<RegistrarScopeIdDTO>() {
 
                         @Override
-                        public void onSuccess(DigitalInstanceDTO result) {
-                            onUpdated.run(result);
+                        public void onSuccess(RegistrarScopeIdDTO registrarScopeIdDTO) {
+                            onInserted.run(registrarScopeIdDTO);
                             closeDialog();
                         }
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            errorLabel.setText(messages.serverError(caught.getMessage()));
                             btnClose.setEnabled(true);
                             btnSave.setEnabled(true);
+                            errorLabel.setText(messages.serverError(caught.getMessage()));
                         }
                     });
                 }
