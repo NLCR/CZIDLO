@@ -346,7 +346,7 @@ public class DigitalDocumentTreeBuilder extends TreeBuilder {
     private void addRegistrarScopeIdentifiers(TreeItem rootItem) {
         ArrayList<RegistrarScopeIdDTO> idList = dto.getRegistrarScopeIdList();
         boolean canEdit = activeUser().isSuperAdmin() || activeUserManagesRegistrar();
-        boolean showIdsPanel = (idList != null && idList.isEmpty()) || canEdit;
+        boolean showIdsPanel = (idList != null && !idList.isEmpty()) || canEdit;
         if (showIdsPanel) {
             HorizontalPanel idsPanel = new HorizontalPanel();
             idsPanel.add(new HTML("<i>registrar-scope</i>&nbsp;" + constants.identifiers()));
