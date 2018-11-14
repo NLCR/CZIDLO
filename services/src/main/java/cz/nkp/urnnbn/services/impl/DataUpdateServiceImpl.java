@@ -68,7 +68,8 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
                 throw new UnknownDigDocException(id.getDigDocId());
             }
             logRegistrarScopeIdUpdated(login, id, registrar, urn);
-            // TODO: 13.11.18 reindex
+            //reindexace
+            reindexDigitalDocument(id.getDigDocId(), urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -100,7 +101,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         }
     }
 
-    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
+    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the update itself
         try {
             solrIndexer.indexDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());

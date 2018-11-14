@@ -15,12 +15,15 @@ import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * TODO: test
- *
  * @author Martin Řehánek
  */
 public class DataImportServiceImpl extends BusinessServiceImpl implements DataImportService {
+
+    private static final Logger LOGGER = Logger.getLogger(DataImportServiceImpl.class.getName());
 
     private final SolrIndexer solrIndexer;
 
@@ -110,10 +113,20 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
                 throw new RuntimeException(e);
             }
             logRegistrarScopeIdCreated(login, rsId, registrar, urn);
-            // TODO: 13.11.18 reindex
+            //reindexace
+            reindexDigitalDocument(rsId.getDigDocId(), urn);
             return result;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
+        try {
+            solrIndexer.indexDocument(digDocId);
+            LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
         }
     }
 

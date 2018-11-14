@@ -114,7 +114,7 @@ public class Services {
 
     public DataRemoveService dataRemoveService() {
         if (dataRemove == null) {
-            dataRemove = new DataRemoveServiceImpl(connector);
+            dataRemove = new DataRemoveServiceImpl(connector, solrIndexer);
         }
         return dataRemove;
     }

@@ -13,14 +13,23 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
 import cz.nkp.urnnbn.services.exceptions.*;
+import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Martin Řehánek
  */
 public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRemoveService {
 
-    public DataRemoveServiceImpl(DatabaseConnector conn) {
+    private static final Logger LOGGER = Logger.getLogger(DataRemoveServiceImpl.class.getName());
+
+    private final SolrIndexer solrIndexer;
+
+    public DataRemoveServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer) {
         super(conn);
+        this.solrIndexer = solrIndexer;
     }
 
     @Override
@@ -45,6 +54,8 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
                 throw new UnknownDigDocException(digDocId);
             }
             logRegistrarScopeIdsDeleted(login, urn);
+            //reindexace
+            reindexDigitalDocument(digDocId, urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -93,9 +104,19 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
                 throw new UnknownDigDocException(digDocId);
             }
             logRegistrarScopeIdDeleted(login, registrarScopeId, registrar, urn);
-            // TODO: 13.11.18 reindex
+            //reindexace
+            reindexDigitalDocument(digDocId, urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the delete itself
+        try {
+            solrIndexer.indexDocument(digDocId);
+            LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
         }
     }
 
