@@ -84,7 +84,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(rsId.getDigDocId());
             }
-            //insert
+            //insert rsId
             try {
                 factory.digDocIdDao().insertRegistrarScopeId(rsId);
             } catch (RecordNotFoundException e) {
@@ -94,6 +94,13 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
                 //either registrar-digDoc-idType or registrar-idType-idValue already exists
                 throw new RegistrarScopeIdentifierCollisionException(registrar.getCode(), rsId.getDigDocId(), rsId.getType(), rsId.getValue());
             }
+            //update digital-document timestamp
+            try {
+                factory.documentDao().updateDocumentDatestamp(rsId.getDigDocId());
+            } catch (RecordNotFoundException e) {
+                //should never happen, digital document has been located already
+                throw new UnknownDigDocException(rsId.getDigDocId());
+            }
             //retrieve result
             RegistrarScopeIdentifier result;
             try {
@@ -102,9 +109,8 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
                 //not found after inserted just now
                 throw new RuntimeException(e);
             }
-            // TODO: 13.11.18 update digDoc timestamp
-            // TODO: 13.11.18 reindex
             logRegistrarScopeIdCreated(login, rsId, registrar, urn);
+            // TODO: 13.11.18 reindex
             return result;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

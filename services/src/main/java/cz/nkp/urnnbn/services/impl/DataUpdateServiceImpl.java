@@ -50,7 +50,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(id.getDigDocId());
             }
-            //update
+            //update rsId
             try {
                 factory.digDocIdDao().updateRegistrarScopeIdValue(id);
             } catch (RecordNotFoundException e) {

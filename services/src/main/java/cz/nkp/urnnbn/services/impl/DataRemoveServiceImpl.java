@@ -79,19 +79,21 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             } catch (RecordNotFoundException e1) {
                 throw new RegistrarScopeIdentifierNotDefinedException(digDocId, type);
             }
+            //delete rsId
             try {
                 factory.digDocIdDao().deleteRegistrarScopeId(digDocId, type);
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(digDocId);
             }
+            //update digital-document timestamp
             try {
                 factory.documentDao().updateDocumentDatestamp(digDocId);
             } catch (RecordNotFoundException e) {
+                //should never happen, digital document has been located already
                 throw new UnknownDigDocException(digDocId);
             }
-            // TODO: 13.11.18 update digDoc timestamp
-            // TODO: 13.11.18 reindex
             logRegistrarScopeIdDeleted(login, registrarScopeId, registrar, urn);
+            // TODO: 13.11.18 reindex
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
