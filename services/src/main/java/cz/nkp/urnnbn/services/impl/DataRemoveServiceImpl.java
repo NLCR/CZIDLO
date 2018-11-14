@@ -6,33 +6,15 @@ package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 import cz.nkp.urnnbn.services.DataRemoveService;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.CannotBeRemovedException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRemoveService {
@@ -95,7 +77,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             try {
                 registrarScopeId = factory.digDocIdDao().getRegistrarScopeId(digDocId, type);
             } catch (RecordNotFoundException e1) {
-                throw new RegistrarScopeIdentifierNotDefinedException(type);
+                throw new RegistrarScopeIdentifierNotDefinedException(digDocId, type);
             }
             try {
                 factory.digDocIdDao().deleteRegistrarScopeId(digDocId, type);
@@ -107,6 +89,8 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             } catch (RecordNotFoundException e) {
                 throw new UnknownDigDocException(digDocId);
             }
+            // TODO: 13.11.18 update digDoc timestamp
+            // TODO: 13.11.18 reindex
             logRegistrarScopeIdDeleted(login, registrarScopeId, registrar, urn);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);

@@ -4,43 +4,29 @@
  */
 package cz.nkp.urnnbn.services;
 
+import cz.nkp.urnnbn.core.dto.*;
+import cz.nkp.urnnbn.services.exceptions.*;
+
 import java.util.Collection;
 
-import cz.nkp.urnnbn.core.dto.Archiver;
-import cz.nkp.urnnbn.core.dto.Catalog;
-import cz.nkp.urnnbn.core.dto.Content;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.DigitalInstance;
-import cz.nkp.urnnbn.core.dto.DigitalLibrary;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.Registrar;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
-import cz.nkp.urnnbn.core.dto.User;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.UnknownArchiverException;
-import cz.nkp.urnnbn.services.exceptions.UnknownCatalogException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigLibException;
-import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
-
 /**
- *
  * @author Martin Řehánek
  */
 public interface DataUpdateService extends BusinessService {
 
-    public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownUserException, AccessException,
-            UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
+    /**
+     * @param login
+     * @param rsId
+     * @throws UnknownUserException                        if user identified by login doesn't exist
+     * @throws AccessException                             if user doesn't have right to registrar (identified by rsId.getRegistrarId())
+     * @throws UnknownRegistrarException                   if no such registrar with id form rsId.getRegistrarId() exists
+     * @throws UnknownDigDocException                      if digital document (identified by rsId.getRegistrarId()) doesn't exist
+     * @throws RegistrarScopeIdentifierCollisionException  if there already exists another digital document with same type and value (within registrar)
+     * @throws RegistrarScopeIdentifierNotDefinedException if no registrar-scope of such type exist for digital document
+     */
+    public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier rsId) throws UnknownUserException, AccessException,
+            UnknownRegistrarException, UnknownDigDocException,
+            RegistrarScopeIdentifierCollisionException, RegistrarScopeIdentifierNotDefinedException;
 
     public void updateDigitalDocument(DigitalDocument doc, String login) throws UnknownUserException, AccessException, UnknownDigDocException;
 
@@ -55,7 +41,8 @@ public interface DataUpdateService extends BusinessService {
     public void updateCatalog(Catalog catalog, String login) throws UnknownUserException, AccessException, UnknownCatalogException;
 
     public void updateIntelectualEntity(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc,
-            Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, AccessException, UnknownIntelectualEntity;
+                                        Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, AccessException,
+            UnknownIntelectualEntity;
 
     public void updateUser(User user, String login) throws UnknownUserException, NotAdminException;
 

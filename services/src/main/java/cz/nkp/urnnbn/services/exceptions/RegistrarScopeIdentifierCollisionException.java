@@ -7,22 +7,22 @@ package cz.nkp.urnnbn.services.exceptions;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
-import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class RegistrarScopeIdentifierCollisionException extends Exception {
 
-    public RegistrarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId, RegistrarCode registrarCode) {
-        super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with code %s",
-                toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), registrarCode.toString()));
+    public RegistrarScopeIdentifierCollisionException(RegistrarCode registrarCode, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
+        super(String.format("registrar-scope identifier with type '%s' and value '%s' already exists for registrar with code '%s'",
+                toStringOrNull(type), toStringOrNull(value), registrarCode.toString()));
     }
 
-    public RegistrarScopeIdentifierCollisionException(RegistrarScopeIdentifier rsId) {
-        super(String.format("registrar-scope identifier with type %s and value %s  already present for registrar with id %d",
-                toStringOrNull(rsId.getType()), toStringOrNull(rsId.getValue()), rsId.getRegistrarId()));
+    public RegistrarScopeIdentifierCollisionException(RegistrarCode registrarCode, Long digDocId, RegistrarScopeIdType type, RegistrarScopeIdValue value) {
+        super(String.format("for registrar '%s' there already exists registrar-scope identifier with either " +
+                        "type '%s' for digital document %d, or " +
+                        "type '%s' and value '%s' for some other digital document",
+                registrarCode.toString(), toStringOrNull(type), digDocId, toStringOrNull(type), toStringOrNull(value)));
     }
 
     private static String toStringOrNull(RegistrarScopeIdValue value) {

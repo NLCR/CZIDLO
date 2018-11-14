@@ -48,10 +48,17 @@ public interface DataImportService extends BusinessService {
     public DigitalInstance addDigitalInstance(DigitalInstance instance, String login) throws UnknownUserException, AccessException,
             UnknownDigLibException, UnknownDigDocException;
 
-    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier newId, String login) throws UnknownUserException, AccessException,
-            UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
-
-    public RegistrarScopeIdentifier updateRegistrarScopeIdentifier(RegistrarScopeIdentifier rsId, String login) throws UnknownUserException, AccessException,
+    /**
+     * @param newRsId
+     * @param login
+     * @return newly inserted registrar-scope id (with timestamps)
+     * @throws UnknownUserException                       if user identified by login doesn't exist
+     * @throws AccessException                            if user doesn't have right to registrar (identified by newRsId.getRegistrarId())
+     * @throws UnknownRegistrarException                  if no such registrar with id form newRsId.getRegistrarId() exists
+     * @throws UnknownDigDocException                     if digital document (identified by newRsId.getRegistrarId()) doesn't exist
+     * @throws RegistrarScopeIdentifierCollisionException if combination of registrar-digDoc-idType or registrar-idType-idValue already exists
+     */
+    public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier newRsId, String login) throws UnknownUserException, AccessException,
             UnknownRegistrarException, UnknownDigDocException, RegistrarScopeIdentifierCollisionException;
 
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;

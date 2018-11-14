@@ -97,7 +97,9 @@ public class DataServiceImpl extends AbstractService implements DataService {
     public RegistrarScopeIdDTO updateRegistrarScopeIdentifier(RegistrarScopeIdDTO rsId) throws ServerException {
         try {
             checkNotReadOnlyMode();
-            RegistrarScopeIdentifier updated = createService.updateRegistrarScopeIdentifier(new DtoToRegistrarScopeIdTransformer(rsId).transform(), getUserLogin());
+            RegistrarScopeIdentifier toBeUpdated = new DtoToRegistrarScopeIdTransformer(rsId).transform();
+            updateService.updateRegistrarScopeIdentifier(getUserLogin(), toBeUpdated);
+            RegistrarScopeIdentifier updated = readService.registrarScopeIdentifier(rsId.getDigDocId(), toBeUpdated.getType());
             return new RegistrarScopeIdDtoTransformer(updated).transform();
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);

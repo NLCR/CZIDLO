@@ -4,8 +4,6 @@
  */
 package cz.nkp.urnnbn.core.persistence;
 
-import java.util.List;
-
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
@@ -13,8 +11,9 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordReferencedException;
 
+import java.util.List;
+
 /**
- *
  * @author Martin Řehánek
  */
 public interface RegistrarDAO {
@@ -29,7 +28,7 @@ public interface RegistrarDAO {
     /**
      * Should not use id from registrar but instead create new by means of database
      *
-     * @param archiver
+     * @param registrar
      * @return id created
      * @throws DatabaseException
      */

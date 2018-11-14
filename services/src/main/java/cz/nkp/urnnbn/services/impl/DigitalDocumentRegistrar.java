@@ -294,19 +294,19 @@ public class DigitalDocumentRegistrar {
         }
     }
 
-    private List<RegistrarScopeIdentifier> persistRegistrarScopeIdentifiers(long digDocInternalId) throws RegistrarScopeIdentifierCollisionException,
+    private List<RegistrarScopeIdentifier> persistRegistrarScopeIdentifiers(long digDocId) throws RegistrarScopeIdentifierCollisionException,
             DatabaseException, RecordNotFoundException {
         Registrar registrar = factory.registrarDao().getRegistrarByCode(data.getRegistrarCode());
-        List<RegistrarScopeIdentifier> result = new ArrayList<RegistrarScopeIdentifier>();
+        List<RegistrarScopeIdentifier> result = new ArrayList<>();
         for (RegistrarScopeIdentifier id : data.getDigDogIdentifiers()) {
-            id.setDigDocId(digDocInternalId);
+            id.setDigDocId(digDocId);
             id.setRegistrarId(registrar.getId());
             try {
                 factory.digDocIdDao().insertRegistrarScopeId(id);
                 result.add(id);
             } catch (AlreadyPresentException ex) {
                 logger.log(Level.SEVERE, "identifier collision for {0}", id);
-                throw new RegistrarScopeIdentifierCollisionException(id, registrar.getCode());
+                throw new RegistrarScopeIdentifierCollisionException(registrar.getCode(), digDocId, id.getType(), id.getValue());
             }
         }
         return result;

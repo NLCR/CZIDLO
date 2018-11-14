@@ -102,7 +102,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
                 return id;
             }
         }
-        throw new RegistrarScopeIdentifierNotDefinedException(type);
+        throw new RegistrarScopeIdentifierNotDefinedException(digDocId, type);
     }
 
     @Override

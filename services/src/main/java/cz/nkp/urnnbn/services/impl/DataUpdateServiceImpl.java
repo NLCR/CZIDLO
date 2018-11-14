@@ -35,7 +35,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     @Override
     public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownRegistrarException, UnknownDigDocException,
-            AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException {
+            AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException, RegistrarScopeIdentifierNotDefinedException {
         try {
             authorization.checkAccessRightsOrAdmin(id.getRegistrarId(), login);
             Registrar registrar;
@@ -48,21 +48,27 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             try {
                 urn = factory.urnDao().getUrnNbnByDigDocId(id.getDigDocId());
             } catch (RecordNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new UnknownDigDocException(id.getDigDocId());
             }
+            //update
             try {
                 factory.digDocIdDao().updateRegistrarScopeIdValue(id);
             } catch (RecordNotFoundException e) {
-                throw new RuntimeException(e);
+                //digital document does not have registrar-scope id with this type
+                throw new RegistrarScopeIdentifierNotDefinedException(id.getDigDocId(), id.getType());
             } catch (AlreadyPresentException e) {
-                throw new RegistrarScopeIdentifierCollisionException(id);
+                //such registrarScope id already exists (for another digital document)
+                throw new RegistrarScopeIdentifierCollisionException(registrar.getCode(), id.getType(), id.getValue());
             }
+            //update digital-document timestamp
             try {
                 factory.documentDao().updateDocumentDatestamp(id.getDigDocId());
             } catch (RecordNotFoundException e) {
+                //should never happen, digital document has been located already
                 throw new UnknownDigDocException(id.getDigDocId());
             }
             logRegistrarScopeIdUpdated(login, id, registrar, urn);
+            // TODO: 13.11.18 reindex
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
