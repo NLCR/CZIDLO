@@ -25,7 +25,7 @@ public class EditRegistrarScopeIdDialogBox extends AbstractDialogBox {
     private Button btnClose;
 
     public EditRegistrarScopeIdDialogBox(RegistrarScopeIdDTO originalDto, Operation<RegistrarScopeIdDTO> onUpdated) {
-        this.form = new RegistrarScopeIdForm(originalDto);
+        this.form = new RegistrarScopeIdForm(originalDto, true);
         this.onUpdated = onUpdated;
         init();
     }

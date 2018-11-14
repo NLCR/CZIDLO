@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.client.forms.digitalDocument;
 
+import cz.nkp.urnnbn.client.forms.Field;
 import cz.nkp.urnnbn.client.forms.Form;
 import cz.nkp.urnnbn.client.forms.FormFields;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
@@ -9,9 +10,10 @@ import cz.nkp.urnnbn.shared.dto.RegistrarScopeIdDTO;
 public class RegistrarScopeIdForm extends Form {
 
     private final RegistrarScopeIdDTO originalDto;
+    private final boolean fixType;
 
     public RegistrarScopeIdForm(Long registrarId, Long digDocId) {
-        this(buildDto(registrarId, digDocId));
+        this(buildDto(registrarId, digDocId), false);
     }
 
     private static RegistrarScopeIdDTO buildDto(Long registrarId, Long digDocId) {
@@ -21,15 +23,20 @@ public class RegistrarScopeIdForm extends Form {
         return dto;
     }
 
-    public RegistrarScopeIdForm(RegistrarScopeIdDTO originalDto) {
+    public RegistrarScopeIdForm(RegistrarScopeIdDTO originalDto, boolean fixType) {
         this.originalDto = originalDto;
+        this.fixType = fixType;
         initForm();
     }
 
     @Override
     public FormFields buildFields() {
         FormFields fields = new FormFields();
-        fields.addField("type", new TextInputValueField(new LimitedLengthValidator(100), constants.idType(), originalDto.getType(), true));
+        Field typeField = new TextInputValueField(new LimitedLengthValidator(100), constants.idType(), originalDto.getType(), true);
+        if (fixType) {
+            typeField.disable();
+        }
+        fields.addField("type", typeField);
         fields.addField("value", new TextInputValueField(new LimitedLengthValidator(100), constants.idValue(), originalDto.getValue(), true));
         return fields;
     }
