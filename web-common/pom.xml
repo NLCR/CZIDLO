@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>web-common</artifactId>
-    <version>4.6.alpha2</version>
+    <version>4.6.alpha3</version>
     <!--<version>${czidlo_version}</version>-->
     <packaging>jar</packaging>
     <name>CZIDLO - web-common</name>
