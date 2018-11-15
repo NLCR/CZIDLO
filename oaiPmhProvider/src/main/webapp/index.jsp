@@ -54,8 +54,20 @@
                 text-indent: 5px;
             }
 
+            h1{
+                margin-right: 25px;
+                margin-left: 25px;
+                align: left;
+            }
+            h2{
+                margin-right: 25px;
+                margin-left: 25px;
+                align: left;
+            }
             .descriptionText{
-
+                max-width: 1000px;
+                margin-right: 25px;
+                margin-left: 25px;
             }
 
             .verb{
@@ -67,37 +79,37 @@
         <%
             OaiPmhConfiguration conf = OaiPmhConfiguration.instanceOf();
             String providerUrl = conf.getBaseUrl();
+            String adminName = conf.getAdminEmail();
+            if(adminName == null){
+                adminName = conf.getAdminEmail();
+            }
         %>
 
-        <h1 align="center">OAI-PMH data provider</h1>
+        <h1>OAI-PMH data provider</h1>
         <p class="descriptionText">
-            <h3>General information</h3>
             Welcome to <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">OAI-PMH</a> data provider of
             <a href="https://github.com/NLCR/CZIDLO/wiki/OAI-PMH-data-provider">CZIDLO (version <%=cz.nkp.urnnbn.core.Czidlo.VERSION%>)</a>.
             This particular instance,
             which is deployed at <b><%=request.getHeader("host")%></b>,
             handles language code <b><%=conf.getLanguageCode()%></b>.
+            <br>
+            For more information checkout the <a href ="../../web">main web interface</a> of CZIDLO or contact the administrator
+            <a href="mailto:<%=conf.getAdminEmail()%>"><%=adminName%></a>.
         </p>
-        <p>
-            For more information and troubleshooting please contact administrator
-            <a href="mailto:<%=conf.getAdminEmail()%>"><%=conf.getAdminName()%></a>.
-        </p>
 
-
-
-        <h3>Web interface description</h3>
+        <h2>Web interface</h2>
         <p class="descriptionText">
-            This is just simple web interface.
-            The actual base url is <a href="<%=providerUrl%>"><%=providerUrl%></a>. 
-        </p>
-        <p>
-            Each row in table below represents single operation. 
-            Each column allways contains button with name of the operation, 
-            clicking on the button launches the operation.
+            This is a simple web interface for accessing OAI-PMH operations.
+            The actual base url is <a href="<%=providerUrl%>"><%=providerUrl%></a>.
+            <br>
+            Every row in this table represents a single operation.
+            First column always contains button with name of the operation. Clicking this button launches the operation.
+            <br>
             Rest of the columns contain those parameters, that are applicable to given operation.
+            <br>
             Some operations are available in more than one form and are therefore present in multiple rows.
-            For example there are versions of <i>ListIdentifiers</i> and <i>ListRecords</i> for initial request
-            and versions for following requests identified by 
+            For example there are two versions of the operation <i>ListIdentifiers</i> - one for initial request
+            and one for following requests identified by
             <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl"><i>resumtion tokens</i></a>.
         </p>
 
