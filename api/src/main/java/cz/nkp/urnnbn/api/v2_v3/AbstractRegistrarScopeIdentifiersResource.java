@@ -16,9 +16,6 @@
  */
 package cz.nkp.urnnbn.api.v2_v3;
 
-import java.util.List;
-import java.util.logging.Level;
-
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.InvalidRegistrarScopeIdentifier;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
@@ -27,17 +24,14 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv3.builders.RegistrarScopeIdentifiersBuilder;
 
+import java.util.List;
+import java.util.logging.Level;
+
 /**
- *
  * @author Martin Řehánek
  */
 public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV2V3Resource {
@@ -110,6 +104,10 @@ public abstract class AbstractRegistrarScopeIdentifiersResource extends ApiV2V3R
             logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (UnknownDigDocException ex) {
+            logger.log(Level.FINE, null, ex);
+            throw new InternalException(ex);
+        } catch (RegistrarScopeIdentifierNotDefinedException ex) {
+            //should never happen, it's been already established that the registerar-scope id exists
             logger.log(Level.FINE, null, ex);
             throw new InternalException(ex);
         } catch (RegistrarScopeIdentifierCollisionException ex) {

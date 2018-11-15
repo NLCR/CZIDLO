@@ -14,25 +14,6 @@
  */
 package cz.nkp.urnnbn.api.v4;
 
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import cz.nkp.urnnbn.api.v4.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v4.exceptions.NoAccessRightsException;
 import cz.nkp.urnnbn.api.v4.exceptions.NotDefinedException;
@@ -42,14 +23,19 @@ import cz.nkp.urnnbn.core.RegistrarScopeIdType;
 import cz.nkp.urnnbn.core.RegistrarScopeIdValue;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierCollisionException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownRegistrarException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifierBuilder;
 import cz.nkp.urnnbn.xml.apiv4.builders.RegistrarScopeIdentifiersBuilder;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
 
@@ -66,14 +52,14 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
         ResponseFormat format = Parser.parseFormat(formatStr);
         try {
             switch (format) {
-            case XML:
-                String xml = registrarScopeIdentifiersBuilderXml(doc.getId()).buildDocumentWithResponseHeader().toXML();
-                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            case JSON:
-                String json = registrarScopeIdentifiersBuilderJson(doc.getId()).toJson();
-                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-            default:
-                throw new RuntimeException();
+                case XML:
+                    String xml = registrarScopeIdentifiersBuilderXml(doc.getId()).buildDocumentWithResponseHeader().toXML();
+                    return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+                case JSON:
+                    String json = registrarScopeIdentifiersBuilderJson(doc.getId()).toJson();
+                    return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -86,19 +72,19 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @GET
     @Path("/{idType}")
     public Response getRegistrarScopeIdentifierValue(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
-            @PathParam("idType") String idTypeStr) {
+                                                     @PathParam("idType") String idTypeStr) {
         ResponseFormat format = Parser.parseFormat(formatStr);
         RegistrarScopeIdType idType = Parser.parseRegistrarScopeIdType(format, idTypeStr);
         try {
             switch (format) {
-            case XML:
-                String xml = new RegistrarScopeIdentifierBuilder(findRsid(format, idType)).buildDocumentWithResponseHeader().toXML();
-                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
-            case JSON:
-                String json = new RegistrarScopeIdentifierBuilderJson(findRsid(format, idType)).toJson();
-                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
-            default:
-                throw new RuntimeException();
+                case XML:
+                    String xml = new RegistrarScopeIdentifierBuilder(findRsid(format, idType)).buildDocumentWithResponseHeader().toXML();
+                    return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+                case JSON:
+                    String json = new RegistrarScopeIdentifierBuilderJson(findRsid(format, idType)).toJson();
+                    return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;
@@ -189,6 +175,10 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
         } catch (UnknownDigDocException ex) {
+            LOGGER.log(Level.FINE, null, ex);
+            throw new InternalException(format, ex);
+        } catch (RegistrarScopeIdentifierNotDefinedException ex) {
+            //should never happen, it's been already established that the registerar-scope id exists
             LOGGER.log(Level.FINE, null, ex);
             throw new InternalException(format, ex);
         } catch (RegistrarScopeIdentifierCollisionException ex) {
