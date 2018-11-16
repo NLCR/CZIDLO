@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_credentials /home/martin/secret/resolver/nkpAdmin
+define_credentials ../credentials/localhost/default
 
 REGISTRAR_CODE=tst02
 #REGISTRAR_CODE=tst01

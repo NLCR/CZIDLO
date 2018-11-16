@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_credentials /home/martin/secret/resolver/nkpAdmin
+define_credentials ../credentials/localhost/default
 
 URN_NBN=urn:nbn:cz:tst02-000003
 URL="https://${HOST}/api/v3/resolver/${URN_NBN}/registrarScopeIdentifiers/"

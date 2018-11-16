@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_credentials /home/martin/secret/resolver/nkpAdmin
+define_credentials ../credentials/localhost/default
 
 DIG_INST_ID=22
 URL=https://${HOST}/api/v3/digitalInstances/id/${DIG_INST_ID}

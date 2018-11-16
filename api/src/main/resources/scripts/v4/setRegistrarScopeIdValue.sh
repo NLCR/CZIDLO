@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_credentials /home/martin/secret/resolver-test1/mzk-rehan
+define_credentials /credentials/localhost/default
 
 URNNBN=urn:nbn:cz:tst02-000001
 ID_TYPE=someIdType2

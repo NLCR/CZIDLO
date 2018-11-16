@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_credentials /home/martin/secret/resolver/nkpAdmin
+define_credentials ../credentials/localhost/default
 
 URL="https://${HOST}/api/v3/registrars/${REGISTRAR_CODE}/digitalDocuments"
 METHOD=POST
