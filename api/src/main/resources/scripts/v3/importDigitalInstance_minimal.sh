@@ -2,7 +2,7 @@
 source ../inc.sh
 
 init_tmp_files
-define_creditentials /home/martin/secret/resolver/nkpAdmin
+define_credentials /home/martin/secret/resolver/nkpAdmin
 
 URN_NBN=urn:nbn:cz:tst02-000001
 URL=https://${HOST}/api/v3/resolver/${URN_NBN}/digitalInstances

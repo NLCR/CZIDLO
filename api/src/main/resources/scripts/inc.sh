@@ -15,7 +15,7 @@ rm $BODY_TMP
 #password - heslo
 #registrarCode - kód registrátora
 
-function define_creditentials() {
+function define_credentials() {
 HOST=`cat ${1}/host`;
 LOGIN=`cat ${1}/login`;
 PASSWORD=`cat ${1}/password`;
