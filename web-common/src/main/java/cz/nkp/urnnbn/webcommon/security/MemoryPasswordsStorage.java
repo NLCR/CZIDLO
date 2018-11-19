@@ -12,7 +12,7 @@ import java.util.Map;
 public class MemoryPasswordsStorage {
 
     private static MemoryPasswordsStorage instance = new MemoryPasswordsStorage();
-    private Map<String, String> passwordMap = new HashMap<String, String>();
+    private Map<String, String> passwordMap = new HashMap<>();
 
     public static MemoryPasswordsStorage instanceOf() {
         return instance;
