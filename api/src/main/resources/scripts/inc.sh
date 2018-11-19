@@ -1,8 +1,8 @@
 #!/bin/bash
 
 function init_tmp_files() {
-HEADERS_TMP=/tmp/import-headers
-BODY_TMP=/tmp/import-body;
+HEADERS_TMP=/tmp/czidlo-script-headers
+BODY_TMP=/tmp/czidlo-script-body;
 
 rm $HEADERS_TMP
 rm $BODY_TMP
@@ -32,5 +32,6 @@ echo
 function print_body() {
 echo "Telo"
 echo "--------"
-cat $BODY_TMP | xmlindent
+#cat $BODY_TMP | xmlindent -l 80
+xmllint --format $BODY_TMP
 }
