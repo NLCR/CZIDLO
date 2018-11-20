@@ -6,7 +6,6 @@
                     http://www.springframework.org/schema/security
                     http://www.springframework.org/schema/security/spring-security.xsd">
 
-
     <!-- <http use-expressions="true"> <intercept-url pattern="/**" access="permitAll" /> <form-login
         /> </http> -->
 
@@ -18,14 +17,17 @@
     <!-- <http pattern="/test/login.jsp" security="none"/> <http pattern="/test/logout.jsp*" security="none"/> -->
 
     <http>
+
+        <!--TODO: handle csrf properly, until then it's disbled-->
+        <csrf disabled="true"/>
+
         <!-- <http-basic/> -->
         <!-- <form-login login-page='/test/login.jsp'/> -->
         <form-login/>
         <!-- <form-login login-page="/web/login" /> -->
 
-        <!-- <intercept-url pattern="/spring_security_login" access="IS_AUTHENTICATED_ANONYMOUSLY"
-            requires-channel="https"/> -->
-        <!-- <intercept-url pattern="/spring_security_login" requires-channel="https"/> -->
+        <!-- <intercept-url pattern="/login" access="IS_AUTHENTICATED_ANONYMOUSLY" requires-channel="https"/> -->
+        <!-- <intercept-url pattern="/login" requires-channel="https"/> -->
 
         <!--alternativa: sice nautentizovany, ale uplatnuji se security filter chains -->
         <!-- <intercept-url pattern="/test/logout.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY" /> -->
@@ -42,8 +44,8 @@
             <!--here the second login will be rejected -->
             <concurrency-control max-sessions="3" error-if-maximum-exceeded="true"/>
         </session-management>
-        <!-- <logout delete-cookies="JSESSIONID" logout-success-url="/test/logout.jsp" logout-url="/logout"/> -->
-        <logout delete-cookies="JSESSIONID" logout-url="/logout"/>
+
+        <logout delete-cookies="JSESSIONID" logout-url="/logout" logout-success-url="/"/>
     </http>
 
     <authentication-manager>

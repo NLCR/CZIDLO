@@ -20,7 +20,7 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class UserPanel extends Composite {
 
-    private static final String DEFAULT_LOGIN_PAGE = "spring_security_login";
+    private static final String DEFAULT_LOGIN_PAGE = "login";
     private static final String LOGOUT_PAGE = "logout";
     private final ConfigurationServiceAsync configurationService = GWT.create(ConfigurationService.class);
     private final MessagesImpl messages = GWT.create(MessagesImpl.class);

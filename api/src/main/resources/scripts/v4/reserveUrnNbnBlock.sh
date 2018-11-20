@@ -24,3 +24,5 @@ echo
 print_headers
 print_body
 
+#echo
+#cat $BODY_TMP
