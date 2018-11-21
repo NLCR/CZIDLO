@@ -22,4 +22,6 @@ public interface MainCss extends CssResource {
 
     public String footerPanel();
 
+    public String langBtn();
+
 }

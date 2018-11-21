@@ -1,15 +1,12 @@
 package cz.nkp.urnnbn.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.i18n.ConstantsImpl;
 import cz.nkp.urnnbn.client.i18n.MessagesImpl;
 import cz.nkp.urnnbn.client.resources.Resources;
@@ -49,9 +46,7 @@ public class UserPanel extends Composite {
 
     private void initPanel(ConfigurationData configuration) {
         panel.addStyleName(resources.MainCss().userPanel());
-        Anchor language = langAnchor();
-        language.addStyleName(resources.MainCss().userPanelContent());
-        panel.add(language);
+        panel.add(langSwitchWidget());
         if (user.getLogin() == null) {
             String loginUrl = configuration.getLoginPage() == null ? DEFAULT_LOGIN_PAGE : configuration.getLoginPage();
             panel.add(buildLink(loginUrl, constants.loginButton()));
@@ -69,17 +64,33 @@ public class UserPanel extends Composite {
         return result;
     }
 
-    private Anchor langAnchor() {
+    private Widget langSwitchWidget() {
+        HorizontalPanel panel = new HorizontalPanel();
         LocaleInfo locale = LocaleInfo.getCurrentLocale();
-        // locale not defined
-        if (locale.getLocaleName() == null) {
-            return new Anchor(constants.localeEn(), "?locale=en");
-        }// locale cs_CZ
-        else if (locale.getLocaleName().startsWith("cs")) {
-            return new Anchor(constants.localeEn(), GWT.getHostPageBaseURL() + "?locale=en");
-        }// locale en or other
-        else {
-            return new Anchor(constants.localeCz(), GWT.getHostPageBaseURL() + "?locale=cs");
+        //CZ
+        PushButton btnCz = new PushButton(new Image("img/flag_cz_24_rect.png"), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Window.Location.assign(GWT.getHostPageBaseURL() + "?locale=cs");
+            }
+        });
+        if (locale.getLocaleName().startsWith("cs")) {
+            btnCz.setEnabled(false);
         }
+        btnCz.addStyleName(resources.MainCss().langBtn());
+        panel.add(btnCz);
+        //EN
+        PushButton btnEn = new PushButton(new Image("img/flag_en_24_rect.png"), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                Window.Location.assign(GWT.getHostPageBaseURL() + "?locale=en");
+            }
+        });
+        if (locale.getLocaleName().startsWith("en")) {
+            btnEn.setEnabled(false);
+        }
+        btnEn.addStyleName(resources.MainCss().langBtn());
+        panel.add(btnEn);
+        return panel;
     }
 }
