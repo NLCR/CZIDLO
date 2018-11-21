@@ -17,9 +17,9 @@ public class AbstractFormatter {
             if (isToday(then, now)) {
                 return DateTimeFormat.getFormat("HH:mm:ss").format(then);
             } else if (isSameYear(then, now)) {
-                return DateTimeFormat.getFormat("dd. M. HH:mm").format(then);
+                return DateTimeFormat.getFormat("d. M. HH:mm").format(then);
             } else { //another year
-                return DateTimeFormat.getFormat("dd. M. yyyy").format(then);
+                return DateTimeFormat.getFormat("d. M. yyyy").format(then);
             }
         }
     }
