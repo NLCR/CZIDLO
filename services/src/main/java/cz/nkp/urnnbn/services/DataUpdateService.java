@@ -46,6 +46,8 @@ public interface DataUpdateService extends BusinessService {
 
     public void updateUser(User user, String login) throws UnknownUserException, NotAdminException;
 
+    public void updateUserSelf(User user, String login) throws UnknownUserException, InvalidUserException;
+
     public void updateContent(Content content, String login) throws UnknownUserException, NotAdminException, ContentNotFoundException;
 
 }

@@ -1,10 +1,5 @@
 package cz.nkp.urnnbn.server.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
@@ -14,6 +9,12 @@ import cz.nkp.urnnbn.server.dtoTransformation.UserDtoTransformer;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
+import cz.nkp.urnnbn.utils.CryptoUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UserAccountServiceImpl extends AbstractService implements UserAccountService {
 
@@ -32,7 +33,7 @@ public class UserAccountServiceImpl extends AbstractService implements UserAccou
     }
 
     private ArrayList<UserDTO> convertUsers(List<User> users) {
-        ArrayList<UserDTO> result = new ArrayList<UserDTO>(users.size());
+        ArrayList<UserDTO> result = new ArrayList<>(users.size());
         for (User original : users) {
             result.add(new UserDtoTransformer(original).transform());
         }

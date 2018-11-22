@@ -281,6 +281,36 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateUser(User user, String login) throws UnknownUserException, NotAdminException {
         try {
             authorization.checkAdminRights(login);
+            User fromDb = factory.userDao().getUserByLogin(user.getLogin());
+            if (user.getPasswordSalt() == null) {
+                user.setPasswordSalt(fromDb.getPasswordSalt());
+            }
+            if (user.getPasswordHash() == null) {
+                user.setPasswordHash(fromDb.getPasswordHash());
+            }
+            factory.userDao().updateUser(user);
+            logUserUpdated(login, user);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(user.getId());
+        }
+    }
+
+    public void updateUserSelf(User user, String login) throws UnknownUserException, InvalidUserException {
+        try {
+            if (!login.equals(user.getLogin())) {
+                throw new InvalidUserException(login);
+            }
+            User fromDb = factory.userDao().getUserByLogin(login);
+            //self cannot update administrator flag
+            user.setAdmin(fromDb.isAdmin());
+            if (user.getPasswordSalt() == null) {
+                user.setPasswordSalt(fromDb.getPasswordSalt());
+            }
+            if (user.getPasswordHash() == null) {
+                user.setPasswordHash(fromDb.getPasswordHash());
+            }
             factory.userDao().updateUser(user);
             logUserUpdated(login, user);
         } catch (DatabaseException ex) {

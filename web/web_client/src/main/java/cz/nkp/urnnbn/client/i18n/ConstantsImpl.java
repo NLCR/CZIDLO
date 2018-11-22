@@ -460,6 +460,8 @@ public interface ConstantsImpl extends Constants {
 
     String diDeactivationDialogText();
 
+    String changPasswordDialogTitle();
+
     String predecessors();
 
     String successors();

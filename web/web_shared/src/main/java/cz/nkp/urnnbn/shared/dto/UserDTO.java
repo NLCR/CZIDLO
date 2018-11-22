@@ -18,6 +18,20 @@ public class UserDTO implements Serializable {
     private String created;
     private String modified;
 
+
+    public UserDTO() {
+    }
+
+    public UserDTO(UserDTO copyFrom) {
+        this.id = copyFrom.id;
+        this.login = copyFrom.login;
+        this.email = copyFrom.email;
+        this.password = copyFrom.password;
+        this.role = copyFrom.role;
+        this.created = copyFrom.created;
+        this.modified = copyFrom.modified;
+    }
+
     public Long getId() {
         return id;
     }

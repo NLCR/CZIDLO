@@ -23,6 +23,7 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
     }
 
     private Widget contentPanel() {
+        // TODO: 22.11.18 tady použít stejný formulář, jako podrobnosti uživatele ve správě uživatelů
         VerticalPanel panel = new VerticalPanel();
         Grid grid = new Grid(determineRows(), 2);
         grid.setWidget(0, 0, new Label(constants.login() + ':'));
@@ -68,10 +69,8 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
         return new Button(constants.changPasswordButton(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                // TODO: 22.11.18 implement
-                // TODO: 22.11.18 jeste ve sprave uzivatelu pridat moznost "vygenerovat nove heslo", tak aby bylo mozne vyresit i situaci, kdy uzivatel heslo ztratil
-                // a nove heslo necha vygenerovat superadmin s tim, aby si ho uzivatel pak zmenil sam
-                // potencialne problem ale bude v tom, ze kazdy superadmin muze zmenit hesla vsem ostatnim
+                CurrentUserDialogBox.this.hide();
+                new ChangeUserPasswordDialogBox(user).show();
             }
         });
     }
