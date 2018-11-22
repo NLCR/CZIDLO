@@ -56,12 +56,22 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
         return result;
     }
 
+    private Panel buttons() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.add(closeButton());
+        result.add(logoutButton());
+        result.add(changePasswordButton());
+        return result;
+    }
+
     private Button changePasswordButton() {
-        // TODO: 22.11.18 i18n
-        return new Button("změnit heslo", new ClickHandler() {
+        return new Button(constants.changPasswordButton(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 // TODO: 22.11.18 implement
+                // TODO: 22.11.18 jeste ve sprave uzivatelu pridat moznost "vygenerovat nove heslo", tak aby bylo mozne vyresit i situaci, kdy uzivatel heslo ztratil
+                // a nove heslo necha vygenerovat superadmin s tim, aby si ho uzivatel pak zmenil sam
+                // potencialne problem ale bude v tom, ze kazdy superadmin muze zmenit hesla vsem ostatnim
             }
         });
     }
@@ -74,16 +84,6 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
             }
         });
     }
-
-    private Panel buttons() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(closeButton());
-        result.add(logoutButton());
-        result.add(changePasswordButton());
-
-        return result;
-    }
-
 
     private Button closeButton() {
         return new Button(constants.close(), new ClickHandler() {

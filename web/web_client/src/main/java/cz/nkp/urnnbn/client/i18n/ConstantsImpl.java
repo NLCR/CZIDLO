@@ -16,6 +16,8 @@ public interface ConstantsImpl extends Constants {
 
     String logoutButton();
 
+    String changPasswordButton();
+
     String tabInfoLabel();
 
     String tabRulesLabel();
