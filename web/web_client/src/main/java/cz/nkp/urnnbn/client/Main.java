@@ -96,7 +96,7 @@ public class Main implements EntryPoint {
         DockLayoutPanel headerPanel = new DockLayoutPanel(Unit.PX);
         headerPanel.setWidth("100%");
         headerPanel.addWest(leftHeaderPanel(), 1000);
-        headerPanel.addEast(new UserPanel(user), 80);
+        headerPanel.addEast(new UserPanel(user), 200);
         return headerPanel;
     }
 

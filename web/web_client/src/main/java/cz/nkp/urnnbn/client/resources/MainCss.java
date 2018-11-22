@@ -24,4 +24,6 @@ public interface MainCss extends CssResource {
 
     public String langBtn();
 
+    public String avatarBtn();
+
 }

@@ -24,7 +24,7 @@ public class UserPanel extends Composite {
     private final UserDTO user;
     private Resources resources = GWT.create(Resources.class);
     private ConstantsImpl constants = GWT.create(ConstantsImpl.class);
-    private VerticalPanel panel = new VerticalPanel();
+    private HorizontalPanel panel = new HorizontalPanel();
 
     public UserPanel(UserDTO user) {
         this.user = user;
@@ -44,24 +44,35 @@ public class UserPanel extends Composite {
         });
     }
 
-    private void initPanel(ConfigurationData configuration) {
+    private void initPanel(final ConfigurationData configuration) {
         panel.addStyleName(resources.MainCss().userPanel());
         panel.add(langSwitchWidget());
         if (user.getLogin() == null) {
-            String loginUrl = configuration.getLoginPage() == null ? DEFAULT_LOGIN_PAGE : configuration.getLoginPage();
-            panel.add(buildLink(loginUrl, constants.loginButton()));
+            //login button
+            final String loginUrl = configuration.getLoginPage() == null ? DEFAULT_LOGIN_PAGE : configuration.getLoginPage();
+            panel.add(new Button(constants.loginButton(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    Window.Location.assign(loginUrl);
+                }
+            }));
         } else {
-            Label userName = new Label(user.getLogin());
-            userName.addStyleName(resources.MainCss().userPanelContent());
-            panel.add(userName);
-            panel.add(buildLink(LOGOUT_PAGE, constants.logoutButton()));
+            //button with avatar and username
+            Button avatarButton = new Button();
+            avatarButton.setHTML("" +
+                    "<div>" +
+                    "<img src='img/avatar_black_14.png' style='vertical-align: middle;' width='14px' height='14px'/>" +
+                    "<span style='vertical-align: middle; margin-left: 4px;'><b>" + user.getLogin() + "</b></span>" +
+                    "</div>");
+            avatarButton.addStyleName(resources.MainCss().avatarBtn());
+            avatarButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent clickEvent) {
+                    new CurrentUserDialogBox(user, LOGOUT_PAGE).show();
+                }
+            });
+            panel.add(avatarButton);
         }
-    }
-
-    private HTML buildLink(String url, String text) {
-        HTML result = new HTML("<a href='" + url + "'>" + text + "</a>");
-        result.addStyleName(resources.MainCss().userPanelContent());
-        return result;
     }
 
     private Widget langSwitchWidget() {
