@@ -27,7 +27,7 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
     public ChangeUserPasswordDialogBox(UserDTO user) {
         this.user = user;
         this.form = new ChangePasswordForm(user);
-        String title = constants.changPasswordDialogTitle();
+        String title = constants.changePasswordDialogTitle();
         setTitle(title);
         setText(title);
         setAnimationEnabled(true);
@@ -51,8 +51,7 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
     }
 
     private Button confirmButton() {
-        // TODO: 22.11.18 i18n
-        return new Button("změnit heslo", new ClickHandler() {
+        return new Button(constants.changePasswordButton(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 if (form.isFilledCorrectly()) {
@@ -68,11 +67,9 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
         final String passNew1 = form.getPassNew1();
         String passNew2 = form.getPassNew2();
         if (!passNew1.equals(passNew2)) {
-            // TODO: 22.11.18 i18n
-            errorLabel.setText("první a druhý zápis nového hesla se liší");
+            errorLabel.setText(constants.changePasswordDialogNewPasswordsMismatch());
         } else if (passNew1.equals(passOld)) {
-            // TODO: 22.11.18 i18n
-            errorLabel.setText("nové heslo se shoduje s původním heslem");
+            errorLabel.setText(constants.changePasswordDialogNewPasswordSameAsOld());
         } else {
             authService.checkPasswordMatch(login, passOld, new AsyncCallback<Boolean>() {
                 @Override
@@ -83,8 +80,7 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
                 @Override
                 public void onSuccess(Boolean match) {
                     if (!match) {
-                        // TODO: 22.11.18 i18n
-                        errorLabel.setText("původní heslo nesouhlasí");
+                        errorLabel.setText(constants.changePasswordDialogOriginalPasswordMismatch());
                     } else {
                         authService.changePassword(login, passNew1, new AsyncCallback<Void>() {
                             @Override

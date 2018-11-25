@@ -12,7 +12,7 @@ public class PasswordChangedDialogBox extends AbstractDialogBox {
     public PasswordChangedDialogBox() {
         // TODO: 22.11.18 nastylovat, vypadá to hrozně
         // TODO: 22.11.18 i18n
-        /*String title = constants.changPasswordDialogTitle();
+        /*String title = constants.changePasswordDialogTitle();
         setTitle(title);
         setText(title);*/
         setAnimationEnabled(true);

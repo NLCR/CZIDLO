@@ -16,7 +16,7 @@ public interface ConstantsImpl extends Constants {
 
     String logoutButton();
 
-    String changPasswordButton();
+    String changePasswordButton();
 
     String tabInfoLabel();
 
@@ -460,7 +460,20 @@ public interface ConstantsImpl extends Constants {
 
     String diDeactivationDialogText();
 
-    String changPasswordDialogTitle();
+    String changePasswordDialogTitle();
+
+    String changePasswordDialogNewPasswordsMismatch();
+
+    String changePasswordDialogNewPasswordSameAsOld();
+
+    String changePasswordDialogOriginalPasswordMismatch();
+
+    String changePasswordDialogCurrentPassword();
+
+    String changePasswordDialogNewPassword();
+
+    String changePasswordDialogNewPasswordAgain();
+
 
     String predecessors();
 

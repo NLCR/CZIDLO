@@ -31,14 +31,11 @@ public class ChangePasswordForm extends Form {
         result.addField(FIELD_LOGIN, login);
         //passwords
         Validator passwordValidator = new PasswordValidator(5, 10);
-        // TODO: 22.11.18 i18n
-        Field passOriginalField = new TextInputValueField(passwordValidator, "aktuální heslo", null, true);
+        Field passOriginalField = new TextInputValueField(passwordValidator, constants.changePasswordDialogCurrentPassword(), null, true);
         result.addField(FIELD_PASS_OLD, passOriginalField);
-        // TODO: 22.11.18 i18n
-        Field passNew1Field = new TextInputValueField(passwordValidator, "nové heslo", null, true);
+        Field passNew1Field = new TextInputValueField(passwordValidator, constants.changePasswordDialogNewPassword(), null, true);
         result.addField(FIELD_PASS_NEW1, passNew1Field);
-        // TODO: 22.11.18 i18n
-        Field passNew2Field = new TextInputValueField(passwordValidator, "nové heslo znovu", null, true);
+        Field passNew2Field = new TextInputValueField(passwordValidator, constants.changePasswordDialogNewPasswordAgain(), null, true);
         result.addField(FIELD_PASS_NEW2, passNew2Field);
         return result;
     }

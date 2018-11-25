@@ -66,7 +66,7 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
     }
 
     private Button changePasswordButton() {
-        return new Button(constants.changPasswordButton(), new ClickHandler() {
+        return new Button(constants.changePasswordButton(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 CurrentUserDialogBox.this.hide();
