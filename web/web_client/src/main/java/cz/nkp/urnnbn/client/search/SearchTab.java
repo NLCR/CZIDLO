@@ -304,7 +304,8 @@ public class SearchTab extends SingleTabContentPanel implements DigitalInstanceR
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 
     @Override

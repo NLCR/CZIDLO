@@ -16,6 +16,8 @@ public class TestTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 
     public void onLoad() {

@@ -1,11 +1,10 @@
 package cz.nkp.urnnbn.client.insertRecord;
 
-import java.util.logging.Logger;
-
 import com.google.gwt.user.client.ui.Panel;
-
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
+
+import java.util.logging.Logger;
 
 public class DataInputTab extends SingleTabContentPanel {
 
@@ -42,7 +41,7 @@ public class DataInputTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
-
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 }

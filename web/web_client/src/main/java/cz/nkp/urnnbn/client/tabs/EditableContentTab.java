@@ -160,6 +160,7 @@ public abstract class EditableContentTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 }

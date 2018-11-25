@@ -123,8 +123,8 @@ public class StatisticsTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
-
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 
 }

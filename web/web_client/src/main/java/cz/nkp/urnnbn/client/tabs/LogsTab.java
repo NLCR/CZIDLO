@@ -93,7 +93,7 @@ public class LogsTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
-        LOGGER.fine("onSelected");
+        LOGGER.fine("onDeselected");
         super.onDeselected();
         logRefreshTimer.cancel();
     }
