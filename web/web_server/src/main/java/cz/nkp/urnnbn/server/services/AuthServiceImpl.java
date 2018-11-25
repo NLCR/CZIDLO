@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.server.services;
 
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.server.dtoTransformation.UserDtoTransformer;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
 import cz.nkp.urnnbn.utils.CryptoUtils;
@@ -18,7 +19,13 @@ public class AuthServiceImpl extends AbstractService implements AuthService {
     @Override
     public UserDTO getLoggedUser() throws ServerException {
         try {
-            return super.getActiveUser();
+            UserDTO authUser = super.getActiveUser();
+            if (authUser.getRole() == UserDTO.ROLE.USER) {
+                return authUser;
+            } else {
+                User userWithMetadata = readService.userByLogin(authUser.getLogin());
+                return new UserDtoTransformer(userWithMetadata).transform();
+            }
         } catch (Throwable e) {
             logger.log(Level.SEVERE, null, e);
             throw new ServerException(e.getMessage());

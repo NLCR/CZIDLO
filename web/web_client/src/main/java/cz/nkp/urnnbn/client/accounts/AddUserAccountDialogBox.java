@@ -4,15 +4,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.forms.userAccounts.UserDetailsForm;
+import cz.nkp.urnnbn.client.forms.userAccounts.UserAddForm;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
@@ -21,7 +15,7 @@ public class AddUserAccountDialogBox extends AbstractDialogBox {
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private final UsersAdministrationTab superPanel;
-    private final UserDetailsForm form = new UserDetailsForm();
+    private final UserAddForm form = new UserAddForm();
     private final Label errorLabel = errorLabel(320);
 
     public AddUserAccountDialogBox(UsersAdministrationTab superPanel) {

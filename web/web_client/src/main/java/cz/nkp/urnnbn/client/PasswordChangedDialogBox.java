@@ -10,24 +10,36 @@ import com.google.gwt.user.client.ui.*;
 public class PasswordChangedDialogBox extends AbstractDialogBox {
 
     public PasswordChangedDialogBox() {
-        // TODO: 22.11.18 nastylovat, vypadá to hrozně
-        /*String title = constants.changePasswordDialogTitle();
+        String title = constants.changePasswordDialogTitle();
         setTitle(title);
-        setText(title);*/
+        setText(title);
         setAnimationEnabled(true);
-        setWidget(contentPanel());
+        setWidget(buildWidget());
         center();
+    }
+
+    private IsWidget buildWidget() {
+        VerticalPanel panel = new VerticalPanel();
+        panel.add(contentPanel());
+        panel.add(buttons());
+        return panel;
     }
 
     private IsWidget contentPanel() {
         VerticalPanel panel = new VerticalPanel();
+        panel.setHeight("50px");
+        panel.setWidth("200px");
+        panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         panel.add(new Label(constants.changePasswordDialogChangedLabel()));
-        panel.add(buttons());
         return panel;
     }
 
     private Panel buttons() {
         HorizontalPanel result = new HorizontalPanel();
+        result.setWidth("100%");
+        result.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+        result.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         result.add(closeButton());
         return result;
     }

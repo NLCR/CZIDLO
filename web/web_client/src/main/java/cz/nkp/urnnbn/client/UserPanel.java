@@ -68,7 +68,7 @@ public class UserPanel extends Composite {
             avatarButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent clickEvent) {
-                    new CurrentUserDialogBox(user, LOGOUT_PAGE).show();
+                    new CurrentUserDetailsDialogBox(user, LOGOUT_PAGE).show();
                 }
             });
             panel.add(avatarButton);

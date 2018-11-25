@@ -6,25 +6,40 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-public class CurrentUserDialogBox extends AbstractDialogBox {
+public class CurrentUserDetailsDialogBox extends AbstractDialogBox {
 
     private final UserDTO user;
     private final String logoutPage;
 
-    public CurrentUserDialogBox(UserDTO user, String logoutPage) {
+    public CurrentUserDetailsDialogBox(UserDTO user, String logoutPage) {
         this.user = user;
         this.logoutPage = logoutPage;
         String title = constants.user() + " - " + constants.details();
         setTitle(title);
         setText(title);
         setAnimationEnabled(true);
-        setWidget(contentPanel());
+        setWidget(buildWidget());
         center();
     }
 
-    private Widget contentPanel() {
-        // TODO: 22.11.18 tady použít stejný formulář, jako podrobnosti uživatele ve správě uživatelů
+    private Widget buildWidget() {
         VerticalPanel panel = new VerticalPanel();
+        panel.add(contentPanel());
+        panel.add(buttons());
+        return panel;
+    }
+
+    private IsWidget contentPanel() {
+        VerticalPanel panel = new VerticalPanel();
+        panel.setHeight("140px");
+        panel.setWidth("340px");
+        panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        panel.add(buidGrid());
+        return panel;
+    }
+
+    private IsWidget buidGrid() {
         Grid grid = new Grid(determineRows(), 2);
         grid.setWidget(0, 0, new Label(constants.login() + ':'));
         grid.setWidget(0, 1, new Label(user.getLogin()));
@@ -41,9 +56,7 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
                 grid.setWidget(4, 1, new Label(user.getModified()));
             }
         }
-        panel.add(grid);
-        panel.add(buttons());
-        return panel;
+        return grid;
     }
 
     private int determineRows() {
@@ -59,6 +72,14 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
 
     private Panel buttons() {
         HorizontalPanel result = new HorizontalPanel();
+        result.setWidth("100%");
+        result.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        result.add(buttonContainer());
+        return result;
+    }
+
+    private IsWidget buttonContainer() {
+        HorizontalPanel result = new HorizontalPanel();
         result.add(closeButton());
         result.add(logoutButton());
         result.add(changePasswordButton());
@@ -69,7 +90,7 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
         return new Button(constants.changePasswordButton(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                CurrentUserDialogBox.this.hide();
+                CurrentUserDetailsDialogBox.this.hide();
                 new ChangeUserPasswordDialogBox(user).show();
             }
         });
@@ -89,7 +110,7 @@ public class CurrentUserDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                CurrentUserDialogBox.this.hide();
+                CurrentUserDetailsDialogBox.this.hide();
             }
         });
     }

@@ -31,19 +31,37 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
         setTitle(title);
         setText(title);
         setAnimationEnabled(true);
-        setWidget(contentPanel());
+        setWidget(buildWidget());
         center();
     }
 
-    private Widget contentPanel() {
+    private Widget buildWidget() {
         VerticalPanel panel = new VerticalPanel();
-        panel.add(form);
+        panel.add(contentPanel());
         panel.add(buttons());
+        return panel;
+    }
+
+    private IsWidget contentPanel() {
+        VerticalPanel panel = new VerticalPanel();
+        panel.setHeight("180px");
+        panel.setWidth("200px");
+        panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        panel.add(form);
         panel.add(errorLabel);
         return panel;
     }
 
     private Panel buttons() {
+        HorizontalPanel result = new HorizontalPanel();
+        result.setWidth("100%");
+        result.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        result.add(buttonsContainer());
+        return result;
+    }
+
+    private IsWidget buttonsContainer() {
         HorizontalPanel result = new HorizontalPanel();
         result.add(closeButton());
         result.add(confirmButton());
