@@ -11,7 +11,6 @@ public class PasswordChangedDialogBox extends AbstractDialogBox {
 
     public PasswordChangedDialogBox() {
         // TODO: 22.11.18 nastylovat, vypadá to hrozně
-        // TODO: 22.11.18 i18n
         /*String title = constants.changePasswordDialogTitle();
         setTitle(title);
         setText(title);*/
@@ -22,8 +21,7 @@ public class PasswordChangedDialogBox extends AbstractDialogBox {
 
     private IsWidget contentPanel() {
         VerticalPanel panel = new VerticalPanel();
-        // TODO: 22.11.18 i18n
-        panel.add(new Label("Heslo bylo změněno"));
+        panel.add(new Label(constants.changePasswordDialogChangedLabel()));
         panel.add(buttons());
         return panel;
     }
@@ -35,8 +33,7 @@ public class PasswordChangedDialogBox extends AbstractDialogBox {
     }
 
     private Button closeButton() {
-        // TODO: 22.11.18 tady mozna radeji tlacitko OK
-        return new Button(constants.close(), new ClickHandler() {
+        return new Button(constants.ok(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {

@@ -198,6 +198,8 @@ public interface ConstantsImpl extends Constants {
 
     String description();
 
+    //general buttons
+
     String close();
 
     String delete();
@@ -208,6 +210,8 @@ public interface ConstantsImpl extends Constants {
 
     String insert();
 
+    String ok();
+
     String recordInsertion();
 
     String recordAdjustment();
@@ -215,6 +219,8 @@ public interface ConstantsImpl extends Constants {
     String save();
 
     String edit();
+
+    String rights();
 
     String upload();
 
@@ -474,6 +480,7 @@ public interface ConstantsImpl extends Constants {
 
     String changePasswordDialogNewPasswordAgain();
 
+    String changePasswordDialogChangedLabel();
 
     String predecessors();
 

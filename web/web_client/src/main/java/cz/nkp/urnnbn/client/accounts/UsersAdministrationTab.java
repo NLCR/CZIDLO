@@ -1,27 +1,21 @@
 package cz.nkp.urnnbn.client.accounts;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.client.tabs.SingleTabContentPanel;
 import cz.nkp.urnnbn.client.tabs.TabsPanel;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.logging.Logger;
 
 public class UsersAdministrationTab extends SingleTabContentPanel {
 
@@ -136,8 +130,7 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
     }
 
     private Button accessRights(final UserDTO user) {
-        // TODO: i18n
-        return new Button("práva", new ClickHandler() {
+        return new Button(constants.rights(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
@@ -187,7 +180,8 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
 
     @Override
     public void onDeselected() {
-        // TODO Auto-generated method stub
+        // LOGGER.fine("onDeselected");
+        super.onDeselected();
     }
 
 }
