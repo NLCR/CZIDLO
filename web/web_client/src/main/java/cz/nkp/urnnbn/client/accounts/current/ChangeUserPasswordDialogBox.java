@@ -1,15 +1,15 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.accounts.current;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.AbstractDialogBox;
+import cz.nkp.urnnbn.client.accounts.UserPasswordChangedDialogBox;
 import cz.nkp.urnnbn.client.forms.userAccounts.ChangeUserPasswordOwnForm;
 import cz.nkp.urnnbn.client.services.AuthService;
 import cz.nkp.urnnbn.client.services.AuthServiceAsync;
-import cz.nkp.urnnbn.client.services.UserAccountService;
-import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 import java.util.logging.Logger;
@@ -108,7 +108,7 @@ public class ChangeUserPasswordDialogBox extends AbstractDialogBox {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 ChangeUserPasswordDialogBox.this.hide();
-                                new PasswordChangedDialogBox().show();
+                                new UserPasswordChangedDialogBox().show();
                             }
                         });
                     }

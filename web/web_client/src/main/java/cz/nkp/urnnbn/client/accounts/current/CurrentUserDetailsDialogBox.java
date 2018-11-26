@@ -1,9 +1,10 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.accounts.current;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.AbstractDialogBox;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 public class CurrentUserDetailsDialogBox extends AbstractDialogBox {

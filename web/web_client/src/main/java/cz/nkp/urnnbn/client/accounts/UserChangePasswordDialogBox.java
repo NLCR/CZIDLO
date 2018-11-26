@@ -62,6 +62,7 @@ public class UserChangePasswordDialogBox extends AbstractDialogBox {
                         @Override
                         public void onSuccess(Void aVoid) {
                             UserChangePasswordDialogBox.this.hide();
+                            new UserPasswordChangedDialogBox().show();
                         }
                     });
                 }

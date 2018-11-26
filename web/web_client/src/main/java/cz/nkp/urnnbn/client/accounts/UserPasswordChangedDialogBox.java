@@ -1,15 +1,16 @@
-package cz.nkp.urnnbn.client;
+package cz.nkp.urnnbn.client.accounts;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.AbstractDialogBox;
 
 /**
  * Created by Martin Řehánek on 22.11.18.
  */
-public class PasswordChangedDialogBox extends AbstractDialogBox {
+public class UserPasswordChangedDialogBox extends AbstractDialogBox {
 
-    public PasswordChangedDialogBox() {
+    public UserPasswordChangedDialogBox() {
         String title = constants.changePasswordDialogTitle();
         setTitle(title);
         setText(title);
@@ -49,7 +50,7 @@ public class PasswordChangedDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                PasswordChangedDialogBox.this.hide();
+                UserPasswordChangedDialogBox.this.hide();
             }
         });
     }
