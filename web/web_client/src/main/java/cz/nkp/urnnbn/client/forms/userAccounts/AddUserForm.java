@@ -9,14 +9,14 @@ import cz.nkp.urnnbn.client.validation.Validator;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO.ROLE;
 
-public class UserAddForm extends Form {
+public class AddUserForm extends Form {
 
     private static final String FIELD_LOGIN = "login";
     private static final String FIELD_PASSWORD = "password";
     private static final String FIELD_EMAIL = "email";
     private static final String FIELD_ADMIN = "admin";
 
-    public UserAddForm() {
+    public AddUserForm() {
         initForm();
     }
 

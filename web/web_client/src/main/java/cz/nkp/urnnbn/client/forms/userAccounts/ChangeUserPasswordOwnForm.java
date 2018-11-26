@@ -9,7 +9,7 @@ import cz.nkp.urnnbn.client.validation.PasswordValidator;
 import cz.nkp.urnnbn.client.validation.Validator;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-public class ChangePasswordForm extends Form {
+public class ChangeUserPasswordOwnForm extends Form {
 
     private static final String FIELD_LOGIN = "login";
     private static final String FIELD_PASS_OLD = "passOld";
@@ -17,7 +17,7 @@ public class ChangePasswordForm extends Form {
     private static final String FIELD_PASS_NEW2 = "passNew2";
     private final UserDTO user;
 
-    public ChangePasswordForm(UserDTO user) {
+    public ChangeUserPasswordOwnForm(UserDTO user) {
         this.user = user;
         initForm();
     }
@@ -43,7 +43,7 @@ public class ChangePasswordForm extends Form {
     @Override
     public UserDTO getDto() {
         UserDTO result = new UserDTO(user);
-        result.setPassword(getStringFieldValue("passNew1"));
+        result.setPassword(getStringFieldValue(FIELD_PASS_NEW1));
         return result;
     }
 

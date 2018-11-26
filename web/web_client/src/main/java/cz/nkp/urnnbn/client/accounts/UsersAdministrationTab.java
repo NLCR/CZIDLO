@@ -96,7 +96,7 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
     }
 
     private Grid grid() {
-        Grid result = new Grid(users.size(), 5);
+        Grid result = new Grid(users.size(), 6);
         for (int i = 0; i < users.size(); i++) {
             UserDTO user = users.get(i);
             Label name = new Label(user.getLogin());
@@ -105,8 +105,20 @@ public class UsersAdministrationTab extends SingleTabContentPanel {
             result.setWidget(i, 2, userEditButton(user));
             result.setWidget(i, 3, accessRights(user));
             result.setWidget(i, 4, userDeleteButton(user));
+            result.setWidget(i, 5, userChangePasswordButton(user));
         }
         return result;
+    }
+
+    private IsWidget userChangePasswordButton(final UserDTO user) {
+        // TODO: 26.11.18 i18n
+        return new Button("změnit heslo", new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                new UserChangePasswordDialogBox(user).show();
+            }
+        });
     }
 
     private Button userDetailsButton(final UserDTO user) {

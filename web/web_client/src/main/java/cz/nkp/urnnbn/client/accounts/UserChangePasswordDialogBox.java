@@ -6,21 +6,26 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.forms.userAccounts.AddUserForm;
-import cz.nkp.urnnbn.client.services.UserAccountService;
-import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
+import cz.nkp.urnnbn.client.forms.userAccounts.ChangeUserPasswordByAdminForm;
+import cz.nkp.urnnbn.client.services.AuthService;
+import cz.nkp.urnnbn.client.services.AuthServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
-public class AddUserAccountDialogBox extends AbstractDialogBox {
+/**
+ * Created by Martin Řehánek on 26.11.18.
+ */
+public class UserChangePasswordDialogBox extends AbstractDialogBox {
 
-    private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private final UsersAdministrationTab superPanel;
-    private final AddUserForm form = new AddUserForm();
+    private final AuthServiceAsync authService = GWT.create(AuthService.class);
+    private final ChangeUserPasswordByAdminForm form;
     private final Label errorLabel = errorLabel(320);
 
-    public AddUserAccountDialogBox(UsersAdministrationTab superPanel) {
-        this.superPanel = superPanel;
-        setText(constants.userAccount() + " - " + constants.recordInsertion());
+
+    public UserChangePasswordDialogBox(UserDTO user) {
+        form = new ChangeUserPasswordByAdminForm(user);
+        String title = constants.changePasswordDialogTitle();
+        setTitle(title);
+        setText(title);
         setAnimationEnabled(true);
         setWidget(contentPanel());
         center();
@@ -42,22 +47,21 @@ public class AddUserAccountDialogBox extends AbstractDialogBox {
     }
 
     private Widget saveButton() {
-        return new Button(constants.save(), new ClickHandler() {
+        return new Button(constants.changePasswordButton(), new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 if (form.isFilledCorrectly()) {
-                    accountsService.insertUser(form.getDto(), new AsyncCallback<UserDTO>() {
-
+                    UserDTO user = form.getDto();
+                    authService.changePassword(user.getLogin(), user.getPassword(), new AsyncCallback<Void>() {
                         @Override
-                        public void onSuccess(UserDTO result) {
-                            superPanel.addUser(result);
-                            AddUserAccountDialogBox.this.hide();
+                        public void onFailure(Throwable throwable) {
+                            errorLabel.setText(messages.serverError(throwable.getMessage()));
                         }
 
                         @Override
-                        public void onFailure(Throwable caught) {
-                            errorLabel.setText(messages.serverError(caught.getMessage()));
+                        public void onSuccess(Void aVoid) {
+                            UserChangePasswordDialogBox.this.hide();
                         }
                     });
                 }
@@ -70,8 +74,9 @@ public class AddUserAccountDialogBox extends AbstractDialogBox {
 
             @Override
             public void onClick(ClickEvent event) {
-                AddUserAccountDialogBox.this.hide();
+                UserChangePasswordDialogBox.this.hide();
             }
         });
     }
+
 }

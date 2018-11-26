@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import cz.nkp.urnnbn.client.AbstractDialogBox;
-import cz.nkp.urnnbn.client.forms.userAccounts.UserEditForm;
+import cz.nkp.urnnbn.client.forms.userAccounts.EditUserForm;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
@@ -21,12 +21,12 @@ public class EditUserDialogBox extends AbstractDialogBox {
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private final UsersAdministrationTab superPanel;
-    private final UserEditForm form;
+    private final EditUserForm form;
     private final Label errorLabel = errorLabel(320);
 
     public EditUserDialogBox(UsersAdministrationTab superPanel, UserDTO user) {
         this.superPanel = superPanel;
-        this.form = new UserEditForm(user);
+        this.form = new EditUserForm(user);
         setText(constants.userAccount() + " - " + constants.recordAdjustment());
         setAnimationEnabled(true);
         setWidget(contentPanel());

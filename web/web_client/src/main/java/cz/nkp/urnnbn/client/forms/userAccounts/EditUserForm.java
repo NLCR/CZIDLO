@@ -6,7 +6,7 @@ import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO.ROLE;
 
-public class UserEditForm extends Form {
+public class EditUserForm extends Form {
 
     private static final String FIELD_LOGIN = "login";
     private static final String FIELD_EMAIL = "email";
@@ -14,7 +14,7 @@ public class UserEditForm extends Form {
 
     private final UserDTO originalUser;
 
-    public UserEditForm(UserDTO originalUser) {
+    public EditUserForm(UserDTO originalUser) {
         this.originalUser = originalUser;
         initForm();
     }
