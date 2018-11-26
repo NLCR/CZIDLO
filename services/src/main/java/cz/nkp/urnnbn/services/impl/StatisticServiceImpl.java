@@ -1,11 +1,5 @@
 package cz.nkp.urnnbn.services.impl;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
@@ -13,6 +7,12 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.StatisticService;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class StatisticServiceImpl extends BusinessServiceImpl implements StatisticService {
 
@@ -31,10 +31,10 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
             int year = now.get(Calendar.YEAR);
             int month = now.get(Calendar.MONTH);
             try {
-                Statistic current = factory.urnNbnStatisticDao().getResolvationsStatistic(registrarCode, year, month);
-                LOGGER.warning(current.toString());
-                current.setVolume(current.getVolume() + 1);
-                factory.urnNbnStatisticDao().updateResolvationStatistic(current);
+                Statistic statistics = factory.urnNbnStatisticDao().getResolvationsStatistic(registrarCode, year, month);
+                statistics.setVolume(statistics.getVolume() + 1);
+                LOGGER.fine(statistics.toString());
+                factory.urnNbnStatisticDao().updateResolvationStatistic(statistics);
             } catch (RecordNotFoundException e) {
                 Statistic initial = new Statistic();
                 initial.setRegistrarCode(registrarCode);

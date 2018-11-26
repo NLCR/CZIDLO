@@ -39,4 +39,13 @@ public class Statistic {
         this.volume = volume;
     }
 
+    @Override
+    public String toString() {
+        return "Statistic{" +
+                "registrarCode='" + registrarCode + '\'' +
+                ", year=" + year +
+                ", month=" + month +
+                ", volume=" + volume +
+                '}';
+    }
 }
