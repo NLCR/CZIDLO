@@ -16,8 +16,12 @@
                 doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
     />
 
-    <!-- K4 MZK (resolver-test2) -->
-    <xsl:variable name="digitalLibraryId">42</xsl:variable>
+
+    <!-- K4 MZK (resolver-test) -->
+    <xsl:variable name="digitalLibraryId">50</xsl:variable>
+    <!-- K4 MZK (resolver-dev) -->
+    <!--<xsl:variable name="digitalLibraryId">42</xsl:variable>-->
+    <!-- K4 MZK (resolver prod?) -->
     <!--<xsl:variable name="digitalLibraryId">49</xsl:variable>-->
 
     <xsl:template match="/">

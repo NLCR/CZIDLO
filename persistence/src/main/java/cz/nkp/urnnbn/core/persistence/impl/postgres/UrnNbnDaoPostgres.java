@@ -206,7 +206,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (PersistenceException ex) {
             // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return Collections.<UrnNbnWithStatus> emptyList();
+            return Collections.emptyList();
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -362,7 +362,6 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         }
     }
 
-    // TODO: otestovat
     @Override
     @SuppressWarnings("unchecked")
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) throws DatabaseException {
@@ -373,7 +372,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (PersistenceException ex) {
             // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return Collections.<UrnNbnExport> emptyList();
+            return Collections.emptyList();
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -391,7 +390,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (PersistenceException ex) {
             // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return Collections.<DiExport> emptyList();
+            return Collections.emptyList();
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }

@@ -1,11 +1,11 @@
 package cz.nkp.urnnbn.core.persistence.impl.transformations;
 
+import cz.nkp.urnnbn.core.UrnNbnExport;
+import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
-import cz.nkp.urnnbn.core.UrnNbnExport;
-import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 
 public class UrnNbnExportRT implements ResultsetTransformer {
 

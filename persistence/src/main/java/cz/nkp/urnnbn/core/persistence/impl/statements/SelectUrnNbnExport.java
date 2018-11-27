@@ -33,8 +33,8 @@ public class SelectUrnNbnExport implements StatementWrapper {
                 + ",EXISTS(SELECT 1 FROM ieidentifier AS ied WHERE ied.intelectualentityid = ie.id AND ied.type='ISBN') AS isbn"
                 + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='TITLE') as id_title"
                 + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='SUB_TITLE') as id_sub_title"
-                + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='') as id_volume_title"
-                + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='') as id_issue_title";
+                + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='VOLUME_TITLE') as id_volume_title"
+                + ",(SELECT idvalue from ieidentifier AS ied where ied.intelectualentityid = ie.id and ied.type='ISSUE_TITLE') as id_issue_title";
         if (withDigitalInstances) {
             result += ",(SELECT COUNT(*) FROM digitalinstance WHERE digitaldocumentid=dd.id) AS digital_instances";
         } else {
