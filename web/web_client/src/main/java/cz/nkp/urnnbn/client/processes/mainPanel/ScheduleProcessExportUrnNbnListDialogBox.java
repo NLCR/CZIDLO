@@ -269,71 +269,77 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
         return new Button(constants.scheduleProcess(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-
-                //registration date
-                String paramRegistrationStart = filterByRegistrationDate.getValue() ? (String) registrationStartDate.getInsertedValue() : null;
-                String paramRegistrationEnd = filterByRegistrationDate.getValue() ? (String) registrationEndDate.getInsertedValue() : null;
-
-                //registrars
-                String paramRegistrars = null;
-                if (filterByRegistrar.getValue()) {
-                    List<String> registrarCodes = registrarsListBox.getSelectedItems();
-                    if (registrarCodes.size() > 0) {
-                        StringBuilder builder = new StringBuilder();
-                        String separator = "";
-                        for (String code : registrarCodes) {
-                            builder.append(separator);
-                            builder.append(code);
-                            separator = ",";
-                        }
-                        paramRegistrars = builder.toString();
-                    }
+                boolean formWithoutErrors = true;
+                if (filterByRegistrationDate.getValue()) {
+                    formWithoutErrors = registrationStartDate.validValueInserted() && registrationEndDate.validValueInserted();
                 }
 
-                //document types
-                String paramEntityTypes = null;
-                if (filterByIeType.getValue()) {
-                    List<String> selectedEntityTypes = ieTypesListBox.getSelectedItems();
-                    if (selectedEntityTypes.size() > 0) {
-                        StringBuilder types = new StringBuilder();
-                        String separator = "";
-                        for (String code : selectedEntityTypes) {
-                            types.append(separator);
-                            types.append(code);
-                            separator = ",";
+                if (formWithoutErrors) {
+                    //registration date
+                    String paramRegistrationStart = filterByRegistrationDate.getValue() ? (String) registrationStartDate.getInsertedValue() : null;
+                    String paramRegistrationEnd = filterByRegistrationDate.getValue() ? (String) registrationEndDate.getInsertedValue() : null;
+
+                    //registrars
+                    String paramRegistrars = null;
+                    if (filterByRegistrar.getValue()) {
+                        List<String> registrarCodes = registrarsListBox.getSelectedItems();
+                        if (registrarCodes.size() > 0) {
+                            StringBuilder builder = new StringBuilder();
+                            String separator = "";
+                            for (String code : registrarCodes) {
+                                builder.append(separator);
+                                builder.append(code);
+                                separator = ",";
+                            }
+                            paramRegistrars = builder.toString();
                         }
-                        paramEntityTypes = types.toString();
                     }
+
+                    //document types
+                    String paramEntityTypes = null;
+                    if (filterByIeType.getValue()) {
+                        List<String> selectedEntityTypes = ieTypesListBox.getSelectedItems();
+                        if (selectedEntityTypes.size() > 0) {
+                            StringBuilder types = new StringBuilder();
+                            String separator = "";
+                            for (String code : selectedEntityTypes) {
+                                types.append(separator);
+                                types.append(code);
+                                separator = ",";
+                            }
+                            paramEntityTypes = types.toString();
+                        }
+                    }
+
+                    //missing identifiers
+                    List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
+                    Boolean paramMissingCnb = idents.contains("CNB") && filterByAbsentIdentifiers.getValue();
+                    Boolean paramMissingIssn = idents.contains("ISSN") && filterByAbsentIdentifiers.getValue();
+                    Boolean paramMissingIsbn = idents.contains("ISBN") && filterByAbsentIdentifiers.getValue();
+
+                    int activitySelectedIndex = stateListBox.getSelectedIndex();
+                    Boolean returnActive = !filterByState.getValue() || activitySelectedIndex == 0;
+                    Boolean returnDeactivated = !filterByState.getValue() || activitySelectedIndex == 1;
+                    Boolean exportNumberOfDigitalInstances = includeNumberOfDigitalInstances.getValue();
+
+                    String[] params = new String[]{
+                            paramRegistrationStart, paramRegistrationEnd,
+                            paramRegistrars,
+                            paramEntityTypes,
+                            paramMissingCnb.toString(), paramMissingIssn.toString(), paramMissingIsbn.toString(),
+                            returnActive.toString(), returnDeactivated.toString(),
+                            exportNumberOfDigitalInstances.toString()};
+                    processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
+
+                        public void onSuccess(Void result) {
+                            ScheduleProcessExportUrnNbnListDialogBox.this.hide();
+                        }
+
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(caught.getMessage());
+                        }
+                    });
                 }
-
-                //missing identifiers
-                List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
-                Boolean paramMissingCnb = idents.contains("CNB") && filterByAbsentIdentifiers.getValue();
-                Boolean paramMissingIssn = idents.contains("ISSN") && filterByAbsentIdentifiers.getValue();
-                Boolean paramMissingIsbn = idents.contains("ISBN") && filterByAbsentIdentifiers.getValue();
-
-                int activitySelectedIndex = stateListBox.getSelectedIndex();
-                Boolean returnActive = !filterByState.getValue() || activitySelectedIndex == 0;
-                Boolean returnDeactivated = !filterByState.getValue() || activitySelectedIndex == 1;
-                Boolean exportNumberOfDigitalInstances = includeNumberOfDigitalInstances.getValue();
-
-                String[] params = new String[]{
-                        paramRegistrationStart, paramRegistrationEnd,
-                        paramRegistrars,
-                        paramEntityTypes,
-                        paramMissingCnb.toString(), paramMissingIssn.toString(), paramMissingIsbn.toString(),
-                        returnActive.toString(), returnDeactivated.toString(),
-                        exportNumberOfDigitalInstances.toString()};
-                processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
-
-                    public void onSuccess(Void result) {
-                        ScheduleProcessExportUrnNbnListDialogBox.this.hide();
-                    }
-
-                    public void onFailure(Throwable caught) {
-                        errorLabel.setText(caught.getMessage());
-                    }
-                });
             }
         });
     }
