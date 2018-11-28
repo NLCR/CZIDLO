@@ -22,7 +22,7 @@ public class DateTimeValidator extends Validator {
 
     @Override
     public String localizedErrorMessage(String value) {
-        return "TODO: invalid dateTime format";
+        return messages.validationInvalidDateTime();
     }
 
 }

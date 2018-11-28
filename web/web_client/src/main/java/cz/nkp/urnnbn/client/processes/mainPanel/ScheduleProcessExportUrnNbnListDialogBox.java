@@ -5,7 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.i18n.shared.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
@@ -128,12 +128,12 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
         HorizontalPanel dataPanel = new HorizontalPanel();
         dataPanel.add(new HTML("&nbsp"));
-        //from
+        //start
         Date start = new Date(112, 8, 1); // 1.9.2012
         registrationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false);
         registrationStartDate.disable();
         dataPanel.add(registrationStartDate.getContentWidget());
-        //to
+        //end
         registrationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
         dataPanel.add(new HTML("&nbsp-&nbsp"));
         dataPanel.add(registrationEndDate.getContentWidget());

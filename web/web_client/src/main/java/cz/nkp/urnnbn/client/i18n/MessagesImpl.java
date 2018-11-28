@@ -31,6 +31,8 @@ public interface MessagesImpl extends Messages {
 
     public String validationInvalidUrnNbnPartC();
 
+    public String validationInvalidDateTime();
+
     public String confirmDeleteDigitalLibrary(String libraryName);
 
     public String confirmDeleteCatalog(String catalogName);
