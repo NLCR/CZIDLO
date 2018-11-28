@@ -35,11 +35,11 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
     private TextInputValueField registrationStartDate;
     private TextInputValueField registrationEndDate;
 
-    private CheckBox filterByRegistrars;
+    private CheckBox filterByRegistrar;
     private MultiSelectListBox registrarsListBox;
 
-    private CheckBox filterByDocumentType;
-    private MultiSelectListBox documentTypeListBox;
+    private CheckBox filterByIeType;
+    private MultiSelectListBox ieTypesListBox;
 
     private CheckBox filterByAbsentIdentifiers;
     private MultiSelectListBox absenceOfIdentifiersListBox;
@@ -110,9 +110,8 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel filterByRegistrationDatePanel() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18 i18n
-        // constants.timestampRegistered()
-        filterByRegistrationDate = new CheckBox("Filtrovat podle data registrace");
+
+        filterByRegistrationDate = new CheckBox(constants.processUrnNbnExportFilterByRegistrationDate());
         filterByRegistrationDate.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
@@ -147,11 +146,10 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel filterByRegistrars() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18 i18n
-        // constants.registrar()
-        filterByRegistrars = new CheckBox("Filtrovat podle registrátora");
-        result.add(filterByRegistrars);
-        filterByRegistrars.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+        filterByRegistrar = new CheckBox(constants.processUrnNbnExportFilterByRegistrar());
+        result.add(filterByRegistrar);
+        filterByRegistrar.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
                 registrarsListBox.setEnabled(valueChangeEvent.getValue());
@@ -175,25 +173,24 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel filterByEntityTypes() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18 i18n
-        // constants.documentType()
-        filterByDocumentType = new CheckBox("Filtrovat podle typu intelektuální entity");
-        result.add(filterByDocumentType);
-        filterByDocumentType.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+        filterByIeType = new CheckBox(constants.processUrnNbnExportFilterByIeType());
+        result.add(filterByIeType);
+        filterByIeType.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
-                documentTypeListBox.setEnabled(valueChangeEvent.getValue());
+                ieTypesListBox.setEnabled(valueChangeEvent.getValue());
             }
         });
 
         HorizontalPanel dataPanel = new HorizontalPanel();
         dataPanel.add(new HTML("&nbsp"));
-        documentTypeListBox = new MultiSelectListBox();
+        ieTypesListBox = new MultiSelectListBox();
         for (String entityType : ENTITY_TYPES) {
-            documentTypeListBox.addItem(entityType);
+            ieTypesListBox.addItem(entityType);
         }
-        documentTypeListBox.setEnabled(false);
-        dataPanel.add(documentTypeListBox);
+        ieTypesListBox.setEnabled(false);
+        dataPanel.add(ieTypesListBox);
         result.add(dataPanel);
 
         result.add(new HTML("<br>"));
@@ -202,9 +199,8 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel filterByAbsentIdentifier() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18 i18n
-        // constants.absenceOfIdentifiers()
-        filterByAbsentIdentifiers = new CheckBox("Filtrovat jen na dokumenty, kterým chybí identifikátor(y)");
+
+        filterByAbsentIdentifiers = new CheckBox(constants.processUrnNbnExportFilterByMissingIdentifiers());
         filterByAbsentIdentifiers.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
@@ -229,9 +225,8 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel filterByState() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18 i18n
-        // constants.activityFlag()
-        filterByState = new CheckBox("Filtrovat podle stavu URN:NBN");
+
+        filterByState = new CheckBox(constants.processUrnNbnExportFilterByState());
         filterByState.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
@@ -255,9 +250,7 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel includeNumberOfDigitalInstancesCheckbox() {
         VerticalPanel result = new VerticalPanel();
-        // TODO: 27.11.18
-        //constants.includeNumberOfDigitalInstances()
-        includeNumberOfDigitalInstances = new CheckBox("Zahrnout počet digitálních instancí");
+        includeNumberOfDigitalInstances = new CheckBox(constants.processUrnNbnExportIncludeNumberOfDigitalInstances());
         result.add(includeNumberOfDigitalInstances);
         result.add(new HTML("<br>"));
         return result;
@@ -283,7 +276,7 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
                 //registrars
                 String paramRegistrars = null;
-                if (filterByRegistrars.getValue()) {
+                if (filterByRegistrar.getValue()) {
                     List<String> registrarCodes = registrarsListBox.getSelectedItems();
                     if (registrarCodes.size() > 0) {
                         StringBuilder builder = new StringBuilder();
@@ -299,8 +292,8 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
                 //document types
                 String paramEntityTypes = null;
-                if (filterByDocumentType.getValue()) {
-                    List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
+                if (filterByIeType.getValue()) {
+                    List<String> selectedEntityTypes = ieTypesListBox.getSelectedItems();
                     if (selectedEntityTypes.size() > 0) {
                         StringBuilder types = new StringBuilder();
                         String separator = "";

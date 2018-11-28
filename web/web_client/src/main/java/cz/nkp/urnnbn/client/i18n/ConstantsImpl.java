@@ -378,6 +378,8 @@ public interface ConstantsImpl extends Constants {
 
     String processDelete();
 
+    //process OAI Adapter
+
     String processOaiAdapterRegistrar();
 
     String processOaiAdapterOaiBaseUrl();
@@ -418,6 +420,8 @@ public interface ConstantsImpl extends Constants {
 
     String processOaiAdapterTransformationXslt();
 
+    //process DI Availability check
+
     String processDiAvailabilityCheckDd();
 
     String processDiAvailabilityCheckDi();
@@ -431,6 +435,21 @@ public interface ConstantsImpl extends Constants {
     String processDiAvailabilityCheckActive();
 
     String processDiAvailabilityCheckDeactivated();
+
+    //process URN:NBN Export
+
+    String processUrnNbnExportFilterByRegistrationDate();
+
+    String processUrnNbnExportFilterByRegistrar();
+
+    String processUrnNbnExportFilterByIeType();
+
+    String processUrnNbnExportFilterByMissingIdentifiers();
+
+    String processUrnNbnExportFilterByState();
+
+    String processUrnNbnExportIncludeNumberOfDigitalInstances();
+
 
     // logs
     String logsTabProcessListHeading();
