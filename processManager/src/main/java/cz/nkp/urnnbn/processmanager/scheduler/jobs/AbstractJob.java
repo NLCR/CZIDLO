@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Martin Řehánek
@@ -112,6 +114,7 @@ public abstract class AbstractJob implements InterruptableJob {
         return new PostgresPooledConnector();
     }
 
+    @Deprecated
     DateTime parseDatetimeFromContext(String key, JobExecutionContext context, DateFormat dateFormat) throws ParseException {
         if (context.getMergedJobDataMap().containsKey(key)) {
             String val = context.getMergedJobDataMap().getString(key);
@@ -122,6 +125,48 @@ public abstract class AbstractJob implements InterruptableJob {
             }
         } else {
             throw new IllegalStateException("no data for key '" + key + "' found");
+        }
+    }
+
+    DateTime parseDatetimeOrNullFromContext(String key, JobExecutionContext context, DateFormat dateFormat) throws ParseException {
+        if (context.getMergedJobDataMap().containsKey(key)) {
+            String val = context.getMergedJobDataMap().getString(key);
+            if (val != null) {
+                return new DateTime(dateFormat.parse(val));
+            } else {
+                return null;
+            }
+        } else {
+            throw new IllegalStateException("no data for key '" + key + "' found");
+        }
+    }
+
+    List<String> parseStringListOrNullFromContext(String key, JobExecutionContext context) {
+        if (context.getMergedJobDataMap().containsKey(key)) {
+            String val = context.getMergedJobDataMap().getString(key);
+            if (val != null) {
+                return Arrays.asList(val.split(","));
+            } else {
+                return null;
+            }
+        } else {
+            throw new IllegalStateException("no data for key '" + key + "' found");
+        }
+    }
+
+
+    String listOfStringsToString(List<String> list) {
+        if (list == null) {
+            return null;
+        } else {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                builder.append(list.get(i));
+                if (i != list.size() - 1) {
+                    builder.append(',');
+                }
+            }
+            return builder.toString();
         }
     }
 

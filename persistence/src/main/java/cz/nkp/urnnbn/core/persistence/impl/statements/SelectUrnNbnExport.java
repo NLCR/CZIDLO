@@ -47,6 +47,7 @@ public class SelectUrnNbnExport implements StatementWrapper {
 
     private String buildParameters() {
         StringBuilder parameters = new StringBuilder();
+        //registration date range
         if (filter.getBegin() != null) {
             parameters.append("row.registered> ? AND ");
         }
@@ -75,14 +76,14 @@ public class SelectUrnNbnExport implements StatementWrapper {
             }
             parameters.append(String.format("row.entity_type in (%s) AND ", typesBody.toString()));
         }
-
-        if (filter.getMissingCcnb()) {
+        //missing identifiers
+        if (filter.getWithMissingCcnbOnly()) {
             parameters.append("row.cnb = false AND ");
         }
-        if (filter.getMissingIssn()) {
+        if (filter.getWithMissingIssnOnly()) {
             parameters.append("row.issn = false AND ");
         }
-        if (filter.getMissingIsbn()) {
+        if (filter.getWithMMissingIsbnOnly()) {
             parameters.append("row.isbn = false AND ");
         }
         if (!filter.getReturnActive() || !filter.getReturnDeactivated()) {

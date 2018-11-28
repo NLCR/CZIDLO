@@ -16,25 +16,22 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.UrnNbnExport;
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class UrnNbnCsvExportJob extends AbstractJob {
@@ -47,9 +44,9 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     public static final String PARAM_END = "end";
     public static final String PARAM_REGISTRARS_CODES = "registrars";
     public static final String PARAM_ENT_TYPES = "entityTypes";
-    public static final String PARAM_MISSING_CCNB = "missingCnb";
-    public static final String PARAM_MISSING_ISSN = "missingIssn";
-    public static final String PARAM_MISSING_ISBN = "missingIsbn";
+    public static final String PARAM_WITH_MISSING_CCNB_ONLY = "withMissingCnbOnly";
+    public static final String PARAM_WITH_MISSING_ISSN_ONLY = "withMissingIssnOnly";
+    public static final String PARAM_WITH_MISSING_ISBN_ONLY = "withMissingIsbnOnly";
     public static final String PARAM_RETURN_ACTIVE = "returnActive";
     public static final String PARAM_RETURN_DEACTIVED = "returnDeactivated";
     public static final String PARAM_EXPORT_NUM_OF_DIG_INSTANCES = "exportNumOfDigInstances";
@@ -82,13 +79,14 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             // country code
             String countryCode = context.getMergedJobDataMap().getString(PARAM_COUNTRY_CODE);
             logger.info("country code: " + countryCode);
+            //filter
+            UrnNbnExportFilter filter = extractFilter(context);
             // include number of digital instances
             Boolean exportNumOfDigInstances = context.getMergedJobDataMap().getBoolean(PARAM_EXPORT_NUM_OF_DIG_INSTANCES);
             if (exportNumOfDigInstances == null) {
                 throw new NullPointerException("includeNumOfDigInst");
             }
             logger.info("export number of digital instances: " + exportNumOfDigInstances);
-            UrnNbnExportFilter filter = extractFilter(context);
             //run
             runProcess(countryCode, filter, exportNumOfDigInstances);
             if (interrupted) {
@@ -109,27 +107,25 @@ public class UrnNbnCsvExportJob extends AbstractJob {
 
     private UrnNbnExportFilter extractFilter(JobExecutionContext context) throws ParseException {
         UrnNbnExportFilter result = new UrnNbnExportFilter();
-        // datestamps
-        result.setBegin(parseDatetimeFromContext(PARAM_BEGIN, context, dateFormat));
-        result.setEnd(parseDatetimeFromContext(PARAM_END, context, dateFormat));
-        logger.info("registered: " + result.getBegin() + " - " + result.getEnd());
+        // registration datestamps
+        result.setBegin(parseDatetimeOrNullFromContext(PARAM_BEGIN, context, dateFormat));
+        result.setEnd(parseDatetimeOrNullFromContext(PARAM_END, context, dateFormat));
+        logger.info("registered: " + ((result.getBegin() == null && result.getEnd() == null) ? "ALL" : result.getBegin() + " - " + result.getEnd()));
         // registrars
-        String registrarCodesStr = (String) context.getMergedJobDataMap().getString(PARAM_REGISTRARS_CODES);
-        logger.info("registrars: " + registrarCodesStr);
-        result.setRegistrars(Arrays.asList(registrarCodesStr.split(",")));
+        result.setRegistrars(parseStringListOrNullFromContext(PARAM_REGISTRARS_CODES, context));
+        logger.info("registrars: " + (result.getRegistrars() == null ? "ALL" : listOfStringsToString(result.getRegistrars())));
         // intelectual entity types
-        String entityTypesStr = (String) context.getMergedJobDataMap().get(PARAM_ENT_TYPES);
-        result.setEntityTypes(Arrays.asList(entityTypesStr.split(",")));
-        logger.info("intelectual entity types: " + entityTypesStr);
-        // limit to missing ccnb
-        result.setMissingCcnb(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_CCNB));
-        logger.info("limit to records missing cCNB: " + result.getMissingCcnb());
-        // limit to missing issn
-        result.setMissingIssn(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISSN));
-        logger.info("limit to records missing ISSN: " + result.getMissingIssn());
-        // limit to missing isbn
-        result.setMissingIsbn(context.getMergedJobDataMap().getBoolean(PARAM_MISSING_ISSN));
-        logger.info("limit to records missing ISBN: " + result.getMissingIsbn());
+        result.setEntityTypes(parseStringListOrNullFromContext(PARAM_ENT_TYPES, context));
+        logger.info("intelectual entity types: " + (result.getEntityTypes() == null ? "ALL" : listOfStringsToString(result.getEntityTypes())));
+        // limit to only those with missing ccnb
+        result.setWithMissingCcnbOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_CCNB_ONLY));
+        logger.info("limit to records missing cCNB: " + result.getWithMissingCcnbOnly());
+        // limit to only those with missing issn
+        result.setWithMissingIssnOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_ISSN_ONLY));
+        logger.info("limit to records missing ISSN: " + result.getWithMissingIssnOnly());
+        // limit to only those with missing isbn
+        result.setWithMissingIsbnOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_ISBN_ONLY));
+        logger.info("limit to records missing ISBN: " + result.getWithMMissingIsbnOnly());
         // urn:nbn states
         result.setReturnActive(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_ACTIVE));
         logger.info("return active records: " + result.getReturnActive());
@@ -137,6 +133,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         logger.info("return deactivated records: " + result.getReturnDeactivated());
         return result;
     }
+
 
     @Override
     void close() {
@@ -206,28 +203,28 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     private String toAggregateTitle(UrnNbnExport export) {
         StringBuilder builder = new StringBuilder();
         switch (EntityType.valueOf(export.getEntityType())) {
-        case MONOGRAPH:
-        case PERIODICAL:
-        case ANALYTICAL:
-        case THESIS:
-        case OTHER:
-            builder.append(export.getTitle());
-            if (export.getSubtitle() != null) {
-                builder.append(" (").append(export.getSubtitle()).append(')');
-            }
-            return builder.toString();
-        case MONOGRAPH_VOLUME:
-        case PERIODICAL_VOLUME:
-            builder.append(export.getTitle());
-            builder.append(", ").append(export.getVolumeTitle());
-            return builder.toString();
-        case PERIODICAL_ISSUE:
-            builder.append(export.getTitle());
-            builder.append(", ").append(export.getVolumeTitle());
-            builder.append(", ").append(export.getIssueTitle());
-            return builder.toString();
-        default:
-            return "";
+            case MONOGRAPH:
+            case PERIODICAL:
+            case ANALYTICAL:
+            case THESIS:
+            case OTHER:
+                builder.append(export.getTitle());
+                if (export.getSubtitle() != null) {
+                    builder.append(" (").append(export.getSubtitle()).append(')');
+                }
+                return builder.toString();
+            case MONOGRAPH_VOLUME:
+            case PERIODICAL_VOLUME:
+                builder.append(export.getTitle());
+                builder.append(", ").append(export.getVolumeTitle());
+                return builder.toString();
+            case PERIODICAL_ISSUE:
+                builder.append(export.getTitle());
+                builder.append(", ").append(export.getVolumeTitle());
+                builder.append(", ").append(export.getIssueTitle());
+                return builder.toString();
+            default:
+                return "";
         }
     }
 

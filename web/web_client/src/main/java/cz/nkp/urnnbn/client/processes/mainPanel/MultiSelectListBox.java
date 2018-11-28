@@ -1,9 +1,9 @@
 package cz.nkp.urnnbn.client.processes.mainPanel;
 
+import com.google.gwt.user.client.ui.ListBox;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gwt.user.client.ui.ListBox;
 
 public class MultiSelectListBox extends ListBox {
 
@@ -12,7 +12,7 @@ public class MultiSelectListBox extends ListBox {
     }
 
     public List<String> getSelectedItems() {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         for (int i = 0; i < this.getItemCount(); i++) {
             if (this.isItemSelected(i)) {
                 result.add(this.getItemText(i));

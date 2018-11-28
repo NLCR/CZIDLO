@@ -1,50 +1,53 @@
 package cz.nkp.urnnbn.client.processes.mainPanel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
+import cz.nkp.urnnbn.client.validation.DateTimeValidator;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
-import cz.nkp.urnnbn.client.validation.DateTimeValidator;
+
+import java.util.*;
 
 public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractScheduleProcessDialogBox {
 
+    private static final String[] ENTITY_TYPES = {"MONOGRAPH", "MONOGRAPH_VOLUME", "PERIODICAL", "PERIODICAL_VOLUME", "PERIODICAL_ISSUE", "THESIS", "ANALYTICAL", "OTHER"};
+    // TODO: 28.11.18 resit jen na urovni dnu
     private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
-    protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
+
+    private DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<RegistrarDTO>();
     private final Label errorLabel = errorLabel(320);
 
-    private MultiSelectListBox absenceOfIdentifiersListBox;
+    private CheckBox filterByRegistrationDate;
+    private TextInputValueField registrationStartDate;
+    private TextInputValueField registrationEndDate;
+
+    private CheckBox filterByRegistrars;
     private MultiSelectListBox registrarsListBox;
+
+    private CheckBox filterByDocumentType;
     private MultiSelectListBox documentTypeListBox;
-    private TextInputValueField beginDate;
-    private TextInputValueField endDate;
-    private ListBox activationFlag;
-    private CheckBox numberOfDigitalInstances;
+
+    private CheckBox filterByAbsentIdentifiers;
+    private MultiSelectListBox absenceOfIdentifiersListBox;
+
+    private CheckBox filterByState;
+    private ListBox stateListBox;
+
+    private CheckBox includeNumberOfDigitalInstances;
 
     public ScheduleProcessExportUrnNbnListDialogBox(UserDTO user) {
         super(user);
@@ -53,7 +56,7 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
     }
 
     @Override
-    public void open(){
+    public void open() {
         reload();
     }
 
@@ -92,84 +95,171 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
-        result.add(selectDateRangePanel());
-        result.add(selectRegistrarsPanel());
-        result.add(selectTypeOfDocumentPanel());
-        result.add(selectAbsenceOfIdentifiers());
-        result.add(numberOfDigitalInstancesCheckbox());
-        result.add(selectActivationFlag());
+        result.add(filterByRegistrationDatePanel());
+        result.add(filterByRegistrars());
+        result.add(filterByEntityTypes());
+        result.add(filterByAbsentIdentifier());
+        result.add(filterByState());
+        result.add(new HTML("<hr>"));
+        result.add(includeNumberOfDigitalInstancesCheckbox());
+        result.add(new HTML("<br>"));
         result.add(buttonsPanel());
         result.add(errorLabel);
         return result;
     }
 
-    @SuppressWarnings("deprecation")
-    private Panel selectDateRangePanel() {
-        HorizontalPanel result = new HorizontalPanel();
+    private Panel filterByRegistrationDatePanel() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18 i18n
+        // constants.timestampRegistered()
+        filterByRegistrationDate = new CheckBox("Filtrovat podle data registrace");
+        filterByRegistrationDate.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                if (valueChangeEvent.getValue()) {
+                    registrationStartDate.enable();
+                    registrationEndDate.enable();
+                } else {
+                    registrationStartDate.disable();
+                    registrationEndDate.disable();
+                }
+            }
+        });
+        result.add(filterByRegistrationDate);
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        //from
         Date start = new Date(112, 8, 1); // 1.9.2012
-        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampRegistered(), dateFormat.format(start), false);
-        result.add(beginDate.getLabelWidget());
-        result.add(beginDate.getContentWidget());
-        endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
-        result.add(new HTML(" - "));
-        result.add(endDate.getContentWidget());
+        registrationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false);
+        registrationStartDate.disable();
+        dataPanel.add(registrationStartDate.getContentWidget());
+        //to
+        registrationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
+        dataPanel.add(new HTML("&nbsp-&nbsp"));
+        dataPanel.add(registrationEndDate.getContentWidget());
+        registrationEndDate.disable();
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
         return result;
     }
 
-    private Panel selectRegistrarsPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.registrar() + SEPARATOR));
-        initRegistrarsList();
-        result.add(registrarsListBox);
-        return result;
-    }
+    private Panel filterByRegistrars() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18 i18n
+        // constants.registrar()
+        filterByRegistrars = new CheckBox("Filtrovat podle registrátora");
+        result.add(filterByRegistrars);
+        filterByRegistrars.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                registrarsListBox.setEnabled(valueChangeEvent.getValue());
+            }
+        });
 
-    private Panel selectTypeOfDocumentPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.documentType() + SEPARATOR));
-        documentTypeListBox = new MultiSelectListBox();
-        documentTypeListBox.addItem("MONOGRAPH");
-        documentTypeListBox.addItem("MONOGRAPH_VOLUME");
-        documentTypeListBox.addItem("PERIODICAL");
-        documentTypeListBox.addItem("PERIODICAL_VOLUME");
-        documentTypeListBox.addItem("PERIODICAL_ISSUE");
-        documentTypeListBox.addItem("THESIS");
-        documentTypeListBox.addItem("ANALYTICAL");
-        documentTypeListBox.addItem("OTHER");
-        for (int i = 0; i < documentTypeListBox.getItemCount(); i++) {
-            documentTypeListBox.setItemSelected(i, true);
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        registrarsListBox = new MultiSelectListBox();
+        for (int i = 0; i < registrarsOfUser.size(); i++) {
+            RegistrarDTO registrar = registrarsOfUser.get(i);
+            registrarsListBox.addItem(registrar.getCode());
         }
-        result.add(documentTypeListBox);
+        dataPanel.add(registrarsListBox);
+        registrarsListBox.setEnabled(false);
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
         return result;
     }
 
-    private Panel selectAbsenceOfIdentifiers() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.absenceOfIdentifiers() + SEPARATOR));
+    private Panel filterByEntityTypes() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18 i18n
+        // constants.documentType()
+        filterByDocumentType = new CheckBox("Filtrovat podle typu intelektuální entity");
+        result.add(filterByDocumentType);
+        filterByDocumentType.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                documentTypeListBox.setEnabled(valueChangeEvent.getValue());
+            }
+        });
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        documentTypeListBox = new MultiSelectListBox();
+        for (String entityType : ENTITY_TYPES) {
+            documentTypeListBox.addItem(entityType);
+        }
+        documentTypeListBox.setEnabled(false);
+        dataPanel.add(documentTypeListBox);
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
+        return result;
+    }
+
+    private Panel filterByAbsentIdentifier() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18 i18n
+        // constants.absenceOfIdentifiers()
+        filterByAbsentIdentifiers = new CheckBox("Filtrovat jen na dokumenty, kterým chybí identifikátor(y)");
+        filterByAbsentIdentifiers.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                absenceOfIdentifiersListBox.setEnabled(valueChangeEvent.getValue());
+            }
+        });
+        result.add(filterByAbsentIdentifiers);
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
         absenceOfIdentifiersListBox = new MultiSelectListBox();
         absenceOfIdentifiersListBox.addItem("CNB");
         absenceOfIdentifiersListBox.addItem("ISSN");
         absenceOfIdentifiersListBox.addItem("ISBN");
-        result.add(absenceOfIdentifiersListBox);
+        absenceOfIdentifiersListBox.setEnabled(false);
+        dataPanel.add(absenceOfIdentifiersListBox);
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
         return result;
     }
 
-    private Panel numberOfDigitalInstancesCheckbox() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.includeNumberOfDigitalInstances() + SEPARATOR));
-        numberOfDigitalInstances = new CheckBox();
-        result.add(numberOfDigitalInstances);
+    private Panel filterByState() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18 i18n
+        // constants.activityFlag()
+        filterByState = new CheckBox("Filtrovat podle stavu URN:NBN");
+        filterByState.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                stateListBox.setEnabled(valueChangeEvent.getValue());
+            }
+        });
+        result.add(filterByState);
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        stateListBox = new ListBox();
+        stateListBox.addItem(constants.activityActiveOnly());
+        stateListBox.addItem(constants.activityDeactivatedOnly());
+        stateListBox.setEnabled(false);
+        dataPanel.add(stateListBox);
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
         return result;
     }
 
-    private Panel selectActivationFlag() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.activityFlag() + SEPARATOR));
-        activationFlag = new ListBox();
-        activationFlag.addItem(constants.activityAll());
-        activationFlag.addItem(constants.activityActiveOnly());
-        activationFlag.addItem(constants.activityDeactivatedOnly());
-        result.add(activationFlag);
+    private Panel includeNumberOfDigitalInstancesCheckbox() {
+        VerticalPanel result = new VerticalPanel();
+        // TODO: 27.11.18
+        //constants.includeNumberOfDigitalInstances()
+        includeNumberOfDigitalInstances = new CheckBox("Zahrnout počet digitálních instancí");
+        result.add(includeNumberOfDigitalInstances);
+        result.add(new HTML("<br>"));
         return result;
     }
 
@@ -181,60 +271,66 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
         return result;
     }
 
-    private void initRegistrarsList() {
-        registrarsListBox = new MultiSelectListBox();
-        for (int i = 0; i < registrarsOfUser.size(); i++) {
-            RegistrarDTO registrar = registrarsOfUser.get(i);
-            registrarsListBox.addItem(registrar.getCode());
-            registrarsListBox.setItemSelected(i, true);
-        }
-    }
 
     private Button scheduleProcessButton() {
         return new Button(constants.scheduleProcess(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
+
+                //registration date
+                String paramRegistrationStart = filterByRegistrationDate.getValue() ? (String) registrationStartDate.getInsertedValue() : null;
+                String paramRegistrationEnd = filterByRegistrationDate.getValue() ? (String) registrationEndDate.getInsertedValue() : null;
+
+                //registrars
+                String paramRegistrars = null;
+                if (filterByRegistrars.getValue()) {
+                    List<String> registrarCodes = registrarsListBox.getSelectedItems();
+                    if (registrarCodes.size() > 0) {
+                        StringBuilder builder = new StringBuilder();
+                        String separator = "";
+                        for (String code : registrarCodes) {
+                            builder.append(separator);
+                            builder.append(code);
+                            separator = ",";
+                        }
+                        paramRegistrars = builder.toString();
+                    }
+                }
+
+                //document types
+                String paramEntityTypes = null;
+                if (filterByDocumentType.getValue()) {
+                    List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
+                    if (selectedEntityTypes.size() > 0) {
+                        StringBuilder types = new StringBuilder();
+                        String separator = "";
+                        for (String code : selectedEntityTypes) {
+                            types.append(separator);
+                            types.append(code);
+                            separator = ",";
+                        }
+                        paramEntityTypes = types.toString();
+                    }
+                }
+
+                //missing identifiers
                 List<String> idents = absenceOfIdentifiersListBox.getSelectedItems();
+                Boolean paramMissingCnb = idents.contains("CNB") && filterByAbsentIdentifiers.getValue();
+                Boolean paramMissingIssn = idents.contains("ISSN") && filterByAbsentIdentifiers.getValue();
+                Boolean paramMissingIsbn = idents.contains("ISBN") && filterByAbsentIdentifiers.getValue();
 
-                Boolean missingCnb = idents.contains("CNB");
-                Boolean missingIssn = idents.contains("ISSN");
-                Boolean missingIsbn = idents.contains("ISBN");
+                int activitySelectedIndex = stateListBox.getSelectedIndex();
+                Boolean returnActive = !filterByState.getValue() || activitySelectedIndex == 0;
+                Boolean returnDeactivated = !filterByState.getValue() || activitySelectedIndex == 1;
+                Boolean exportNumberOfDigitalInstances = includeNumberOfDigitalInstances.getValue();
 
-                String registrars = null;
-                List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
-                if (selectedRegistrars.size() > 0) {
-                    StringBuilder regs = new StringBuilder();
-                    String sep = "";
-                    for (String code : selectedRegistrars) {
-                        regs.append(sep);
-                        regs.append(code);
-                        sep = ",";
-                    }
-                    registrars = regs.toString();
-                }
-                String entityTypes = null;
-                List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
-                if (selectedEntityTypes.size() > 0) {
-                    StringBuilder types = new StringBuilder();
-                    String sep = "";
-                    for (String code : selectedEntityTypes) {
-                        types.append(sep);
-                        types.append(code);
-                        sep = ",";
-                    }
-                    entityTypes = types.toString();
-                }
-
-                String begin = (String) beginDate.getInsertedValue();
-                String end = (String) endDate.getInsertedValue();
-
-                int activitySelectedIndex = activationFlag.getSelectedIndex();
-                Boolean returnActive = activitySelectedIndex == 0 || activitySelectedIndex == 1;
-                Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;
-                Boolean exportNumberOfDigitalInstances = numberOfDigitalInstances.getValue();
-
-                String[] params = new String[] { begin, end, registrars, entityTypes, missingCnb.toString(), missingIssn.toString(),
-                        missingIsbn.toString(), returnActive.toString(), returnDeactivated.toString(), exportNumberOfDigitalInstances.toString() };
+                String[] params = new String[]{
+                        paramRegistrationStart, paramRegistrationEnd,
+                        paramRegistrars,
+                        paramEntityTypes,
+                        paramMissingCnb.toString(), paramMissingIssn.toString(), paramMissingIsbn.toString(),
+                        returnActive.toString(), returnDeactivated.toString(),
+                        exportNumberOfDigitalInstances.toString()};
                 processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
                     public void onSuccess(Void result) {

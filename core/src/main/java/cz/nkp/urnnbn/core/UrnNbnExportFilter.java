@@ -1,8 +1,8 @@
 package cz.nkp.urnnbn.core;
 
-import java.util.List;
-
 import org.joda.time.DateTime;
+
+import java.util.List;
 
 public class UrnNbnExportFilter {
 
@@ -10,24 +10,24 @@ public class UrnNbnExportFilter {
     private DateTime end;
     private List<String> registrars;
     private List<String> entityTypes;
-    private Boolean missingCcnb;
-    private Boolean missingIssn;
-    private Boolean missingIsbn;
-    private Boolean returnActive;
-    private Boolean returnDeactivated;
+    private boolean withMissingCcnbOnly;
+    private boolean withMissingIssnOnly;
+    private boolean withMMissingIsbnOnly;
+    private boolean returnActive;
+    private boolean returnDeactivated;
 
     public UrnNbnExportFilter() {
     }
 
-    public UrnNbnExportFilter(DateTime begin, DateTime end, List<String> registrars, List<String> entityTypes, Boolean missingCcnb,
-            Boolean missingIssn, Boolean missingIsbn, Boolean returnActive, Boolean returnDeactivated) {
+    public UrnNbnExportFilter(DateTime begin, DateTime end, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
+                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated) {
         this.begin = begin;
         this.end = end;
         this.registrars = registrars;
         this.entityTypes = entityTypes;
-        this.missingCcnb = missingCcnb;
-        this.missingIssn = missingIssn;
-        this.missingIsbn = missingIsbn;
+        this.withMissingCcnbOnly = withMissingCcnbOnly;
+        this.withMissingIssnOnly = withMissingIssnOnly;
+        this.withMMissingIsbnOnly = withMMissingIsbnOnly;
         this.returnActive = returnActive;
         this.returnDeactivated = returnDeactivated;
     }
@@ -48,23 +48,23 @@ public class UrnNbnExportFilter {
         return entityTypes;
     }
 
-    public Boolean getMissingCcnb() {
-        return missingCcnb;
+    public boolean getWithMissingCcnbOnly() {
+        return withMissingCcnbOnly;
     }
 
-    public Boolean getMissingIssn() {
-        return missingIssn;
+    public boolean getWithMissingIssnOnly() {
+        return withMissingIssnOnly;
     }
 
-    public Boolean getMissingIsbn() {
-        return missingIsbn;
+    public boolean getWithMMissingIsbnOnly() {
+        return withMMissingIsbnOnly;
     }
 
-    public Boolean getReturnActive() {
+    public boolean getReturnActive() {
         return returnActive;
     }
 
-    public Boolean getReturnDeactivated() {
+    public boolean getReturnDeactivated() {
         return returnDeactivated;
     }
 
@@ -77,51 +77,30 @@ public class UrnNbnExportFilter {
     }
 
     public void setRegistrars(List<String> registrars) {
-        if (registrars == null) {
-            throw new NullPointerException("registrars");
-        }
         this.registrars = registrars;
     }
 
     public void setEntityTypes(List<String> entityTypes) {
-        if (entityTypes == null) {
-            throw new NullPointerException("entityTypes");
-        }
         this.entityTypes = entityTypes;
     }
 
-    public void setMissingCcnb(Boolean missingCcnb) {
-        if (missingCcnb == null) {
-            throw new NullPointerException("missingCcnb");
-        }
-        this.missingCcnb = missingCcnb;
+    public void setWithMissingCcnbOnly(boolean withMissingCcnbOnly) {
+        this.withMissingCcnbOnly = withMissingCcnbOnly;
     }
 
-    public void setMissingIssn(Boolean missingIssn) {
-        if (missingIssn == null) {
-            throw new NullPointerException("missingIssn");
-        }
-        this.missingIssn = missingIssn;
+    public void setWithMissingIssnOnly(boolean withMissingIssnOnly) {
+        this.withMissingIssnOnly = withMissingIssnOnly;
     }
 
-    public void setMissingIsbn(Boolean missingIsbn) {
-        if (missingIsbn == null) {
-            throw new NullPointerException("missingIsbn");
-        }
-        this.missingIsbn = missingIsbn;
+    public void setWithMissingIsbnOnly(boolean withMMissingIsbnOnly) {
+        this.withMMissingIsbnOnly = withMMissingIsbnOnly;
     }
 
-    public void setReturnActive(Boolean returnActive) {
-        if (returnActive == null) {
-            throw new NullPointerException("returnActive");
-        }
+    public void setReturnActive(boolean returnActive) {
         this.returnActive = returnActive;
     }
 
-    public void setReturnDeactivated(Boolean returnDeactivated) {
-        if (returnDeactivated == null) {
-            throw new NullPointerException("returnDeactivated");
-        }
+    public void setReturnDeactivated(boolean returnDeactivated) {
         this.returnDeactivated = returnDeactivated;
     }
 
