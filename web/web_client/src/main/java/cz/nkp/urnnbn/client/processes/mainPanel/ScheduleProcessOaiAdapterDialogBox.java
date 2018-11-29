@@ -7,8 +7,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
+import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
+import cz.nkp.urnnbn.client.validation.LimitedLengthUrlValidator;
+import cz.nkp.urnnbn.client.validation.LimitedLengthValidator;
 import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
@@ -30,9 +33,9 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     private XmlTransformationDTO selectedDdRegistrationTransformation;
     private XmlTransformationDTO selectedDiImportTransformation;
 
-    private TextBox oaiBaseUrlTextBox;
-    private TextBox oaiMetadataPrefixTextBox;
-    private TextBox oaiSetTtextBox;
+    private TextInputValueField oaiBaseUrlField;
+    private TextInputValueField oaiMetadataPrefixField;
+    private TextInputValueField oaiSetField;
 
     private CheckBox registerDDsWithUrnCheckbox;
     private CheckBox registerDDsWithoutUrnCheckbox;
@@ -116,7 +119,7 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
         result.add(selectRegistrarPanel());
-        result.add(insertOaiBasUrlPanel());
+        result.add(insertOaiBaseUrlPanel());
         result.add(insertOaiMetadataPrefixPanel());
         result.add(selectOaiSetPanel());
         result.add(selectDdRegistrationXsltPanel());
@@ -164,30 +167,31 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
         return result;
     }
 
-    private Panel insertOaiBasUrlPanel() {
+    private Panel insertOaiBaseUrlPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
-        result.add(new Label(constants.processOaiAdapterOaiBaseUrl() + SEPARATOR));
-        oaiBaseUrlTextBox = new TextBox();
-        result.add(oaiBaseUrlTextBox);
+        oaiBaseUrlField = new TextInputValueField(new LimitedLengthUrlValidator(100), constants.processOaiAdapterOaiBaseUrl(), "", true, 200);
+        result.add(oaiBaseUrlField.getLabelWidget());
+        result.add(oaiBaseUrlField.getContentWidget());
         return result;
     }
 
     private Panel insertOaiMetadataPrefixPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
-        result.add(new Label(constants.processOaiAdapterOaiMetadataPrefix() + SEPARATOR));
-        oaiMetadataPrefixTextBox = new TextBox();
-        result.add(oaiMetadataPrefixTextBox);
+        oaiMetadataPrefixField = new TextInputValueField(new LimitedLengthValidator(20), constants.processOaiAdapterOaiMetadataPrefix(), "", true, 160);
+        result.add(oaiMetadataPrefixField.getLabelWidget());
+        result.add(oaiMetadataPrefixField.getContentWidget());
         return result;
     }
+
 
     private Panel selectOaiSetPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
-        result.add(new Label(constants.processOaiAdapterOaiSet() + SEPARATOR));
-        oaiSetTtextBox = new TextBox();
-        result.add(oaiSetTtextBox);
+        oaiSetField = new TextInputValueField(new LimitedLengthValidator(20), constants.processOaiAdapterOaiSet(), "", false, 160);
+        result.add(oaiSetField.getLabelWidget());
+        result.add(oaiSetField.getContentWidget());
         return result;
     }
 
@@ -285,16 +289,18 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
             @Override
             public void onClick(ClickEvent event) {
                 if (selectedRegistrar != null) {
-                    String oaiSet = (oaiSetTtextBox.getText() == null || oaiSetTtextBox.getText().isEmpty()) ? null : oaiSetTtextBox.getText();
-                    //TODO: vzdy musi byt vybrana sablona, jinak neni mozne naplanovat proces
-                    //podobne kontroly i pro dalsi parametry
+                    String oaiSet = null;
+                    String oaiSetRaw = (String) oaiSetField.getInsertedValue();
+                    if (oaiSetRaw != null && !oaiSetRaw.trim().isEmpty()) {
+                        oaiSet = oaiSetRaw.trim();
+                    }
                     String ddRegistrationTemplateId = selectedDdRegistrationTransformation == null ? null : selectedDdRegistrationTransformation.getId().toString();
                     String diImportTemplateId = selectedDiImportTransformation == null ? null : selectedDiImportTransformation.getId().toString();
 
                     String[] params = new String[]{
                             selectedRegistrar.getCode(),
-                            oaiBaseUrlTextBox.getText(),
-                            oaiMetadataPrefixTextBox.getText(),
+                            (String) oaiBaseUrlField.getInsertedValue(),
+                            (String) oaiMetadataPrefixField.getInsertedValue(),
                             oaiSet,
                             ddRegistrationTemplateId,
                             diImportTemplateId,
@@ -304,18 +310,29 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
                             diImportIgnoreDifferenceInAccessibilityCheckbox.getValue().toString(),
                             diImportIgnoreDifferenceInFormatCheckbox.getValue().toString()
                     };
-                    processService.scheduleProcess(ProcessDTOType.OAI_ADAPTER, params, new AsyncCallback<Void>() {
 
-                        @Override
-                        public void onSuccess(Void result) {
-                            ScheduleProcessOaiAdapterDialogBox.this.hide();
-                        }
+                    boolean formOk = true;
+                    formOk &= oaiBaseUrlField.validValueInserted();
+                    formOk &= oaiMetadataPrefixField.validValueInserted();
+                    formOk &= oaiSetField.validValueInserted();
+                    formOk &= ddRegistrationTemplateId != null;
+                    formOk &= diImportTemplateId != null;
 
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            errorLabel.setText(caught.getMessage());
-                        }
-                    });
+                    if (formOk) {
+                        //log(LOGGER, params);
+                        processService.scheduleProcess(ProcessDTOType.OAI_ADAPTER, params, new AsyncCallback<Void>() {
+
+                            @Override
+                            public void onSuccess(Void result) {
+                                ScheduleProcessOaiAdapterDialogBox.this.hide();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                errorLabel.setText(caught.getMessage());
+                            }
+                        });
+                    }
                 }
             }
         });

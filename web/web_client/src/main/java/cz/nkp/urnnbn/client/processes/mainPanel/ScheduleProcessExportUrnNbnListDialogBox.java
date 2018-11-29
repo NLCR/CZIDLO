@@ -403,7 +403,7 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
                             returnActive.toString(), returnDeactivated.toString(),
                             paramDeactivationStart, paramDeactivationEnd,
                             exportNumberOfDigitalInstances.toString()};
-                    //log(params);
+                    //log(LOGGER, params);
                     processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
                         public void onSuccess(Void result) {
@@ -417,19 +417,6 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
                 }
             }
         });
-    }
-
-    private void log(String[] params) {
-        StringBuilder builder = new StringBuilder();
-        builder.append('[');
-        for (int i = 0; i < params.length; i++) {
-            builder.append(params[i]);
-            if (i != params.length - 1) {
-                builder.append(',');
-            }
-        }
-        builder.append(']');
-        LOGGER.info("params:" + builder.toString());
     }
 
     private Button closeButton() {

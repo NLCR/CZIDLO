@@ -8,6 +8,8 @@ import cz.nkp.urnnbn.client.services.ProcessService;
 import cz.nkp.urnnbn.client.services.ProcessServiceAsync;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
+import java.util.logging.Logger;
+
 public abstract class AbstractScheduleProcessDialogBox extends AbstractDialogBox {
     protected static final char SEPARATOR = ':';
     protected final ProcessServiceAsync processService = GWT.create(ProcessService.class);
@@ -20,5 +22,18 @@ public abstract class AbstractScheduleProcessDialogBox extends AbstractDialogBox
     }
 
     public abstract void open();
+
+    void log(Logger logger, String[] params) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0; i < params.length; i++) {
+            builder.append(params[i]);
+            if (i != params.length - 1) {
+                builder.append(',');
+            }
+        }
+        builder.append(']');
+        logger.info("params:" + builder.toString());
+    }
 
 }
