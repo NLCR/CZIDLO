@@ -3,6 +3,8 @@ package cz.nkp.urnnbn.client.processes.mainPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,19 +24,16 @@ import java.util.Date;
 
 public class ScheduleProcessIndexDocumentsDialogBox extends AbstractScheduleProcessDialogBox {
 
-    private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
+    private static final String DATE_FORMAT = "d. M. yyyy";
     protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
     private ArrayList<RegistrarDTO> registrarsOfUser = new ArrayList<>();
-    private final Label errorLabel = errorLabel(320);
+    private final Label errorLabel = errorLabel(300);
 
-    private TextInputValueField beginDate;
-    private TextInputValueField endDate;
-
-    /*private MultiSelectListBox registrarsListBox;
-    private MultiSelectListBox documentTypeListBox;
-    private ListBox activationFlag;*/
+    private CheckBox filterByRegistrationDate;
+    private TextInputValueField registrationStartDate;
+    private TextInputValueField registrationEndDate;
 
     public ScheduleProcessIndexDocumentsDialogBox(UserDTO user) {
         super(user);
@@ -82,65 +81,48 @@ public class ScheduleProcessIndexDocumentsDialogBox extends AbstractScheduleProc
 
     private Panel contentPanel() {
         VerticalPanel result = new VerticalPanel();
-        result.add(selectDateRangePanel());
-        //result.add(selectRegistrarsPanel());
-        //result.add(selectTypeOfDocumentPanel());
-        //result.add(selectActivationFlag());
+        result.add(filterByRegistrationDatePanel());
         result.add(buttonsPanel());
         result.add(errorLabel);
         return result;
     }
 
-    @SuppressWarnings("deprecation")
-    private Panel selectDateRangePanel() {
-        HorizontalPanel result = new HorizontalPanel();
+    private Panel filterByRegistrationDatePanel() {
+        VerticalPanel result = new VerticalPanel();
+
+        filterByRegistrationDate = new CheckBox(constants.processIndexDocumentsLimitByRegistrationDate());
+        filterByRegistrationDate.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                if (valueChangeEvent.getValue()) {
+                    registrationStartDate.enable();
+                    registrationEndDate.enable();
+                } else {
+                    registrationStartDate.disable();
+                    registrationEndDate.disable();
+                }
+            }
+        });
+        filterByRegistrationDate.setValue(true);
+        result.add(filterByRegistrationDate);
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        //start
         Date start = new Date(112, 8, 1); // 1.9.2012
-        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.timestampRegistered(), dateFormat.format(start), false);
-        result.add(beginDate.getLabelWidget());
-        result.add(beginDate.getContentWidget());
-        endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
-        result.add(new HTML(" - "));
-        result.add(endDate.getContentWidget());
+        registrationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false, 80);
+        //registrationStartDate.disable();
+        dataPanel.add(registrationStartDate.getContentWidget());
+        //end
+        registrationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false, 80);
+        dataPanel.add(new HTML("&nbsp-&nbsp"));
+        dataPanel.add(registrationEndDate.getContentWidget());
+        //registrationEndDate.disable();
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
         return result;
     }
-
-   /*private Panel selectRegistrarsPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.registrar() + SEPARATOR));
-        initRegistrarsList();
-        result.add(registrarsListBox);
-        return result;
-    }*/
-
-    /*private Panel selectTypeOfDocumentPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.documentType() + SEPARATOR));
-        documentTypeListBox = new MultiSelectListBox();
-        documentTypeListBox.addItem("MONOGRAPH");
-        documentTypeListBox.addItem("MONOGRAPH_VOLUME");
-        documentTypeListBox.addItem("PERIODICAL");
-        documentTypeListBox.addItem("PERIODICAL_VOLUME");
-        documentTypeListBox.addItem("PERIODICAL_ISSUE");
-        documentTypeListBox.addItem("THESIS");
-        documentTypeListBox.addItem("ANALYTICAL");
-        documentTypeListBox.addItem("OTHER");
-        for (int i = 0; i < documentTypeListBox.getItemCount(); i++) {
-            documentTypeListBox.setItemSelected(i, true);
-        }
-        result.add(documentTypeListBox);
-        return result;
-    }*/
-
-    /*private Panel selectActivationFlag() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.add(new Label(constants.activityFlag() + SEPARATOR));
-        activationFlag = new ListBox();
-        activationFlag.addItem(constants.activityAll());
-        activationFlag.addItem(constants.activityActiveOnly());
-        activationFlag.addItem(constants.activityDeactivatedOnly());
-        result.add(activationFlag);
-        return result;
-    }*/
 
     private Panel buttonsPanel() {
         HorizontalPanel result = new HorizontalPanel();
@@ -150,62 +132,37 @@ public class ScheduleProcessIndexDocumentsDialogBox extends AbstractScheduleProc
         return result;
     }
 
-    /*private void initRegistrarsList() {
-        registrarsListBox = new MultiSelectListBox();
-        for (int i = 0; i < registrarsOfUser.size(); i++) {
-            RegistrarDTO registrar = registrarsOfUser.get(i);
-            registrarsListBox.addItem(registrar.getCode());
-            registrarsListBox.setItemSelected(i, true);
-        }
-    }*/
-
     private Button scheduleProcessButton() {
         return new Button(constants.scheduleProcess(), new ClickHandler() {
 
             public void onClick(ClickEvent event) {
-                String begin = (String) beginDate.getInsertedValue();
-                String end = (String) endDate.getInsertedValue();
+                String paramRegistrationStart = null;
+                String paramRegistrationEnd = null;
 
-                /*String registrars = null;
-                List<String> selectedRegistrars = registrarsListBox.getSelectedItems();
-                if (selectedRegistrars.size() > 0) {
-                    StringBuilder regs = new StringBuilder();
-                    String sep = "";
-                    for (String code : selectedRegistrars) {
-                        regs.append(sep);
-                        regs.append(code);
-                        sep = ",";
-                    }
-                    registrars = regs.toString();
+                if (filterByRegistrationDate.getValue()) {
+                    paramRegistrationStart = (String) registrationStartDate.getInsertedValue();
+                    paramRegistrationEnd = (String) registrationEndDate.getInsertedValue();
                 }
-                String entityTypes = null;
-                List<String> selectedEntityTypes = documentTypeListBox.getSelectedItems();
-                if (selectedEntityTypes.size() > 0) {
-                    StringBuilder types = new StringBuilder();
-                    String sep = "";
-                    for (String code : selectedEntityTypes) {
-                        types.append(sep);
-                        types.append(code);
-                        sep = ",";
-                    }
-                    entityTypes = types.toString();
+
+                boolean formOk = true;
+                if (filterByRegistrationDate.getValue()) {
+                    formOk &= registrationStartDate.validValueInserted();
+                    formOk &= registrationEndDate.validValueInserted();
                 }
-                int activitySelectedIndex = activationFlag.getSelectedIndex();
-                Boolean returnActive = activitySelectedIndex == 0 || activitySelectedIndex == 1;
-                Boolean returnDeactivated = activitySelectedIndex == 0 || activitySelectedIndex == 2;*/
 
-                String[] params = new String[]{begin, end};
-                //String[] params = new String[]{begin, end, registrars, entityTypes, returnActive.toString(), returnDeactivated.toString()};
-                processService.scheduleProcess(ProcessDTOType.INDEXATION, params, new AsyncCallback<Void>() {
+                if (formOk) {
+                    String[] params = new String[]{paramRegistrationStart, paramRegistrationEnd};
+                    processService.scheduleProcess(ProcessDTOType.INDEXATION, params, new AsyncCallback<Void>() {
 
-                    public void onSuccess(Void result) {
-                        ScheduleProcessIndexDocumentsDialogBox.this.hide();
-                    }
+                        public void onSuccess(Void result) {
+                            ScheduleProcessIndexDocumentsDialogBox.this.hide();
+                        }
 
-                    public void onFailure(Throwable caught) {
-                        errorLabel.setText(caught.getMessage());
-                    }
-                });
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(caught.getMessage());
+                        }
+                    });
+                }
             }
         });
     }

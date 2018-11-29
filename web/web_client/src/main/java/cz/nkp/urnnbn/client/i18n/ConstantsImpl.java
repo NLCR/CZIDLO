@@ -452,6 +452,10 @@ public interface ConstantsImpl extends Constants {
 
     String processUrnNbnExportIncludeNumberOfDigitalInstances();
 
+    //process Index documents
+
+    String processIndexDocumentsLimitByRegistrationDate();
+
 
     // logs
     String logsTabProcessListHeading();

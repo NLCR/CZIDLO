@@ -4,24 +4,9 @@
  */
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.joda.time.DateTime;
-
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
-import cz.nkp.urnnbn.core.persistence.ArchiverDAO;
-import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
-import cz.nkp.urnnbn.core.persistence.DigitalDocumentDAO;
-import cz.nkp.urnnbn.core.persistence.IntelectualEntityDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarDAO;
-import cz.nkp.urnnbn.core.persistence.RegistrarScopeIdentifierDAO;
+import cz.nkp.urnnbn.core.persistence.*;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
@@ -33,20 +18,21 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.statements.SelectNewIdFromSequence;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertDigitalDocument;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsLong;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountByLong;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByLongStringString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectSingleAttrByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateDigitalDocument;
+import cz.nkp.urnnbn.core.persistence.impl.statements.*;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DigitalDocumentRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleIntRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
+import org.joda.time.DateTime;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * 
  * @author Martin Řehánek
  */
 public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDocumentDAO {

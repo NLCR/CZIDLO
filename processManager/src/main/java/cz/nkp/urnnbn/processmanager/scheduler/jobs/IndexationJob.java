@@ -27,6 +27,8 @@ import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
 import cz.nkp.urnnbn.solr_indexer.ProgressListener;
 import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.UnableToInterruptJobException;
@@ -59,15 +61,9 @@ public class IndexationJob extends AbstractJob {
     //date range
     public static final String PARAM_MODIFICATION_DATE_FROM = "mod_date_from";
     public static final String PARAM_MODIFICATION_DATE_TO = "mod_date_to";
-    //possible other paramethers
-    /*
-    public static final String PARAM_REGISTRAR_CODES = "registrar_codes";
-    public static final String PARAM_IE_TYPES = "entity_types";
-    public static final String PARAM_INDEX_ACTIVE_DOCS = "index_active_docs";
-    public static final String PARAM_INDEX_DEACTIVED_DOCS = "index_deactivated_docs";
-    */
+    //possiblly other paramethers
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
+    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
 
     private SolrIndexer solrIndexer;
 
@@ -87,6 +83,7 @@ public class IndexationJob extends AbstractJob {
             logger.info("executing " + IndexationJob.class.getName());
 
             IndexerConfig config = new IndexerConfig();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
 
             // czidlo api
             config.setCzidloApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL));
@@ -107,31 +104,12 @@ public class IndexationJob extends AbstractJob {
             config.setCzidloToSolrXsltFile(new File((String) context.getMergedJobDataMap().get(PARAM_XSL_FILE)));
             config.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(config.getCzidloToSolrXsltFile().getAbsolutePath()));
 
-            // modification date from
-            String modDateFromStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_FROM);
-            logger.info("modification date from: " + modDateFromStr);
-            DateTime modDateFrom = new DateTime(dateFormat.parse(modDateFromStr));
+            //registration date range
+            DateTime registrationStart = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);
+            logger.info("registration start: " + registrationStart == null ? null : registrationStart.toString(dateTimeFormatter));
+            DateTime registrationEnd = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_TO, context, dateFormat);
+            logger.info("registrationEnd: " + registrationStart == null ? null : registrationStart.toString(dateTimeFormatter));
 
-            // modification date to
-            String modDateToStr = (String) context.getMergedJobDataMap().getString(PARAM_MODIFICATION_DATE_TO);
-            logger.info("modification date to: " + modDateToStr);
-            DateTime modDateTo = new DateTime(dateFormat.parse(modDateToStr));
-
-            /*
-            // registrars
-            String registrarCodesStr = (String) context.getMergedJobDataMap().getString(PARAM_REGISTRAR_CODES);
-            logger.info("registrars: " + registrarCodesStr);
-            List<String> registrars = Arrays.asList(registrarCodesStr.split(","));
-            // intelectual entity types
-            String entityTypesStr = (String) context.getMergedJobDataMap().get(PARAM_IE_TYPES);
-            List<String> entityTypes = Arrays.asList(entityTypesStr.split(","));
-            logger.info("intelectual entity types: " + entityTypesStr);
-            // urn:nbn states
-            Boolean returnActive = context.getMergedJobDataMap().getBoolean(PARAM_INDEX_ACTIVE_DOCS);
-            logger.info("return active records: " + returnActive);
-            Boolean returnDeactivated = context.getMergedJobDataMap().getBoolean(PARAM_INDEX_DEACTIVED_DOCS);
-            logger.info("return deactivated records: " + returnDeactivated);
-            */
 
             logger.info("running Indexer process");
             solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
@@ -162,7 +140,7 @@ public class IndexationJob extends AbstractJob {
             });
 
             if (!interrupted) {
-                solrIndexer.indexDocuments(modDateFrom, modDateTo);
+                solrIndexer.indexDocuments(registrationStart, registrationEnd);
             }
             if (interrupted) {
                 context.setResult(ProcessState.KILLED);
