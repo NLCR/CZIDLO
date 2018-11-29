@@ -80,7 +80,7 @@ public class IndexationJob extends AbstractJob {
         try {
             // System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
             init(context.getMergedJobDataMap(), ProcessType.INDEXATION);
-            logger.info("executing " + IndexationJob.class.getName());
+            logger.info("Executing " + IndexationJob.class.getSimpleName());
 
             IndexerConfig config = new IndexerConfig();
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
@@ -106,12 +106,12 @@ public class IndexationJob extends AbstractJob {
 
             //registration date range
             DateTime registrationStart = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_FROM, context, dateFormat);
-            logger.info("registration start: " + registrationStart == null ? null : registrationStart.toString(dateTimeFormatter));
+            logger.info("Registration from: " + (registrationStart == null ? null : registrationStart.toString(dateTimeFormatter)));
             DateTime registrationEnd = parseDatetimeOrNullFromContext(PARAM_MODIFICATION_DATE_TO, context, dateFormat);
-            logger.info("registrationEnd: " + registrationStart == null ? null : registrationStart.toString(dateTimeFormatter));
+            logger.info("Registration until: " + (registrationEnd == null ? null : registrationEnd.toString(dateTimeFormatter)));
 
 
-            logger.info("running Indexer process");
+            logger.info("Running Solr Indexer");
             solrIndexer = new SolrIndexer(config, buildReportLoggerOutputStream(),
                     new DataProvider() {
                         @Override
@@ -143,14 +143,14 @@ public class IndexationJob extends AbstractJob {
                 solrIndexer.indexDocuments(registrationStart, registrationEnd);
             }
             if (interrupted) {
+                logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
-                logger.info("Indexer process killed");
             } else {
+                logger.info("Process finished, see export");
                 context.setResult(ProcessState.FINISHED);
-                logger.info("Indexer process finished, see report");
             }
         } catch (Throwable ex) {
-            logger.error("Indexer process failed", ex);
+            logger.error("Process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();

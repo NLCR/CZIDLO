@@ -1,30 +1,27 @@
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-
-import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import org.joda.time.DateTime;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 import cz.nkp.urnnbn.core.DiExport;
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob.UrlChecker.Result;
 import cz.nkp.urnnbn.services.Services;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 public class DiUrlAvailabilityCheckJob extends AbstractJob {
 
@@ -53,7 +50,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
     private static final Object HEADER_AVAILABILITY_RESULT_CODE = "Dostupnost URL";
     private static final Object HEADER_AVAILABILITY_RESULT_MESSAGE = "Popis chyby";
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
+    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
     private PrintWriter csvWriter;
     private Services services;
 
@@ -61,23 +58,25 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             init(context.getMergedJobDataMap(), ProcessType.DI_URL_AVAILABILITY_CHECK);
-            logger.info("executing " + DiUrlAvailabilityCheckJob.class.getName());
+            logger.info("Executing " + DiUrlAvailabilityCheckJob.class.getSimpleName());
             csvWriter = openCsvWriter(createWriteableProcessFile(CSV_EXPORT_FILE_NAME));
             this.services = initServices();
-            logger.info("services initialized");
+            logger.info("Services initialized");
             String countryCode = context.getMergedJobDataMap().getString(PARAM_COUNTRY_CODE);
-            logger.info("country code: " + countryCode);
+            logger.info("Country code: " + countryCode);
             Filter filter = extractFilter(context);
             runProcess(countryCode, filter);
-            logger.info("finished");
+            logger.info("Finished");
             if (interrupted) {
+                logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
             } else {
+                logger.info("Process finished, see export");
                 context.setResult(ProcessState.FINISHED);
             }
         } catch (Throwable ex) {
             // throw new JobExecutionException(ex);
-            logger.error("urn:nbn export process failed", ex);
+            logger.error("Process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();
@@ -86,13 +85,14 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
 
     private Filter extractFilter(JobExecutionContext context) throws ParseException {
         Filter result = new Filter();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
         // registrars
         String registrarCodesStr = context.getMergedJobDataMap().getString(PARAM_REGISTRAR_CODES);
-        logger.info("registrars: " + registrarCodesStr);
+        logger.info("Registrars: " + registrarCodesStr);
         result.setRegistrarCodes(Arrays.asList(registrarCodesStr.split(",")));
         // intelectual entity types
         String entityTypesStr = context.getMergedJobDataMap().getString(PARAM_INT_ENT_TYPES);
-        logger.info("intelectual entity types: " + entityTypesStr);
+        logger.info("Intelectual Entity types: " + entityTypesStr);
         result.setEntityTypes(Arrays.asList(entityTypesStr.split(",")));
         // states
         result.setUrnStateIncludeActive(context.getMergedJobDataMap().getBoolean(PARAM_URNNBN_STATES_INCLUDE_ACTIVE));
@@ -104,9 +104,12 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
         result.setDiStateIncludeDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_DI_STATES_INCLUDE_DEACTIVATED));
         logger.info("DI - include deactivated: " + result.getDiStateIncludeDeactivated());
         // datestamps
-        result.setDiDsFrom(parseDatetimeFromContext(PARAM_DI_DATESTAMP_FROM, context, dateFormat));
-        result.setDiDsTo(parseDatetimeFromContext(PARAM_DI_DATESTAMP_TO, context, dateFormat));
-        logger.info("date range: " + result.getDiDsFrom() + " - " + result.getDiDsTo());
+        result.setDiDsFrom(parseDatetimeOrNullFromContext(PARAM_DI_DATESTAMP_FROM, context, dateFormat));
+        result.setDiDsTo(parseDatetimeOrNullFromContext(PARAM_DI_DATESTAMP_TO, context, dateFormat));
+        logger.info(String.format("Date range: %s - %s",
+                result.getDiDsFrom() == null ? null : result.getDiDsFrom().toString(dateTimeFormatter),
+                result.getDiDsTo() == null ? null : result.getDiDsTo().toString(dateTimeFormatter))
+        );
         return result;
     }
 
@@ -117,7 +120,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
             // header
             csvWriter.println(buildHeaderLine());
             // records
-            logger.info("records to export: " + exports.size());
+            logger.info("Records to export: " + exports.size());
             int counter = 0;
             for (DiExport export : exports) {
                 counter++;
@@ -130,12 +133,12 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                 csvWriter.println(line);
                 if (counter % 10 == 0) {
                     int percentage = (int) ((((float) counter) / exports.size()) * 100);
-                    logger.info(String.format("processed %d/%d (%d %%)", counter, exports.size(), percentage));
+                    logger.info(String.format("Processed %d/%d (%d %%)", counter, exports.size(), percentage));
                 }
             }
             if (counter % 10 != 0) {
                 int percentage = (int) ((((float) counter) / exports.size()) * 100);
-                logger.info(String.format("processed %d/%d (%d %%)", counter, exports.size(), percentage));
+                logger.info(String.format("Processed %d/%d (%d %%)", counter, exports.size(), percentage));
             }
 
         } finally {
@@ -171,19 +174,19 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                     // urlConnection.setr
                     int responseCode = urlConnection.getResponseCode();
                     switch (responseCode) {
-                    case 200:
-                        return new Result("OK", "");
-                    case 300:
-                    case 301:
-                    case 302:
-                    case 303:
-                    case 305:
-                    case 307:
-                        String location = urlConnection.getHeaderField("Location");
-                        return check(location, remainingRedirections - 1);
+                        case 200:
+                            return new Result("OK", "");
+                        case 300:
+                        case 301:
+                        case 302:
+                        case 303:
+                        case 305:
+                        case 307:
+                            String location = urlConnection.getHeaderField("Location");
+                            return check(location, remainingRedirections - 1);
 
-                    default:
-                        return new Result("UNEXPECTED_HTTP_CODE", "" + responseCode + " " + urlConnection.getResponseMessage());
+                        default:
+                            return new Result("UNEXPECTED_HTTP_CODE", "" + responseCode + " " + urlConnection.getResponseMessage());
                     }
                 } catch (MalformedURLException e) {
                     return new Result("INVALID_URL", e.getMessage());

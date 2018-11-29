@@ -114,20 +114,6 @@ public abstract class AbstractJob implements InterruptableJob {
         return new PostgresPooledConnector();
     }
 
-    @Deprecated
-    DateTime parseDatetimeFromContext(String key, JobExecutionContext context, DateFormat dateFormat) throws ParseException {
-        if (context.getMergedJobDataMap().containsKey(key)) {
-            String val = context.getMergedJobDataMap().getString(key);
-            if (val != null) {
-                return new DateTime(dateFormat.parse(val));
-            } else {
-                throw new NullPointerException("data for key '" + key + "'");
-            }
-        } else {
-            throw new IllegalStateException("no data for key '" + key + "' found");
-        }
-    }
-
     DateTime parseDatetimeOrNullFromContext(String key, JobExecutionContext context, DateFormat dateFormat) throws ParseException {
         if (context.getMergedJobDataMap().containsKey(key)) {
             String val = context.getMergedJobDataMap().getString(key);

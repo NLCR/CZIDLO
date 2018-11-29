@@ -80,11 +80,11 @@ public class OaiAdapterJob extends AbstractJob {
         try {
             // System.setProperty("javax.xml.parsers.SAXParserFactory","org.apache.xerces.jaxp.SAXParserFactoryImpl");
             init(context.getMergedJobDataMap(), ProcessType.OAI_ADAPTER);
-            logger.info("executing " + OaiAdapterJob.class.getName());
+            logger.info("Executing " + OaiAdapterJob.class.getSimpleName());
             //core
             CountryCode.initialize("CZ");
             String registrarCode = (String) context.getMergedJobDataMap().get(PARAM_CZIDLO_REGISTRAR_CODE);
-            logger.info("registrar code: " + registrarCode);
+            logger.info("Registrar code: " + registrarCode);
             // oai provider
             String oaiBaseUrl = (String) context.getMergedJobDataMap().get(PARAM_OAI_BASE_URL);
             logger.info("OAI base url: " + oaiBaseUrl);
@@ -128,7 +128,7 @@ public class OaiAdapterJob extends AbstractJob {
             File reportFile = createWriteableProcessFile(PARAM_REPORT_FILE);
             reportLogger = buildReportLogger(reportFile);
             //run
-            logger.info("running OAI Adapter process");
+            logger.info("Running OAI Adapter");
             oaiAdapter = new OaiAdapter(registrarCode,
                     oaiBaseUrl, oaiMetadataPrefix, oaiSet,
                     czidloApiBaseUrl, czidloApiLogin, czidloApiPassword, false,
@@ -141,14 +141,14 @@ public class OaiAdapterJob extends AbstractJob {
             );
             oaiAdapter.run();
             if (interrupted) {
+                logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
-                logger.info("OAI Adapter process killed");
             } else {
+                logger.info("Process finished, see report");
                 context.setResult(ProcessState.FINISHED);
-                logger.info("OAI Adapter process finished, see report");
             }
         } catch (Throwable ex) {
-            logger.error("OAI Adapter process failed", ex);
+            logger.error("Process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();

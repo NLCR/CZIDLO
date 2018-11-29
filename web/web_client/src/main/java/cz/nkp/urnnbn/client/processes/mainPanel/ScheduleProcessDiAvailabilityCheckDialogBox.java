@@ -1,27 +1,12 @@
 package cz.nkp.urnnbn.client.processes.mainPanel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import com.google.gwt.user.client.ui.*;
 import cz.nkp.urnnbn.client.forms.TextInputValueField;
 import cz.nkp.urnnbn.client.services.UserAccountService;
 import cz.nkp.urnnbn.client.services.UserAccountServiceAsync;
@@ -30,23 +15,27 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 
+import java.util.*;
+
 public class ScheduleProcessDiAvailabilityCheckDialogBox extends AbstractScheduleProcessDialogBox {
-    private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
+    private static final String DATE_FORMAT = "d. M. yyyy";
     protected DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
     private final UserAccountServiceAsync accountsService = GWT.create(UserAccountService.class);
-    private ArrayList<RegistrarDTO> registrars = new ArrayList<RegistrarDTO>();
+    private ArrayList<RegistrarDTO> registrars = new ArrayList<>();
 
     // widgets
     private final Label errorLabel = errorLabel(320);
-    private TextInputValueField beginDate;
-    private TextInputValueField endDate;
+
     private MultiSelectListBox registrarsListBox;
     private MultiSelectListBox documentTypeListBox;
     private CheckBox urnStatesIncludeActive;
     private CheckBox urnStatesIncludeDeactivated;
     private CheckBox diStatesIncludeActive;
     private CheckBox diStatesIncludeDeactivated;
+    private TextInputValueField beginDate;
+    private TextInputValueField endDate;
+
 
     public ScheduleProcessDiAvailabilityCheckDialogBox(UserDTO user) {
         super(user);
@@ -54,7 +43,7 @@ public class ScheduleProcessDiAvailabilityCheckDialogBox extends AbstractSchedul
     }
 
     @Override
-    public void open(){
+    public void open() {
         reload();
     }
 
@@ -97,44 +86,51 @@ public class ScheduleProcessDiAvailabilityCheckDialogBox extends AbstractSchedul
         VerticalPanel result = new VerticalPanel();
         // DD
         Label ddHeader = new Label(constants.processDiAvailabilityCheckDd());
-        // TODO: style properly
-        ddHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+        //ddHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
         ddHeader.getElement().getStyle().setFontSize(1.2, Unit.EM);
         result.add(ddHeader);
         result.add(new HTML("&nbsp;"));
         result.add(buildRegistrarSelectionPanel());
+        result.add(new HTML("<br>"));
         result.add(buildIntEntTypeSelectionPanel());
+        result.add(new HTML("<br>"));
         result.add(buildUrnStatePanel());
+        result.add(new HTML("<br>"));
 
         // divider
-        result.add(new HTML("<hr style=\"width:100%;\"/>"));
+        result.add(new HTML("<hr>"));
 
         // DI
         Label diHeader = new Label(constants.processDiAvailabilityCheckDi());
-        // TODO: style properly
-        diHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+        //diHeader.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
         diHeader.getElement().getStyle().setFontSize(1.2, Unit.EM);
         result.add(diHeader);
         result.add(new HTML("&nbsp;"));
         result.add(selectDateRangePanel());
+        result.add(new HTML("<br>"));
         result.add(buildDiStatePanel());
+        result.add(new HTML("<br>"));
         result.add(buttonsPanel());
         result.add(errorLabel);
         return result;
     }
 
     private Panel selectDateRangePanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        @SuppressWarnings("deprecation")
+        VerticalPanel result = new VerticalPanel();
+        HorizontalPanel row1 = new HorizontalPanel();
+        row1.add(new Label(constants.processDiAvailabilityCheckCreatedDeactivated() + ":"));
+        result.add(row1);
+
+        HorizontalPanel row2 = new HorizontalPanel();
         Date start = new Date(112, 8, 1); // 1.9.2012
         constants.processDiAvailabilityCheckCreatedDeactivated();
-        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), constants.processDiAvailabilityCheckCreatedDeactivated(),
-                dateFormat.format(start), false);
-        result.add(beginDate.getLabelWidget());
-        result.add(beginDate.getContentWidget());
-        endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
-        result.add(new HTML(" - "));
-        result.add(endDate.getContentWidget());
+        beginDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), true, 80);
+        row2.add(beginDate.getContentWidget());
+        row2.add(new HTML("&nbsp-&nbsp"));
+        endDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), true, 80);
+        row2.add(endDate.getContentWidget());
+        result.add(row2);
+
         return result;
     }
 
@@ -244,19 +240,26 @@ public class ScheduleProcessDiAvailabilityCheckDialogBox extends AbstractSchedul
                 Boolean diIncludeActive = diStatesIncludeActive.getValue();
                 Boolean diIncludeDeactivated = diStatesIncludeDeactivated.getValue();
 
-                String[] params = new String[] { registrars, entityTypes, urnIncludeActive.toString(), urnIncludeDeactivated.toString(),
-                        diIncludeActive.toString(), diIncludeDeactivated.toString(), begin, end };
-                processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
+                boolean formOk = true;
+                formOk &= beginDate.validValueInserted();
+                formOk &= endDate.validValueInserted();
 
-                    public void onSuccess(Void result) {
-                        ScheduleProcessDiAvailabilityCheckDialogBox.this.hide();
-                    }
+                if (formOk) {
+                    String[] params = new String[]{registrars, entityTypes,
+                            urnIncludeActive.toString(), urnIncludeDeactivated.toString(),
+                            diIncludeActive.toString(), diIncludeDeactivated.toString(),
+                            begin, end};
+                    processService.scheduleProcess(ProcessDTOType.DI_URL_AVAILABILITY_CHECK, params, new AsyncCallback<Void>() {
 
-                    public void onFailure(Throwable caught) {
-                        errorLabel.setText(caught.getMessage());
-                    }
-                });
+                        public void onSuccess(Void result) {
+                            ScheduleProcessDiAvailabilityCheckDialogBox.this.hide();
+                        }
 
+                        public void onFailure(Throwable caught) {
+                            errorLabel.setText(caught.getMessage());
+                        }
+                    });
+                }
             }
         });
     }

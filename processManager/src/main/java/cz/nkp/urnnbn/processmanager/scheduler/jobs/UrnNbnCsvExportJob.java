@@ -76,13 +76,13 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
             init(context.getMergedJobDataMap(), ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT);
-            logger.info("executing " + UrnNbnCsvExportJob.class.getName());
+            logger.info("Executing " + UrnNbnCsvExportJob.class.getSimpleName());
             csvWriter = openCsvWriter(createWriteableProcessFile(CSV_EXPORT_FILE_NAME));
             this.services = initServices();
-            logger.info("services initialized");
+            logger.info("Services initialized");
             // country code
             String countryCode = context.getMergedJobDataMap().getString(PARAM_COUNTRY_CODE);
-            logger.info("country code: " + countryCode);
+            logger.info("Country code: " + countryCode);
             //filter
             UrnNbnExportFilter filter = extractFilter(context);
             // include number of digital instances
@@ -90,19 +90,19 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             if (exportNumOfDigInstances == null) {
                 throw new NullPointerException("includeNumOfDigInst");
             }
-            logger.info("export number of digital instances: " + exportNumOfDigInstances);
+            logger.info("Export number of digital instances: " + exportNumOfDigInstances);
             //run
             runProcess(countryCode, filter, exportNumOfDigInstances);
             if (interrupted) {
+                logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
-                logger.info("urn:nbn export process killed");
             } else {
+                logger.info("Process finished, see export");
                 context.setResult(ProcessState.FINISHED);
-                logger.info("urn:nbn export process finished");
             }
         } catch (Throwable ex) {
             // throw new JobExecutionException(ex);
-            logger.error("urn:nbn export process failed", ex);
+            logger.error("Process failed", ex);
             context.setResult(ProcessState.FAILED);
         } finally {
             close();
@@ -115,31 +115,31 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         // registration datestamps
         result.setRegistrationStart(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_START, context, dateFormat));
         result.setRegistrationEnd(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_END, context, dateFormat));
-        logger.info("registered: " + ((result.getRegistrationStart() == null && result.getRegistrationEnd() == null) ? "ALL" : result.getRegistrationStart().toString(dateTimeFormatter) + " - " + result.getRegistrationEnd().toString(dateTimeFormatter)));
+        logger.info("Registered: " + ((result.getRegistrationStart() == null && result.getRegistrationEnd() == null) ? "ALL" : result.getRegistrationStart().toString(dateTimeFormatter) + " - " + result.getRegistrationEnd().toString(dateTimeFormatter)));
         // registrars
         result.setRegistrars(parseStringListOrNullFromContext(PARAM_REGISTRARS_CODES, context));
-        logger.info("registrars: " + (result.getRegistrars() == null ? "ALL" : listOfStringsToString(result.getRegistrars())));
+        logger.info("Registrars: " + (result.getRegistrars() == null ? "ALL" : listOfStringsToString(result.getRegistrars())));
         // intelectual entity types
         result.setEntityTypes(parseStringListOrNullFromContext(PARAM_ENT_TYPES, context));
-        logger.info("intelectual entity types: " + (result.getEntityTypes() == null ? "ALL" : listOfStringsToString(result.getEntityTypes())));
+        logger.info("Intelectual Entity types: " + (result.getEntityTypes() == null ? "ALL" : listOfStringsToString(result.getEntityTypes())));
         // limit to only those with missing ccnb
         result.setWithMissingCcnbOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_CCNB_ONLY));
-        logger.info("limit to records missing cCNB: " + result.getWithMissingCcnbOnly());
+        logger.info("Limit to records missing cCNB: " + result.getWithMissingCcnbOnly());
         // limit to only those with missing issn
         result.setWithMissingIssnOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_ISSN_ONLY));
-        logger.info("limit to records missing ISSN: " + result.getWithMissingIssnOnly());
+        logger.info("Limit to records missing ISSN: " + result.getWithMissingIssnOnly());
         // limit to only those with missing isbn
         result.setWithMissingIsbnOnly(context.getMergedJobDataMap().getBoolean(PARAM_WITH_MISSING_ISBN_ONLY));
-        logger.info("limit to records missing ISBN: " + result.getWithMMissingIsbnOnly());
+        logger.info("Limit to records missing ISBN: " + result.getWithMMissingIsbnOnly());
         // urn:nbn states
         result.setReturnActive(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_ACTIVE));
-        logger.info("return active records: " + result.getReturnActive());
+        logger.info("Return active records: " + result.getReturnActive());
         result.setReturnDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_DEACTIVED));
-        logger.info("return deactivated records: " + result.getReturnDeactivated());
+        logger.info("Return deactivated records: " + result.getReturnDeactivated());
         //deactivation datestamps
         result.setDeactivationStart(parseDatetimeOrNullFromContext(PARAM_DEACTIVATION_START, context, dateFormat));
         result.setDeactivationEnd(parseDatetimeOrNullFromContext(PARAM_DEACTIVATION_END, context, dateFormat));
-        logger.info("deactivated: " + ((result.getDeactivationStart() == null && result.getDeactivationEnd() == null) ? "ALL" : result.getDeactivationStart().toString(dateTimeFormatter) + " - " + result.getDeactivationEnd().toString(dateTimeFormatter)));
+        logger.info("Deactivated: " + ((result.getDeactivationStart() == null && result.getDeactivationEnd() == null) ? "ALL" : result.getDeactivationStart().toString(dateTimeFormatter) + " - " + result.getDeactivationEnd().toString(dateTimeFormatter)));
         return result;
     }
 
@@ -157,7 +157,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             csvWriter.println(buildHeaderLine(exportNumOfDigInstances));
             int counter = 0;
             int total = urnNbnList.size();
-            logger.info("records to export: " + total);
+            logger.info("Records to export: " + total);
             for (UrnNbnExport urnExport : urnNbnList) {
                 if (interrupted) {
                     csvWriter.flush();
@@ -165,7 +165,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
                 }
                 String line = toCsvLine(urnExport, exportNumOfDigInstances);
                 csvWriter.println(line);
-                logger.info("exporting " + urnExport.getUrnNbn() + " (" + ++counter + "/" + total + ")");
+                logger.info("Exporting " + urnExport.getUrnNbn() + " (" + ++counter + "/" + total + ")");
             }
         } finally {
             csvWriter.close();
