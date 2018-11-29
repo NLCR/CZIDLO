@@ -6,8 +6,8 @@ import java.util.List;
 
 public class UrnNbnExportFilter {
 
-    private DateTime begin;
-    private DateTime end;
+    private DateTime registrationStart;
+    private DateTime registrationEnd;
     private List<String> registrars;
     private List<String> entityTypes;
     private boolean withMissingCcnbOnly;
@@ -15,14 +15,16 @@ public class UrnNbnExportFilter {
     private boolean withMMissingIsbnOnly;
     private boolean returnActive;
     private boolean returnDeactivated;
+    private DateTime deactivationStart;
+    private DateTime deactivationEnd;
 
     public UrnNbnExportFilter() {
     }
 
-    public UrnNbnExportFilter(DateTime begin, DateTime end, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
-                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated) {
-        this.begin = begin;
-        this.end = end;
+    public UrnNbnExportFilter(DateTime registrationStart, DateTime registrationEnd, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
+                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated, DateTime deactivationStart, DateTime deactivationEnd) {
+        this.registrationStart = registrationStart;
+        this.registrationEnd = registrationEnd;
         this.registrars = registrars;
         this.entityTypes = entityTypes;
         this.withMissingCcnbOnly = withMissingCcnbOnly;
@@ -30,14 +32,16 @@ public class UrnNbnExportFilter {
         this.withMMissingIsbnOnly = withMMissingIsbnOnly;
         this.returnActive = returnActive;
         this.returnDeactivated = returnDeactivated;
+        this.deactivationStart = deactivationStart;
+        this.deactivationEnd = deactivationEnd;
     }
 
-    public DateTime getBegin() {
-        return begin;
+    public DateTime getRegistrationStart() {
+        return registrationStart;
     }
 
-    public DateTime getEnd() {
-        return end;
+    public DateTime getRegistrationEnd() {
+        return registrationEnd;
     }
 
     public List<String> getRegistrars() {
@@ -68,12 +72,20 @@ public class UrnNbnExportFilter {
         return returnDeactivated;
     }
 
-    public void setBegin(DateTime begin) {
-        this.begin = begin;
+    public DateTime getDeactivationStart() {
+        return deactivationStart;
     }
 
-    public void setEnd(DateTime end) {
-        this.end = end;
+    public DateTime getDeactivationEnd() {
+        return deactivationEnd;
+    }
+
+    public void setRegistrationStart(DateTime registrationStart) {
+        this.registrationStart = registrationStart;
+    }
+
+    public void setRegistrationEnd(DateTime registrationEnd) {
+        this.registrationEnd = registrationEnd;
     }
 
     public void setRegistrars(List<String> registrars) {
@@ -104,4 +116,11 @@ public class UrnNbnExportFilter {
         this.returnDeactivated = returnDeactivated;
     }
 
+    public void setDeactivationStart(DateTime deactivationStart) {
+        this.deactivationStart = deactivationStart;
+    }
+
+    public void setDeactivationEnd(DateTime deactivationEnd) {
+        this.deactivationEnd = deactivationEnd;
+    }
 }

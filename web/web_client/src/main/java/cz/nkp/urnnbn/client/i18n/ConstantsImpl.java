@@ -448,6 +448,8 @@ public interface ConstantsImpl extends Constants {
 
     String processUrnNbnExportFilterByState();
 
+    String processUrnNbnExportFilterByDeactivationDate();
+
     String processUrnNbnExportIncludeNumberOfDigitalInstances();
 
 

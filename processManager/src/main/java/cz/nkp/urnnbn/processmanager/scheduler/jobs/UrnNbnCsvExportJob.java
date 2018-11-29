@@ -42,8 +42,8 @@ public class UrnNbnCsvExportJob extends AbstractJob {
 
     // TODO: really needed?
     public static final String PARAM_COUNTRY_CODE = "countryCode";
-    public static final String PARAM_BEGIN = "begin";
-    public static final String PARAM_END = "end";
+    public static final String PARAM_REGISTRATION_START = "registrationStart";
+    public static final String PARAM_REGISTRATION_END = "registrationEnd";
     public static final String PARAM_REGISTRARS_CODES = "registrars";
     public static final String PARAM_ENT_TYPES = "entityTypes";
     public static final String PARAM_WITH_MISSING_CCNB_ONLY = "withMissingCnbOnly";
@@ -51,6 +51,8 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     public static final String PARAM_WITH_MISSING_ISBN_ONLY = "withMissingIsbnOnly";
     public static final String PARAM_RETURN_ACTIVE = "returnActive";
     public static final String PARAM_RETURN_DEACTIVED = "returnDeactivated";
+    public static final String PARAM_DEACTIVATION_START = "deactivationStart";
+    public static final String PARAM_DEACTIVATION_END = "deactivationEnd";
     public static final String PARAM_EXPORT_NUM_OF_DIG_INSTANCES = "exportNumOfDigInstances";
 
     // TODO: i18n or keep here english only
@@ -111,9 +113,9 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         UrnNbnExportFilter result = new UrnNbnExportFilter();
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
         // registration datestamps
-        result.setBegin(parseDatetimeOrNullFromContext(PARAM_BEGIN, context, dateFormat));
-        result.setEnd(parseDatetimeOrNullFromContext(PARAM_END, context, dateFormat));
-        logger.info("registered: " + ((result.getBegin() == null && result.getEnd() == null) ? "ALL" : result.getBegin().toString(dateTimeFormatter) + " - " + result.getEnd().toString(dateTimeFormatter)));
+        result.setRegistrationStart(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_START, context, dateFormat));
+        result.setRegistrationEnd(parseDatetimeOrNullFromContext(PARAM_REGISTRATION_END, context, dateFormat));
+        logger.info("registered: " + ((result.getRegistrationStart() == null && result.getRegistrationEnd() == null) ? "ALL" : result.getRegistrationStart().toString(dateTimeFormatter) + " - " + result.getRegistrationEnd().toString(dateTimeFormatter)));
         // registrars
         result.setRegistrars(parseStringListOrNullFromContext(PARAM_REGISTRARS_CODES, context));
         logger.info("registrars: " + (result.getRegistrars() == null ? "ALL" : listOfStringsToString(result.getRegistrars())));
@@ -134,6 +136,10 @@ public class UrnNbnCsvExportJob extends AbstractJob {
         logger.info("return active records: " + result.getReturnActive());
         result.setReturnDeactivated(context.getMergedJobDataMap().getBoolean(PARAM_RETURN_DEACTIVED));
         logger.info("return deactivated records: " + result.getReturnDeactivated());
+        //deactivation datestamps
+        result.setDeactivationStart(parseDatetimeOrNullFromContext(PARAM_DEACTIVATION_START, context, dateFormat));
+        result.setDeactivationEnd(parseDatetimeOrNullFromContext(PARAM_DEACTIVATION_END, context, dateFormat));
+        logger.info("deactivated: " + ((result.getDeactivationStart() == null && result.getDeactivationEnd() == null) ? "ALL" : result.getDeactivationStart().toString(dateTimeFormatter) + " - " + result.getDeactivationEnd().toString(dateTimeFormatter)));
         return result;
     }
 

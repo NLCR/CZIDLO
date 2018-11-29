@@ -1,6 +1,8 @@
 package cz.nkp.urnnbn.client.processes.mainPanel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -18,9 +20,11 @@ import cz.nkp.urnnbn.shared.dto.UserDTO;
 import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractScheduleProcessDialogBox {
 
+    private static final Logger LOGGER = Logger.getLogger(ScheduleProcessExportUrnNbnListDialogBox.class.getName());
     private static final String[] ENTITY_TYPES = {"MONOGRAPH", "MONOGRAPH_VOLUME", "PERIODICAL", "PERIODICAL_VOLUME", "PERIODICAL_ISSUE", "THESIS", "ANALYTICAL", "OTHER"};
     private static final String DATE_FORMAT = "d. M. yyyy";
 
@@ -45,6 +49,11 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
 
     private CheckBox filterByState;
     private ListBox stateListBox;
+
+    private Panel filterByDeactivationDateContainer = new VerticalPanel();
+    private CheckBox filterByDeactivationDate;
+    private TextInputValueField deactivationStartDate;
+    private TextInputValueField deactivationEndDate;
 
     private CheckBox includeNumberOfDigitalInstances;
 
@@ -99,6 +108,7 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
         result.add(filterByEntityTypes());
         result.add(filterByAbsentIdentifier());
         result.add(filterByState());
+        result.add(filterByDeactivationDateContainer);
         result.add(new HTML("<hr>"));
         result.add(includeNumberOfDigitalInstancesCheckbox());
         result.add(new HTML("<br>"));
@@ -240,10 +250,60 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
         stateListBox.addItem(constants.activityActiveOnly());
         stateListBox.addItem(constants.activityDeactivatedOnly());
         stateListBox.setEnabled(false);
+        stateListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent changeEvent) {
+                if (stateListBox.getSelectedIndex() == 0) {
+                    //active only
+                    filterByDeactivationDateContainer.clear();
+                } else {
+                    //deactivated only
+                    filterByDeactivationDateContainer.clear();
+                    filterByDeactivationDateContainer.add(buildFilterByDeactivationDate());
+                }
+            }
+        });
         dataPanel.add(stateListBox);
         result.add(dataPanel);
 
         result.add(new HTML("<br>"));
+        return result;
+    }
+
+    private Panel buildFilterByDeactivationDate() {
+        VerticalPanel result = new VerticalPanel();
+
+        filterByDeactivationDate = new CheckBox(constants.processUrnNbnExportFilterByDeactivationDate());
+        filterByDeactivationDate.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> valueChangeEvent) {
+                if (valueChangeEvent.getValue()) {
+                    deactivationStartDate.enable();
+                    deactivationEndDate.enable();
+                } else {
+                    deactivationStartDate.disable();
+                    deactivationEndDate.disable();
+                }
+            }
+        });
+        result.add(filterByDeactivationDate);
+
+        HorizontalPanel dataPanel = new HorizontalPanel();
+        dataPanel.add(new HTML("&nbsp"));
+        //start
+        Date start = new Date(112, 8, 1); // 1.9.2012
+        deactivationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false, 80);
+        deactivationStartDate.disable();
+        dataPanel.add(deactivationStartDate.getContentWidget());
+        //end
+        deactivationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false, 80);
+        dataPanel.add(new HTML("&nbsp-&nbsp"));
+        dataPanel.add(deactivationEndDate.getContentWidget());
+        deactivationEndDate.disable();
+        result.add(dataPanel);
+
+        result.add(new HTML("<br>"));
+
         return result;
     }
 
@@ -270,7 +330,10 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
             public void onClick(ClickEvent event) {
                 boolean formWithoutErrors = true;
                 if (filterByRegistrationDate.getValue()) {
-                    formWithoutErrors = registrationStartDate.validValueInserted() && registrationEndDate.validValueInserted();
+                    formWithoutErrors &= registrationStartDate.validValueInserted() && registrationEndDate.validValueInserted();
+                }
+                if (stateListBox.getSelectedIndex() == 1 && filterByDeactivationDate.getValue()) {//only deactivated with filter selected
+                    formWithoutErrors &= deactivationStartDate.validValueInserted() && deactivationEndDate.validValueInserted();
                 }
 
                 if (formWithoutErrors) {
@@ -316,9 +379,20 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
                     Boolean paramMissingIssn = idents.contains("ISSN") && filterByAbsentIdentifiers.getValue();
                     Boolean paramMissingIsbn = idents.contains("ISBN") && filterByAbsentIdentifiers.getValue();
 
+                    //states
                     int activitySelectedIndex = stateListBox.getSelectedIndex();
                     Boolean returnActive = !filterByState.getValue() || activitySelectedIndex == 0;
                     Boolean returnDeactivated = !filterByState.getValue() || activitySelectedIndex == 1;
+
+                    //deactivation date range
+                    String paramDeactivationStart = null;
+                    String paramDeactivationEnd = null;
+                    if (!returnActive && returnDeactivated && filterByDeactivationDate.getValue()) {
+                        paramDeactivationStart = (String) deactivationStartDate.getInsertedValue();
+                        paramDeactivationEnd = (String) deactivationEndDate.getInsertedValue();
+                    }
+
+                    //include number of DIs
                     Boolean exportNumberOfDigitalInstances = includeNumberOfDigitalInstances.getValue();
 
                     String[] params = new String[]{
@@ -327,7 +401,9 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
                             paramEntityTypes,
                             paramMissingCnb.toString(), paramMissingIssn.toString(), paramMissingIsbn.toString(),
                             returnActive.toString(), returnDeactivated.toString(),
+                            paramDeactivationStart, paramDeactivationEnd,
                             exportNumberOfDigitalInstances.toString()};
+                    //log(params);
                     processService.scheduleProcess(ProcessDTOType.REGISTRARS_URN_NBN_CSV_EXPORT, params, new AsyncCallback<Void>() {
 
                         public void onSuccess(Void result) {
@@ -341,6 +417,19 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
                 }
             }
         });
+    }
+
+    private void log(String[] params) {
+        StringBuilder builder = new StringBuilder();
+        builder.append('[');
+        for (int i = 0; i < params.length; i++) {
+            builder.append(params[i]);
+            if (i != params.length - 1) {
+                builder.append(',');
+            }
+        }
+        builder.append(']');
+        LOGGER.info("params:" + builder.toString());
     }
 
     private Button closeButton() {

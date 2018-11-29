@@ -1,15 +1,14 @@
 package cz.nkp.urnnbn.core.persistence.impl.statements;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
+import org.joda.time.DateTime;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
 public class SelectUrnNbnExport implements StatementWrapper {
 
@@ -48,11 +47,11 @@ public class SelectUrnNbnExport implements StatementWrapper {
     private String buildParameters() {
         StringBuilder parameters = new StringBuilder();
         //registration date range
-        if (filter.getBegin() != null) {
-            parameters.append("row.registered> ? AND ");
+        if (filter.getRegistrationStart() != null) {
+            parameters.append("row.registered>= ? AND ");
         }
-        if (filter.getEnd() != null) {
-            parameters.append("row.registered< ? AND ");
+        if (filter.getRegistrationEnd() != null) {
+            parameters.append("row.registered<= ? AND ");
         }
         // registrars
         List<String> registrars = filter.getRegistrars();
@@ -86,12 +85,20 @@ public class SelectUrnNbnExport implements StatementWrapper {
         if (filter.getWithMMissingIsbnOnly()) {
             parameters.append("row.isbn = false AND ");
         }
+        //state
         if (!filter.getReturnActive() || !filter.getReturnDeactivated()) {
             if (filter.getReturnActive()) {
                 parameters.append("row.active = true AND ");
             } else {
                 parameters.append("row.active = false AND ");
             }
+        }
+        //deactivation date range
+        if (filter.getDeactivationStart() != null) {
+            parameters.append("row.deactivated>= ? AND ");
+        }
+        if (filter.getDeactivationEnd() != null) {
+            parameters.append("row.deactivated<= ? AND ");
         }
         parameters.append(" true");
         return parameters.toString();
@@ -100,14 +107,14 @@ public class SelectUrnNbnExport implements StatementWrapper {
     public void populate(PreparedStatement st) throws SyntaxException {
         int index = 1;
         try {
-            DateTime begin = filter.getBegin();
-            if (begin != null) {
-                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(begin));
+            DateTime registrationStart = filter.getRegistrationStart();
+            if (registrationStart != null) {
+                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(registrationStart));
                 index++;
             }
-            DateTime end = filter.getEnd();
-            if (end != null) {
-                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(end));
+            DateTime registrationEnd = filter.getRegistrationEnd();
+            if (registrationEnd != null) {
+                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(registrationEnd));
                 index++;
             }
             List<String> registrars = filter.getRegistrars();
@@ -123,6 +130,16 @@ public class SelectUrnNbnExport implements StatementWrapper {
                     st.setString(index, type);
                     index++;
                 }
+            }
+            DateTime deactivationStart = filter.getDeactivationStart();
+            if (deactivationStart != null) {
+                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(deactivationStart));
+                index++;
+            }
+            DateTime deactivationEnd = filter.getDeactivationEnd();
+            if (deactivationEnd != null) {
+                st.setTimestamp(index, DateTimeUtils.datetimeToTimestamp(deactivationEnd));
+                index++;
             }
         } catch (SQLException sqle) {
             throw new SyntaxException(sqle);
