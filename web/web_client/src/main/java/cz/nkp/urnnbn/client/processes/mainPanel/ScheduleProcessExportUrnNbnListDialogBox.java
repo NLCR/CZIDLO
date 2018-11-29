@@ -22,8 +22,7 @@ import java.util.*;
 public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractScheduleProcessDialogBox {
 
     private static final String[] ENTITY_TYPES = {"MONOGRAPH", "MONOGRAPH_VOLUME", "PERIODICAL", "PERIODICAL_VOLUME", "PERIODICAL_ISSUE", "THESIS", "ANALYTICAL", "OTHER"};
-    // TODO: 28.11.18 resit jen na urovni dnu
-    private static final String DATE_FORMAT = "d. M. yyyy H:m.s";
+    private static final String DATE_FORMAT = "d. M. yyyy";
 
     private DateTimeFormat dateFormat = DateTimeFormat.getFormat(DATE_FORMAT);
 
@@ -130,11 +129,11 @@ public class ScheduleProcessExportUrnNbnListDialogBox extends AbstractSchedulePr
         dataPanel.add(new HTML("&nbsp"));
         //start
         Date start = new Date(112, 8, 1); // 1.9.2012
-        registrationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false);
+        registrationStartDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(start), false, 80);
         registrationStartDate.disable();
         dataPanel.add(registrationStartDate.getContentWidget());
         //end
-        registrationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false);
+        registrationEndDate = new TextInputValueField(new DateTimeValidator(DATE_FORMAT), "", dateFormat.format(new Date()), false, 80);
         dataPanel.add(new HTML("&nbsp-&nbsp"));
         dataPanel.add(registrationEndDate.getContentWidget());
         registrationEndDate.disable();

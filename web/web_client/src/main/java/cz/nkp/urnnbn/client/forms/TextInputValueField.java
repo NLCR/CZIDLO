@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-
 import cz.nkp.urnnbn.client.validation.Validator;
 
 public class TextInputValueField extends Field {
@@ -16,18 +15,22 @@ public class TextInputValueField extends Field {
     private final boolean mandatory;
 
     public TextInputValueField(Validator validator, String labelText, boolean mandatory) {
-        this(validator, labelText, mandatory, true);
+        this(validator, labelText, mandatory, true, null);
     }
 
     public TextInputValueField(Validator validator, String labelText, boolean mandatory, boolean withLabelInputboxSeparator) {
-        this(validator, labelText, null, mandatory, withLabelInputboxSeparator);
+        this(validator, labelText, null, mandatory, withLabelInputboxSeparator, null);
     }
 
     public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory) {
-        this(validator, labelText, value, mandatory, true);
+        this(validator, labelText, value, mandatory, true, null);
     }
 
-    public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory, boolean withLabelInputboxSeparator) {
+    public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory, Integer width) {
+        this(validator, labelText, value, mandatory, true, width);
+    }
+
+    public TextInputValueField(Validator validator, String labelText, Object value, boolean mandatory, boolean withLabelInputboxSeparator, Integer width) {
         this.validator = validator;
         this.mandatory = mandatory;
         if (withLabelInputboxSeparator) {
@@ -36,11 +39,12 @@ public class TextInputValueField extends Field {
             label.setText(labelText);
         }
         label.setStyleName(css.formLabel());
-        // todo: sirku textBoxu nastavovat parametrem konstruktoru
         if (value != null) {
             textBox.setValue(value.toString());
         }
-        // textBox.setWidth("200px");
+        if (width != null) {
+            textBox.setWidth(width + "px");
+        }
         textBox.addKeyUpHandler(textChangeHandler());
     }
 

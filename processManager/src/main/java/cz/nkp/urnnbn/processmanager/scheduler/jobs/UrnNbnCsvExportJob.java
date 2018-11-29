@@ -22,6 +22,8 @@ import cz.nkp.urnnbn.core.UrnNbnExportFilter;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;
 import cz.nkp.urnnbn.processmanager.core.ProcessType;
 import cz.nkp.urnnbn.services.Services;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -64,7 +66,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
     private static final String HEADER_UNR_ACTIVE = "Aktivní";
     private static final String HEADER_NUM_OF_DIG_INSTANCES = "Počet instancí";
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy H:m.s");
+    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
     private PrintWriter csvWriter;
     private Services services;
 
@@ -107,10 +109,11 @@ public class UrnNbnCsvExportJob extends AbstractJob {
 
     private UrnNbnExportFilter extractFilter(JobExecutionContext context) throws ParseException {
         UrnNbnExportFilter result = new UrnNbnExportFilter();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
         // registration datestamps
         result.setBegin(parseDatetimeOrNullFromContext(PARAM_BEGIN, context, dateFormat));
         result.setEnd(parseDatetimeOrNullFromContext(PARAM_END, context, dateFormat));
-        logger.info("registered: " + ((result.getBegin() == null && result.getEnd() == null) ? "ALL" : result.getBegin() + " - " + result.getEnd()));
+        logger.info("registered: " + ((result.getBegin() == null && result.getEnd() == null) ? "ALL" : result.getBegin().toString(dateTimeFormatter) + " - " + result.getEnd().toString(dateTimeFormatter)));
         // registrars
         result.setRegistrars(parseStringListOrNullFromContext(PARAM_REGISTRARS_CODES, context));
         logger.info("registrars: " + (result.getRegistrars() == null ? "ALL" : listOfStringsToString(result.getRegistrars())));
