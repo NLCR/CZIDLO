@@ -132,17 +132,25 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     }
 
     private Panel importDiPanel() {
-        HorizontalPanel result = new HorizontalPanel();
-        result.setSpacing(5);
+        VerticalPanel result = new VerticalPanel();
+
+        HorizontalPanel row1 = new HorizontalPanel();
+        row1.setSpacing(5);
         diImportMergeDisCheckbox = new CheckBox(constants.processOaiAdapterDiImportMergDis());
         diImportMergeDisCheckbox.setChecked(true);
-        result.add(diImportMergeDisCheckbox);
+        row1.add(diImportMergeDisCheckbox);
+        result.add(row1);
+
+        HorizontalPanel row2 = new HorizontalPanel();
+        row2.setSpacing(5);
         diImportIgnoreDifferenceInAccessibilityCheckbox = new CheckBox(constants.processOaiAdapterDiImportIgnoreDifferenceInAccessibility());
         diImportIgnoreDifferenceInAccessibilityCheckbox.setChecked(true);
-        result.add(diImportIgnoreDifferenceInAccessibilityCheckbox);
+        row2.add(diImportIgnoreDifferenceInAccessibilityCheckbox);
         diImportIgnoreDifferenceInFormatCheckbox = new CheckBox(constants.processOaiAdapterDiImportIgnoreDifferenceInFormat());
         diImportIgnoreDifferenceInFormatCheckbox.setChecked(true);
-        result.add(diImportIgnoreDifferenceInFormatCheckbox);
+        row2.add(diImportIgnoreDifferenceInFormatCheckbox);
+
+        result.add(row2);
         return result;
     }
 
