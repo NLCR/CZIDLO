@@ -233,7 +233,9 @@ public class MainPanel extends VerticalPanel {
 
 
     private IsWidget processDefinitionsPanel() {
-        Grid result = new Grid(4, 5);
+        boolean superadmin = user.getRole() == UserDTO.ROLE.SUPER_ADMIN;
+
+        Grid result = new Grid(superadmin ? 4 : 3, 4);
         int row = 0;
         addProcessDefinition(result, row++, constants.OAI_ADAPTER(), new ProcessAdministrationTab.Operation() {
                     @Override
@@ -259,12 +261,14 @@ public class MainPanel extends VerticalPanel {
                 new ScheduleProcessDiAvailabilityCheckDialogBox(user).open();
             }
         }, null);
-        addProcessDefinition(result, row++, constants.DOCS_INDEXATION(), new ProcessAdministrationTab.Operation() {
-            @Override
-            public void run() {
-                new ScheduleProcessIndexDocumentsDialogBox(user).open();
-            }
-        }, null);
+        if (superadmin) {
+            addProcessDefinition(result, row++, constants.DOCS_INDEXATION(), new ProcessAdministrationTab.Operation() {
+                @Override
+                public void run() {
+                    new ScheduleProcessIndexDocumentsDialogBox(user).open();
+                }
+            }, null);
+        }
         return result;
     }
 
@@ -285,6 +289,7 @@ public class MainPanel extends VerticalPanel {
         configBtn.setEnabled(configAction != null);
 
         grid.setWidget(row, 0, new Label(processName));
+        grid.setWidget(row, 1, new HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"));
         grid.setWidget(row, 2, scheduleBtn);
         grid.setWidget(row, 3, configBtn);
     }
