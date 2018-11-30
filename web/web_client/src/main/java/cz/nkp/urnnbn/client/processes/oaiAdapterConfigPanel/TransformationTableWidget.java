@@ -142,7 +142,7 @@ public class TransformationTableWidget extends Composite {
 
         table.addColumnSortHandler(columnSortHandler);
         // By default sorted by name
-        table.getColumnSortList().push(descColumn);
+        table.getColumnSortList().push(nameColumn);
         ColumnSortEvent.fire(table, table.getColumnSortList());
 
         return table;

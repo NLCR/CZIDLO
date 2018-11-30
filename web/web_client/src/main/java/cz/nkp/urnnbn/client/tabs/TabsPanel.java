@@ -24,6 +24,8 @@ import cz.nkp.urnnbn.shared.dto.RegistrarDTO;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class TabsPanel extends Composite {
 
@@ -52,6 +54,13 @@ public class TabsPanel extends Composite {
                 @Override
                 public void onSuccess(ArrayList<RegistrarDTO> result) {
                     registrarsManagedByUser = result;
+                    Collections.sort(registrarsManagedByUser, new Comparator<RegistrarDTO>() {
+
+                        @Override
+                        public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+                            return o1.getCode().compareTo(o2.getCode());
+                        }
+                    });
                 }
 
                 @Override

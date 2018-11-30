@@ -18,6 +18,8 @@ import cz.nkp.urnnbn.shared.dto.process.ProcessDTOType;
 import cz.nkp.urnnbn.shared.dto.process.XmlTransformationDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -71,6 +73,20 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
                             break;
                     }
                 }
+                Collections.sort(ddRegistrationTransformations, new Comparator<XmlTransformationDTO>() {
+
+                    @Override
+                    public int compare(XmlTransformationDTO o1, XmlTransformationDTO o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                Collections.sort(diImportTransformations, new Comparator<XmlTransformationDTO>() {
+
+                    @Override
+                    public int compare(XmlTransformationDTO o1, XmlTransformationDTO o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
                 reload();
             }
 
@@ -89,6 +105,13 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
             public void onSuccess(ArrayList<RegistrarDTO> result) {
                 //LOGGER.info("registrars loaded");
                 registrarsOfUser = result;
+                Collections.sort(registrarsOfUser, new Comparator<RegistrarDTO>() {
+
+                    @Override
+                    public int compare(RegistrarDTO o1, RegistrarDTO o2) {
+                        return o1.getCode().compareTo(o2.getCode());
+                    }
+                });
                 if (!registrarsOfUser.isEmpty()) {
                     selectedRegistrar = registrarsOfUser.get(0);
                 }
