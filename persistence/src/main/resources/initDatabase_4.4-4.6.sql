@@ -1,4 +1,4 @@
-/* SQL script to initialize CZIDLO core database for CZIDLO versions 4.4 - 4.5 */
+/* SQL script to initialize CZIDLO core database for CZIDLO versions 4.4 - 4.6 */
   
 /* Drop Indexes */
 

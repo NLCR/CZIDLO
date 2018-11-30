@@ -1,17 +1,17 @@
-README file for CZIDLO v4.5
+README file for CZIDLO v4.6
 
 Copyright (C) 2013-2018 Martin Řehánek
 
 
 #####################################
 #####################################
-#         CZIDLO version 4.5        #
+#         CZIDLO version 4.6        #
 #####################################
 #####################################
 
 This archive contains files for the CZIDLO (CZech IDentification and LOcalization Tool based on URN:NBN) system installation.
 
-CZIDLO is authority over global persistent identifiers URN:NBN for single national space and should be therefore run only by particular national library. 
+CZIDLO is authority over global persistent identifiers URN:NBN for single national space and should be therefore run only by particular national library.
 
 System is being developed under GNU GPL v3 licence by [National Library of the Czech Republic](http://nkp.cz/).
 Source codes, built software and documentation is available on [google code](http://code.google.com/p/czidlo/).
@@ -44,7 +44,7 @@ Version 4.0:
 - manual changing order of registrars/archiver in web interface
 - hidden registrars/archivers in web interface
 - content of tabs "info" and "rules" can be edited through web interface
-- application "web" can now also be deployed in read-only mode 
+- application "web" can now also be deployed in read-only mode
 - login page configurable, which is usefull for more complicated system deployments
 - digital instances editable through web interface
 - more parameters for process Export URN:NBN - so far we could restrict records produced only by registrar
@@ -79,7 +79,7 @@ Version 4.4:
 - own search solution consisting of database tables, views, functions triggers has been replaced with Apache Solr
 - added reverse resolving, i.e. finding URN:NBN by URL, throw API or web interface
 - some tuning of web interface
-- OAI Adapter reworked, source code and report cleaned up. Parameters changed, enabled merging of digital instances. 
+- OAI Adapter reworked, source code and report cleaned up. Parameters changed, enabled merging of digital instances.
 
 Version 4.4.1
 - fixed bug in scheduling OAI Adapter from web interface
@@ -88,6 +88,12 @@ Version 4.5
 - increased max length of registrar-scope id value frome 60 to 80
 - updated XSL templates for OAI Adapter
 
+Version 4.6
+- rearranged web process management, process scheduling dialogs
+- added registrar-scope identifier manipulation through web interface
+- spring-security upgrade (3.1.0 -> 4.2.9)
+- updated login/user account web UI
+- added web option to change password (by logged user or admin)
 
 ##################
 ## Installation ##
@@ -102,30 +108,30 @@ Version 4.5
 This archive should contain following files:
 - `README.rm` - this file
 - `web.war` - web interface module
-- `api.war` - API module  
+- `api.war` - API module
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_4.4-4.5.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_4.4-4.6.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
-- `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2). 
+- `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2).
 - `databaseUpgrader-4.2.2.jar` - java program that replaces plaintext passwords with their encrypted form.
 - `updateDatabase_4.2.2_to_4.3.sql` - sql script for updating core database (from version 4.2.2 to version 4.3).
-- `updateDatabase_4.3_to_4.4-4.5.sql` - sql script for updating core database (from version 4.3 to versions 4.4, 4.4.1 and 4.5).
+- `updateDatabase_4.3_to_4.4-4.6.sql` - sql script for updating core database (from version 4.3 to versions 4.4, 4.4.1, 4.5 and 4.6).
 - `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
 - `cliUtils.jar` - command line application with some utilities
- 
+
 It is NOT sufficient only to run this script to update database. Complete database upgrade is described below.
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.4-4.5.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.4-4.6.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
 
-   Script also creates one administrator account (admin:admin). Since it is not possible yet to change user password, it is very important that this account is removed immediately
-   after another administrator account (with publicly unknown password) is created.
+   Script also creates one administrator account (admin:admin).
+   It is very important that this account is removed immediately after another administrator account (with publicly unknown password) is created. Or at least the password for user 'admin' should be changed.
 
 
-2. Next step is the installation of the four web applications. That is done simply by copying `web.war`, `api.war`, `oaiPmhProvider.war` and `processDataServer.war` into `$TOMCAT_HOME/webapps`. 
+2. Next step is the installation of the four web applications. That is done simply by copying `web.war`, `api.war`, `oaiPmhProvider.war` and `processDataServer.war` into `$TOMCAT_HOME/webapps`.
    Applications are independent so you can choose from multiple deployment options. For example:
 
    - `web.war` + `processDataServer.war` + `api.war` - if OAI-PMH functionality is not desired
@@ -159,13 +165,13 @@ It is NOT sufficient only to run this script to update database. Complete databa
    </Context>
    ```
 
-   Bear in mind that there always exists default context.xml in each war 
+   Bear in mind that there always exists default context.xml in each war
    so it will be copied into `$TOMCAT_HOME/webapps/$APPLICATION_NAME/META-INF/context.xml` when the application is (re)deployed.
 
 4. Application run on same server should set property `resolver.admin.logFile` to the same file so that admin logs of all modules
    are accessible through web interface.
 
-5. Web applications `web` and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized. 
+5. Web applications `web` and `processDataServer` need that database for processes and OAI Adapter xsl transformations is initialized.
 
    Applications access this database by hibernate (unlike core database where pure JDBC is used).
 
@@ -198,7 +204,7 @@ Default version of configuration files are contained within application and expl
 - OAI_PMH_PROVIDER: `provider.properties`
 - PROCESS_DATA_SERVER: `processDataServer.properties`, `hibernate.cfg.xml`
 
-Note: Keys in configuration properties files have been renamed since version 4.2.2. Also some new properties were introduced. 
+Note: Keys in configuration properties files have been renamed since version 4.2.2. Also some new properties were introduced.
 So don't rely on simply copying configuration from previous version. Migration should be straightforward.
 See https://github.com/NLCR/CZIDLO/commit/20543990df5132b156426f61ae5024ba4f2ef0b1.
 
@@ -213,7 +219,7 @@ There is also new database required since version 3.0. It stores data of externa
 
 Initialization of this database is described in section installation (item 5) of this document.
 
-Concrete actions needed to upgrade database(s) to work correctly with current version 4.5 are described bellow.
+Concrete actions needed to upgrade database(s) to current version are described bellow.
 
 You should always backup your database before upgrading it in order to avoid data loss if something goes wrong.
 
@@ -221,20 +227,37 @@ Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
 
 ##################################
+### Upgrade from version 4.5   ###
+##################################
+
+#### Core database ####
+
+No upgrade needed.
+
+#### Process database ####
+
+No upgrade needed.
+
+#### Solr server ####
+
+No upgrade needed.
+
+
+##################################
 ### Upgrade from version 4.4.1 ###
 ##################################
 
 #### Core database ####
 
-No need to upgrade.
+No upgrade needed.
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 #### Solr server ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ##################################
@@ -243,15 +266,15 @@ No need to upgrade.
 
 #### Core database ####
 
-No need to upgrade.
+No upgrade needed.
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 #### Solr server ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ##################################
@@ -266,7 +289,7 @@ There is significantly less data processing compared to 4.2.2->4.3 database upgr
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 #### Solr server ####
 
@@ -286,7 +309,7 @@ Since there is nontrivial amount of data being processed here (precomputed table
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ##################################
@@ -299,7 +322,7 @@ Proceed as described in "Upgrade from version 4.2.2" section of this document.
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ################################
@@ -312,7 +335,7 @@ Proceed as described in "Upgrade from version 4.2.2" section of this document.
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ################################
@@ -329,7 +352,7 @@ No need to upgrade.
 
 #### Process database ###
 
-No need to upgrade.
+No upgrade needed.
 
 
 ################################
@@ -342,7 +365,7 @@ Proceed as described in "Upgrade from version 4.1" section of this document.
 
 #### Process database ####
 
-No need to upgrade.
+No upgrade needed.
 
 
 ########################################
@@ -356,7 +379,7 @@ No need to upgrade.
 
 #### Process database ####
 
-Database needs to be created and initialized same way as in current version. 
+Database needs to be created and initialized same way as in current version.
 See installation section of this document.
 
 
@@ -372,7 +395,7 @@ See installation section of this document.
 
 #### Process database ####
 
-Database needs to be created and initialized same way as in current version. 
+Database needs to be created and initialized same way as in current version.
 See installation section of this document.
 
 
@@ -380,14 +403,14 @@ See installation section of this document.
 ##  Solr installation ##
 ########################
 
-If installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must install Solr server for web search:
+If you are installing CZIDLO version 4.4+ or upgrading from version 4.3 to 4.4, you must install Solr server for web search:
 1. unpack file `solr-7.2.1-czidlo.zip` into directory from now on called SOLR_HOME
 2. start Solr server with `$SOLR_HOME/bin/solr start`
 3. check that Solr server is running correctly with `$SOLR_HOME/bin/solr status`
-4. create preconfigured czidlo solr-core with `$SOLR_HOME/bin/solr create -c czidlo -d $SOLR_HOME/server/solr/czidlo -n solrconfig.xml` 
-5. stop Solr server with `$SOLR_HOME/bin/solr stop` 
+4. create preconfigured czidlo solr-core with `$SOLR_HOME/bin/solr create -c czidlo -d $SOLR_HOME/server/solr/czidlo -n solrconfig.xml`
+5. stop Solr server with `$SOLR_HOME/bin/solr stop`
 6. enable security configuration by renaming file `$SOLR_HOME/server/solr/security.json.disabled` to `$SOLR_HOME/server/solr/security.json`
-7. change default login and password for solr indexer (czidloIndexer:czidloRolls) in all configuration files 
+7. change default login and password for solr indexer (czidloIndexer:czidloRolls) in all configuration files
 in properties `indexer.solr.login`, `indexer.solr.password`, `process.solrIndexer.login` and `process.solrIndexer.password`.
 8. use `cliUtils.jar` to generate credentials for new login and pasword and change configuration file `$SOLR_HOME/server/solr/security.json` accordingly:
 for example: `java -jar cliUtils.jar build_solr_basic-auth-plugin_credentials login password`
@@ -404,7 +427,7 @@ When all applications are properly deployed (especially web, api) you should sch
 
 Standard java.util.logging is used as logging framework.
 
-Loggers are allways named after full names of classes (sometime superclasses) that create logs.
+Loggers are always named after full names of classes (sometime superclasses) that create logs.
 
 So it is possible to append handlers according to the package hierarchy. E. g.:
 

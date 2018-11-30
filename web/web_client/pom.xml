@@ -6,14 +6,14 @@
     <parent>
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
-        <version>4.6.alpha4</version>
+        <version>4.6</version>
         <!--upgrade to maven 3.5 might fix this-->
         <!--<version>${czidlo_version}</version>-->
     </parent>
 
     <artifactId>web_client</artifactId>
     <name>CZIDLO - web (client)</name>
-    <version>4.6.alpha4</version>
+    <version>4.6</version>
     <!--<version>${czidlo_version}</version>-->
     <packaging>war</packaging>
 
