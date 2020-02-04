@@ -64,7 +64,7 @@ SELECT
 	count(*) AS sum FROM UrnNbn
 GROUP BY registrarCode, year, month, active;
 
-/* function to update preprocessed table record by registrarCode, year, month, activity */
+--function to update preprocessed table record by registrarCode, year, month, activity
 CREATE OR REPLACE FUNCTION update_urnnbn_assignment(VARCHAR, NUMERIC, NUMERIC, BOOLEAN) RETURNS void AS $BODY$
 BEGIN
    IF (EXISTS (SELECT sum FROM urnnbn_assignment_statistics_view WHERE registrarCode=$1 AND year=$2 AND month=$3 AND active=$4)) THEN
@@ -97,11 +97,11 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION update_urnnbn_assignment() RETURNS TRIGGER AS $BODY$
    BEGIN
       IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE') THEN
-         EXECUTE update_urnnbn_assignment(NEW.registrarCode, to_year(NEW.registered), to_year(NEW.registered),true);
-         EXECUTE update_urnnbn_assignment(NEW.registrarCode, to_year(NEW.registered), to_year(NEW.registered),false);
+         EXECUTE update_urnnbn_assignment(NEW.registrarCode, to_year(NEW.registered), to_month(NEW.registered),true);
+         EXECUTE update_urnnbn_assignment(NEW.registrarCode, to_year(NEW.registered), to_month(NEW.registered),false);
       ELSIF (TG_OP = 'DELETE') THEN
-         EXECUTE update_urnnbn_assignment(OLD.registrarCode, to_year(OLD.registered), to_year(OLD.registered),true);
-         EXECUTE update_urnnbn_assignment(OLD.registrarCode, to_year(OLD.registered), to_year(OLD.registered),false);
+         EXECUTE update_urnnbn_assignment(OLD.registrarCode, to_year(OLD.registered), to_month(OLD.registered),true);
+         EXECUTE update_urnnbn_assignment(OLD.registrarCode, to_year(OLD.registered), to_month(OLD.registered),false);
       END IF;
       RETURN NULL;
    END;

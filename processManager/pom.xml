@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>processManager</artifactId>
-    <version>4.6</version>
+    <version>4.6.1</version>
     <!--<version>${czidlo_version}</version>-->
     <packaging>jar</packaging>
     <name>CZIDLO - processManager</name>

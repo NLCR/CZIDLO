@@ -5,7 +5,7 @@ Copyright (C) 2013-2018 Martin Řehánek
 
 #####################################
 #####################################
-#         CZIDLO version 4.6        #
+#         CZIDLO version 4.6.1      #
 #####################################
 #####################################
 
@@ -95,6 +95,9 @@ Version 4.6
 - updated login/user account web UI
 - added web option to change password (by logged user or admin)
 
+Version 4.6.1
+- fix bug in statistics (urn:nbn assignments)
+
 ##################
 ## Installation ##
 ##################
@@ -111,13 +114,14 @@ This archive should contain following files:
 - `api.war` - API module
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_4.4-4.6.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_4.6.1.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2).
 - `databaseUpgrader-4.2.2.jar` - java program that replaces plaintext passwords with their encrypted form.
 - `updateDatabase_4.2.2_to_4.3.sql` - sql script for updating core database (from version 4.2.2 to version 4.3).
 - `updateDatabase_4.3_to_4.4-4.6.sql` - sql script for updating core database (from version 4.3 to versions 4.4, 4.4.1, 4.5 and 4.6).
+- `updateDatabase_4.4-4.6_to_4.6.1` - sql script for updating core database (from versions versions 4.4, 4.4.1, 4.5 and 4.6 to version 4.6.1).
 - `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
 - `cliUtils.jar` - command line application with some utilities
 
@@ -125,7 +129,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.4-4.6.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.6.1.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
 
    Script also creates one administrator account (admin:admin).
    It is very important that this account is removed immediately after another administrator account (with publicly unknown password) is created. Or at least the password for user 'admin' should be changed.
@@ -227,12 +231,30 @@ Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
 
 ##################################
+### Upgrade from version 4.6   ###
+##################################
+
+#### Core database ####
+
+1. Use script `updateDatabase_4.4-4.6_to_4.6.1.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
+Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.4-4.6_to_4.6.1.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
+
+#### Process database ####
+
+No upgrade needed.
+
+#### Solr server ####
+
+No upgrade needed.
+
+
+##################################
 ### Upgrade from version 4.5   ###
 ##################################
 
 #### Core database ####
 
-No upgrade needed.
+Proceed as described in "Upgrade from version 4.6" section of this document.
 
 #### Process database ####
 
@@ -249,7 +271,7 @@ No upgrade needed.
 
 #### Core database ####
 
-No upgrade needed.
+Proceed as described in "Upgrade from version 4.6" section of this document.
 
 #### Process database ####
 
@@ -266,7 +288,7 @@ No upgrade needed.
 
 #### Core database ####
 
-No upgrade needed.
+Proceed as described in "Upgrade from version 4.6" section of this document.
 
 #### Process database ####
 
@@ -286,6 +308,7 @@ No upgrade needed.
 1. Use script `updateDatabase_4.3_to_4.4-4.5.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
 Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.3_to_4.4-4.5.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
 There is significantly less data processing compared to 4.2.2->4.3 database upgrade. Upgrading database with 1 mil digital documents shouldn't last more than few seconds.
+2. Proceed as described in "Upgrade from version 4.6" section of this document.
 
 #### Process database ####
 
