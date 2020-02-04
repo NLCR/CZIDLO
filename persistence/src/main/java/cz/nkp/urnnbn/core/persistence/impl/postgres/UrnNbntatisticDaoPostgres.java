@@ -1,33 +1,23 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.UrnNbnStatisticDAO;
-import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
-import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
-import cz.nkp.urnnbn.core.persistence.exceptions.IdPart;
-import cz.nkp.urnnbn.core.persistence.exceptions.PersistenceException;
-import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
-import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
+import cz.nkp.urnnbn.core.persistence.exceptions.*;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrs;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByBoolean;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringBoolean;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringIntInt;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringIntIntBoolean;
+import cz.nkp.urnnbn.core.persistence.impl.statements.*;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnResolvationStatisticRT;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStatisticDAO {
 
@@ -52,7 +42,7 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, statistic.getRegistrarCode());
                 IdPart year = new IdPart(ATTR_YEAR, Integer.toString(statistic.getYear()));
                 IdPart month = new IdPart(ATTR_MONTH, Integer.toString(statistic.getMonth()));
-                throw new AlreadyPresentException(new IdPart[] { registrarCode, year, month });
+                throw new AlreadyPresentException(new IdPart[]{registrarCode, year, month});
             } else {
                 throw new DatabaseException(ex);
             }
@@ -130,7 +120,7 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Statistic> listAssignmentStatistics(String registrarCode) throws DatabaseException {
+    public List<Statistic> listAssignmentStatisticsAll(String registrarCode) throws DatabaseException {
         StatementWrapper wrapper = new SelectAllAttrsByStringAttr(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode);
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
@@ -144,9 +134,18 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Statistic> listAssignmentStatistics(String registrarCode, boolean active) throws DatabaseException {
+    public List<Statistic> listAssignmentStatisticsActiveOnly(String registrarCode) throws DatabaseException {
+        return listAssignmentStatisticsFilterByActivity(registrarCode, true);
+    }
+
+    @Override
+    public List<Statistic> listAssignmentStatisticsDeactivatedOnly(String registrarCode) throws DatabaseException {
+        return listAssignmentStatisticsFilterByActivity(registrarCode, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Statistic> listAssignmentStatisticsFilterByActivity(String registrarCode, boolean active) throws DatabaseException {
         StatementWrapper wrapper = new SelectAllAttrsByStringBoolean(TABLE_ASSIGNMENTS_NAME, ATTR_REGISTRAR_CODE, registrarCode, ATTR_ACTIVE, active);
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
@@ -178,7 +177,7 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Statistic> listAssignmentStatistics() throws DatabaseException {
+    public List<Statistic> listAssignmentStatisticsAll() throws DatabaseException {
         StatementWrapper wrapper = new SelectAllAttrs(TABLE_ASSIGNMENTS_NAME);
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
@@ -192,9 +191,18 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Statistic> listAssignmentStatistics(boolean active) throws DatabaseException {
+    public List<Statistic> listAssignmentStatisticsActiveOnly() throws DatabaseException {
+        return listAssignmentStatisticsFilterByActivity(true);
+    }
+
+    @Override
+    public List<Statistic> listAssignmentStatisticsDeactivatedOnly() throws DatabaseException {
+        return listAssignmentStatisticsFilterByActivity(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Statistic> listAssignmentStatisticsFilterByActivity(boolean active) throws DatabaseException {
         StatementWrapper wrapper = new SelectAllAttrsByBoolean(TABLE_ASSIGNMENTS_NAME, ATTR_ACTIVE, active);
         DaoOperation operation = new MultipleResultsOperation(wrapper, new UrnNbnResolvationStatisticRT());
         try {
@@ -235,7 +243,7 @@ public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStat
             IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, log.getRegistrarCode());
             IdPart year = new IdPart(ATTR_YEAR, Integer.toString(log.getYear()));
             IdPart month = new IdPart(ATTR_MONTH, Integer.toString(log.getMonth()));
-            throw new AlreadyPresentException(new IdPart[] { registrarCode, year, month });
+            throw new AlreadyPresentException(new IdPart[]{registrarCode, year, month});
         } catch (RecordNotFoundException e) {
             // ok, not found
         }

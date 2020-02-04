@@ -69,7 +69,6 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
 
     @Override
     public int getCurrentYear() {
-        // current year
         return Calendar.getInstance().get(Calendar.YEAR);
     }
 
@@ -78,8 +77,11 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
         try {
             boolean filterByActivity = (includeActive && !includeDeactivated) || (!includeActive && includeDeactivated);
             List<Registrar> registrars = factory.registrarDao().getAllRegistrars();
-            List<Statistic> data = filterByActivity ? factory.urnNbnStatisticDao().listAssignmentStatistics(includeActive) : factory
-                    .urnNbnStatisticDao().listAssignmentStatistics(includeActive);
+            List<Statistic> data = !filterByActivity ?
+                    factory.urnNbnStatisticDao().listAssignmentStatisticsAll() :
+                    includeActive ?
+                            factory.urnNbnStatisticDao().listAssignmentStatisticsActiveOnly() :
+                            factory.urnNbnStatisticDao().listAssignmentStatisticsDeactivatedOnly();
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
             Map<String, Map<Integer, Map<Integer, Integer>>> result = new HashMap<>();
@@ -97,11 +99,14 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     public Map<Integer, Map<Integer, Integer>> getUrnNbnAssignmentStatistics(String registrarCode, boolean includeActive, boolean includeDeactivated) {
         try {
             boolean filterByActivity = (includeActive && !includeDeactivated) || (!includeActive && includeDeactivated);
-            List<Statistic> data = filterByActivity ? factory.urnNbnStatisticDao().listAssignmentStatistics(registrarCode, includeActive) : factory
-                    .urnNbnStatisticDao().listAssignmentStatistics(registrarCode);
+            List<Statistic> data = !filterByActivity ?
+                    factory.urnNbnStatisticDao().listAssignmentStatisticsAll(registrarCode) :
+                    includeActive ?
+                            factory.urnNbnStatisticDao().listAssignmentStatisticsActiveOnly(registrarCode) :
+                            factory.urnNbnStatisticDao().listAssignmentStatisticsDeactivatedOnly(registrarCode);
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
-            return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
+            return filterAndFill(data, registrarCode, yearFrom, yearTo);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
@@ -131,7 +136,7 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
             List<Statistic> data = factory.urnNbnStatisticDao().listResolvationStatistics(registrarCode);
             int yearFrom = getFirstYearWithData();
             int yearTo = getCurrentYear();
-            return filterAndFill(data, registrarCode.toString(), yearFrom, yearTo);
+            return filterAndFill(data, registrarCode, yearFrom, yearTo);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }
