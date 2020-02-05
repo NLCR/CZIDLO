@@ -24,3 +24,7 @@ CREATE OR REPLACE FUNCTION update_urnnbn_assignment() RETURNS TRIGGER AS $BODY$
    END;
 $BODY$
 LANGUAGE plpgsql;
+
+/* initial filling table search_rsi_preprocessed */
+DELETE FROM urnnbn_assignment_statistics_preprocessed;
+INSERT INTO urnnbn_assignment_statistics_preprocessed (SELECT * FROM urnnbn_assignment_statistics_view);
