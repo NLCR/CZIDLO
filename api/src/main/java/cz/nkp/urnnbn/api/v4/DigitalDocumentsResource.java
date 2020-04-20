@@ -287,7 +287,6 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response registerDigitalDocument(@Context HttpServletRequest context, String content) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);

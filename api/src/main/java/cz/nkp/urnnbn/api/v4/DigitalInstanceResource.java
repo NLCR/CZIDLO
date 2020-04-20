@@ -128,7 +128,6 @@ public class DigitalInstanceResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String deactivateDigitalInstance(@Context HttpServletRequest req) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);

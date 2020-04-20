@@ -77,7 +77,6 @@ public class UrnNbnResource extends ApiV4Resource {
     @Produces("text/xml")
     public String deactivateUrnNbn(@Context HttpServletRequest req, @PathParam("urnNbn") String urnNbnString,
             @QueryParam(PARAM_DEACTIVATION_NOTE) String note) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);

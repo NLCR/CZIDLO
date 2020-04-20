@@ -108,7 +108,6 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public Response setOrUpdateIdentifierValue(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr, String idValueStr) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
@@ -200,7 +199,6 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @Path("/{idType}")
     @Produces("application/xml")
     public String deleteRegistrarScopeIdentifier(@Context HttpServletRequest req, @PathParam("idType") String idTypeStr) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
@@ -240,7 +238,6 @@ public class RegistrarScopeIdentifiersResource extends ApiV4Resource {
     @DELETE
     @Produces("application/xml")
     public String removeAllIdentifiers(@Context HttpServletRequest req) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);

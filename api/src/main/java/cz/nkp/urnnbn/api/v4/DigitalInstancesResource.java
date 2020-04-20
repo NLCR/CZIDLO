@@ -162,7 +162,6 @@ public class DigitalInstancesResource extends ApiV4Resource {
     @Consumes("application/xml")
     @Produces("application/xml")
     public Response addNewDigitalInstance(@Context HttpServletRequest req, String content) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);

@@ -101,7 +101,6 @@ public class UrnNbnReservationsResource extends ApiV4Resource {
     @POST
     @Produces("application/xml")
     public Response reserveUrnNbns(@Context HttpServletRequest req, @QueryParam(PARAM_SIZE) String sizeStr) {
-        // TODO:APIv5: response format should not be fixed to XML but rather negotiated through Accept header
         ResponseFormat format = ResponseFormat.XML;
         try {
             checkServerNotReadOnly(format);
