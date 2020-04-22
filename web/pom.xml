@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>czidlo</artifactId>
         <version>4.6.1</version>
-        <!--upgrade to maven 3.5 might fix this-->
+        <!--TODO: upgrade to maven 3.5 might fix this-->
         <!--<version>${czidlo_version}</version>-->
     </parent>
 
@@ -24,8 +24,12 @@
     </modules>
 
     <properties>
-        <gwtVersion>2.7.0</gwtVersion>
-        <!--<gwtVersion>2.8.2</gwtVersion>-->
+        <!--<gwtVersion>2.7.0</gwtVersion>-->
+        <!--<gwtVersion>2.8.1</gwtVersion>-->
+        <gwtVersion>2.8.2</gwtVersion>
+        <!--see https://stackoverflow.com/questions/33653943/codehaus-mojo-gwt-maven-plugin-project-fails-to-compile-->
+        <!--<maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>-->
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomcat.webport>8082</tomcat.webport>
@@ -76,24 +80,20 @@
     <build>
 
         <!-- https://github.com/steinsag/gwt-maven-example -->
-        <defaultGoal>clean install  tomcat7:run-war-only</defaultGoal>
+        <defaultGoal>clean install tomcat7:run-war-only</defaultGoal>
 
         <plugins>
 
-            <!-- todo: just temporarily -->
-            <!-- <plugin> -->
-            <!-- <groupId>org.apache.maven.plugins</groupId> -->
-            <!-- <artifactId>maven-dependency-plugin</artifactId> -->
-            <!-- <version>2.2</version> -->
-            <!-- </plugin> -->
-
             <plugin>
+                <!--https://gwt-maven-plugin.github.io/gwt-maven-plugin/-->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>${gwtVersion}</version>
                 <configuration>
                     <!-- for Super Dev Mode, otherwise java.lang.outofmemoryerror -->
                     <extraJvmArgs>-Xmx2048M -Xms1024M -Xss1024k</extraJvmArgs>
+                    <sourceLevel>1.8</sourceLevel>
+                    <logLevel>INFO</logLevel>
                 </configuration>
             </plugin>
             <plugin>
@@ -101,15 +101,33 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.3</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
                     <!-- <source>1.5</source> -->
                     <!-- <target>1.5</target> -->
+                    <!-- <fork>true</fork> -->
+                    <!-- <meminitial>1024m</meminitial> -->
+                    <!-- <maxmem>2024m</maxmem> -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Without this maven compiler sometimes uses java 1.3.
+                    See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!--<version>2.5.1</version>-->
+                <version>3.1</version>
+                <configuration>
+                    <!-- <source>1.5</source> -->
+                    <!-- <target>1.5</target> -->
+                    <!-- <source>1.7</source> -->
+                    <!-- <target>1.7</target> -->
+                    <!-- <source>1.8</source> -->
+                    <!-- <target>1.8</target> -->
                     <!-- <fork>true</fork> -->
                     <!-- <meminitial>1024m</meminitial> -->
                     <!-- <maxmem>2024m</maxmem> -->
