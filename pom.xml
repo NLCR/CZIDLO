@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>czidlo</artifactId>
@@ -46,7 +46,14 @@
     </issueManagement>
 
     <properties>
+        <!--following properties must be defined in every module: -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!--following properties must be defined at top-level and in every module that can be built on it's own: -->
+        <!--TODO: jeste proverit, jestli je to fakt nutne, protoze treba solr_indexer jde vybuildit i bez toho a nezavisi na nicem, co sestou definuje czidlo_version-->
         <czidlo_version>4.6.1</czidlo_version>
+        <!--following properties are relevant ony for this module and it's submodules: -->
     </properties>
 
     <modules>

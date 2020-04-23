@@ -17,6 +17,63 @@
     <!--<version>${czidlo_version}</version>-->
     <packaging>war</packaging>
 
+    <properties>
+        <!--following properties must be defined in every module: -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!--following properties are relevant ony for this module and it's submodules: -->
+    </properties>
+
+    <build>
+        <!-- Generate compiled stuff in the folder used for developing mode -->
+        <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+
+        <plugins>
+
+            <!-- GWT Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <!-- <goal>test</goal> -->
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- Plugin configuration. There are many available options,
+                    see gwt-maven-plugin documentation at codehaus.org -->
+                <configuration>
+                    <runTarget>index.html</runTarget>
+                    <draftCompile>true</draftCompile>
+                    <hostedWebapp>${webappDirectory}</hostedWebapp>
+                    <noServer>true</noServer>
+                    <port>${tomcat.webport}</port>
+                    <runTarget>${tomcat.context}</runTarget>
+                </configuration>
+            </plugin>
+
+            <!-- Copy static web files before executing gwt:run -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webappDirectory>${webappDirectory}</webappDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
 
         <dependency>
@@ -63,53 +120,5 @@
 
     </dependencies>
 
-    <build>
-        <!-- Generate compiled stuff in the folder used for developing mode -->
-        <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
-
-        <plugins>
-
-            <!-- GWT Maven Plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>gwt-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <!-- <goal>test</goal> -->
-                        </goals>
-                    </execution>
-                </executions>
-                <!-- Plugin configuration. There are many available options, 
-                    see gwt-maven-plugin documentation at codehaus.org -->
-                <configuration>
-                    <runTarget>index.html</runTarget>
-                    <draftCompile>true</draftCompile>
-                    <hostedWebapp>${webappDirectory}</hostedWebapp>
-                    <noServer>true</noServer>
-                    <port>${tomcat.webport}</port>
-                    <runTarget>${tomcat.context}</runTarget>
-                </configuration>
-            </plugin>
-
-            <!-- Copy static web files before executing gwt:run -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exploded</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <webappDirectory>${webappDirectory}</webappDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
