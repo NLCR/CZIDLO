@@ -5,13 +5,13 @@
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>solr_indexer</artifactId>
     <!--<version>4.6.1</version>-->
-    <version>${czidlo_version}</version>
+    <version>${czidlo.version}</version>
     <packaging>jar</packaging>
     <name>CZIDLO - solr indexer</name>
 
     <properties>
         <!--following properties must be defined in every module: -->
-        <czidlo_version>4.6.1</czidlo_version>
+        <czidlo.version>4.6.1</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

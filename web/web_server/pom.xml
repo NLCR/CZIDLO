@@ -7,19 +7,19 @@
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
         <!--suppress MavenPropertyInParent -->
-        <version>${czidlo_version}</version>
+        <version>${czidlo.version}</version>
         <!--<version>4.6.1</version>-->
     </parent>
 
     <artifactId>web_server</artifactId>
     <name>CZIDLO - web (server)</name>
     <!--<version>4.6.1</version>-->
-    <version>${czidlo_version}</version>
+    <version>${czidlo.version}</version>
     <packaging>jar</packaging>
 
     <properties>
         <!--following properties must be defined in every module: -->
-        <czidlo_version>4.6.1</czidlo_version>
+        <czidlo.version>4.6.1</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -29,7 +29,7 @@
         <apache.commons-io.version>2.3</apache.commons-io.version>
         <spring.version>4.2.9.RELEASE</spring.version>
         <!--<spring.version>5.2.1.RELEASE</spring.version>-->
-        <!--<gwtVersion>2.7.0</gwtVersion>-->
+        <!--<gwt.version>2.7.0</gwt.version>-->
     </properties>
 
 
@@ -54,14 +54,14 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
-            <version>${gwtVersion}</version>
+            <version>${gwt.version}</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
-            <version>${gwtVersion}</version>
+            <version>${gwt.version}</version>
             <scope>provided</scope>
         </dependency>
 

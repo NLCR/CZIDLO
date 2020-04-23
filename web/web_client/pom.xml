@@ -7,19 +7,19 @@
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
         <!--suppress MavenPropertyInParent -->
-        <version>${czidlo_version}</version>
+        <version>${czidlo.version}</version>
         <!--<version>4.6.1</version>-->
     </parent>
 
     <artifactId>web_client</artifactId>
     <name>CZIDLO - web (client)</name>
     <!--<version>4.6.1</version>-->
-    <version>${czidlo_version}</version>
+    <version>${czidlo.version}</version>
     <packaging>war</packaging>
 
     <properties>
         <!--following properties must be defined in every module: -->
-        <czidlo_version>4.6.1</czidlo_version>
+        <czidlo.version>4.6.1</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -28,7 +28,7 @@
 
     <build>
         <!-- Generate compiled stuff in the folder used for developing mode -->
-        <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+        <outputDirectory>${webapp.dir}/WEB-INF/classes</outputDirectory>
 
         <plugins>
 
@@ -49,7 +49,7 @@
                 <configuration>
                     <runTarget>index.html</runTarget>
                     <draftCompile>true</draftCompile>
-                    <hostedWebapp>${webappDirectory}</hostedWebapp>
+                    <hostedWebapp>${webapp.dir}</hostedWebapp>
                     <noServer>true</noServer>
                     <port>${tomcat.webport}</port>
                     <runTarget>${tomcat.context}</runTarget>
@@ -69,7 +69,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <webappDirectory>${webappDirectory}</webappDirectory>
+                    <webappDirectory>${webapp.dir}</webappDirectory>
                 </configuration>
             </plugin>
         </plugins>
