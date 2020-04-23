@@ -4,18 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>processDataServer</artifactId>
-    <version>4.6.1</version>
-    <!--<version>${czidlo_version}</version>-->
+    <!--<version>4.6.1</version>-->
+    <version>${czidlo_version}</version>
     <packaging>war</packaging>
     <name>CZIDLO - processDataServer</name>
 
     <properties>
         <!--following properties must be defined in every module: -->
+        <czidlo_version>4.6.1</czidlo_version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <!--following properties must be defined at top-level and in every module that can be built on it's own: -->
-        <czidlo_version>4.6.1</czidlo_version>
         <!--following properties are relevant ony for this module and it's submodules: -->
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
