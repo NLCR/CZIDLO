@@ -8,7 +8,6 @@
         <artifactId>czidlo</artifactId>
         <!--suppress MavenPropertyInParent -->
         <version>${czidlo.version}</version>
-        <!--<version>4.6.1</version>-->
     </parent>
 
     <artifactId>web</artifactId>
@@ -24,7 +23,7 @@
 
     <properties>
         <!--following properties must be defined in every module: -->
-        <czidlo.version>4.6.1</czidlo.version>
+        <czidlo.version>5.0.alpha</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
