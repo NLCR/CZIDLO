@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class App {
 
-    private static final String ACTION_BUILD_SOLR_PASSWORD_HASH = ";";
+    private static final String ACTION_BUILD_SOLR_PASSWORD_HASH = "build_solr_password_hash";
 
     public static void main(String[] args) {
         if (args.length == 0) {
