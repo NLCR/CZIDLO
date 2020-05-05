@@ -75,6 +75,7 @@
 
     <dependencies>
 
+        <!--czidlo-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>web_shared</artifactId>

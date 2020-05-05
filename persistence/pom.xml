@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>persistence</artifactId>
@@ -17,56 +17,14 @@
         <!--following properties are relevant ony for this module and it's submodules: -->
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <!--TODO: je potreba tenhle plugin?-->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.2</version>
-                <!-- nothing here -->
-            </plugin>
-
-            <!--<plugin>
-                &lt;!&ndash; Without this maven compiler sometimes uses java 1.3.
-                    See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 &ndash;&gt;
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    &lt;!&ndash;<source>1.7</source>
-                    <target>1.7</target>&ndash;&gt;
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>-->
-
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>cz.nkp.urn.databaseUpgrader.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
+        <!--czidlo-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -82,11 +40,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -48,6 +48,41 @@
 
     <dependencies>
 
+        <!--czidlo-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web_shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>processManager</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>cglib</artifactId>
+                    <groupId>cglib</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <!-- Because of ASM versions conflict (Jersey requires 3.5.1 
+                while Hibernate needs 1.5.3). Solution is to add depency to cglib-nodep instead 
+                of cglib (is excluded here) See http://www.hildeberto.com/2008/05/hibernate-and-jersey-conflict-on.html -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
@@ -82,39 +117,6 @@
             <version>1.0.0.GA</version>
             <classifier>sources</classifier>
             <!-- <scope>test</scope> -->
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>web_shared</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>web-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>processManager</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>cglib</artifactId>
-                    <groupId>cglib</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <!-- Because of ASM versions conflict (Jersey requires 3.5.1 
-                while Hibernate needs 1.5.3). Solution is to add depency to cglib-nodep instead 
-                of cglib (is excluded here) See http://www.hildeberto.com/2008/05/hibernate-and-jersey-conflict-on.html -->
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
         </dependency>
 
         <dependency>

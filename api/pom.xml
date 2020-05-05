@@ -31,22 +31,8 @@
         </repository>
     </repositories>
 
-
     <build>
         <plugins>
-            <!--<plugin>
-                &lt;!&ndash; Without this maven compiler sometimes uses java 1.3.
-                    See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 &ndash;&gt;
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    &lt;!&ndash;<source>1.7</source>
-                    <target>1.7</target>&ndash;&gt;
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -109,6 +95,33 @@
 
     <dependencies>
 
+        <!-- czidlo -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- jersey -->
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -145,33 +158,6 @@
             <groupId>com.sun.jersey.contribs.jersey-oauth</groupId>
             <artifactId>oauth-signature</artifactId>
             <version>${jersey.version}</version>
-        </dependency>
-
-        <!-- czidlo -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xml</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>web-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>persistence</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- spring -->

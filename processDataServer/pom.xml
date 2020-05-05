@@ -22,19 +22,6 @@
 
     <build>
         <plugins>
-            <!-- <plugin>
-                 &lt;!&ndash; Without this maven compiler sometimes uses java 1.3.
-                     See http://stackoverflow.com/questions/7597950/maven-error-generics-are-not-supported-in-source-1-3-i-am-using-1-6 &ndash;&gt;
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-compiler-plugin</artifactId>
-                 <version>3.1</version>
-                 <configuration>
-                     &lt;!&ndash;<source>1.7</source>
-                     <target>1.7</target>&ndash;&gt;
-                     <source>1.8</source>
-                     <target>1.8</target>
-                 </configuration>
-             </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -72,6 +59,32 @@
     </build>
 
     <dependencies>
+        <!--czidlo-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>processManager</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>cglib</artifactId>
+                    <groupId>cglib</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!-- Because of ASM versions conflict (Jersey requires 3.5.1
+                while Hibernate needs 1.5.3). Solution is to add depency to cglib-nodep instead
+                of cglib (is excluded here) See http://www.hildeberto.com/2008/05/hibernate-and-jersey-conflict-on.html -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.2</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
@@ -108,35 +121,13 @@
             <artifactId>oauth-signature</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>processManager</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>cglib</artifactId>
-                    <groupId>cglib</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <!-- Because of ASM versions conflict (Jersey requires 3.5.1 
-                while Hibernate needs 1.5.3). Solution is to add depency to cglib-nodep instead 
-                of cglib (is excluded here) See http://www.hildeberto.com/2008/05/hibernate-and-jersey-conflict-on.html -->
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
-        </dependency>
+
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>3.0</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>web-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -144,6 +135,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
 
 </project>
