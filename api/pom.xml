@@ -18,7 +18,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
         <jersey.version>1.19</jersey.version>
-        <spring.version>5.2.1.RELEASE</spring.version>
+        <spring.version>5.2.4.RELEASE</spring.version>
         <restassured.version>2.8.0</restassured.version>
     </properties>
 
