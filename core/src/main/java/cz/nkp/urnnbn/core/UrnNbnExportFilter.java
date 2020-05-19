@@ -36,6 +36,11 @@ public class UrnNbnExportFilter {
         this.deactivationEnd = deactivationEnd;
     }
 
+    public UrnNbnExportFilter(DateTime registrationStart, DateTime registrationEnd, List<String> registrars, List<String> entityTypes, boolean withMissingCcnbOnly,
+                              boolean withMissingIssnOnly, boolean withMMissingIsbnOnly, boolean returnActive, boolean returnDeactivated) {
+        this(registrationStart, registrationEnd, registrars, entityTypes, withMissingCcnbOnly, withMissingIssnOnly, withMissingIssnOnly, returnActive, returnDeactivated, null, null);
+    }
+
     public DateTime getRegistrationStart() {
         return registrationStart;
     }
