@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import cz.nkp.urnnbn.config.PropertyKeys;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresPooledConnector;
@@ -17,7 +16,6 @@ import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class DatabaseConnectorFactory {
@@ -27,11 +25,9 @@ public class DatabaseConnectorFactory {
     /**
      * Returns database connector form properties file.
      *
-     * @param properties
-     *            Properties file
+     * @param properties Properties file
      * @return DatabaseConnector object
-     * @throws IOException
-     *             when reading configuration properties file failes.
+     * @throws IOException when reading configuration properties file failes.
      */
     public static DatabaseConnector getConnector(File properties) throws IOException {
         PropertyLoader loader = new PropertyLoader(properties);
@@ -64,14 +60,13 @@ public class DatabaseConnectorFactory {
             }
 
         } else if (DatabaseDriver.ORACLE.equals(driver)) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         } else {
             throw new IllegalArgumentException("Unknown driver '" + driver + "'");
         }
     }
 
     /**
-     *
      * @return connector using resource (possibly pool) defined in application context
      */
     public static DatabaseConnector getJndiPoolledConnector() {
@@ -80,7 +75,6 @@ public class DatabaseConnectorFactory {
     }
 
     /**
-     *
      * @return connector with hardcoded configuration from class DevelDatabaseConfig
      */
     public static DatabaseConnector getDevelConnector() {
