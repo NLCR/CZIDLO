@@ -55,7 +55,6 @@
 
     <modules>
         <module>core</module>
-        <!-- <module>gdrive</module> -->
         <module>oaiAdapter</module>
         <module>solr_indexer</module>
         <module>persistence</module>
@@ -64,13 +63,16 @@
         <module>api_client</module>
         <module>services</module>
         <module>xml</module>
-        <!-- <module>legacyRecordsImport</module> -->
-        <module>databaseUpgrader</module>
         <module>web-common</module>
         <module>web</module>
         <module>processDataServer</module>
         <module>oaiPmhProvider</module>
         <module>cliUtils</module>
+
+        <!--deprecated-->
+        <module>legacyRecordsImport</module>
+        <module>databaseUpgrader</module>
+        <!-- <module>gdrive</module> -->
     </modules>
 
 </project>

@@ -5,7 +5,6 @@
 package cz.nkp.urnnbn.legacyrecordsimport;
 
 import cz.nkp.urnnbn.legacyrecordsimport.validation.ImportValidator;
-import cz.nkp.urnnbn.xml.commons.Namespaces;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class RecordImportBuilder {
     public static final String DOCUMENT_TYPE_PERIODICAL_VOLUME = "ročník novin";
     
 
-    static String RESOLVER = Namespaces.RESOLVER;
+    static String RESOLVER = "http://resolver.nkp.cz/v1/";
     private static String NAMESPACE_PREFIX = "r";
     private static String SPACE = " ";
     private static String TWO_SPACES = "  ";

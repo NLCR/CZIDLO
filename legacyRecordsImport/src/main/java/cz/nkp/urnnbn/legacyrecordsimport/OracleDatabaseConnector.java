@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The connector is effectively disabled
  * @author Martin Řehánek
  */
 public class OracleDatabaseConnector {
@@ -34,7 +34,7 @@ public class OracleDatabaseConnector {
     }
 
     public Connection getConnection() throws DatabaseException {
-        String url = getJdbcUrl();
+        /*String url = getJdbcUrl();
         logger.log(Level.INFO, "jdbc url: {0}", url);
         try {
             Class.forName(DRIVER_CLASS);
@@ -45,10 +45,11 @@ public class OracleDatabaseConnector {
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Cannot obtain connection from {0}: {1}", new Object[]{url, ex.getMessage()});
             throw new DatabaseException(ex);
-        }
+        }*/
+        return null;
     }
 
-    private String getJdbcUrl() {
+    /*private String getJdbcUrl() {
         if (jdbcUrl == null) {
             jdbcUrl = "jdbc:oracle:thin:@" + host + ":" + port + ":" + database;
         }
@@ -66,5 +67,5 @@ public class OracleDatabaseConnector {
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
-    }
+    }*/
 }
