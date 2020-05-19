@@ -48,9 +48,9 @@ public class RegistrarScopeIdValueTest extends TestCase {
         }
     }
 
-    public void testValueOfToLong() {
+    public void testValueOfTooLong() {
         try {
-            RegistrarScopeIdValue.valueOf("aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaaa5aaaaaaaaa6X");
+            RegistrarScopeIdValue.valueOf("aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6aaaaaaaaa7aaaaaaaaa8X");
             fail();
         } catch (IllegalArgumentException e) {
             LOGGER.info(e.getMessage());
@@ -65,6 +65,7 @@ public class RegistrarScopeIdValueTest extends TestCase {
         RegistrarScopeIdValue.valueOf("abc");
         RegistrarScopeIdValue.valueOf("ABC");
         RegistrarScopeIdValue.valueOf("1aA");
+        RegistrarScopeIdValue.valueOf("aaaaaaaaa1aaaaaaaaa2aaaaaaaaa3aaaaaaaaa4aaaaaaaaa5aaaaaaaaa6aaaaaaaaa7aaaaaaaaa8");
     }
 
     public void testValueOfSpecialChars() {

@@ -7,13 +7,12 @@ package cz.nkp.urnnbn.core;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class RegistrarScopeIdValue {
 
     private static final int MIN_LENGTH = 1;
-    private static final int MAX_LENGTH = 60;
+    private static final int MAX_LENGTH = 80;
     /*
      * Min length 1, max length 70, can contain small, big letters, numbers, and following characters: :?#[]@!$&'()*+,;=-._~ I.e. all reserved and
      * unreserved characters as specified inrfc3986, except for '/'. Must start and end with letter/number.
@@ -27,6 +26,9 @@ public class RegistrarScopeIdValue {
     }
 
     public static RegistrarScopeIdValue valueOf(String string) {
+        if (string == null) {
+            throw new NullPointerException();
+        }
         if (PATTERN.matcher(string).matches()) {
             return new RegistrarScopeIdValue(string);
         } else {
