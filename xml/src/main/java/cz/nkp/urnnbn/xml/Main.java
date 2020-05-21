@@ -32,6 +32,7 @@ public class Main {
     }
 
     private static void validateXmlExamples() {
+        // TODO: move to API test
         // TODO: move to the test class, rootDirs should be relative
         validateDigDocRegistrationApiV3Examples();
         validateDigitalInstanceImportApiV3Examples();
