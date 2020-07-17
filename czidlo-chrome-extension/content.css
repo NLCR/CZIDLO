@@ -1,0 +1,74 @@
+.urn-nbn-cz {
+    position: relative;
+}
+
+.urn-nbn-cz-value {
+    position: relative;
+}
+
+.urn-nbn-cz-info {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    z-index: 10;
+    padding: 4px;
+}
+
+.urn-nbn-cz:hover > .urn-nbn-cz-info {
+    display: block;
+}
+
+.urn-nbn-cz-progress-spinner-container {
+    padding: 8px;
+}
+
+.urn-nbn-cz-title{
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.urn-nbn-cz-status{
+    white-space: nowrap;
+}
+
+.urn-nbn-cz-status-free{
+    white-space: nowrap;
+    font-weight: bold;
+    color: #999900
+}
+
+.urn-nbn-cz-status-reserved{
+    white-space: nowrap;
+    font-weight: bold;
+    color: #999900
+}
+
+.urn-nbn-cz-status-active{
+    white-space: nowrap;
+    color: darkgreen;
+}
+
+.urn-nbn-cz-status-deactivated{
+    white-space: nowrap;
+    font-weight: bold;
+    color: #990000;
+}
+
+.urn-nbn-cz-czidlo-url{
+    white-space: nowrap;
+}
+
+.urn-nbn-cz-timestamp{
+    white-space: nowrap;
+}
+
+.urn-nbn-cz-dis{
+    padding-top: 4px;
+}
+
+.urn-nbn-cz-di-url{
+    white-space: nowrap;
+}

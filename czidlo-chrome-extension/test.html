@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<head></head>
+
+<body>
+
+    <h1>Stránka pro testování rozšíření prohlížeče Chrome pro CZIDLO</h1>
+
+    <div>
+        <h2>Chyby syntaxe URN:NBN</h2>
+        urn:nbn:cz:m-123456 <br>
+        urn:nbn:cz:1234567-123456 <br>
+        urn:nbn:cz:mzk-12345<br>
+        urn:nbn:cz:mzk-1234567<br>
+        urn:nbn:cz:ik-12901<br>
+        URN-NBN:cz-ik5373
+    </div>
+
+    <div>
+        <h2>Syntaxe URN:NBN v pořádku</h2>
+        <div>
+            <h3>prefix</h3>
+            urn:nbn:cz:1abc-12abCD<br>
+            URN:NBN:CZ:1abc-12abCD<br>
+        </div>
+        <div>
+            <h3>kód registratora</h3>
+            urn:nbn:cz:12-12abCD<br>
+            urn:nbn:cz:123456-12abCD<br>
+            urn:nbn:cz:ab-12abCD<br>
+            urn:nbn:cz:abcdef-12abCD<br>
+            urn:nbn:cz:AB-12abCD<br>
+            urn:nbn:cz:ABCDEF-12abCD<br>
+            urn:nbn:cz:abcDEF-12abCD<br>
+            urn:nbn:cz:1abc-12abCD<br>
+        </div>
+        <div>
+            <h3>kód dokumentu</h3>
+            urn:nbn:cz:nk-123456<br>
+            urn:nbn:cz:nk-abcdef<br>
+            urn:nbn:cz:nk-ABCDEF<br>
+            urn:nbn:cz:nk-ABCdef<br>
+            urn:nbn:cz:nk-12abCD<br>
+        </div>
+        <div>
+            <h3>Case sensitivity</h3>
+            <div>urn:nbn:cz:nk-000m65</div>
+            <div>URN:nbn:cz:nk-000m65</div>
+            <div>urn:NBN:cz:nk-000m65</div>
+            <div>urn:nbn:CZ:nk-000m65</div>
+            <div>urn:nbn:cz:NK-000m65</div>
+            <div>urn:nbn:cz:NK-000M65</div>
+            <div>URN:NBN:CZ:NK-000M65</div>
+        </div>
+    </div>
+
+    <div>
+        <h2>Realné příklady (resolver-dev)</h2>
+        <div>
+            <h3>Volné</h3>
+            urn:nbn:cz:nk-000xxx<br>
+            urn:nbn:cz:mzk-000xxx<br>
+        </div>
+        <div>
+            <h3>Rezervováno</h3>
+            urn:nbn:cz:nk-0000aa<br>
+            urn:nbn:cz:aba001-0005bk<br>
+            urn:nbn:cz:mzk-00000g<br>
+            urn:nbn:cz:tst03-00000c<br>
+        </div>
+        <div>
+            <h3>Deaktivováno</h3>
+            urn:nbn:cz:aba001-00003u (s poznámkou)<br>
+            urn:nbn:cz:nk-000178 (bez poznámky)<br>
+        </div>
+        <div>
+            <h3>Aktivní</h3>
+            urn:nbn:cz:ik-007920<br>
+            urn:nbn:cz:ik-000000<br>
+            urn:nbn:cz:nk-000m65<br>
+            urn:nbn:cz:aba001-0000iz<br>
+            urn:nbn:cz:aba001-000207<br>
+            urn:nbn:cz:aba001-0005hn (s predchudcem)<br>
+            urn:nbn:cz:aba001-0005hq (s dvema predchudci)<br>
+            urn:nbn:cz:rych01-000003 (s registrar-scope id)<br>
+            urn:nbn:cz:mzk-005wo2 (s jednou DI)<br>
+            urn:nbn:cz:duha-0000s1 (duha, DI, registrar-scope id)<br>
+            urn:nbn:cz:ik-007920 (2 aktivni DI ve stejne dig. knihovne)<br>
+            urn:nbn:cz:ik-000000 (3 aktivni DI ve stejne dig. knihovne)<br>
+            urn:nbn:cz:nk-000m65 (2 aktivni DI v ruznych dig. knihovnach)<br>
+            urn:nbn:cz:nk-00000h<br>
+            urn:nbn:cz:nk-00000i<br>
+        </div>
+    </div>
+
+    <div>
+        <h2>Předem obalené divy (testování prevence zacyklení)</h2>
+        <div class="urn-nbn-cz">
+            <div class="urn-nbn-cz-value">urn:nbn:cz:ik-007920</div>
+            <div class="urn-nbn-cz-info"></div>
+        </div>
+        <br>
+        <div class="urn-nbn-cz">
+            <div class="urn-nbn-cz-value">urn:nbn:cz:ik-007920</div>
+            <div class="urn-nbn-cz-info"></div>
+        </div>
+        <br>
+        <div class="urn-nbn-cz">
+            <div class="urn-nbn-cz-value">urn:nbn:cz:nk-000m65</div>
+            <div class="urn-nbn-cz-info"></div>
+        </div>
+        <br>
+        <div class="urn-nbn-cz">
+            <div class="urn-nbn-cz-value">urn:nbn:cz:aba001-0005hq</div>
+            <div class="urn-nbn-cz-info"></div>
+        </div>
+        <br>
+        <div class="urn-nbn-cz">
+            <div class="urn-nbn-cz-value">urn:nbn:cz:duha-0000s1</div>
+            <div class="urn-nbn-cz-info"></div>
+        </div>
+    </div>
+
+    <!-- simulace paticky webu -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+</html>

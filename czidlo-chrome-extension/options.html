@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+
+<html>
+
+<head>
+    <title>Nastavení</title>
+</head>
+
+<body>
+    <div>
+        <div>
+            <label for="instance">Instance CZIDLO</label>
+            <select id="instance">
+                <option value="resolver.nkp.cz">resolver.nkp.cz</option>
+                <option value="resolver-test.nkp.cz">resolver-test.nkp.cz</option>
+                <option value="resolver-dev.nkp.cz">resolver-dev.nkp.cz</option>
+            </select>
+            *
+        </div>
+        <br>
+        <div>* Změny v nastavení se projeví až po novém načtení stránky.</div>
+        <br>
+
+        <div id="saved" style="display: none;">Uloženo</div>
+        <button id="save">Uložit</button>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

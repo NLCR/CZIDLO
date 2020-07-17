@@ -1,0 +1,42 @@
+{
+    "manifest_version": 2,
+    "name": "CZIDLO urn:nbn:cz",
+    "description": "Nachází-li se na stránce identifikátor urn:nbn:cz, zobrazí se informace o patřičném dokumentu včetně odkazů na digitální instance",
+    "version": "1.0",
+    "icons": {
+        "48": "img/icon48.ico"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "background": {
+        "scripts": [
+            "jquery-3.5.1.min.js",
+            "background.js"
+        ]
+    },
+    "browser_action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "jquery-3.5.1.min.js",
+                "content.js"
+            ],
+            "css": [
+                "content.css",
+                "three-dots/three-dots.min.css"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
+    },
+    "author": "Martin Řehánek"
+}
