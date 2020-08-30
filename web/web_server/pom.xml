@@ -7,12 +7,14 @@
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
         <!--suppress MavenPropertyInParent -->
-        <version>${czidlo.version}</version>
+        <!--<version>${czidlo.version}</version>-->
+        <version>5.0.alpha</version>
     </parent>
 
     <artifactId>web_server</artifactId>
     <name>CZIDLO - web (server)</name>
-    <version>${czidlo.version}</version>
+    <!--<version>${czidlo.version}</version>-->
+    <version>5.0.alpha</version>
     <packaging>jar</packaging>
 
     <properties>

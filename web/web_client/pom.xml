@@ -7,12 +7,14 @@
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>web</artifactId>
         <!--suppress MavenPropertyInParent -->
-        <version>${czidlo.version}</version>
+        <!--<version>${czidlo.version}</version>-->
+        <version>5.0.alpha</version>
     </parent>
 
     <artifactId>web_client</artifactId>
     <name>CZIDLO - web (client)</name>
-    <version>${czidlo.version}</version>
+    <!--<version>${czidlo.version}</version>-->
+    <version>5.0.alpha</version>
     <packaging>war</packaging>
 
     <properties>
