@@ -76,7 +76,7 @@
                     you should remove the records manually like this: -->
                 <!-- delete from registrarscopeid where type like 'type%'
                     or idvalue like 'value%'; -->
-                <!-- This won't allways remove everything created by tests.
+                <!-- This won't always remove everything created by tests.
                     To check last 10 created registrar-scope ids: -->
                 <!-- select * from registrarscopeid order by created desc
                     limit 10; -->

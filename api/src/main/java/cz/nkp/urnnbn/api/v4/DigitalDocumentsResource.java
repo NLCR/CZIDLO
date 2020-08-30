@@ -146,7 +146,7 @@ public class DigitalDocumentsResource extends AbstractDigitalDocumentResource {
             @PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr,
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
-            // allways redirect somwehere
+            // always redirect somewehere
             DigitalDocument digitalDocument = getDigitalDocument(ResponseFormat.XML, idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return redirectionResponse(context, urn);

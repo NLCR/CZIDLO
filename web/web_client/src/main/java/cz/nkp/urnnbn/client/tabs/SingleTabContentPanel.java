@@ -35,7 +35,7 @@ public abstract class SingleTabContentPanel extends ScrollPanel {
     }
 
     /**
-     * Implemantations must allways call super.onSelected() preferably as first command.
+     * Implemantations must always call super.onSelected() preferably as first command.
      */
     public void onSelected() {
         if (tabsPanel.isGaEnabled()) {

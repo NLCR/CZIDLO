@@ -239,7 +239,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
     // action=show
 
     /**
-     * Allways redirect to czidlo web, as if format=html.
+     * Always redirect to czidlo web, as if format=html.
      */
     @Test
     public void actionShowFormatNotSpecified() {
@@ -255,7 +255,7 @@ public class ResolveByUrnNbn extends ApiV3Tests {
     }
 
     /**
-     * allways redirect to czidlo web
+     * always redirect to czidlo web
      */
     @Test
     public void actionShowFormatHtml() {

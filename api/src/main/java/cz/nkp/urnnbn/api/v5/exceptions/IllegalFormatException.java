@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * The only exception here that does not extend ApiV5Exception. It allways returns html no mether what the specified response format was. The error
+ * The only exception here that does not extend ApiV5Exception. It always returns html no mether what the specified response format was. The error
  * was in incorrect format specification.
  *
  */

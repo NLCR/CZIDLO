@@ -23,6 +23,8 @@ import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +32,7 @@ import java.util.logging.Logger;
 public class ResolverResource extends AbstractDigitalDocumentResource {
 
     private static final Logger LOGGER = Logger.getLogger(ResolverResource.class.getName());
+    private static final List<String> SUPPORTED_FOREIGN_URN_NBN_LANG_CODES = Arrays.asList(new String[]{"de", "it", "fi", "se", "no", "hu", "nl", "si"});
 
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
@@ -97,30 +100,34 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
     @Path("{id}")
     public Response resolve(@Context HttpServletRequest context, @PathParam("id") String id, @QueryParam(PARAM_FORMAT) String formatStr,
                             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
-        if (isKnownForeignUrnNbn(id)) {
-            return redirectionToForeignResolverResponse(context, id);
-        } else if (formatStr == null) {
-            // always redirect somwehere
-            return redirectionResponse(context, id);
-        } else {
-            // show data
-            ResponseFormat format = Parser.parseFormat(formatStr);
-            boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
-            return metadataResponse(id, format, withDigitalInstances);
-        }
-    }
-
-    private boolean isKnownForeignUrnNbn(String urnNbnString) {
-        if (urnNbnString != null && !urnNbnString.isEmpty() && urnNbnString.toLowerCase().startsWith("urn:nbn:")) {
-            String langCode = urnNbnString.split(":")[2].substring(0, 2).toLowerCase();
-            String[] allowedCodes = new String[]{"de", "it", "fi", "se", "no", "hu", "nl", "si"};
-            for (String allowedCode : allowedCodes) {
-                if (langCode.equals(allowedCode)) {
-                    return true;
+        if (id.toLowerCase().startsWith("urn:nbn:") && id.length() >= "urn:nbn:XX".length()) {
+            String langCode = id.split(":")[2].substring(0, 2).toLowerCase();
+            if ("cz".equals(langCode)) { //urn:nbn:cz
+                if (formatStr == null) {
+                    // always redirect somewhere
+                    return redirectionResponse(context, id);
+                } else {
+                    // show data
+                    ResponseFormat format = Parser.parseFormat(formatStr);
+                    boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+                    return metadataResponse(id, format, withDigitalInstances);
+                }
+            } else { //foreign urn:nbn
+                if (SUPPORTED_FOREIGN_URN_NBN_LANG_CODES.contains(langCode)) {
+                    return redirectionToForeignResolverResponse(context, id);
+                } else {
+                    return Response.status(Status.NOT_FOUND).build();
                 }
             }
+        } else if (id.toLowerCase().startsWith("isbn:")) {
+            //TODO: implement resolving by isbn
+            return Response.status(Status.NOT_FOUND).build();
+        } else if (id.toLowerCase().startsWith("issn:")) {
+            //TODO: implement resolving by issn
+            return Response.status(Status.NOT_FOUND).build();
+        } else { //unknown identifier schema
+            return Response.status(Status.BAD_REQUEST).build();
         }
-        return false;
     }
 
     private Response redirectionToForeignResolverResponse(HttpServletRequest context, String id) {
@@ -145,7 +152,7 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
                 case "si": //http://www.nbn.si/URN:NBN:SI:FSD:MAG-1DC22KA
                     return Response.seeOther(new URI("http://www.nbn.si/" + urnNbnString)).build();
                 default:
-                    return Response.status(Status.FORBIDDEN).build();
+                    return Response.status(Status.NOT_FOUND).build();
             }
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, e.getMessage());

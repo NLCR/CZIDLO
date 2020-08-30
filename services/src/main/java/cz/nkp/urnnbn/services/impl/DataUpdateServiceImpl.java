@@ -256,7 +256,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         Long digDocId = null;
         try {
             List<DigitalDocument> digDocs = factory.documentDao().getDocumentsOfIntEntity(entity.getId());
-            // there is allways exactly one digital document, even though data model allows more
+            // there is always exactly one digital document, even though data model allows more
             // dig-docs for single int-entity
             if (digDocs == null || digDocs.isEmpty()) {
                 urn = null;

@@ -339,7 +339,7 @@ public class ResolveByRsId extends ApiV3Tests {
     }
 
     /**
-     * Allways redirect to czidlo web, as if format=html.
+     * Always redirect to czidlo web, as if format=html.
      */
     @Test
     public void actionShowFormatNotSpecified() {
@@ -356,7 +356,7 @@ public class ResolveByRsId extends ApiV3Tests {
     }
 
     /**
-     * allways redirect to czidlo web
+     * always redirect to czidlo web
      */
     @Test
     public void actionShowFormatHtml() {

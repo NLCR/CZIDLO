@@ -205,7 +205,7 @@ public abstract class AbstractDigitalDocumentResource extends ApiV2V3Resource {
     }
 
     /**
-     * Redirects to web interface. It is allways redirected to http://SERVER_NAME/WEB_MODULE_CONTEXT?q=URN where SERVER_NAME is same as the one in
+     * Redirects to web interface. It is always redirected to http://SERVER_NAME/WEB_MODULE_CONTEXT?q=URN where SERVER_NAME is same as the one in
      * request, WEB_MODULE_CONTEXT is "web" in default. Web server should perform redirection to HTTPS if desirable.
      *
      * @param request

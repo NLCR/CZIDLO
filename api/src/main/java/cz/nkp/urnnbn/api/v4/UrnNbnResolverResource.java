@@ -114,7 +114,7 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     public Response resolve(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr,
             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
         if (formatStr == null) {
-            // allways redirect somwehere
+            // always redirect somewhere
             return redirectionResponse(context, urnNbnString);
         } else {
             // show data
