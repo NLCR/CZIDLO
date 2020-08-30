@@ -27,9 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Path("/resolver")
-public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
+public class ResolverResource extends AbstractDigitalDocumentResource {
 
-    private static final Logger LOGGER = Logger.getLogger(UrnNbnResolverResource.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ResolverResource.class.getName());
 
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
@@ -94,17 +94,62 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
     }
 
     @GET
-    @Path("{urn}")
-    public Response resolve(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr,
+    @Path("{id}")
+    public Response resolve(@Context HttpServletRequest context, @PathParam("id") String id, @QueryParam(PARAM_FORMAT) String formatStr,
                             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
-        if (formatStr == null) {
-            // allways redirect somwehere
-            return redirectionResponse(context, urnNbnString);
+        if (isKnownForeignUrnNbn(id)) {
+            return redirectionToForeignResolverResponse(context, id);
+        } else if (formatStr == null) {
+            // always redirect somwehere
+            return redirectionResponse(context, id);
         } else {
             // show data
             ResponseFormat format = Parser.parseFormat(formatStr);
             boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
-            return metadataResponse(urnNbnString, format, withDigitalInstances);
+            return metadataResponse(id, format, withDigitalInstances);
+        }
+    }
+
+    private boolean isKnownForeignUrnNbn(String urnNbnString) {
+        if (urnNbnString != null && !urnNbnString.isEmpty() && urnNbnString.toLowerCase().startsWith("urn:nbn:")) {
+            String langCode = urnNbnString.split(":")[2].substring(0, 2).toLowerCase();
+            String[] allowedCodes = new String[]{"de", "it", "fi", "se", "no", "hu", "nl", "si"};
+            for (String allowedCode : allowedCodes) {
+                if (langCode.equals(allowedCode)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Response redirectionToForeignResolverResponse(HttpServletRequest context, String id) {
+        try {
+            String urnNbnString = id.toLowerCase();
+            String langCode = urnNbnString.split(":")[2].substring(0, 2).toLowerCase();
+            switch (langCode) {
+                case "de"://http://nbn-resolving.de/urn:nbn:de:101:1-200910131091
+                    return Response.seeOther(new URI("http://nbn-resolving.de/" + urnNbnString)).build();
+                case "it": //http://nbn.depositolegale.it/urn:nbn:it:unimi-6456
+                    return Response.seeOther(new URI("http://nbn.depositolegale.it/" + urnNbnString)).build();
+                case "fi": //http://urn.fi/urn:nbn:fi-fe20042357
+                    return Response.seeOther(new URI("http://urn.fi/" + urnNbnString)).build();
+                case "se": //http://urn.kb.se/resolve?urn=urn:nbn:se:su:diva-1278
+                    return Response.seeOther(new URI("http://urn.kb.se/resolve?urn=" + urnNbnString)).build();
+                case "no": //http://urn.nb.no/URN:NBN:no-nb_digibok_2010090303019
+                    return Response.seeOther(new URI("http://urn.nb.no/" + urnNbnString)).build();
+                case "hu": //http://nbn-test.urn.hu/N2L?urn:nbn:hu-107035
+                    return Response.seeOther(new URI("http://nbn-test.urn.hu/N2L?" + urnNbnString)).build();
+                case "nl": //http://persistent-identifier.nl/?identifier=URN:NBN:NL:UI:10-1-115852
+                    return Response.seeOther(new URI("http://persistent-identifier.nl/?identifier=" + urnNbnString)).build();
+                case "si": //http://www.nbn.si/URN:NBN:SI:FSD:MAG-1DC22KA
+                    return Response.seeOther(new URI("http://www.nbn.si/" + urnNbnString)).build();
+                default:
+                    return Response.status(Status.FORBIDDEN).build();
+            }
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(ResponseFormat.XML, e.getMessage());
         }
     }
 
