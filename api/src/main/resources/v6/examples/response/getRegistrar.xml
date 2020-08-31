@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<response xmlns="http://resolver.nkp.cz/v6/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v6/response.xsd">
+    <registrar code="tst02" id="38">
+        <name>Moravská zemská knihovna - test</name>
+        <description>testovací registrátor</description>
+        <created>2012-04-18T23:19:17.727+02:00</created>
+        <modified>2012-10-29T10:39:30.882+01:00</modified>
+        <registrationModes>
+            <mode name="BY_RESOLVER" enabled="true" />
+            <mode name="BY_REGISTRAR" enabled="true" />
+            <mode name="BY_RESERVATION" enabled="true" />
+        </registrationModes>
+    </registrar>
+</response>

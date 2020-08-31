@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Příklady validnidentifikátorů použitých v importech. Syntaxe je validována. 
+    Nekontrolují se ale kontrolní součty v ISNB, ISSN. -->
+<identifiers xmlns="http://resolver.nkp.cz/v6/">
+    <!-- isbn-10 bez oddelovacu -->
+    <isbn>8090119964</isbn>
+    <isbn>809011996x</isbn>
+    <isbn>809011996X</isbn>
+
+    <!-- isbn-10 s pomlckama -->
+    <isbn>80-9-011996-4</isbn>
+    <isbn>80-7178-463-X</isbn>
+    <isbn>80-7178-463-x</isbn>
+
+    <!-- isbn-10 s mezerama -->
+    <isbn>80 9 011996 4</isbn>
+    <isbn>80 7178 463 X</isbn>
+    <isbn>80 7178 463 x</isbn>
+
+    <!-- isbn-13 bez oddelovacu -->
+    <isbn>9788090119964</isbn>
+    <isbn>978807178463X</isbn>
+    <isbn>978807178463x</isbn>
+
+    <!-- isbn-13 s pomlckama -->
+    <isbn>978-80-9-011996-4</isbn>
+    <isbn>978-80-7178-463-X</isbn>
+    <isbn>978-80-7178-463-x</isbn>
+
+    <!--isbn-13 s mezerama -->
+    <isbn>978 80 9 011996 4</isbn>
+    <isbn>978 80 7178 463 X</isbn>
+    <isbn>978 80 7178 463 x</isbn>
+
+    <!--isbn-13 s pomlčkou za 978 -->
+    <isbn>978-8090119964</isbn>
+    <isbn>978-807178463X</isbn>
+    <isbn>978-807178463x</isbn>
+
+    <!-- ccnb -->
+    <ccnb>cnb123456789</ccnb>
+    <ccnb>CNB123456789</ccnb>
+
+    <!-- issn -->
+    <issn>1234-5678</issn>
+    <issn>1234-567x</issn>
+    <issn>1234-567X</issn>
+</identifiers>

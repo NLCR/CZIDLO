@@ -11,7 +11,8 @@
         <h1>API pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>
         Aplikační programové rozhraní je popsáno na
         <a href="https://github.com/NLCR/CZIDLO/wiki/API">wiki projektu na Githubu</a>.<br>
-        <p><a href="/api/v5/">API verze 5</a></p>
+        <p><a href="/api/v6/">API verze 6</a></p>
+        <p><a href="/api/v5/">API verze 5 (deprecated)</a></p>
         <p><a href="/api/v4/">API verze 4 (deprecated)</a></p>
         <p><a href="/api/v3/">API verze 3 (deprecated)</a></p>
         <p><a href="/api/v2/">API verze 2 (deprecated)</a></p>

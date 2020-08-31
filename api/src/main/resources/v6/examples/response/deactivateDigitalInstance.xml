@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v6/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v6/response.xsd">
+    <digitalInstance id="56" active="false">
+        <url>http://kramerius.nkp.cz/search/handle/uuid:8ffd7a5b-82da-11e0-bc9f-0050569d679d
+        </url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <digitalLibraryId>38</digitalLibraryId>
+        <created>2013-01-17T03:46:16.244+01:00</created>
+        <deactivated>2013-01-17T03:46:51.280+01:00</deactivated>
+    </digitalInstance>
+</response>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import xmlns="http://resolver.nkp.cz/v6/">
+    <!-- školní práce -->
+    <thesis>
+        <titleInfo>
+            <!-- název (povinný údaj) -->
+            <title>Basic Model Checking Problems for Stochastic Games</title>
+            <!-- další názvové údaje -->
+            <subTitle>Tato práce se zabývá stochastickými tahovými hrami na nekonečných grafech s lineárními výherními podmínkami.</subTitle>
+        </titleInfo>
+        <!-- čČNB -->
+        <ccnb>cnb001282114</ccnb>
+        <!-- jiný globální identifikátor školní práce -->
+        <otherId>TODO</otherId>
+        <!-- druh dokumentu -->
+        <documentType>Ph.D. Thesis</documentType>
+        <!-- zda je dokument e-born, defaultně false -->
+        <digitalBorn>true</digitalBorn>
+        <!-- hlavní původce (zde povolen pouze autor) -->
+        <primaryOriginator type="AUTHOR">Václav Brožek</primaryOriginator>
+        <!-- další původce (např. ilustrátor nebo překladatel) -->
+        <otherOriginator>Jan Ilustrator</otherOriginator>
+        <!-- informace o publikování -->
+        <publication>
+            <!-- rok publikace -->
+            <year>2009</year>
+        </publication>
+        <!-- informace o zdrojovém dokumentu. v tomto případě se jedná o výtisk periodika -->
+        <degreeAwardingInstitution>Fakulta informatiky; Masarykova univerzita</degreeAwardingInstitution>
+    </thesis>
+    <digitalDocument>
+        <!-- identifikátor archivátora -->
+        <archiverId>3</archiverId>
+        <!-- seznam identifikátorů v rámci registrátora -->
+        <registrarScopeIdentifiers>
+            <id type="OAI_harvester">1239</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedl</id>
+        </registrarScopeIdentifiers>
+        <!-- čím/kým byla digitalizace financována 
+             pro novou digitalizaci v rámci NDK zde bude vždy hodnota IOP-NDK
+        -->
+        <financed>norské fondy</financed>
+        <!-- číslo zakázky, u nové digitalizace se nebude uvádět -->
+        <contractNumber>123</contractNumber>
+        <!-- technická metadata, která se vážou k ARCHIVNÍ verzi
+             digitálního dokumentu -->
+        <technicalMetadata>
+            <!-- typ a verze formátu -->
+            <format version="1.0">jpeg</format>
+            <!-- rozsah (v počtu souborů) -->
+            <extent>3 x jpeg2000;3 x mods-alto;1 x mods</extent>
+            <!-- rozlišení nastavené na skeneru v dpi-->
+            <resolution>
+                <!-- horizontální -->
+                <horizontal>1280</horizontal>
+                <!-- vertikální -->
+                <vertical>1024</vertical>
+            </resolution>
+            <!-- kompresní algoritmus a komprimační poměr -->
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <!-- barevný model -->
+                <model>RGB</model>
+                <!-- bitová hloubka -->
+                <depth>24</depth>
+            </color>
+            <!-- ICC profil -->
+            <iccProfile>some ICC profile</iccProfile>
+            <!-- realná velikost obrázků (něktěrého obrázku) v pixelech -->
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+    </digitalDocument>
+</import>

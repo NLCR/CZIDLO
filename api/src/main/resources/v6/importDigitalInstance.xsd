@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2011 - 2020 Martin Řehánek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+    Author     : Martin Řehánek
+    Description:
+        This XML Schema (W3C) document validates APIv6 digital-instance-import operation input data.
+        https://github.com/NLCR/CZIDLO
+        https://github.com/NLCR/CZIDLO/wiki/API
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified" targetNamespace="http://resolver.nkp.cz/v6/"
+           xmlns:czidlo="http://resolver.nkp.cz/v6/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+    <!--<xs:include schemaLocation="common.xsd.xml"/> -->
+    <xs:element name="digitalInstance">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="url" type="czidlo:url"/>
+                <xs:element name="digitalLibraryId" type="xs:integer"/>
+                <xs:element name="format" type="xs:string"
+                            minOccurs="0"/>
+                <xs:element name="accessibility" type="xs:string"
+                            minOccurs="0"/>
+                <xs:element name="accessRestriction" type="czidlo:accessRestrictionType"
+                            minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name='nonemptyString'>
+        <xs:restriction base='xs:string'>
+            <xs:minLength value='1'/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- urn:nbn -->
+    <xs:simpleType name="urnNbnType">
+        <xs:restriction base="xs:string">
+            <xs:pattern
+                    value="urn:nbn:[A-Za-z]{2}:[A-Za-z0-9]{2,6}\-[A-Za-z0-9]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- registrar scope identifiers -->
+    <xs:complexType name="registrarScopeIdentifiers">
+        <xs:sequence>
+            <xs:element name="id"
+                        type="czidlo:registrarScopeIdentifier" minOccurs="0"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- registrar-scope identifier -->
+    <xs:complexType name="registrarScopeIdentifier">
+        <xs:simpleContent>
+            <xs:extension base="czidlo:registrarScopeIdValueType">
+                <xs:attribute name="type" use="required"
+                              type="czidlo:registrarScopeIdTypeType"/>
+                <xs:attribute name="previousValue" use="optional"
+                              type="czidlo:registrarScopeIdValueType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- registrar-scope type -->
+    <xs:simpleType name="registrarScopeIdTypeType">
+        <xs:restriction base="xs:token">
+            <!-- uppercase/lowercase letters, numbers, '_', '-', ':'. Must 
+                start and end with letter or number. Length must be between 1 and 20 characters. -->
+            <xs:pattern
+                    value="[A-Za-z0-9]{1}[A-Za-z0-9_\-:]{0,18}[A-Za-z0-9]{1}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- registrar-scope value -->
+    <xs:simpleType name="registrarScopeIdValueType">
+        <!-- In API V2 were allowed only these characters: A-Z a-z 0-9 $ 
+            - _ . + ! * ' ( ) , : @ -->
+        <!-- Now all reserved and unreserved URI characters as specified 
+            in RFC 3986 (sections 2.2 and 2.3) are allowed, except for '/'. Must start 
+            and end with number letter (capital or not). Leng must be between 1 and 80
+            characters. -->
+        <!-- unreserved characters: -->
+        <!-- A-Z a-z 0-9 -_.~ -->
+        <!-- reserved characters (all except for '/'): -->
+        <!-- ! * ' ( ) ; : @ & = + $ , ? # [ ] -->
+        <!-- i.e. these characters are newly allowed: ? [ ] ; & = # -->
+        <xs:restriction base="xs:token">
+            <xs:pattern
+                    value="[A-Za-z0-9]{1}[A-Za-z0-9\-_\.~!\*'\(\);:@&amp;=+$,\?#\[\]]{0,78}[A-Za-z0-9]{1}|[A-Za-z0-9]{1}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- primary originator -->
+    <xs:complexType name="primaryOriginator">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type" use="required"
+                              type="czidlo:originatorTypeType"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- originator type -->
+    <xs:simpleType name="originatorTypeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTHOR"/>
+            <xs:enumeration value="EVENT"/>
+            <xs:enumeration value="CORPORATION"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- source document -->
+    <xs:complexType name="sourceDocument">
+        <xs:sequence>
+            <xs:element name="titleInfo" minOccurs="1"
+                        maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="title" type="xs:string"
+                                    minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="volumeTitle" type="xs:string"
+                                    minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="issueTitle" type="xs:string"
+                                    minOccurs="0" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ccnb" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="isbn" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="issn" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="otherId" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="publication" type="czidlo:publication"
+                        minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- publication -->
+    <xs:complexType name="publication">
+        <xs:sequence>
+            <xs:element name="publisher" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="place" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+            <!--TODO: zminit zmenu v dokumentaci. Rok byval xs:int, teď tam 
+                muze byt string, ale pokud neobsahuje cislo, zahodi se -->
+            <!--TODO: projit ostatni data a pokud najdu podobny int, tak 
+                udelat to same -->
+            <xs:element name="year" type="xs:string"
+                        minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- url -->
+    <xs:simpleType name="url">
+        <xs:restriction base="xs:string">
+            <!--starts with http:// or https:// (case insensitive) with total 
+                length at most 2008 characters -->
+            <xs:pattern value="[hH][tT]{2}[pP][sS]{0,1}://.{1,200}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--accessRestriction-->
+    <xs:simpleType name="accessRestrictionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UNKNOWN"/>
+            <xs:enumeration value="UNLIMITED_ACCESS"/>
+            <xs:enumeration value="LIMITED_ACCESS"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

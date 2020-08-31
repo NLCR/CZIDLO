@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v6/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2001/XMLSchema-instance http://resolver.nkp.cz/api/v6/response.xsd">
+    <digitalDocument id="7">
+        <urnNbn>
+            <value>urn:nbn:cz:tst02-000005</value>
+            <successor value="urn:nbn:cz:tst02-000006" note="naslednik" />
+            <successor value="urn:nbn:cz:tst02-000007" />
+        </urnNbn>
+        <financed>norské fondy</financed>
+        <contractNumber>123</contractNumber>
+        <created>2012-04-18T23:21:55.984+02:00</created>
+        <intelectualEntity type="MONOGRAPH_VOLUME">
+            <created>2012-04-18T23:21:55.892+02:00</created>
+            <titleInfo>
+                <monographTitle>Slovník naučný</monographTitle>
+                <volumeTitle>D. 8.,S-Szyttler</volumeTitle>
+            </titleInfo>
+            <ccnb>cnb000000000</ccnb>
+            <isbn>8090119964</isbn>
+            <otherId>DOI:TODO</otherId>
+            <documentType>slovník</documentType>
+            <digitalBorn>false</digitalBorn>
+            <primaryOriginator type="AUTHOR">Rieger, František
+                Vladislav</primaryOriginator>
+            <otherOriginator>Jan Ilustrator</otherOriginator>
+            <publication>
+                <publisher>I. L. Kober</publisher>
+                <place>V Praze</place>
+                <year>1870</year>
+            </publication>
+        </intelectualEntity>
+        <technicalMetadata>
+            <format version="1.0">jpeg</format>
+            <extent>1218 x jpeg2000;1218 x mods-alto;1 x mods</extent>
+            <resolution>
+                <horizontal>1280</horizontal>
+                <vertical>1024</vertical>
+            </resolution>
+            <compression ratio="0.3">LZW</compression>
+            <color>
+                <model>RGB</model>
+                <depth>24</depth>
+            </color>
+            <iccProfile>some ICC profile</iccProfile>
+            <pictureSize>
+                <width>600</width>
+                <height>1000</height>
+            </pictureSize>
+        </technicalMetadata>
+        <registrarScopeIdentifiers>
+            <id type="signatura">MP-0001.308,8</id>
+            <id type="K4_pid">uuid:38bfc69d-1d10-4822-b7a4-c7531bb4aedx</id>
+        </registrarScopeIdentifiers>
+        <registrar code="tst02" id="38">
+            <name>Moravská zemská knihovna - test</name>
+            <description>testovací registrátor</description>
+            <created>2012-04-18T23:19:17.727+02:00</created>
+            <modified>2012-10-29T10:39:30.882+01:00</modified>
+            <registrationModes>
+                <mode name="BY_RESOLVER" enabled="true" />
+                <mode name="BY_REGISTRAR" enabled="false" />
+                <mode name="BY_RESERVATION" enabled="false" />
+            </registrationModes>
+        </registrar>
+        <archiver id="3">
+            <name>MK3</name>
+            <description>Mala knihovna 3</description>
+            <created>2012-04-18T23:19:15.842+02:00</created>
+        </archiver>
+        <digitalInstances count="0" />
+    </digitalDocument>
+</response>
+

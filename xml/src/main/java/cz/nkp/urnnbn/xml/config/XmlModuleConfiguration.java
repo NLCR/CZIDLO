@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class XmlModuleConfiguration {
@@ -33,6 +32,7 @@ public class XmlModuleConfiguration {
     private String apiV3ResponseXsdLocation;
     private String apiV4ResponseXsdLocation;
     private String apiV5ResponseXsdLocation;
+    private String apiV6ResponseXsdLocation;
 
     static public XmlModuleConfiguration instanceOf() {
         if (instance == null) {
@@ -42,9 +42,7 @@ public class XmlModuleConfiguration {
     }
 
     /**
-     *
      * @param loader
-     *
      * @throws IOException
      */
     public void initialize(PropertyLoader loader) throws IOException {
@@ -55,6 +53,8 @@ public class XmlModuleConfiguration {
         logger.log(Level.INFO, "APIv4 response.xsd location: {0}", apiV4ResponseXsdLocation);
         apiV5ResponseXsdLocation = loader.loadString(PropertyKeys.API_V5_RESPONSE_XSD_LOCATION);
         logger.log(Level.INFO, "APIv5 response.xsd location: {0}", apiV5ResponseXsdLocation);
+        apiV6ResponseXsdLocation = loader.loadString(PropertyKeys.API_V6_RESPONSE_XSD_LOCATION);
+        logger.log(Level.INFO, "APIv6 response.xsd location: {0}", apiV6ResponseXsdLocation);
     }
 
     public String getApiV3ResponseXsdLocation() {
@@ -67,5 +67,9 @@ public class XmlModuleConfiguration {
 
     public String getApiV5ResponseXsdLocation() {
         return apiV5ResponseXsdLocation;
+    }
+
+    public String getapiv6ResponseXsdLocation() {
+        return apiV6ResponseXsdLocation;
     }
 }

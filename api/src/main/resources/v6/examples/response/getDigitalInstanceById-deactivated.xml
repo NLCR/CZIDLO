@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response xmlns="http://resolver.nkp.cz/v6/">
+    <digitalInstance id="5" active="false">
+        <url>http://kramerius3.mzk.cz/kramerius/handle/BOA001/935239
+        </url>
+        <format>jpg;pdf</format>
+        <accessibility>volně přístupné</accessibility>
+        <created>2012-02-08T06:34:03.434+01:00</created>
+        <deactivated>2012-02-10T06:34:03.434+01:00</deactivated>
+    </digitalInstance>
+</response>

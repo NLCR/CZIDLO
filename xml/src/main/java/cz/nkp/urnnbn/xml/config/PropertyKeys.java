@@ -17,7 +17,6 @@
 package cz.nkp.urnnbn.xml.config;
 
 /**
- *
  * @author Martin Řehánek
  */
 class PropertyKeys {
@@ -25,4 +24,5 @@ class PropertyKeys {
     public static final String API_V3_RESPONSE_XSD_LOCATION = "czidlo.api.v3.response-xsd";
     public static final String API_V4_RESPONSE_XSD_LOCATION = "czidlo.api.v4.response-xsd";
     public static final String API_V5_RESPONSE_XSD_LOCATION = "czidlo.api.v5.response-xsd";
+    public static final String API_V6_RESPONSE_XSD_LOCATION = "czidlo.api.v6.response-xsd";
 }
