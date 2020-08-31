@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -110,7 +111,7 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
                     // show data
                     ResponseFormat format = Parser.parseFormat(formatStr);
                     boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
-                    return metadataResponse(id, format, withDigitalInstances);
+                    return metadataResponseByUrnNbn(id, format, withDigitalInstances);
                 }
             } else { //foreign urn:nbn
                 if (SUPPORTED_FOREIGN_URN_NBN_LANG_CODES.contains(langCode)) {
@@ -120,8 +121,10 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
                 }
             }
         } else if (id.toLowerCase().startsWith("isbn:")) {
-            //TODO: implement resolving by isbn
-            return Response.status(Status.NOT_FOUND).build();
+            ResponseFormat format = formatStr == null ? ResponseFormat.XML : Parser.parseFormat(formatStr);
+            boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+            String isbn = id.substring("isbn:".length());
+            return metadataResponseByIsbn(isbn, format, withDigitalInstances);
         } else if (id.toLowerCase().startsWith("issn:")) {
             //TODO: implement resolving by issn
             return Response.status(Status.NOT_FOUND).build();
@@ -197,9 +200,9 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
         return Response.seeOther(buildWebSearchUri(urnNbn.toString())).build();
     }
 
-    private Response metadataResponse(String urnNbnString, ResponseFormat format, boolean withDigitalInstances) {
+    private Response metadataResponseByUrnNbn(String urnNbnString, ResponseFormat format, boolean withDigitalInstances) {
         try {
-            UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
+            UrnNbnWithStatus urnNbnWithState = fetchUrnNbn(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
                 case ACTIVE:
                     DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());
@@ -224,9 +227,44 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
         }
     }
 
-    private UrnNbnWithStatus parse(String urnNbnString, ResponseFormat format) {
+    private Response metadataResponseByIsbn(String isbn, ResponseFormat format, boolean withDigitalInstances) {
+        try {
+            List<DigitalDocument> docs = dataAccessService().digDocsByIsbn(isbn);
+            if (docs.isEmpty()) {
+                throw new UnknownDigitalDocumentException(format, "isbn:" + isbn);
+            } else {
+                List<UrnNbn> urnNbns = new ArrayList<>();
+                for (DigitalDocument doc : docs) {
+                    urnNbns.add(dataAccessService().urnByDigDocId(doc.getId(), false));
+                }
+                return metadataResponse(docs, urnNbns, format, withDigitalInstances);
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    private UrnNbnWithStatus fetchUrnNbn(String urnNbnString, ResponseFormat format) {
         UrnNbn urnNbnParsed = Parser.parseUrn(format, urnNbnString);
         return dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnParsed.getRegistrarCode(), urnNbnParsed.getDocumentCode(), true);
+    }
+
+    private Response metadataResponse(List<DigitalDocument> docs, List<UrnNbn> urnNbns, ResponseFormat format, boolean withDigitalInstances) {
+        switch (format) {
+            case XML: {
+                String xml = digitalDocumentsBuilderXml(docs, urnNbns, withDigitalInstances).buildDocumentWithResponseHeader().toXML();
+                return Response.status(Status.OK).type(MediaType.APPLICATION_XML).entity(xml).build();
+            }
+            case JSON: {
+                String json = digitalDocumentsBuilderJson(docs, urnNbns, withDigitalInstances).toJson();
+                return Response.status(Status.OK).type(JSON_WITH_UTF8).entity(json).build();
+            }
+            default:
+                throw new RuntimeException();
+        }
     }
 
     private Response metadataResponse(DigitalDocument doc, UrnNbn urnNbn, ResponseFormat format, boolean withDigitalInstances) {
@@ -253,7 +291,7 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
         try {
             checkServerNotReadOnly(format);
             String login = context.getRemoteUser();
-            UrnNbnWithStatus urnNbnWithState = parse(urnNbnString, format);
+            UrnNbnWithStatus urnNbnWithState = fetchUrnNbn(urnNbnString, format);
             switch (urnNbnWithState.getStatus()) {
                 case ACTIVE:
                     DigitalDocument doc = dataAccessService().digDocByInternalId(urnNbnWithState.getUrn().getDigDocId());

@@ -69,6 +69,8 @@ public interface DataAccessService extends BusinessService {
 
     public DigitalDocument digDocByIdentifier(RegistrarScopeIdentifier id);
 
+    public List<DigitalDocument> digDocsByIsbn(String isbn);
+
     public List<DigitalDocument> digDocsOfIntEnt(long intEntId);
 
     public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until);

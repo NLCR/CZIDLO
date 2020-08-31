@@ -28,13 +28,10 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.OperationUtils;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertIntEntIdentifier;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByLongAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.UpdateIntEntIdentifier;
+import cz.nkp.urnnbn.core.persistence.impl.statements.*;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.IntEntIdentifierRT;
 
 /**
- *
  * @author Martin Řehánek
  */
 public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntIdentifierDAO {
@@ -67,7 +64,7 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
             if ("23505".equals(ex.getSQLState())) {
                 IdPart intEntId = new IdPart(IntEntIdentifierDAO.ATTR_IE_ID, Long.toString(identifier.getIntEntDbId()));
                 IdPart type = new IdPart(IntEntIdentifierDAO.ATTR_TYPE, identifier.getType().toString());
-                throw new AlreadyPresentException(new IdPart[] { intEntId, type });
+                throw new AlreadyPresentException(new IdPart[]{intEntId, type});
             } else {
                 throw new DatabaseException(ex);
             }
@@ -91,6 +88,21 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
     }
 
     @Override
+    public List<IntEntIdentifier> getIdList(String type, String value) throws DatabaseException {
+        try {
+            StatementWrapper st = new SelectAllAttrsByStringString(TABLE_NAME, ATTR_TYPE, type, ATTR_VALUE, value);
+            DaoOperation operation = new MultipleResultsOperation(st, new IntEntIdentifierRT());
+            return (List<IntEntIdentifier>) runInTransaction(operation);
+        } catch (PersistenceException ex) {
+            // cannot happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+    }
+
+    @Override
     public void updateIntEntIdValue(IntEntIdentifier id) throws DatabaseException, RecordNotFoundException {
         checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, id.getIntEntDbId());
         try {
@@ -101,7 +113,7 @@ public class IntEntIdentifierDaoPostgres extends AbstractDAO implements IntEntId
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
             return;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Cannot update {0}", new Object[] { IntelectualEntityDAO.TABLE_NAME, id });
+            logger.log(Level.SEVERE, "Cannot update {0}", new Object[]{IntelectualEntityDAO.TABLE_NAME, id});
             if ("23503".equals(ex.getSQLState())) {
                 logger.log(Level.SEVERE, "Referenced record doesn't exist", ex);
                 throw new RecordNotFoundException();

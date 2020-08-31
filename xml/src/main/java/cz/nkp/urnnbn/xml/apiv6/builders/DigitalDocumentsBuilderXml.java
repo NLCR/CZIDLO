@@ -19,22 +19,40 @@ package cz.nkp.urnnbn.xml.apiv6.builders;
 import nu.xom.Attribute;
 import nu.xom.Element;
 
+import java.util.List;
+
 /**
- *
  * @author Martin Řehánek
  */
 public class DigitalDocumentsBuilderXml extends XmlBuilder {
 
-    private final int digDocCount;
+    private final Integer digDocsCount;
+    private final List<DigitalDocumentBuilderXml> digDocBuilders;
 
-    public DigitalDocumentsBuilderXml(int digDocCount) {
-        this.digDocCount = digDocCount;
+    private DigitalDocumentsBuilderXml(Integer digDocsCount, List<DigitalDocumentBuilderXml> digDocBuilders) {
+        this.digDocsCount = digDocsCount;
+        this.digDocBuilders = digDocBuilders;
+    }
+
+    public DigitalDocumentsBuilderXml(List<DigitalDocumentBuilderXml> digDocBuilders) {
+        this(null, digDocBuilders);
+    }
+
+    public DigitalDocumentsBuilderXml(Integer digDocsCount) {
+        this(digDocsCount, null);
     }
 
     @Override
     public Element buildRootElement() {
         Element root = new Element("digitalDocuments", CZIDLO_NS);
-        root.addAttribute(new Attribute("count", Integer.toString(digDocCount)));
+        if (digDocsCount != null) {
+            root.addAttribute(new Attribute("count", Integer.toString(digDocsCount)));
+        } else {
+            root.addAttribute(new Attribute("count", Integer.toString(digDocBuilders.size())));
+            for (DigitalDocumentBuilderXml docBuilder : digDocBuilders) {
+                appendBuilderResultfNotNull(root, docBuilder);
+            }
+        }
         return root;
     }
 }

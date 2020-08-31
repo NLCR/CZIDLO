@@ -41,4 +41,8 @@ public class UnknownDigitalDocumentException extends ApiV6Exception {
                 registrarCode, idType.toString(), idValue.toString()));
     }
 
+    public UnknownDigitalDocumentException(ResponseFormat format, String id) {
+        super(format, Status.NOT_FOUND, errorCode, String.format("There is no digital document registered with '%s'.", id));
+    }
+
 }

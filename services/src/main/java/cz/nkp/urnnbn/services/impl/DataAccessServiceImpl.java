@@ -298,6 +298,23 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public List<DigitalDocument> digDocsByIsbn(String isbn) {
+        try {
+            List<IntEntIdentifier> ieIds = factory.intEntIdentifierDao().getIdList("ISBN", isbn);
+            List<DigitalDocument> result = new ArrayList<>();
+            for (IntEntIdentifier ieId : ieIds) {
+                result.addAll(factory.documentDao().getDocumentsOfIntEntity(ieId.getIntEntDbId()));
+            }
+            return result;
+        } catch (RecordNotFoundException ex) {
+            // logger.log(Level.WARNING, ex.getMessage());
+            return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public List<DigitalDocument> digDocsOfIntEnt(long intEntId) {
         try {
             return factory.documentDao().getDocumentsOfIntEntity(intEntId);

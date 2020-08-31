@@ -26,6 +26,22 @@ public abstract class AbstractDigitalDocumentResource extends ApiV6Resource {
                 intelectualEntityBuilderXml(digDoc.getIntEntId()));
     }
 
+    protected DigitalDocumentsBuilderXml digitalDocumentsBuilderXml(List<DigitalDocument> digDocs, List<UrnNbn> urnNbns, boolean withDigitalInstances) {
+        List<DigitalDocumentBuilderXml> builders = new ArrayList<>();
+        for (int i = 0; i < digDocs.size(); i++) {
+            DigitalDocument digDoc = digDocs.get(i);
+            UrnNbn urnNbn = urnNbns.get(i);
+            builders.add(new DigitalDocumentBuilderXml(digDoc, urnNbn,//
+                    registrarScopeIdentifiersBuilderXml(digDoc.getId()),//
+                    withDigitalInstances ? digitalInstancesBuilderXml(digDoc) : null,//
+                    registrarBuilderXml(digDoc.getRegistrarId()),//
+                    archiverBuilderXml(digDoc),//
+                    intelectualEntityBuilderXml(digDoc.getIntEntId()))
+            );
+        }
+        return new DigitalDocumentsBuilderXml(builders);
+    }
+
     private DigitalInstancesBuilderXml digitalInstancesBuilderXml(DigitalDocument digDoc) {
         List<DigitalInstance> instances = dataAccessService().digInstancesByDigDocId(digDoc.getId());
         List<DigitalInstanceBuilderXml> result = new ArrayList<DigitalInstanceBuilderXml>(instances.size());
@@ -64,6 +80,22 @@ public abstract class AbstractDigitalDocumentResource extends ApiV6Resource {
                 registrarBuilderJson(digDoc.getRegistrarId()),//
                 archiverBuilderJson(digDoc),//
                 intelectualEntityBuilderJson(digDoc.getIntEntId()));
+    }
+
+    protected DigitalDocumentsBuilderJson digitalDocumentsBuilderJson(List<DigitalDocument> digDocs, List<UrnNbn> urnNbns, boolean withDigitalInstances) {
+        List<DigitalDocumentBuilderJson> builders = new ArrayList<>();
+        for (int i = 0; i < digDocs.size(); i++) {
+            DigitalDocument digDoc = digDocs.get(i);
+            UrnNbn urnNbn = urnNbns.get(i);
+            builders.add(new DigitalDocumentBuilderJson(digDoc, urnNbn,//
+                    registrarScopeIdentifiersBuilderJson(digDoc.getId()),//
+                    withDigitalInstances ? digitalInstancesBuilderJson(digDoc) : null,//
+                    registrarBuilderJson(digDoc.getRegistrarId()),//
+                    archiverBuilderJson(digDoc),//
+                    intelectualEntityBuilderJson(digDoc.getIntEntId()))
+            );
+        }
+        return new DigitalDocumentsBuilderJson(builders);
     }
 
     private DigitalInstancesBuilderJson digitalInstancesBuilderJson(DigitalDocument digDoc) {
