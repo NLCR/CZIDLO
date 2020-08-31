@@ -227,7 +227,7 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
 
     private Response metadataResponseByIsbn(String isbn, ResponseFormat format, boolean withDigitalInstances) {
         try {
-            List<DigitalDocument> docs = dataAccessService().digDocsByIsbn(isbn);
+            List<DigitalDocument> docs = dataAccessService().digDocsByIsbn(normalizeIsbn(isbn));
             if (docs.isEmpty()) {
                 throw new UnknownDigitalDocumentException(format, "isbn:" + isbn);
             } else {
@@ -243,6 +243,10 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
             LOGGER.log(Level.SEVERE, e.getMessage());
             throw new InternalException(format, e);
         }
+    }
+
+    private String normalizeIsbn(String isbn) {
+        return isbn.replaceAll("-", "").replace(" ", "");
     }
 
     private Response metadataResponseByIssn(String issn, ResponseFormat format, boolean withDigitalInstances) {

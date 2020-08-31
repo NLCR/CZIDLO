@@ -5,7 +5,7 @@ Copyright (C) 2013-2018 Martin Řehánek
 
 #####################################
 #####################################
-#         CZIDLO version 4.6.1      #
+#         CZIDLO version 5.0        #
 #####################################
 #####################################
 
@@ -121,7 +121,8 @@ This archive should contain following files:
 - `databaseUpgrader-4.2.2.jar` - java program that replaces plaintext passwords with their encrypted form.
 - `updateDatabase_4.2.2_to_4.3.sql` - sql script for updating core database (from version 4.2.2 to version 4.3).
 - `updateDatabase_4.3_to_4.4-4.6.sql` - sql script for updating core database (from version 4.3 to versions 4.4, 4.4.1, 4.5 and 4.6).
-- `updateDatabase_4.4-4.6_to_4.6.1` - sql script for updating core database (from versions versions 4.4, 4.4.1, 4.5 and 4.6 to version 4.6.1).
+- `updateDatabase_4.4-4.6_to_4.6.1.sql` - sql script for updating core database (from versions versions 4.4, 4.4.1, 4.5 and 4.6 to version 4.6.1).
+- `updateDatabase_4.6.1_to_5.0.sql` - sql script for updating core database (from version 4.6.1 to version 5.0).
 - `solr-7.2.1-czidlo.zip` - zip archive containing solr server with CZIDLO configuration
 - `cliUtils.jar` - command line application with some utilities
 
@@ -229,6 +230,23 @@ You should always backup your database before upgrading it in order to avoid dat
 
 Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
+
+##################################
+### Upgrade from version 5.0   ###
+##################################
+
+#### Core database ####
+
+1. Use script `updateDatabase_4.6.1_to_5.0.sql`. Be sure to run this script as user that has all necessary rights (creating, deleting and updating databases, indexes, views, functions, triggers).
+Typically something like this: `psql czidlo_core czidlo_user <./updateDatabase_4.6.1_to_5.0.sql` with czidlo_core being name of database and czidlo_user being user that is owner of the database.
+
+#### Process database ####
+
+No upgrade needed.
+
+#### Solr server ####
+
+No upgrade needed.
 
 ##################################
 ### Upgrade from version 4.6   ###
