@@ -101,6 +101,8 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
     @Path("{id}")
     public Response resolve(@Context HttpServletRequest context, @PathParam("id") String id, @QueryParam(PARAM_FORMAT) String formatStr,
                             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
+        ResponseFormat format = Parser.parseFormat(formatStr);
+        boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
         if (id.toLowerCase().startsWith("urn:nbn:") && id.length() >= "urn:nbn:XX".length()) {
             String langCode = id.split(":")[2].substring(0, 2).toLowerCase();
             if ("cz".equals(langCode)) { //urn:nbn:cz
@@ -109,8 +111,6 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
                     return redirectionResponse(context, id);
                 } else {
                     // show data
-                    ResponseFormat format = Parser.parseFormat(formatStr);
-                    boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
                     return metadataResponseByUrnNbn(id, format, withDigitalInstances);
                 }
             } else { //foreign urn:nbn
@@ -121,13 +121,11 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
                 }
             }
         } else if (id.toLowerCase().startsWith("isbn:")) {
-            ResponseFormat format = formatStr == null ? ResponseFormat.XML : Parser.parseFormat(formatStr);
-            boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
             String isbn = id.substring("isbn:".length());
             return metadataResponseByIsbn(isbn, format, withDigitalInstances);
         } else if (id.toLowerCase().startsWith("issn:")) {
-            //TODO: implement resolving by issn
-            return Response.status(Status.NOT_FOUND).build();
+            String issn = id.substring("issn:".length());
+            return metadataResponseByIssn(issn, format, withDigitalInstances);
         } else { //unknown identifier schema
             return Response.status(Status.BAD_REQUEST).build();
         }
@@ -232,6 +230,26 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
             List<DigitalDocument> docs = dataAccessService().digDocsByIsbn(isbn);
             if (docs.isEmpty()) {
                 throw new UnknownDigitalDocumentException(format, "isbn:" + isbn);
+            } else {
+                List<UrnNbn> urnNbns = new ArrayList<>();
+                for (DigitalDocument doc : docs) {
+                    urnNbns.add(dataAccessService().urnByDigDocId(doc.getId(), false));
+                }
+                return metadataResponse(docs, urnNbns, format, withDigitalInstances);
+            }
+        } catch (WebApplicationException e) {
+            throw e;
+        } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+            throw new InternalException(format, e);
+        }
+    }
+
+    private Response metadataResponseByIssn(String issn, ResponseFormat format, boolean withDigitalInstances) {
+        try {
+            List<DigitalDocument> docs = dataAccessService().digDocsByIssn(issn);
+            if (docs.isEmpty()) {
+                throw new UnknownDigitalDocumentException(format, "issn:" + issn);
             } else {
                 List<UrnNbn> urnNbns = new ArrayList<>();
                 for (DigitalDocument doc : docs) {
