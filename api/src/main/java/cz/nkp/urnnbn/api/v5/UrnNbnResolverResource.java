@@ -23,16 +23,13 @@ import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Path("/resolver")
-public class ResolverResource extends AbstractDigitalDocumentResource {
+public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
-    private static final Logger LOGGER = Logger.getLogger(ResolverResource.class.getName());
-    private static final List<String> SUPPORTED_FOREIGN_URN_NBN_LANG_CODES = Arrays.asList(new String[]{"de", "it", "fi", "se", "no", "hu", "nl", "si"});
+    private static final Logger LOGGER = Logger.getLogger(UrnNbnResolverResource.class.getName());
 
     @Path("{urn}/registrarScopeIdentifiers")
     public RegistrarScopeIdentifiersResource getRegistrarScopeIdentifiersResource(@DefaultValue("xml") @QueryParam(PARAM_FORMAT) String formatStr,
@@ -97,66 +94,17 @@ public class ResolverResource extends AbstractDigitalDocumentResource {
     }
 
     @GET
-    @Path("{id}")
-    public Response resolve(@Context HttpServletRequest context, @PathParam("id") String id, @QueryParam(PARAM_FORMAT) String formatStr,
+    @Path("{urn}")
+    public Response resolve(@Context HttpServletRequest context, @PathParam("urn") String urnNbnString, @QueryParam(PARAM_FORMAT) String formatStr,
                             @DefaultValue("true") @QueryParam(PARAM_WITH_DIG_INST) String withDigitalInstancesStr) {
-        if (id.toLowerCase().startsWith("urn:nbn:") && id.length() >= "urn:nbn:XX".length()) {
-            String langCode = id.split(":")[2].substring(0, 2).toLowerCase();
-            if ("cz".equals(langCode)) { //urn:nbn:cz
-                if (formatStr == null) {
-                    // always redirect somewhere
-                    return redirectionResponse(context, id);
-                } else {
-                    // show data
-                    ResponseFormat format = Parser.parseFormat(formatStr);
-                    boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
-                    return metadataResponse(id, format, withDigitalInstances);
-                }
-            } else { //foreign urn:nbn
-                if (SUPPORTED_FOREIGN_URN_NBN_LANG_CODES.contains(langCode)) {
-                    return redirectionToForeignResolverResponse(context, id);
-                } else {
-                    return Response.status(Status.NOT_FOUND).build();
-                }
-            }
-        } else if (id.toLowerCase().startsWith("isbn:")) {
-            //TODO: implement resolving by isbn
-            return Response.status(Status.NOT_FOUND).build();
-        } else if (id.toLowerCase().startsWith("issn:")) {
-            //TODO: implement resolving by issn
-            return Response.status(Status.NOT_FOUND).build();
-        } else { //unknown identifier schema
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-    }
-
-    private Response redirectionToForeignResolverResponse(HttpServletRequest context, String id) {
-        try {
-            String urnNbnString = id.toLowerCase();
-            String langCode = urnNbnString.split(":")[2].substring(0, 2).toLowerCase();
-            switch (langCode) {
-                case "de"://http://nbn-resolving.de/urn:nbn:de:101:1-200910131091
-                    return Response.seeOther(new URI("http://nbn-resolving.de/" + urnNbnString)).build();
-                case "it": //http://nbn.depositolegale.it/urn:nbn:it:unimi-6456
-                    return Response.seeOther(new URI("http://nbn.depositolegale.it/" + urnNbnString)).build();
-                case "fi": //http://urn.fi/urn:nbn:fi-fe20042357
-                    return Response.seeOther(new URI("http://urn.fi/" + urnNbnString)).build();
-                case "se": //http://urn.kb.se/resolve?urn=urn:nbn:se:su:diva-1278
-                    return Response.seeOther(new URI("http://urn.kb.se/resolve?urn=" + urnNbnString)).build();
-                case "no": //http://urn.nb.no/URN:NBN:no-nb_digibok_2010090303019
-                    return Response.seeOther(new URI("http://urn.nb.no/" + urnNbnString)).build();
-                case "hu": //http://nbn-test.urn.hu/N2L?urn:nbn:hu-107035
-                    return Response.seeOther(new URI("http://nbn-test.urn.hu/N2L?" + urnNbnString)).build();
-                case "nl": //http://persistent-identifier.nl/?identifier=URN:NBN:NL:UI:10-1-115852
-                    return Response.seeOther(new URI("http://persistent-identifier.nl/?identifier=" + urnNbnString)).build();
-                case "si": //http://www.nbn.si/URN:NBN:SI:FSD:MAG-1DC22KA
-                    return Response.seeOther(new URI("http://www.nbn.si/" + urnNbnString)).build();
-                default:
-                    return Response.status(Status.NOT_FOUND).build();
-            }
-        } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-            throw new InternalException(ResponseFormat.XML, e.getMessage());
+        if (formatStr == null) {
+            // allways redirect somwehere
+            return redirectionResponse(context, urnNbnString);
+        } else {
+            // show data
+            ResponseFormat format = Parser.parseFormat(formatStr);
+            boolean withDigitalInstances = Parser.parseBooleanQueryParam(format, withDigitalInstancesStr, PARAM_WITH_DIG_INST);
+            return metadataResponse(urnNbnString, format, withDigitalInstances);
         }
     }
 
