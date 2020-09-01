@@ -15,4 +15,6 @@ public abstract class PublishableEntityDTO extends IntelectualEntityDTO {
     public void setPublication(PublicationDTO publication) {
         this.publication = publication;
     }
+
+
 }

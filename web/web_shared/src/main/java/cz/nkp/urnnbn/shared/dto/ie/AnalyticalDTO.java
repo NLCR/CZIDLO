@@ -42,7 +42,7 @@ public class AnalyticalDTO extends IntelectualEntityDTO implements Serializable 
     }
 
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
+        this.isbn = normalizeIsbn(isbn);
     }
 
     public String getIssn() {

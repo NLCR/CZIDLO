@@ -53,7 +53,7 @@ public class SourceDocumentDTO implements Serializable {
     }
 
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
+        this.isbn = Utils.normalizeIsbn(isbn);
     }
 
     public String getIssn() {

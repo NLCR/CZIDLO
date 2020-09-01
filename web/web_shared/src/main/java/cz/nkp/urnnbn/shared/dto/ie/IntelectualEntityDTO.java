@@ -115,4 +115,8 @@ public abstract class IntelectualEntityDTO implements Serializable {
         return true;
     }
 
+    String normalizeIsbn(String isbn) {
+        return Utils.normalizeIsbn(isbn);
+    }
+
 }

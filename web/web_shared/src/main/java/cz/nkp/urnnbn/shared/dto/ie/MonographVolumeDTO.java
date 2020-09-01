@@ -40,7 +40,7 @@ public class MonographVolumeDTO extends PublishableEntityDTO implements Serializ
     }
 
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
+        this.isbn = normalizeIsbn(isbn);
     }
 
     public String getOtherId() {
