@@ -2,9 +2,9 @@ package cz.nkp.urnnbn.xml.apiv3.unmarshallers.validation;
 
 import junit.framework.TestCase;
 
-public class NoLeadingRoTrailingWhitespacesEnhancerTest extends TestCase {
+public class NoLeadingOrTrailingWhitespacesEnhancerTest extends TestCase {
 
-    public NoLeadingRoTrailingWhitespacesEnhancerTest(String testName) {
+    public NoLeadingOrTrailingWhitespacesEnhancerTest(String testName) {
         super(testName);
     }
 

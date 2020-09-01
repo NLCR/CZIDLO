@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.xml.apiv6.unmarshallers.validation;
 
-public class NoLeadingRoTrailingWhitespacesEnhancer implements ElementContentEnhancer {
+public class NoLeadingOrTrailingWhitespacesEnhancer implements ElementContentEnhancer {
 
     @Override
     public String toEnhancedValueOrNull(String string) {

@@ -210,7 +210,7 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     private Panel insertOaiMetadataPrefixPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
-        oaiMetadataPrefixField = new TextInputValueField(new LimitedLengthValidator(20), constants.processOaiAdapterOaiMetadataPrefix(), "", true, 160);
+        oaiMetadataPrefixField = new TextInputValueField(new LimitedLengthValidator(40), constants.processOaiAdapterOaiMetadataPrefix(), "", true, 160);
         result.add(oaiMetadataPrefixField.getLabelWidget());
         result.add(oaiMetadataPrefixField.getContentWidget());
         return result;
@@ -220,7 +220,7 @@ public class ScheduleProcessOaiAdapterDialogBox extends AbstractScheduleProcessD
     private Panel selectOaiSetPanel() {
         HorizontalPanel result = new HorizontalPanel();
         result.setSpacing(5);
-        oaiSetField = new TextInputValueField(new LimitedLengthValidator(20), constants.processOaiAdapterOaiSet(), "", false, 160);
+        oaiSetField = new TextInputValueField(new LimitedLengthValidator(40), constants.processOaiAdapterOaiSet(), "", false, 160);
         result.add(oaiSetField.getLabelWidget());
         result.add(oaiSetField.getContentWidget());
         return result;

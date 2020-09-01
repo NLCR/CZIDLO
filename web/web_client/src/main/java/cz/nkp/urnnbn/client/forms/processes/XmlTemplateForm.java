@@ -21,7 +21,7 @@ public class XmlTemplateForm extends Form {
         FormFields result = new FormFields();
         result.addField("name",
                 new TextInputValueField(new LimitedLengthValidator(1, 20), constants.processOaiAdapterTransformationTitle(), "", true));
-        result.addField("description", new TextInputValueField(new LimitedLengthValidator(30),
+        result.addField("description", new TextInputValueField(new LimitedLengthValidator(50),
                 constants.processOaiAdapterTransformationDescription(), "", false));
         result.addField("file", new UploadFileField(constants.processOaiAdapterTransformationXslt()));
         return result;

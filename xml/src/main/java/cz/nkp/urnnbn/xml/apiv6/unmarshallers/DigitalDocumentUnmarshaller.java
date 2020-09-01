@@ -23,7 +23,7 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.RegistrarScopeIdentifier;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.xml.apiv6.unmarshallers.validation.LimitedLengthEnhancer;
-import cz.nkp.urnnbn.xml.apiv6.unmarshallers.validation.NoLeadingRoTrailingWhitespacesEnhancer;
+import cz.nkp.urnnbn.xml.apiv6.unmarshallers.validation.NoLeadingOrTrailingWhitespacesEnhancer;
 import cz.nkp.urnnbn.xml.commons.Xpath;
 import nu.xom.Element;
 import nu.xom.Nodes;
@@ -162,7 +162,7 @@ public class DigitalDocumentUnmarshaller extends Unmarshaller {
                 for (int i = 0; i < predecessors.size(); i++) {
                     Element predecessor = (Element) predecessors.get(i);
                     UrnNbn urnNbn = UrnNbn.valueOf(attributeContentOrNull("value", predecessor));
-                    String note = attributeContentOrNull("note", predecessor, new NoLeadingRoTrailingWhitespacesEnhancer());
+                    String note = attributeContentOrNull("note", predecessor, new NoLeadingOrTrailingWhitespacesEnhancer());
                     UrnNbnWithStatus urn = new UrnNbnWithStatus(urnNbn, null, note);
                     result.add(urn);
                 }
