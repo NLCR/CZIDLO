@@ -7,14 +7,12 @@
         <groupId>cz.nkp.urnnbn</groupId>
         <artifactId>czidlo</artifactId>
         <!--suppress MavenPropertyInParent -->
-        <!--<version>${czidlo.version}</version>-->
         <version>5.0</version>
     </parent>
 
     <artifactId>web</artifactId>
     <name>CZIDLO - web</name>
     <packaging>pom</packaging>
-    <!--<version>${czidlo.version}</version>-->
     <version>5.0</version>
 
     <modules>

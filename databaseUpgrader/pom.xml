@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>databaseUpgrader</artifactId>
-    <version>${czidlo.version}</version>
+    <version>5.0</version>
     <name>CZIDLO - database upgrader</name>
 
     <properties>

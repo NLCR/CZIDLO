@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cz.nkp.urnnbn</groupId>
     <artifactId>solr_indexer</artifactId>
-    <version>${czidlo.version}</version>
+    <version>5.0</version>
     <packaging>jar</packaging>
     <name>CZIDLO - solr indexer</name>
 
