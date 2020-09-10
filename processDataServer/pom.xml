@@ -63,12 +63,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>web-common</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>processManager</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>cglib</artifactId>

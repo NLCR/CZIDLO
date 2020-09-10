@@ -50,12 +50,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>xml</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api_client</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
         </dependency>
 
         <dependency>

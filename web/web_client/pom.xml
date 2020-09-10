@@ -79,13 +79,13 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>web_shared</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
         </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>web_server</artifactId>
-            <version>${project.version}</version>
+            <version>5.0</version>
             <exclusions>
                 <!-- see https://vaadin.com/forum#!/thread/9316748 -->
                 <exclusion>
