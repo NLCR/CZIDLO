@@ -12,7 +12,7 @@
 
     <properties>
         <!--following properties must be defined in every module: -->
-        <czidlo.version>5.0.alpha</czidlo.version>
+        <czidlo.version>5.0</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

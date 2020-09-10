@@ -1,4 +1,4 @@
-README file for CZIDLO v4.6
+README file for CZIDLO v5.0
 
 Copyright (C) 2013-2018 Martin Řehánek
 
@@ -98,6 +98,10 @@ Version 4.6
 Version 4.6.1
 - fix bug in statistics (urn:nbn assignments)
 
+Version 5.0
+- see https://github.com/NLCR/CZIDLO/wiki/P%C5%99ehled-zm%C4%9Bn#50
+
+
 ##################
 ## Installation ##
 ##################
@@ -114,7 +118,7 @@ This archive should contain following files:
 - `api.war` - API module
 - `oaiPmhProvider.war` - OAI-PMH provider module
 - `processDataServer.war` - application to access logs and outputs of processes
-- `initDatabase_4.6.1.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
+- `initDatabase_5.0.sql` - sql script for database initialization (only the core database, does NOT include database for processes and OAI Adapter xsl transformations)
 - `updateDatabase-2.0-2.2_to_2.3-3.0.sql` - sql script for upgrading core database (from CZIDLO versions 2.0, 2.1 or 2.2 to versions 2.3, 2.4 or 3.0)
 - `updateDatabase-2.3-3.0_to_4.1.sql` - sql script for upgrading core database (from versions 2.3, 2.4 or 3.0 to version 4.1)
 - `updateDatabase_4.1_to_4.2.2.sql` - sql script for updating core database (from version 4.1 to version 4.2.2).
@@ -130,7 +134,7 @@ It is NOT sufficient only to run this script to update database. Complete databa
 
 ### Process ###
 
-1. Provided you have database installed and properly configured, you should first run the `initDatabase_4.6.1.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
+1. Provided you have database installed and properly configured, you should first run the `initDatabase_5.0.sql` script (e. g. by psql) in order to create tables, sequences and indexes.
 
    Script also creates one administrator account (admin:admin).
    It is very important that this account is removed immediately after another administrator account (with publicly unknown password) is created. Or at least the password for user 'admin' should be changed.
@@ -232,7 +236,7 @@ Apart from that, applications need to be replaced with newer versions.
 This will probably require fixing configuration files again, since application server will probably replace these files with default ones from war archives.
 
 ##################################
-### Upgrade from version 5.0   ###
+### Upgrade from version 4.6.1 ###
 ##################################
 
 #### Core database ####
