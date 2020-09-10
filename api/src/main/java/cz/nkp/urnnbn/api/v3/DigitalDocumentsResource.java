@@ -30,7 +30,7 @@ import cz.nkp.urnnbn.core.dto.UrnNbn;
  *
  * @author Martin Řehánek
  */
-public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v2_v3.AbstractDigitalDocumentsResource {
+public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v3.v3_abstract.AbstractDigitalDocumentsResource {
 
     @Context
     private UriInfo context;

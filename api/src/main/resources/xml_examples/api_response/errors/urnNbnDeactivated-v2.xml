@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>URN_NBN_DEACTIVATED</v2:code>
-    <v2:message>urn:nbn:cz:tst02-00000f has been deactivated
-        at 2013-01-08T03:17:32.996+01:00</v2:message>
-</v2:error>

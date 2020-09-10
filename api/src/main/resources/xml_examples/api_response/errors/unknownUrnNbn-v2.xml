@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>UNKNOWN_URN</v2:code>
-    <v2:message>No such urn 'urn:nbn:cz:boa001-00000d'
-        has been assigned yet</v2:message>
-</v2:error>

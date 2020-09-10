@@ -17,7 +17,6 @@ import cz.nkp.urnnbn.xml.commons.XsltXmlTransformer;
 
 /**
  * Hello world!
- *
  */
 public class Main {
 
@@ -25,27 +24,22 @@ public class Main {
         // xpathTest();
         // xsltTest();
         // transformationTest();
-
         validateXmlExamples();
-        testApiV2Responses();
-        testApiV2ErrorResponses();
     }
 
     private static void validateXmlExamples() {
         // TODO: move to API test
-        // TODO: move to the test class, rootDirs should be relative
+        // TODO: move to the test class
         validateDigDocRegistrationApiV3Examples();
         validateDigitalInstanceImportApiV3Examples();
         validateResponseExamples();
         validateErrorResponseExamples();
-        transformDigDocRegistrationV2ToV3WithValidation();
-        transformDigInstImportV2ToV3WithValidation();
         validateOaiResponse();
     }
 
     private static void validateDigDocRegistrationApiV3Examples() {
-        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
-        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/";
+        File xsd = new File("xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
+        String rootDir = "xml/src/main/resources/xml/request/registerDigitalDocument/";
         validate(rootDir + "analytical.xml", xsd);
         validate(rootDir + "monograph-withUrnNbn.xml", xsd);
         validate(rootDir + "monograph.xml", xsd);
@@ -59,8 +53,8 @@ public class Main {
     }
 
     private static void validateDigitalInstanceImportApiV3Examples() {
-        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
-        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/";
+        File xsd = new File("xml/src/main/resources/xsd/digInstImport.xsd.xml");
+        String rootDir = "xml/src/main/resources/xml/request/importDigitalInstance/";
         validate(rootDir + "complete.xml", xsd);
         validate(rootDir + "minimal.xml", xsd);
         validate(rootDir + "https.xml", xsd);
@@ -68,8 +62,8 @@ public class Main {
     }
 
     private static void validateResponseExamples() {
-        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
-        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
+        File xsd = new File("xml/src/main/resources/xsd/response.xsd.xml");
+        String rootDir = "xml/src/main/resources/xml/response/";
         // import digital instance
         validate(rootDir + "importDigitalInstance.xml", xsd);
         validate(rootDir + "importDigitalInstance-minimal.xml", xsd);
@@ -132,8 +126,8 @@ public class Main {
     }
 
     private static void validateErrorResponseExamples() {
-        File xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
-        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/errors/";
+        File xsd = new File("xml/src/main/resources/xsd/response.xsd.xml");
+        String rootDir = "xml/src/main/resources/xml/response/errors/";
         validate(rootDir + "digitalInstanceAlreadyPresent.xml", xsd);
         validate(rootDir + "invalidDigitalDocumentIdType.xml", xsd);
         validate(rootDir + "invalidUrnNbn.xml", xsd);
@@ -175,7 +169,7 @@ public class Main {
 
     private static void xpathTest() {
         try {
-            File in = new File("/home/martin/NetBeansProjects/xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
+            File in = new File("xml/src/main/java/cz/nkp/urnnbn/xml/examples/request/importDigitalInstance.xml");
             nu.xom.Document doc = XOMUtils.loadDocumentWithoutValidation(in);
             XPathContext context = new XPathContext("r", Namespaces.CZIDLO_V3_NS);
             Nodes nodes = doc.query("r:digitalInstance/r:url", context);
@@ -192,54 +186,9 @@ public class Main {
         }
     }
 
-    private static void transformDigDocRegistrationV2ToV3WithValidation() {
-        try {
-            String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/registerDigitalDocument/apiV2/";
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v2ToV3Request/digDocRegistrationV2ToV3.xsl");
-            Document xsltDoc = XOMUtils.loadDocumentWithoutValidation(xsltFile);
-
-            File digDocRegistrationV3Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digDocRegistration.xsd.xml");
-            File digDocRegistrationV2Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/apiV2/registerDigitalDocument.xsd");
-
-            validateTransformValidate(rootDir + "monograph.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "monograph-withUrnNbn.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "monographVolume.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "analytical.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "periodical.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "periodicalVolume.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "periodicalIssue.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "thesis.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "otherEntity-map.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-            validateTransformValidate(rootDir + "otherEntity-musicSheet.xml", xsltDoc, digDocRegistrationV2Xsd, digDocRegistrationV3Xsd);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private static void transformDigInstImportV2ToV3WithValidation() {
-        try {
-            String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importDigitalInstance/apiV2/";
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v2ToV3Request/digInstImportV2ToV3.xsl");
-            Document xsltDoc = XOMUtils.loadDocumentWithoutValidation(xsltFile);
-
-            File digInstImportV3Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/digInstImport.xsd.xml");
-            File digInstImportV2Xsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/apiV2/importDigitalInstance.xsd");
-
-            validateTransformValidate(rootDir + "complete.xml", xsltDoc, digInstImportV2Xsd, digInstImportV3Xsd);
-            validateTransformValidate(rootDir + "https.xml", xsltDoc, digInstImportV2Xsd, digInstImportV3Xsd);
-            validateTransformValidate(rootDir + "minimal.xml", xsltDoc, digInstImportV2Xsd, digInstImportV3Xsd);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     private static void validateOaiResponse() {
-        String rootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/oai/";
-        File resolverFormatXsd = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/response.xsd.xml");
+        String rootDir = "xml/src/main/resources/xml/oai/";
+        File resolverFormatXsd = new File("xml/src/main/resources/xsd/response.xsd.xml");
         validate(rootDir + "response-resolver.xml", resolverFormatXsd);
     }
 
@@ -287,8 +236,8 @@ public class Main {
 
     static void transformationTest() {
         try {
-            File inFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/oai/response-resolver.xml");
-            File xsltFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xslt/oai/czidloToOaiDc.xsl");
+            File inFile = new File("xml/src/main/resources/xml/oai/response-resolver.xml");
+            File xsltFile = new File("xml/src/main/resources/xslt/oai/czidloToOaiDc.xsl");
             Document srcDoc = XOMUtils.loadDocumentWithoutValidation(inFile);
             Document xslt = XOMUtils.loadDocumentWithoutValidation(xsltFile);
             XsltXmlTransformer transformer = new XsltXmlTransformer(xslt);
@@ -297,88 +246,6 @@ public class Main {
             System.err.println("transformed: " + transformed);
         } catch (XSLException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParsingException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private static void testApiV2Responses() {
-        try {
-            String xmlRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/";
-            String xsltRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v3ToV2Response/";
-            transform(xmlRootDir + "getRegistrar.xml", xsltRootDir + "getRegistrar.xsl", "v2");
-            transform(xmlRootDir + "getRegistrarWithLibrariesAndCatalogs.xml", xsltRootDir + "getRegistrar.xsl", "v2");
-            transform(xmlRootDir + "getRegistrars.xml", xsltRootDir + "getRegistrars.xsl", "v2");
-            transform(xmlRootDir + "getRegistrarsWithLibrariesAndCatalogs.xml", xsltRootDir + "getRegistrars.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbnReservations.xml", xsltRootDir + "getUrnNbnReservations.xsl", "v2");
-            transform(xmlRootDir + "reserveUrnNbns.xml", xsltRootDir + "reserveUrnNbnBlock.xsl", "v2");
-            transform(xmlRootDir + "getDigitalDocuments.xml", xsltRootDir + "getDigitalDocuments.xsl", "v2");
-
-            transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-MONOGRAPH_VOLUME.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL_VOLUME.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-PERIODICAL_ISSUE.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-ANALYTICAL.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-THESIS.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "getDigDoc/getDigDoc-OTHER.xml", xsltRootDir + "getDigitalDocument.xsl", "v2");
-
-            transform(xmlRootDir + "getRegistrarScopeIdentfiersOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifiers.xsl", "v2");
-            transform(xmlRootDir + "getRegistrarScopeIdentifierValueOfDigDoc.xml", xsltRootDir + "getRegistrarScopeIdentifierValue.xsl", "v2");
-            transform(xmlRootDir + "deleteRegistrarScopeIdentifier.xml", xsltRootDir + "deleteRegistrarScopeIdentifier.xsl", "v2");
-            transform(xmlRootDir + "deleteRegistrarScopeIdentifiersOfDigDoc.xml", xsltRootDir + "deleteRegistrarScopeIdentifiers.xsl", "v2");
-            transform(xmlRootDir + "postRegistrarScopeIdentifier-insert.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
-            transform(xmlRootDir + "postRegistrarScopeIdentifier-update.xml", xsltRootDir + "setOrUpdateRegistrarScopeIdentifier.xsl", "v2");
-            transform(xmlRootDir + "getDigitalInstances-global.xml", xsltRootDir + "getDigitalInstances.xsl", "v2");
-            transform(xmlRootDir + "getDigitalInstancesOfDigDoc.xml", xsltRootDir + "getDigitalInstances.xsl", "v2");
-            transform(xmlRootDir + "getDigitalInstanceById.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "getDigitalInstanceById-deactivated.xml", xsltRootDir + "getDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "importDigitalInstance.xml", xsltRootDir + "importDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "importDigitalInstance-minimal.xml", xsltRootDir + "importDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "deactivateDigitalInstance.xml", xsltRootDir + "deactivateDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "deactivateDigitalInstance-minimal.xml", xsltRootDir + "deactivateDigitalInstance.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/active.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/active-formalyReserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/deactivated.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/deactivated-formalyReserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/free.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "getUrnNbn/reserved.xml", xsltRootDir + "getUrnNbn.xsl", "v2");
-            transform(xmlRootDir + "registerDigitalDocument/byResolver.xml", xsltRootDir + "registerDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "registerDigitalDocument/byReservation.xml", xsltRootDir + "registerDigitalDocument.xsl", "v2");
-            transform(xmlRootDir + "registerDigitalDocument/byRegistrar.xml", xsltRootDir + "registerDigitalDocument.xsl", "v2");
-        } catch (ParsingException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private static void testApiV2ErrorResponses() {
-        try {
-            String xmlRootDir = "/home/martin/NetBeansProjects/xml/src/main/resources/xml/response/errors/";
-            String xsltFilename = "/home/martin/NetBeansProjects/xml/src/main/resources/xslt/v3ToV2Response/error.xsl";
-            transform(xmlRootDir + "digitalInstanceAlreadyPresent.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidDigitalDocumentIdType.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidUrnNbn.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unknownDigitalInstance.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "incorrectPredecessorFree.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidDigitalInstanceId.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "notAuthorized.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unknownDigitalLibrary.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "incorrectPredecessorReserved.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidQueryParamValue.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "registrarScopeIdValueNotDefined.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unknownRegistrar.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidArchiverId.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidRegistrarCode.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unauthorizedRegistrationMode.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unknownUrnNbn.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidData.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "invalidRegistrarScopeIdentifier.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "unknownDigitalDocument.xml", xsltFilename, "v2");
-            transform(xmlRootDir + "urnNbnDeactivated.xml", xsltFilename, "v2");
         } catch (ParsingException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

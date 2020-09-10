@@ -30,8 +30,8 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
  */
 public class ImportExamples extends TestCase {
 
-    // File importExamplesDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml/request/importRecord");
-    // File importSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/recordImport.xsd.xml");
+    // File importExamplesDir = new File("xml/src/main/resources/xml/request/importRecord");
+    // File importSchemaFile = new File("xml/src/main/resources/xsd/recordImport.xsd.xml");
     // String importSchema;
 
     public ImportExamples(String testName) {

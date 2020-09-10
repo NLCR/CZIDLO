@@ -15,7 +15,6 @@
         <p><a href="/api/v5/">API verze 5 (deprecated)</a></p>
         <p><a href="/api/v4/">API verze 4 (deprecated)</a></p>
         <p><a href="/api/v3/">API verze 3 (deprecated)</a></p>
-        <p><a href="/api/v2/">API verze 2 (deprecated)</a></p>
         <p>
         Pro ruční vyhledávání, vkládání či editaci záznamů a další administraci použijte <a href ="/web">webové rozhraní</a>.
         Pro hromadné sklízení záznamů použijte <a href ="/oaiPmhProvider/provider">OAI-PMH</a>,

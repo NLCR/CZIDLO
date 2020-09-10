@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:registrar code="tst02" xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:created>2012-04-18T23:19:17.727+02:00</v2:created>
-    <v2:modified>2012-10-29T10:39:30.882+01:00</v2:modified>
-    <v2:name>Moravská zemská knihovna - test</v2:name>
-    <v2:description>testovací registrátor</v2:description>
-</v2:registrar>

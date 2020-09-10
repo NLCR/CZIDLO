@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>INVALID_DIGITAL_DOCUMENT_ID_TYPE</v2:code>
-    <v2:message>Incorrect syntax in 'OAI+harvester':character
-        '+' at position 3 is not permitted</v2:message>
-</v2:error>

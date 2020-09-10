@@ -32,7 +32,7 @@ public class ImportValidator {
         factory.setValidating(false);
         factory.setNamespaceAware(true);
         SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        String schemaPath = "/home/hanis/prace/resolver/urnnbn-resolver-v2/legacyRecordsImport/src/main/java/cz/nkp/urnnbn/legacyrecordsimport/validation/import.xsd";
+        String schemaPath = "legacyRecordsImport/src/main/java/cz/nkp/urnnbn/legacyrecordsimport/validation/import.xsd";
         factory.setSchema(schemaFactory.newSchema(
                 new Source[]{new StreamSource(schemaPath)}));
 

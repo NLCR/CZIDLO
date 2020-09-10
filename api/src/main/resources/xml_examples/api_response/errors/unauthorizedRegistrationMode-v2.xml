@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>UNAUTHORIZED_REGISTRATION_MODE</v2:code>
-    <v2:message>cannot register digital document with urn:nbn:cz:tst02-00000p
-        - registration mode BY_RESERVATION not allowed
-        for registrar tst02 (Moravská zemská knihovna -
-        test)</v2:message>
-</v2:error>

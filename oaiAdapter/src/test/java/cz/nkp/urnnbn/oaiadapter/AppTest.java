@@ -32,9 +32,10 @@ public class AppTest extends TestCase {
 
     public void testOaiAdapter() {
         //CountryCode.initialize("CZ");
+        //
         String configFile = "src/test/resources/mzk.properties";
         //String configFile = "src/test/resources/nkp.properties";
-        App.main(new String[]{configFile});
+        //App.main(new String[]{configFile});
     }
 
 }

@@ -17,11 +17,11 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import cz.nkp.urnnbn.api.v2_v3.AbstractDigitalDocumentResource;
-import cz.nkp.urnnbn.api.v2_v3.AbstractDigitalInstancesResource;
-import cz.nkp.urnnbn.api.v2_v3.Action;
-import cz.nkp.urnnbn.api.v2_v3.Parser;
-import cz.nkp.urnnbn.api.v2_v3.ResponseFormat;
+import cz.nkp.urnnbn.api.v3.v3_abstract.AbstractDigitalDocumentResource;
+import cz.nkp.urnnbn.api.v3.v3_abstract.AbstractDigitalInstancesResource;
+import cz.nkp.urnnbn.api.v3.v3_abstract.Action;
+import cz.nkp.urnnbn.api.v3.v3_abstract.Parser;
+import cz.nkp.urnnbn.api.v3.v3_abstract.ResponseFormat;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
@@ -34,7 +34,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.DigitalDocumentBuilder;
  */
 public class DigitalDocumentResource extends AbstractDigitalDocumentResource {
 
-    private static final Logger logger = Logger.getLogger(cz.nkp.urnnbn.api.v2.DigitalDocumentResource.class.getName());
+    private static final Logger logger = Logger.getLogger(DigitalDocumentResource.class.getName());
     private static final String PARAM_ACTION = "action";
     private static final String PARAM_WITH_DIG_INST = "digitalInstances";
 

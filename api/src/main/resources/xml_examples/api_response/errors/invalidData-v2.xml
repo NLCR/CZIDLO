@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>INVALID_DATA</v2:code>
-    <v2:message>Error: line 1: cvc-pattern-valid: Value
-        'AZaz09$-_.+!*'():@+,' is not facet-valid with
-        respect to pattern '[A-Za-z0-9_\-:]{2,20}' for
-        type 'registrarScopeIdTypeType'. </v2:message>
-</v2:error>

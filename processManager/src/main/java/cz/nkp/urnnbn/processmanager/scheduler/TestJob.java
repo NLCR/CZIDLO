@@ -47,7 +47,7 @@ public class TestJob implements InterruptableJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap data = context.getMergedJobDataMap();
         jobId = data.getString("id");
-        createAppender(new File("/home/martin/tmp/quartzTestLogs"), jobId);
+        createAppender(new File("~/tmp/quartzTestLogs"), jobId);
         logger = LoggerFactory.getLogger("TestJob." + jobId);
         // logger = Logger.getLogger("TestJob." + jobId);
         out("executing");

@@ -16,8 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import cz.nkp.urnnbn.api.config.ApiModuleConfiguration;
-import cz.nkp.urnnbn.api.v2_v3.AbstractUrnNbnReservationsResource;
-import cz.nkp.urnnbn.api.v2_v3.Parser;
+import cz.nkp.urnnbn.api.v3.v3_abstract.AbstractUrnNbnReservationsResource;
+import cz.nkp.urnnbn.api.v3.v3_abstract.Parser;
 import cz.nkp.urnnbn.api.v3.exceptions.InternalException;
 import cz.nkp.urnnbn.api.v3.exceptions.NotAuthorizedException;
 import cz.nkp.urnnbn.core.dto.Registrar;

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 22. únor 2012, 11:59
     Author     : Martin Řehánek
     Description:
-        Example of valid record to be imported into application urnnbn-resolver-v2
+        Example of valid record to be imported into application urnnbn-resolver
         through its http rest api.
         Intelectual Entity in this example is of type MONOGRAPH_VOLUME. 
         The type will be used for publications that do not come out periodically

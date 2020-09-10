@@ -52,7 +52,7 @@ public class App {
     public static void main(String[] args) {
         try {
             // args = new String[1];
-            // args[0] = "/home/martin/NetBeansProjects/persistence/src/main/resources/example.properties";
+            // args[0] = "persistence/src/main/resources/example.properties";
             App app = new App(databaseConnector(args));
             app.clearDatabase();
             System.out.println("database cleared");

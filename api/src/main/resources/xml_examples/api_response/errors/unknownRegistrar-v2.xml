@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<v2:error xmlns:v2="http://resolver.nkp.cz/v2/">
-    <v2:code>UNKNOWN_REGISTRAR</v2:code>
-    <v2:message>There is no registrar with sigla 'tst09'</v2:message>
-</v2:error>

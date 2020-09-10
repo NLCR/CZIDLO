@@ -5,10 +5,10 @@
     Author     : Martin Řehánek
     Description:
         This XML Schema (W3C) document validates records
-        that are imported into application urnnbn-resolver-v2 
+        that are imported into application urnnbn-resolver
         through its http rest api.
-        http://code.google.com/p/urnnbn-resolver-v2/
-        http://code.google.com/p/urnnbn-resolver-v2/wiki/API
+        http://code.google.com/p/urnnbn-resolver
+        http://code.google.com/p/urnnbn-resolver/wiki/API
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified" 

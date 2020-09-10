@@ -30,8 +30,8 @@ import cz.nkp.urnnbn.xml.commons.XOMUtils;
  */
 public class Identifiers extends TestCase {
 
-    // File xmlDir = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xml");
-    // File identifiersSchemaFile = new File("/home/martin/NetBeansProjects/xml/src/main/resources/xsd/identifiers.xsd.xml");
+    // File xmlDir = new File("xml/src/main/resources/xml");
+    // File identifiersSchemaFile = new File("xml/src/main/resources/xsd/identifiers.xsd.xml");
     // String identifiersSchema;
 
     public Identifiers(String testName) {

@@ -502,7 +502,7 @@ Apache can also perform other preprocessing of packets.
 
 - HTTPS support
 - redirection from HTTP to HTTPS where desired
-- this type of redirection: http://myresolverdomain.cz/urn:nbn:cz:aba001-000001 --> http://mydomain.cz/api/v2/resolver/urn:nbn:cz:aba001-000001
+- this type of redirection: http://myresolverdomain.cz/urn:nbn:cz:aba001-000001 --> http://mydomain.cz/api/v6/resolver/urn:nbn:cz:aba001-000001
 - load balancing among more Tomcat instances
 
 Apache is thought to be more secure than Tomcat because of its wider usage.
