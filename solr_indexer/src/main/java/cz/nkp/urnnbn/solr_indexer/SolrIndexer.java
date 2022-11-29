@@ -111,6 +111,7 @@ public class SolrIndexer {
             }
             indexDocument(doc.getId(), counters, false);
         }
+        commit(); //one explicit commit at the very end
         report(" ");
 
         report("Summary");
@@ -123,6 +124,14 @@ public class SolrIndexer {
         report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
         if (progressListener != null) {
             progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
+    }
+
+    private void commit() {
+        try {
+            solrConnector.commit();
+        } catch (SolrServerException | IOException e) {
+            report(" Solr server error while commiting", e);
         }
     }
 

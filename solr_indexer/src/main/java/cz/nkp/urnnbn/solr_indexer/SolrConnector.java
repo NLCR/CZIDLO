@@ -100,6 +100,10 @@ public class SolrConnector {
         return builder.toString();
     }
 
+    public void commit() throws SolrServerException, IOException {
+        solrClient.commit(collection);
+    }
+
     public UpdateResponse indexFromXmlFile(File xmlFile, boolean explicitCommit) throws IOException, SAXException, ParserConfigurationException, SolrServerException {
         return indexFromXmlInputStream(new FileInputStream(xmlFile), explicitCommit);
     }
