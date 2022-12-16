@@ -25,7 +25,7 @@
         <!-- TODO: mozna hodit do parent modulu -->
         <apache.commons-collections.version>3.2.2</apache.commons-collections.version>
         <apache.commons-io.version>2.3</apache.commons-io.version>
-        <spring.version>5.2.4.RELEASE</spring.version>
+        <spring.version>5.2.20.RELEASE</spring.version>
         <!--<gwt.version>2.7.0</gwt.version>-->
     </properties>
 
