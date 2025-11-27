@@ -63,6 +63,16 @@ public interface DataImportService extends BusinessService {
 
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException;
 
+    /**
+     * Inserts new registrar.
+     *
+     * @param registrar
+     * @param login
+     * @return newly inserted registrar (with id and timestamps)
+     * @throws UnknownUserException
+     * @throws NotAdminException
+     * @throws RegistrarCollisionException
+     */
     public Registrar insertNewRegistrar(Registrar registrar, String login) throws UnknownUserException, NotAdminException,
             RegistrarCollisionException;
 

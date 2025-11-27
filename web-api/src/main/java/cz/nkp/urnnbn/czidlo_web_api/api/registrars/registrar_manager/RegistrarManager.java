@@ -22,9 +22,10 @@ public interface RegistrarManager {
      * @param allowedRegistrationModeByRegistrar   if the registrar is a registrar //TODO: unknown meanings of params
      * @param description                          description of the registrar
      * @return instance of the registrar
+     * @throws BadArgumentException     if registrarCode is invalid
      * @throws DuplicateRecordException if a registrar of that name already exists
      */
-    public Registrar createRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar) throws DuplicateRecordException;
+    public Registrar createRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar) throws BadArgumentException, DuplicateRecordException;
 
     /**
      * Returns a registrar with code.

@@ -170,9 +170,13 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         try {
             authorization.checkAdminRights(login);
             Long id = factory.registrarDao().insertRegistrar(registrar);
-            registrar.setId(id);
-            logRegistrarCreated(login, registrar);
-            return registrar;
+            try {
+                Registrar inserted = factory.registrarDao().getRegistrarById(id); //to get all fields properly set including timestamps
+                logRegistrarCreated(login, inserted);
+                return inserted;
+            } catch (RecordNotFoundException e) {
+                throw new RuntimeException("Inserted registrar not found: " + registrar.toString()); //should never happen
+            }
         } catch (AlreadyPresentException ex) {
             throw new RegistrarCollisionException(registrar.getCode().toString());
         } catch (DatabaseException ex) {

@@ -8,6 +8,9 @@ import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.DigitalLibrary;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,21 +42,45 @@ public class RegistrarManagerImpl implements RegistrarManager {
     }
 
     @Override
-    public Registrar createRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar) throws DuplicateRecordException {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Registrar createRegistrar(String login, String registrarCodeStr, String name, String description,
+                                     boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar)
+            throws BadArgumentException, DuplicateRecordException {
+        cz.nkp.urnnbn.core.dto.Registrar registrarDto = new cz.nkp.urnnbn.core.dto.Registrar();
+        RegistrarCode registrarCode;
+        try {
+            registrarCode = RegistrarCode.valueOf(registrarCodeStr);
+        } catch (IllegalArgumentException e) {
+            throw new BadArgumentException("Invalid registrar code: " + registrarCodeStr + ": " + e.getMessage());
+        }
+        registrarDto.setCode(registrarCode);
+        registrarDto.setName(name);
+        registrarDto.setDescription(description);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_RESOLVER, allowedRegistrationModeByResolver);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_RESERVATION, allowedRegistrationModeByReservation);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_REGISTRAR, allowedRegistrationModeByRegistrar);
+        try {
+            registrarDto = dataImportService().insertNewRegistrar(registrarDto, login);
+            return convertDtoRegistrar(registrarDto);
+        } catch (UnknownUserException e) { // should not happen, will be caught earlier
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) { // should not happen, will be caught earlier
+            throw new RuntimeException(e);
+        } catch (RegistrarCollisionException e) {
+            throw new DuplicateRecordException("Registrar with given code or name already exists: " + e.getMessage());
+        }
     }
 
     @Override
-    public Registrar getRegistrarByCode(String registrarCode) throws UnknownRecordException, BadArgumentException {
-        RegistrarCode code;
+    public Registrar getRegistrarByCode(String registrarCodeStr) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode;
         try {
-            code = RegistrarCode.valueOf(registrarCode);
+            registrarCode = RegistrarCode.valueOf(registrarCodeStr);
         } catch (IllegalArgumentException e) {
-            throw new BadArgumentException("Invalid registrar code: " + registrarCode + ": " + e.getMessage());
+            throw new BadArgumentException("Invalid registrar code: " + registrarCodeStr + ": " + e.getMessage());
         }
-        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(code);
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
         if (dtoRegistrar == null) {
-            throw new UnknownRecordException("Unknown registrar with code: " + registrarCode);
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
         }
         return convertDtoRegistrar(dtoRegistrar);
     }
@@ -90,6 +117,7 @@ public class RegistrarManagerImpl implements RegistrarManager {
                                      boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation,
                                      boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws
             UnknownRecordException, DuplicateRecordException {
+
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

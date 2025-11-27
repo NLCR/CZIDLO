@@ -33,6 +33,9 @@ public class RegistrarResources extends AbstractResource {
     //private static final RegistrarManager registrarManager = new RegistrarManagerMockInMemory();
     private static final RegistrarManager registrarManager = new RegistrarManagerImpl();
 
+    //TODO: in production replace with real user from authentication
+    private static final String DEFAULT_USER = "superAdmin";
+
     @Operation(
             summary = "Create registrar",
             tags = "Registrars",
@@ -56,7 +59,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws DuplicateRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -104,7 +107,7 @@ public class RegistrarResources extends AbstractResource {
     public Response getRegistrarByCode(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         Registrar a = registrarManager.getRegistrarByCode(code);
         return Response.ok(a).build();
@@ -123,7 +126,7 @@ public class RegistrarResources extends AbstractResource {
     )
     @GET
     public Response getRegistrars() {
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         List<Registrar> a = registrarManager.getRegistrars();
         return Response.ok(new RegistrarList(a)).build();
@@ -155,7 +158,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws UnknownRecordException, DuplicateRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -201,7 +204,7 @@ public class RegistrarResources extends AbstractResource {
     @DELETE
     @Path("/{code}")
     public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException {
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
         //TODO: až bude napojedno na databázi, tak povolit jen tehdy, pokud registrátor neregistruje žádný Digitální Dokument
 
         registrarManager.deleteRegistrar(user, code);
@@ -234,7 +237,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -287,7 +290,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -334,7 +337,7 @@ public class RegistrarResources extends AbstractResource {
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the digital library", required = true) @PathParam("id") long id)
             throws UnknownRecordException {
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         registrarManager.deleteLibrary(user, code, id);
         return Response.noContent().build();
@@ -366,7 +369,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -419,7 +422,7 @@ public class RegistrarResources extends AbstractResource {
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
 
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -465,7 +468,7 @@ public class RegistrarResources extends AbstractResource {
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the catalogue", required = true) @PathParam("id") long id)
             throws UnknownRecordException {
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         registrarManager.deleteCatalogue(user, code, id);
         return Response.noContent().build();
