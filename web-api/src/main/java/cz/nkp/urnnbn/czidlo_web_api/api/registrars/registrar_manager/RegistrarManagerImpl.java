@@ -166,7 +166,24 @@ public class RegistrarManagerImpl implements RegistrarManager {
     public DigitalLibrary createLibrary(String login, String registrarCodeStr, String name, String description, String
             url) throws UnknownRecordException, BadArgumentException {
         RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
-        throw new UnsupportedOperationException("Not implemented yet");
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
+        cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLib = new cz.nkp.urnnbn.core.dto.DigitalLibrary();
+        dtoLib.setName(name);
+        dtoLib.setDescription(description);
+        dtoLib.setUrl(url);
+        try {
+            cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLibInserted = dataImportService().insertNewDigitalLibrary(dtoLib, dtoRegistrar.getId(), login);
+            return DigitalLibrary.fromDto(dtoLibInserted);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
     }
 
     @Override

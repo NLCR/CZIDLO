@@ -201,10 +201,11 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             AccessException, UnknownRegistrarException {
         try {
             authorization.checkAccessRightsOrAdmin(registrarId, login);
+            library.setRegistrarId(registrarId); //make sure registrarId is set correctly
             Long id = factory.diglLibDao().insertLibrary(library);
-            library.setId(id);
-            logLibraryCreated(login, library);
-            return library;
+            DigitalLibrary inserted = factory.diglLibDao().getLibraryById(id); //to get all fields properly set including timestamps
+            logLibraryCreated(login, inserted);
+            return inserted;
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(registrarId);
         } catch (DatabaseException ex) {

@@ -46,8 +46,9 @@ public class DigitalLibraryDaoPostgres extends AbstractDAO implements DigitalLib
 
     @Override
     public Long insertLibrary(final DigitalLibrary library) throws DatabaseException, RecordNotFoundException {
-        // TODO: operace kontroly pritomonosti id neni v transakci s vkladanim!
-        // v tom to pripade nevadi
+        if (library.getRegistrarId() == null) {
+            throw new IllegalArgumentException("Registrar ID cannot be null");
+        }
         checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, library.getRegistrarId());
         DaoOperation operation = new DaoOperation() {
 
