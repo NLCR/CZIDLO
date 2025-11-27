@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.registrars.core;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -15,6 +16,17 @@ public class Catalogue {
     private String urlPrefix;
     private Date created;
     private Date modified;
+
+    public static Catalogue fromDto(cz.nkp.urnnbn.core.dto.Catalog dto) {
+        Catalogue result = new Catalogue();
+        result.setId(dto.getId());
+        result.setName(dto.getName());
+        result.setDescription(dto.getDescription());
+        result.setUrlPrefix(dto.getUrlPrefix());
+        result.setCreated(Utils.dateTimeToDate(dto.getCreated()));
+        result.setModified(Utils.dateTimeToDate(dto.getModified()));
+        return result;
+    }
 
     public Long getId() {
         return id;

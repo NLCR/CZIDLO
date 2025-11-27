@@ -26,7 +26,7 @@ public class Registrar {
     private List<DigitalLibrary> digitalLibraries = new ArrayList<>();
     private List<Catalogue> catalogues = new ArrayList<>();
 
-    public static Registrar from(cz.nkp.urnnbn.core.dto.Registrar reg, Object libraries, Object catalogues) {
+    public static Registrar from(cz.nkp.urnnbn.core.dto.Registrar reg, List<DigitalLibrary> libraries, List<Catalogue> catalogues) {
         Registrar result = new Registrar();
         result.setId(reg.getId());
         result.setCode(reg.getCode().toString());
@@ -38,6 +38,8 @@ public class Registrar {
         result.setAllowedRegistrationModeByReservation(reg.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
         result.setAllowedRegistrationModeByRegistrar(reg.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
         result.setHidden(reg.isHidden());
+        result.setDigitalLibraries(libraries);
+        result.setCatalogues(catalogues);
         return result;
     }
 
@@ -145,4 +147,11 @@ public class Registrar {
         this.catalogues.add(catalogue);
     }
 
+    public void setDigitalLibraries(List<DigitalLibrary> digitalLibraries) {
+        this.digitalLibraries = digitalLibraries;
+    }
+
+    public void setCatalogues(List<Catalogue> catalogues) {
+        this.catalogues = catalogues;
+    }
 }

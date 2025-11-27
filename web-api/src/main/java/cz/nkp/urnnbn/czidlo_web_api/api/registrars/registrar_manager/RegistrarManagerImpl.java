@@ -49,29 +49,45 @@ public class RegistrarManagerImpl implements RegistrarManager {
 
     @Override
     public List<Registrar> getRegistrars() {
-        List<cz.nkp.urnnbn.core.dto.Registrar> registrars = dataAccessService().registrars();
-        List<Registrar> result = new ArrayList<>(registrars.size());
-        for (cz.nkp.urnnbn.core.dto.Registrar reg : registrars) {
-            System.out.println("Registrar: " + reg.getCode() + ", name: " + reg.getName());
-            Registrar resultItem = Registrar.from(reg, null, null);
-            //TODO: populate libraries and catalogues
-            result.add(resultItem);
+        List<cz.nkp.urnnbn.core.dto.Registrar> dtoRegs = dataAccessService().registrars();
+        List<Registrar> regs = new ArrayList<>(dtoRegs.size());
+        for (cz.nkp.urnnbn.core.dto.Registrar dtoReg : dtoRegs) {
+            List<cz.nkp.urnnbn.core.dto.DigitalLibrary> dtoLibs = dataAccessService().librariesByRegistrarId(dtoReg.getId());
+            List<DigitalLibrary> libs = new ArrayList<>(dtoLibs.size());
+            for (cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLib : dtoLibs) {
+                DigitalLibrary lib = DigitalLibrary.fromDto(dtoLib);
+                libs.add(lib);
+            }
+            List<cz.nkp.urnnbn.core.dto.Catalog> dtoCats = dataAccessService().catalogsByRegistrarId(dtoReg.getId());
+            List<Catalogue> cats = new ArrayList<>(dtoCats.size());
+            for (cz.nkp.urnnbn.core.dto.Catalog dtoCat : dtoCats) {
+                Catalogue cat = Catalogue.fromDto(dtoCat);
+                cats.add(cat);
+            }
+            Registrar resultItem = Registrar.from(dtoReg, libs, cats);
+            regs.add(resultItem);
         }
-        return result;
+        return regs;
     }
 
+
     @Override
-    public Registrar updateRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws UnknownRecordException, DuplicateRecordException {
+    public Registrar updateRegistrar(String login, String registrarCode, String name, String description,
+                                     boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation,
+                                     boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws
+            UnknownRecordException, DuplicateRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public DigitalLibrary createLibrary(String login, String registrarCode, String name, String description, String url) throws UnknownRecordException {
+    public DigitalLibrary createLibrary(String login, String registrarCode, String name, String description, String
+            url) throws UnknownRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public DigitalLibrary updateLibrary(String login, String registrarCode, long libraryId, String name, String description, String url) throws UnknownRecordException {
+    public DigitalLibrary updateLibrary(String login, String registrarCode, long libraryId, String name, String
+            description, String url) throws UnknownRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
@@ -81,12 +97,14 @@ public class RegistrarManagerImpl implements RegistrarManager {
     }
 
     @Override
-    public Catalogue createCatalogue(String login, String registrarCode, String name, String description, String urlPrefix) throws UnknownRecordException {
+    public Catalogue createCatalogue(String login, String registrarCode, String name, String description, String
+            urlPrefix) throws UnknownRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public Catalogue updateCatalogue(String login, String registrarCode, long catalogueId, String name, String description, String urlPrefix) throws UnknownRecordException {
+    public Catalogue updateCatalogue(String login, String registrarCode, long catalogueId, String name, String
+            description, String urlPrefix) throws UnknownRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
