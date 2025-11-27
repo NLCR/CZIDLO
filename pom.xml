@@ -45,34 +45,54 @@
     </issueManagement>
 
     <properties>
-        <!--following properties must be defined in every module: -->
         <czidlo.version>5.0</czidlo.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!--following properties are relevant ony for this module and it's submodules: -->
+        <java.version>21</java.version>
     </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- společné nastavení kompilátoru pro všechny potomky -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.14.0</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <modules>
         <module>core</module>
-        <module>oaiAdapter</module>
-        <module>solr_indexer</module>
-        <module>persistence</module>
-        <module>processManager</module>
-        <module>api</module>
-        <module>api_client</module>
-        <module>services</module>
         <module>xml</module>
+        <module>api_client</module>
+        <module>oaiAdapter</module>
+        <module>persistence</module>
+        <module>solr_indexer</module>
+        <module>services</module>
         <module>web-common</module>
-        <module>web</module>
+        <module>api</module>
+
+        <!--
+        <module>processManager</module>
         <module>processDataServer</module>
         <module>oaiPmhProvider</module>
         <module>cliUtils</module>
-
-        <!--deprecated-->
+        <module>web</module>
         <module>legacyRecordsImport</module>
         <module>databaseUpgrader</module>
-        <!-- <module>gdrive</module> -->
+        <module>gdrive</module>-->
     </modules>
 
 </project>

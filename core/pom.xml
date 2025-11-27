@@ -2,19 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cz.nkp.urnnbn</groupId>
+
+    <parent>
+        <groupId>cz.nkp.urnnbn</groupId>
+        <artifactId>czidlo</artifactId>
+        <version>5.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <artifactId>core</artifactId>
-    <version>5.0</version>
     <packaging>jar</packaging>
     <name>CZIDLO - core</name>
 
     <properties>
-        <!--following properties must be defined in every module: -->
-        <czidlo.version>5.0</czidlo.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <!--following properties are relevant ony for this module and it's submodules: -->
+        <!--<czidlo.version>5.0</czidlo.version>-->
+        <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+        <!--<java.version>21</java.version>-->
     </properties>
 
     <dependencies>
@@ -35,4 +38,5 @@
             <version>1.2.16</version>
         </dependency>
     </dependencies>
+
 </project>
