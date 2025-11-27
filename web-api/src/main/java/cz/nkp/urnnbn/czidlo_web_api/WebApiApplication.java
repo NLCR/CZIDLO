@@ -1,9 +1,16 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.CORSResponseFilter;
+import cz.nkp.urnnbn.utils.PropertyLoader;
+import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
+import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
+
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 @OpenAPIDefinition(
         info = @Info(title = "CZIDLO Web API", version = "0.9.1",
@@ -17,6 +24,11 @@ import jakarta.ws.rs.ApplicationPath;
 )
 @ApplicationPath("/api")
 public class WebApiApplication extends org.glassfish.jersey.server.ResourceConfig {
+
+    private static final Logger LOGGER = Logger.getLogger(WebApiApplication.class.getName());
+    private static final String WEB_APP_NAME = "WEB-API";
+    private static final String PROPERTIES_FILE = "web-api.properties";
+
 
     public WebApiApplication() {
         //This configuration enables content negotiation based on suffixes:
@@ -34,5 +46,15 @@ public class WebApiApplication extends org.glassfish.jersey.server.ResourceConfi
         register(io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource.class);
         // Enable CORS
         register(CORSResponseFilter.class);
+
+        //load configuration from file web-api.properties
+        new ResourceUtilizer(LOGGER) {
+            @Override
+            public void processResource(InputStream in) throws Exception {
+                PropertyLoader loader = new PropertyLoader(in);
+                WebApiModuleConfiguration.instanceOf().initialize(WEB_APP_NAME, loader);
+                //XmlModuleConfiguration.instanceOf().initialize(loader);
+            }
+        }.run(PROPERTIES_FILE);
     }
 }
