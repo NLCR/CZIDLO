@@ -8,9 +8,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.DigitalLibrary;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarCollisionException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,9 +114,28 @@ public class RegistrarManagerImpl implements RegistrarManager {
     public Registrar updateRegistrar(String login, String registrarCode, String name, String description,
                                      boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation,
                                      boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws
-            UnknownRecordException, DuplicateRecordException {
+            UnknownRecordException, DuplicateRecordException, BadArgumentException {
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        cz.nkp.urnnbn.core.dto.Registrar registrarDto = dataAccessService().registrarByCode(RegistrarCode.valueOf(registrarCode));
+        if (registrarDto == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCode);
+        }
+        registrarDto.setName(name);
+        registrarDto.setDescription(description);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_RESOLVER, allowedRegistrationModeByResolver);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_RESERVATION, allowedRegistrationModeByReservation);
+        registrarDto.setRegistrationModeAllowed(cz.nkp.urnnbn.core.UrnNbnRegistrationMode.BY_REGISTRAR, allowedRegistrationModeByRegistrar);
+        registrarDto.setHidden(isHidden);
+        try {
+            dataUpdateService().updateRegistrar(registrarDto, login);
+            return getRegistrarByCode(registrarCode);
+        } catch (UnknownUserException e) { // should not happen, will be caught earlier
+            throw new RuntimeException(e);
+        } catch (UnknownRegistrarException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

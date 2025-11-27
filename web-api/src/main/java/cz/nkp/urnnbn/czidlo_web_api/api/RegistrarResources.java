@@ -203,7 +203,7 @@ public class RegistrarResources extends AbstractResource {
     )
     @DELETE
     @Path("/{code}")
-    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException {
+    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
         String user = DEFAULT_USER;
         //TODO: až bude napojedno na databázi, tak povolit jen tehdy, pokud registrátor neregistruje žádný Digitální Dokument
 
@@ -336,7 +336,7 @@ public class RegistrarResources extends AbstractResource {
     public Response deleteDigitalLibrary(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the digital library", required = true) @PathParam("id") long id)
-            throws UnknownRecordException {
+            throws UnknownRecordException, BadArgumentException {
         String user = DEFAULT_USER;
 
         registrarManager.deleteLibrary(user, code, id);
@@ -467,7 +467,7 @@ public class RegistrarResources extends AbstractResource {
     public Response deleteCatalogue(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the catalogue", required = true) @PathParam("id") long id)
-            throws UnknownRecordException {
+            throws UnknownRecordException, BadArgumentException {
         String user = DEFAULT_USER;
 
         registrarManager.deleteCatalogue(user, code, id);
