@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8"/>
+    <title>CZIDLO web-api API docs</title>
+    <link rel="stylesheet" href="../webjars/swagger-ui/5.28.1/swagger-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="../webjars/swagger-ui/5.28.1/index.css"/>
+    <link rel="icon" type="image/png" href="../webjars/swagger-ui/5.28.1/favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="../webjars/swagger-ui/5.28.1/favicon-16x16.png" sizes="16x16"/>
+</head>
+<body>
+<div id="swagger-ui"></div>
+
+<script src="../webjars/swagger-ui/5.28.1/swagger-ui-bundle.js"></script>
+<script src="../webjars/swagger-ui/5.28.1/swagger-ui-standalone-preset.js"></script>
+<script>
+    // Zjisti context path (např. "/web-api")
+    const ctx = (function () {
+      const p = window.location.pathname;              // /web-api/api-docs/...
+      const i = p.indexOf('/', 1);
+      return i > 0 ? p.substring(0, i) : '';
+    })();
+
+    window.ui = SwaggerUIBundle({
+      url: ctx + '/api/openapi.json',
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      layout: 'BaseLayout',
+      validatorUrl: null
+    });
+</script>
+</body>
+</html>
