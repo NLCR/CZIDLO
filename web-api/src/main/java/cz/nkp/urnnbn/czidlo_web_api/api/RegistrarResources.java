@@ -8,6 +8,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.DigitalLibrary;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.RegistrarList;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManager;
+import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManagerMockInMemory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +30,8 @@ import java.util.function.Function;
 
 @Path("/registrars")
 public class RegistrarResources extends AbstractResource {
-    private static final RegistrarManager registrarManager = new RegistrarManagerMockInMemory();
+    //private static final RegistrarManager registrarManager = new RegistrarManagerMockInMemory();
+    private static final RegistrarManager registrarManager = new RegistrarManagerImpl();
 
     @Operation(
             summary = "Create registrar",

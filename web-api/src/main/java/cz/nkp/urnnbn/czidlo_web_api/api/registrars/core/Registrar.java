@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.registrars.core;
 
+import cz.nkp.urnnbn.core.UrnNbnRegistrationMode;
+import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -23,6 +25,21 @@ public class Registrar {
     private boolean isHidden = false;
     private List<DigitalLibrary> digitalLibraries = new ArrayList<>();
     private List<Catalogue> catalogues = new ArrayList<>();
+
+    public static Registrar from(cz.nkp.urnnbn.core.dto.Registrar reg, Object libraries, Object catalogues) {
+        Registrar result = new Registrar();
+        result.setId(reg.getId());
+        result.setCode(reg.getCode().toString());
+        result.setName(reg.getName());
+        result.setDescription(reg.getDescription());
+        result.setCreated(Utils.dateTimeToDate(reg.getCreated()));
+        result.setModified(Utils.dateTimeToDate(reg.getModified()));
+        result.setAllowedRegistrationModeByResolver(reg.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESOLVER));
+        result.setAllowedRegistrationModeByReservation(reg.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_RESERVATION));
+        result.setAllowedRegistrationModeByRegistrar(reg.isRegistrationModeAllowed(UrnNbnRegistrationMode.BY_REGISTRAR));
+        result.setHidden(reg.isHidden());
+        return result;
+    }
 
     public Long getId() {
         return id;
