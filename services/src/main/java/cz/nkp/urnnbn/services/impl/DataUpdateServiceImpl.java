@@ -188,7 +188,6 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     private void logLibraryUpdated(String login, DigitalLibrary library) throws DatabaseException {
         Registrar registrar;
         try {
-            System.out.println(library);
             registrar = factory.registrarDao().getRegistrarById(library.getRegistrarId());
         } catch (RecordNotFoundException e) {
             throw new RuntimeException(e);
