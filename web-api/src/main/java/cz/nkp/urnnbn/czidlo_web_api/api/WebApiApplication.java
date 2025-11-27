@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
-//import jakarta.ws.rs.core.Application;
 
 @OpenAPIDefinition(
         info = @Info(title = "CZIDLO Web API", version = "0.9.1",
@@ -17,9 +16,9 @@ import jakarta.ws.rs.ApplicationPath;
         }
 )
 @ApplicationPath("/api")
-public class ApiApp extends org.glassfish.jersey.server.ResourceConfig {
+public class WebApiApplication extends org.glassfish.jersey.server.ResourceConfig {
 
-    public ApiApp() {
+    public WebApiApplication() {
         //This configuration enables content negotiation based on suffixes:
         //GET http://localhost:8080/web-api/api/processes - XML (default)
         //GET http://localhost:8080/web-api/api/processes.json - JSON

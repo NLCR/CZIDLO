@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.nkp.urnnbn.utils;
 
 import java.io.File;
@@ -10,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.IllegalFormatException;
 import java.util.Properties;
 
 /**
@@ -22,7 +17,7 @@ import java.util.Properties;
  */
 public class PropertyLoader {
 
-    private Properties properties;
+    private final Properties properties;
 
     public PropertyLoader(Properties properties) {
         this.properties = properties;
