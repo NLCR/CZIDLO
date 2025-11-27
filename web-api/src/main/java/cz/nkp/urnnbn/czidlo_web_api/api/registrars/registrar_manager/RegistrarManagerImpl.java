@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
@@ -36,15 +38,24 @@ public class RegistrarManagerImpl implements RegistrarManager {
         return Services.instanceOf().statisticService();
     }
 
-
     @Override
     public Registrar createRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar) throws DuplicateRecordException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public Registrar getRegistrarByCode(String registrarCode) throws UnknownRecordException {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public Registrar getRegistrarByCode(String registrarCode) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode code;
+        try {
+            code = RegistrarCode.valueOf(registrarCode);
+        } catch (IllegalArgumentException e) {
+            throw new BadArgumentException("Invalid registrar code: " + registrarCode + ": " + e.getMessage());
+        }
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(code);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with code: " + registrarCode);
+        }
+        return convertDtoRegistrar(dtoRegistrar);
     }
 
     @Override
@@ -52,22 +63,25 @@ public class RegistrarManagerImpl implements RegistrarManager {
         List<cz.nkp.urnnbn.core.dto.Registrar> dtoRegs = dataAccessService().registrars();
         List<Registrar> regs = new ArrayList<>(dtoRegs.size());
         for (cz.nkp.urnnbn.core.dto.Registrar dtoReg : dtoRegs) {
-            List<cz.nkp.urnnbn.core.dto.DigitalLibrary> dtoLibs = dataAccessService().librariesByRegistrarId(dtoReg.getId());
-            List<DigitalLibrary> libs = new ArrayList<>(dtoLibs.size());
-            for (cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLib : dtoLibs) {
-                DigitalLibrary lib = DigitalLibrary.fromDto(dtoLib);
-                libs.add(lib);
-            }
-            List<cz.nkp.urnnbn.core.dto.Catalog> dtoCats = dataAccessService().catalogsByRegistrarId(dtoReg.getId());
-            List<Catalogue> cats = new ArrayList<>(dtoCats.size());
-            for (cz.nkp.urnnbn.core.dto.Catalog dtoCat : dtoCats) {
-                Catalogue cat = Catalogue.fromDto(dtoCat);
-                cats.add(cat);
-            }
-            Registrar resultItem = Registrar.from(dtoReg, libs, cats);
-            regs.add(resultItem);
+            regs.add(convertDtoRegistrar(dtoReg));
         }
         return regs;
+    }
+
+    private Registrar convertDtoRegistrar(cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar) {
+        List<cz.nkp.urnnbn.core.dto.DigitalLibrary> dtoLibs = dataAccessService().librariesByRegistrarId(dtoRegistrar.getId());
+        List<DigitalLibrary> libs = new ArrayList<>(dtoLibs.size());
+        for (cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLib : dtoLibs) {
+            DigitalLibrary lib = DigitalLibrary.fromDto(dtoLib);
+            libs.add(lib);
+        }
+        List<cz.nkp.urnnbn.core.dto.Catalog> dtoCats = dataAccessService().catalogsByRegistrarId(dtoRegistrar.getId());
+        List<Catalogue> cats = new ArrayList<>(dtoCats.size());
+        for (cz.nkp.urnnbn.core.dto.Catalog dtoCat : dtoCats) {
+            Catalogue cat = Catalogue.fromDto(dtoCat);
+            cats.add(cat);
+        }
+        return Registrar.from(dtoRegistrar, libs, cats);
     }
 
 

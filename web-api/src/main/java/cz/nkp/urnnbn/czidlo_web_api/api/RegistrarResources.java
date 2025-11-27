@@ -102,7 +102,7 @@ public class RegistrarResources extends AbstractResource {
     @GET
     @Path("{code}")
     public Response getRegistrarByCode(
-            @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code) throws UnknownRecordException {
+            @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
 
         String user = "dummyUser";
 
