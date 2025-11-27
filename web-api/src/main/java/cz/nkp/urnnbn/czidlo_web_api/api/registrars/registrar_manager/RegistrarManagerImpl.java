@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
@@ -70,17 +71,20 @@ public class RegistrarManagerImpl implements RegistrarManager {
 
     @Override
     public Registrar getRegistrarByCode(String registrarCodeStr) throws UnknownRecordException, BadArgumentException {
-        RegistrarCode registrarCode;
-        try {
-            registrarCode = RegistrarCode.valueOf(registrarCodeStr);
-        } catch (IllegalArgumentException e) {
-            throw new BadArgumentException("Invalid registrar code: " + registrarCodeStr + ": " + e.getMessage());
-        }
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
         if (dtoRegistrar == null) {
             throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
         }
         return convertDtoRegistrar(dtoRegistrar);
+    }
+
+    private RegistrarCode parseRegistrarCode(String registrarCodeStr) throws BadArgumentException {
+        try {
+            return RegistrarCode.valueOf(registrarCodeStr);
+        } catch (IllegalArgumentException e) {
+            throw new BadArgumentException("Invalid registrar code: " + registrarCodeStr + ": " + e.getMessage());
+        }
     }
 
     @Override
@@ -111,14 +115,14 @@ public class RegistrarManagerImpl implements RegistrarManager {
 
 
     @Override
-    public Registrar updateRegistrar(String login, String registrarCode, String name, String description,
+    public Registrar updateRegistrar(String login, String registrarCodeStr, String name, String description,
                                      boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation,
                                      boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws
-            UnknownRecordException, DuplicateRecordException, BadArgumentException {
-
-        cz.nkp.urnnbn.core.dto.Registrar registrarDto = dataAccessService().registrarByCode(RegistrarCode.valueOf(registrarCode));
+            UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
+        cz.nkp.urnnbn.core.dto.Registrar registrarDto = dataAccessService().registrarByCode(registrarCode);
         if (registrarDto == null) {
-            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCode);
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
         }
         registrarDto.setName(name);
         registrarDto.setDescription(description);
@@ -128,7 +132,7 @@ public class RegistrarManagerImpl implements RegistrarManager {
         registrarDto.setHidden(isHidden);
         try {
             dataUpdateService().updateRegistrar(registrarDto, login);
-            return getRegistrarByCode(registrarCode);
+            return getRegistrarByCode(registrarCodeStr);
         } catch (UnknownUserException e) { // should not happen, will be caught earlier
             throw new RuntimeException(e);
         } catch (UnknownRegistrarException e) {
@@ -139,41 +143,63 @@ public class RegistrarManagerImpl implements RegistrarManager {
     }
 
     @Override
-    public DigitalLibrary createLibrary(String login, String registrarCode, String name, String description, String
-            url) throws UnknownRecordException {
+    public void deleteRegistrar(String login, String registrarCodeStr) throws UnknownRecordException, BadArgumentException, ConflictException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
+        try {
+            dataRemoveService().removeRegistrar(dtoRegistrar.getId(), login);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException(e);
+        } catch (CannotBeRemovedException e) {
+            throw new ConflictException(e);
+        }
+    }
+
+    @Override
+    public DigitalLibrary createLibrary(String login, String registrarCodeStr, String name, String description, String
+            url) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public DigitalLibrary updateLibrary(String login, String registrarCode, long libraryId, String name, String
-            description, String url) throws UnknownRecordException {
+    public DigitalLibrary updateLibrary(String login, String registrarCodeStr, long libraryId, String name, String
+            description, String url) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public void deleteLibrary(String login, String registrarCode, long libraryId) throws UnknownRecordException {
+    public void deleteLibrary(String login, String registrarCodeStr, long libraryId) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public Catalogue createCatalogue(String login, String registrarCode, String name, String description, String
-            urlPrefix) throws UnknownRecordException {
+    public Catalogue createCatalogue(String login, String registrarCodeStr, String name, String description, String
+            urlPrefix) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public Catalogue updateCatalogue(String login, String registrarCode, long catalogueId, String name, String
-            description, String urlPrefix) throws UnknownRecordException {
+    public Catalogue updateCatalogue(String login, String registrarCodeStr, long catalogueId, String name, String
+            description, String urlPrefix) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public void deleteCatalogue(String login, String registrarCode, long catalogueId) throws UnknownRecordException {
+    public void deleteCatalogue(String login, String registrarCodeStr, long catalogueId) throws UnknownRecordException, BadArgumentException {
+        RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
-    public void deleteRegistrar(String login, String registrarCode) throws UnknownRecordException {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
 }

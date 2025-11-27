@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api;
 
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
@@ -58,8 +59,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing registrar parameters",
                     required = true
             ) String body) throws DuplicateRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -95,9 +95,10 @@ public class RegistrarResources extends AbstractResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "The registrar",
                             content = @Content(schema = @Schema(implementation = Registrar.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string"),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -106,7 +107,6 @@ public class RegistrarResources extends AbstractResource {
     @Path("{code}")
     public Response getRegistrarByCode(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
-
         String user = DEFAULT_USER;
 
         Registrar a = registrarManager.getRegistrarByCode(code);
@@ -140,9 +140,10 @@ public class RegistrarResources extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = Registrar.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string"),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -157,8 +158,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing registrar parameters",
                     required = true
             ) String body) throws UnknownRecordException, DuplicateRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -194,22 +194,23 @@ public class RegistrarResources extends AbstractResource {
             responses = {
                     @ApiResponse(
                             responseCode = "204", description = "Success"),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string"),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "409", description = "Registrar cannot be deleted because it registers some documents",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @DELETE
     @Path("/{code}")
-    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER;
-        //TODO: až bude napojedno na databázi, tak povolit jen tehdy, pokud registrátor neregistruje žádný Digitální Dokument
+    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException, BadArgumentException, ConflictException {
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         registrarManager.deleteRegistrar(user, code);
         return Response.noContent().build();
-
     }
 
     @Operation(
@@ -220,7 +221,9 @@ public class RegistrarResources extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "The library",
                             content = @Content(schema = @Schema(implementation = DigitalLibraryCreate.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid library params",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or library params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -236,8 +239,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing digital library parameters",
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -271,9 +273,10 @@ public class RegistrarResources extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = DigitalLibraryUpdate.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or library params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, digital library not found or id is not integer"),
+                    @ApiResponse(responseCode = "404", description = "Registrar or digital library not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -289,8 +292,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing digital library parameters",
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -324,9 +326,10 @@ public class RegistrarResources extends AbstractResource {
             responses = {
                     @ApiResponse(
                             responseCode = "204", description = "Success"),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or digital library id",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, digital library not found or id is not integer"),
+                    @ApiResponse(responseCode = "404", description = "Registrar or digital library not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -337,7 +340,7 @@ public class RegistrarResources extends AbstractResource {
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the digital library", required = true) @PathParam("id") long id)
             throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         registrarManager.deleteLibrary(user, code, id);
         return Response.noContent().build();
@@ -350,9 +353,9 @@ public class RegistrarResources extends AbstractResource {
             description = "Creates a new catalogue.",
             responses = {
                     @ApiResponse(
-                            responseCode = "200", description = "The catalogue",
+                            responseCode = "200", description = "Catalogue created",
                             content = @Content(schema = @Schema(implementation = CatalogueCreate.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid catalogue params",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -368,8 +371,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing catalogue parameters",
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -403,7 +405,7 @@ public class RegistrarResources extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = CatalogueUpdate.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, catalogue not found or id is not integer"),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
@@ -421,8 +423,7 @@ public class RegistrarResources extends AbstractResource {
                     description = "JSON object representing catalogue parameters",
                     required = true
             ) String body) throws UnknownRecordException, BadArgumentException {
-
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -455,7 +456,7 @@ public class RegistrarResources extends AbstractResource {
             responses = {
                     @ApiResponse(
                             responseCode = "204", description = "Success"),
-                    @ApiResponse(responseCode = "400", description = "Invalid code supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue id",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, catalogue not found or id is not integer"),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
@@ -468,7 +469,7 @@ public class RegistrarResources extends AbstractResource {
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the catalogue", required = true) @PathParam("id") long id)
             throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER;
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         registrarManager.deleteCatalogue(user, code, id);
         return Response.noContent().build();

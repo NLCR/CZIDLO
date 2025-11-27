@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.persistence.impl.statements.*;
 import org.joda.time.DateTime;
 
 import cz.nkp.urnnbn.core.DiExport;
@@ -36,20 +37,6 @@ import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.MultipleResultsOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
 import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
-import cz.nkp.urnnbn.core.persistence.impl.statements.DeactivateUrnNbn;
-import cz.nkp.urnnbn.core.persistence.impl.statements.DeleteByStringString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbn;
-import cz.nkp.urnnbn.core.persistence.impl.statements.InsertUrnNbnPredecessor;
-import cz.nkp.urnnbn.core.persistence.impl.statements.ReactivateUrnNbn;
-import cz.nkp.urnnbn.core.persistence.impl.statements.Select3StringsBy2Strings;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringAttr;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByStringString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsByTimestamps;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectAllAttrsbyTimestampsString;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectCountBy4Strings;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectDiExport;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectMinDateStatement;
-import cz.nkp.urnnbn.core.persistence.impl.statements.SelectUrnNbnExport;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.DiExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleLongRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.SingleTimestampRT;
@@ -58,7 +45,7 @@ import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnExportRT;
 import cz.nkp.urnnbn.core.persistence.impl.transformations.UrnNbnRT;
 
 /**
- * 
+ *
  * @author Martin Řehánek
  */
 public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
@@ -84,7 +71,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
                 IdPart digDocId = new IdPart(ATTR_DIG_DOC_ID, Long.toString(urn.getDigDocId()));
                 IdPart registrarCode = new IdPart(ATTR_REGISTRAR_CODE, urn.getRegistrarCode().toString());
                 IdPart documentCode = new IdPart(ATTR_DOCUMENT_CODE, urn.getDocumentCode());
-                throw new AlreadyPresentException(new IdPart[] { digDocId, registrarCode, documentCode });
+                throw new AlreadyPresentException(new IdPart[]{digDocId, registrarCode, documentCode});
             } else {
                 throw new DatabaseException(ex);
             }
@@ -131,7 +118,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         try {
             return (UrnNbn) runInTransaction(operation);
         } catch (RecordNotFoundException e) {
-            logger.log(Level.INFO, "No such urn:nbn with registrar code {0} and document code {1}", new Object[] { registrarCode, documentCode });
+            logger.log(Level.INFO, "No such urn:nbn with registrar code {0} and document code {1}", new Object[]{registrarCode, documentCode});
             throw (RecordNotFoundException) e;
         } catch (PersistenceException e) {
             // should never happen
@@ -155,6 +142,21 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
             return null;
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
+        }
+    }
+
+    @Override
+    public Long getUrnNbnCountByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException {
+        StatementWrapper st = new SelectCountByString(TABLE_NAME, ATTR_REGISTRAR_CODE, registrarCode.toString());
+        DaoOperation op = new SingleResultOperation(st, new SingleLongRT());
+        try {
+            return (Long) runInTransaction(op);
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        } catch (PersistenceException ex) {
+            // should never happen
+            logger.log(Level.SEVERE, "Exception unexpected here", ex);
+            return null;
         }
     }
 
@@ -225,7 +227,7 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
         } catch (PersistenceException ex) {
             // cannot happen
             logger.log(Level.SEVERE, "Exception unexpected here", ex);
-            return Collections.<UrnNbnWithStatus> emptyList();
+            return Collections.<UrnNbnWithStatus>emptyList();
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -380,8 +382,9 @@ public class UrnNbnDaoPostgres extends AbstractDAO implements UrnNbnDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
-            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException {
+    public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes,
+                                       boolean includeUrnActive, boolean includeUrnDeactivated,
+                                       boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException {
         try {
             SelectDiExport st = new SelectDiExport(registrarCodes, entityTypes, includeUrnActive, includeUrnDeactivated, includeDiActive,
                     includeDiDeactivated);

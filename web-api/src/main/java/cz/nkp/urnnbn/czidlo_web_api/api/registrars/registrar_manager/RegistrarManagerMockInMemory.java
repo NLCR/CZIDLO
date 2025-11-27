@@ -39,7 +39,7 @@ public class RegistrarManagerMockInMemory implements RegistrarManager {
     }
 
     @Override
-    public Registrar updateRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws UnknownRecordException, DuplicateRecordException {
+    public Registrar updateRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws UnknownRecordException {
         return repo.update(registrarCode, name, description, allowedRegistrationModeByResolver, allowedRegistrationModeByReservation, allowedRegistrationModeByRegistrar, isHidden);
     }
 

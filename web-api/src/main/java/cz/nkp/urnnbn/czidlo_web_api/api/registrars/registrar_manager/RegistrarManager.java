@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager;
 
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
@@ -59,13 +60,12 @@ public interface RegistrarManager {
      * @param allowedRegistrationModeByRegistrar   if the registrar should be allowed to register in mode BY_REGISTRAR
      * @param isHidden                             if the registrar is hidden
      * @return registrar after update
-     * @throws UnknownRecordException   if a registrar with that code does not exist
-     * @throws DuplicateRecordException if a registrar with this code already exists
-     * @throws BadArgumentException     if registrarCode is invalid
+     * @throws UnknownRecordException if a registrar with that code does not exist
+     * @throws BadArgumentException   if registrarCode is invalid
      */
     public Registrar updateRegistrar(String login, String registrarCode, String name, String description,
                                      boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar,
-                                     boolean isHidden) throws UnknownRecordException, DuplicateRecordException, BadArgumentException;
+                                     boolean isHidden) throws UnknownRecordException, BadArgumentException;
 
     /**
      * Deletes a registrar.
@@ -74,9 +74,10 @@ public interface RegistrarManager {
      * @param registrarCode unique code of the registrar
      * @throws UnknownRecordException if a registrar with that code does not exist
      * @throws BadArgumentException   if registrarCode is invalid
+     * @throws ConflictException      if the registrar cannot be deleted because it already registered some documents
      */
     public void deleteRegistrar(String login, String registrarCode)
-            throws UnknownRecordException, BadArgumentException;
+            throws UnknownRecordException, BadArgumentException, ConflictException;
 
 
     /**
@@ -89,9 +90,10 @@ public interface RegistrarManager {
      * @param url           the url of the library
      * @return newly created library
      * @throws UnknownRecordException if a registrar with that code does not exist
+     * @throws BadArgumentException   if registrarCode is invalid
      */
     public DigitalLibrary createLibrary(String login, String registrarCode, String name, String description, String url)
-            throws UnknownRecordException;
+            throws UnknownRecordException, BadArgumentException;
 
     /**
      * Updates a library in a registrar.

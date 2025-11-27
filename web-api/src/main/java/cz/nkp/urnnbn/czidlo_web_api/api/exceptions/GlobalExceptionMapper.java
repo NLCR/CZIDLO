@@ -47,6 +47,10 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             return response(Response.Status.BAD_REQUEST, "Malformed JSON in request body: " + exception.getMessage());
         }
 
+        if (exception instanceof ConflictException) {
+            return response(Response.Status.CONFLICT, exception.getMessage());
+        }
+
         return response(Response.Status.INTERNAL_SERVER_ERROR, "Internal server error: " + exception.getMessage());
     }
 

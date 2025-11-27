@@ -172,6 +172,10 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         try {
             authorization.checkAdminRights(login);
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
+            Long registeredDocsCount = factory.urnDao().getUrnNbnCountByRegistrarCode(registrar.getCode());
+            if (registeredDocsCount > 0) {
+                throw new CannotBeRemovedException("There are " + registeredDocsCount + " digital documents registered by this registrar");
+            }
             factory.registrarDao().deleteRegistrar(registrarId);
             logRegistrarDeleted(login, registrar);
         } catch (DatabaseException ex) {
@@ -179,7 +183,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
         } catch (RecordNotFoundException ex) {
             throw new UnknownRegistrarException(registrarId);
         } catch (RecordReferencedException ex) {
-            throw new CannotBeRemovedException("There are digital documents registered by this registrar");
+            throw new CannotBeRemovedException("There are records referencing this registrar.");
         }
     }
 

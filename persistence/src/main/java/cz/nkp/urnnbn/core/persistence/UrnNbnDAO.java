@@ -19,7 +19,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 
 /**
- * 
+ *
  * @author Martin Řehánek
  */
 public interface UrnNbnDAO {
@@ -42,7 +42,7 @@ public interface UrnNbnDAO {
     public String ATTR_NOTE = "note";
 
     /**
-     * 
+     *
      * @param urn
      * @throws DatabaseException
      * @throws AlreadyPresentException
@@ -66,6 +66,8 @@ public interface UrnNbnDAO {
     public List<UrnNbn> getUrnNbnsByRegistrarCodeAndTimestamps(RegistrarCode registrarCode, DateTime from, DateTime until) throws DatabaseException;
 
     public List<UrnNbn> getUrnNbnsByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException;
+
+    public Long getUrnNbnCountByRegistrarCode(RegistrarCode registrarCode) throws DatabaseException;
 
     public List<UrnNbnWithStatus> getPredecessors(UrnNbn urn) throws DatabaseException;
 
@@ -98,6 +100,6 @@ public interface UrnNbnDAO {
     public Integer getAssignmentsFirstYear() throws DatabaseException;
 
     public List<DiExport> listDiExport(List<String> registrarCodes, List<String> entityTypes, boolean includeUrnActive,
-            boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException;
+                                       boolean includeUrnDeactivated, boolean includeDiActive, boolean includeDiDeactivated) throws DatabaseException;
 
 }
