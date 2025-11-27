@@ -14,14 +14,14 @@ public interface RegistrarManager {
     /**
      * Creates a registrar.
      *
-     * @param login                                login of user creating the registrar
+     * @param login                                login of user performing this operation
      * @param registrarCode                        a unique code of the registrar
-     * @param name                                 unique name of the registrar
-     * @param allowedRegistrationModeByResolver    if the registrar is a resolver
-     * @param allowedRegistrationModeByReservation if the registrar is a reserver
-     * @param allowedRegistrationModeByRegistrar   if the registrar is a registrar //TODO: unknown meanings of params
+     * @param name                                 name of the registrar
+     * @param allowedRegistrationModeByResolver    if the registrar should be allowed to register in mode BY_RESOLVER
+     * @param allowedRegistrationModeByReservation if the registrar should be allowed to register in mode BY_RESERVATION
+     * @param allowedRegistrationModeByRegistrar   if the registrar should be allowed to register in mode BY_REGISTRAR
      * @param description                          description of the registrar
-     * @return instance of the registrar
+     * @return newly created registrar
      * @throws BadArgumentException     if registrarCode is invalid
      * @throws DuplicateRecordException if a registrar of that name already exists
      */
@@ -31,7 +31,7 @@ public interface RegistrarManager {
      * Returns a registrar with code.
      *
      * @param registrarCode code of the registrar
-     * @return instance of the registrar
+     * @return registrar with given code
      * @throws UnknownRecordException if a registrar with that code does not exist
      * @throws BadArgumentException   if registrarCode is invalid
      */
@@ -44,26 +44,28 @@ public interface RegistrarManager {
      */
     public List<Registrar> getRegistrars();
 
-    /// Updates a registrar.
-    ///
-    /// @param login                                login of user updating the registrar
-    /// @param registrarCode                        a unique code of the registrar
-    /// @param name                                 unique name of the registrar
-    /// @param description                          description of the registrar
-    /// @param allowedRegistrationModeByResolver    if the registrar is a resolver
-    /// @param allowedRegistrationModeByReservation if the registrar is a reserver
-    /// @param allowedRegistrationModeByRegistrar   if the registrar is a registrar //TODO: unknown meanings of params
-    /// @param isHidden                             if the registrar is hidden
-    /// @return instance of the registrar
-    /// @throws UnknownRecordException   if a registrar with that ID does not exist
-    /// @throws DuplicateRecordException if a registrar of that name already exists
+    /**
+     * Updates a registrar.
+     *
+     * @param login                                login of user performing this operation
+     * @param registrarCode                        a unique code of the registrar
+     * @param name                                 name of the registrar
+     * @param description                          description of the registrar
+     * @param allowedRegistrationModeByResolver    if the registrar should be allowed to register in mode BY_RESOLVER
+     * @param allowedRegistrationModeByReservation if the registrar should be allowed to register in mode BY_RESERVATION
+     * @param allowedRegistrationModeByRegistrar   if the registrar should be allowed to register in mode BY_REGISTRAR
+     * @param isHidden                             if the registrar is hidden
+     * @return registrar after update
+     * @throws UnknownRecordException
+     * @throws DuplicateRecordException
+     */
     public Registrar updateRegistrar(String login, String registrarCode, String name, String description, boolean allowedRegistrationModeByResolver, boolean allowedRegistrationModeByReservation, boolean allowedRegistrationModeByRegistrar, boolean isHidden) throws UnknownRecordException, DuplicateRecordException;
 
     /**
      * Creates a library for a registrar.
      *
-     * @param login         login of user adding the library
-     * @param registrarCode a unique code of the registrar
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the library
      * @param name          a name of the library
      * @param description   description of the library
      * @param url           the url of the library
@@ -74,9 +76,9 @@ public interface RegistrarManager {
     /**
      * Updates a library in a registrar.
      *
-     * @param login         login of user adding the library
-     * @param registrarCode a unique code of the registrar
-     * @param libraryId     id of the library
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the library
+     * @param libraryId     id of the library being updated
      * @param name          a name of the library
      * @param description   description of the library
      * @param url           the url of the library
@@ -87,9 +89,9 @@ public interface RegistrarManager {
     /**
      * Deletes a library from a registrar.
      *
-     * @param login         login of user adding the library
-     * @param registrarCode a unique code of the registrar
-     * @param libraryId     id of the library
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the library
+     * @param libraryId     id of the library being deleted
      * @throws UnknownRecordException if a registrar with that code does not exist
      */
     public void deleteLibrary(String login, String registrarCode, long libraryId) throws UnknownRecordException;
@@ -97,8 +99,8 @@ public interface RegistrarManager {
     /**
      * Creates a catalogue for a registrar.
      *
-     * @param login         login of user adding the catalogue
-     * @param registrarCode a unique code of the registrar
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the catalogue
      * @param name          a name of the catalogue
      * @param description   description of the catalogue
      * @param urlPrefix     the url prefix of the catalogue
@@ -109,9 +111,9 @@ public interface RegistrarManager {
     /**
      * Updates a catalogue in a registrar.
      *
-     * @param login         login of user adding the catalogue
-     * @param registrarCode a unique code of the registrar
-     * @param catalogueId   id of the catalogue
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the catalogue
+     * @param catalogueId   id of the catalogue being updated
      * @param name          a name of the catalogue
      * @param description   description of the catalogue
      * @param urlPrefix     the url of the catalogue
@@ -122,9 +124,9 @@ public interface RegistrarManager {
     /**
      * Deletes a catalogue from a registrar.
      *
-     * @param login         login of user adding the catalogue
-     * @param registrarCode a unique code of the registrar
-     * @param catalogueId   id of the catalogue
+     * @param login         login of user performing this operation
+     * @param registrarCode code of the registrar owning the catalogue
+     * @param catalogueId   id of the catalogue being deleted
      * @throws UnknownRecordException if a registrar or a catalogue with that code does not exist
      */
     public void deleteCatalogue(String login, String registrarCode, long catalogueId) throws UnknownRecordException;
@@ -133,8 +135,8 @@ public interface RegistrarManager {
     /**
      * Deletes a registrar.
      *
-     * @param login         login of user deleting the registrar
-     * @param registrarCode a unique code of the registrar
+     * @param login         login of user performing this operation
+     * @param registrarCode unique code of the registrar
      * @throws UnknownRecordException if a registrar with that code does not exist
      */
     public void deleteRegistrar(String login, String registrarCode) throws UnknownRecordException;
