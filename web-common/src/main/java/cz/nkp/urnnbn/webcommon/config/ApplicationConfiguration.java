@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 public abstract class ApplicationConfiguration {
 
     private static final Logger appLogger = Logger.getLogger(ApplicationConfiguration.class.getName());
-    private static final String CZIDL_TO_SOLR_XSLT = "czidlo-to-solr.xslt";
+    private static final String CZIDLO_TO_SOLR_XSLT = "czidlo-to-solr.xslt";
     private Boolean serverReadOnly;
     private Boolean develMode;
     private String languageCode;
@@ -55,7 +55,7 @@ public abstract class ApplicationConfiguration {
         indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
 
         try {
-            URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDL_TO_SOLR_XSLT);
+            URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDLO_TO_SOLR_XSLT);
             if (czidloToSolrXsltFileResource != null) { //because not all web modules contain this file
                 try {
                     File czidloToSolrXsltFile = new File(czidloToSolrXsltFileResource.toURI());
@@ -63,11 +63,11 @@ public abstract class ApplicationConfiguration {
                     indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath()));
                 } catch (IllegalArgumentException e) {
                     initIndexer = false;
-                    appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDL_TO_SOLR_XSLT);
+                    appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
                 }
             } else {
                 initIndexer = false;
-                appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDL_TO_SOLR_XSLT);
+                appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
             }
         } catch (Exception e) {
             e.printStackTrace();
