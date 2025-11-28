@@ -22,6 +22,9 @@ public abstract class AbstractResource {
         if (sc == null) {
             throw new UnauthorizedException("User must be authenticated for this operation");
         }
+        if (sc.getUserPrincipal() == null) {
+            throw new UnauthorizedException("User must be authenticated for this operation");
+        }
         if (!(sc.getUserPrincipal() instanceof AuthenticatedUserPrincipal principal)) {
             throw new UnauthorizedException("Invalid security context principal: " +
                     (sc.getUserPrincipal() == null ? "null" : sc.getUserPrincipal().getClass().getName())

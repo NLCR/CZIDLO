@@ -1,11 +1,14 @@
 package cz.nkp.urnnbn.czidlo_web_api.api;
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerMockInMemory;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.ArchiverList;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,8 +19,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.json.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.io.StringReader;
 import java.util.List;
@@ -28,8 +33,8 @@ public class ArchiversResource extends AbstractResource {
     //private static final ArchiverManager archiverManager = new ArchiverManagerMockInMemory();
     private static final ArchiverManager archiverManager = new ArchiverManagerImpl();
 
-    //TODO: in production replace with real user from authentication
-    private static final String DEFAULT_USER = "superAdmin";
+    @Context
+    private SecurityContext securityContext;
 
     @Operation(
             summary = "Create archiver",
@@ -40,6 +45,10 @@ public class ArchiversResource extends AbstractResource {
                             responseCode = "200", description = "The archiver",
                             content = @Content(schema = @Schema(implementation = Archiver.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid archiver params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -52,8 +61,13 @@ public class ArchiversResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ArchiverCreate.class)),
                     description = "JSON object representing archiver parameters",
                     required = true
-            ) String body) throws DuplicateRecordException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws DuplicateRecordException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can manage archivers");
+        }
 
         if (body == null || body.isEmpty()) {
             throw new BadRequestException("Missing mandatory body");
@@ -70,9 +84,8 @@ public class ArchiversResource extends AbstractResource {
             desc = readParam("description", root::getString);
         }
 
-        Archiver a = archiverManager.createArchiver(user, name, desc);
+        Archiver a = archiverManager.createArchiver(user.getLogin(), name, desc);
         return Response.ok(a).build();
-
     }
 
     @Operation(
@@ -84,16 +97,17 @@ public class ArchiversResource extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = Archiver.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer"),
+                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
     @Path("{id}")
-    public Response getArchiversById(
+    public Response getArchiverById(
             @Parameter(description = "ID of the archiver", required = true) @PathParam("id") long id) throws UnknownRecordException {
-        String user = DEFAULT_USER;
+        //authorization: none
 
         Archiver a = archiverManager.getArchiver(id);
         return Response.ok(a).build();
@@ -112,7 +126,7 @@ public class ArchiversResource extends AbstractResource {
     )
     @GET
     public Response getArchivers() {
-        String user = DEFAULT_USER;
+        //authorization: none
 
         List<Archiver> a = archiverManager.getArchivers();
         return Response.ok(new ArchiverList(a)).build();
@@ -128,7 +142,12 @@ public class ArchiversResource extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = Archiver.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -142,8 +161,13 @@ public class ArchiversResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ArchiverUpdate.class)),
                     description = "JSON object representing archiver parameters",
                     required = true
-            ) String body) throws UnknownRecordException, DuplicateRecordException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, DuplicateRecordException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can manage archivers");
+        }
 
         if (body == null || body.isEmpty()) {
             throw new BadRequestException("Missing mandatory body");
@@ -161,7 +185,7 @@ public class ArchiversResource extends AbstractResource {
         }
         boolean hidden = readParam("hidden", root::getBoolean);
 
-        Archiver a = archiverManager.updateArchiver(user, id, name, desc, hidden);
+        Archiver a = archiverManager.updateArchiver(user.getLogin(), id, name, desc, hidden);
         return Response.ok(a).build();
 
     }
@@ -175,17 +199,27 @@ public class ArchiversResource extends AbstractResource {
                             responseCode = "204", description = "Success"),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Archiver not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @DELETE
     @Path("/{id}")
-    public Response deleteArchiver(@PathParam("id") long id) throws UnknownRecordException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+    public Response deleteArchiver(@PathParam("id") long id) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can manage archivers");
+        }
 
-        archiverManager.deleteArchiver(user, id);
+        archiverManager.deleteArchiver(user.getLogin(), id);
         return Response.noContent().build();
     }
 
