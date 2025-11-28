@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.dto.Catalog;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
@@ -241,19 +242,45 @@ public class RegistrarManagerImpl implements RegistrarManager {
     public Catalogue createCatalogue(String login, String registrarCodeStr, String name, String description, String
             urlPrefix) throws UnknownRecordException, BadArgumentException {
         RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
-        throw new UnsupportedOperationException("Not implemented yet");
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
+        Catalog dtoCat = new Catalog();
+        dtoCat.setName(name);
+        dtoCat.setDescription(description);
+        dtoCat.setUrlPrefix(urlPrefix);
+        dtoCat.setRegistrarId(dtoRegistrar.getId());
+        try {
+            Catalog catalog = dataImportService().insertNewCatalog(dtoCat, dtoRegistrar.getId(), login);
+            return Catalogue.fromDto(catalog);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
     }
 
     @Override
     public Catalogue updateCatalogue(String login, String registrarCodeStr, long catalogueId, String name, String
             description, String urlPrefix) throws UnknownRecordException, BadArgumentException {
         RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
     public void deleteCatalogue(String login, String registrarCodeStr, long catalogueId) throws UnknownRecordException, BadArgumentException {
         RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
