@@ -32,12 +32,12 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public UserDetails createUser(Object userPerformingThisOperation, String login, String email, String password, boolean isAdmin) throws DuplicateRecordException, AccessRightException, BadArgumentException {
+    public UserDetails createUser(String loginOfUserPerformingThisOperation, String login, String email, String password, boolean isAdmin) throws DuplicateRecordException, AccessRightException, BadArgumentException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public UserDetails getUser(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
+    public UserDetails getUser(String loginOfUserPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
         try {
             User userDto = dataAccessService().userById(userId);
             List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), userDto.getLogin());
@@ -50,10 +50,10 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public UserDetails getUser(Object userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
+    public UserDetails getUser(String loginOfUserPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
         try {
             User userDto = dataAccessService().userByLogin(login);
-            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), userDto.getLogin());
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), null);
             return UserDetails.fromUserDto(userDto, dtoRegistrars);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with login: " + login);
@@ -63,37 +63,49 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public List<UserDetails> getUsers(Object userPerformingThisOperation) throws AccessRightException {
+    public List<UserDetails> getUsers(String loginOfUserPerformingThisOperation) throws AccessRightException {
+        try {
+            List<User> dtoUsers = dataAccessService().users(loginOfUserPerformingThisOperation);
+            List<UserDetails> users = new java.util.ArrayList<>();
+            for (User userDto : dtoUsers) {
+                List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), userDto.getLogin());
+                users.add(UserDetails.fromUserDto(userDto, dtoRegistrars));
+            }
+            return users;
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UserDetails updateUser(String loginOfUserPerformingThisOperation, long userId, String login, String email, boolean isAdmin) throws UnknownRecordException, DuplicateRecordException, AccessRightException, BadArgumentException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public UserDetails updateUser(Object userPerformingThisOperation, long userId, String login, String email, boolean isAdmin) throws UnknownRecordException, DuplicateRecordException, AccessRightException, BadArgumentException {
+    public UserDetails updateUserPassword(String loginOfUserPerformingThisOperation, long userId, String newPassword) throws UnknownRecordException, AccessRightException, BadArgumentException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public UserDetails updateUserPassword(Object userPerformingThisOperation, long userId, String newPassword) throws UnknownRecordException, AccessRightException, BadArgumentException {
+    public UserDetails addRegistrarRight(String loginOfUserPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public UserDetails addRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
+    public UserDetails removeRegistrarRight(String loginOfUserPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public UserDetails removeRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
+    public List<String> getRegistrarRights(String loginOfUserPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public List<String> getRegistrarRights(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
-    public void deleteUser(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
+    public void deleteUser(String loginOfUserPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented yet");
     }
 }

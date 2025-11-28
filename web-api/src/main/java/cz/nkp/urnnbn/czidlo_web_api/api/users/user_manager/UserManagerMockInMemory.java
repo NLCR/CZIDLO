@@ -16,7 +16,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails createUser(Object userPerformingThisOperation, String login, String email, String password, boolean isAdmin)
+    public UserDetails createUser(String userPerformingThisOperation, String login, String email, String password, boolean isAdmin)
             throws DuplicateRecordException, BadArgumentException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin or the user with userId
@@ -39,7 +39,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails getUser(Object userPerformingThisOperation, long userId)
+    public UserDetails getUser(String userPerformingThisOperation, long userId)
             throws UnknownRecordException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin or the user with userId
@@ -56,12 +56,12 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails getUser(Object userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
+    public UserDetails getUser(String userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public List<UserDetails> getUsers(Object userPerformingThisOperation)
+    public List<UserDetails> getUsers(String userPerformingThisOperation)
             throws AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
@@ -72,7 +72,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails updateUser(Object userPerformingThisOperation, long userId, String login, String email, boolean isAdmin)
+    public UserDetails updateUser(String userPerformingThisOperation, long userId, String login, String email, boolean isAdmin)
             throws UnknownRecordException, DuplicateRecordException, BadArgumentException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
@@ -99,7 +99,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails updateUserPassword(Object userPerformingThisOperation, long userId, String newPassword)
+    public UserDetails updateUserPassword(String userPerformingThisOperation, long userId, String newPassword)
             throws UnknownRecordException, AccessRightException, BadArgumentException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin or the user with userId
@@ -117,7 +117,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails addRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
+    public UserDetails addRegistrarRight(String userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
             throw new AccessRightException("TODO: no access right");
@@ -146,7 +146,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public UserDetails removeRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
+    public UserDetails removeRegistrarRight(String userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
             throw new AccessRightException("TODO: no access right");
@@ -175,7 +175,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public List<String> getRegistrarRights(Object userPerformingThisOperation, long userId) throws AccessRightException, UnknownRecordException {
+    public List<String> getRegistrarRights(String userPerformingThisOperation, long userId) throws AccessRightException, UnknownRecordException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
             throw new AccessRightException("TODO: no access right");
@@ -191,7 +191,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public void deleteUser(Object userPerformingThisOperation, long userId)
+    public void deleteUser(String userPerformingThisOperation, long userId)
             throws UnknownRecordException, AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin

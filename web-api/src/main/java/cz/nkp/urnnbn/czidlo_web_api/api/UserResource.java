@@ -50,7 +50,7 @@ public class UserResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            UserDetails userDetails = userManager.getUser(user, user.getLogin());
+            UserDetails userDetails = userManager.getUser(user.getLogin(), user.getLogin());
             return Response.ok(userDetails).build();
         } catch (AccessRightException e) {
             throw new RuntimeException(e);
