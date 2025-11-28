@@ -1,14 +1,13 @@
 package cz.nkp.urnnbn.czidlo_web_api.api;
 
+import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManagerMockInMemory;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessInMemoryOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessList;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InvalidStateException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,8 +17,10 @@ import jakarta.json.*;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +33,9 @@ import java.util.function.Function;
 @Path("/processes")
 public class ProcessesResource extends AbstractResource {
 
+    @Context
+    private SecurityContext securityContext;
+
     private static final ProcessManager processManager = new ProcessManagerMockInMemory();
 
     @Operation(
@@ -39,10 +43,11 @@ public class ProcessesResource extends AbstractResource {
             tags = "Processes",
             description = "Schedules a new process. The request body must be a JSON array of strings representing process parameters. The number and meaning of parameters depend on the process type.",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200", description = "The process",
+                    @ApiResponse(responseCode = "200", description = "The process",
                             content = @Content(schema = @Schema(implementation = Process.class))),
                     @ApiResponse(responseCode = "400", description = "Unknown process type or invalid process params in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -55,8 +60,10 @@ public class ProcessesResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ProcessCreate.class)),
                     description = "JSON array of strings representing process parameters",
                     required = true
-            ) String body) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
+            ) String body) throws UnauthorizedException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
 
         if (body == null || body.isEmpty()) {
             return mandatoryBodyMissingResponse();
@@ -104,7 +111,7 @@ public class ProcessesResource extends AbstractResource {
         */
 
         Map<String, Object> paramsMap = paramsToMap(params);
-        Process p = processManager.scheduleNewProcess(user, type, paramsMap);
+        Process p = processManager.scheduleNewProcess(user.getLogin(), type, paramsMap);
         return Response.ok(p).build();
     }
 
@@ -134,27 +141,34 @@ public class ProcessesResource extends AbstractResource {
             tags = "Processes",
             description = "Returns a process by its ID.",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200", description = "The process",
+                    @ApiResponse(responseCode = "200", description = "The process",
                             content = @Content(schema = @Schema(implementation = Process.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
     @Path("{id}")
-    public Response getProcessById(@PathParam("id") long id) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
+    public Response getProcessById(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            Process p = processManager.getProcess(user, id);
+            Process p = processManager.getProcess(user.getLogin(), id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (Exception e) {
             return internalErrorResponse(e);
         }
@@ -167,14 +181,21 @@ public class ProcessesResource extends AbstractResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of processes",
                             content = @Content(schema = @Schema(implementation = ProcessList.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
-    public Response getAllProcesses() {
-        //TODO: až napojíme identifikaci uživatele, tak se změní logika: pokud je uživatel admin, vrátí se všechny procesy, pokud je běžný uživatel, vrátí se jen jeho procesy
-        List<Process> p = processManager.getProcesses();
+    public Response getAllProcesses() throws UnauthorizedException {
+        //authorization: must be logged in
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
+        List<Process> p = user.isAdmin()
+                ? processManager.getProcesses() // all processes for admin
+                : processManager.getProcessesByOwner(user.getLogin()); // only own processes for regular user
         return Response.ok(new ProcessList(p)).build();
     }
 
@@ -185,15 +206,23 @@ public class ProcessesResource extends AbstractResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "List of processes",
                             content = @Content(schema = @Schema(implementation = ProcessList.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
     @Path("/by-owner/{owner}")
-    public Response getProcessByOwner(@PathParam("owner") String owner) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
-        //TODO: tohle povolíme jen adminovi (až bude implementovaná autentizace)
+    public Response getProcessByOwner(@PathParam("owner") String owner) throws UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can access processes by owner");
+        }
         List<Process> p = processManager.getProcessesByOwner(owner);
         return Response.ok(p).build();
     }
@@ -212,24 +241,32 @@ public class ProcessesResource extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = Boolean.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or process is not in a state that allows this operation",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @POST
     @Path("/{id}/kill")
-    public Response killRunningProcess(@PathParam("id") long id) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
+    public Response killRunningProcess(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            boolean p = processManager.killRunningProcess(user, id);
+            boolean p = processManager.killRunningProcess(user.getLogin(), id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (InvalidStateException e) {
             return processInvalidStateResponse(id, "kill");
         } catch (Exception e) {
@@ -245,24 +282,32 @@ public class ProcessesResource extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = Boolean.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or process is not in a state that allows this operation",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @POST
     @Path("/{id}/cancel")
-    public Response cancelScheduledProcess(@PathParam("id") long id) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
+    public Response cancelScheduledProcess(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            boolean p = processManager.cancelScheduledProcess(user, id);
+            boolean p = processManager.cancelScheduledProcess(user.getLogin(), id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (InvalidStateException e) {
             return processInvalidStateResponse(id, "cancel");
         } catch (Exception e) {
@@ -277,24 +322,32 @@ public class ProcessesResource extends AbstractResource {
             responses = {
                     @ApiResponse(
                             responseCode = "204", description = "Success"),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or process is not in a state that allows this operation",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Process not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @DELETE
     @Path("/{id}")
-    public Response deleteProcess(@PathParam("id") long id) {
-        String user = "dummyUser"; // In real scenario, extract from auth context
+    public Response deleteProcess(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            processManager.deleteProcess(user, id);
+            processManager.deleteProcess(user.getLogin(), id);
             return Response.noContent().build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (InvalidStateException e) {
             return processInvalidStateResponse(id, "delete");
         } catch (Exception e) {
@@ -310,24 +363,28 @@ public class ProcessesResource extends AbstractResource {
                     @ApiResponse(
                             responseCode = "200", description = "Process log successfully retrieved",
                             content = @Content(schema = @Schema(implementation = String.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or process log cannot be read",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process log not found or ID is not integer"),
+                    @ApiResponse(responseCode = "404", description = "Process log not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
     @Path("/{id}/log")
-    public Response getProcessLog(@PathParam("id") long id) {
-        String user = "dummyUser";
+    public Response getProcessLog(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            FileInputStream processLog = processManager.getProcessLog(user, id);
+            FileInputStream processLog = processManager.getProcessLog(user.getLogin(), id);
             return Response.ok(processLog, MediaType.TEXT_PLAIN).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (FileNotFoundException e) {
             return processFileNotFoundResponse(id);
         } catch (Exception e) {
@@ -342,19 +399,27 @@ public class ProcessesResource extends AbstractResource {
             responses = {
                     @ApiResponse(
                             responseCode = "200", description = "Process output file successfully retrieved"),
-                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    @ApiResponse(responseCode = "400", description = "Invalid ID supplied or output file cannot be read",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Process output file not found or ID is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing authentication",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Access denied",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Process output file not found or ID is not integer",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
     )
     @GET
     @Path("/{id}/output")
-    public Response getProcessOutput(@PathParam("id") long id) {
-        String user = "dummyUser";
+    public Response getProcessOutput(@PathParam("id") long id) throws UnauthorizedException {
+        //authorization: must be admin or owner of the process
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+
         try {
-            ProcessInMemoryOutputFile outputFile = processManager.getProcessOutput(user, id);
+            ProcessInMemoryOutputFile outputFile = processManager.getProcessOutput(user.getLogin(), id);
             Response.ResponseBuilder builder = Response.ok(outputFile.getFile(), outputFile.getMimeType());
             String extension = outputFile.getExtension();
             builder.header("Content-Disposition", "attachment; filename=\"process_" + id + "_output" + extension + "\"");
@@ -362,7 +427,7 @@ public class ProcessesResource extends AbstractResource {
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
         } catch (AccessRightException e) {
-            return processAccessForbiddenResponse(user, id);
+            return processAccessForbiddenResponse(user.getLogin(), id);
         } catch (InvalidStateException e) {
             return processInvalidStateResponse(id, "fetch-output");
         } catch (FileNotFoundException e) {
