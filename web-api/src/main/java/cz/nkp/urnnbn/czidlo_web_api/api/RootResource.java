@@ -13,7 +13,7 @@ public class RootResource extends AbstractResource {
     public String getApiInfo() {
         StringBuilder info = new StringBuilder();
         info.append("CZIDLO web API\n");
-        info.append("Verze API: 0.9.1\n");
+        info.append("Verze API: 1.13.0\n");
         info.append("Jersey 4 (EE11)\n");
         return info.toString();
     }

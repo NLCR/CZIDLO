@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 @OpenAPIDefinition(
-        info = @Info(title = "CZIDLO Web API", version = "0.9.1",
+        info = @Info(title = "CZIDLO Web API", version = "1.13.0",
                 description = "API for accessing the CZIDLO system by web applications."),
         servers = {
                 // relativní URL je přenositelné (Tomcat doplní host/port):
