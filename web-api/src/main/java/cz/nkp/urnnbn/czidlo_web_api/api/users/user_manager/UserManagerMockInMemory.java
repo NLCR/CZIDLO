@@ -61,8 +61,7 @@ public class UserManagerMockInMemory implements UserManager {
     }
 
     @Override
-    public List<UserDetails> getUsers(String userPerformingThisOperation)
-            throws AccessRightException {
+    public List<UserDetails> getUsers(String userPerformingThisOperation) throws AccessRightException {
         //check access rights
         if (false) { //TODO: check that userPerformingThisOperation is admin
             throw new AccessRightException("TODO: no access right");

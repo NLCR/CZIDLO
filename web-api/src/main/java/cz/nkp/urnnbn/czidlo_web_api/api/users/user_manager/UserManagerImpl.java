@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager;
 
+import cz.nkp.urnnbn.core.DtoBuilder;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
@@ -8,9 +9,12 @@ import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.utils.CryptoUtils;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class UserManagerImpl implements UserManager {
@@ -33,7 +37,26 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public UserDetails createUser(String loginOfUserPerformingThisOperation, String login, String email, String password, boolean isAdmin) throws DuplicateRecordException, AccessRightException, BadArgumentException {
-        throw new RuntimeException("Not implemented yet");
+        User user = new User();
+        user.setLogin(login);
+        try {
+            user.setPasswordSalt(CryptoUtils.generateSalt());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        user.setPasswordHash(CryptoUtils.createSha256Hash(password, user.getPasswordSalt()));
+        user.setAdmin(isAdmin);
+        user.setEmail(email);
+        try {
+            User created = dataImportService().addNewUser(user, loginOfUserPerformingThisOperation);
+            return UserDetails.fromUserDto(created, List.of());
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        } catch (LoginConflictException e) {
+            throw new DuplicateRecordException("User with login " + login + " already exists.");
+        }
     }
 
     @Override

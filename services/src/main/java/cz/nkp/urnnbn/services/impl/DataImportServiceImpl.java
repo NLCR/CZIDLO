@@ -278,13 +278,15 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         try {
             authorization.checkAdminRights(login);
             Long id = factory.userDao().insertUser(user);
-            user.setId(id);
-            logUserCreated(login, user);
-            return user;
+            User inserted = factory.userDao().getUserById(id);
+            logUserCreated(login, inserted);
+            return inserted;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (AlreadyPresentException ex) {
             throw new LoginConflictException(user.getLogin());
+        } catch (RecordNotFoundException e) {
+            throw new RuntimeException(e); //should never happen
         }
     }
 

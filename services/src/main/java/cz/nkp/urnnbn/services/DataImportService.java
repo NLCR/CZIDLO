@@ -82,7 +82,7 @@ public interface DataImportService extends BusinessService {
     public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws UnknownUserException, AccessException,
             UnknownRegistrarException;
 
-    public User addNewUser(User user, String login) throws UnknownUserException, NotAdminException, LoginConflictException;
+    public User addNewUser(User user, String loginOfUserPerformingThisOperation) throws UnknownUserException, NotAdminException, LoginConflictException;
 
     public void addRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException,
             RegistrarRightCollisionException, UnknownRegistrarException;
