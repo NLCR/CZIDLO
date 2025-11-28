@@ -145,9 +145,13 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
         try {
             authorization.checkAdminRights(login);
             Long id = factory.archiverDao().insertArchiver(archiver);
-            archiver.setId(id);
-            logArchiverCreated(login, archiver);
-            return archiver;
+            try {
+                Archiver inserted = factory.archiverDao().getArchiverById(id);
+                logArchiverCreated(login, inserted);
+                return inserted;
+            } catch (RecordNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         }

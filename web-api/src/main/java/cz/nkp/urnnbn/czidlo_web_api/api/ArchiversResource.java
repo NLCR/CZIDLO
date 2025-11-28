@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api;
 
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManager;
+import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerMockInMemory;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.ArchiverList;
@@ -24,7 +25,11 @@ import java.util.function.Function;
 
 @Path("/archivers")
 public class ArchiversResource extends AbstractResource {
-    private static final ArchiverManager archiverManager = new ArchiverManagerMockInMemory();
+    //private static final ArchiverManager archiverManager = new ArchiverManagerMockInMemory();
+    private static final ArchiverManager archiverManager = new ArchiverManagerImpl();
+
+    //TODO: in production replace with real user from authentication
+    private static final String DEFAULT_USER = "superAdmin";
 
     @Operation(
             summary = "Create archiver",
@@ -48,8 +53,7 @@ public class ArchiversResource extends AbstractResource {
                     description = "JSON object representing archiver parameters",
                     required = true
             ) String body) throws DuplicateRecordException {
-
-        String user = "dummyUser";
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         if (body == null || body.isEmpty()) {
             throw new BadRequestException("Missing mandatory body");
@@ -89,8 +93,7 @@ public class ArchiversResource extends AbstractResource {
     @Path("{id}")
     public Response getArchiversById(
             @Parameter(description = "ID of the archiver", required = true) @PathParam("id") long id) throws UnknownRecordException {
-
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         Archiver a = archiverManager.getArchiver(id);
         return Response.ok(a).build();
@@ -109,7 +112,7 @@ public class ArchiversResource extends AbstractResource {
     )
     @GET
     public Response getArchivers() {
-        String user = "dummyUser";
+        String user = DEFAULT_USER;
 
         List<Archiver> a = archiverManager.getArchivers();
         return Response.ok(new ArchiverList(a)).build();
@@ -140,8 +143,7 @@ public class ArchiversResource extends AbstractResource {
                     description = "JSON object representing archiver parameters",
                     required = true
             ) String body) throws UnknownRecordException, DuplicateRecordException {
-
-        String user = "dummyUser";
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         if (body == null || body.isEmpty()) {
             throw new BadRequestException("Missing mandatory body");
@@ -181,11 +183,10 @@ public class ArchiversResource extends AbstractResource {
     @DELETE
     @Path("/{id}")
     public Response deleteArchiver(@PathParam("id") long id) throws UnknownRecordException {
-        String user = "dummyUser";
+        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
 
         archiverManager.deleteArchiver(user, id);
         return Response.noContent().build();
-
     }
 
     private <T> T readParam(String paramName, Function<String, T> funk) {

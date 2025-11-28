@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.archivers.core;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -15,6 +16,17 @@ public class Archiver {
     private String name;
     private String description;
     private boolean hidden = false;
+
+    public static Archiver fromDto(cz.nkp.urnnbn.core.dto.Archiver dtoArchiver) {
+        Archiver archiver = new Archiver();
+        archiver.setId(dtoArchiver.getId());
+        archiver.setCreated(Utils.dateTimeToDate(dtoArchiver.getCreated()));
+        archiver.setModified(Utils.dateTimeToDate(dtoArchiver.getModified()));
+        archiver.setName(dtoArchiver.getName());
+        archiver.setDescription(dtoArchiver.getDescription());
+        archiver.setHidden(dtoArchiver.isHidden());
+        return archiver;
+    }
 
     public Long getId() {
         return id;

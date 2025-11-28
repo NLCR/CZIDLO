@@ -32,7 +32,7 @@ public class ArchiverManagerMockInMemory implements ArchiverManager {
     }
 
     @Override
-    public Archiver createArchiver(String login, String name, String description) throws DuplicateRecordException {
+    public Archiver createArchiver(String login, String name, String description) {
         return repo.create(name, description);
     }
 
@@ -52,7 +52,7 @@ public class ArchiverManagerMockInMemory implements ArchiverManager {
     }
 
     @Override
-    public Archiver updateArchiver(String login, long archiverId, String name, String description, boolean hidden) throws UnknownRecordException, DuplicateRecordException {
+    public Archiver updateArchiver(String login, long archiverId, String name, String description, boolean hidden) throws UnknownRecordException {
         return repo.update(archiverId, name, description, hidden);
     }
 
