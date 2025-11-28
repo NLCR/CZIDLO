@@ -61,6 +61,8 @@ public interface DataAccessService extends BusinessService {
 
     public List<Catalog> catalogsByRegistrarId(long registrarId);
 
+    public Catalog catalogByInternalId(long catalogId);
+
     public List<Catalog> catalogs();
 
     public List<Registrar> registrars();

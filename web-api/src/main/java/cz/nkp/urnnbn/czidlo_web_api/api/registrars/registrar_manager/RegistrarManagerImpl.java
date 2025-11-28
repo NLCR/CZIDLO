@@ -271,7 +271,23 @@ public class RegistrarManagerImpl implements RegistrarManager {
         if (dtoRegistrar == null) {
             throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
         }
-        throw new UnsupportedOperationException("Not implemented yet");
+        Catalog dtoCat = dataAccessService().catalogByInternalId(catalogueId);
+        if (dtoCat == null) {
+            throw new UnknownRecordException("Unknown catalogue with id: " + catalogueId);
+        }
+        dtoCat.setName(name);
+        dtoCat.setDescription(description);
+        dtoCat.setUrlPrefix(urlPrefix);
+        try {
+            dataUpdateService().updateCatalog(dtoCat, login);
+            return Catalogue.fromDto(dataAccessService().catalogByInternalId(catalogueId));
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownCatalogException e) {
+            throw new UnknownRecordException("Unknown catalogue with id: " + catalogueId);
+        }
     }
 
     @Override

@@ -264,6 +264,18 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public Catalog catalogByInternalId(long catalogId) {
+        try {
+            return factory.catalogDao().getCatalogById(catalogId);
+        } catch (RecordNotFoundException ex) {
+            logger.log(Level.WARNING, ex.getMessage());
+            return null;
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
     public List<Registrar> registrars() {
         try {
             return factory.registrarDao().getAllRegistrars();
