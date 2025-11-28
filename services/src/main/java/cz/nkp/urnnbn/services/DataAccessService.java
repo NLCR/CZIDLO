@@ -98,6 +98,13 @@ public interface DataAccessService extends BusinessService {
     public List<User> users(String login) throws UnknownUserException, NotAdminException;
 
     /**
+     * @param userId id of user that is being lookuped
+     * @return
+     * @throws UnknownUserException
+     */
+    public User userById(long userId) throws UnknownUserException;
+
+    /**
      * @param login login of user that is being lookuped
      * @return
      * @throws UnknownUserException

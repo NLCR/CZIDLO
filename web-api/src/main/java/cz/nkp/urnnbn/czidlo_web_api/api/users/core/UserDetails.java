@@ -1,5 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.users.core;
 
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -19,8 +21,8 @@ public class UserDetails {
     private Date modified;
     private List<String> registrarsRights = new ArrayList<>();
 
-    public static UserDetails fromUser(User user){
-        if (user == null){
+    public static UserDetails fromUser(User user) {
+        if (user == null) {
             return null;
         }
 
@@ -33,6 +35,26 @@ public class UserDetails {
         userDetails.setAdmin(user.isAdmin());
         userDetails.setRegistrarRights(user.getRegistrarsRights());
 
+        return userDetails;
+    }
+
+    public static UserDetails fromUserDto(cz.nkp.urnnbn.core.dto.User userDto, List<Registrar> dtoRegistrars) {
+        if (userDto == null) {
+            return null;
+        }
+
+        UserDetails userDetails = new UserDetails();
+        userDetails.setId(userDto.getId());
+        userDetails.setCreated(Utils.dateTimeToDate(userDto.getCreated()));
+        userDetails.setModified(Utils.dateTimeToDate(userDto.getModified()));
+        userDetails.setLogin(userDto.getLogin());
+        userDetails.setEmail(userDto.getEmail());
+        userDetails.setAdmin(userDto.isAdmin());
+        List<String> registrarCodes = new ArrayList<>();
+        for (Registrar registrar : dtoRegistrars) {
+            registrarCodes.add(registrar.getCode().toString());
+        }
+        userDetails.setRegistrarRights(registrarCodes);
         return userDetails;
     }
 

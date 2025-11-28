@@ -1,11 +1,15 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager;
 
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.services.exceptions.NotAdminException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 import java.util.List;
 
@@ -29,46 +33,67 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public UserDetails createUser(Object userPerformingThisOperation, String login, String email, String password, boolean isAdmin) throws DuplicateRecordException, AccessRightException, BadArgumentException {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public UserDetails getUser(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-        return null;
+        try {
+            User userDto = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), userDto.getLogin());
+            return UserDetails.fromUserDto(userDto, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with id: " + userId);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UserDetails getUser(Object userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
+        try {
+            User userDto = dataAccessService().userByLogin(login);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(userDto.getId(), userDto.getLogin());
+            return UserDetails.fromUserDto(userDto, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with login: " + login);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<UserDetails> getUsers(Object userPerformingThisOperation) throws AccessRightException {
-        return List.of();
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public UserDetails updateUser(Object userPerformingThisOperation, long userId, String login, String email, boolean isAdmin) throws UnknownRecordException, DuplicateRecordException, AccessRightException, BadArgumentException {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public UserDetails updateUserPassword(Object userPerformingThisOperation, long userId, String newPassword) throws UnknownRecordException, AccessRightException, BadArgumentException {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public UserDetails addRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public UserDetails removeRegistrarRight(Object userPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public List<String> getRegistrarRights(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-        return List.of();
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public void deleteUser(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-
+        throw new RuntimeException("Not implemented yet");
     }
 }

@@ -12,7 +12,8 @@ public class UserManagerMockInMemory implements UserManager {
     private static final UserInMemoryRepo userRepo = UserInMemoryRepo.getInstance();
     private static final RegistrarInMemoryRepo registrarRepo = RegistrarInMemoryRepo.getInstance();
 
-    public UserManagerMockInMemory() {}
+    public UserManagerMockInMemory() {
+    }
 
     @Override
     public UserDetails createUser(Object userPerformingThisOperation, String login, String email, String password, boolean isAdmin)
@@ -52,6 +53,11 @@ public class UserManagerMockInMemory implements UserManager {
         }
         //return user
         return user;
+    }
+
+    @Override
+    public UserDetails getUser(Object userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -130,7 +136,7 @@ public class UserManagerMockInMemory implements UserManager {
             throw new UnknownRecordException("Unknown registrar: " + registrarCode);
         }
 
-        if (userFromDb.getRegistrarRights().contains(registrarCode)){
+        if (userFromDb.getRegistrarRights().contains(registrarCode)) {
             return null;
         }
 
@@ -159,7 +165,7 @@ public class UserManagerMockInMemory implements UserManager {
             throw new UnknownRecordException("Unknown registrar: " + registrarCode);
         }
 
-        if (!userFromDb.getRegistrarRights().contains(registrarCode)){
+        if (!userFromDb.getRegistrarRights().contains(registrarCode)) {
             throw new UnknownRecordException("User does not contain registrar with code: " + registrarCode);
         }
 

@@ -446,6 +446,17 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
+    public User userById(long userId) throws UnknownUserException {
+        try {
+            return factory.userDao().getUserById(userId);
+        } catch (DatabaseException ex) {
+            throw new RuntimeException(ex);
+        } catch (RecordNotFoundException ex) {
+            throw new UnknownUserException(userId);
+        }
+    }
+
+    @Override
     public User userByLogin(String login) throws UnknownUserException {
         try {
             return factory.userDao().getUserByLogin(login);

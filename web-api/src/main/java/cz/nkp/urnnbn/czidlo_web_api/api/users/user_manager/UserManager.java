@@ -34,6 +34,17 @@ public interface UserManager {
     public UserDetails getUser(Object userPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException;
 
     /**
+     * Returns a user with given login.
+     *
+     * @param userPerformingThisOperation the user performing this operation
+     * @param login                       login of the user
+     * @return user with given ID
+     * @throws UnknownRecordException if a user with that login does not exist
+     * @throws AccessRightException   if userPerformingThisOperation is not admin or this user (user with the same userId)
+     */
+    public UserDetails getUser(Object userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException;
+
+    /**
      * Returns all users.
      *
      * @return list of all users
