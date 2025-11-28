@@ -17,9 +17,9 @@
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
 import cz.nkp.urnnbn.processmanager.conf.Configuration;
+
 import java.io.File;
 import java.io.IOException;
-import java.security.AccessControlException;
 
 /**
  *
@@ -54,7 +54,7 @@ public class ProcessFileUtils {
     private static void createFile(File file) throws IOException {
         File parentDir = file.getParentFile();
         if (!parentDir.canWrite()) {
-            throw new AccessControlException("no rights to create files in directory " + parentDir.getAbsolutePath());
+            throw new IOException("no rights to create files in directory " + parentDir.getAbsolutePath());
         }
         file.createNewFile();
     }
@@ -95,7 +95,7 @@ public class ProcessFileUtils {
     }
 
     /**
-     * 
+     *
      * @param processId
      * @return File failed to delete
      */
