@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager;
 
 import cz.nkp.urnnbn.core.DtoBuilder;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.Registrar;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
@@ -9,9 +10,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.services.*;
-import cz.nkp.urnnbn.services.exceptions.LoginConflictException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.utils.CryptoUtils;
 
 import java.security.NoSuchAlgorithmException;
@@ -145,17 +144,61 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public UserDetails addRegistrarRight(String loginOfUserPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
+        Registrar registrar = dataAccessService().registrarByCode(RegistrarCode.valueOf(registrarCode));
+        if (registrar == null) {
+            throw new UnknownRecordException("Unknown registrar with code: " + registrarCode);
+        }
+        try {
+            dataImportService().addRegistrarRight(userId, registrar.getId(), loginOfUserPerformingThisOperation);
+            User updated = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(updated.getId(), updated.getLogin());
+            return UserDetails.fromUserDto(updated, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        } catch (RegistrarRightCollisionException e) {
+            throw new AccessRightException("User with id " + userId + " already has right for registrar with code: " + registrarCode);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException("Unknown registrar with id: " + registrar.getId());
+        }
     }
 
     @Override
     public UserDetails removeRegistrarRight(String loginOfUserPerformingThisOperation, long userId, String registrarCode) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
+        Registrar registrar = dataAccessService().registrarByCode(RegistrarCode.valueOf(registrarCode));
+        if (registrar == null) {
+            throw new UnknownRecordException("Unknown registrar with code: " + registrarCode);
+        }
+        try {
+            dataRemoveService().removeRegistrarRight(userId, registrar.getId(), loginOfUserPerformingThisOperation);
+            User updated = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(updated.getId(), updated.getLogin());
+            return UserDetails.fromUserDto(updated, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (NotAdminException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException("Unknown registrar with id: " + registrar.getId());
+        }
     }
 
     @Override
     public List<String> getRegistrarRights(String loginOfUserPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
+        try {
+            User user = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(user.getId(), user.getLogin());
+            List<String> registrarCodes = new java.util.ArrayList<>();
+            for (Registrar registrar : dtoRegistrars) {
+                registrarCodes.add(registrar.getCode().toString());
+            }
+            return registrarCodes;
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with id: " + userId);
+        } catch (NotAdminException e) {
+            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
+        }
     }
 
     @Override

@@ -320,11 +320,11 @@ public class UsersResource extends AbstractResource {
         UserDetails userDetails = userManager.addRegistrarRight(user.getLogin(), userId, registrarCode);
         if (userDetails == null) {
             return Response.status(Response.Status.OK)
-                    .entity(new ApiError("User already contains registrar with code: " + registrarCode))
+                    .entity(new ApiError("User already manages registrar with code: " + registrarCode))
                     .build();
         }
         //return updated user
-        return Response.ok(user).build();
+        return Response.ok(userDetails).build();
     }
 
     @Operation(
