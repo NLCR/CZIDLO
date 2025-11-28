@@ -84,6 +84,7 @@
         <module>web-common</module>
         <module>api</module>
         <module>web-api</module>
+        <module>processManager</module>
 
         <!--
         <module>processManager</module>
