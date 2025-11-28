@@ -58,6 +58,11 @@
             <artifactId>web-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cz.nkp.urnnbn</groupId>
+            <artifactId>processManager</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Servlet API – provided Tomcatem -->
         <dependency>

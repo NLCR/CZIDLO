@@ -18,6 +18,9 @@
         <!--<czidlo.version>5.0</czidlo.version>-->
         <!--<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
         <!--<java.version>21</java.version>-->
+
+        <!--testy pro tento modul vypnuty, protoze vyzaduji funkcni infastrukturu (databazi, apod.)-->
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -53,11 +56,23 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate</artifactId>
             <version>3.2.5.ga</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.3.2.GA</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- <dependency> -->
@@ -71,17 +86,14 @@
         <!-- <version>3.5.4.Final</version> -->
         <!-- </dependency> -->
 
+        <!-- JDBC optional package už je součástí JDK, externí JAR není potřeba -->
+        <!-- dependency javax.sql:jdbc-stdext odstraněna -->
+
+        <!-- JTA API – náhrada za staré javax.transaction:jta:1.0.1B -->
         <dependency>
-            <!-- Artifact not available in maven central. Install jdbc-stdext-2.0.jar into local repo. See  https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html -->
-            <groupId>javax.sql</groupId>
-            <artifactId>jdbc-stdext</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <!-- Artifact not available in maven central. Install jta-1.0.1B.jar into local repo. See  https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html -->
             <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-            <version>1.0.1B</version>
+            <artifactId>javax.transaction-api</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
