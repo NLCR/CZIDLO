@@ -1,9 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api;
 
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
+import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.DigitalLibrary;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
@@ -22,8 +20,10 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.io.StringReader;
 import java.util.List;
@@ -31,11 +31,12 @@ import java.util.function.Function;
 
 @Path("/registrars")
 public class RegistrarResources extends AbstractResource {
+
+    @Context
+    private SecurityContext securityContext;
+
     //private static final RegistrarManager registrarManager = new RegistrarManagerMockInMemory();
     private static final RegistrarManager registrarManager = new RegistrarManagerImpl();
-
-    //TODO: in production replace with real user from authentication
-    private static final String DEFAULT_USER = "superAdmin";
 
     @Operation(
             summary = "Create registrar",
@@ -46,6 +47,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "200", description = "The registrar",
                             content = @Content(schema = @Schema(implementation = Registrar.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -58,8 +63,14 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = RegistrarCreate.class)),
                     description = "JSON object representing registrar parameters",
                     required = true
-            ) String body) throws DuplicateRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin
+            ) String body) throws DuplicateRecordException, BadArgumentException, InsufficientRightsException, UnauthorizedException {
+
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can create registrars");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -84,7 +95,7 @@ public class RegistrarResources extends AbstractResource {
         Boolean allowedRegistrationModeByReservation = readParam("allowedRegistrationModeByReservation", root::getBoolean);
         Boolean allowedRegistrationModeByRegistrar = readParam("allowedRegistrationModeByRegistrar", root::getBoolean);
 
-        Registrar a = registrarManager.createRegistrar(user, code, name, desc, allowedRegistrationModeByResolver, allowedRegistrationModeByReservation, allowedRegistrationModeByRegistrar);
+        Registrar a = registrarManager.createRegistrar(user.getLogin(), code, name, desc, allowedRegistrationModeByResolver, allowedRegistrationModeByReservation, allowedRegistrationModeByRegistrar);
         return Response.ok(a).build();
     }
 
@@ -107,7 +118,7 @@ public class RegistrarResources extends AbstractResource {
     @Path("{code}")
     public Response getRegistrarByCode(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER;
+        //authorization: none
 
         Registrar a = registrarManager.getRegistrarByCode(code);
         return Response.ok(a).build();
@@ -126,7 +137,7 @@ public class RegistrarResources extends AbstractResource {
     )
     @GET
     public Response getRegistrars() {
-        String user = DEFAULT_USER;
+        //authorization: none
 
         List<Registrar> a = registrarManager.getRegistrars();
         return Response.ok(new RegistrarList(a)).build();
@@ -141,6 +152,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = Registrar.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -157,8 +172,13 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = RegistrarUpdate.class)),
                     description = "JSON object representing registrar parameters",
                     required = true
-            ) String body) throws UnknownRecordException, DuplicateRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, BadArgumentException, InsufficientRightsException, UnauthorizedException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -182,9 +202,8 @@ public class RegistrarResources extends AbstractResource {
         Boolean allowedRegistrationModeByRegistrar = readParam("allowedRegistrationModeByRegistrar", root::getBoolean);
         boolean hidden = readParam("hidden", root::getBoolean);
 
-        Registrar a = registrarManager.updateRegistrar(user, code, name, desc, allowedRegistrationModeByResolver, allowedRegistrationModeByReservation, allowedRegistrationModeByRegistrar, hidden);
+        Registrar a = registrarManager.updateRegistrar(user.getLogin(), code, name, desc, allowedRegistrationModeByResolver, allowedRegistrationModeByReservation, allowedRegistrationModeByRegistrar, hidden);
         return Response.ok(a).build();
-
     }
 
     @Operation(
@@ -196,6 +215,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "204", description = "Success"),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "409", description = "Registrar cannot be deleted because it registers some documents",
@@ -206,10 +229,15 @@ public class RegistrarResources extends AbstractResource {
     )
     @DELETE
     @Path("/{code}")
-    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException, BadArgumentException, ConflictException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+    public Response deleteRegistrar(@PathParam("code") String code) throws UnknownRecordException, BadArgumentException, ConflictException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
-        registrarManager.deleteRegistrar(user, code);
+        registrarManager.deleteRegistrar(user.getLogin(), code);
         return Response.noContent().build();
     }
 
@@ -222,6 +250,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "200", description = "The library",
                             content = @Content(schema = @Schema(implementation = DigitalLibraryCreate.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or library params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -238,8 +270,13 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = DigitalLibraryCreate.class)),
                     description = "JSON object representing digital library parameters",
                     required = true
-            ) String body) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -261,7 +298,7 @@ public class RegistrarResources extends AbstractResource {
         String url = readParam("url", root::getString);
         checkDigitalLibraryUrl(url);
 
-        DigitalLibrary a = registrarManager.createLibrary(user, code, name, desc, url);
+        DigitalLibrary a = registrarManager.createLibrary(user.getLogin(), code, name, desc, url);
         return Response.ok(a).build();
     }
 
@@ -274,6 +311,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "200", description = "Success",
                             content = @Content(schema = @Schema(implementation = DigitalLibraryUpdate.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or library params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar or digital library not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -291,8 +332,13 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = DigitalLibraryUpdate.class)),
                     description = "JSON object representing digital library parameters",
                     required = true
-            ) String body) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -314,9 +360,8 @@ public class RegistrarResources extends AbstractResource {
         String url = readParam("url", root::getString);
         checkDigitalLibraryUrl(url);
 
-        DigitalLibrary a = registrarManager.updateLibrary(user, code, id, name, desc, url);
+        DigitalLibrary a = registrarManager.updateLibrary(user.getLogin(), code, id, name, desc, url);
         return Response.ok(a).build();
-
     }
 
     @Operation(
@@ -327,6 +372,10 @@ public class RegistrarResources extends AbstractResource {
                     @ApiResponse(
                             responseCode = "204", description = "Success"),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or digital library id",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Registrar or digital library not found",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -339,12 +388,16 @@ public class RegistrarResources extends AbstractResource {
     public Response deleteDigitalLibrary(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the digital library", required = true) @PathParam("id") long id)
-            throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
-        registrarManager.deleteLibrary(user, code, id);
+        registrarManager.deleteLibrary(user.getLogin(), code, id);
         return Response.noContent().build();
-
     }
 
     @Operation(
@@ -356,6 +409,10 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "200", description = "Catalogue created",
                             content = @Content(schema = @Schema(implementation = CatalogueCreate.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue params",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
@@ -370,8 +427,13 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = CatalogueCreate.class)),
                     description = "JSON object representing catalogue parameters",
                     required = true
-            ) String body) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -393,7 +455,7 @@ public class RegistrarResources extends AbstractResource {
         String urlPrefix = readParam("urlPrefix", root::getString);
         checkCatalogueUrlPrefix(urlPrefix);
 
-        Catalogue a = registrarManager.createCatalogue(user, code, name, desc, urlPrefix);
+        Catalogue a = registrarManager.createCatalogue(user.getLogin(), code, name, desc, urlPrefix);
         return Response.ok(a).build();
     }
 
@@ -407,7 +469,12 @@ public class RegistrarResources extends AbstractResource {
                             content = @Content(schema = @Schema(implementation = CatalogueUpdate.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue params",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, catalogue not found or id is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found or catalogue not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -422,8 +489,13 @@ public class RegistrarResources extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = CatalogueUpdate.class)),
                     description = "JSON object representing catalogue parameters",
                     required = true
-            ) String body) throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            ) String body) throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
         //parse mandatory body to json
         if (body == null || body.isEmpty()) {
@@ -445,7 +517,7 @@ public class RegistrarResources extends AbstractResource {
         String urlPrefix = readParam("urlPrefix", root::getString);
         checkCatalogueUrlPrefix(urlPrefix);
 
-        Catalogue a = registrarManager.updateCatalogue(user, code, id, name, desc, urlPrefix);
+        Catalogue a = registrarManager.updateCatalogue(user.getLogin(), code, id, name, desc, urlPrefix);
         return Response.ok(a).build();
     }
 
@@ -458,7 +530,12 @@ public class RegistrarResources extends AbstractResource {
                             responseCode = "204", description = "Success"),
                     @ApiResponse(responseCode = "400", description = "Invalid registrar code or catalogue id",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
-                    @ApiResponse(responseCode = "404", description = "Registrar not found or code is not string, catalogue not found or id is not integer"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Registrar not found or catalogue not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "500", description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = ApiError.class)))
             }
@@ -468,12 +545,16 @@ public class RegistrarResources extends AbstractResource {
     public Response deleteCatalogue(
             @Parameter(description = "Code of the registrar", required = true) @PathParam("code") String code,
             @Parameter(description = "Id of the catalogue", required = true) @PathParam("id") long id)
-            throws UnknownRecordException, BadArgumentException {
-        String user = DEFAULT_USER; //TODO: must be admin or have right to manage this registrar
+            throws UnknownRecordException, BadArgumentException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin() && !principal.managesRegistrar(code)) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + code + " can perform this operation");
+        }
 
-        registrarManager.deleteCatalogue(user, code, id);
+        registrarManager.deleteCatalogue(user.getLogin(), code, id);
         return Response.noContent().build();
-
     }
 
     private Response mandatoryBodyMissingResponse() {

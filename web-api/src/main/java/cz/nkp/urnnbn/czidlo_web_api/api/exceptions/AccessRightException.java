@@ -20,6 +20,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.exceptions;
 /**
  * @author Martin Řehánek
  */
+@Deprecated
 public class AccessRightException extends Exception {
 
     public AccessRightException(String login, Process process) {

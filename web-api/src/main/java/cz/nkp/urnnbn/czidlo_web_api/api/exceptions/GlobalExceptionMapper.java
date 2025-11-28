@@ -43,6 +43,14 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {
             return response(Response.Status.FORBIDDEN, exception.getMessage());
         }
 
+        if (exception instanceof InsufficientRightsException) {
+            return response(Response.Status.FORBIDDEN, exception.getMessage());
+        }
+
+        if (exception instanceof UnauthorizedException) {
+            return response(Response.Status.UNAUTHORIZED, exception.getMessage());
+        }
+
         if (exception instanceof JsonParsingException) {
             return response(Response.Status.BAD_REQUEST, "Malformed JSON in request body: " + exception.getMessage());
         }
