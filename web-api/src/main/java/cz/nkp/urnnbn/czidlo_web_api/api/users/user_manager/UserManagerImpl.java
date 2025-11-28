@@ -160,6 +160,13 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public void deleteUser(String loginOfUserPerformingThisOperation, long userId) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
+        try {
+            User user = dataAccessService().userById(userId);
+            dataRemoveService().removeUser(user.getId(), loginOfUserPerformingThisOperation);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with id: " + userId);
+        } catch (NotAdminException e) {
+            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
+        }
     }
 }
