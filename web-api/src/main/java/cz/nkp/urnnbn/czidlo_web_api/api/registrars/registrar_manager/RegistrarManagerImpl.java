@@ -216,7 +216,25 @@ public class RegistrarManagerImpl implements RegistrarManager {
     @Override
     public void deleteLibrary(String login, String registrarCodeStr, long libraryId) throws UnknownRecordException, BadArgumentException {
         RegistrarCode registrarCode = parseRegistrarCode(registrarCodeStr);
-        throw new UnsupportedOperationException("Not implemented yet");
+        cz.nkp.urnnbn.core.dto.Registrar dtoRegistrar = dataAccessService().registrarByCode(registrarCode);
+        if (dtoRegistrar == null) {
+            throw new UnknownRecordException("Unknown registrar with registrar code: " + registrarCodeStr);
+        }
+        cz.nkp.urnnbn.core.dto.DigitalLibrary dtoLib = dataAccessService().libraryByInternalId(libraryId);
+        if (dtoLib == null) {
+            throw new UnknownRecordException("Unknown digital library with id: " + libraryId);
+        }
+        try {
+            dataRemoveService().removeDigitalLibrary(libraryId, login);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownDigLibException e) {
+            throw new UnknownRecordException("Unknown digital library with id: " + libraryId);
+        } catch (CannotBeRemovedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
