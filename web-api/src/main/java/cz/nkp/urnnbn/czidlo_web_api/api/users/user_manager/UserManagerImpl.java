@@ -104,12 +104,43 @@ public class UserManagerImpl implements UserManager {
 
     @Override
     public UserDetails updateUser(String loginOfUserPerformingThisOperation, long userId, String login, String email, boolean isAdmin) throws UnknownRecordException, DuplicateRecordException, AccessRightException, BadArgumentException {
-        throw new RuntimeException("Not implemented yet");
+        try {
+            User original = dataAccessService().userById(userId);
+            original.setLogin(login);
+            original.setEmail(email);
+            original.setAdmin(isAdmin);
+            //update
+            dataUpdateService().updateUser(original, loginOfUserPerformingThisOperation);
+            User updated = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(updated.getId(), updated.getLogin());
+            return UserDetails.fromUserDto(updated, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with id: " + userId);
+        } catch (NotAdminException e) {
+            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
+        }
     }
 
     @Override
     public UserDetails updateUserPassword(String loginOfUserPerformingThisOperation, long userId, String newPassword) throws UnknownRecordException, AccessRightException, BadArgumentException {
-        throw new RuntimeException("Not implemented yet");
+        try {
+            User user = dataAccessService().userById(userId);
+            String newSalt = CryptoUtils.generateSalt();
+            String newHash = CryptoUtils.createSha256Hash(newPassword, newSalt);
+            user.setPasswordSalt(newSalt);
+            user.setPasswordHash(newHash);
+            //update
+            dataUpdateService().updateUser(user, loginOfUserPerformingThisOperation);
+            User updated = dataAccessService().userById(userId);
+            List<Registrar> dtoRegistrars = dataAccessService().registrarsManagedByUser(updated.getId(), updated.getLogin());
+            return UserDetails.fromUserDto(updated, dtoRegistrars);
+        } catch (UnknownUserException e) {
+            throw new UnknownRecordException("Unknown user with id: " + userId);
+        } catch (NotAdminException e) {
+            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
