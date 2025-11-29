@@ -77,7 +77,6 @@ public interface UrnNbnDAO {
 
     public List<UrnNbnExport> selectByCriteria(String languageCode, UrnNbnExportFilter filter, boolean withDigitalInstances) throws DatabaseException;
 
-    // only for tests, rollbacks
     public void reactivateUrnNbn(RegistrarCode registrarCode, String documentCode) throws DatabaseException;
 
     public void deactivateUrnNbn(RegistrarCode registrarCode, String documentCode, String note) throws DatabaseException;

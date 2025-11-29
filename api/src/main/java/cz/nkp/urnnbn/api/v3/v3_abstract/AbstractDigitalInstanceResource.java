@@ -87,7 +87,7 @@ public abstract class AbstractDigitalInstanceResource extends ApiResource {
 
     private void deactivateDigitalInstanceWithServiceExceptionTranslation(String login) {
         try {
-            dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
+            dataUpdateService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {
             throw new NotAuthorizedException(ex.getMessage());
         } catch (AccessException ex) {

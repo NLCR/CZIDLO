@@ -67,7 +67,7 @@ public class DocumentsResource extends AbstractResource {
     @Operation(
             summary = "Deactivates URN:NBN",
             tags = "Documents",
-            description = "Deactivates the given URN:NBN identifier and thus the associated digital document.",
+            description = "Deactivates given URN:NBN identifier and thus the associated digital document.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Deactivated, i.e. deactivation record created",
                             content = @Content(schema = @Schema(implementation = Record.class))),
@@ -106,6 +106,55 @@ public class DocumentsResource extends AbstractResource {
         boolean deactivated = documentManager.deactivateRecord(urnNbn, note, user.getLogin());
         if (!deactivated) {
             throw new ConflictException("URN:NBN " + urn + " is already deactivated");
+        }
+        Record record = documentManager.getRecord(urnNbn);
+        return Response.ok(record).build();
+    }
+
+    @Operation(
+            summary = "Reactivates URN:NBN",
+            tags = "Documents",
+            description = "Reactivates deactivated URN:NBN identifier and thus the associated digital document.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Reactivated, i.e. deactivation record removed",
+                            content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights to reactivate URN:NBN (must be admin)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Digital document not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "409", description = "URN:NBN is not deactivated",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @DELETE
+    @Path("{urn}/deactivation")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response reactivateUrnNbn(
+            @Parameter(description = "URN:NBN identifier of the digital document", required = true)
+            @PathParam("urn") String urn) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin can perform this operation");
+        }
+
+        UrnNbn urnNbn;
+        try {
+            urnNbn = UrnNbn.valueOf(urn);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format: " + e.getMessage());
+        }
+
+        boolean reactivated = documentManager.reactivateRecord(urnNbn, user.getLogin());
+        if (!reactivated) {
+            throw new ConflictException("URN:NBN " + urn + " still active, cannot reactivate");
         }
         Record record = documentManager.getRecord(urnNbn);
         return Response.ok(record).build();

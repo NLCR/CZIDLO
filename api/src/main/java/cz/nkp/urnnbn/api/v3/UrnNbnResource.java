@@ -57,7 +57,7 @@ public class UrnNbnResource extends AbstractUrnNbnResource {
             switch (urnNbnWithStatus.getStatus()) {
             case ACTIVE:
                 String login = req.getRemoteUser();
-                dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
+                dataUpdateService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
                 UrnNbnWithStatus deactivated = getUrnNbnWithStatus(urnNbnWithStatus.getUrn());
                 return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();
             default:

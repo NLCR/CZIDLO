@@ -138,7 +138,7 @@ public class DigitalInstanceResource extends ApiV5Resource {
 
     private void deactivateDigitalInstanceWithServiceExceptionTranslation(ResponseFormat format, String login) {
         try {
-            dataRemoveService().deactivateDigitalInstance(instance.getId(), login);
+            dataUpdateService().deactivateDigitalInstance(instance.getId(), login);
         } catch (UnknownUserException ex) {
             throw new NoAccessRightsException(format, ex.getMessage());
         } catch (AccessException ex) {

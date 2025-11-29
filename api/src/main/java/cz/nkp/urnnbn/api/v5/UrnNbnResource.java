@@ -79,7 +79,7 @@ public class UrnNbnResource extends ApiV5Resource {
             switch (urnNbnWithStatus.getStatus()) {
             case ACTIVE:
                 String login = req.getRemoteUser();
-                dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
+                dataUpdateService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), login, note);
                 UrnNbnWithStatus deactivated = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbnWithStatus.getUrn().getRegistrarCode(),
                         urnNbnWithStatus.getUrn().getDocumentCode(), true);
                 return new UrnNbnBuilder(deactivated).buildDocumentWithResponseHeader().toXML();

@@ -105,8 +105,30 @@ public class DocumentManagerImpl implements DocumentManager {
             return false; // already deactivated
         }
         try {
-            dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), loginOfUserPerformingOperation, note);
+            dataUpdateService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), loginOfUserPerformingOperation, note);
             return true; //deactivated now
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownDigDocException e) {
+            throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
+        }
+    }
+
+    @Override
+    public boolean reactivateRecord(UrnNbn urnNbn, String login) throws UnknownRecordException {
+        UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        if (urnNbnWithStatus == null || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE
+                || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
+            throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
+        }
+        if (urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.ACTIVE) {
+            return false; // already active
+        }
+        try {
+            dataUpdateService().reactivateUrnNbn(urnNbnWithStatus.getUrn(), login);
+            return true; // reactivated now
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
         } catch (AccessException e) {
