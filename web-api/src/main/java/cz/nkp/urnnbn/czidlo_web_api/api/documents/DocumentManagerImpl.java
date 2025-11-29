@@ -1,15 +1,14 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,6 +57,7 @@ public class DocumentManagerImpl implements DocumentManager {
         Registrar registrar = null;
         Archiver archiver = null;
         List<RsId> rsIds = null;
+        List<DigInst> digitalInstances = null;
         Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
@@ -76,7 +76,17 @@ public class DocumentManagerImpl implements DocumentManager {
                 archiver = Archiver.fromDto(dataAccessService().archiverById(digDoc.getArchiverId()));
             }
             rsIds = RsId.fromList(dataAccessService().registrarScopeIdentifiers(digDocId));
+            List<DigitalInstance> dtoDis = dataAccessService().digInstancesByDigDocId(digDocId);
+            if (dtoDis == null) {
+                dtoDis = List.of();
+            } else {
+                digitalInstances = new ArrayList<>();
+                for (DigitalInstance di : dtoDis) {
+                    DigitalLibrary digitalLibrary = dataAccessService().libraryByInternalId(di.getLibraryId());
+                    digitalInstances.add(DigInst.from(di, digitalLibrary));
+                }
+            }
         }
-        return Record.from(urn, doc, entity, registrar, archiver, rsIds);
+        return Record.from(urn, doc, entity, registrar, archiver, rsIds, digitalInstances);
     }
 }
