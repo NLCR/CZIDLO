@@ -106,7 +106,7 @@ public class UrnNbn {
      * @param deactivationNote
      */
     public UrnNbn(RegistrarCode registrarCode, String documentCode, Long digDocId, DateTime reserved, DateTime registered, DateTime deactivated,
-            boolean active, String deactivationNote) {
+                  boolean active, String deactivationNote) {
         this.registrarCode = registrarCode;
         this.documentCode = documentCode.toLowerCase();
         this.digDocId = digDocId;

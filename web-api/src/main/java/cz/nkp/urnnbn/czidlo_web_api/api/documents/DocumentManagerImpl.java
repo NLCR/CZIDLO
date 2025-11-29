@@ -5,8 +5,12 @@ import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,5 +92,27 @@ public class DocumentManagerImpl implements DocumentManager {
             }
         }
         return Record.from(urn, doc, entity, registrar, archiver, rsIds, digitalInstances);
+    }
+
+    @Override
+    public boolean deactivateRecord(UrnNbn urnNbn, String note, String loginOfUserPerformingOperation) throws UnknownRecordException {
+        UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        if (urnNbnWithStatus == null || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE
+                || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
+            throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
+        }
+        if (urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.DEACTIVATED) {
+            return false; // already deactivated
+        }
+        try {
+            dataRemoveService().deactivateUrnNbn(urnNbnWithStatus.getUrn(), loginOfUserPerformingOperation, note);
+            return true; //deactivated now
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownDigDocException e) {
+            throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
+        }
     }
 }
