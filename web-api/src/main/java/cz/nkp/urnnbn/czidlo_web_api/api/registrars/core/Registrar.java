@@ -27,6 +27,9 @@ public class Registrar {
     private List<Catalogue> catalogues = new ArrayList<>();
 
     public static Registrar from(cz.nkp.urnnbn.core.dto.Registrar reg, List<DigitalLibrary> libraries, List<Catalogue> catalogues) {
+        if (reg == null) {
+            return null;
+        }
         Registrar result = new Registrar();
         result.setId(reg.getId());
         result.setCode(reg.getCode().toString());

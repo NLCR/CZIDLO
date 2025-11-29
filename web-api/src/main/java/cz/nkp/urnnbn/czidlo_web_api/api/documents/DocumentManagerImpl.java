@@ -4,11 +4,14 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
+import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DocumentManagerImpl implements DocumentManager {
 
@@ -52,6 +55,8 @@ public class DocumentManagerImpl implements DocumentManager {
         //DIGITAL DOCUMENT
         Document doc = null;
         Entity entity = null;
+        Registrar registrar = null;
+        Archiver archiver = null;
         Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
@@ -65,7 +70,11 @@ public class DocumentManagerImpl implements DocumentManager {
                 List<IeId> ieIds = IeId.fromlist(dataAccessService().intEntIdentifiersByIntEntId(ie.getId()));
                 entity = Entity.from(ie, originator, publication, srcDoc, ieIds);
             }
+            registrar = Registrar.from(dataAccessService().registrarById(digDoc.getRegistrarId()), null, null);
+            if (digDoc.getArchiverId() != null && !Objects.equals(digDoc.getRegistrarId(), digDoc.getArchiverId())) {
+                archiver = Archiver.fromDto(dataAccessService().archiverById(digDoc.getArchiverId()));
+            }
         }
-        return Record.from(urn, doc, entity);
+        return Record.from(urn, doc, entity, registrar, archiver);
     }
 }
