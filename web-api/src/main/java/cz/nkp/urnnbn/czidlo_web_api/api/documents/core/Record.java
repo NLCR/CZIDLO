@@ -2,22 +2,19 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 
 public class Record {
 
-    //TODO: intelectual entity
-    //TODO: originator
-    //TODO: publication
-    //TODO: source document
-    //TODO: ieidentifiers
     //TODO: digital instance, digital library
     //TODO: registrar, archiver
     //TODO: registrar-scope identifiers
 
-    private Document document;
     private Urn urn;
+    private Document document;
+    private Entity entity;
 
-    public static Record from(Urn urn, Document document) {
+    public static Record from(Urn urn, Document document, Entity entity) {
         Record record = new Record();
         record.urn = urn;
         record.document = document;
+        record.entity = entity;
         return record;
     }
 
@@ -27,5 +24,9 @@ public class Record {
 
     public Document getDocument() {
         return document;
+    }
+
+    public Entity getEntity() {
+        return entity;
     }
 }

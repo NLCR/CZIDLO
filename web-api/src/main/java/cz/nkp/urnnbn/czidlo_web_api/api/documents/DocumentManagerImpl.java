@@ -4,6 +4,7 @@ import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Document;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Entity;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Urn;
 import cz.nkp.urnnbn.services.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
@@ -49,12 +50,13 @@ public class DocumentManagerImpl implements DocumentManager {
         }
         //DIGITAL DOCUMENT
         Document doc = null;
+        Entity entity = null;
         Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
             doc = Document.from(digDoc);
-            //TODO: IE
+            entity = Entity.from(dataAccessService().entityById(digDoc.getIntEntId()));
         }
-        return Record.from(urn, doc);
+        return Record.from(urn, doc, entity);
     }
 }

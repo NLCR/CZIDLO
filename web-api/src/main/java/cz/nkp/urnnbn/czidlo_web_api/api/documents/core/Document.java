@@ -8,6 +8,7 @@ import java.util.Date;
 //@XmlRootElement(name = "digitalDocument")
 //@XmlAccessorType(XmlAccessType.FIELD)
 public class Document {
+    private Long id;
     private Date created;
     private Date modified;
     //
@@ -29,6 +30,7 @@ public class Document {
 
     public static Document from(DigitalDocument dtoDigDoc) {
         Document digDoc = new Document();
+        digDoc.id = dtoDigDoc.getId();
         digDoc.created = Utils.dateTimeToDate(dtoDigDoc.getCreated());
         digDoc.modified = Utils.dateTimeToDate(dtoDigDoc.getModified());
         digDoc.financedFrom = dtoDigDoc.getFinancedFrom();
@@ -46,6 +48,10 @@ public class Document {
         digDoc.pictureWidth = dtoDigDoc.getPictureWidth();
         digDoc.pictureHeight = dtoDigDoc.getPictureHeight();
         return digDoc;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Date getCreated() {
