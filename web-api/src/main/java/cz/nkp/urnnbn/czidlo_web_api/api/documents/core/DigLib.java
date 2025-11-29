@@ -1,11 +1,10 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 
 import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
-import org.joda.time.DateTime;
 
 import java.util.Date;
 
-public class Lib {
+public class DigLib {
 
     private Long id;
     private Long registrarId;
@@ -15,11 +14,11 @@ public class Lib {
     private String description;
     private String url;
 
-    public static Lib from(cz.nkp.urnnbn.core.dto.DigitalLibrary dto) {
+    public static DigLib from(cz.nkp.urnnbn.core.dto.DigitalLibrary dto) {
         if (dto == null) {
             return null;
         }
-        Lib result = new Lib();
+        DigLib result = new DigLib();
         result.id = dto.getId();
         result.registrarId = dto.getRegistrarId();
         result.created = Utils.dateTimeToDate(dto.getCreated());

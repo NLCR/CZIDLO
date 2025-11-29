@@ -7,7 +7,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 import java.util.Date;
 import java.util.List;
 
-public class Entity {
+public class IntEnt {
 
     private Long id;
     private EntityType entityType;
@@ -23,11 +23,11 @@ public class Entity {
     private SrcDoc sourceDocument;
     private List<IeId> ieIdentifiers;
 
-    public static Entity from(IntelectualEntity dtoIe, Orig originator, Publ publication, SrcDoc srcDoc, List<IeId> ieIds) {
+    public static IntEnt from(IntelectualEntity dtoIe, Orig originator, Publ publication, SrcDoc srcDoc, List<IeId> ieIds) {
         if (dtoIe == null) {
             return null;
         }
-        Entity result = new Entity();
+        IntEnt result = new IntEnt();
         result.id = dtoIe.getId();
         result.entityType = dtoIe.getEntityType();
         result.created = Utils.dateTimeToDate(dtoIe.getCreated());

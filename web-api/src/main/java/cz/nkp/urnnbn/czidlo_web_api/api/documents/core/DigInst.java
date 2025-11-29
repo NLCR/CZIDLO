@@ -16,7 +16,7 @@ public class DigInst {
     private String format;
     private String accessibility;
     private AccessRestriction accessRestriction;
-    private Lib library;
+    private DigLib library;
 
     public static DigInst from(DigitalInstance dto, DigitalLibrary digitalLibrary) {
         if (dto == null) {
@@ -31,7 +31,7 @@ public class DigInst {
         result.format = dto.getFormat();
         result.accessibility = dto.getAccessibility();
         result.accessRestriction = dto.getAccessRestriction();
-        result.library = Lib.from(digitalLibrary);
+        result.library = DigLib.from(digitalLibrary);
         return result;
     }
 
@@ -67,7 +67,7 @@ public class DigInst {
         return accessRestriction;
     }
 
-    public Lib getLibrary() {
+    public DigLib getLibrary() {
         return library;
     }
 }

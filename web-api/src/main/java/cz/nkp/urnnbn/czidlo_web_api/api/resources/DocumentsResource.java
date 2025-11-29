@@ -1,11 +1,9 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
-import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Document;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.json.JsonObject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

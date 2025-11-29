@@ -8,17 +8,17 @@ import java.util.List;
 public class Record {
 
     private Urn urnNbn;
-    private Document digitalDocument;
-    private Entity intelectualEntity;
+    private DigDoc digitalDocument;
+    private IntEnt intelectualEntity;
     private Registrar registrar;
     private Archiver archiver;
     private List<RsId> registrarScopeIdentifiers;
     private List<DigInst> digitalInstances;
 
-    public static Record from(Urn urn, Document document, Entity entity, Registrar registrar, Archiver archiver, List<RsId> registrarScopeIdentifiers, List<DigInst> digitalInstances) {
+    public static Record from(Urn urn, DigDoc digDoc, IntEnt entity, Registrar registrar, Archiver archiver, List<RsId> registrarScopeIdentifiers, List<DigInst> digitalInstances) {
         Record record = new Record();
         record.urnNbn = urn;
-        record.digitalDocument = document;
+        record.digitalDocument = digDoc;
         record.intelectualEntity = entity;
         record.registrar = registrar;
         record.archiver = archiver;
@@ -31,11 +31,11 @@ public class Record {
         return urnNbn;
     }
 
-    public Document getDigitalDocument() {
+    public DigDoc getDigitalDocument() {
         return digitalDocument;
     }
 
-    public Entity getIntelectualEntity() {
+    public IntEnt getIntelectualEntity() {
         return intelectualEntity;
     }
 

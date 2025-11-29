@@ -52,8 +52,8 @@ public class DocumentManagerImpl implements DocumentManager {
             return null;
         }
         //DIGITAL DOCUMENT
-        Document doc = null;
-        Entity entity = null;
+        DigDoc doc = null;
+        IntEnt entity = null;
         Registrar registrar = null;
         Archiver archiver = null;
         List<RsId> rsIds = null;
@@ -61,7 +61,7 @@ public class DocumentManagerImpl implements DocumentManager {
         Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
-            doc = Document.from(digDoc);
+            doc = DigDoc.from(digDoc);
             //INTELECTUAL ENTITY
             IntelectualEntity ie = dataAccessService().entityById(digDoc.getIntEntId());
             if (ie != null) {
@@ -69,7 +69,7 @@ public class DocumentManagerImpl implements DocumentManager {
                 Publ publication = Publ.from(dataAccessService().publicationByIntEntId(ie.getId()));
                 SrcDoc srcDoc = SrcDoc.from(dataAccessService().sourceDocumentByIntEntId(ie.getId()));
                 List<IeId> ieIds = IeId.fromlist(dataAccessService().intEntIdentifiersByIntEntId(ie.getId()));
-                entity = Entity.from(ie, originator, publication, srcDoc, ieIds);
+                entity = IntEnt.from(ie, originator, publication, srcDoc, ieIds);
             }
             registrar = Registrar.from(dataAccessService().registrarById(digDoc.getRegistrarId()), null, null);
             if (digDoc.getArchiverId() != null && !Objects.equals(digDoc.getRegistrarId(), digDoc.getArchiverId())) {
@@ -77,8 +77,8 @@ public class DocumentManagerImpl implements DocumentManager {
             }
             rsIds = RsId.fromList(dataAccessService().registrarScopeIdentifiers(digDocId));
             List<DigitalInstance> dtoDis = dataAccessService().digInstancesByDigDocId(digDocId);
-            if (dtoDis == null) {
-                dtoDis = List.of();
+            if (dtoDis == null || dtoDis.isEmpty()) {
+                digitalInstances = List.of();
             } else {
                 digitalInstances = new ArrayList<>();
                 for (DigitalInstance di : dtoDis) {
