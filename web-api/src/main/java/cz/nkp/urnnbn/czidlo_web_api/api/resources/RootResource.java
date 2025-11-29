@@ -22,7 +22,7 @@ public class RootResource extends AbstractResource {
     public String getStatusText() {
         StringBuilder info = new StringBuilder();
         info.append("CZIDLO web API\n");
-        info.append("Verze API: 1.13.0\n");
+        info.append("Verze API: 1.15.0\n");
         info.append("Jersey 4 (EE11)\n");
         info.append("Status: OK\n");
         return info.toString();
@@ -34,7 +34,7 @@ public class RootResource extends AbstractResource {
     public String getApiInfoJson() {
         JSONObject root = new JSONObject();
         root.put("apiName", "CZIDLO web API");
-        root.put("apiVersion", "1.13.0");
+        root.put("apiVersion", "1.15.0");
         root.put("jerseyVersion", "Jersey 4 (EE11)");
         root.put("status", "OK");
         return root.toString();
