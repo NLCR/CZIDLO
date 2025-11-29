@@ -1,6 +1,8 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Catalogue;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.DigitalLibrary;
@@ -8,7 +10,6 @@ import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.RegistrarList;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.registrars.registrar_manager.RegistrarManagerMockInMemory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Path("/registrars")
-public class RegistrarResources extends AbstractResource {
+public class RegistrarsResource extends AbstractResource {
 
     @Context
     private SecurityContext securityContext;

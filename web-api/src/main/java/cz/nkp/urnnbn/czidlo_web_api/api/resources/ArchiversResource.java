@@ -1,9 +1,10 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerMockInMemory;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.ArchiverList;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;

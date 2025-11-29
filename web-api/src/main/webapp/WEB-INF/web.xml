@@ -5,16 +5,6 @@
                              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
-    <!--Případně přes anotace WebServlet-->
-    <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>cz.nkp.urnnbn.czidlo_web_api.HelloServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
-    </servlet-mapping>
-
     <!-- Jersey REST bootstrap -->
     <servlet>
         <servlet-name>Jersey</servlet-name>

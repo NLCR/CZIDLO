@@ -1,5 +1,6 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,14 +12,12 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import javassist.LoaderClassPath;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Path("/system_logs")

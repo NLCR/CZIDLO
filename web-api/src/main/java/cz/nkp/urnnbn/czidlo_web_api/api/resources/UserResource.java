@@ -1,6 +1,8 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
@@ -8,15 +10,12 @@ import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManagerMockInMemory;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;

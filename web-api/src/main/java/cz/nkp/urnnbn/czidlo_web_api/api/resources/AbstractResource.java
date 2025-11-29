@@ -1,5 +1,6 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import jakarta.ws.rs.OPTIONS;
 import jakarta.ws.rs.Path;

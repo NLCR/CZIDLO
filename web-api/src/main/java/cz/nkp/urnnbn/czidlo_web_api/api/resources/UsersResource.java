@@ -1,12 +1,13 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserList;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManagerMockInMemory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

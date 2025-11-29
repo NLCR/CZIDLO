@@ -1,6 +1,8 @@
-package cz.nkp.urnnbn.czidlo_web_api.api;
+package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
 import cz.nkp.urnnbn.core.dto.User;
+import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManager;
