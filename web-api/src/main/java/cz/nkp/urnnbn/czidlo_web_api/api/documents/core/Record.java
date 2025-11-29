@@ -2,9 +2,9 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 
 public class Record {
 
-    //TODO: digital instance, digital library
     //TODO: registrar, archiver
     //TODO: registrar-scope identifiers
+    //TODO: digital instance, digital library
 
     private Urn urn;
     private Document document;

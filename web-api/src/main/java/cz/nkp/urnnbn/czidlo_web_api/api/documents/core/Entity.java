@@ -3,7 +3,6 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
-import org.joda.time.DateTime;
 
 import java.util.Date;
 
@@ -18,25 +17,27 @@ public class Entity {
     private String otherOriginator;
     private String degreeAwardingInstitution;
 
-    //TODO: originator
+    private PrimaryOriginator originator;
+
     //TODO: publication
     //TODO: source document
     //TODO: ieidentifiers
 
-    public static Entity from(IntelectualEntity ie) {
-        if (ie == null) {
+    public static Entity from(IntelectualEntity dtoIe, PrimaryOriginator originator) {
+        if (dtoIe == null) {
             return null;
         }
-        Entity entity = new Entity();
-        entity.id = ie.getId();
-        entity.entityType = ie.getEntityType();
-        entity.created = Utils.dateTimeToDate(ie.getCreated());
-        entity.modified = Utils.dateTimeToDate(ie.getModified());
-        entity.documentType = ie.getDocumentType();
-        entity.digitalBorn = ie.isDigitalBorn();
-        entity.otherOriginator = ie.getOtherOriginator();
-        entity.degreeAwardingInstitution = ie.getDegreeAwardingInstitution();
-        return entity;
+        Entity result = new Entity();
+        result.id = dtoIe.getId();
+        result.entityType = dtoIe.getEntityType();
+        result.created = Utils.dateTimeToDate(dtoIe.getCreated());
+        result.modified = Utils.dateTimeToDate(dtoIe.getModified());
+        result.documentType = dtoIe.getDocumentType();
+        result.digitalBorn = dtoIe.isDigitalBorn();
+        result.otherOriginator = dtoIe.getOtherOriginator();
+        result.degreeAwardingInstitution = dtoIe.getDegreeAwardingInstitution();
+        result.originator = originator;
+        return result;
     }
 
     public Long getId() {
@@ -69,5 +70,9 @@ public class Entity {
 
     public String getDegreeAwardingInstitution() {
         return degreeAwardingInstitution;
+    }
+
+    public PrimaryOriginator getOriginator() {
+        return originator;
     }
 }
