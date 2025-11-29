@@ -16,7 +16,7 @@
  */
 package cz.nkp.urnnbn.processmanager.scheduler.jobs;
 
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.processmanager.core.ProcessState;

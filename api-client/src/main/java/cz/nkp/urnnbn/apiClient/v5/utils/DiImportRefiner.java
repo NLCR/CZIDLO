@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.api_client.v5.utils;
+package cz.nkp.urnnbn.apiClient.v5.utils;
 
 import nu.xom.Document;
 import nu.xom.Element;

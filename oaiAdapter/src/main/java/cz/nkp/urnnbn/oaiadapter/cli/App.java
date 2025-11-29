@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.oaiadapter.cli;
 
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.oaiadapter.OaiAdapter;
 import cz.nkp.urnnbn.oaiadapter.ReportLogger;

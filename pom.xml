@@ -76,15 +76,20 @@
     <modules>
         <module>core</module>
         <module>xml</module>
-        <module>api_client</module>
+        <module>api-client</module>
+        <!--TODO: rename to oai-adapter (package oaiAdapter)-->
         <module>oaiAdapter</module>
-        <module>persistence</module>
+        <!--TODO: rename to solr-indexer (package solrIndexer)-->
         <module>solr_indexer</module>
+        <!--TODO: rename to process-manager (package processManager)-->
+        <module>processManager</module>
+
+        <module>persistence</module>
         <module>services</module>
         <module>web-common</module>
         <module>api</module>
         <module>web-api</module>
-        <module>processManager</module>
+
 
         <!--
         <module>processManager</module>

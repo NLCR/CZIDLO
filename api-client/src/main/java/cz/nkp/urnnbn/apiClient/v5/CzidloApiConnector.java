@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.nkp.urnnbn.api_client.v5;
+package cz.nkp.urnnbn.apiClient.v5;
 
-import cz.nkp.urnnbn.api_client.v5.utils.ApiResponse;
-import cz.nkp.urnnbn.api_client.v5.utils.Credentials;
-import cz.nkp.urnnbn.api_client.v5.utils.HttpConnector;
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.utils.ApiResponse;
+import cz.nkp.urnnbn.apiClient.v5.utils.Credentials;
+import cz.nkp.urnnbn.apiClient.v5.utils.HttpConnector;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import nu.xom.*;

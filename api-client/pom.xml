@@ -10,9 +10,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>api_client</artifactId>
+    <artifactId>api-client</artifactId>
     <packaging>jar</packaging>
-    <name>CZIDLO - api client</name>
+    <name>CZIDLO - api-client</name>
 
     <properties>
         <!--<czidlo.version>5.0</czidlo.version>-->

@@ -4,7 +4,7 @@
  */
 package cz.nkp.urnnbn.webcommon.config;
 
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.config.PropertyKeys;
 import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.CountryCode;

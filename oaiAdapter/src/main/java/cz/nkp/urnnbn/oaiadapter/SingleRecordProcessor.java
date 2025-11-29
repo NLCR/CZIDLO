@@ -1,10 +1,10 @@
 package cz.nkp.urnnbn.oaiadapter;
 
-import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
-import cz.nkp.urnnbn.api_client.v5.CzidloApiErrorException;
-import cz.nkp.urnnbn.api_client.v5.utils.DdRegistrationRefiner;
-import cz.nkp.urnnbn.api_client.v5.utils.DiImportRefiner;
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
+import cz.nkp.urnnbn.apiClient.v5.CzidloApiErrorException;
+import cz.nkp.urnnbn.apiClient.v5.utils.DdRegistrationRefiner;
+import cz.nkp.urnnbn.apiClient.v5.utils.DiImportRefiner;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;

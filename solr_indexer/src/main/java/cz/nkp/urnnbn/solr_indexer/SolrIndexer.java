@@ -1,9 +1,9 @@
 package cz.nkp.urnnbn.solr_indexer;
 
 
-import cz.nkp.urnnbn.api_client.v5.CzidloApiConnector;
-import cz.nkp.urnnbn.api_client.v5.CzidloApiErrorException;
-import cz.nkp.urnnbn.api_client.v5.utils.XmlTools;
+import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
+import cz.nkp.urnnbn.apiClient.v5.CzidloApiErrorException;
+import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;

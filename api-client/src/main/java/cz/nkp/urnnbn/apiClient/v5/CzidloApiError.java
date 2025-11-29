@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.api_client.v5;
+package cz.nkp.urnnbn.apiClient.v5;
 
 /**
  * Created by Martin Řehánek on 1.11.17.
