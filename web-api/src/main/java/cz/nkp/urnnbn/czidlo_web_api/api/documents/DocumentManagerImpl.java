@@ -57,6 +57,7 @@ public class DocumentManagerImpl implements DocumentManager {
         Entity entity = null;
         Registrar registrar = null;
         Archiver archiver = null;
+        List<RsId> rsIds = null;
         Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
@@ -74,7 +75,8 @@ public class DocumentManagerImpl implements DocumentManager {
             if (digDoc.getArchiverId() != null && !Objects.equals(digDoc.getRegistrarId(), digDoc.getArchiverId())) {
                 archiver = Archiver.fromDto(dataAccessService().archiverById(digDoc.getArchiverId()));
             }
+            rsIds = RsId.fromList(dataAccessService().registrarScopeIdentifiers(digDocId));
         }
-        return Record.from(urn, doc, entity, registrar, archiver);
+        return Record.from(urn, doc, entity, registrar, archiver, rsIds);
     }
 }
