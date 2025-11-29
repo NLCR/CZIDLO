@@ -5,6 +5,7 @@ import cz.nkp.urnnbn.core.dto.IntelectualEntity;
 import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
 
 import java.util.Date;
+import java.util.List;
 
 public class Entity {
 
@@ -17,13 +18,12 @@ public class Entity {
     private String otherOriginator;
     private String degreeAwardingInstitution;
 
-    private PrimaryOriginator originator;
+    private Orig originator;
+    private Publ publication;
+    private SrcDoc sourceDocument;
+    private List<IeId> ieIdentifiers;
 
-    //TODO: publication
-    //TODO: source document
-    //TODO: ieidentifiers
-
-    public static Entity from(IntelectualEntity dtoIe, PrimaryOriginator originator) {
+    public static Entity from(IntelectualEntity dtoIe, Orig originator, Publ publication, SrcDoc srcDoc, List<IeId> ieIds) {
         if (dtoIe == null) {
             return null;
         }
@@ -37,6 +37,9 @@ public class Entity {
         result.otherOriginator = dtoIe.getOtherOriginator();
         result.degreeAwardingInstitution = dtoIe.getDegreeAwardingInstitution();
         result.originator = originator;
+        result.publication = publication;
+        result.sourceDocument = srcDoc;
+        result.ieIdentifiers = ieIds;
         return result;
     }
 
@@ -72,7 +75,19 @@ public class Entity {
         return degreeAwardingInstitution;
     }
 
-    public PrimaryOriginator getOriginator() {
+    public Orig getOriginator() {
         return originator;
+    }
+
+    public Publ getPublication() {
+        return publication;
+    }
+
+    public SrcDoc getSourceDocument() {
+        return sourceDocument;
+    }
+
+    public List<IeId> getIeIdentifiers() {
+        return ieIdentifiers;
     }
 }

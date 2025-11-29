@@ -6,27 +6,27 @@ public class Record {
     //TODO: registrar-scope identifiers
     //TODO: digital instance, digital library
 
-    private Urn urn;
-    private Document document;
-    private Entity entity;
+    private Urn urnNbn;
+    private Document digitalDocument;
+    private Entity intelectualEntity;
 
     public static Record from(Urn urn, Document document, Entity entity) {
         Record record = new Record();
-        record.urn = urn;
-        record.document = document;
-        record.entity = entity;
+        record.urnNbn = urn;
+        record.digitalDocument = document;
+        record.intelectualEntity = entity;
         return record;
     }
 
-    public Urn getUrn() {
-        return urn;
+    public Urn getUrnNbn() {
+        return urnNbn;
     }
 
-    public Document getDocument() {
-        return document;
+    public Document getDigitalDocument() {
+        return digitalDocument;
     }
 
-    public Entity getEntity() {
-        return entity;
+    public Entity getIntelectualEntity() {
+        return intelectualEntity;
     }
 }

@@ -8,6 +8,8 @@ import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.services.*;
 
+import java.util.List;
+
 public class DocumentManagerImpl implements DocumentManager {
 
     protected DataAccessService dataAccessService() {
@@ -54,12 +56,14 @@ public class DocumentManagerImpl implements DocumentManager {
         if (digDocId != null) {
             DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
             doc = Document.from(digDoc);
-            //ENTITY
+            //INTELECTUAL ENTITY
             IntelectualEntity ie = dataAccessService().entityById(digDoc.getIntEntId());
             if (ie != null) {
-                //List<IntEntIdentifier> intEntIdentifiers = dataAccessService().intEntIdentifiersByIntEntId(ie.getId());
-                PrimaryOriginator originator = PrimaryOriginator.from(dataAccessService().originatorByIntEntId(ie.getId()));
-                entity = Entity.from(ie, originator);
+                Orig originator = Orig.from(dataAccessService().originatorByIntEntId(ie.getId()));
+                Publ publication = Publ.from(dataAccessService().publicationByIntEntId(ie.getId()));
+                SrcDoc srcDoc = SrcDoc.from(dataAccessService().sourceDocumentByIntEntId(ie.getId()));
+                List<IeId> ieIds = IeId.fromlist(dataAccessService().intEntIdentifiersByIntEntId(ie.getId()));
+                entity = Entity.from(ie, originator, publication, srcDoc, ieIds);
             }
         }
         return Record.from(urn, doc, entity);
