@@ -1,0 +1,60 @@
+package cz.nkp.urnnbn.czidlo_web_api.api.documents;
+
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Document;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Urn;
+import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
+
+public class DocumentManagerImpl implements DocumentManager {
+
+    protected DataAccessService dataAccessService() {
+        return Services.instanceOf().dataAccessService();
+    }
+
+    protected DataImportService dataImportService() {
+        return Services.instanceOf().dataImportService();
+    }
+
+    protected UrnNbnReservationService urnReservationService() {
+        return Services.instanceOf().urnReservationService();
+    }
+
+    protected DataRemoveService dataRemoveService() {
+        return Services.instanceOf().dataRemoveService();
+    }
+
+    protected DataUpdateService dataUpdateService() {
+        return Services.instanceOf().dataUpdateService();
+    }
+
+    protected StatisticService statisticService() {
+        return Services.instanceOf().statisticService();
+    }
+
+
+    @Override
+    public Record getRecord(UrnNbn urnNbn) {
+        //URN:NBN
+        UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+        if (urnNbnWithStatus == null) {
+            return null;
+        }
+        Urn urn = Urn.from(urnNbnWithStatus);
+        if (urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE
+                || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
+            return null;
+        }
+        //DIGITAL DOCUMENT
+        Document doc = null;
+        Long digDocId = urnNbnWithStatus.getUrn().getDigDocId();
+        if (digDocId != null) {
+            DigitalDocument digDoc = dataAccessService().digDocByInternalId(digDocId);
+            doc = Document.from(digDoc);
+            //TODO: IE
+        }
+        return Record.from(urn, doc);
+    }
+}
