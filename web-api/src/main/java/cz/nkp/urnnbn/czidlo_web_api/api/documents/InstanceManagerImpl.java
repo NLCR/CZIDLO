@@ -1,16 +1,16 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.core.AccessRestriction;
+import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.services.*;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 
 public class InstanceManagerImpl implements InstanceManager {
 
@@ -82,6 +82,33 @@ public class InstanceManagerImpl implements InstanceManager {
             throw new InsufficientRightsException("User with login " + login + " has insufficient rights to update digital instance with id " + instanceId + ".");
         } catch (UnknownDigInstException e) {
             throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+        }
+    }
+
+    @Override
+    public DigInst createDigitalInstance(String login, UrnNbn urnNbn, long libraryId, String url, String format, String accessibility, AccessRestriction accessRestriction) throws UnknownRecordException, InsufficientRightsException {
+        try {
+            UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
+            if (urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED || urnNbnWithStatus.getUrn() == null) {
+                throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " does not exist.");
+            }
+            DigitalInstance instance = new DigitalInstance();
+            instance.setLibraryId(libraryId);
+            instance.setDigDocId(urnNbnWithStatus.getUrn().getDigDocId());
+            instance.setUrl(url);
+            instance.setFormat(format);
+            instance.setAccessibility(accessibility);
+            instance.setAccessRestriction(accessRestriction);
+            DigitalInstance created = dataImportService().addDigitalInstance(instance, login);
+            return DigInst.from(created,
+                    dataAccessService().libraryByInternalId(created.getLibraryId()),
+                    dataAccessService().registrarById(dataAccessService().libraryByInternalId(created.getLibraryId()).getRegistrarId()).getCode().toString());
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("User with login " + login + " has insufficient rights to create new digital instance in library with id " + libraryId + ".");
+        } catch (UnknownDigLibException | UnknownDigDocException e) {
+            throw new UnknownRecordException(e.getMessage());
         }
     }
 }

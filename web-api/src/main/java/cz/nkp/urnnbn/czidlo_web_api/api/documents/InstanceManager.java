@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.core.AccessRestriction;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
@@ -42,4 +43,21 @@ public interface InstanceManager {
      *                                     i.e. doesn't manage the registrar that owns the digital library that the digital instance is in
      */
     public void updateDigitalInstance(long instanceId, String login, String url, String format, String accessibility, AccessRestriction accessRestriction) throws UnknownRecordException, InsufficientRightsException;
+
+
+    /**
+     * Creates a new digital instance associated with the record identified by given URN:NBN.
+     *
+     * @param login             login of user performing the operation
+     * @param urnNbn            URN:NBN of the record the digital instance will be associated with
+     * @param libraryId         internal ID of the digital library the digital instance will belong to
+     * @param url
+     * @param format
+     * @param accessibility
+     * @param accessRestriction
+     * @throws UnknownRecordException      if record with given URN:NBN does not exist or digital library with given ID does not exist
+     * @throws InsufficientRightsException if user identified by given login has insufficient rights to perform the operation,
+     *                                     i.e. doesn't manage the registrar that owns the digital library that the digital instance will be in
+     */
+    public DigInst createDigitalInstance(String login, UrnNbn urnNbn, long libraryId, String url, String format, String accessibility, AccessRestriction accessRestriction) throws UnknownRecordException, InsufficientRightsException;
 }

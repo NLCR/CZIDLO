@@ -17,7 +17,7 @@ public class DigitalInstance implements IdentifiableByLongAttribute {
     private Long libraryId;
     private DateTime created;
     private DateTime deactivated;
-    private Boolean active;
+    private Boolean active = true;
     private String url;
     private String format;
     private String accessibility;

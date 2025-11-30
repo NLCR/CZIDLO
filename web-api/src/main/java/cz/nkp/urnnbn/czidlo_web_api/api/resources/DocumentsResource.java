@@ -1,28 +1,34 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManagerImpl;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManager;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManagerImpl;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+
+import java.io.StringReader;
 
 @Path("/documents")
 public class DocumentsResource extends AbstractResource {
@@ -31,6 +37,7 @@ public class DocumentsResource extends AbstractResource {
     private SecurityContext securityContext;
 
     private static final DocumentManager documentManager = new DocumentManagerImpl();
+    private static final InstanceManager instanceManager = new InstanceManagerImpl();
 
     @Operation(
             summary = "Fetch document record by URN:NBN",
@@ -165,7 +172,8 @@ public class DocumentsResource extends AbstractResource {
             tags = "Documents",
             description = "Creates new digital instance linked to document identified by the given URN:NBN.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Created"),
+                    @ApiResponse(responseCode = "201", description = "Created",
+                            content = @Content(schema = @Schema(implementation = DigInst.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format or invalid digital instance data in request body",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -180,25 +188,89 @@ public class DocumentsResource extends AbstractResource {
     )
     @POST
     @Path("{urn}/instances")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response addInstanceToDocument(
             @Parameter(description = "URN:NBN identifier of the digital document", required = true)
             @PathParam("urn") String urn, @RequestBody(
                     content = @Content(schema = @Schema(implementation = InstanceCreate.class)),
                     description = "JSON object representing archiver parameters",
                     required = true
-            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException {
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException, BadArgumentException {
         //authorization: must be admin or user with right to manage registrar of the digital library hosting new digital instance
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
-        //TODO: implement
+        //parse and validate urn
+        UrnNbn urnNbn;
+        try {
+            urnNbn = UrnNbn.valueOf(urn);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format: " + e.getMessage());
+        }
+        //parse mandatory body to json
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        JsonObject root;
+        try (JsonReader r = Json.createReader(new StringReader(body))) {
+            root = r.readObject();
+        }
+        //extract and validate parameters
+        if (!root.containsKey("libraryId")) {
+            throw new BadArgumentException("Missing mandatory parameter: libraryId");
+        }
+        Long libraryId = readParam("libraryId", name -> root.getJsonNumber(name).longValue());
+        String url = readParam("url", root::getString);
+        checkDigitalInstanceUrl(url);
+        String format = null;
+        if (root.containsKey("format")) {
+            format = readParam("format", root::getString);
+        }
+        String accessibility = null;
+        if (root.containsKey("accessibility")) {
+            accessibility = readParam("accessibility", root::getString);
+        }
+        AccessRestriction accessRestriction = null;
+        if (root.containsKey("accessRestriction")) {
+            String accessRestrictionStr = readParam("accessRestriction", root::getString);
+            accessRestriction = parseAccessRestriction(accessRestrictionStr);
+        }
+        DigInst created = instanceManager.createDigitalInstance(user.getLogin(), urnNbn, libraryId, url, format, accessibility, accessRestriction);
+        return Response.status(Response.Status.CREATED).entity(created).build();
+    }
 
-        //TODO: uzivatel musi mit prava k registratorovi. Ale ne nute tomu, ktery registroval DD, ale k tomu, ktery ma DI ve své digitální knihovně.
-        return Response.status(Response.Status.BAD_REQUEST).entity("Not implemented yet").build();
+    private AccessRestriction parseAccessRestriction(String accessRestriction) throws BadArgumentException {
+        if (accessRestriction == null || accessRestriction.isEmpty()) {
+            return null;
+        }
+        try {
+            return AccessRestriction.valueOf(accessRestriction.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadArgumentException("Invalid accessRestriction: " + accessRestriction + ". Allowed values are: UNKNOWN, UNLIMITED_ACCESS, LIMITED_ACCESS");
+        }
+    }
+
+    private void checkDigitalInstanceUrl(String url) throws BadArgumentException {
+        //must not be null or empty
+        if (url == null || url.isEmpty()) {
+            throw new BadArgumentException("Invalid url: " + url + ". Must not be null or empty");
+        }
+        //must start with "http://" or "https://"
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            throw new BadArgumentException("Invalid url: " + url + ". Must start with http:// or https://");
+        }
+        int minLength = 11; //http://a.cz
+        if (url.length() < minLength) {
+            throw new BadArgumentException("Invalid url: " + url + ". Min length is " + minLength + " characters");
+        }
+        int maxLength = 200;
+        if (url.length() > maxLength) {
+            throw new BadArgumentException("Invalid url: " + url + ". Max length is " + maxLength + " characters");
+        }
     }
 
 
-    record InstanceCreate(@NotNull String url, String format, String accessibility, String accessRestriction) {
+    record InstanceCreate(@NotNull String url, @NotNull Long libraryId, String format, String accessibility,
+                          String accessRestriction) {
     }
 
 }
