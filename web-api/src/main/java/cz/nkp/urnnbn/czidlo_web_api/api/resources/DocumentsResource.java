@@ -15,7 +15,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -31,11 +33,12 @@ public class DocumentsResource extends AbstractResource {
     private static final DocumentManager documentManager = new DocumentManagerImpl();
 
     @Operation(
-            summary = "Fetch document by URN:NBN",
+            summary = "Fetch document record by URN:NBN",
             tags = "Documents",
             description = "Returns digital document identified by the given URN:NBN.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Digital document"),
+                    @ApiResponse(responseCode = "200", description = "Digital document",
+                            content = @Content(schema = @Schema(implementation = Record.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "404", description = "Digital document not found",
@@ -65,12 +68,11 @@ public class DocumentsResource extends AbstractResource {
     }
 
     @Operation(
-            summary = "Deactivates URN:NBN",
+            summary = "Deactivate URN:NBN",
             tags = "Documents",
             description = "Deactivates given URN:NBN identifier and thus the associated digital document.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Deactivated, i.e. deactivation record created",
-                            content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "200", description = "Deactivated, i.e. deactivation record created"),
                     @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -112,12 +114,11 @@ public class DocumentsResource extends AbstractResource {
     }
 
     @Operation(
-            summary = "Reactivates URN:NBN",
+            summary = "Reactivate URN:NBN",
             tags = "Documents",
             description = "Reactivates deactivated URN:NBN identifier and thus the associated digital document.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Reactivated, i.e. deactivation record removed",
-                            content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "200", description = "Reactivated, i.e. deactivation record removed"),
                     @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -134,7 +135,6 @@ public class DocumentsResource extends AbstractResource {
     )
     @DELETE
     @Path("{urn}/deactivation")
-    @Consumes(MediaType.TEXT_PLAIN)
     public Response reactivateUrnNbn(
             @Parameter(description = "URN:NBN identifier of the digital document", required = true)
             @PathParam("urn") String urn) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException {
@@ -158,6 +158,47 @@ public class DocumentsResource extends AbstractResource {
         }
         Record record = documentManager.getRecord(urnNbn);
         return Response.ok(record).build();
+    }
+
+    @Operation(
+            summary = "Create digital instance",
+            tags = "Documents",
+            description = "Creates new digital instance linked to document identified by the given URN:NBN.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Created"),
+                    @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format or invalid digital instance data in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights to add digital instance to this document",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Digital document not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @POST
+    @Path("{urn}/instances")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response addInstanceToDocument(
+            @Parameter(description = "URN:NBN identifier of the digital document", required = true)
+            @PathParam("urn") String urn, @RequestBody(
+                    content = @Content(schema = @Schema(implementation = InstanceCreate.class)),
+                    description = "JSON object representing archiver parameters",
+                    required = true
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException {
+        //authorization: must be admin or user with right to manage registrar of the digital library hosting new digital instance
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //TODO: implement
+
+        //TODO: uzivatel musi mit prava k registratorovi. Ale ne nute tomu, ktery registroval DD, ale k tomu, ktery ma DI ve své digitální knihovně.
+        return Response.status(Response.Status.BAD_REQUEST).entity("Not implemented yet").build();
+    }
+
+
+    record InstanceCreate(@NotNull String url, String format, String accessibility, String accessRestriction) {
     }
 
 }
