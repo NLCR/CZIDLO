@@ -5,7 +5,9 @@ import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManagerImpl;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.ConflictException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
@@ -35,7 +37,8 @@ public class InstancesResource extends AbstractResource {
             tags = "Documents",
             description = "Updates digital instance identified by the given ID.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Updated"),
+                    @ApiResponse(responseCode = "200", description = "Updated",
+                            content = @Content(schema = @Schema(implementation = DigInst.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid digital instance ID format or invalid input data",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -75,7 +78,8 @@ public class InstancesResource extends AbstractResource {
             tags = "Documents",
             description = "Deactivates digital instance identified by the given ID.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Deactivated"),
+                    @ApiResponse(responseCode = "200", description = "Deactivated",
+                            content = @Content(schema = @Schema(implementation = DigInst.class))),
                     @ApiResponse(responseCode = "400", description = "Invalid digital instance ID format",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -95,14 +99,21 @@ public class InstancesResource extends AbstractResource {
     @Consumes(MediaType.TEXT_PLAIN)
     public Response deactivateDigitalInstance(
             @Parameter(description = "Digital instance id (numeric)", required = true)
-            @PathParam("diId") String diId) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException {
+            @PathParam("diId") String dsIdStr) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException {
         //authorization: must be admin or user with right to manage registrar of the digital library hosting this digital instance
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
-        //TODO: implement
-
-        //TODO: uzivatel musi mit prava k registratorovi. Ale ne nute tomu, ktery registroval DD, ale k tomu, ktery ma DI ve své digitální knihovně.
-        return Response.status(Response.Status.BAD_REQUEST).entity("Not implemented yet").build();
+        Long dsId = null;
+        try {
+            dsId = Long.valueOf(dsIdStr);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Invalid digital instance ID format: " + dsIdStr);
+        }
+        boolean deactivatedNow = instanceManager.deactivateInstance(dsId, user.getLogin());
+        if (!deactivatedNow) {
+            throw new ConflictException("Digital instance with ID " + dsId + " is already deactivated");
+        }
+        return Response.ok(instanceManager.getDigitalInstanceById(dsId)).build();
     }
 
     record InstanceUpdate(@NotNull String url, String format, String accessibility, String accessRestriction) {

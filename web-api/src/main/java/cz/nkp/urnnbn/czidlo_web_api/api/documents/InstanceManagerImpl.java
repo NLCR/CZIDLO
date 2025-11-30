@@ -1,4 +1,65 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
+import cz.nkp.urnnbn.core.dto.DigitalInstance;
+import cz.nkp.urnnbn.core.dto.DigitalLibrary;
+import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
+import cz.nkp.urnnbn.services.*;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.UnknownDigInstException;
+import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+
 public class InstanceManagerImpl implements InstanceManager {
+
+    protected DataAccessService dataAccessService() {
+        return Services.instanceOf().dataAccessService();
+    }
+
+    protected DataImportService dataImportService() {
+        return Services.instanceOf().dataImportService();
+    }
+
+    protected DataRemoveService dataRemoveService() {
+        return Services.instanceOf().dataRemoveService();
+    }
+
+    protected DataUpdateService dataUpdateService() {
+        return Services.instanceOf().dataUpdateService();
+    }
+
+    @Override
+    public boolean deactivateInstance(long instanceId, String login) throws UnknownRecordException, InsufficientRightsException {
+        try {
+            DigitalInstance digitalInstance = dataAccessService().digInstanceByInternalId(instanceId);
+            if (digitalInstance == null) {
+                throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+            }
+            if (!digitalInstance.isActive()) {
+                return false; // already inactive
+            }
+            dataUpdateService().deactivateDigitalInstance(instanceId, login);
+            return true; // successfully deactivated
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("User with login " + login + " has insufficient rights to deactivate digital instance with id " + instanceId + ".");
+        } catch (UnknownDigInstException e) {
+            throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+        }
+    }
+
+    @Override
+    public DigInst getDigitalInstanceById(long instanceId) throws UnknownRecordException {
+        DigitalInstance digitalInstance = dataAccessService().digInstanceByInternalId(instanceId);
+        if (digitalInstance == null) {
+            throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+        }
+        DigitalLibrary library = dataAccessService().libraryByInternalId(digitalInstance.getLibraryId());
+        Registrar registrar = dataAccessService().registrarById(library.getRegistrarId());
+        return DigInst.from(digitalInstance,
+                dataAccessService().libraryByInternalId(digitalInstance.getLibraryId()),
+                registrar.getCode().toString());
+    }
 }
