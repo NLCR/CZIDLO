@@ -1,16 +1,18 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.UrnNbnWithStatus;
 import cz.nkp.urnnbn.core.dto.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.registrars.core.Registrar;
 import cz.nkp.urnnbn.services.*;
-import cz.nkp.urnnbn.services.exceptions.AccessException;
-import cz.nkp.urnnbn.services.exceptions.UnknownDigDocException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
+import jakarta.ws.rs.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,7 @@ public class DocumentManagerImpl implements DocumentManager {
     }
 
     @Override
-    public boolean deactivateRecord(UrnNbn urnNbn, String note, String loginOfUserPerformingOperation) throws UnknownRecordException {
+    public boolean deactivateRecord(UrnNbn urnNbn, String note, String loginOfUserPerformingOperation) throws UnknownRecordException, InsufficientRightsException {
         UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
         if (urnNbnWithStatus == null || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE
                 || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
@@ -111,14 +113,14 @@ public class DocumentManagerImpl implements DocumentManager {
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
         } catch (AccessException e) {
-            throw new RuntimeException(e);
+            throw new InsufficientRightsException("User with login " + loginOfUserPerformingOperation + " has insufficient rights to deactivate record with URN:NBN " + urnNbn);
         } catch (UnknownDigDocException e) {
             throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
         }
     }
 
     @Override
-    public boolean reactivateRecord(UrnNbn urnNbn, String login) throws UnknownRecordException {
+    public boolean reactivateRecord(UrnNbn urnNbn, String login) throws UnknownRecordException, InsufficientRightsException {
         UrnNbnWithStatus urnNbnWithStatus = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(), urnNbn.getDocumentCode(), true);
         if (urnNbnWithStatus == null || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.FREE
                 || urnNbnWithStatus.getStatus() == UrnNbnWithStatus.Status.RESERVED) {
@@ -133,9 +135,74 @@ public class DocumentManagerImpl implements DocumentManager {
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
         } catch (AccessException e) {
-            throw new RuntimeException(e);
+            throw new InsufficientRightsException("User with login " + login + " has insufficient rights to reactivate record with URN:NBN " + urnNbn);
         } catch (UnknownDigDocException e) {
             throw new UnknownRecordException("Digital document with URN:NBN " + urnNbn + " not found");
         }
+    }
+
+    @Override
+    public UrnNbn createRecord(RecordToBeImported record, String login) throws
+            BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException,
+            IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException {
+        try {
+            DigDocRegistrationData docData = convert(record);
+            return dataImportService().registerDigitalDocument(docData, login);
+        } catch (UnknownRegistrarException e) {
+            throw new UnknownRecordException("Unknown registrar: " + e.getMessage());
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
+        } catch (UrnNotFromRegistrarException e) {
+            throw new BadArgumentException("URN:NBN not matching registrar: " + e.getMessage());
+        } catch (UrnUsedException e) {
+            throw new BadArgumentException("URN:NBN already used: " + e.getMessage());
+        } catch (RegistrationModeNotAllowedException e) {
+            throw new BadArgumentException("Registration mode not allowed: " + e.getMessage());
+        }
+    }
+
+    private DigDocRegistrationData convert(RecordToBeImported record) {
+        System.out.println("Converting RecordToBeImported to DigDocRegistrationData...");
+        System.out.println(record);
+        DigDocRegistrationData result = new DigDocRegistrationData();
+        //intellectual entity
+        result.setEntity(record.intelectualEntity.toDtoIntEnt());
+        result.setIntEntIds(record.intelectualEntity.toDtoIeIds());
+        result.setPublication(record.intelectualEntity.toDtoPublication());
+        result.setOriginator(record.intelectualEntity.toDtoOriginator());
+        result.setSourceDoc(record.intelectualEntity.toDtoSrcDoc());
+        //digital document
+        result.setDigitalDocument(record.digitalDocument.toDtoDigDoc());
+        //registrar-scope identifiers (not used here)
+        result.setDigDocIdentifiers(List.of());
+        //predecessors (not used here)
+        result.setPredecessors(List.of());
+        //urn:nbn
+        if (record.urnNbn != null) {
+            try {
+                result.setUrn(UrnNbn.valueOf(record.urnNbn));
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Invalid URN:NBN format: " + record.urnNbn);
+            }
+        }
+        //registrar-code
+        if (record.registrarCode == null) {
+            throw new BadRequestException("Registrar code is required");
+        }
+        try {
+            result.setRegistrarCode(RegistrarCode.valueOf(record.registrarCode));
+            //set registrarId and archiverId in digital document from registrarCode and archiverId (from record)
+            cz.nkp.urnnbn.core.dto.Registrar registrar = dataAccessService().registrarByCode(result.getRegistrarCode());
+            if (registrar == null) {
+                throw new BadRequestException("Unknown registrar code: " + record.registrarCode);
+            }
+            if (result.getDigitalDocument().getRegistrarId() == null) {
+                result.getDigitalDocument().setRegistrarId(registrar.getId());
+            }
+            result.getDigitalDocument().setArchiverId(record.archiverId == null ? registrar.getId() : record.archiverId);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid registrar code: " + record.registrarCode);
+        }
+        return result;
     }
 }

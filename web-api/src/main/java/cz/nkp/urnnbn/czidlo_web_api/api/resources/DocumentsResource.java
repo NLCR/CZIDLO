@@ -9,9 +9,10 @@ import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.DocumentManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.InstanceManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.DigInst;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
+import cz.nkp.urnnbn.services.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -38,6 +39,62 @@ public class DocumentsResource extends AbstractResource {
 
     private static final DocumentManager documentManager = new DocumentManagerImpl();
     private static final InstanceManager instanceManager = new InstanceManagerImpl();
+
+    @Operation(
+            summary = "Create digital document",
+            tags = "Documents",
+            description = "Creates new digital document, either by provided URN:NBN or by letting the system assign new URN:NBN.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Created",
+                            content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data in request body",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights (if URN:NBN is provided, user must manage the registrar)",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Registrar or archiver not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @POST
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createDigitalDocument(
+            @RequestBody(
+                    content = @Content(schema = @Schema(implementation = cz.nkp.urnnbn.czidlo_web_api.api.documents.core.RecordToBeImported.class)),
+                    description = "JSON object with digital document input data",
+                    required = true
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException, BadArgumentException {
+        //authorization: must be admin or user with right to manage registrar (if URN:NBN is provided)
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //parse mandatory body to json
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        JsonObject root;
+        try (JsonReader r = Json.createReader(new StringReader(body))) {
+            root = r.readObject();
+        }
+        RecordToBeImported recordToBeImported = RecordToBeImported.fromJsonObject(root);
+        //register digital document
+        try {
+            UrnNbn urnNbn = documentManager.createRecord(recordToBeImported, user.getLogin());
+            Record created = documentManager.getRecord(urnNbn);
+            return Response.status(Response.Status.CREATED).entity(created).build();
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (RegistrarScopeIdentifierCollisionException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownArchiverException e) {
+            throw new RuntimeException(e);
+        } catch (IncorrectPredecessorStatus e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Operation(
             summary = "Fetch document record by URN:NBN",
@@ -189,7 +246,7 @@ public class DocumentsResource extends AbstractResource {
     @POST
     @Path("{urn}/instances")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addInstanceToDocument(
+    public Response createDigitalInstance(
             @Parameter(description = "URN:NBN identifier of the digital document", required = true)
             @PathParam("urn") String urn, @RequestBody(
                     content = @Content(schema = @Schema(implementation = InstanceCreate.class)),

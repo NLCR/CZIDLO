@@ -20,6 +20,13 @@ public class IeId {
         return result;
     }
 
+    public IntEntIdentifier toDto() {
+        IntEntIdentifier dto = new IntEntIdentifier();
+        dto.setType(type);
+        dto.setValue(value);
+        return dto;
+    }
+
     public static List<IeId> fromlist(List<IntEntIdentifier> intEntIdentifiers) {
         if (intEntIdentifiers == null || intEntIdentifiers.isEmpty()) {
             return List.of();

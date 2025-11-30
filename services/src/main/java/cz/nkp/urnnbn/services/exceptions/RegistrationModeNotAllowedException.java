@@ -40,4 +40,9 @@ public class RegistrationModeNotAllowedException extends Exception {
     public UrnNbn getUrn() {
         return urn;
     }
+
+    @Override
+    public String getMessage() {
+        return "Registration mode " + mode + " is not allowed for " + urn;
+    }
 }

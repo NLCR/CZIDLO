@@ -4,16 +4,16 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 
 public class SrcDoc {
 
-    private String ccnb;
-    private String isbn;
-    private String issn;
-    private String otherId;
-    private String title;
-    private String volumeTitle;
-    private String issueTitle;
-    private String publicationPlace;
-    private String publisher;
-    private Integer publicationYear;
+    public String ccnb;
+    public String isbn;
+    public String issn;
+    public String otherId;
+    public String title;
+    public String volumeTitle;
+    public String issueTitle;
+    public String publicationPlace;
+    public String publisher;
+    public Integer publicationYear;
 
     public static SrcDoc from(SourceDocument dto) {
         if (dto == null) {

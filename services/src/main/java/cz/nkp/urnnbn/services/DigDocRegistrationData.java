@@ -1,4 +1,4 @@
-/*  
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -108,7 +108,7 @@ public class DigDocRegistrationData {
     }
 
     public List<UrnNbnWithStatus> getPredecessors() {
-        return predecessors == null ? Collections.<UrnNbnWithStatus> emptyList() : predecessors;
+        return predecessors == null ? Collections.emptyList() : predecessors;
     }
 
     public void setPredecessors(List<UrnNbnWithStatus> predecessors) {

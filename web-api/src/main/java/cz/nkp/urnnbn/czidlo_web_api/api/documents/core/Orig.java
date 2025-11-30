@@ -3,8 +3,8 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 import cz.nkp.urnnbn.core.OriginType;
 
 public class Orig {
-    private OriginType type;
-    private String value;
+    public OriginType type;
+    public String value;
 
     public static Orig from(cz.nkp.urnnbn.core.dto.Originator dto) {
         if (dto == null) {

@@ -12,21 +12,21 @@ public class DigDoc {
     private Date created;
     private Date modified;
     //
-    private String financedFrom;
-    private String contractNumber;
+    public String financedFrom;
+    public String contractNumber;
     //
-    private String format;
-    private String formatVersion;
-    private String extent;
-    private Integer resolutionHorizontal;
-    private Integer resolutionVertical;
-    private String compression;
-    private Double compressionRatio;
-    private String colorModel;
-    private Integer colorDepth;
-    private String iccProfile;
-    private Integer pictureWidth;
-    private Integer pictureHeight;
+    public String format;
+    public String formatVersion;
+    public String extent;
+    public Integer resolutionHorizontal;
+    public Integer resolutionVertical;
+    public String compression;
+    public Double compressionRatio;
+    public String colorModel;
+    public Integer colorDepth;
+    public String iccProfile;
+    public Integer pictureWidth;
+    public Integer pictureHeight;
 
     public static DigDoc from(DigitalDocument dtoDigDoc) {
         DigDoc digDoc = new DigDoc();
@@ -116,6 +116,48 @@ public class DigDoc {
 
     public Integer getPictureHeight() {
         return pictureHeight;
+    }
+
+    public DigitalDocument toDtoDigDoc() {
+        DigitalDocument dtoDigDoc = new DigitalDocument();
+        dtoDigDoc.setFinancedFrom(financedFrom);
+        dtoDigDoc.setContractNumber(contractNumber);
+        dtoDigDoc.setFormat(format);
+        dtoDigDoc.setFormatVersion(formatVersion);
+        dtoDigDoc.setExtent(extent);
+        dtoDigDoc.setResolutionHorizontal(resolutionHorizontal);
+        dtoDigDoc.setResolutionVertical(resolutionVertical);
+        dtoDigDoc.setCompression(compression);
+        dtoDigDoc.setCompressionRatio(compressionRatio);
+        dtoDigDoc.setColorModel(colorModel);
+        dtoDigDoc.setColorDepth(colorDepth);
+        dtoDigDoc.setIccProfile(iccProfile);
+        dtoDigDoc.setPictureWidth(pictureWidth);
+        dtoDigDoc.setPictureHeight(pictureHeight);
+        return dtoDigDoc;
+    }
+
+    @Override
+    public String toString() {
+        return "DigDoc{" +
+                "id=" + id +
+                ",\n created=" + created +
+                ",\n modified=" + modified +
+                ",\n financedFrom='" + financedFrom + '\'' +
+                ",\n contractNumber='" + contractNumber + '\'' +
+                ",\n format='" + format + '\'' +
+                ",\n formatVersion='" + formatVersion + '\'' +
+                ",\n extent='" + extent + '\'' +
+                ",\n resolutionHorizontal=" + resolutionHorizontal +
+                ",\n resolutionVertical=" + resolutionVertical +
+                ",\n compression='" + compression + '\'' +
+                ",\n compressionRatio=" + compressionRatio +
+                ",\n colorModel='" + colorModel + '\'' +
+                ",\n colorDepth=" + colorDepth +
+                ",\n iccProfile='" + iccProfile + '\'' +
+                ",\n pictureWidth=" + pictureWidth +
+                ",\n pictureHeight=" + pictureHeight +
+                "\n}";
     }
 }
 

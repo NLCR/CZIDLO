@@ -44,11 +44,19 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
     }
 
     @Override
-    public Long insertDocument(final DigitalDocument representation) throws DatabaseException, RecordNotFoundException {
-        // TODO: melo by byt vsechno v transakci
-        checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, representation.getRegistrarId());
-        checkRecordExists(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, representation.getArchiverId());
-        checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, representation.getIntEntId());
+    public Long insertDocument(final DigitalDocument digDoc) throws DatabaseException, RecordNotFoundException {
+        if (digDoc.getRegistrarId() == null) {
+            throw new IllegalArgumentException("DigitalDocumentDaoPostgres.insertDocument: digDoc.registrarId is null");
+        }
+        if (digDoc.getArchiverId() == null) {
+            throw new IllegalArgumentException("DigitalDocumentDaoPostgres.insertDocument: digDoc.archiverId is null");
+        }
+        if (digDoc.getIntEntId() == null) {
+            throw new IllegalArgumentException("DigitalDocumentDaoPostgres.insertDocument: digDoc.intEntId is null");
+        }
+        checkRecordExists(RegistrarDAO.TABLE_NAME, RegistrarDAO.ATTR_ID, digDoc.getRegistrarId());
+        checkRecordExists(ArchiverDAO.TABLE_NAME, ArchiverDAO.ATTR_ID, digDoc.getArchiverId());
+        checkRecordExists(IntelectualEntityDAO.TABLE_NAME, IntelectualEntityDAO.ATTR_ID, digDoc.getIntEntId());
         DaoOperation operation = new DaoOperation() {
 
             @Override
@@ -60,9 +68,9 @@ public class DigitalDocumentDaoPostgres extends AbstractDAO implements DigitalDo
                 ResultSet idResultSet = newIdSt.executeQuery();
                 Long id = OperationUtils.resultSet2Long(idResultSet);
                 // set id
-                representation.setId(id);
+                digDoc.setId(id);
                 // insert
-                StatementWrapper insert = new InsertDigitalDocument(representation);
+                StatementWrapper insert = new InsertDigitalDocument(digDoc);
                 PreparedStatement insertSt = OperationUtils.preparedStatementFromWrapper(connection, insert);
                 insertSt.executeUpdate();
                 return id;
