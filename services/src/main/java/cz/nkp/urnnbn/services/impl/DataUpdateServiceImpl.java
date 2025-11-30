@@ -344,6 +344,13 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateDigitalInstance(DigitalInstance instance, String login) throws UnknownUserException, AccessException, UnknownDigInstException {
         try {
+            DigitalLibrary lib;
+            try {
+                lib = factory.diglLibDao().getLibraryById(instance.getLibraryId());
+            } catch (RecordNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            authorization.checkAccessRights(lib.getRegistrarId(), login);
             factory.digInstDao().updateDigInstance(instance);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -386,6 +393,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void deactivateDigitalInstance(long instanceId, String login) throws UnknownUserException, AccessException, UnknownDigInstException {
         try {
+            //TADY
             DigitalInstance digInstance;
             try {
                 digInstance = factory.digInstDao().getDigInstanceById(instanceId);

@@ -641,9 +641,13 @@ public class RegistrarsResource extends AbstractResource {
         if (!urlPrefix.startsWith("http://") && !urlPrefix.startsWith("https://")) {
             throw new BadArgumentException("Invalid urlPrefix: " + urlPrefix + ". Must start with http:// or https://");
         }
-        //max length = 100
-        if (urlPrefix.length() > 100) {
-            throw new BadArgumentException("Invalid urlPrefix: " + urlPrefix + ". Max length is 100 characters");
+        int minLength = 11; //http://a.cz
+        if (urlPrefix.length() < minLength) {
+            throw new BadArgumentException("Invalid url: " + urlPrefix + ". Min length is " + minLength + " characters");
+        }
+        int maxLength = 100;
+        if (urlPrefix.length() > maxLength) {
+            throw new BadArgumentException("Invalid url: " + urlPrefix + ". Max length is " + maxLength + " characters");
         }
     }
 
@@ -674,9 +678,13 @@ public class RegistrarsResource extends AbstractResource {
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             throw new BadArgumentException("Invalid url: " + url + ". Must start with http:// or https://");
         }
-        //max length = 100
-        if (url.length() > 100) {
-            throw new BadArgumentException("Invalid url: " + url + ". Max length is 100 characters");
+        int minLength = 11; //http://a.cz
+        if (url.length() < minLength) {
+            throw new BadArgumentException("Invalid url: " + url + ". Min length is " + minLength + " characters");
+        }
+        int maxLength = 100;
+        if (url.length() > maxLength) {
+            throw new BadArgumentException("Invalid url: " + url + ". Max length is " + maxLength + " characters");
         }
     }
 

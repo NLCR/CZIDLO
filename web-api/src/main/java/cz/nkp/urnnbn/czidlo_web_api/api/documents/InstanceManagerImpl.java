@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
+import cz.nkp.urnnbn.core.AccessRestriction;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.core.dto.Registrar;
@@ -61,5 +62,26 @@ public class InstanceManagerImpl implements InstanceManager {
         return DigInst.from(digitalInstance,
                 dataAccessService().libraryByInternalId(digitalInstance.getLibraryId()),
                 registrar.getCode().toString());
+    }
+
+    @Override
+    public void updateDigitalInstance(long instanceId, String login, String url, String format, String accessibility, AccessRestriction accessRestriction) throws UnknownRecordException, InsufficientRightsException {
+        try {
+            DigitalInstance digitalInstance = dataAccessService().digInstanceByInternalId(instanceId);
+            if (digitalInstance == null) {
+                throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+            }
+            digitalInstance.setUrl(url);
+            digitalInstance.setFormat(format);
+            digitalInstance.setAccessibility(accessibility);
+            digitalInstance.setAccessRestriction(accessRestriction);
+            dataUpdateService().updateDigitalInstance(digitalInstance, login);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("User with login " + login + " has insufficient rights to update digital instance with id " + instanceId + ".");
+        } catch (UnknownDigInstException e) {
+            throw new UnknownRecordException("Digital instance with id " + instanceId + " does not exist.");
+        }
     }
 }
