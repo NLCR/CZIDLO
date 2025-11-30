@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 
 import cz.nkp.urnnbn.core.AccessRestriction;
+import cz.nkp.urnnbn.core.RegistrarCode;
 import cz.nkp.urnnbn.core.dto.DigitalInstance;
 import cz.nkp.urnnbn.core.dto.DigitalLibrary;
 import cz.nkp.urnnbn.czidlo_web_api.api.Utils;
@@ -17,8 +18,9 @@ public class DigInst {
     private String accessibility;
     private AccessRestriction accessRestriction;
     private DigLib library;
+    private String registrarCode;
 
-    public static DigInst from(DigitalInstance dto, DigitalLibrary digitalLibrary) {
+    public static DigInst from(DigitalInstance dto, DigitalLibrary digitalLibrary, String registrarCode) {
         if (dto == null) {
             return null;
         }
@@ -32,6 +34,7 @@ public class DigInst {
         result.accessibility = dto.getAccessibility();
         result.accessRestriction = dto.getAccessRestriction();
         result.library = DigLib.from(digitalLibrary);
+        result.registrarCode = registrarCode;
         return result;
     }
 
@@ -69,5 +72,9 @@ public class DigInst {
 
     public DigLib getLibrary() {
         return library;
+    }
+
+    public String getRegistrarCode() {
+        return registrarCode;
     }
 }

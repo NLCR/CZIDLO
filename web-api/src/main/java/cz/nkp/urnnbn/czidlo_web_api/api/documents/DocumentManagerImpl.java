@@ -87,7 +87,8 @@ public class DocumentManagerImpl implements DocumentManager {
                 digitalInstances = new ArrayList<>();
                 for (DigitalInstance di : dtoDis) {
                     DigitalLibrary digitalLibrary = dataAccessService().libraryByInternalId(di.getLibraryId());
-                    digitalInstances.add(DigInst.from(di, digitalLibrary));
+                    cz.nkp.urnnbn.core.dto.Registrar registrarOfDi = dataAccessService().registrarById(digitalLibrary.getRegistrarId());
+                    digitalInstances.add(DigInst.from(di, digitalLibrary, registrarOfDi.getCode().toString()));
                 }
             }
         }
