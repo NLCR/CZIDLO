@@ -191,17 +191,22 @@ public class DocumentManagerImpl implements DocumentManager {
         }
         try {
             result.setRegistrarCode(RegistrarCode.valueOf(record.registrarCode));
-            //set registrarId and archiverId in digital document from registrarCode and archiverId (from record)
-            cz.nkp.urnnbn.core.dto.Registrar registrar = dataAccessService().registrarByCode(result.getRegistrarCode());
-            if (registrar == null) {
-                throw new BadRequestException("Unknown registrar code: " + record.registrarCode);
-            }
-            if (result.getDigitalDocument().getRegistrarId() == null) {
-                result.getDigitalDocument().setRegistrarId(registrar.getId());
-            }
-            result.getDigitalDocument().setArchiverId(record.archiverId == null ? registrar.getId() : record.archiverId);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Invalid registrar code: " + record.registrarCode);
+        }
+        //set registrarId and archiverId in digital document from registrarCode and archiverId (from record)
+        cz.nkp.urnnbn.core.dto.Registrar registrar = dataAccessService().registrarByCode(result.getRegistrarCode());
+        if (registrar == null) {
+            throw new BadRequestException("Unknown registrar code: " + record.registrarCode);
+        }
+        if (result.getDigitalDocument().getRegistrarId() == null) {
+            result.getDigitalDocument().setRegistrarId(registrar.getId());
+        }
+        result.getDigitalDocument().setArchiverId(record.archiverId == null ? registrar.getId() : record.archiverId);
+        try {
+            new MetadataStructureEnforcer(result).run();
+        } catch (MetadataStructureEnforcer.MetadataStructureException e) {
+            throw new BadRequestException("Metadata structure error: " + e.getMessage());
         }
         return result;
     }
