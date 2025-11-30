@@ -17,12 +17,17 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+
+import java.io.StringReader;
 
 @Path("/instances")
 public class InstancesResource extends AbstractResource {
@@ -67,7 +72,28 @@ public class InstancesResource extends AbstractResource {
         //authorization: must be admin or user with right to manage registrar of the digital library hosting this digital instance
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
-        //TODO: implement
+
+        //parse mandatory body to json
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        JsonObject root;
+        try (JsonReader r = Json.createReader(new StringReader(body))) {
+            root = r.readObject();
+        }
+
+        //TODO: implement rest of the method
+
+        //extract and validate parameters
+        /*String name = readParam("name", root::getString);
+        checkDigitalLibraryName(name);
+        String desc = null;
+        if (root.containsKey("description")) {
+            desc = readParam("description", root::getString);
+        }
+        checkDigitalLibraryDescription(desc);
+        String url = readParam("url", root::getString);
+        checkDigitalLibraryUrl(url);*/
 
         //TODO: uzivatel musi mit prava k registratorovi. Ale ne nute tomu, ktery registroval DD, ale k tomu, ktery ma DI ve své digitální knihovně.
         return Response.status(Response.Status.BAD_REQUEST).entity("Not implemented yet").build();

@@ -558,22 +558,6 @@ public class RegistrarsResource extends AbstractResource {
         return Response.noContent().build();
     }
 
-    private Response mandatoryBodyMissingResponse() {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ApiError("Missing mandatory body"))
-                .build();
-    }
-
-    private <T> T readParam(String paramName, Function<String, T> funk) {
-        try {
-            return funk.apply(paramName);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Missing mandatory parameter: " + paramName);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Invalid type for parameter: " + paramName);
-        }
-    }
-
     record RegistrarCreate(@NotNull String code, @NotNull String name, String description,
                            @NotNull boolean allowedRegistrationModeByResolver,
                            @NotNull boolean allowedRegistrationModeByReservation,

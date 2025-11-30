@@ -62,7 +62,7 @@ public class ProcessesResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ProcessCreate.class)),
                     description = "JSON array of strings representing process parameters",
                     required = true
-            ) String body) throws UnauthorizedException {
+            ) String body) throws UnauthorizedException, BadArgumentException {
         //authorization: must be logged in
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
@@ -439,30 +439,6 @@ public class ProcessesResource extends AbstractResource {
         }
     }
 
-    private Response internalErrorResponse(Exception e) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ApiError("Internal server error: " + e.getMessage()))
-                .build();
-    }
-
-    private Response mandatoryBodyMissingResponse() {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ApiError("Missing mandatory body"))
-                .build();
-    }
-
-    private Response mandatoryParamMissingResponse(String paramName) {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ApiError("Missing mandatory parameter: " + paramName))
-                .build();
-    }
-
-    private Response invalidParamValueResponse(String parameterName, String value) {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ApiError("Invalid value for parameter " + parameterName + ": " + value))
-                .build();
-    }
-
     private Response processNotFounResponse(long processId) {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity(new ApiError("Process with ID " + processId + " not found"))
@@ -485,16 +461,6 @@ public class ProcessesResource extends AbstractResource {
         return Response.status(Response.Status.NOT_FOUND)
                 .entity(new ApiError("File not found for process with ID: " + processId))
                 .build();
-    }
-
-    private <T> T readParam(String paramName, Function<String, T> funk) {
-        try {
-            return funk.apply(paramName);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Missing mandatory parameter: " + paramName);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Invalid type for parameter: " + paramName);
-        }
     }
 
     record ProcessCreate(@NotNull ProcessType type, @NotNull Object params) {

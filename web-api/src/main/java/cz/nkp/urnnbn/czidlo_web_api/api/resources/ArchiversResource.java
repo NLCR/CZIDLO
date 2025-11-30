@@ -7,10 +7,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManag
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.archiver_manager.ArchiverManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.Archiver;
 import cz.nkp.urnnbn.czidlo_web_api.api.archivers.core.ArchiverList;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.DuplicateRecordException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
-import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,7 +59,7 @@ public class ArchiversResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ArchiverCreate.class)),
                     description = "JSON object representing archiver parameters",
                     required = true
-            ) String body) throws DuplicateRecordException, UnauthorizedException, InsufficientRightsException {
+            ) String body) throws DuplicateRecordException, UnauthorizedException, InsufficientRightsException, BadArgumentException {
         //authorization: must be admin
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
@@ -162,7 +159,7 @@ public class ArchiversResource extends AbstractResource {
                     content = @Content(schema = @Schema(implementation = ArchiverUpdate.class)),
                     description = "JSON object representing archiver parameters",
                     required = true
-            ) String body) throws UnknownRecordException, DuplicateRecordException, UnauthorizedException, InsufficientRightsException {
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, BadArgumentException {
         //authorization: must be admin
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
@@ -222,16 +219,6 @@ public class ArchiversResource extends AbstractResource {
 
         archiverManager.deleteArchiver(user.getLogin(), id);
         return Response.noContent().build();
-    }
-
-    private <T> T readParam(String paramName, Function<String, T> funk) {
-        try {
-            return funk.apply(paramName);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Missing mandatory parameter: " + paramName);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Invalid type for parameter: " + paramName);
-        }
     }
 
     record ArchiverCreate(@NotNull String name, String description) {

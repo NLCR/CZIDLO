@@ -397,22 +397,6 @@ public class UsersResource extends AbstractResource {
         return Response.ok(userDetails).build();
     }
 
-    private <T> T readParam(String paramName, Function<String, T> funk) throws BadArgumentException {
-        try {
-            return funk.apply(paramName);
-        } catch (NullPointerException e) {
-            throw new BadArgumentException("Missing mandatory parameter: " + paramName);
-        } catch (ClassCastException e) {
-            throw new BadArgumentException("Invalid type for parameter: " + paramName);
-        }
-    }
-
-    private Response mandatoryBodyMissingResponse() {
-        return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ApiError("Missing mandatory body"))
-                .build();
-    }
-
     record UserCreate(@NotNull String login, @NotNull String email, @NotNull String password,
                       @NotNull boolean isAdmin) {
     }
