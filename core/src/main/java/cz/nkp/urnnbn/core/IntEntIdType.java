@@ -84,6 +84,9 @@ public enum IntEntIdType {
             case MONOGRAPH:
                 result.add(ISBN);
                 return result;
+            case MONOGRAPH_VOLUME:
+                result.add(ISBN);
+                return result;
             case PERIODICAL:
                 result.add(ISSN);
                 return result;
@@ -101,6 +104,11 @@ public enum IntEntIdType {
             case ANALYTICAL:
                 result.add(ISBN);
                 result.add(ISSN);
+                return result;
+            case OTHER:
+                result.add(ISBN);
+                return result;
+            case SOUND_COLLECTION:
                 return result;
             default:
                 return result;

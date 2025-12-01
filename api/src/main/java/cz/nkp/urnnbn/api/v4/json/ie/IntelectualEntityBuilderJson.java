@@ -19,27 +19,29 @@ import cz.nkp.urnnbn.core.dto.SourceDocument;
 public abstract class IntelectualEntityBuilderJson extends JsonBuilder {
 
     public static IntelectualEntityBuilderJson instanceOf(IntelectualEntity entity, List<IntEntIdentifier> ieIdentfiers, Publication pub,
-            Originator originator, SourceDocument srcDoc) {
+                                                          Originator originator, SourceDocument srcDoc) {
         EntityType entityType = entity.getEntityType();
         switch (entityType) {
-        case MONOGRAPH:
-            return new MonographBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case MONOGRAPH_VOLUME:
-            return new MonographVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case PERIODICAL:
-            return new PeriodicalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case PERIODICAL_VOLUME:
-            return new PeriodicalVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case PERIODICAL_ISSUE:
-            return new PeriodicalIssueBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case THESIS:
-            return new ThesisBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case ANALYTICAL:
-            return new AnalyticalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        case OTHER:
-            return new OtherEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
-        default:
-            throw new RuntimeException();
+            case MONOGRAPH:
+                return new MonographBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case MONOGRAPH_VOLUME:
+                return new MonographVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case PERIODICAL:
+                return new PeriodicalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case PERIODICAL_VOLUME:
+                return new PeriodicalVolumeBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case PERIODICAL_ISSUE:
+                return new PeriodicalIssueBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case THESIS:
+                return new ThesisBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case ANALYTICAL:
+                return new AnalyticalBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case OTHER:
+                return new OtherEntityBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            case SOUND_COLLECTION:
+                return new SoundCollectionBuilder(entity, ieIdentfiers, pub, originator, srcDoc);
+            default:
+                throw new RuntimeException();
         }
     }
 
@@ -51,7 +53,7 @@ public abstract class IntelectualEntityBuilderJson extends JsonBuilder {
     private final Map<IntEntIdType, String> intEntIdMap = new EnumMap<IntEntIdType, String>(IntEntIdType.class);
 
     public IntelectualEntityBuilderJson(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
-            SourceDocument srcDoc) {
+                                        SourceDocument srcDoc) {
         this.entity = entity;
         this.identifiers = identifiers;
         this.publication = publication;

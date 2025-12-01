@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <xs:element ref="czidlo:analytical"/>
                     <xs:element ref="czidlo:thesis"/>
                     <xs:element ref="czidlo:otherEntity"/>
+                    <xs:element ref="czidlo:soundCollection" />
                 </xs:choice>
                 <xs:element ref="czidlo:digitalDocument" minOccurs="1" maxOccurs="1"/>
             </xs:sequence>
@@ -225,6 +226,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 </xs:element>
                 <xs:element name="ccnb" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="isbn" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="primaryOriginator" type="czidlo:primaryOriginator" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="otherOriginator" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="publication" type="czidlo:publication" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="soundCollection">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="titleInfo" minOccurs="1" maxOccurs="1">
+                    <xs:complexType >
+                        <xs:sequence>
+                            <xs:element name="title" type="czidlo:nonemptyString" minOccurs="1" maxOccurs="1"/>
+                            <xs:element name="subTitle" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ccnb" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="otherId" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="documentType" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="digitalBorn" type="xs:boolean" minOccurs="0" maxOccurs="1"/>

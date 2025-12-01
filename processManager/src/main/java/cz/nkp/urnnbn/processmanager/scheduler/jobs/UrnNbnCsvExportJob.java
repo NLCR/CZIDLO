@@ -217,6 +217,7 @@ public class UrnNbnCsvExportJob extends AbstractJob {
             case ANALYTICAL:
             case THESIS:
             case OTHER:
+            case SOUND_COLLECTION:
                 builder.append(export.getTitle());
                 if (export.getSubtitle() != null) {
                     builder.append(" (").append(export.getSubtitle()).append(')');

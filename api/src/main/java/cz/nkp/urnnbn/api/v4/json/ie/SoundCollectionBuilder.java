@@ -1,27 +1,20 @@
 package cz.nkp.urnnbn.api.v4.json.ie;
 
-import java.util.List;
-
+import cz.nkp.urnnbn.core.IntEntIdType;
+import cz.nkp.urnnbn.core.dto.*;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import cz.nkp.urnnbn.core.IntEntIdType;
-import cz.nkp.urnnbn.core.dto.IntEntIdentifier;
-import cz.nkp.urnnbn.core.dto.IntelectualEntity;
-import cz.nkp.urnnbn.core.dto.Originator;
-import cz.nkp.urnnbn.core.dto.Publication;
-import cz.nkp.urnnbn.core.dto.SourceDocument;
+import java.util.List;
 
-public class OtherEntityBuilder extends IntelectualEntityBuilderJson {
-
-    public OtherEntityBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator,
-                              SourceDocument srcDoc) {
+public class SoundCollectionBuilder extends IntelectualEntityBuilderJson {
+    public SoundCollectionBuilder(IntelectualEntity entity, List<IntEntIdentifier> identifiers, Publication publication, Originator originator, SourceDocument srcDoc) {
         super(entity, identifiers, publication, originator, srcDoc);
     }
 
     @Override
     protected String getName() {
-        return "otherEntity";
+        return "soundCollection";
     }
 
     @Override
@@ -33,7 +26,6 @@ public class OtherEntityBuilder extends IntelectualEntityBuilderJson {
             appendEntityIdentifier(titleInfo, IntEntIdType.TITLE, "title");
             appendEntityIdentifier(titleInfo, IntEntIdType.SUB_TITLE, "subTitle");
             appendEntityIdentifier(root, IntEntIdType.CCNB, "ccnb");
-            appendEntityIdentifier(root, IntEntIdType.ISBN, "isbn");
             appendEntityIdentifier(root, IntEntIdType.OTHER, "otherId");
             appendDocumentType(root);
             appendDigitalBorn(root);

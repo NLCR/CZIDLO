@@ -65,6 +65,8 @@ public abstract class IntelectualEntityUnmarshaller extends Unmarshaller {
             return new ThesisUnmarshaller(entityEl);
         case OTHER:
             return new OtherEntityUnmarshaller(entityEl);
+        case SOUND_COLLECTION:
+            return new SoundCollectionUnmarshaller(entityEl);
         default:
             throw new RuntimeException();
         }
