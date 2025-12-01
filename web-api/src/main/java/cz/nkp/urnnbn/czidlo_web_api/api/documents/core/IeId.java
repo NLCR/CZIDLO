@@ -7,8 +7,8 @@ import java.util.List;
 
 public class IeId {
 
-    private IntEntIdType type;
-    private String value;
+    public IntEntIdType type;
+    public String value;
 
     public static IeId from(IntEntIdentifier dto) {
         if (dto == null) {

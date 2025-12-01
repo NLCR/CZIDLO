@@ -14,56 +14,48 @@ import java.util.List;
 public enum IntEntIdType {
 
     TITLE {
-
         @Override
         public String toString() {
             return "title";
         }
     },
     SUB_TITLE {
-
         @Override
         public String toString() {
             return "subTitle";
         }
     },
     VOLUME_TITLE {
-
         @Override
         public String toString() {
             return "volumeTitle";
         }
     },
     ISSUE_TITLE {
-
         @Override
         public String toString() {
             return "issueTitle";
         }
     },
     ISBN {
-
         @Override
         public String toString() {
             return "isbn";
         }
     },
     CCNB {
-
         @Override
         public String toString() {
             return "ccnb";
         }
     },
     ISSN {
-
         @Override
         public String toString() {
             return "issn";
         }
     },
     OTHER {
-
         @Override
         public String toString() {
             return "otherId";
@@ -89,29 +81,29 @@ public enum IntEntIdType {
         result.add(CCNB);
         result.add(OTHER);
         switch (type) {
-        case MONOGRAPH:
-            result.add(ISBN);
-            return result;
-        case PERIODICAL:
-            result.add(ISSN);
-            return result;
-        case PERIODICAL_VOLUME:
-            result.add(ISSN);
-            result.add(VOLUME_TITLE);
-            return result;
-        case PERIODICAL_ISSUE:
-            result.add(ISSN);
-            result.add(VOLUME_TITLE);
-            result.add(ISSUE_TITLE);
-            return result;
-        case THESIS:
-            return result;
-        case ANALYTICAL:
-            result.add(ISBN);
-            result.add(ISSN);
-            return result;
-        default:
-            return result;
+            case MONOGRAPH:
+                result.add(ISBN);
+                return result;
+            case PERIODICAL:
+                result.add(ISSN);
+                return result;
+            case PERIODICAL_VOLUME:
+                result.add(ISSN);
+                result.add(VOLUME_TITLE);
+                return result;
+            case PERIODICAL_ISSUE:
+                result.add(ISSN);
+                result.add(VOLUME_TITLE);
+                result.add(ISSUE_TITLE);
+                return result;
+            case THESIS:
+                return result;
+            case ANALYTICAL:
+                result.add(ISBN);
+                result.add(ISSN);
+                return result;
+            default:
+                return result;
         }
     }
 }

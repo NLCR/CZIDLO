@@ -15,7 +15,7 @@ public class MetadataStructureEnforcer {
     public static class MetadataStructureException extends Exception {
 
         public MetadataStructureException(EntityType entityType, String message) {
-            super(entityType + ": " + message);
+            super((entityType == null ? "" : entityType.name()) + ": " + message);
         }
 
         public MetadataStructureException(String message) {
@@ -109,13 +109,13 @@ public class MetadataStructureEnforcer {
 
     private void mustHaveId(IntEntIdType type) throws MetadataStructureException {
         if (!hasIdentifier(type)) {
-            throw new MetadataStructureException(getEntityType(), "Missing required identifier of type: " + type);
+            throw new MetadataStructureException(getEntityType(), "Missing required identifier of type: " + type.name());
         }
     }
 
     private void cantHaveId(IntEntIdType type) throws MetadataStructureException {
         if (hasIdentifier(type)) {
-            throw new MetadataStructureException(getEntityType(), "Identifier of type " + type + " is not allowed.");
+            throw new MetadataStructureException(getEntityType(), "Identifier of type " + type.name() + " is not allowed.");
         }
     }
 

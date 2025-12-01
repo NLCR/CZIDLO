@@ -1,11 +1,14 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 
 import cz.nkp.urnnbn.core.EntityType;
+import cz.nkp.urnnbn.core.IntEntIdType;
 import cz.nkp.urnnbn.core.OriginType;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 public class RecordToBeImported {
@@ -99,7 +102,7 @@ public class RecordToBeImported {
         if (ie.containsKey("entityType")) {
             String entityTypeStr = ie.getString("entityType");
             try {
-                result.entityType = EntityType.valueOf(entityTypeStr.toUpperCase());
+                result.entityType = EntityType.valueOf(entityTypeStr);
             } catch (IllegalArgumentException e) {
                 throw new BadArgumentException("Invalid value for parameter entityType: " + entityTypeStr);
             }
@@ -178,18 +181,34 @@ public class RecordToBeImported {
                 result.sourceDocument.publicationYear = sourceDocument.getInt("publicationYear");
             }
         }
+        if (ie.containsKey("ieIdentifiers")) {
+            result.ieIdentifiers = new ArrayList<>();
+            JsonArray ieIds = ie.getJsonArray("ieIdentifiers");
+            //extract type and value from each object and save as IeId into list
+            for (int i = 0; i < ieIds.size(); i++) {
+                JsonObject ieIdObj = ieIds.getJsonObject(i);
+                IeId ieId = new IeId();
+                if (ieIdObj.containsKey("type")) {
+                    String typeStr = ieIdObj.getString("type");
+                    try {
+                        ieId.type = IntEntIdType.valueOf(typeStr);
+                        //ieId.type = IntEntIdType.parse(typeStr);
+                    } catch (IllegalArgumentException e) {
+                        throw new BadArgumentException("Invalid value for parameter ieIdentifiers[" + i + "].type: " + typeStr);
+                    }
+                } else {
+                    throw new BadArgumentException("Missing mandatory parameter: ieIdentifiers[" + i + "].type");
+                }
+                if (ieIdObj.containsKey("value")) {
+                    ieId.value = ieIdObj.getString("value");
+                } else {
+                    throw new BadArgumentException("Missing mandatory parameter: ieIdentifiers[" + i + "].value");
+                }
+                result.ieIdentifiers.add(ieId);
+            }
+        }
 
         return result;
-    }
-
-    static <T> T readParam(String paramName, Function<String, T> funk) throws BadArgumentException {
-        try {
-            return funk.apply(paramName);
-        } catch (NullPointerException e) {
-            throw new BadArgumentException("Missing mandatory parameter: " + paramName);
-        } catch (ClassCastException e) {
-            throw new BadArgumentException("Invalid type for parameter: " + paramName);
-        }
     }
 
     @Override
