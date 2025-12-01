@@ -1,8 +1,6 @@
 package cz.nkp.urnnbn.indexer.es;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.BulkRequest;
-import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
@@ -17,6 +15,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class DataMigrator {
@@ -32,33 +31,39 @@ public class DataMigrator {
     private static int BATCH_SIZE = 1000;
     private static final ConversionType type = new Resolving(); // change class for different mapping
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
     public static void main(String[] args) {
-        Properties props = loadProperties();
-
-        ElasticsearchClient esClient = createElasticClient(props);
-        String indexName = props.getProperty("es.index.name");
+        IndexerEngine indexerEngine = null;
         try {
-            esClient.ping();
+            Properties props = loadProperties();
+
+            //init and check ES connection
+            String indexName = props.getProperty("es.index.name");
+            //init indexer
+            indexerEngine = new IndexerEngine(props.getProperty("es.url"),
+                    props.getProperty("es.username"),
+                    props.getProperty("es.password"));
+
+            //define batch processor
+            System.out.println("h1");
+            IndexerEngine finalIndexerEngine = indexerEngine;
+            Consumer<List<Object>> batchProcessor = (batch) -> {
+                System.out.println("Received batch of " + batch.size() + " records. Indexing...");
+                finalIndexerEngine.indexBatch(indexName, batch);
+            };
+            System.out.println("h2");
+
+            System.out.println("--- STARTING MIGRATION (STREAMING) ---");
+
+            //start processing
+            processFromPostgres(props, batchProcessor);
+
+            System.out.println("--- MIGRATION COMPLETE ---");
         } catch (IOException e) {
-            throw new RuntimeException("Could not reach elastic", e);
+            System.err.println("Failed to initialize indexer engine or load properties.");
+            if (indexerEngine != null) {
+                indexerEngine.close();
+            }
         }
-
-        Consumer<List<Object>> batchProcessor = (batch) -> {
-            System.out.println("Received batch of " + batch.size() + " records. Indexing...");
-            indexBatch(esClient, indexName, batch);
-        };
-
-        System.out.println("--- STARTING MIGRATION (STREAMING) ---");
-
-        processFromPostgres(props, batchProcessor);
-        //processFromSolr(props, batchProcessor);
-
-        System.out.println("--- MIGRATION COMPLETE ---");
     }
 
     private static void processFromPostgres(Properties props, Consumer<List<Object>> processor) {
@@ -75,6 +80,7 @@ public class DataMigrator {
 
                 //joins all the tables according to their keys (trust)
                 System.out.println("Executing SQL statement.");
+                System.out.println(type.query());
                 ResultSet rs = stmt.executeQuery(type.query());
                 System.out.println("Finished executing SQL statement.");
 
@@ -83,7 +89,7 @@ public class DataMigrator {
                     String json = rs.getString("resulting_json");
                     Object mapped = null;
                     try {
-                        mapped = OBJECT_MAPPER.readValue(json, type.getClass());
+                        mapped = Mapping.OBJECT_MAPPER.readValue(json, type.getClass());
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
@@ -118,38 +124,7 @@ public class DataMigrator {
     }
 
 
-    private static void indexBatch(ElasticsearchClient client, String indexName, List<Object> batch) {
-        if (batch.isEmpty()) return;
-
-        BulkRequest.Builder br = new BulkRequest.Builder();
-
-        for (Object document : batch) {
-            br.operations(op -> op
-                    .index(idx -> idx
-                            .index(indexName)
-                            .id(UUID.randomUUID().toString())
-                            .document(document)
-                    )
-            );
-        }
-
-        try {
-            BulkResponse result = client.bulk(br.build());
-            if (result.errors()) {
-                System.err.println("Batch had errors:");
-                result.items().stream()
-                        .filter(item -> item.error() != null)
-                        .forEach(item -> System.err.println(" - " + item.error().reason()));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Failed to send batch to Elasticsearch: " + e.getMessage());
-            throw new RuntimeException("Failed to send batch to Elasticsearch", e);
-        }
-    }
-
-
-    private static ElasticsearchClient createElasticClient(Properties props) {
+  /*  private static ElasticsearchClient createElasticClient(Properties props) {
         String serverUrl = props.getProperty("es.url");
         BasicCredentialsProvider credsProv = new BasicCredentialsProvider();
         String user = props.getProperty("es.username");
@@ -170,11 +145,14 @@ public class DataMigrator {
         );
 
         return new ElasticsearchClient(transport);
-    }
+    }*/
 
     private static Properties loadProperties() {
         Properties props = new Properties();
-        try (InputStream input = DataMigrator.class.getClassLoader().getResourceAsStream("config.properties")) {
+        File hardcoderConfigFile = new File("/Users/martinrehanek/TrineraProjects/Czidlo/CZIDLO/indexer/src/main/resources/indexer-es.properties");
+        //try (InputStream input = DataMigrator.class.getClassLoader().getResourceAsStream("config.properties")) {
+        System.out.println("Loading properties from " + hardcoderConfigFile.getAbsolutePath());
+        try (InputStream input = new FileInputStream(hardcoderConfigFile)) {
             if (input == null) {
                 System.out.println("Sorry, unable to find config.properties");
                 System.exit(1);
