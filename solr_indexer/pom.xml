@@ -32,7 +32,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>cz.nkp.urnnbn.solr_indexer.App</mainClass>
+                            <mainClass>cz.nkp.urnnbn.indexer.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

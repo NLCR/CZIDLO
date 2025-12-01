@@ -12,7 +12,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.*;
-import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.Collection;
 import java.util.List;

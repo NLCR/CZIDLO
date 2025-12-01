@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
-import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.Collection;
 import java.util.logging.Level;

@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.solr_indexer;
+package cz.nkp.urnnbn.indexer;
 
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;

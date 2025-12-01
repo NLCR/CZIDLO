@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.solr_indexer;
+package cz.nkp.urnnbn.indexer;
 
 /**
  * Created by Martin Řehánek on 21.12.17.

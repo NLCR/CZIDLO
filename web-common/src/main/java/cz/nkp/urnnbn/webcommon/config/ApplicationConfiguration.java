@@ -10,7 +10,7 @@ import cz.nkp.urnnbn.core.AdminLogger;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.persistence.impl.DatabaseConnectorFactory;
 import cz.nkp.urnnbn.services.Services;
-import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
+import cz.nkp.urnnbn.indexer.IndexerConfig;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 
 import java.io.File;

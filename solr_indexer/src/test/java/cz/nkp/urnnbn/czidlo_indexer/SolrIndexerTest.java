@@ -1,11 +1,8 @@
 package cz.nkp.urnnbn.czidlo_indexer;
 
-import cz.nkp.urnnbn.solr_indexer.SolrConnector;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 
 //import cz.nkp.urnnbn.core.persistence.impl.postgres.PostgresSimpleConnector;
 //import cz.nkp.urnnbn.services.Services;

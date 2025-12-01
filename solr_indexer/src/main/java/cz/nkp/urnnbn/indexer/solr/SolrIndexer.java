@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.solr_indexer;
+package cz.nkp.urnnbn.indexer.solr;
 
 
 import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
@@ -7,6 +7,7 @@ import cz.nkp.urnnbn.apiClient.v5.utils.XmlTools;
 import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.indexer.*;
 import nu.xom.Document;
 import nu.xom.ParsingException;
 import nu.xom.xslt.XSLException;

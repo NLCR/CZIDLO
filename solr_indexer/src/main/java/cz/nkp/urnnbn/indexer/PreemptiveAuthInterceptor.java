@@ -1,4 +1,4 @@
-package cz.nkp.urnnbn.solr_indexer;
+package cz.nkp.urnnbn.indexer;
 
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;

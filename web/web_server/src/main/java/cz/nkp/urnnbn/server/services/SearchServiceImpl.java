@@ -11,8 +11,8 @@ import cz.nkp.urnnbn.shared.dto.DigitalDocumentDTO;
 import cz.nkp.urnnbn.shared.dto.DigitalInstanceDTO;
 import cz.nkp.urnnbn.shared.dto.ie.IntelectualEntityDTO;
 import cz.nkp.urnnbn.shared.exceptions.ServerException;
-import cz.nkp.urnnbn.solr_indexer.SolrConnector;
-import cz.nkp.urnnbn.solr_indexer.SolrUtils;
+import cz.nkp.urnnbn.indexer.SolrConnector;
+import cz.nkp.urnnbn.indexer.SolrUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 

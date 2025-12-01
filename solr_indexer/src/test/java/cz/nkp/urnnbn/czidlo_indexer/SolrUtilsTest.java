@@ -1,6 +1,6 @@
 package cz.nkp.urnnbn.czidlo_indexer;
 
-import cz.nkp.urnnbn.solr_indexer.SolrUtils;
+import cz.nkp.urnnbn.indexer.solr.SolrUtils;
 import junit.framework.TestCase;
 
 /**

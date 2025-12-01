@@ -8,9 +8,9 @@ import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.services.impl.*;
-import cz.nkp.urnnbn.solr_indexer.DataProvider;
-import cz.nkp.urnnbn.solr_indexer.IndexerConfig;
-import cz.nkp.urnnbn.solr_indexer.SolrIndexer;
+import cz.nkp.urnnbn.indexer.DataProvider;
+import cz.nkp.urnnbn.indexer.IndexerConfig;
+import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 import org.joda.time.DateTime;
 
 import java.util.List;
