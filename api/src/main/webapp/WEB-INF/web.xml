@@ -2,6 +2,7 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
     <!-- JDBC pool -->
     <resource-ref>
         <description>Postgres Connection pool datasource</description>
@@ -10,34 +11,38 @@
         <!-- <res-type>org.postgresql.jdbc3.Jdbc3ConnectionPool</res-type> -->
         <res-auth>Container</res-auth>
     </resource-ref>
+
     <context-param>
         <param-name>apiConfig</param-name>
-        <param-value>
-            /api.properties
-        </param-value>
+        <param-value>/api.properties</param-value>
     </context-param>
+
     <listener>
         <listener-class>cz.nkp.urnnbn.api.config.ContextListener</listener-class>
     </listener>
+
     <!-- SPRING START -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>
-            /WEB-INF/securityContext.xml
-        </param-value>
+        <param-value>/WEB-INF/securityContext.xml</param-value>
     </context-param>
+
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <!-- SPRING END -->
+
+    <!-- indexové JSP pro jednotlivé verze API -->
     <servlet>
         <servlet-name>index</servlet-name>
         <jsp-file>/index.jsp</jsp-file>
@@ -59,86 +64,106 @@
         <jsp-file>/index_v6.jsp</jsp-file>
     </servlet>
 
-
+    <!--
+    =========================
+        Jersey 2 – APIv3
+    =========================
+    -->
     <servlet>
         <servlet-name>ServletAdaptor-v3</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <!-- <init-param> -->
-        <!-- <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name> -->
-        <!-- <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value> -->
-        <!-- </init-param> -->
-        <!-- <init-param> -->
-        <!-- <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name> -->
-        <!-- <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value> -->
-        <!-- </init-param> -->
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <!-- balíčky s @Path resource třídami -->
         <init-param>
             <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>cz.nkp.urnnbn.api.v3</param-value>
         </init-param>
+
+        <!-- pokud APIv3 používá jen XML, není potřeba Jackson/MultiPart -->
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!--
+    =========================
+        Jersey 2 – APIv4
+    =========================
+    -->
     <servlet>
         <servlet-name>ServletAdaptor-v4</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <!-- <init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name> 
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value> 
-            </init-param> <init-param> <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name> 
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value> 
-            </init-param> -->
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <!-- JSON + multipart providery (náhrada za POJOMappingFeature + jersey-multipart) -->
         <init-param>
-            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-            <param-value>true</param-value>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>
+                org.glassfish.jersey.jackson.JacksonFeature,
+                org.glassfish.jersey.media.multipart.MultiPartFeature
+            </param-value>
         </init-param>
+
         <init-param>
             <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>cz.nkp.urnnbn.api.v4</param-value>
         </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!--
+    =========================
+        Jersey 2 – APIv5
+    =========================
+    -->
     <servlet>
         <servlet-name>ServletAdaptor-v5</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <!-- <init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
-            </init-param> <init-param> <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
-            </init-param> -->
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
         <init-param>
-            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-            <param-value>true</param-value>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>
+                org.glassfish.jersey.jackson.JacksonFeature,
+                org.glassfish.jersey.media.multipart.MultiPartFeature
+            </param-value>
         </init-param>
+
         <init-param>
             <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>cz.nkp.urnnbn.api.v5</param-value>
         </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!--
+    =========================
+        Jersey 2 – APIv6
+    =========================
+    -->
     <servlet>
         <servlet-name>ServletAdaptor-v6</servlet-name>
-        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-        <!-- <init-param> <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
-            </init-param> <init-param> <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
-            </init-param> -->
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
         <init-param>
-            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-            <param-value>true</param-value>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>
+                org.glassfish.jersey.jackson.JacksonFeature,
+                org.glassfish.jersey.media.multipart.MultiPartFeature
+            </param-value>
         </init-param>
+
         <init-param>
             <description>Multiple packages, separated by semicolon(;), can be specified in param-value</description>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>cz.nkp.urnnbn.api.v6</param-value>
         </init-param>
+
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!-- JSP mapování -->
     <servlet-mapping>
         <servlet-name>index</servlet-name>
         <url-pattern>/</url-pattern>
@@ -164,6 +189,7 @@
         <url-pattern>/v6/</url-pattern>
     </servlet-mapping>
 
+    <!-- REST mapování -->
     <servlet-mapping>
         <servlet-name>ServletAdaptor-v3</servlet-name>
         <url-pattern>/v3/*</url-pattern>
