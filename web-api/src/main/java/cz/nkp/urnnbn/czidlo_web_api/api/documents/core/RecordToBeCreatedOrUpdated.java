@@ -42,6 +42,10 @@ public class RecordToBeCreatedOrUpdated {
         //urnNbn
         record.urnNbn = null;
         if (root.containsKey("urnNbn")) {
+            //urnNbn must be string
+            if (root.get("urnNbn").getValueType() != jakarta.json.JsonValue.ValueType.STRING) {
+                throw new BadArgumentException("Invalid value for parameter urnNbn: must be a string, not " + root.get("urnNbn").getValueType().toString());
+            }
             record.urnNbn = root.getString("urnNbn");
         }
         return record;

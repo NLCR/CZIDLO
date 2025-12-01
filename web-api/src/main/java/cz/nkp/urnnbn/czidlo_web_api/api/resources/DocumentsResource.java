@@ -189,6 +189,12 @@ public class DocumentsResource extends AbstractResource {
         if (record.urnNbn != null && !urnNbn.toString().equals(record.urnNbn)) {
             throw new BadArgumentException("URN:NBN in path parameter and in request body do not match");
         }
+        if (record.intelectualEntity.id == null) {
+            throw new BadArgumentException("Missing mandatory parameter: intelectualEntity.id");
+        }
+        if (record.digitalDocument.id == null) {
+            throw new BadArgumentException("Missing mandatory parameter: digitalDocument.id");
+        }
         //update digital document
         try {
             documentManager.updateRecord(record, user.getLogin());
