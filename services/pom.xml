@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>solr_indexer</artifactId>
+            <artifactId>indexer</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -79,8 +79,7 @@
         <module>api-client</module>
         <!--TODO: rename to oai-adapter (package oaiAdapter)-->
         <module>oaiAdapter</module>
-        <!--TODO: rename to solr-indexer (package solrIndexer)-->
-        <module>solr_indexer</module>
+        <module>indexer</module>
         <!--TODO: rename to process-manager (package processManager)-->
         <module>processManager</module>
 

@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>solr_indexer</artifactId>
+    <artifactId>indexer</artifactId>
     <packaging>jar</packaging>
     <name>CZIDLO - solr indexer</name>
 
