@@ -64,7 +64,7 @@ public class DocumentsResource extends AbstractResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createDigitalDocument(
             @RequestBody(
-                    content = @Content(schema = @Schema(implementation = cz.nkp.urnnbn.czidlo_web_api.api.documents.core.RecordToBeImported.class)),
+                    content = @Content(schema = @Schema(implementation = RecordToBeCreatedOrUpdated.class)),
                     description = "JSON object with digital document input data",
                     required = true
             ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, ConflictException, BadArgumentException {
@@ -79,10 +79,10 @@ public class DocumentsResource extends AbstractResource {
         try (JsonReader r = Json.createReader(new StringReader(body))) {
             root = r.readObject();
         }
-        RecordToBeImported recordToBeImported = RecordToBeImported.fromJsonObject(root);
+        RecordToBeCreatedOrUpdated recordToBeCreatedOrUpdated = RecordToBeCreatedOrUpdated.fromJsonObject(root);
         //register digital document
         try {
-            UrnNbn urnNbn = documentManager.createRecord(recordToBeImported, user.getLogin());
+            UrnNbn urnNbn = documentManager.createRecord(recordToBeCreatedOrUpdated, user.getLogin());
             Record created = documentManager.getRecord(urnNbn);
             return Response.status(Response.Status.CREATED).entity(created).build();
         } catch (UnknownUserException e) {
@@ -129,6 +129,77 @@ public class DocumentsResource extends AbstractResource {
             throw new UnknownRecordException("Digital document with URN:NBN " + urn + " not found");
         }
         return Response.ok(record).build();
+    }
+
+    @Operation(
+            summary = "Update document",
+            tags = "Documents",
+            description = "Updates digital document identified by the given URN:NBN, including it's intelecutal entity and associated records.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Updated digital document",
+                            content = @Content(schema = @Schema(implementation = Record.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid URN:NBN format or invalid input data",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "403", description = "Insufficient rights to manage this document's registrar",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Digital document not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "404", description = "Digital document not found",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal server error",
+                            content = @Content(schema = @Schema(implementation = ApiError.class)))
+            }
+    )
+    @PUT
+    @Path("{urn}")
+    public Response updateDocumentByUrnNbn(
+            @Parameter(description = "URN:NBN identifier of the digital document", required = true)
+            @PathParam("urn") String urn,
+            @RequestBody(
+                    content = @Content(schema = @Schema(implementation = RecordToBeCreatedOrUpdated.class)),
+                    description = "JSON object with digital document input data",
+                    required = true
+            ) String body) throws UnknownRecordException, UnauthorizedException, InsufficientRightsException, BadArgumentException {
+        //authorization: must be admin or user with right to manage this registrar
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        //parse and validate urn
+        UrnNbn urnNbn;
+        try {
+            urnNbn = UrnNbn.valueOf(urn);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid URN:NBN format: " + e.getMessage());
+        }
+        if (!user.isAdmin() && !principal.managesRegistrar(urnNbn.getRegistrarCode().toString())) {
+            throw new InsufficientRightsException("Only admin or user with right to manage registrar " + urnNbn.getRegistrarCode().toString() + " can perform this operation");
+        }
+        //parse mandatory body to json
+        if (body == null || body.isEmpty()) {
+            return mandatoryBodyMissingResponse();
+        }
+        JsonObject root;
+        try (JsonReader r = Json.createReader(new StringReader(body))) {
+            root = r.readObject();
+        }
+
+        RecordToBeCreatedOrUpdated record = RecordToBeCreatedOrUpdated.fromJsonObject(root);
+        //check URN:NBN in body (if present) against path parameter
+        if (record.urnNbn != null && !urnNbn.toString().equals(record.urnNbn)) {
+            throw new BadArgumentException("URN:NBN in path parameter and in request body do not match");
+        }
+        //update digital document
+        try {
+            documentManager.updateRecord(record, user.getLogin());
+            Record updated = documentManager.getRecord(urnNbn);
+            return Response.ok().entity(updated).build();
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Operation(

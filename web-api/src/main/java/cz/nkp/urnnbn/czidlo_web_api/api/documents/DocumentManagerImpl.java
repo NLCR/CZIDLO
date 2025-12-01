@@ -142,7 +142,7 @@ public class DocumentManagerImpl implements DocumentManager {
     }
 
     @Override
-    public UrnNbn createRecord(RecordToBeImported record, String login) throws
+    public UrnNbn createRecord(RecordToBeCreatedOrUpdated record, String login) throws
             BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException,
             IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException {
         try {
@@ -161,18 +161,36 @@ public class DocumentManagerImpl implements DocumentManager {
         }
     }
 
-    private DigDocRegistrationData convert(RecordToBeImported record) {
+    @Override
+    public void updateRecord(RecordToBeCreatedOrUpdated recordToBeUpdated, String login) throws InsufficientRightsException, UnknownRecordException {
+        DigDocRegistrationData docData = convert(recordToBeUpdated);
+        try {
+            dataUpdateService().updateIntelectualEntity(docData.getEntity(), docData.getOriginator(), docData.getPublication(), docData.getSourceDoc(), docData.getIntEntIds(), login);
+            dataUpdateService().updateDigitalDocument(docData.getDigitalDocument(), login);
+        } catch (UnknownUserException e) {
+            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new InsufficientRightsException("Insufficient rights: " + e.getMessage());
+        } catch (UnknownIntelectualEntity e) {
+            throw new UnknownRecordException("Unknown intellectual entity: " + e.getMessage());
+        } catch (UnknownDigDocException e) {
+            throw new UnknownRecordException("Unknown digital document: " + e.getMessage());
+        }
+    }
+
+    private DigDocRegistrationData convert(RecordToBeCreatedOrUpdated record) {
         System.out.println("Converting RecordToBeImported to DigDocRegistrationData...");
         System.out.println(record);
         DigDocRegistrationData result = new DigDocRegistrationData();
         //intellectual entity
+        long ieId = record.intelectualEntity.id;
         result.setEntity(record.intelectualEntity.toDtoIntEnt());
-        result.setIntEntIds(record.intelectualEntity.toDtoIeIds());
-        result.setPublication(record.intelectualEntity.toDtoPublication());
-        result.setOriginator(record.intelectualEntity.toDtoOriginator());
-        result.setSourceDoc(record.intelectualEntity.toDtoSrcDoc());
+        result.setIntEntIds(record.intelectualEntity.toDtoIeIds(ieId));
+        result.setPublication(record.intelectualEntity.toDtoPublication(ieId));
+        result.setOriginator(record.intelectualEntity.toDtoOriginator(ieId));
+        result.setSourceDoc(record.intelectualEntity.toDtoSrcDoc(ieId));
         //digital document
-        result.setDigitalDocument(record.digitalDocument.toDtoDigDoc());
+        result.setDigitalDocument(record.digitalDocument.toDtoDigDoc(ieId));
         //registrar-scope identifiers (not used here)
         result.setDigDocIdentifiers(List.of());
         //predecessors (not used here)

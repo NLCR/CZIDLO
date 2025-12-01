@@ -28,4 +28,13 @@ public class Publ {
     public String getPublisher() {
         return publisher;
     }
+
+    @Override
+    public String toString() {
+        return "Publ{" +
+                "year=" + year +
+                ", place='" + place + '\'' +
+                ", publisher='" + publisher + '\'' +
+                '}';
+    }
 }

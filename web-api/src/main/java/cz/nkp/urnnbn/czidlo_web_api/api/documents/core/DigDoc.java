@@ -8,7 +8,7 @@ import java.util.Date;
 //@XmlRootElement(name = "digitalDocument")
 //@XmlAccessorType(XmlAccessType.FIELD)
 public class DigDoc {
-    private Long id;
+    public Long id;
     private Date created;
     private Date modified;
     //
@@ -118,8 +118,10 @@ public class DigDoc {
         return pictureHeight;
     }
 
-    public DigitalDocument toDtoDigDoc() {
+    public DigitalDocument toDtoDigDoc(long idId) {
         DigitalDocument dtoDigDoc = new DigitalDocument();
+        dtoDigDoc.setId(id);
+        dtoDigDoc.setIntEntId(idId);
         dtoDigDoc.setFinancedFrom(financedFrom);
         dtoDigDoc.setContractNumber(contractNumber);
         dtoDigDoc.setFormat(format);

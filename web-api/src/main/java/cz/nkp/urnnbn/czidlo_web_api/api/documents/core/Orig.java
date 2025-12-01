@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents.core;
 import cz.nkp.urnnbn.core.OriginType;
 
 public class Orig {
+
     public OriginType type;
     public String value;
 
@@ -22,5 +23,13 @@ public class Orig {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "Orig{" +
+                "type=" + type +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

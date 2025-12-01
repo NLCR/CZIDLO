@@ -2,7 +2,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.Record;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.RecordToBeImported;
+import cz.nkp.urnnbn.czidlo_web_api.api.documents.core.RecordToBeCreatedOrUpdated;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.BadArgumentException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
@@ -40,7 +40,34 @@ public interface DocumentManager {
     public boolean reactivateRecord(UrnNbn urnNbn, String login) throws UnknownRecordException, InsufficientRightsException;
 
 
-    public UrnNbn createRecord(RecordToBeImported record, String login) throws
+    /**
+     * Creates new record along with assigning or confirming URN:NBN.
+     *
+     * @param record record to be created
+     * @param login  login of user performing the operation
+     * @return
+     * @throws BadArgumentException
+     * @throws UnknownUserException
+     * @throws RegistrarScopeIdentifierCollisionException
+     * @throws UnknownArchiverException
+     * @throws IncorrectPredecessorStatus
+     * @throws UnknownRecordException
+     * @throws InsufficientRightsException
+     */
+    public UrnNbn createRecord(RecordToBeCreatedOrUpdated record, String login) throws
             BadArgumentException, UnknownUserException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException,
             IncorrectPredecessorStatus, UnknownRecordException, InsufficientRightsException;
+
+    /**
+     * Updates existing record identified by URN:NBN.
+     *
+     * @param record to be updated
+     * @param login  login of user performing the operation
+     * @throws BadArgumentException
+     * @throws UnknownUserException
+     * @throws InsufficientRightsException
+     * @throws UnknownRecordException
+     */
+    public void updateRecord(RecordToBeCreatedOrUpdated record, String login) throws BadArgumentException,
+            UnknownUserException, InsufficientRightsException, UnknownRecordException;
 }

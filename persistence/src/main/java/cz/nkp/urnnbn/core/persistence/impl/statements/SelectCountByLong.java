@@ -34,6 +34,7 @@ public class SelectCountByLong implements StatementWrapper {
     @Override
     public void populate(PreparedStatement st) throws SyntaxException {
         try {
+            //System.out.printf("SelectCountByLong: Populating for table %s, attribute %s, idValue %d%n", tableName, attributeName, idValue);
             st.setLong(1, idValue);
         } catch (SQLException e) {
             // chyba je v prepared statementu nebo v tranfsformaci resultSetu

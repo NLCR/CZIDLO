@@ -72,4 +72,20 @@ public class SrcDoc {
     public Integer getPublicationYear() {
         return publicationYear;
     }
+
+    @Override
+    public String toString() {
+        return "SrcDoc{" +
+                "ccnb='" + ccnb + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", issn='" + issn + '\'' +
+                ", otherId='" + otherId + '\'' +
+                ", title='" + title + '\'' +
+                ", volumeTitle='" + volumeTitle + '\'' +
+                ", issueTitle='" + issueTitle + '\'' +
+                ", publicationPlace='" + publicationPlace + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", publicationYear=" + publicationYear +
+                '}';
+    }
 }

@@ -20,8 +20,9 @@ public class IeId {
         return result;
     }
 
-    public IntEntIdentifier toDto() {
+    public IntEntIdentifier toDto(long ieInternalId) {
         IntEntIdentifier dto = new IntEntIdentifier();
+        dto.setIntEntDbId(ieInternalId);
         dto.setType(type);
         dto.setValue(value);
         return dto;
@@ -40,5 +41,13 @@ public class IeId {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "IeId{" +
+                "type=" + type +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

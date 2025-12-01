@@ -9,9 +9,8 @@ import jakarta.json.JsonObject;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
-import java.util.function.Function;
 
-public class RecordToBeImported {
+public class RecordToBeCreatedOrUpdated {
     @NotNull
     public DigDoc digitalDocument;
     @NotNull
@@ -21,10 +20,8 @@ public class RecordToBeImported {
     public Long archiverId;
     public String urnNbn;
 
-    public static RecordToBeImported fromJsonObject(JsonObject root) throws BadArgumentException {
-        //System.out.println("RecordToBeImported.fromJsonObject: " + root);
-        //System.out.println(root.toString());
-        RecordToBeImported record = new RecordToBeImported();
+    public static RecordToBeCreatedOrUpdated fromJsonObject(JsonObject root) throws BadArgumentException {
+        RecordToBeCreatedOrUpdated record = new RecordToBeCreatedOrUpdated();
         //digitalDocument
         if (root.containsKey("digitalDocument")) {
             record.digitalDocument = parseDigDoc(root.getJsonObject("digitalDocument"));
@@ -43,7 +40,7 @@ public class RecordToBeImported {
             record.archiverId = (long) root.getInt("archiverId");
         }
         //urnNbn
-        String urnNbn = null;
+        record.urnNbn = null;
         if (root.containsKey("urnNbn")) {
             record.urnNbn = root.getString("urnNbn");
         }
@@ -52,6 +49,9 @@ public class RecordToBeImported {
 
     private static DigDoc parseDigDoc(JsonObject digitalDocument) {
         DigDoc result = new DigDoc();
+        if (digitalDocument.containsKey("id")) {
+            result.id = (long) digitalDocument.getInt("id");
+        }
         if (digitalDocument.containsKey("financedFrom")) {
             result.financedFrom = digitalDocument.getString("financedFrom");
         }
@@ -99,6 +99,9 @@ public class RecordToBeImported {
 
     private static IntEnt parseIntEnt(JsonObject ie) throws BadArgumentException {
         IntEnt result = new IntEnt();
+        if (ie.containsKey("id")) {
+            result.id = (long) ie.getInt("id");
+        }
         if (ie.containsKey("entityType")) {
             String entityTypeStr = ie.getString("entityType");
             try {

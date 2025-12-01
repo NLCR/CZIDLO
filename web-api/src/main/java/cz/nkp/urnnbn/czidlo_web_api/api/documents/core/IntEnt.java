@@ -93,6 +93,7 @@ public class IntEnt {
 
     public IntelectualEntity toDtoIntEnt() {
         IntelectualEntity result = new IntelectualEntity();
+        result.setId(this.id);
         result.setEntityType(this.entityType);
         result.setDocumentType(this.documentType);
         if (this.digitalBorn != null) {
@@ -103,43 +104,46 @@ public class IntEnt {
         return result;
     }
 
-    public List<IntEntIdentifier> toDtoIeIds() {
+    public List<IntEntIdentifier> toDtoIeIds(long ieInternalId) {
         if (ieIdentifiers == null) {
             return List.of();
         }
         List<IntEntIdentifier> result = new java.util.ArrayList<>();
         for (IeId ieId : ieIdentifiers) {
-            result.add(ieId.toDto());
+            result.add(ieId.toDto(ieInternalId));
         }
         return result;
     }
 
-    public Originator toDtoOriginator() {
+    public Originator toDtoOriginator(long ieId) {
         if (originator == null) {
             return null;
         }
         Originator dto = new Originator();
+        dto.setId(ieId);
         dto.setType(originator.type);
         dto.setValue(originator.value);
         return dto;
     }
 
-    public Publication toDtoPublication() {
+    public Publication toDtoPublication(Long ieId) {
         if (publication == null) {
             return null;
         }
         Publication dto = new Publication();
+        dto.setId(ieId);
         dto.setPublisher(publication.publisher);
         dto.setPlace(publication.place);
         dto.setYear(publication.year);
         return dto;
     }
 
-    public SourceDocument toDtoSrcDoc() {
+    public SourceDocument toDtoSrcDoc(long ieId) {
         if (sourceDocument == null) {
             return null;
         }
         SourceDocument dto = new SourceDocument();
+        dto.setId(ieId);
         dto.setCcnb(sourceDocument.ccnb);
         dto.setIsbn(sourceDocument.isbn);
         dto.setIssn(sourceDocument.issn);
