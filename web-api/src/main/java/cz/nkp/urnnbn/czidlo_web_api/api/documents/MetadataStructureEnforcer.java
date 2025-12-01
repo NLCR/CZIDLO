@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.Originator;
 import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
@@ -60,7 +61,29 @@ public class MetadataStructureEnforcer {
         if (data.getDigitalDocument() == null) {
             throw new MetadataStructureException("Missing digital document metadata.");
         }
-        //TODO: fields within digital document
+        checkDigitalDocument();
+    }
+
+    private void checkDigitalDocument() throws MetadataStructureException {
+        DigitalDocument digDoc = data.getDigitalDocument();
+        if (digDoc.getFormat() == null || digDoc.getFormat().isEmpty()) {
+            throw new MetadataStructureException("Digital document format is required.");
+        }
+        if (digDoc.getResolutionHorizontal() == null) {
+            throw new MetadataStructureException("Digital document horizontal resolution is required.");
+        }
+        if (digDoc.getResolutionVertical() == null) {
+            throw new MetadataStructureException("Digital document vertical resolution is required.");
+        }
+        if (digDoc.getCompression() == null || digDoc.getCompression().isEmpty()) {
+            throw new MetadataStructureException("Digital document compression is required.");
+        }
+        if (digDoc.getPictureWidth() == null) {
+            throw new MetadataStructureException("Digital document picture width is required.");
+        }
+        if (digDoc.getPictureHeight() == null) {
+            throw new MetadataStructureException("Digital document picture height is required.");
+        }
     }
 
     private void checkSourceDocumentForAnalytical() throws MetadataStructureException {
