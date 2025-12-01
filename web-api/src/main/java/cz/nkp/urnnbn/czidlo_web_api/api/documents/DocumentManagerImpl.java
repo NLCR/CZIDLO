@@ -204,7 +204,7 @@ public class DocumentManagerImpl implements DocumentManager {
         }
         result.getDigitalDocument().setArchiverId(record.archiverId == null ? registrar.getId() : record.archiverId);
         try {
-            new MetadataStructureEnforcer(result).run();
+            new MetadataStructureEnforcer(result).check();
         } catch (MetadataStructureEnforcer.MetadataStructureException e) {
             throw new BadRequestException("Metadata structure error: " + e.getMessage());
         }

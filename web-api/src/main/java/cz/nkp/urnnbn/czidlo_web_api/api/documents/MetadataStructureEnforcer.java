@@ -2,6 +2,8 @@ package cz.nkp.urnnbn.czidlo_web_api.api.documents;
 
 import cz.nkp.urnnbn.core.EntityType;
 import cz.nkp.urnnbn.core.IntEntIdType;
+import cz.nkp.urnnbn.core.dto.Originator;
+import cz.nkp.urnnbn.core.dto.SourceDocument;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 
 public class MetadataStructureEnforcer {
@@ -23,17 +25,55 @@ public class MetadataStructureEnforcer {
         }
     }
 
-    public void run() throws MetadataStructureException {
-        if (data.getEntity() == null) {
-            throw new MetadataStructureException("Missing intellectual entity metadata.");
-        }
-        if (data.getDigitalDocument() == null) {
-            throw new MetadataStructureException("Missing digital document metadata.");
-        }
+    public void check() throws MetadataStructureException {
+        //REGISTRAR CODE
         if (data.getRegistrarCode() == null) {
             throw new MetadataStructureException("Missing registrar code.");
         }
-        //IDENTIFIERS
+        //INTELLECTUAL ENTITY
+        if (data.getEntity() == null) {
+            throw new MetadataStructureException("Missing intellectual entity metadata.");
+        }
+        //IE - IDENTIFIERS
+        checkIeIdentifiers();
+        //PRIMARY ORIGINATOR
+        Originator originator = data.getOriginator();
+        if (originator == null) {
+            throw new MetadataStructureException("Missing originator metadata.");
+        } else {
+            if (originator.getValue() == null || originator.getValue().isEmpty()) {
+                throw new MetadataStructureException("Originator value is required.");
+            }
+            if (originator.getType() == null) {
+                throw new MetadataStructureException("Originator type is required.");
+            }
+        }
+        //SOURCE DOCUMENT
+        if (getEntityType() == EntityType.ANALYTICAL) {
+            checkSourceDocumentForAnalytical();
+        } else {
+            if (data.getSourceDoc() != null) {
+                throw new MetadataStructureException(getEntityType(), "Source document metadata is not allowed for this entity type.");
+            }
+        }
+        //DIGITAL DOCUMENT
+        if (data.getDigitalDocument() == null) {
+            throw new MetadataStructureException("Missing digital document metadata.");
+        }
+        //TODO: fields within digital document
+    }
+
+    private void checkSourceDocumentForAnalytical() throws MetadataStructureException {
+        SourceDocument srcDoc = data.getSourceDoc();
+        if (srcDoc == null) {
+            throw new MetadataStructureException(EntityType.ANALYTICAL, "Missing source document metadata for this entity type.");
+        }
+        if (srcDoc.getTitle() == null || srcDoc.getTitle().isEmpty()) {
+            throw new MetadataStructureException(EntityType.ANALYTICAL, "Source document title is required for this entity type.");
+        }
+    }
+
+    private void checkIeIdentifiers() throws MetadataStructureException {
         switch (data.getEntity().getEntityType()) {
             case MONOGRAPH -> {
                 mustHaveId(IntEntIdType.TITLE);
