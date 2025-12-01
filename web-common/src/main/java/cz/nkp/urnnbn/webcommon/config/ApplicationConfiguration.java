@@ -31,6 +31,7 @@ public abstract class ApplicationConfiguration {
     private String languageCode;
     private String adminName;
     private String adminEmail;
+    private File adminLogFile;
 
     public void initialize(String webAppName, PropertyLoader loader) throws IOException {
         appLogger.fine("Loading configuration");
@@ -39,7 +40,7 @@ public abstract class ApplicationConfiguration {
         languageCode = loader.loadString(PropertyKeys.LANGUAGE_CODE);
         adminName = loader.loadStringOrNull(PropertyKeys.ADMIN_NAME);
         adminEmail = loader.loadStringOrNull(PropertyKeys.ADMIN_EMAIL);
-        String adminLogFile = loader.loadString(PropertyKeys.ADMIN_LOG_FILE);
+        adminLogFile = new File(loader.loadString(PropertyKeys.ADMIN_LOG_FILE));
         appLogger.log(Level.INFO, "initializing admin logger to file {0}", adminLogFile);
         AdminLogger.initializeLogger(webAppName, adminLogFile);
         CountryCode.initialize(languageCode);
@@ -102,5 +103,9 @@ public abstract class ApplicationConfiguration {
 
     public String getAdminEmail() {
         return adminEmail;
+    }
+
+    public File getAdminLogFile() {
+        return adminLogFile;
     }
 }

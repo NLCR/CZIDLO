@@ -1,7 +1,12 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.resources;
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
+import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InsufficientRightsException;
+import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnauthorizedException;
 import cz.nkp.urnnbn.czidlo_web_api.api.logs.SystemLogProvider;
+import cz.nkp.urnnbn.czidlo_web_api.api.logs.SystemLogProviderImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.logs.SystemLogProviderMock;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,12 +14,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.*;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -25,7 +28,11 @@ import java.util.List;
 @Path("/system_logs")
 public class SystemLogsResource extends AbstractResource {
 
-    private final SystemLogProvider logProvider = new SystemLogProviderMock();
+    @Context
+    private SecurityContext securityContext;
+
+    //private final SystemLogProvider logProvider = new SystemLogProviderMock();
+    private final SystemLogProvider logProvider = new SystemLogProviderImpl();
 
     @Operation(
             summary = "Get system logs",
@@ -44,6 +51,8 @@ public class SystemLogsResource extends AbstractResource {
                             }
                     ),
                     @ApiResponse(responseCode = "400", description = "Invalid query parameter value",
+                            content = @Content(schema = @Schema(implementation = ApiError.class))),
+                    @ApiResponse(responseCode = "401", description = "User not authenticated",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
                     @ApiResponse(responseCode = "403", description = "User not authenticated or not authorized (only admins can get system logs)",
                             content = @Content(schema = @Schema(implementation = ApiError.class))),
@@ -75,8 +84,14 @@ public class SystemLogsResource extends AbstractResource {
             )
             @QueryParam("dayAfterMaxDate") String dayAfterMaxDateStr,
 
-            @Context HttpHeaders headers) {
-        //TODO: povoleno jen adminovi
+            @Context HttpHeaders headers) throws IOException, UnauthorizedException, InsufficientRightsException {
+        //authorization: must be admin
+        AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
+        User user = principal.getUser();
+        if (!user.isAdmin()) {
+            throw new InsufficientRightsException("Only admin users can access system logs");
+        }
+        //extract and validate parameters
         Integer maxLines = null;
         if (maxLinesStr != null && !maxLinesStr.trim().isEmpty()) {
             try {
@@ -107,7 +122,7 @@ public class SystemLogsResource extends AbstractResource {
                 throw new BadRequestException("Parameter minDate must be before dayAfterMaxDate: minDate=" + minDate + ", dayAfterMaxDate=" + dayAfterMaxDate);
             }
         }
-
+        //fetch logs
         String systemLogs = logProvider.getLogs(maxLines, minDate, dayAfterMaxDate);
         // Akceptované typy seřazené podle q z hlavičky Accept
         List<MediaType> accept = headers.getAcceptableMediaTypes();

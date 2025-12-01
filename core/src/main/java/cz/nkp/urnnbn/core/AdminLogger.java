@@ -34,12 +34,12 @@ public class AdminLogger {
     private static Logger logger;
     private static File logFile;
 
-    public static void initializeLogger(String loggerName, String loggerFileName) throws IOException {
-        logFile = new File(loggerFileName);
+    public static void initializeLogger(String loggerName, File loggerFile) throws IOException {
+        logFile = loggerFile;
         AdminLogger.logger = Logger.getLogger(loggerName);
         // Layout layout = new PatternLayout("%-5p [%d{dd. MM. yyyy HH:mm:ss}] %c: %m%n");
         Layout layout = new PatternLayout("[%d{dd.MM.yyyy, HH:mm:ss}] %c: %m%n");
-        Appender appender = new FileAppender(layout, loggerFileName, true);
+        Appender appender = new FileAppender(layout, loggerFile.getAbsolutePath(), true);
         logger.removeAllAppenders();
         logger.addAppender(appender);
     }
