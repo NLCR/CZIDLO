@@ -125,6 +125,37 @@ public class CzidloApiConnector {
     }
 
     /**
+     * @param internalId
+     * @param withDigitalInstances
+     * @return digital-document identified by registrar-scope-identifier for given registrar or null if no such digital-document exists
+     * @throws CzidloApiErrorException in case of API error response
+     * @throws ParsingException        in case of parsing xml from API response body
+     * @throws IOException             in case of network error
+     */
+    public String getDigitalDocumentByInternalIdJson(long internalId, boolean withDigitalInstances) throws CzidloApiErrorException, IOException {
+        String url = baseUrlUnauthenticated()
+                + "digitalDocuments/id/" + internalId
+                + "?format=json&digitalInstances=" + withDigitalInstances;
+        //System.out.println("url = " + url);
+        ApiResponse apiResponse = httpConnector.httpGet(new URL(url), credentials, ignoreInvalidCertificate);
+        if (apiResponse.getHttpCode() == 200) { //ok, document found
+            return apiResponse.getBody();
+        } else {
+            try {
+                Document document = new Builder().build(apiResponse.getBody(), null);
+                CzidloApiError apiError = xmlTools.parseErrorMessage(document);
+                if (apiResponse.getHttpCode() == 404 && "UNKNOWN_DIGITAL_DOCUMENT".equals(apiError.getErrorCode())) { //document not found
+                    return null;
+                } else { //other error
+                    throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), apiError);
+                }
+            } catch (ParsingException | IOException e) { //other error but failed to parse body
+                throw new CzidloApiErrorException(url, apiResponse.getHttpCode(), null);
+            }
+        }
+    }
+
+    /**
      * @param registrarCode
      * @param registrarScopeIdType
      * @param registrarScopeIdValue

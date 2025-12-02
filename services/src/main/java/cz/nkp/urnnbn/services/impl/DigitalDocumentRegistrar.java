@@ -14,6 +14,7 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
@@ -34,12 +35,14 @@ public class DigitalDocumentRegistrar {
     private final DigDocRegistrationData data;
     private final IntelectualEntityMerger merger;
     private final UrnNbnFinder finder;
-    private final SolrIndexer solrIndexer;
+    //private final SolrIndexer solrIndexer;
+    private final EsIndexer esIndexer;
 
-    DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data, SolrIndexer solrIndexer) throws UnknownRegistrarException {
+    DigitalDocumentRegistrar(DAOFactory factory, DigDocRegistrationData data, EsIndexer esIndexer) throws UnknownRegistrarException {
         this.factory = factory;
         this.data = data;
-        this.solrIndexer = solrIndexer;
+        //this.solrIndexer = solrIndexer;
+        this.esIndexer = esIndexer;
         this.merger = new IntelectualEntityMerger(factory);
         this.finder = initFinder(factory, data);
     }
@@ -80,7 +83,7 @@ public class DigitalDocumentRegistrar {
 
     private void indexToSolr(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            solrIndexer.indexDocument(digDocId);
+            esIndexer.indexDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

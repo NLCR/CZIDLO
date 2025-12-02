@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataImportService;
 import cz.nkp.urnnbn.services.DigDocRegistrationData;
 import cz.nkp.urnnbn.services.exceptions.*;
@@ -25,11 +26,13 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     private static final Logger LOGGER = Logger.getLogger(DataImportServiceImpl.class.getName());
 
-    private final SolrIndexer solrIndexer;
+    //private final SolrIndexer solrIndexer;
+    private final EsIndexer esIndexer;
 
-    public DataImportServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer) {
+    public DataImportServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer, EsIndexer esIndexer) {
         super(conn);
-        this.solrIndexer = solrIndexer;
+        //this.solrIndexer = solrIndexer;
+        this.esIndexer = esIndexer;
     }
 
     @Override
@@ -37,7 +40,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
             RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
         authorization.checkAccessRights(importData.getRegistrarCode(), login);
-        UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, solrIndexer).run();
+        UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, esIndexer).run();
         AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
         return urnNbn;
     }
@@ -123,7 +126,8 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            solrIndexer.indexDocument(digDocId);
+            //solrIndexer.indexDocument(digDocId);
+            esIndexer.indexDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

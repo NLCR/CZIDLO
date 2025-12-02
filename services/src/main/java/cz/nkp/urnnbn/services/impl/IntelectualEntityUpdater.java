@@ -9,8 +9,8 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.exceptions.UnknownIntelectualEntity;
-import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
 
 import java.util.Collection;
 import java.util.logging.Level;
@@ -23,11 +23,12 @@ public class IntelectualEntityUpdater {
 
     private static final Logger logger = Logger.getLogger(IntelectualEntityUpdater.class.getName());
     private final DAOFactory daoFactory;
-    private final SolrIndexer solrIndexer;
+    //private final SolrIndexer solrIndexer;
+    private final EsIndexer esIndexer;
 
-    public IntelectualEntityUpdater(DAOFactory daoFactory, SolrIndexer solrIndexer) {
+    public IntelectualEntityUpdater(DAOFactory daoFactory, EsIndexer esIndexer) {
         this.daoFactory = daoFactory;
-        this.solrIndexer = solrIndexer;
+        this.esIndexer = esIndexer;
     }
 
     void run(IntelectualEntity entity, Originator originator, Publication publication, SourceDocument srcDoc, Collection<IntEntIdentifier> identifiers, UrnNbn urnNbn, Long ddId)
@@ -46,7 +47,7 @@ public class IntelectualEntityUpdater {
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the import itself
         try {
-            solrIndexer.indexDocument(digDocId);
+            esIndexer.indexDocument(digDocId);
             logger.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);

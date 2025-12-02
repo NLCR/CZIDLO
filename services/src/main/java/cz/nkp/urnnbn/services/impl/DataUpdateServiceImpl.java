@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.DataUpdateService;
 import cz.nkp.urnnbn.services.exceptions.*;
 import cz.nkp.urnnbn.indexer.solr.SolrIndexer;
@@ -26,11 +27,12 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     private static final Logger LOGGER = Logger.getLogger(DataUpdateServiceImpl.class.getName());
 
-    private final SolrIndexer solrIndexer;
+    //private final SolrIndexer solrIndexer;
+    private final EsIndexer esIndexer;
 
-    public DataUpdateServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer) {
+    public DataUpdateServiceImpl(DatabaseConnector conn, SolrIndexer solrIndexer, EsIndexer esIndexer) {
         super(conn);
-        this.solrIndexer = solrIndexer;
+        this.esIndexer = esIndexer;
     }
 
     @Override
@@ -103,7 +105,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     private void reindexDigitalDocument(long digDocId, UrnNbn urnNbn) { //this should never break the update itself
         try {
-            solrIndexer.indexDocument(digDocId);
+            esIndexer.indexDocument(digDocId);
             LOGGER.log(Level.INFO, "Indexed {0} ", urnNbn.toString());
         } catch (Throwable e) {
             LOGGER.log(Level.SEVERE, "Error indexing " + urnNbn.toString(), e);
@@ -272,7 +274,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
-        new IntelectualEntityUpdater(factory, solrIndexer).run(entity, originator, publication, srcDoc, identifiers, urn, digDocId);
+        new IntelectualEntityUpdater(factory, esIndexer).run(entity, originator, publication, srcDoc, identifiers, urn, digDocId);
         AdminLogger.getLogger().info(String.format("User %s updated intelectual-entity of %s.", login, urn));
     }
 

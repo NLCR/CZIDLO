@@ -7,6 +7,7 @@ package cz.nkp.urnnbn.services;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.impl.*;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
@@ -28,6 +29,7 @@ public class Services {
     private final Integer urnNbnReservationMaxSize;
 
     private final SolrIndexer solrIndexer;
+    private final EsIndexer esIndexer;
     private DataAccessService dataAccess;
     private DataImportService dataImport;
     private DataRemoveService dataRemove;
@@ -45,12 +47,26 @@ public class Services {
         }
         if (indexerConfig == null) {
             solrIndexer = null;
-            logger.warning("Solr indexer config is null, ignoring Solr indexer initialization");
+            esIndexer = null;
+            logger.warning("Indexer config is null, ignoring Solr/ES indexer initialization");
         } else {
-            logger.info("initializing Solr indexer");
+            logger.info("initializing Solr/ES indexer");
             solrIndexer = new SolrIndexer(
                     indexerConfig,
                     null,
+                    new DataProvider() {
+                        @Override
+                        public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
+                            return dataAccessService().digDocsByModificationDate(from, until);
+                        }
+
+                        @Override
+                        public UrnNbn urnByDigDocId(long id, boolean withPredecessorsAndSuccessors) {
+                            return dataAccessService().urnByDigDocId(id, withPredecessorsAndSuccessors);
+                        }
+                    }
+            );
+            esIndexer = new EsIndexer(indexerConfig, null,
                     new DataProvider() {
                         @Override
                         public List<DigitalDocument> digDocsByModificationDate(DateTime from, DateTime until) {
@@ -100,7 +116,7 @@ public class Services {
 
     public DataImportService dataImportService() {
         if (dataImport == null) {
-            dataImport = new DataImportServiceImpl(connector, solrIndexer);
+            dataImport = new DataImportServiceImpl(connector, solrIndexer, esIndexer);
         }
         return dataImport;
     }
@@ -114,14 +130,14 @@ public class Services {
 
     public DataRemoveService dataRemoveService() {
         if (dataRemove == null) {
-            dataRemove = new DataRemoveServiceImpl(connector, solrIndexer);
+            dataRemove = new DataRemoveServiceImpl(connector, solrIndexer, esIndexer);
         }
         return dataRemove;
     }
 
     public DataUpdateService dataUpdateService() {
         if (dataUpdate == null) {
-            dataUpdate = new DataUpdateServiceImpl(connector, solrIndexer);
+            dataUpdate = new DataUpdateServiceImpl(connector, solrIndexer, esIndexer);
         }
         return dataUpdate;
     }

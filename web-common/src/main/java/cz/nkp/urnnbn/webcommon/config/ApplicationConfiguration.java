@@ -54,6 +54,11 @@ public abstract class ApplicationConfiguration {
         indexerConfig.setSolrApiUseHttps(loader.loadBoolean(PropertyKeys.INDEXER_SOLR_USE_HTTPS));
         indexerConfig.setSolrApiLogin(loader.loadString(PropertyKeys.INDEXER_SOLR_LOGIN));
         indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
+        //ES
+        indexerConfig.setEsApiBaseUrl(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_BASE_URL));
+        indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
+        indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
+        indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
 
         try {
             URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDLO_TO_SOLR_XSLT);

@@ -41,5 +41,10 @@ public enum EntityTypeDTO {
         public String toString() {
             return "otherEntity";
         }
-    };
+    },
+    SOUND_RECORDING {
+        public String toString() {
+            return "soundRecording";
+        }
+    }
 }

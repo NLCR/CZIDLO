@@ -55,7 +55,7 @@ public class IndexerEngine {
                 ).build();
 
         ElasticsearchTransport transport = new RestClientTransport(restClient,
-                new JacksonJsonpMapper(Mapping.OBJECT_MAPPER)
+                new JacksonJsonpMapper(cz.nkp.urnnbn.indexer.es.Mapping.OBJECT_MAPPER)
         );
 
         return new ElasticsearchClient(transport);

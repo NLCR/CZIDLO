@@ -15,6 +15,11 @@ public class IndexerConfig {
     private Boolean solrApiUseHttps;
     private String solrApiLogin;
     private String solrApiPassword;
+    // ES API
+    private String esApiBaseUrl;
+    private String esApiLogin;
+    private String esApiPassword;
+    private String esApiIndexName;
     // XSLT
     private String czidloToSolrXslt;
     private File czidloToSolrXsltFile;
@@ -89,5 +94,37 @@ public class IndexerConfig {
 
     public void setCzidloToSolrXsltFile(File czidloToSolrXsltFile) {
         this.czidloToSolrXsltFile = czidloToSolrXsltFile;
+    }
+
+    public String getEsApiBaseUrl() {
+        return esApiBaseUrl;
+    }
+
+    public void setEsApiBaseUrl(String esApiBaseUrl) {
+        this.esApiBaseUrl = esApiBaseUrl;
+    }
+
+    public String getEsApiLogin() {
+        return esApiLogin;
+    }
+
+    public void setEsApiLogin(String esApiLogin) {
+        this.esApiLogin = esApiLogin;
+    }
+
+    public String getEsApiPassword() {
+        return esApiPassword;
+    }
+
+    public void setEsApiPassword(String esApiPassword) {
+        this.esApiPassword = esApiPassword;
+    }
+
+    public String getEsApiIndexName() {
+        return esApiIndexName;
+    }
+
+    public void setEsApiIndexName(String esApiIndexName) {
+        this.esApiIndexName = esApiIndexName;
     }
 }
