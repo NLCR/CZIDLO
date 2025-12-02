@@ -179,8 +179,8 @@ public class DocumentManagerImpl implements DocumentManager {
     }
 
     private DigDocRegistrationData convert(RecordToBeCreatedOrUpdated record) {
-        System.out.println("Converting RecordToBeImported to DigDocRegistrationData...");
-        System.out.println(record);
+        //System.out.println("Converting RecordToBeImported to DigDocRegistrationData...");
+        //System.out.println(record);
         DigDocRegistrationData result = new DigDocRegistrationData();
         //intellectual entity
         long ieId = record.intelectualEntity.id;

@@ -51,6 +51,8 @@ public class Services {
             logger.warning("Indexer config is null, ignoring Solr/ES indexer initialization");
         } else {
             logger.info("initializing Solr/ES indexer");
+            solrIndexer = null;
+            /*
             solrIndexer = new SolrIndexer(
                     indexerConfig,
                     null,
@@ -66,6 +68,7 @@ public class Services {
                         }
                     }
             );
+             */
             esIndexer = new EsIndexer(indexerConfig, null,
                     new DataProvider() {
                         @Override

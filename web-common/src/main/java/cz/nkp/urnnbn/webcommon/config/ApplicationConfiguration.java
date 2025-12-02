@@ -68,11 +68,11 @@ public abstract class ApplicationConfiguration {
                     indexerConfig.setCzidloToSolrXsltFile(czidloToSolrXsltFile);
                     indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath()));
                 } catch (IllegalArgumentException e) {
-                    initIndexer = false;
+                    //initIndexer = false;
                     appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
                 }
             } else {
-                initIndexer = false;
+                //initIndexer = false;
                 appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
             }
         } catch (Exception e) {

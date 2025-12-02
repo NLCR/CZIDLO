@@ -14,6 +14,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -21,6 +23,7 @@ import java.util.UUID;
 
 public class EsConnector {
 
+    private static final Logger log = LoggerFactory.getLogger(EsConnector.class);
     private final ElasticsearchClient esClient;
     private final String index;
 
@@ -67,11 +70,14 @@ public class EsConnector {
         if (forIndexing == null) {
             System.out.println("Converted JSON is null, skipping indexing.");
             return;
+        } else if (!forIndexing.containsKey("id")) {
+            System.out.println("Converted JSON does not contain 'id', skipping indexing.");
+            return;
         }
         //System.out.println(forIndexing.toString());
         esClient.index(i -> i
                 .index(index)
-                .id(UUID.randomUUID().toString())
+                .id("dd_" + forIndexing.getInt("id"))
                 .withJson(new StringReader(forIndexing.toString()))
         );
     }
@@ -85,6 +91,9 @@ public class EsConnector {
         JsonObjectBuilder jsonOut = Json.createObjectBuilder();
         if (jsonIn.containsKey("digitalDocument")) {
             JsonObject dd = jsonIn.getJsonObject("digitalDocument");
+            if (dd.containsKey("id")) {
+                jsonOut.add("id", dd.getJsonNumber("id").longValue());
+            }
             if (dd.containsKey("urnNbn")) {
                 String urnNbn = dd.getString("urnNbn");
                 jsonOut.add("urnnbn", urnNbn);
