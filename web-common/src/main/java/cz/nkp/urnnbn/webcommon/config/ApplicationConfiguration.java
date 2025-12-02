@@ -59,6 +59,7 @@ public abstract class ApplicationConfiguration {
         indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
         indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
         indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
+        //TODO: fail here, if some required properties are missing
 
         try {
             URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDLO_TO_SOLR_XSLT);

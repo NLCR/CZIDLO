@@ -75,6 +75,9 @@ public class EsConnector {
             return;
         }
         //System.out.println(forIndexing.toString());
+        if (index == null || index.isEmpty()) {
+            throw new RuntimeException("Index name is not set in EsConnector");
+        }
         esClient.index(i -> i
                 .index(index)
                 .id("dd_" + forIndexing.getInt("id"))
