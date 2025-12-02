@@ -37,6 +37,10 @@ public class RecordToBeCreatedOrUpdated {
         //registrarCode
         record.registrarCode = root.getString("registrarCode");
         if (root.containsKey("archiverId")) {
+            //archiverId must be integer
+            if (root.get("archiverId").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter archiverId: must be an integer, not " + root.get("archiverId").getValueType().toString());
+            }
             record.archiverId = (long) root.getInt("archiverId");
         }
         //urnNbn
@@ -51,9 +55,12 @@ public class RecordToBeCreatedOrUpdated {
         return record;
     }
 
-    private static DigDoc parseDigDoc(JsonObject digitalDocument) {
+    private static DigDoc parseDigDoc(JsonObject digitalDocument) throws BadArgumentException {
         DigDoc result = new DigDoc();
         if (digitalDocument.containsKey("id")) {
+            if (digitalDocument.get("id").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.id: must be an integer, not " + digitalDocument.get("id").getValueType().toString());
+            }
             result.id = (long) digitalDocument.getInt("id");
         }
         if (digitalDocument.containsKey("financedFrom")) {
@@ -72,30 +79,49 @@ public class RecordToBeCreatedOrUpdated {
             result.extent = digitalDocument.getString("extent");
         }
         if (digitalDocument.containsKey("resolutionHorizontal")) {
+            if (digitalDocument.get("resolutionHorizontal").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.resolutionHorizontal: must be an integer, not " + digitalDocument.get("resolutionHorizontal").getValueType().toString());
+            }
             result.resolutionHorizontal = digitalDocument.getInt("resolutionHorizontal");
         }
         if (digitalDocument.containsKey("resolutionVertical")) {
+            if (digitalDocument.get("resolutionVertical").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.resolutionVertical: must be an integer, not " + digitalDocument.get("resolutionVertical").getValueType().toString());
+            }
             result.resolutionVertical = digitalDocument.getInt("resolutionVertical");
         }
         if (digitalDocument.containsKey("compression")) {
             result.compression = digitalDocument.getString("compression");
         }
         if (digitalDocument.containsKey("compressionRatio")) {
+            //compressionRatio must be float
+            if (digitalDocument.get("compressionRatio").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.compressionRatio: must be a number, not " + digitalDocument.get("compressionRatio").getValueType().toString());
+            }
             result.compressionRatio = digitalDocument.getJsonNumber("compressionRatio").doubleValue();
         }
         if (digitalDocument.containsKey("colorModel")) {
             result.colorModel = digitalDocument.getString("colorModel");
         }
         if (digitalDocument.containsKey("colorDepth")) {
+            if (digitalDocument.get("colorDepth").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.colorDepth: must be an integer, not " + digitalDocument.get("colorDepth").getValueType().toString());
+            }
             result.colorDepth = digitalDocument.getInt("colorDepth");
         }
         if (digitalDocument.containsKey("iccProfile")) {
             result.iccProfile = digitalDocument.getString("iccProfile");
         }
         if (digitalDocument.containsKey("pictureWidth")) {
+            if (digitalDocument.get("pictureWidth").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.pictureWidth: must be an integer, not " + digitalDocument.get("pictureWidth").getValueType().toString());
+            }
             result.pictureWidth = digitalDocument.getInt("pictureWidth");
         }
         if (digitalDocument.containsKey("pictureHeight")) {
+            if (digitalDocument.get("pictureHeight").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter digitalDocument.pictureHeight: must be an integer, not " + digitalDocument.get("pictureHeight").getValueType().toString());
+            }
             result.pictureHeight = digitalDocument.getInt("pictureHeight");
         }
         return result;
@@ -104,6 +130,9 @@ public class RecordToBeCreatedOrUpdated {
     private static IntEnt parseIntEnt(JsonObject ie) throws BadArgumentException {
         IntEnt result = new IntEnt();
         if (ie.containsKey("id")) {
+            if (ie.get("id").getValueType() != jakarta.json.JsonValue.ValueType.NUMBER) {
+                throw new BadArgumentException("Invalid value for parameter intelectualEntity.id: must be an integer, not " + ie.get("id").getValueType().toString());
+            }
             result.id = (long) ie.getInt("id");
         }
         if (ie.containsKey("entityType")) {
