@@ -39,7 +39,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateRegistrarScopeIdentifier(String login, RegistrarScopeIdentifier id) throws UnknownRegistrarException, UnknownDigDocException,
             AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException, RegistrarScopeIdentifierNotDefinedException {
         try {
-            authorization.checkAccessRightsOrAdmin(id.getRegistrarId(), login);
+            authorization.checkRegistrarRightsOrAdmin(id.getRegistrarId(), login);
             Registrar registrar;
             try {
                 registrar = factory.registrarDao().getRegistrarById(id.getRegistrarId());
@@ -91,7 +91,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateDigitalDocument(DigitalDocument doc, String login) throws AccessException, UnknownUserException, UnknownDigDocException {
         try {
-            authorization.checkAccessRightsOrAdmin(doc.getRegistrarId(), login);
+            authorization.checkRegistrarRightsOrAdmin(doc.getRegistrarId(), login);
             factory.documentDao().updateDocument(doc);
             UrnNbn urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
             AdminLogger.getLogger().info(String.format("User %s updated digital-document of %s.", login, urn));
@@ -115,7 +115,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateRegistrar(Registrar registrar, String login) throws UnknownUserException, AccessException, UnknownRegistrarException {
         try {
-            authorization.checkAccessRightsOrAdmin(registrar.getId(), login);
+            authorization.checkRegistrarRightsOrAdmin(registrar.getId(), login);
             factory.registrarDao().updateRegistrar(registrar);
             logRegistrarUpdated(login, registrar);
         } catch (DatabaseException ex) {
@@ -142,7 +142,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException, UnknownArchiverException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             try {
                 factory.archiverDao().updateArchiver(archiver);
             } catch (RecordNotFoundException e) {
@@ -175,7 +175,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateDigitalLibrary(DigitalLibrary library, String login) throws UnknownUserException, AccessException, UnknownDigLibException {
         try {
             long registrarId = registrarIdFromDigLibId(library.getId());
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             factory.diglLibDao().updateLibrary(library);
             // because library object only contains data to be updated and not datestampes,
             // registrar id
@@ -214,7 +214,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void updateCatalog(Catalog catalog, String login) throws UnknownUserException, AccessException, UnknownCatalogException {
         try {
             long registrarId = registrarOfCatalog(catalog.getId());
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             factory.catalogDao().updateCatalog(catalog);
             logCatalogUpdated(login, catalog);
         } catch (DatabaseException ex) {
@@ -267,7 +267,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             for (DigitalDocument doc : digDocs) {
                 urn = factory.urnDao().getUrnNbnByDigDocId(doc.getId());
                 digDocId = doc.getId();
-                authorization.checkAccessRightsOrAdmin(urn.getRegistrarCode(), login);
+                authorization.checkRegistrarRightsOrAdmin(urn.getRegistrarCode(), login);
             }
         } catch (RecordNotFoundException e) {
             throw new RuntimeException(e);
@@ -279,9 +279,9 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     }
 
     @Override
-    public void updateUser(User user, String login) throws UnknownUserException, NotAdminException {
+    public void updateUser(User user, String login) throws UnknownUserException, AccessException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkSameUserOrAdmin(user, login);
             User fromDb = factory.userDao().getUserByLogin(user.getLogin());
             if (user.getPasswordSalt() == null) {
                 user.setPasswordSalt(fromDb.getPasswordSalt());
@@ -334,7 +334,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     @Override
     public void updateContent(Content content, String login) throws UnknownUserException, NotAdminException, ContentNotFoundException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             factory.contentDao().updateContent(content);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -352,7 +352,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            authorization.checkAccessRights(lib.getRegistrarId(), login);
+            authorization.checkRegistrarRights(lib.getRegistrarId(), login);
             factory.digInstDao().updateDigInstance(instance);
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -365,7 +365,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void deactivateUrnNbn(UrnNbn urn, String login, String note) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkRegistrarRights(registrarId, login);
             if ("".equals(note)) {
                 note = null;
             }
@@ -384,7 +384,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
     public void reactivateUrnNbn(UrnNbn urn, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(urn.getDigDocId());
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkRegistrarRights(registrarId, login);
             factory.urnDao().reactivateUrnNbn(urn.getRegistrarCode(), urn.getDocumentCode());
             AdminLogger.getLogger().info(String.format("User %s reactivated %s.", login, urn));
         } catch (DatabaseException ex) {
@@ -414,7 +414,7 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
             } catch (RecordNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            authorization.checkAccessRights(lib.getRegistrarId(), login);
+            authorization.checkRegistrarRights(lib.getRegistrarId(), login);
             try {
                 factory.digInstDao().deactivateDigInstance(instanceId);
             } catch (RecordNotFoundException e) {

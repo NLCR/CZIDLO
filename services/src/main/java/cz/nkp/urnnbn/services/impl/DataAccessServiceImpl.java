@@ -6,10 +6,7 @@ import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.DataAccessService;
-import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 import org.joda.time.DateTime;
 
 import java.util.*;
@@ -438,7 +435,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public List<User> users(String login) throws UnknownUserException, NotAdminException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             return factory.userDao().getAllUsers();
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -468,7 +465,7 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     }
 
     @Override
-    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException {
+    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, AccessException {
         try {
             return factory.registrarDao().getRegistrarsManagedByUser(userId);
         } catch (DatabaseException ex) {

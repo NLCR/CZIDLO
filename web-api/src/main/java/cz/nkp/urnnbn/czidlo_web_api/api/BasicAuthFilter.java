@@ -5,6 +5,7 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.services.AuthenticationService;
 import cz.nkp.urnnbn.services.DataAccessService;
 import cz.nkp.urnnbn.services.Services;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import jakarta.annotation.Priority;
@@ -66,9 +67,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
         List<Registrar> managed = null;
         try {
             managed = Services.instanceOf().dataAccessService().registrarsManagedByUser(user.getId(), user.getLogin());
-        } catch (UnknownUserException e) {
-            throw new RuntimeException(e);
-        } catch (NotAdminException e) {
+        } catch (UnknownUserException | AccessException e) {
             throw new RuntimeException(e);
         }
         AuthenticatedUserPrincipal principal = new AuthenticatedUserPrincipal(user, managed);

@@ -66,8 +66,8 @@ public class UserManagerImpl implements UserManager {
             return UserDetails.fromUserDto(userDto, dtoRegistrars);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with id: " + userId);
-        } catch (NotAdminException e) {
-            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         }
     }
 
@@ -79,8 +79,8 @@ public class UserManagerImpl implements UserManager {
             return UserDetails.fromUserDto(userDto, dtoRegistrars);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with login: " + login);
-        } catch (NotAdminException e) {
-            throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         }
     }
 
@@ -96,8 +96,10 @@ public class UserManagerImpl implements UserManager {
             return users;
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         } catch (NotAdminException e) {
-            throw new RuntimeException(e);
+            throw new AccessRightException(e.getMessage());
         }
     }
 
@@ -115,7 +117,7 @@ public class UserManagerImpl implements UserManager {
             return UserDetails.fromUserDto(updated, dtoRegistrars);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with id: " + userId);
-        } catch (NotAdminException e) {
+        } catch (AccessException e) {
             throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
         }
     }
@@ -135,10 +137,10 @@ public class UserManagerImpl implements UserManager {
             return UserDetails.fromUserDto(updated, dtoRegistrars);
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with id: " + userId);
-        } catch (NotAdminException e) {
-            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
+        } catch (AccessException e) {
+            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin or this user.");
         }
     }
 
@@ -156,11 +158,13 @@ public class UserManagerImpl implements UserManager {
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
         } catch (NotAdminException e) {
-            throw new RuntimeException(e);
+            throw new AccessRightException(e.getMessage());
         } catch (RegistrarRightCollisionException e) {
             throw new AccessRightException("User with id " + userId + " already has right for registrar with code: " + registrarCode);
         } catch (UnknownRegistrarException e) {
             throw new UnknownRecordException("Unknown registrar with id: " + registrar.getId());
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         }
     }
 
@@ -178,9 +182,11 @@ public class UserManagerImpl implements UserManager {
         } catch (UnknownUserException e) {
             throw new RuntimeException(e);
         } catch (NotAdminException e) {
-            throw new RuntimeException(e);
+            throw new AccessRightException(e.getMessage());
         } catch (UnknownRegistrarException e) {
             throw new UnknownRecordException("Unknown registrar with id: " + registrar.getId());
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         }
     }
 
@@ -196,8 +202,8 @@ public class UserManagerImpl implements UserManager {
             return registrarCodes;
         } catch (UnknownUserException e) {
             throw new UnknownRecordException("Unknown user with id: " + userId);
-        } catch (NotAdminException e) {
-            throw new AccessRightException("User " + loginOfUserPerformingThisOperation + " is not admin.");
+        } catch (AccessException e) {
+            throw new AccessRightException(e.getMessage());
         }
     }
 

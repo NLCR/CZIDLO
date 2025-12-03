@@ -38,7 +38,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeRegistrarScopeIdentifiers(long digDocId, String login) throws UnknownUserException, AccessException, UnknownDigDocException {
         try {
             long registrarId = registrarOfDigDoc(digDocId);
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkRegistrarRights(registrarId, login);
             UrnNbn urn;
             try {
                 urn = factory.urnDao().getUrnNbnByDigDocId(digDocId);
@@ -72,7 +72,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             UnknownDigDocException, RegistrarScopeIdentifierNotDefinedException {
         try {
             long registrarId = registrarOfDigDoc(digDocId);
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkRegistrarRights(registrarId, login);
             Registrar registrar;
             try {
                 registrar = factory.registrarDao().getRegistrarById(registrarId);
@@ -140,7 +140,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeArchiver(long archiverId, String login) throws UnknownArchiverException, CannotBeRemovedException, NotAdminException,
             UnknownUserException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             Archiver archiver = factory.archiverDao().getArchiverById(archiverId);
             factory.archiverDao().deleteArchiver(archiverId);
             logArchiverDeleted(login, archiver);
@@ -172,7 +172,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeRegistrar(long registrarId, String login) throws UnknownRegistrarException, CannotBeRemovedException, NotAdminException,
             UnknownUserException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             Long registeredDocsCount = factory.urnDao().getUrnNbnCountByRegistrarCode(registrar.getCode());
             if (registeredDocsCount > 0) {
@@ -210,7 +210,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
             CannotBeRemovedException {
         try {
             long registrarId = registrarIdFromDigLibId(libraryId);
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             DigitalLibrary library = factory.diglLibDao().getLibraryById(libraryId);
             factory.diglLibDao().deleteLibrary(libraryId);
             logLibraryDeleted(login, library);
@@ -253,7 +253,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeCatalog(long catalogId, String login) throws UnknownUserException, AccessException, UnknownCatalogException {
         try {
             long registrarId = registrarOfCatalog(catalogId);
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             Catalog catalog = factory.catalogDao().getCatalogById(catalogId);
             factory.catalogDao().deleteCatalog(catalogId);
             logCatalogDeleted(login, catalog);
@@ -289,7 +289,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     @Override
     public void removeUser(long userId, String login) throws UnknownUserException, NotAdminException, UnknownUserException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             User user = factory.userDao().getUserById(userId);
             factory.userDao().deleteUser(userId);
             logUserDeleted(login, user);
@@ -317,7 +317,7 @@ public class DataRemoveServiceImpl extends BusinessServiceImpl implements DataRe
     public void removeRegistrarRight(long userId, long registrarId, String login) throws UnknownUserException, NotAdminException,
             UnknownRegistrarException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             User user;
             try {
                 user = factory.userDao().getUserById(userId);

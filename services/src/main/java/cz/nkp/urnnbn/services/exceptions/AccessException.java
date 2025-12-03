@@ -5,9 +5,10 @@
 package cz.nkp.urnnbn.services.exceptions;
 
 import cz.nkp.urnnbn.core.RegistrarCode;
+import cz.nkp.urnnbn.core.dto.User;
 
 /**
- * 
+ *
  * @author Martin Řehánek
  */
 public class AccessException extends Exception {
@@ -22,6 +23,11 @@ public class AccessException extends Exception {
 
     public AccessException(String login, long registrarId) {
         super("user '" + login + "' not allowed to manage registrar with id " + registrarId);
+        this.login = login;
+    }
+
+    public AccessException(String login, User targetUser) {
+        super("user '" + login + "' has no rights to manage user '" + targetUser.getLogin() + "'");
         this.login = login;
     }
 

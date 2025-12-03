@@ -10,6 +10,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.core.UserDetails;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.users.user_manager.UserManagerImpl;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +53,7 @@ public class UserResource extends AbstractResource {
             UserDetails userDetails = userManager.getUser(user.getLogin(), user.getLogin());
             return Response.ok(userDetails).build();
         } catch (AccessRightException e) {
-            throw new RuntimeException(e);
+            throw new InsufficientRightsException(e.getMessage());
         }
     }
 }

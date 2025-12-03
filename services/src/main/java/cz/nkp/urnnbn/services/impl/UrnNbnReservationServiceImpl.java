@@ -40,7 +40,7 @@ public class UrnNbnReservationServiceImpl extends BusinessServiceImpl implements
     @Override
     public List<UrnNbn> reserveUrnNbnBatch(int batchSize, Registrar registrar, String login) throws UnknownUserException, AccessException {
         try {
-            authorization.checkAccessRights(registrar.getId(), login);
+            authorization.checkRegistrarRights(registrar.getId(), login);
             List<UrnNbn> result = new ArrayList<UrnNbn>(batchSize);
             for (int i = 0; i < batchSize; i++) {
                 UrnNbn found = findAndSaveNewUrnNbn(registrar);

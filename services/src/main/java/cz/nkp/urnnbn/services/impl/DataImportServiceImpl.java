@@ -39,7 +39,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public UrnNbn registerDigitalDocument(DigDocRegistrationData importData, String login) throws AccessException, UrnNotFromRegistrarException,
             UrnUsedException, UnknownRegistrarException, RegistrarScopeIdentifierCollisionException, UnknownArchiverException, UnknownUserException,
             RegistrationModeNotAllowedException, IncorrectPredecessorStatus {
-        authorization.checkAccessRights(importData.getRegistrarCode(), login);
+        authorization.checkRegistrarRights(importData.getRegistrarCode(), login);
         UrnNbn urnNbn = new DigitalDocumentRegistrar(factory, importData, esIndexer).run();
         AdminLogger.getLogger().info(String.format("User %s registered digital-document to %s.", login, urnNbn));
         return urnNbn;
@@ -50,7 +50,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
             UnknownDigDocException, UnknownUserException {
         try {
             long registrarId = registrarIdFromDigLibId(instance.getLibraryId());
-            authorization.checkAccessRights(registrarId, login);
+            authorization.checkRegistrarRights(registrarId, login);
             instance = new DigitalInstanceImporter(factory, instance).run();
             UrnNbn urn;
             try {
@@ -77,7 +77,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public RegistrarScopeIdentifier addRegistrarScopeIdentifier(RegistrarScopeIdentifier rsId, String login) throws UnknownRegistrarException, UnknownDigDocException,
             AccessException, UnknownUserException, RegistrarScopeIdentifierCollisionException {
         try {
-            authorization.checkAccessRights(rsId.getRegistrarId(), login);
+            authorization.checkRegistrarRights(rsId.getRegistrarId(), login);
             Registrar registrar;
             try {
                 registrar = factory.registrarDao().getRegistrarById(rsId.getRegistrarId());
@@ -147,7 +147,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     @Override
     public Archiver insertNewArchiver(Archiver archiver, String login) throws UnknownUserException, NotAdminException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             Long id = factory.archiverDao().insertArchiver(archiver);
             try {
                 Archiver inserted = factory.archiverDao().getArchiverById(id);
@@ -176,7 +176,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public Registrar insertNewRegistrar(Registrar registrar, String login) throws UnknownUserException, NotAdminException,
             RegistrarCollisionException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             Long id = factory.registrarDao().insertRegistrar(registrar);
             try {
                 Registrar inserted = factory.registrarDao().getRegistrarById(id); //to get all fields properly set including timestamps
@@ -208,7 +208,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public DigitalLibrary insertNewDigitalLibrary(DigitalLibrary library, long registrarId, String login) throws UnknownUserException,
             AccessException, UnknownRegistrarException {
         try {
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             library.setRegistrarId(registrarId); //make sure registrarId is set correctly
             Long id = factory.diglLibDao().insertLibrary(library);
             DigitalLibrary inserted = factory.diglLibDao().getLibraryById(id); //to get all fields properly set including timestamps
@@ -246,7 +246,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     public Catalog insertNewCatalog(Catalog catalog, long registrarId, String login) throws UnknownUserException, AccessException,
             UnknownRegistrarException {
         try {
-            authorization.checkAccessRightsOrAdmin(registrarId, login);
+            authorization.checkRegistrarRightsOrAdmin(registrarId, login);
             catalog.setRegistrarId(registrarId); //make sure registrarId is set correctly
             Long id = factory.catalogDao().insertCatalog(catalog);
             Catalog inserted = factory.catalogDao().getCatalogById(id);
@@ -280,7 +280,7 @@ public class DataImportServiceImpl extends BusinessServiceImpl implements DataIm
     @Override
     public User addNewUser(User user, String login) throws UnknownUserException, NotAdminException, LoginConflictException {
         try {
-            authorization.checkAdminRights(login);
+            authorization.checkAdmin(login);
             Long id = factory.userDao().insertUser(user);
             User inserted = factory.userDao().getUserById(id);
             logUserCreated(login, inserted);

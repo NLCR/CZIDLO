@@ -14,6 +14,7 @@ import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAO;
 import cz.nkp.urnnbn.processmanager.persistence.XmlTransformationDAOImpl;
 import cz.nkp.urnnbn.server.dtoTransformation.process.ProcesDtoTypeTransformer;
 import cz.nkp.urnnbn.server.dtoTransformation.process.ProcessDtoTransformer;
+import cz.nkp.urnnbn.services.exceptions.AccessException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 import cz.nkp.urnnbn.shared.dto.UserDTO;
@@ -87,7 +88,7 @@ public class ProcessServiceImpl extends AbstractService implements ProcessServic
         }
     }
 
-    private void checkAccessRights(String login, String[] registrarCodes) throws UnknownUserException, NotAdminException, ServerException {
+    private void checkAccessRights(String login, String[] registrarCodes) throws UnknownUserException, AccessException, ServerException {
         User user = readService.userByLogin(login);
         List<Registrar> managedRegistrars = readService.registrarsManagedByUser(user.getId(), user.getLogin());
         Set<String> managedRegistrarCodes = toRegistrarCodes(managedRegistrars);

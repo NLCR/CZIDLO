@@ -2,10 +2,7 @@ package cz.nkp.urnnbn.services;
 
 import cz.nkp.urnnbn.core.*;
 import cz.nkp.urnnbn.core.dto.*;
-import cz.nkp.urnnbn.services.exceptions.ContentNotFoundException;
-import cz.nkp.urnnbn.services.exceptions.NotAdminException;
-import cz.nkp.urnnbn.services.exceptions.RegistrarScopeIdentifierNotDefinedException;
-import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
+import cz.nkp.urnnbn.services.exceptions.*;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -118,7 +115,7 @@ public interface DataAccessService extends BusinessService {
      * @throws UnknownUserException
      * @throws NotAdminException
      */
-    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, NotAdminException;
+    public List<Registrar> registrarsManagedByUser(long userId, String login) throws UnknownUserException, AccessException;
 
     public Set<UrnNbn> urnNbnsOfChangedRecords(DateTime from, DateTime until);
 

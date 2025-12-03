@@ -15,6 +15,7 @@ import cz.nkp.urnnbn.core.persistence.DAOFactory;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 import cz.nkp.urnnbn.services.exceptions.AccessException;
+import cz.nkp.urnnbn.services.exceptions.InvalidUserException;
 import cz.nkp.urnnbn.services.exceptions.NotAdminException;
 import cz.nkp.urnnbn.services.exceptions.UnknownUserException;
 
@@ -39,10 +40,10 @@ public class AuthorizationModule {
      * @throws AccessException      if access right of user to registrar doesn't exist
      * @throws UnknownUserException if no such user with this login exists
      */
-    public void checkAccessRights(long registrarId, String login) throws AccessException, UnknownUserException {
+    public void checkRegistrarRights(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
-            checkAccessRights(registrar, userByLogin(login));
+            checkRegistrarRights(registrar, userByLogin(login));
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -58,11 +59,11 @@ public class AuthorizationModule {
      * @throws AccessException      if access right of user to registrar doesn't exist
      * @throws UnknownUserException if no such user with this login exists
      */
-    public void checkAccessRightsOrAdmin(long registrarId, String login) throws AccessException, UnknownUserException {
+    public void checkRegistrarRightsOrAdmin(long registrarId, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarById(registrarId);
             if (!isAdmin(login)) {
-                checkAccessRights(registrar, userByLogin(login));
+                checkRegistrarRights(registrar, userByLogin(login));
             }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -71,11 +72,19 @@ public class AuthorizationModule {
         }
     }
 
-    public void checkAccessRightsOrAdmin(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
+    /**
+     * Verifies that user has access_right to registrar or is administrator.
+     *
+     * @param registrarCode code of registrar
+     * @param login         login of user that is supposed to have access right to registrar
+     * @throws AccessException      if access right of user to registrar doesn't exist
+     * @throws UnknownUserException if no such user with this login exists
+     */
+    public void checkRegistrarRightsOrAdmin(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
             if (!isAdmin(login)) {
-                checkAccessRights(registrar, userByLogin(login));
+                checkRegistrarRights(registrar, userByLogin(login));
             }
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
@@ -92,10 +101,10 @@ public class AuthorizationModule {
      * @throws AccessException      if access right of user to registrar doesn't exist
      * @throws UnknownUserException if no such user with this login exists
      */
-    public void checkAccessRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
+    public void checkRegistrarRights(RegistrarCode registrarCode, String login) throws AccessException, UnknownUserException {
         try {
             Registrar registrar = factory.registrarDao().getRegistrarByCode(registrarCode);
-            checkAccessRights(registrar, userByLogin(login));
+            checkRegistrarRights(registrar, userByLogin(login));
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
         } catch (RecordNotFoundException ex) {
@@ -115,7 +124,7 @@ public class AuthorizationModule {
         }
     }
 
-    private void checkAccessRights(Registrar registrar, User user) throws AccessException {
+    private void checkRegistrarRights(Registrar registrar, User user) throws AccessException {
         try {
             List<Long> adminsOfRegistrar = factory.userDao().getAdminsOfRegistrar(registrar.getId());
             if (!adminsOfRegistrar.contains(user.getId())) {
@@ -128,7 +137,14 @@ public class AuthorizationModule {
         }
     }
 
-    public void checkAdminRights(String login) throws NotAdminException, UnknownUserException {
+    /**
+     * Verifies that user is administrator.
+     *
+     * @param login
+     * @throws NotAdminException
+     * @throws UnknownUserException
+     */
+    public void checkAdmin(String login) throws NotAdminException, UnknownUserException {
         if (!isAdmin(login)) {
             throw new NotAdminException(login);
         }
@@ -137,5 +153,23 @@ public class AuthorizationModule {
     private boolean isAdmin(String login) throws UnknownUserException {
         User user = userByLogin(login);
         return (user.isAdmin());
+    }
+
+    /**
+     * Verifies that user is either administrator or the same user as specified.
+     *
+     * @param targetUser user that is supposed to "managable" by the user with given login
+     * @param login      login of user that is supposed to be admin or the same user
+     * @throws UnknownUserException
+     * @throws AccessException      if user is neither admin nor the same user
+     */
+    public void checkSameUserOrAdmin(User targetUser, String login) throws UnknownUserException, AccessException {
+        User performingUser = userByLogin(login);
+        if (performingUser.isAdmin()) {
+            return;
+        }
+        if (!performingUser.getId().equals(targetUser.getId())) {
+            throw new AccessException(login, targetUser);
+        }
     }
 }

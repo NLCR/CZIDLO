@@ -242,7 +242,8 @@ public class UsersResource extends AbstractResource {
         AuthenticatedUserPrincipal principal = requireUserPrincipal(securityContext);
         User user = principal.getUser();
         if (!user.isAdmin() && user.getId() != id) {
-            throw new InsufficientRightsException("Only admin and the user himself can update password");
+            throw new InsufficientRightsException("User " + user.getLogin() + " with id " + user.getId()
+                    + " is not authorized to update password for user ID " + id + ". Must be admin or the user themself");
         }
 
         //extract new password from body

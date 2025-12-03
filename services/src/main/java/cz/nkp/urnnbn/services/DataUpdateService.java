@@ -44,7 +44,7 @@ public interface DataUpdateService extends BusinessService {
                                         Collection<IntEntIdentifier> identifiers, String login) throws UnknownUserException, AccessException,
             UnknownIntelectualEntity;
 
-    public void updateUser(User user, String login) throws UnknownUserException, NotAdminException;
+    public void updateUser(User user, String login) throws UnknownUserException, AccessException;
 
     public void updateUserSelf(User user, String login) throws UnknownUserException, InvalidUserException;
 
