@@ -16,10 +16,12 @@ import java.util.logging.Logger;
         info = @Info(title = "CZIDLO Web API", version = "1.15.0",
                 description = "API for accessing the CZIDLO system by web applications."),
         servers = {
-                // relativní URL je přenositelné (Tomcat doplní host/port):
-                @Server(url = "/web-api", description = "Local Tomcat (dev)"),
-                // absolutní URL pro produkci:
-                @Server(url = "https://czidlo-web.test.api.trinera.cloud", description = "Production")
+                //relativní URL (root této webové aplikace)
+                @Server(url = "/", description = "This installation"),
+                // relativní URL lokálně na Tomcatu. Přenositelné - Tomcat doplní host/port
+                @Server(url = "/web-api", description = "Development server (local Tomcat)"),
+                // absolutní URL pro (vývojové) nasazení
+                @Server(url = "https://web-api.czidlo.trinera.cloud", description = "Development server (Trinera)"),
         }
 )
 @ApplicationPath("/api")

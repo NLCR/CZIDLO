@@ -14,12 +14,35 @@
 <script src="../webjars/swagger-ui/5.28.1/swagger-ui-bundle.js"></script>
 <script src="../webjars/swagger-ui/5.28.1/swagger-ui-standalone-preset.js"></script>
 <script>
-    // Zjisti context path (např. "/web-api")
-    const ctx = (function () {
-      const p = window.location.pathname;              // /web-api/api-docs/...
-      const i = p.indexOf('/', 1);
-      return i > 0 ? p.substring(0, i) : '';
-    })();
+    // Vrátí context path aplikace:
+    // - ""    když je app na kořeni (za proxy: /api-docs/…)
+    // - "/web-api" když běží na /web-api (lokálně: /web-api/api-docs/…)
+    function getContextPath() {
+    const p = window.location.pathname;   // např. "/api-docs/" nebo "/web-api/api-docs/"
+    const marker = '/api-docs';
+    const idx = p.indexOf(marker);
+    if (idx === -1) {
+      // fallback – radši žádný context než špatný
+      console.warn('getContextPath: marker "' + marker + '" not found in pathname:', p);
+      return '';
+    }
+    if (idx === 0) {
+      // když je "/api-docs" hned od začátku, jsme na rootu → ctx = ""
+      console.log('getContextPath: app běží na rootu, pathname =', p);
+      return '';
+    }
+    // jinak je před ním context path, např. "/web-api"
+    const ctx = p.substring(0, idx);
+    console.log('getContextPath: pathname =', p, ', ctx =', ctx);
+    return ctx;
+  }
+
+  const ctx = getContextPath();
+
+  console.log('DEBUG: window.location.href =', window.location.href);
+  console.log('DEBUG: window.location.pathname =', window.location.pathname);
+  console.log('DEBUG: použiju ctx =', ctx);
+  console.log('DEBUG: openapi URL =', ctx + '/api/openapi.json');
 
     window.ui = SwaggerUIBundle({
       url: ctx + '/api/openapi.json',
@@ -29,5 +52,6 @@
       validatorUrl: null
     });
 </script>
+
 </body>
 </html>
