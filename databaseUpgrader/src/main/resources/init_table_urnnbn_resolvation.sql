@@ -1,16 +1,17 @@
 --
--- Description: Create table urnnbn_resolvations and populate it based on urnnbn_resolvation_statistics
+-- Description: Create table urnnbn_resolvation and populate it based on urnnbn_resolvation_statistics
 --              Each row in urnnbn_resolvation_statistics with a count 'sum' will generate 'sum' rows
---              in urnnbn_resolvations with the same registrarcode and resolved timestamp, and documentcode set to NULL.
+--              in urnnbn_resolvation with the same registrarcode and resolved timestamp, and documentcode set to NULL.
 --
--- Usage: psql -d czidlo_core -v ON_ERROR_STOP=1 -f init_table_urnnbn_resolvations.sql
+-- Usage: psql -d czidlo_core -U czidlo -v ON_ERROR_STOP=1 -f init_table_urnnbn_resolvation.sql
 
-DROP TABLE IF EXISTS urnnbn_resolvations;
+DROP TABLE IF EXISTS urnnbn_resolvation;
 
-CREATE TABLE urnnbn_resolvations (
+CREATE TABLE urnnbn_resolvation (
+  id SERIAL PRIMARY KEY,
   registrarcode VARCHAR(6) NOT NULL,
-  resolved TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  documentcode VARCHAR(6)
+  documentcode VARCHAR(6),
+  resolved TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 WITH RECURSIVE
@@ -40,10 +41,9 @@ WITH RECURSIVE
   )
 
 INSERT INTO
-  urnnbn_resolvations
+  urnnbn_resolvation (registrarcode, resolved)
 SELECT
   registrarcode,
-  resolved,
-  NULL
+  resolved
 FROM
   RowGenerator
