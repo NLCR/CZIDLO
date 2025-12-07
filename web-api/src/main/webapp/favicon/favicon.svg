@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1221)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(3.90625,0,0,3.90625,0,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#0080a8"></rect>
+
+  <g stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Levá hranatá závorka — posunutá blíž k levému okraji -->
+    <path d="M56 64 L32 128 L56 192"></path>
+
+    <!-- Pravá hranatá závorka — posunutá blíž k pravému okraji -->
+    <path d="M200 64 L224 128 L200 192"></path>
+  </g>
+
+  <!-- č -->
+  <g transform="translate(128, 158) scale(1, 1.15)">
+    <text x="0" y="0" font-family="DejaVu Sans, Arial, sans-serif" font-size="110" font-weight="700" text-anchor="middle" fill="#ffffff">
+      č
+    </text>
+  </g>
+</svg></svg></g></g><defs><clipPath id="SvgjsClipPath1221"><rect width="1000" height="1000" x="0" y="0" rx="250" ry="250"></rect></clipPath></defs></svg>

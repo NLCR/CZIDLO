@@ -43,10 +43,13 @@
     <!-- SPRING END -->
 
     <!-- indexové JSP pro jednotlivé verze API -->
-    <servlet>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <!--<servlet>
         <servlet-name>index</servlet-name>
         <jsp-file>/index.jsp</jsp-file>
-    </servlet>
+    </servlet>-->
     <servlet>
         <servlet-name>index_v3</servlet-name>
         <jsp-file>/index_v3.jsp</jsp-file>
@@ -164,10 +167,10 @@
     </servlet>
 
     <!-- JSP mapování -->
-    <servlet-mapping>
+    <!--<servlet-mapping>
         <servlet-name>index</servlet-name>
         <url-pattern>/</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>index_v3</servlet-name>
         <url-pattern>/v3</url-pattern>

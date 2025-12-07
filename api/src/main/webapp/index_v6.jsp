@@ -5,7 +5,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>API V6</title>
+        <title>ČIDLO API v6</title>
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/favicon/favicon-96x96.png" sizes="96x96"/>
+        <link rel="icon" type="image/svg+xml" href="${pageContext.request.contextPath}/favicon/favicon.svg"/>
+        <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon/favicon.ico"/>
     </head>
     <body>
         <h1>API verze 6 pro CZIDLO verze <%=cz.nkp.urnnbn.core.Czidlo.VERSION%></h1>

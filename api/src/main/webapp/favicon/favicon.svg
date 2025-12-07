@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1248)"><rect width="1000" height="1000" fill="#ffffff"></rect><g transform="matrix(3.90625,0,0,3.90625,0,0)"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#0080a8"></rect>
+
+  <!-- Levá složená závorka {  — posunutá blíž k levému okraji -->
+  <text x="48" y="158" font-family="DejaVu Sans, Arial, sans-serif" font-size="150" font-weight="700" text-anchor="middle" fill="#ffffff">
+    {
+  </text>
+
+  <!-- Natažené č – zůstává uprostřed -->
+  <g transform="translate(128, 158) scale(1, 1.15)">
+    <text x="0" y="0" font-family="DejaVu Sans, Arial, sans-serif" font-size="110" font-weight="700" text-anchor="middle" fill="#ffffff">
+      č
+    </text>
+  </g>
+
+  <!-- Pravá složená závorka } — posunutá blíž k pravému okraji -->
+  <text x="208" y="158" font-family="DejaVu Sans, Arial, sans-serif" font-size="150" font-weight="700" text-anchor="middle" fill="#ffffff">
+    }
+  </text>
+</svg></svg></g></g><defs><clipPath id="SvgjsClipPath1248"><rect width="1000" height="1000" x="0" y="0" rx="250" ry="250"></rect></clipPath></defs></svg>
