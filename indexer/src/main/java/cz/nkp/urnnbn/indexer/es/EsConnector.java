@@ -18,6 +18,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.elasticsearch.client.RestClient;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ public class EsConnector {
 
     private static final Logger log = LoggerFactory.getLogger(EsConnector.class);
     private final ElasticsearchClient esClient;
+    @Deprecated
     private final String index;
 
     public EsConnector(String baseurl, String login, String password, String index) {
@@ -93,15 +96,26 @@ public class EsConnector {
         }
     }
 
-    public void indexResolvation(ResolvationLog resolvationLog, String dbUrl, String dbLogin, String dbPassword) throws SQLException {
-        try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
-            ObjectMapper mapper = Config.getObjectMapper();
-            EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
-            System.out.println("Starting data provider...");
-            System.out.println("TODO: implement actual indexing of resolvation log " + resolvationLog);
-        }
+    public void indexResolvation(ResolvationLog resolvationLog, String dbUrl, String dbLogin, String dbPassword) throws SQLException, IOException {
+        //try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
+        //TODO: use db to enhance the record with other fields derived from digital-document by urn:nbn
+        //ObjectMapper mapper = Config.getObjectMapper();
+        //EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
+        //System.out.println("Starting data provider...");
+        JsonObjectBuilder jsonOut = Json.createObjectBuilder();
+        jsonOut.add("id", resolvationLog.getId());
+        jsonOut.add("registrarcode", resolvationLog.getRegistrarCode());
+        jsonOut.add("documentcode", resolvationLog.getDocumentCode());
+        jsonOut.add("resolved", resolvationLog.getResolved().toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")));
+        JsonObject forIndexing = jsonOut.build();
+        //http://localhost:8181/api/v5/resolver/urn:nbn:cz:klg001-00002a
+        //System.out.println("Indexing resolvation log: " + forIndexing.toString());
+        esClient.index(i -> i
+                .index(Config.INDEX_RESOLVE)
+                .id("" + forIndexing.getInt("id"))
+                .withJson(new StringReader(forIndexing.toString()))
+        );
     }
-
 
     public void indexJsonString(String jsonString) throws IOException {
         //see https://czidlo-api.trinera.cloud/api/v5/digitalDocuments/id/1823067?format=json&digitalInstances=true

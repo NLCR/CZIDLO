@@ -60,6 +60,8 @@ public class EsIndexer {
             esConnector.indexResolvation(resolvationLog, dbUrl, dbLogin, dbPassword);
         } catch (SQLException e) {
             report(" SQL error", e);
+        } catch (IOException e) {
+            report(" I/O error", e);
         }
     }
 
