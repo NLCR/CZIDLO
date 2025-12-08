@@ -127,7 +127,14 @@ public class Parser {
     }
 
     public static ResponseFormat parseFormat(String formatStr) {
+        return parseFormat(formatStr, ResponseFormat.XML);
+    }
+
+    public static ResponseFormat parseFormat(String formatStr, ResponseFormat defaultFormat) {
         try {
+            if (formatStr == null || formatStr.trim().isEmpty()) {
+                return defaultFormat;
+            }
             return ResponseFormat.valueOf(formatStr.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalFormatException(formatStr);
