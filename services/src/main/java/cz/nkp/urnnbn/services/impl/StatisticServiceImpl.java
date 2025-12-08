@@ -1,11 +1,13 @@
 package cz.nkp.urnnbn.services.impl;
 
 import cz.nkp.urnnbn.core.dto.Registrar;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.Statistic;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.exceptions.AlreadyPresentException;
 import cz.nkp.urnnbn.core.persistence.exceptions.DatabaseException;
 import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
+import cz.nkp.urnnbn.indexer.es.EsIndexer;
 import cz.nkp.urnnbn.services.StatisticService;
 
 import java.util.Calendar;
@@ -19,9 +21,11 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     private static final Logger LOGGER = Logger.getLogger(StatisticServiceImpl.class.getName());
 
     private Integer statisticsFirstYearCached = null;
+    private final EsIndexer esIndexer;
 
-    public StatisticServiceImpl(DatabaseConnector conn) {
+    public StatisticServiceImpl(DatabaseConnector conn, EsIndexer esIndexer) {
         super(conn);
+        this.esIndexer = esIndexer;
     }
 
     @Override
@@ -55,7 +59,12 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     @Override
     public void logResolvationAccess(String registrarCode, String documentCode) {
         try {
-            factory.urnNbnResolvationLogsDao().insertResolvationAccessLog(registrarCode, documentCode);
+            ResolvationLog resolvationLog = factory.urnNbnResolvationLogsDao().insertResolvationAccessLog(registrarCode, documentCode);
+            try {
+                this.esIndexer.indexResolvation(resolvationLog);
+            } catch (Throwable e) { //don't break main flow
+                LOGGER.warning("Failed to index resolvation log into Elasticsearch: " + e.getMessage());
+            }
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }

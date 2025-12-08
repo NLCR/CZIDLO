@@ -5,6 +5,7 @@ import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.es.single.DdEsConversionResult;
 import cz.nkp.urnnbn.indexer.es.single.EsDataProvider;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class EsConnector {
 
@@ -65,7 +65,7 @@ public class EsConnector {
         return new ElasticsearchClient(transport);
     }
 
-    public void index(long ddInternalId, String dbUrl, String dbLogin, String dbPassword) throws IOException, SQLException {
+    public void indexDocument(long ddInternalId, String dbUrl, String dbLogin, String dbPassword) throws IOException, SQLException {
         try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
             ObjectMapper mapper = Config.getObjectMapper();
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
@@ -93,6 +93,15 @@ public class EsConnector {
         }
     }
 
+    public void indexResolvation(ResolvationLog resolvationLog, String dbUrl, String dbLogin, String dbPassword) throws SQLException {
+        try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
+            ObjectMapper mapper = Config.getObjectMapper();
+            EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
+            System.out.println("Starting data provider...");
+            System.out.println("TODO: implement actual indexing of resolvation log " + resolvationLog);
+        }
+    }
+
 
     public void indexJsonString(String jsonString) throws IOException {
         //see https://czidlo-api.trinera.cloud/api/v5/digitalDocuments/id/1823067?format=json&digitalInstances=true
@@ -117,6 +126,7 @@ public class EsConnector {
         );
     }
 
+    @Deprecated
     private JsonObject convertJson(String jsonString) {
         //System.out.println(jsonString);
         JsonObject jsonIn;
@@ -190,6 +200,8 @@ public class EsConnector {
             }
         }
     }
+
+
 }
 
 

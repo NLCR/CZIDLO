@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.core.persistence.impl.postgres;
 
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.persistence.DatabaseConnector;
 import cz.nkp.urnnbn.core.persistence.DateTimeUtils;
 import cz.nkp.urnnbn.core.persistence.UrnNbnResolvationLogsDAO;
@@ -9,7 +10,8 @@ import cz.nkp.urnnbn.core.persistence.exceptions.SyntaxException;
 import cz.nkp.urnnbn.core.persistence.impl.AbstractDAO;
 import cz.nkp.urnnbn.core.persistence.impl.StatementWrapper;
 import cz.nkp.urnnbn.core.persistence.impl.operations.DaoOperation;
-import cz.nkp.urnnbn.core.persistence.impl.operations.NoResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.operations.SingleResultOperation;
+import cz.nkp.urnnbn.core.persistence.impl.transformations.ResolvationLogRT;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,13 +28,14 @@ public class UrnNbnResolvationLogsDaoPostgres extends AbstractDAO implements Urn
     }
 
     @Override
-    public void insertResolvationAccessLog(String registrarCode, String documentCode) throws DatabaseException {
-        DaoOperation operation = new NoResultOperation(buildInsertStatement(registrarCode, documentCode, DateTimeUtils.nowTs()));
+    public ResolvationLog insertResolvationAccessLog(String registrarCode, String documentCode) throws DatabaseException {
+        DaoOperation operation = new SingleResultOperation(buildInsertStatement(registrarCode, documentCode, DateTimeUtils.nowTs()), new ResolvationLogRT());
         try {
-            runInTransaction(operation);
+            return (ResolvationLog) runInTransaction(operation);
         } catch (PersistenceException ex) {
             // should never happen
             LOGGER.log(Level.SEVERE, "Exception unexpected here", ex);
+            throw new DatabaseException(ex);
         } catch (SQLException ex) {
             throw new DatabaseException(ex);
         }
@@ -47,7 +50,7 @@ public class UrnNbnResolvationLogsDaoPostgres extends AbstractDAO implements Urn
                         + "(" + ATTR_REGISTRAR_CODE//
                         + "," + ATTR_DOCUMENT_CODE//
                         + "," + ATTR_RESOLVED//
-                        + ") values(?,?,?)";
+                        + ") values(?,?,?) RETURNING *";
             }
 
             @Override
@@ -60,7 +63,6 @@ public class UrnNbnResolvationLogsDaoPostgres extends AbstractDAO implements Urn
                     // chyba je v prepared statementu nebo v tranfsformaci resultSetu
                     throw new SyntaxException(e);
                 }
-
             }
         };
 

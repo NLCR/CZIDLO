@@ -1,7 +1,7 @@
 package cz.nkp.urnnbn.indexer.es;
 
 import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
-import cz.nkp.urnnbn.apiClient.v5.CzidloApiErrorException;
+import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.Counters;
 import cz.nkp.urnnbn.indexer.DataProvider;
@@ -55,6 +55,14 @@ public class EsIndexer {
         this.progressListener = progressListener;
     }
 
+    public void indexResolvation(ResolvationLog resolvationLog) {
+        try {
+            esConnector.indexResolvation(resolvationLog, dbUrl, dbLogin, dbPassword);
+        } catch (SQLException e) {
+            report(" SQL error", e);
+        }
+    }
+
     public void indexDocument(long ddInternalId) {
         indexDocument(ddInternalId, new Counters(1), true);
     }
@@ -66,7 +74,7 @@ public class EsIndexer {
         } else {
             report(" processing " + urnNbn);
             try {
-                esConnector.index(ddInternalId, dbUrl, dbLogin, dbPassword);
+                esConnector.indexDocument(ddInternalId, dbUrl, dbLogin, dbPassword);
                 /*String ddCzidloJson = czidloApiConnector.getDigitalDocumentByInternalIdJson(ddInternalId, true);
                 if (ddCzidloJson == null) {
                     report(" digital document's json record not found, ignoring");

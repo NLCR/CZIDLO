@@ -154,7 +154,7 @@ public class Services {
 
     public StatisticService statisticService() {
         if (statisticService == null) {
-            statisticService = new StatisticServiceImpl(connector);
+            statisticService = new StatisticServiceImpl(connector, esIndexer);
         }
         return statisticService;
     }

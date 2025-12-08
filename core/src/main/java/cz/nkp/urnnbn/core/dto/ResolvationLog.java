@@ -1,16 +1,15 @@
 package cz.nkp.urnnbn.core.dto;
 
-import cz.nkp.urnnbn.core.RegistrarCode;
 import org.joda.time.DateTime;
 
 public class ResolvationLog {
 
     private Long id;
-    private RegistrarCode registrarCode;
+    private String registrarCode;
     private String documentCode;
     private DateTime resolved;
 
-    public ResolvationLog(Long id, RegistrarCode registrarCode, String documentCode, DateTime resolved) {
+    public ResolvationLog(Long id, String registrarCode, String documentCode, DateTime resolved) {
         this.id = id;
         this.registrarCode = registrarCode;
         this.documentCode = documentCode;
@@ -21,7 +20,7 @@ public class ResolvationLog {
         return id;
     }
 
-    public RegistrarCode getRegistrarCode() {
+    public String getRegistrarCode() {
         return registrarCode;
     }
 
@@ -31,5 +30,15 @@ public class ResolvationLog {
 
     public DateTime getResolved() {
         return resolved;
+    }
+
+    @Override
+    public String toString() {
+        return "ResolvationLog{" +
+                "id=" + id +
+                ", registrarCode='" + registrarCode + '\'' +
+                ", documentCode='" + documentCode + '\'' +
+                ", resolved=" + resolved +
+                '}';
     }
 }
