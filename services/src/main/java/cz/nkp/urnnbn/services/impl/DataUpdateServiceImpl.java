@@ -323,10 +323,11 @@ public class DataUpdateServiceImpl extends BusinessServiceImpl implements DataUp
 
     private void logUserUpdated(String actorLogin, User user) {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("User %s created user with login: %s", actorLogin, user.getLogin()));
+        builder.append(String.format("User %s updated user with login: %s", actorLogin, user.getLogin()));
         builder.append(String.format(", email: %s", user.getEmail()));
         builder.append(String.format(", admin: %s", user.isAdmin()));
         builder.append(String.format(", created: %s", formatDateTime(user.getCreated())));
+        builder.append(String.format(", modified: %s", formatDateTime(user.getModified())));
         builder.append(".");
         AdminLogger.getLogger().info(builder);
     }

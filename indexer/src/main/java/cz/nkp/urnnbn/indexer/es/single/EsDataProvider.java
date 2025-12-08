@@ -56,7 +56,8 @@ public class EsDataProvider {
             ResultSet resultSet = stmt.executeQuery();
 
             if (!resultSet.next()) {
-                throw new RuntimeException("No result found for id " + ddId);
+                //throw new RuntimeException("No result found for id " + ddId);
+                return null;
             }
 
             String json = resultSet.getString("resulting_json");
@@ -79,7 +80,8 @@ public class EsDataProvider {
             ResultSet resultSet = stmt.executeQuery();
 
             if (!resultSet.next()) {
-                throw new RuntimeException("No result found for id " + ddId);
+                //throw new RuntimeException("No result found for id " + ddId);
+                return null;
             }
 
             String json = resultSet.getString("resulting_json");

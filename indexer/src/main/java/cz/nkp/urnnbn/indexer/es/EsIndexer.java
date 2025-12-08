@@ -11,6 +11,7 @@ import org.apache.solr.common.SolrException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public class EsIndexer {
@@ -23,6 +24,9 @@ public class EsIndexer {
     //helpers
     private CzidloApiConnector czidloApiConnector = null;
     private EsConnector esConnector = null;
+    private String dbUrl = null;
+    private String dbLogin = null;
+    private String dbPassword = null;
 
     public EsIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
         this.dataProvider = dataProvider;
@@ -38,6 +42,9 @@ public class EsIndexer {
                 null,
                 config.getCzidloApiUseHttps(),
                 false);
+        this.dbUrl = config.getDbUrl();
+        this.dbLogin = config.getDbLogin();
+        this.dbPassword = config.getDbPassword();
     }
 
     public void close() {
@@ -59,7 +66,8 @@ public class EsIndexer {
         } else {
             report(" processing " + urnNbn);
             try {
-                String ddCzidloJson = czidloApiConnector.getDigitalDocumentByInternalIdJson(ddInternalId, true);
+                esConnector.index(ddInternalId, dbUrl, dbLogin, dbPassword);
+                /*String ddCzidloJson = czidloApiConnector.getDigitalDocumentByInternalIdJson(ddInternalId, true);
                 if (ddCzidloJson == null) {
                     report(" digital document's json record not found, ignoring");
                     counters.incrementErrors();
@@ -68,16 +76,19 @@ public class EsIndexer {
                     esConnector.indexJsonString(ddCzidloJson);
                     report(" indexed");
                     counters.incrementIndexed();
-                }
-            } catch (CzidloApiErrorException e) {
+                }*/
+            } /*catch (CzidloApiErrorException e) {
                 counters.incrementErrors();
                 report(" CZIDLO API error", e);
-            } catch (IOException e) {
+            } */ catch (IOException e) {
                 counters.incrementErrors();
                 report(" I/O error", e);
             } catch (SolrException e) {
                 counters.incrementErrors();
                 report(" Solr error", e);
+            } catch (SQLException e) {
+                counters.incrementErrors();
+                report(" SQL error", e);
             }
         }
         if (progressListener != null) {

@@ -47,4 +47,8 @@ public class PropertyKeys {
     public static final String INDEXER_ES_INDEX_NAME = "indexer.es.index";
     public static final String INDEXER_ES_LOGIN = "indexer.es.login";
     public static final String INDEXER_ES_PASSWORD = "indexer.es.password";
+
+    public static final String INDEXER_DB_URL = "indexer.db.url";
+    public static final String INDEXER_DB_LOGIN = "indexer.db.login";
+    public static final String INDEXER_DB_PASSWORD = "indexer.db.password";
 }

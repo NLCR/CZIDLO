@@ -20,6 +20,10 @@ public class IndexerConfig {
     private String esApiLogin;
     private String esApiPassword;
     private String esApiIndexName;
+    // DB
+    private String dbUrl;
+    private String dbLogin;
+    private String dbPassword;
     // XSLT
     private String czidloToSolrXslt;
     private File czidloToSolrXsltFile;
@@ -126,5 +130,29 @@ public class IndexerConfig {
 
     public void setEsApiIndexName(String esApiIndexName) {
         this.esApiIndexName = esApiIndexName;
+    }
+
+    public String getDbUrl() {
+        return dbUrl;
+    }
+
+    public void setDbUrl(String dbUrl) {
+        this.dbUrl = dbUrl;
+    }
+
+    public String getDbLogin() {
+        return dbLogin;
+    }
+
+    public void setDbLogin(String dbLogin) {
+        this.dbLogin = dbLogin;
+    }
+
+    public String getDbPassword() {
+        return dbPassword;
+    }
+
+    public void setDbPassword(String dbPassword) {
+        this.dbPassword = dbPassword;
     }
 }

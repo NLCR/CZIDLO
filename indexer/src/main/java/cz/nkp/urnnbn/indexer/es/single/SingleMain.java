@@ -44,17 +44,21 @@ public class SingleMain {
                 return;
             }
 
-            esClient.index(idx -> idx
-                    .index(Config.INDEX_SEARCH)
-                    .id(conversionResult.getSearch().getId())
-                    .document(conversionResult.getSearch())
-            );
+            if (conversionResult.getSearch() != null) {
+                esClient.index(idx -> idx
+                        .index(Config.INDEX_SEARCH)
+                        .id(conversionResult.getSearch().getId())
+                        .document(conversionResult.getSearch())
+                );
+            }
 
-            esClient.index(idx -> idx
-                    .index(Config.INDEX_ASSIGN)
-                    .id(conversionResult.getAssignment().getId())
-                    .document(conversionResult.getAssignment())
-            );
+            if (conversionResult.getAssignment() != null) {
+                esClient.index(idx -> idx
+                        .index(Config.INDEX_ASSIGN)
+                        .id(conversionResult.getAssignment().getId())
+                        .document(conversionResult.getAssignment())
+                );
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

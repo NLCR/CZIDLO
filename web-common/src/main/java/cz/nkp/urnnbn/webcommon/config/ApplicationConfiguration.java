@@ -59,6 +59,10 @@ public abstract class ApplicationConfiguration {
         indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
         indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
         indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
+        //DB
+        indexerConfig.setDbUrl(loader.loadString(PropertyKeys.INDEXER_DB_URL));
+        indexerConfig.setDbLogin(loader.loadString(PropertyKeys.INDEXER_DB_LOGIN));
+        indexerConfig.setDbPassword(loader.loadString(PropertyKeys.INDEXER_DB_PASSWORD));
         //TODO: fail here, if some required properties are missing
 
         try {

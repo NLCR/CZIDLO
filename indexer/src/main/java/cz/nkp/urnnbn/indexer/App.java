@@ -15,9 +15,14 @@ public class App {
     public static void main(String[] args) {
 
         IndexerConfig config = new IndexerConfig();
-        config.setEsApiBaseUrl("ES_API_URL");
-        config.setEsApiLogin("LOGIN");
-        config.setEsApiPassword("PASSWORD");
+        config.setEsApiBaseUrl("https://es8.dev-service.trinera.cloud");
+        config.setEsApiLogin("czidlo_admin");
+        config.setEsApiPassword("v/rUJVzWyHcbUp4i2Y");
+        config.setDbUrl("jdbc:postgresql://localhost:5432/czidlo_core");
+        config.setDbLogin("czidlo");
+        config.setDbPassword("czidlo");
+
+        //zbytecny
         config.setEsApiIndexName("INDEX_NAME");
         config.setCzidloApiUseHttps(true);
         config.setCzidloApiBaseUrl("czidlo-api.trinera.cloud/api");

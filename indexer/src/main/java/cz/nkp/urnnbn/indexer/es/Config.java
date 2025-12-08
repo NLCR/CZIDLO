@@ -15,7 +15,7 @@ public class Config {
     private static ObjectMapper objectMapper;
 
     public static ObjectMapper getObjectMapper() {
-        if (objectMapper != null) {
+        if (objectMapper == null) {
             objectMapper = new ObjectMapper()
                     .registerModule(new JavaTimeModule())
                     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

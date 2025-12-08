@@ -4,7 +4,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.indexer.es.single.DdEsConversionResult;
+import cz.nkp.urnnbn.indexer.es.single.EsDataProvider;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -19,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class EsConnector {
@@ -53,14 +58,41 @@ public class EsConnector {
                 )
                 .build();
 
-        // žádný Jackson, žádný Mapping.OBJECT_MAPPER
         ElasticsearchTransport transport = new RestClientTransport(
                 restClient,
-                new JacksonJsonpMapper()
+                new JacksonJsonpMapper(Config.getObjectMapper())
         );
-
         return new ElasticsearchClient(transport);
     }
+
+    public void index(long ddInternalId, String dbUrl, String dbLogin, String dbPassword) throws IOException, SQLException {
+        try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
+            ObjectMapper mapper = Config.getObjectMapper();
+            EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
+            System.out.println("Starting data provider...");
+            DdEsConversionResult conversionResult = dataProvider.convertDigitalDocumentJson(ddInternalId);
+            System.out.println("Finished data provider.");
+            //System.out.println(conversionResult.getSearch());
+            //index Search
+            if (conversionResult.getSearch() != null) {
+                esClient.index(idx -> idx
+                        .index(Config.INDEX_SEARCH)
+                        .id(conversionResult.getSearch().getId())
+                        .document(conversionResult.getSearch())
+                );
+            }
+
+            //index Assigning
+            if (conversionResult.getAssignment() != null) {
+                esClient.index(idx -> idx
+                        .index(Config.INDEX_ASSIGN)
+                        .id(conversionResult.getAssignment().getId())
+                        .document(conversionResult.getAssignment())
+                );
+            }
+        }
+    }
+
 
     public void indexJsonString(String jsonString) throws IOException {
         //see https://czidlo-api.trinera.cloud/api/v5/digitalDocuments/id/1823067?format=json&digitalInstances=true

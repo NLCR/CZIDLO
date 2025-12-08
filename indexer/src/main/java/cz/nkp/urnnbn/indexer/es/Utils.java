@@ -20,6 +20,10 @@ import java.util.Properties;
 
 public class Utils {
 
+    public static Connection createConnection(String dbUrl, String dbUser, String dbPassword) throws SQLException {
+        return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+    }
+
     public static Connection createConnection(Properties props) throws SQLException {
         return DriverManager.getConnection(
                 props.getProperty("db.url"),
