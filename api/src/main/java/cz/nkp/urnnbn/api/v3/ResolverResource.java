@@ -35,22 +35,23 @@ public class ResolverResource extends ApiResource {
             UrnNbnWithStatus fetched = dataAccessService().urnByRegistrarCodeAndDocumentCode(urnParsed.getRegistrarCode(),
                     urnParsed.getDocumentCode(), true);
             switch (fetched.getStatus()) {
-            case DEACTIVATED:
-            case ACTIVE:
-                DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
-                if (doc == null) {
+                case DEACTIVATED:
+                case ACTIVE:
+                    DigitalDocument doc = dataAccessService().digDocByInternalId(fetched.getUrn().getDigDocId());
+                    if (doc == null) {
+                        throw new UnknownDigitalDocumentException(fetched.getUrn());
+                    } else {
+                        // update resolvations statistics
+                        //statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
+                        statisticService().logResolvationAccess(urnParsed.getRegistrarCode().toString(), urnParsed.getDocumentCode());
+                        return new DigitalDocumentResource(doc, fetched.getUrn());
+                    }
+                case FREE:
+                    throw new UnknownUrnException(urnParsed);
+                case RESERVED:
                     throw new UnknownDigitalDocumentException(fetched.getUrn());
-                } else {
-                    // update resolvations statistics
-                    statisticService().incrementResolvationStatistics(urnParsed.getRegistrarCode().toString());
-                    return new DigitalDocumentResource(doc, fetched.getUrn());
-                }
-            case FREE:
-                throw new UnknownUrnException(urnParsed);
-            case RESERVED:
-                throw new UnknownDigitalDocumentException(fetched.getUrn());
-            default:
-                throw new RuntimeException();
+                default:
+                    throw new RuntimeException();
             }
         } catch (WebApplicationException e) {
             throw e;

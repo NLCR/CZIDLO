@@ -7,6 +7,10 @@ import cz.nkp.urnnbn.core.persistence.exceptions.RecordNotFoundException;
 
 import java.util.List;
 
+@Deprecated
+/*
+ * @Deprecated Use UrnNbnResolvationLogsDAO instead
+ */
 public interface UrnNbnStatisticDAO {
 
     public String TABLE_RESOLVATIONS_NAME = "urnnbn_resolvation_statistics";

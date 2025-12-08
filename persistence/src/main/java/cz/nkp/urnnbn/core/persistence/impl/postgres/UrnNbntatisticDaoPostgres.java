@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Deprecated
 public class UrnNbntatisticDaoPostgres extends AbstractDAO implements UrnNbnStatisticDAO {
 
     private static final Logger LOGGER = Logger.getLogger(UrnNbntatisticDaoPostgres.class.getName());

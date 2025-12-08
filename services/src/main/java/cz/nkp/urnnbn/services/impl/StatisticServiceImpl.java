@@ -53,6 +53,15 @@ public class StatisticServiceImpl extends BusinessServiceImpl implements Statist
     }
 
     @Override
+    public void logResolvationAccess(String registrarCode, String documentCode) {
+        try {
+            factory.urnNbnResolvationLogsDao().insertResolvationAccessLog(registrarCode, documentCode);
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public int getFirstYearWithData() {
         try {
             if (statisticsFirstYearCached == null) {

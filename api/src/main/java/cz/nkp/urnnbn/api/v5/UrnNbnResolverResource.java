@@ -133,7 +133,8 @@ public class UrnNbnResolverResource extends AbstractDigitalDocumentResource {
 
     private Response redirectionResponse(UrnNbn urnNbn, String referer) throws URISyntaxException {
         // update resolvations statistics
-        statisticService().incrementResolvationStatistics(urnNbn.getRegistrarCode().toString());
+        //statisticService().incrementResolvationStatistics(urnNbn.getRegistrarCode().toString());
+        statisticService().logResolvationAccess(urnNbn.getRegistrarCode().toString(), urnNbn.getDocumentCode());
         if (urnNbn.isActive()) {
             URI digitalInstance = getAvailableActiveDigitalInstanceOrNull(urnNbn.getDigDocId(), referer);
             if (digitalInstance != null) {
