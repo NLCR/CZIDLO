@@ -94,7 +94,7 @@ public interface ProcessManager {
      * @return
      * @throws UnknownRecordException
      * @throws AccessRightException
-     * @throws InvalidStateException  If proces is not in SCHEDULED state
+     * @throws InvalidStateException  If process is not in SCHEDULED state
      */
     public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
