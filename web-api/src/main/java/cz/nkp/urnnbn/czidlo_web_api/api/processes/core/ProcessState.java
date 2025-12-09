@@ -21,6 +21,24 @@ package cz.nkp.urnnbn.czidlo_web_api.api.processes.core;
  * @author Martin Řehánek
  */
 public enum ProcessState {
+    SCHEDULED, CANCELED, RUNNING, FINISHED, FAILED, KILLED;
 
-    SCHEDULED, CANCELED, RUNNING, FINISHED, FAILED, KILLED
+    public cz.nkp.urnnbn.processmanager.core.ProcessState rawValue() {
+        switch (this) {
+            case SCHEDULED:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.SCHEDULED;
+            case CANCELED:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.CANCELED;
+            case RUNNING:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.RUNNING;
+            case FINISHED:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.FINISHED;
+            case FAILED:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.FAILED;
+            case KILLED:
+                return cz.nkp.urnnbn.processmanager.core.ProcessState.KILLED;
+            default:
+                throw new IllegalStateException("Unknown process state: " + this);
+        }
+    }
 }

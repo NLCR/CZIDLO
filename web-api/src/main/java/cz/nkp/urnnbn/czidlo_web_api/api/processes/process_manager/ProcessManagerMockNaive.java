@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
@@ -16,7 +17,7 @@ public class ProcessManagerMockNaive extends ProcessManagerNoimpl {
     private static final Random RANDOM = new Random();
 
     @Override
-    public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException {
+    public Process getProcess(User user, Long processId) throws UnknownRecordException, AccessRightException {
         //ignore login, will be used only for access right check
         if (processId == 666) {
             throw new AccessRightException("Access denied to process: " + processId);
@@ -30,7 +31,7 @@ public class ProcessManagerMockNaive extends ProcessManagerNoimpl {
     }
 
     @Override
-    public List<Process> getProcesses() {
+    public List<Process> getAllProcesses() {
         return createDummyProcesses();
     }
 

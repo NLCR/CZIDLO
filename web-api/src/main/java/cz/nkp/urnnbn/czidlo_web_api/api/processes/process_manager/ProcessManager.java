@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
@@ -39,13 +40,13 @@ public interface ProcessManager {
     /**
      * Returns process.
      *
-     * @param login
+     * @param user      user requesting the process
      * @param processId
-     * @return
+     * @return Process object if user has access rights (admin or owner)
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      */
-    public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException;
+    public Process getProcess(User user, Long processId) throws UnknownRecordException, AccessRightException;
 
     /**
      * Returns process.
@@ -56,7 +57,7 @@ public interface ProcessManager {
      */
     public Process getProcess(Long processId) throws UnknownRecordException;
 
-    public List<Process> getProcesses();
+    public List<Process> getAllProcesses();
 
     public List<Process> getProcessesByState(ProcessState state);
 
@@ -69,59 +70,59 @@ public interface ProcessManager {
     /**
      * Kills running process.
      *
-     * @param login
-     * @param processId
-     * @return
+     * @param user      user requesting the kill
+     * @param processId process id
+     * @return if the process was successfully killed
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws InvalidStateException  If process is not in RUNNING state
      */
-    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+    public boolean killRunningProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
     /**
-     * @param login
-     * @param processId
-     * @return
-     * @throws UnknownRecordException
-     * @throws AccessRightException
+     * @param user      user requesting the cancel
+     * @param processId process id
+     * @return if the process was successfully canceled
+     * @throws UnknownRecordException If no such process exists
+     * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws InvalidStateException  If process is not in SCHEDULED state
      */
-    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+    public boolean cancelScheduledProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
     /**
      * Deletes process record from database.
      *
-     * @param login
-     * @param processId
+     * @param user      user requesting the delete
+     * @param processId process id
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws InvalidStateException  If process is in RUNNING or SCHEDULED state
      */
-    public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+    public void deleteProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
 
     /**
      * Returns process log from database.
      *
-     * @param login
-     * @param processId
-     * @return FileInputStream
+     * @param user      user requesting the log
+     * @param processId process id
+     * @return FileInputStream of process log
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws IOException            If process log is missing or failed to read
      */
-    public FileInputStream getProcessLog(String login, Long processId) throws UnknownRecordException, AccessRightException, IOException;
+    public FileInputStream getProcessLog(User user, Long processId) throws UnknownRecordException, AccessRightException, IOException;
 
     /**
      * Returns process output file.
      *
-     * @param login
-     * @param processId
+     * @param user      user requesting the output file
+     * @param processId process id
      * @return ProcessInMemoryOutputFile A custom class holding the output file and its MIME type
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws InvalidStateException  If process is in RUNNING, CANCELED or SCHEDULED state
      * @throws IOException            If process output file is missing
      */
-    public ProcessInMemoryOutputFile getProcessOutput(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException;
+    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException;
 
 }

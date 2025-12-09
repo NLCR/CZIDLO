@@ -30,7 +30,6 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 @Path("/processes")
 public class ProcessesResource extends AbstractResource {
@@ -166,7 +165,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            Process p = processManager.getProcess(user.getLogin(), id);
+            Process p = processManager.getProcess(user, id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -197,7 +196,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         List<Process> p = user.isAdmin()
-                ? processManager.getProcesses() // all processes for admin
+                ? processManager.getAllProcesses() // all processes for admin
                 : processManager.getProcessesByOwner(user.getLogin()); // only own processes for regular user
         return Response.ok(new ProcessList(p)).build();
     }
@@ -264,7 +263,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            boolean p = processManager.killRunningProcess(user.getLogin(), id);
+            boolean p = processManager.killRunningProcess(user, id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -305,7 +304,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            boolean p = processManager.cancelScheduledProcess(user.getLogin(), id);
+            boolean p = processManager.cancelScheduledProcess(user, id);
             return Response.ok(p).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -345,7 +344,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            processManager.deleteProcess(user.getLogin(), id);
+            processManager.deleteProcess(user, id);
             return Response.noContent().build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -382,7 +381,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            FileInputStream processLog = processManager.getProcessLog(user.getLogin(), id);
+            FileInputStream processLog = processManager.getProcessLog(user, id);
             return Response.ok(processLog, MediaType.TEXT_PLAIN).build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);
@@ -422,7 +421,7 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            ProcessInMemoryOutputFile outputFile = processManager.getProcessOutput(user.getLogin(), id);
+            ProcessInMemoryOutputFile outputFile = processManager.getProcessOutput(user, id);
             Response.ResponseBuilder builder = Response.ok(outputFile.getFile(), outputFile.getMimeType());
             String extension = outputFile.getExtension();
             builder.header("Content-Disposition", "attachment; filename=\"process_" + id + "_output" + extension + "\"");

@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
@@ -26,7 +27,7 @@ public class ProcessManagerNoimpl implements ProcessManager {
     }
 
     @Override
-    public cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException {
+    public cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process getProcess(User user, Long processId) throws UnknownRecordException, AccessRightException {
         throw new RuntimeException("Not implemented");
     }
 
@@ -36,7 +37,7 @@ public class ProcessManagerNoimpl implements ProcessManager {
     }
 
     @Override
-    public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getProcesses() {
+    public List<cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process> getAllProcesses() {
         throw new RuntimeException("Not implemented");
     }
 
@@ -61,27 +62,27 @@ public class ProcessManagerNoimpl implements ProcessManager {
     }
 
     @Override
-    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public boolean killRunningProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public boolean cancelScheduledProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+    public void deleteProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public FileInputStream getProcessLog(String user, Long id) throws UnknownRecordException, AccessRightException, IOException {
+    public FileInputStream getProcessLog(User user, Long id) throws UnknownRecordException, AccessRightException, IOException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ProcessInMemoryOutputFile getProcessOutput(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
+    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
         throw new RuntimeException("Not implemented");
     }
 }

@@ -1,6 +1,7 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
 
+import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
@@ -135,13 +136,13 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public Process getProcess(String login, Long processId) throws UnknownRecordException, AccessRightException {
+    public Process getProcess(User user, Long processId) throws UnknownRecordException, AccessRightException {
         Process process = repo.getById(processId);
 
         if (process == null) {
             throw new UnknownRecordException("Unknown process: " + processId);
         }
-        if (!process.getOwnerLogin().equals(login)) {
+        if (!process.getOwnerLogin().equals(user)) {
             throw new AccessRightException("Access denied to process: " + processId);
         }
 
@@ -149,7 +150,7 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public List<Process> getProcesses() {
+    public List<Process> getAllProcesses() {
         return repo.getAll();
     }
 
@@ -164,8 +165,8 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        Process process = getProcess(login, processId);
+    public boolean killRunningProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+        Process process = getProcess(user, processId);
 
         if (!process.getState().equals(RUNNING)) {
             throw new InvalidStateException("Cannot kill process: " + processId);
@@ -177,8 +178,8 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        Process process = getProcess(login, processId);
+    public boolean cancelScheduledProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+        Process process = getProcess(user, processId);
 
         if (!process.getState().equals(SCHEDULED)) {
             throw new InvalidStateException("Cannot cancel process: " + processId);
@@ -189,8 +190,8 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
-        Process process = getProcess(login, processId);
+    public void deleteProcess(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
+        Process process = getProcess(user, processId);
 
         if (List.of(SCHEDULED, RUNNING).contains(process.getState())) {
             throw new InvalidStateException("Cannot delete process: " + processId);
@@ -200,8 +201,8 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public FileInputStream getProcessLog(String login, Long processId) throws UnknownRecordException, AccessRightException, IOException {
-        Process process = getProcess(login, processId);
+    public FileInputStream getProcessLog(User user, Long processId) throws UnknownRecordException, AccessRightException, IOException {
+        Process process = getProcess(user, processId);
 
         Path path = Path.of("data", Long.toString(process.getId()), "log.txt");
         File file = new File(path.toUri());
@@ -210,8 +211,8 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public ProcessInMemoryOutputFile getProcessOutput(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
-        Process process = getProcess(login, processId);
+    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
+        Process process = getProcess(user, processId);
 
         if (List.of(SCHEDULED, CANCELED, RUNNING).contains(process.getState())) {
             throw new InvalidStateException("In invalid state \"" + process.getState() + "\" to return output file for process: " + processId);

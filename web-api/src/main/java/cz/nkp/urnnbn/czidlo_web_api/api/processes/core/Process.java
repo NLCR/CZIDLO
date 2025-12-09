@@ -83,4 +83,18 @@ public class Process {
     public void setFinished(Date finished) {
         this.finished = finished;
     }
+
+    public static Process fromRawProcess(cz.nkp.urnnbn.processmanager.core.Process rawProcess) {
+        Process process = new Process();
+        process.setId(rawProcess.getId());
+        process.setOwnerLogin(rawProcess.getOwnerLogin());
+        process.setType(ProcessType.valueOf(rawProcess.getType().name()));
+        process.setState(ProcessState.valueOf(rawProcess.getState().name()));
+        process.setScheduled(rawProcess.getScheduled());
+        process.setStarted(rawProcess.getStarted());
+        process.setFinished(rawProcess.getFinished());
+        //process.setParams(rawProcess.getParams());
+        return process;
+    }
+
 }
