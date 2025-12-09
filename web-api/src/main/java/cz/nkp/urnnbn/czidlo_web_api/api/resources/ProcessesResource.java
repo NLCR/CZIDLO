@@ -6,7 +6,7 @@ import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManager;
-import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManagerMockInMemory;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManagerImpl;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessInMemoryOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessList;
@@ -38,7 +38,8 @@ public class ProcessesResource extends AbstractResource {
     @Context
     private SecurityContext securityContext;
 
-    private static final ProcessManager processManager = new ProcessManagerMockInMemory();
+    private static final ProcessManager processManager = new ProcessManagerImpl();
+    //private static final ProcessManager processManager = new ProcessManagerMockInMemory();
 
     @Operation(
             summary = "Create process",

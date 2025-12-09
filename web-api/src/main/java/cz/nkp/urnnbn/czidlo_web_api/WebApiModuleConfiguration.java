@@ -25,6 +25,7 @@ public class WebApiModuleConfiguration extends ApplicationConfiguration {
         super.initialize(appName, loader);
         logger.log(Level.INFO, "Initializing {0}", appName);
         webApiBaseUrl = loader.loadString("web-api.baseUrl");
+        cz.nkp.urnnbn.processmanager.conf.Configuration.init(loader); // initialize process manager configuration
     }
 
     public String getWebApiBaseUrl() {
