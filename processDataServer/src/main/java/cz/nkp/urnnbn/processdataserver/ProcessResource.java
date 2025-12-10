@@ -81,7 +81,7 @@ public class ProcessResource {
     public Response getProcessOutput() {
         try {
             ProcessOutputFileInfo outputFileInfo = new ProcessOutputFileInfo(process.getType());
-            // System.err.println("ouptput file: " + outputFileInfo.getFilename() + ", mimeType: \"" + outputFileInfo.getMimetype() + "\"");
+            // System.err.println("output file: " + outputFileInfo.getFilename() + ", mimeType: \"" + outputFileInfo.getMimetype() + "\"");
             File file = getProcessResultManager().getProcessOutputFile(process.getId(), outputFileInfo.getFilename());
             ResponseBuilder builder = Response.ok(file, outputFileInfo.getMimetype());
             builder.header("Content-Disposition", "attachment; filename=\"" + outputFileInfo.getFilename() + "\"");
@@ -112,7 +112,7 @@ public class ProcessResource {
                 case INDEXATION:
                     return "text/plain; charset=UTF-8";
                 default:
-                    throw new RuntimeException("MIME type of process ouptput for process type " + type + " not defined");
+                    throw new RuntimeException("MIME type of process output for process type " + type + " not defined");
             }
         }
 
@@ -127,7 +127,7 @@ public class ProcessResource {
                 case INDEXATION:
                     return IndexationJob.PARAM_REPORT_FILE;
                 default:
-                    throw new RuntimeException("Filename of process ouptput for process type " + type + " not defined");
+                    throw new RuntimeException("Filename of process output for process type " + type + " not defined");
             }
         }
     }

@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InvalidStateException;
@@ -117,12 +118,12 @@ public interface ProcessManager {
      *
      * @param user      user requesting the output file
      * @param processId process id
-     * @return ProcessInMemoryOutputFile A custom class holding the output file and its MIME type
+     * @return ProcessOutput Resulting process output (file, mimetype)
      * @throws UnknownRecordException If no such process exists
      * @throws AccessRightException   If user is not admin nor creator of the process
      * @throws InvalidStateException  If process is in RUNNING, CANCELED or SCHEDULED state
      * @throws IOException            If process output file is missing
      */
-    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException;
+    public ProcessOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException;
 
 }

@@ -13,5 +13,8 @@ public class CORSResponseFilter implements ContainerResponseFilter {
         responseContext.getHeaders().add("Access-Control-Allow-Headers", "*");
         responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
         responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
+
+        // to allow browsers to access Content-Disposition header (downloaded file name)
+        responseContext.getHeaders().add("Access-Control-Expose-Headers", "Content-Disposition");
     }
 }

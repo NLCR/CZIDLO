@@ -4,10 +4,10 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.ApiError;
 import cz.nkp.urnnbn.czidlo_web_api.api.AuthenticatedUserPrincipal;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.*;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManager;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessManagerImpl;
-import cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager.ProcessInMemoryOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessList;
 import io.swagger.v3.oas.annotations.Operation;
@@ -421,10 +421,9 @@ public class ProcessesResource extends AbstractResource {
         User user = principal.getUser();
 
         try {
-            ProcessInMemoryOutputFile outputFile = processManager.getProcessOutput(user, id);
-            Response.ResponseBuilder builder = Response.ok(outputFile.getFile(), outputFile.getMimeType());
-            String extension = outputFile.getExtension();
-            builder.header("Content-Disposition", "attachment; filename=\"process_" + id + "_output" + extension + "\"");
+            ProcessOutputFile outputFile = processManager.getProcessOutput(user, id);
+            Response.ResponseBuilder builder = Response.ok(outputFile.getFileWithData(), outputFile.getOutMimeType());
+            builder.header("Content-Disposition", "attachment; filename=\"" + outputFile.getOutFileName() + "\"");
             return builder.build();
         } catch (UnknownRecordException e) {
             return processNotFounResponse(id);

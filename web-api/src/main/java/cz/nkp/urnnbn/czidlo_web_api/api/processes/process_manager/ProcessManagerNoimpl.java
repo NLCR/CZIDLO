@@ -2,6 +2,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InvalidStateException;
@@ -82,7 +83,7 @@ public class ProcessManagerNoimpl implements ProcessManager {
     }
 
     @Override
-    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
+    public ProcessOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
         throw new RuntimeException("Not implemented");
     }
 }

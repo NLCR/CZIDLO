@@ -4,11 +4,14 @@ import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InvalidStateException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.*;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
-import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
-import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.processmanager.control.ProcessResultManager;
 import cz.nkp.urnnbn.processmanager.control.ProcessResultManagerImpl;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.DiUrlAvailabilityCheckJob;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.IndexationJob;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.OaiAdapterJob;
+import cz.nkp.urnnbn.processmanager.scheduler.jobs.UrnNbnCsvExportJob;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -171,11 +174,67 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
-        throw new RuntimeException("Not implemented");
+    public ProcessOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
+        try {
+            cz.nkp.urnnbn.processmanager.core.Process rawProcess = rawProcessManager().getProcess(user.getLogin(), processId);// for access right check
+            Process process = rawProcessToProcess(rawProcess);
+            if (List.of(SCHEDULED, CANCELED, RUNNING).contains(process.getState())) {
+                throw new InvalidStateException("In invalid state \"" + process.getState() + "\" to return output file for process: " + processId);
+            }
+            ProcessOutputFileInfo outputFileInfo = new ProcessOutputFileInfo(process.getType());
+            //System.err.println("output file name: " + outputFileInfo.getFilename() + ", mimeType: \"" + outputFileInfo.getMimetype() + "\"");
+            File outputFile = getProcessResultManager().getProcessOutputFile(user.getLogin(), processId, outputFileInfo.getFilename());
+            if (!outputFile.exists()) {
+                throw new FileNotFoundException("Output file not found for process: " + processId);
+            }
+            return new ProcessOutputFileImpl(outputFileInfo.getMimetype(), outputFileInfo.getFilename(), outputFile);
+        } catch (cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException e) {
+            throw new UnknownRecordException(e.getMessage());
+        } catch (cz.nkp.urnnbn.processmanager.control.AccessRightException e) {
+            throw new AccessRightException(e.getMessage());
+        } catch (cz.nkp.urnnbn.processmanager.control.InvalidStateException e) {
+            throw new InvalidStateException(e.getMessage());
+        }
     }
 
     private ProcessResultManager getProcessResultManager() {
         return ProcessResultManagerImpl.instanceOf();
+    }
+
+    private static class ProcessOutputFileInfo {
+
+        private final ProcessType type;
+
+        private ProcessOutputFileInfo(ProcessType type) {
+            this.type = type;
+        }
+
+        private String getMimetype() {
+            switch (type) {
+                case REGISTRARS_URN_NBN_CSV_EXPORT:
+                case DI_URL_AVAILABILITY_CHECK:
+                    return "text/csv; charset=UTF-8";
+                case OAI_ADAPTER:
+                case INDEXATION:
+                    return "text/plain; charset=UTF-8";
+                default:
+                    throw new RuntimeException("MIME type of process output for process type " + type + " not defined");
+            }
+        }
+
+        private String getFilename() {
+            switch (type) {
+                case REGISTRARS_URN_NBN_CSV_EXPORT:
+                    return UrnNbnCsvExportJob.CSV_EXPORT_FILE_NAME;
+                case OAI_ADAPTER:
+                    return OaiAdapterJob.PARAM_REPORT_FILE;
+                case DI_URL_AVAILABILITY_CHECK:
+                    return DiUrlAvailabilityCheckJob.CSV_EXPORT_FILE_NAME;
+                case INDEXATION:
+                    return IndexationJob.PARAM_REPORT_FILE;
+                default:
+                    throw new RuntimeException("Filename of process output for process type " + type + " not defined");
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
@@ -211,21 +212,20 @@ public class ProcessManagerMockInMemory extends ProcessManagerNoimpl {
     }
 
     @Override
-    public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
+    public ProcessOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
         Process process = getProcess(user, processId);
 
         if (List.of(SCHEDULED, CANCELED, RUNNING).contains(process.getState())) {
             throw new InvalidStateException("In invalid state \"" + process.getState() + "\" to return output file for process: " + processId);
         }
 
-        ProcessInMemoryOutputFile outputFile = new ProcessInMemoryOutputFile(processId, process.getType());
+        ProcessOutputFileMock outputFile = new ProcessOutputFileMock(processId, process.getType());
 
-        if (!outputFile.getFile().exists()) {
+        if (!outputFile.getFileWithData().exists()) {
             throw new FileNotFoundException("Output file not found for process: " + processId);
         }
 
         return outputFile;
     }
-
 
 }

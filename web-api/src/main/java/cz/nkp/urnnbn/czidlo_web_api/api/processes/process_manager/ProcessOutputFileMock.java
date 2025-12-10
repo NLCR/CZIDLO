@@ -1,16 +1,21 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
+import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessOutputFile;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
+import cz.nkp.urnnbn.processmanager.conf.Configuration;
 
 import java.io.File;
 import java.nio.file.Path;
 
-public class ProcessInMemoryOutputFile {
+public class ProcessOutputFileMock implements ProcessOutputFile {
+
+    private final long processId;
     private final String mimeType;
     private final String extension;
     private final File file;
 
-    public ProcessInMemoryOutputFile(long processId, ProcessType processType) {
+    public ProcessOutputFileMock(long processId, ProcessType processType) {
+        this.processId = processId;
         this.mimeType = evalMimeType(processType);
         this.extension = evalExtension(processType);
         this.file = evalFile(processId);
@@ -33,19 +38,25 @@ public class ProcessInMemoryOutputFile {
     }
 
     private File evalFile(long processId) throws IllegalArgumentException {
+        //Path path = Path.of("data", Long.toString(processId), "output" + extension);
         Path path = Path.of("data", Long.toString(processId), "output" + extension);
+        Configuration.getJobsDir();
         return new File(path.toUri());
     }
 
-    public String getMimeType() {
+    @Override
+    public String getOutMimeType() {
         return mimeType;
     }
 
-    public String getExtension() {
-        return extension;
+    @Override
+    public String getOutFileName() {
+        return "process_" + processId + "_output" + extension;
     }
 
-    public File getFile() {
+    @Override
+    public File getFileWithData() {
         return file;
     }
+
 }
