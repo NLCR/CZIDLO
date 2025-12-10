@@ -22,6 +22,7 @@ import java.util.logging.Logger;
                 @Server(url = "/web-api", description = "Development server (local Tomcat)"),
                 // absolutní URL pro (vývojové) nasazení
                 @Server(url = "https://web-api.czidlo.trinera.cloud", description = "Development server (Trinera)"),
+                @Server(url = "https://resolver-dev.nkp.cz/web-api", description = "Development server (NKP)"),
         }
 )
 @ApplicationPath("/api")
