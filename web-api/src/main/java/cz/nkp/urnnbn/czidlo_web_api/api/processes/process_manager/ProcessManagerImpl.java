@@ -7,12 +7,18 @@ import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.UnknownRecordException;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.Process;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState;
 import cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessType;
+import cz.nkp.urnnbn.processmanager.control.ProcessResultManager;
+import cz.nkp.urnnbn.processmanager.control.ProcessResultManagerImpl;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static cz.nkp.urnnbn.czidlo_web_api.api.processes.core.ProcessState.*;
 
 public class ProcessManagerImpl implements ProcessManager {
 
@@ -151,11 +157,25 @@ public class ProcessManagerImpl implements ProcessManager {
 
     @Override
     public FileInputStream getProcessLog(User user, Long processId) throws UnknownRecordException, AccessRightException, IOException {
-        throw new RuntimeException("Not implemented");
+        try {
+            File file = getProcessResultManager().getProcessLogFile(user.getLogin(), processId);
+            //System.out.println("Process log file path: " + file.getAbsolutePath());
+            return new FileInputStream(file);
+        } catch (cz.nkp.urnnbn.processmanager.persistence.UnknownRecordException e) {
+            throw new UnknownRecordException(e.getMessage());
+        } catch (cz.nkp.urnnbn.processmanager.control.InvalidStateException e) {
+            throw new IOException(e.getMessage());
+        } catch (cz.nkp.urnnbn.processmanager.control.AccessRightException e) {
+            throw new AccessRightException(e.getMessage());
+        }
     }
 
     @Override
     public ProcessInMemoryOutputFile getProcessOutput(User user, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException, IOException {
         throw new RuntimeException("Not implemented");
+    }
+
+    private ProcessResultManager getProcessResultManager() {
+        return ProcessResultManagerImpl.instanceOf();
     }
 }
