@@ -40,7 +40,8 @@ public class MetadataStructureEnforcer {
         //PRIMARY ORIGINATOR
         Originator originator = data.getOriginator();
         if (originator == null) {
-            throw new MetadataStructureException("Missing originator metadata.");
+            //nothing, empty originator is allowed
+            //throw new MetadataStructureException("Missing originator metadata.");
         } else {
             if (originator.getValue() == null || originator.getValue().isEmpty()) {
                 throw new MetadataStructureException("Originator value is required.");
