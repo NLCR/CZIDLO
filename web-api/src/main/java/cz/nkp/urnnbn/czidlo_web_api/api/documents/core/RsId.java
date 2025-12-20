@@ -40,11 +40,23 @@ public class RsId {
         return modified;
     }
 
-    public RegistrarScopeIdType getType() {
-        return type;
+    public String getType() {
+        //musíme takto, protože jinak serializace RegistrarScopeIdType nefunguje, nestačí tam toString()
+        return type == null ? null : type.toString();
     }
 
-    public RegistrarScopeIdValue getValue() {
-        return value;
+    public String getValue() {
+        //musíme takto, protože jinak serializace RegistrarScopeIdValue nefunguje, nestačí tam toString()
+        return value == null ? null : value.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "RsId{" +
+                "created=" + created +
+                ", modified=" + modified +
+                ", type=" + type +
+                ", value=" + value +
+                '}';
     }
 }
