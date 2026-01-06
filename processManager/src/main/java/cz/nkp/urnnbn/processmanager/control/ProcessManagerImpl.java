@@ -94,6 +94,7 @@ public class ProcessManagerImpl implements ProcessManager {
             SchedulerFactory sf = new StdSchedulerFactory();
             // System.err.println("schedule factory intitialized");
             scheduler = sf.getScheduler();
+            //logger.severe("Scheduler starting disabled for debugging purposes");
             scheduler.start();
             // System.err.println("Scheduler started: " + result.isStarted());
             scheduler.getListenerManager().addJobListener(new JobListenerImpl(), jobGroupEquals(PROCESS_GROUP_JOBS));

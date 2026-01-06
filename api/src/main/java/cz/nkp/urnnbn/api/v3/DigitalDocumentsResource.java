@@ -35,9 +35,6 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v3.v3_abstract.A
     @Context
     private UriInfo context;
 
-    /**
-     * Creates a new instance of RegistrarsResource
-     */
     public DigitalDocumentsResource(Registrar registrar) {
         super(registrar);
     }
@@ -64,6 +61,7 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v3.v3_abstract.A
             checkServerNotReadOnly();
             String login = req.getRemoteUser();
             String response = registerDigitalDocumentByApiV3(content, login, registrar.getCode());
+            //TODO: return created URI with @Context UriInfo uriIno
             return Response.created(null).entity(response).build();
         } catch (ValidityException ex) {
             throw new InvalidDataException(ex);
@@ -84,8 +82,8 @@ public class DigitalDocumentsResource extends cz.nkp.urnnbn.api.v3.v3_abstract.A
     @Override
     public DigitalDocumentResource getDigitalDocumentResource(@PathParam("idType") String idTypeStr, @PathParam("idValue") String idValueStr) {
         try {
-            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[] { idTypeStr,
-                    idValueStr, registrar.getCode() });
+            logger.log(Level.INFO, "resolving registrar-scope id (type=''{0}'', value=''{1}'') for registrar {2}", new Object[]{idTypeStr,
+                    idValueStr, registrar.getCode()});
             DigitalDocument digitalDocument = super.getDigitalDocument(idTypeStr, idValueStr);
             UrnNbn urn = dataAccessService().urnByDigDocId(digitalDocument.getId(), true);
             return new DigitalDocumentResource(digitalDocument, urn);

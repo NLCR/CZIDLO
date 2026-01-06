@@ -56,7 +56,7 @@ import cz.nkp.urnnbn.xml.apiv3.builders.UrnNbnBuilder;
 import cz.nkp.urnnbn.xml.apiv3.unmarshallers.RecordImportUnmarshaller;
 
 /**
- * 
+ *
  * @author Martin Řehánek
  */
 public abstract class AbstractDigitalDocumentsResource extends ApiResource {
