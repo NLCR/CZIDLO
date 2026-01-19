@@ -88,12 +88,11 @@
         <module>web-common</module>
         <module>api</module>
         <module>web-api</module>
-
+        <module>oaiPmhProvider</module>
 
         <!--
         <module>processManager</module>
         <module>processDataServer</module>
-        <module>oaiPmhProvider</module>
         <module>cliUtils</module>
         <module>web</module>
         <module>legacyRecordsImport</module>
