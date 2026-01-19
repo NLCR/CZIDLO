@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
@@ -49,25 +50,38 @@ public class RepositoryImpl implements Repository {
 
     @Override
     public Set<Record> getRecords(MetadataFormat format, String setSpec, DateStamp from, DateStamp until) {
+        //System.out.println("RepositoryImpl.getRecords: setSpec=" + setSpec + ", from=" + from + ", until=" + until);
         DateTime fromDt = from == null ? null : from.getDateTime();
         DateTime untilDt = until == null ? null : until.getDateTime();
         Set<UrnNbn> urnNbnSet = getUrnNbnSet(setSpec, fromDt, untilDt);
         Set<Record> result = new HashSet<Record>(urnNbnSet.size());
+        //int total = urnNbnSet.size();
+        //int fetched = 0;
         for (UrnNbn urn : urnNbnSet) {
+            //fetched++;
             result.add(new PresentRecordBuilder(backend, urn, format).build());
+            /*if (fetched % 100 == 0) {
+                System.out.println("RepositoryImpl.getRecords: fetched " + fetched + " of " + total);
+            }*/
         }
         return result;
     }
 
     private Set<UrnNbn> getUrnNbnSet(String setSpec, DateTime fromDt, DateTime untilDt) {
         if (setSpec == null) {
+            //System.out.println("RepositoryImpl.getUrnNbnSet: getting changed records for all registrars");
             return backend.dataAccessService().urnNbnsOfChangedRecords(fromDt, untilDt);
         } else {
             Registrar registrar = registrarFromSetSpec(setSpec);
             if (registrar == null) {
-                return Collections.<UrnNbn> emptySet();
+                return Collections.<UrnNbn>emptySet();
             } else {
-                return backend.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(registrar, fromDt, untilDt);
+                //System.out.println("RepositoryImpl.getUrnNbnSet: getting changed records for registrar " + registrar.getCode());
+                if (fromDt == null && untilDt == null) {
+                    return new HashSet<>(backend.dataAccessService().urnNbnsOfRegistrar(registrar.getCode()));
+                } else {
+                    return backend.dataAccessService().urnNbnsOfChangedRecordsOfRegistrar(registrar, fromDt, untilDt);
+                }
             }
         }
     }
@@ -88,19 +102,19 @@ public class RepositoryImpl implements Repository {
         UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                 urnNbn.getDocumentCode(), true);
         switch (fetechedUrn.getStatus()) {
-        case DEACTIVATED:
-            // TODO: before implementng deletedRecord will even deactivated dig docs available
-            // TODO: potentially return another implementation subclass of Record like DeletedRecord
-            // return null;
-            return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
-        case ACTIVE:
-            return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
-        case FREE:
-            return null;
-        case RESERVED:
-            return null;
-        default:
-            return null;
+            case DEACTIVATED:
+                // TODO: before implementng deletedRecord will even deactivated dig docs available
+                // TODO: potentially return another implementation subclass of Record like DeletedRecord
+                // return null;
+                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
+            case ACTIVE:
+                return new PresentRecordBuilder(backend, fetechedUrn.getUrn(), format).build();
+            case FREE:
+                return null;
+            case RESERVED:
+                return null;
+            default:
+                return null;
         }
     }
 
