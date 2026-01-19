@@ -26,20 +26,18 @@ public class ListIdentifiers extends AbstractListResponse {
 
     public ListIdentifiers(Map<String, String[]> parameters) throws IOException {
         super("ListIdentifiers", parameters);
-        System.out.println("ListIdentifiers: Constructing parts manager");
         partsManager = ResumptionTokenManager.instanceOf(ListRequestType.LIST_IDENTIFIERS, config.getListIdentifiersMaxSize());
     }
 
     @Override
     void appendRecordDataToRoot(UrnNbn urnNbn, MetadataFormat format) {
-        System.out.println("ListIdentifiers: Appending record data for " + urnNbn);
+        //System.out.println("ListIdentifiers: Appending record data for " + urnNbn);
         Record record = convertToRepositoryRecord(urnNbn, format);
         ElementAppender.appendHeaderType(rootEl, record);
     }
 
     @Override
     ResumptionTokenManager getResultPartsManager() {
-        System.out.println("ListIdentifiers: Getting parts manager");
         return partsManager;
     }
 }

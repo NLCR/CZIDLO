@@ -44,13 +44,14 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
 
     @Override
     String[] getRequiredArguments() {
-        String[] result = {METADATA_PREFIX};
+        //SET je dočasně povinný, dokud nebude implemenováno něco efektivnějšího pro čtení dat
+        String[] result = {METADATA_PREFIX, SET};
         return result;
     }
 
     @Override
     String[] getOptionalArguments() {
-        String[] result = {FROM, UNTIL, SET};
+        String[] result = {FROM, UNTIL};
         return result;
     }
 
