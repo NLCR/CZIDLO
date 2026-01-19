@@ -478,20 +478,38 @@ public class DataAccessServiceImpl extends BusinessServiceImpl implements DataAc
     @Override
     public Set<UrnNbn> urnNbnsOfChangedRecordsOfRegistrar(Registrar registrar, DateTime from, DateTime until) {
         try {
+            Long start = System.currentTimeMillis();
             Set<DigitalDocument> foundDigitalDocuments = new HashSet<DigitalDocument>();
             // 1. vsechny zmenene DD, pak odfiltrovat podle id registratora, vytahnout urn:nbn
             foundDigitalDocuments.addAll(findChangedDigDocs(registrar, from, until));
+            System.out.println("DataAccessServiceImpl.urnNbnsOfChangedRecordsOfRegistrar: 1. found in " + (System.currentTimeMillis() - start) + " ms");
+
+            start = System.currentTimeMillis();
             // 2. vsechny zmenene identifikatory DD a pro kazdy nacist DD
-            foundDigitalDocuments.addAll(findDigDocsWithChangedIdentifier(from, until));
+            //foundDigitalDocuments.addAll(findDigDocsWithChangedIdentifier(from, until)); //TODO: pomale, optimalizovat
+            //System.out.println("DataAccessServiceImpl.urnNbnsOfChangedRecordsOfRegistrar: 2. found in "+ (System.currentTimeMillis() - start) + " ms");
+
+            start = System.currentTimeMillis();
             // 3. digitalni dokumenty zmenenych dig. instanci
-            foundDigitalDocuments.addAll(findDigDocsOfChangedDigInstances(from, until));
+            //foundDigitalDocuments.addAll(findDigDocsOfChangedDigInstances(from, until)); //TODO: pomale, optimalizovat
+            //System.out.println("DataAccessServiceImpl.urnNbnsOfChangedRecordsOfRegistrar: 3. found in "+ (System.currentTimeMillis() - start) + " ms");
+
+            start = System.currentTimeMillis();
             // 4. digitalni dokumenty zmenenych int. entit
-            foundDigitalDocuments.addAll(findDigDocsOfChangedIntEntities(from, until));
+            //foundDigitalDocuments.addAll(findDigDocsOfChangedIntEntities(from, until)); //TODO: pomale, optimalizovat
+            //System.out.println("DataAccessServiceImpl.urnNbnsOfChangedRecordsOfRegistrar: 4. found in "+ (System.currentTimeMillis() - start) + " ms");
+
             // remove dig docs of other registrars
-            Set<DigitalDocument> digDocsOfRegistrar = removeDigDocsOfOtherRegistrars(foundDigitalDocuments, registrar);
+            //Set<DigitalDocument> digDocsOfRegistrar = removeDigDocsOfOtherRegistrars(foundDigitalDocuments, registrar);
+            Set<DigitalDocument> digDocsOfRegistrar = foundDigitalDocuments;
+
             Set<UrnNbn> result = toUrnNbnSet(digDocsOfRegistrar);
-            // add changed urn:nbns
+
+            //start = System.currentTimeMillis();
+            //5. add changed urn:nbns
             result.addAll(findChangedUrnNbns(registrar, from, until));
+            //System.out.println("DataAccessServiceImpl.urnNbnsOfChangedRecordsOfRegistrar: 5. added changed urn:nbns in " + (System.currentTimeMillis() - start) + " ms");
+
             return result;
         } catch (DatabaseException ex) {
             throw new RuntimeException(ex);
