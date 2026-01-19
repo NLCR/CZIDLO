@@ -45,49 +45,50 @@ public abstract class ApplicationConfiguration {
         AdminLogger.initializeLogger(webAppName, adminLogFile);
         CountryCode.initialize(languageCode);
 
-        boolean initIndexer = true;
-        IndexerConfig indexerConfig = new IndexerConfig();
-        indexerConfig.setCzidloApiBaseUrl(loader.loadString(PropertyKeys.INDEXER_CZIDLO_API_BASE_URL));
-        indexerConfig.setCzidloApiUseHttps(false);
-        indexerConfig.setSolrApiBaseUrl(loader.loadString(PropertyKeys.INDEXER_SOLR_BASE_URL));
-        indexerConfig.setSolrApiCollection(loader.loadString(PropertyKeys.INDEXER_SOLR_COLLECTION));
-        indexerConfig.setSolrApiUseHttps(loader.loadBoolean(PropertyKeys.INDEXER_SOLR_USE_HTTPS));
-        indexerConfig.setSolrApiLogin(loader.loadString(PropertyKeys.INDEXER_SOLR_LOGIN));
-        indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
-        //ES
-        indexerConfig.setEsApiBaseUrl(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_BASE_URL));
-        indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
-        indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
-        indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
-        //DB
-        indexerConfig.setDbUrl(loader.loadString(PropertyKeys.INDEXER_DB_URL));
-        indexerConfig.setDbLogin(loader.loadString(PropertyKeys.INDEXER_DB_LOGIN));
-        indexerConfig.setDbPassword(loader.loadString(PropertyKeys.INDEXER_DB_PASSWORD));
-        //TODO: fail here, if some required properties are missing
+        boolean initIndexer = loader.loadBoolean("indexer.enabled", true);
+        IndexerConfig indexerConfig = initIndexer ? new IndexerConfig() : null;
+        if (!initIndexer) {
+            appLogger.log(Level.WARNING, "Indexer will not be initialized");
+        } else {
+            appLogger.log(Level.INFO, "Indexer will be initialized");
+            indexerConfig.setCzidloApiBaseUrl(loader.loadString(PropertyKeys.INDEXER_CZIDLO_API_BASE_URL));
+            indexerConfig.setCzidloApiUseHttps(false);
+            indexerConfig.setSolrApiBaseUrl(loader.loadString(PropertyKeys.INDEXER_SOLR_BASE_URL));
+            indexerConfig.setSolrApiCollection(loader.loadString(PropertyKeys.INDEXER_SOLR_COLLECTION));
+            indexerConfig.setSolrApiUseHttps(loader.loadBoolean(PropertyKeys.INDEXER_SOLR_USE_HTTPS));
+            indexerConfig.setSolrApiLogin(loader.loadString(PropertyKeys.INDEXER_SOLR_LOGIN));
+            indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
+            //ES
+            indexerConfig.setEsApiBaseUrl(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_BASE_URL));
+            indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
+            indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
+            indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
+            //DB
+            indexerConfig.setDbUrl(loader.loadString(PropertyKeys.INDEXER_DB_URL));
+            indexerConfig.setDbLogin(loader.loadString(PropertyKeys.INDEXER_DB_LOGIN));
+            indexerConfig.setDbPassword(loader.loadString(PropertyKeys.INDEXER_DB_PASSWORD));
+            //TODO: fail here, if some required properties are missing
 
-        try {
-            URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDLO_TO_SOLR_XSLT);
-            if (czidloToSolrXsltFileResource != null) { //because not all web modules contain this file
-                try {
-                    File czidloToSolrXsltFile = new File(czidloToSolrXsltFileResource.toURI());
-                    indexerConfig.setCzidloToSolrXsltFile(czidloToSolrXsltFile);
-                    indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath()));
-                } catch (IllegalArgumentException e) {
+            try {
+                URL czidloToSolrXsltFileResource = getClass().getClassLoader().getResource(CZIDLO_TO_SOLR_XSLT);
+                if (czidloToSolrXsltFileResource != null) { //because not all web modules contain this file
+                    try {
+                        File czidloToSolrXsltFile = new File(czidloToSolrXsltFileResource.toURI());
+                        indexerConfig.setCzidloToSolrXsltFile(czidloToSolrXsltFile);
+                        indexerConfig.setCzidloToSolrXslt(XmlTools.loadXmlFromFile(czidloToSolrXsltFile.getAbsolutePath()));
+                    } catch (IllegalArgumentException e) {
+                        //initIndexer = false;
+                        appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
+                    }
+                } else {
                     //initIndexer = false;
                     appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
                 }
-            } else {
-                //initIndexer = false;
-                appLogger.log(Level.WARNING, "Resource not found: {0}", CZIDLO_TO_SOLR_XSLT);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        if (!initIndexer) {
-            indexerConfig = null;
-            appLogger.log(Level.WARNING, "Solr indexer will not be initialized");
-        }
         if (develMode) {
             Services.init(DatabaseConnectorFactory.getDevelConnector(), indexerConfig);
         } else {

@@ -5,17 +5,19 @@
 package cz.nkp.urnnbn.oaipmhprovider.conf;
 
 import java.io.InputStream;
+//import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+//import cz.nkp.urnnbn.services.Services;
 import cz.nkp.urnnbn.utils.PropertyLoader;
 import cz.nkp.urnnbn.webcommon.config.ResourceUtilizer;
 import cz.nkp.urnnbn.xml.config.XmlModuleConfiguration;
 
 /**
- * 
+ *
  * @author Martin Řehánek
  */
 public class ContextListener implements ServletContextListener {
@@ -54,5 +56,11 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         // nothing
+        System.out.println("OAI-PMH Provider context destroyed.");
+        /*try {
+            Services.close(); //no such method yet
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error shutting down services", e);
+        }*/
     }
 }

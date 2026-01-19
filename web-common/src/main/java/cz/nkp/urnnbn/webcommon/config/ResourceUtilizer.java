@@ -25,8 +25,7 @@ abstract public class ResourceUtilizer {
     public abstract void processResource(InputStream in) throws Exception;
 
     public final void run(String resourceName) {
-        InputStream data = loadResource(resourceName);
-        try {
+        try (InputStream data = loadResource(resourceName)) {
             processResource(data);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, "Error processing resource " + resourceName, ex);
