@@ -53,13 +53,16 @@ public class Servlet extends HttpServlet {
             try {
                 verbStr = getVerbStr(parameterMap);
                 parameterMap.remove("verb");
+                System.out.println("Processing verb: " + verbStr);
                 OaiVerbResponse verbResponse = VerbFactory.getVerbResponse(verbStr, parameterMap);
+                System.out.println("Building response document for verb: " + verbStr);
                 responseDoc = verbResponse.build();
             } catch (OaiException ex) {
                 OaiErrorResponse errorResponse = new OaiErrorResponse(verbStr, parameterMap, ex.getCode(), ex.getMessage());
                 responseDoc = errorResponse.build();
                 logger.log(Level.WARNING, "{0}: {1}", new Object[] { ex.getCode().toString(), ex.getMessage() });
             }
+            System.out.println("Printing response document for verb: " + verbStr);
             printDoc(out, responseDoc);
             ResumptionTokenManager.clearOldResumptionTokens();
         } finally {

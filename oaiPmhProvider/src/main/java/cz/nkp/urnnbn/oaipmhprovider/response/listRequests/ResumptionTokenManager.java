@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.response.listRequests;
 
+import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ public class ResumptionTokenManager {
 
     public static ResumptionTokenManager instanceOf(ListRequestType type, int returnRecords) {
         if (type == ListRequestType.LIST_IDENTIFIERS) {
+            System.out.printf("ResumptionTokenManager: Creating instance for LIST_IDENTIFIERS with returnRecords=%d%n", returnRecords);
             if (listIdentifiersInst == null) {
                 listIdentifiersInst = new ResumptionTokenManager(returnRecords);
             }
@@ -54,27 +57,17 @@ public class ResumptionTokenManager {
     }
 
     private void clearElderlyResumptionTokens() {
-        for (ListPart requestSequence : resumptionTokens.values()) {
+        for (String resumptionToken : resumptionTokens.keySet()) {
+            ListPart requestSequence = resumptionTokens.get(resumptionToken);
             if (timeToDie(requestSequence)) {
-                String uuid = uuidFromResultPart(requestSequence);
-                logger.log(Level.INFO, "Removing resumption token {0} which was valid until {1}", new Object[] { uuid,
-                        requestSequence.getValidUntil().toString() });
-                resumptionTokens.values().remove(requestSequence);
+                logger.log(Level.INFO, "Removing resumption token {0} which was valid until {1}", new Object[]{resumptionToken, requestSequence.getValidUntil().toString()});
+                resumptionTokens.remove(resumptionToken);
             }
         }
     }
 
     private boolean timeToDie(ListPart resumption) {
         return resumption.getValidUntil().isBeforeNow();
-    }
-
-    private String uuidFromResultPart(ListPart resumption) {
-        for (String uuid : resumptionTokens.keySet()) {
-            if (resumption.equals(resumptionTokens.get(uuid))) {
-                return uuid;
-            }
-        }
-        return null;
     }
 
     public synchronized String registerNextResultPart(ListPart part) throws IOException {
@@ -90,8 +83,7 @@ public class ResumptionTokenManager {
     }
 
     public ListPart requestSeqFromResToken(String resumptionToken) {
-        ListPart resumption = resumptionTokens.get(resumptionToken);
-        return resumption;
+        return resumptionTokens.get(resumptionToken);
     }
 
     public int returnedRecords() {

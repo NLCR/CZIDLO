@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
 
 /**
  *
@@ -16,17 +17,19 @@ import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
  */
 public class CompleteList {
 
-    private final List<Record> records;
+    private final List<UrnNbn> urns;
+    private final MetadataFormat format;
 
-    public CompleteList(Collection<Record> records) {
-        this.records = new ArrayList<Record>(records);
+    public CompleteList(Collection<UrnNbn> urns, MetadataFormat format) {
+        this.urns = new ArrayList<UrnNbn>(urns);
+        this.format = format;
     }
 
     public int totalSize() {
-        return records.size();
+        return urns.size();
     }
 
-    List<Record> getIdentifiers(int start, int maxEnd, int maxLength) {
+    List<UrnNbn> getUrnNbns(int start, int maxEnd, int maxLength) {
         if (start < 0) {
             throw new IllegalArgumentException("start cannot be negative");
         }
@@ -36,8 +39,12 @@ public class CompleteList {
         if (maxLength <= 0) {
             throw new IllegalArgumentException("maxLength must be positive");
         }
-        int realEnd = (start + maxLength) > records.size() ? records.size() // all remaining
+        int realEnd = (start + maxLength) > urns.size() ? urns.size() // all remaining
                 : (start + maxLength); // another part
-        return records.subList(start, realEnd);
+        return urns.subList(start, realEnd);
+    }
+
+    public MetadataFormat getFormat() {
+        return format;
     }
 }

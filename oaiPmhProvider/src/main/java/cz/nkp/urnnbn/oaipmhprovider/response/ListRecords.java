@@ -7,6 +7,8 @@ package cz.nkp.urnnbn.oaipmhprovider.response;
 import java.io.IOException;
 import java.util.Map;
 
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
 import cz.nkp.urnnbn.oaipmhprovider.repository.Record;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ListRequestType;
 import cz.nkp.urnnbn.oaipmhprovider.response.listRequests.ResumptionTokenManager;
@@ -26,7 +28,8 @@ public class ListRecords extends AbstractListResponse {
     }
 
     @Override
-    void appendRecordDataToRoot(Record record) throws IOException {
+    void appendRecordDataToRoot(UrnNbn urnNbn, MetadataFormat format) throws IOException {
+        Record record = convertToRepositoryRecord(urnNbn, format);
         ElementAppender.appendRecord(rootEl, record);
     }
 

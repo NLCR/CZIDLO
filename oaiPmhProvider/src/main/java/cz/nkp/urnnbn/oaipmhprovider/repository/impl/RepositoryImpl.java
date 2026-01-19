@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
@@ -44,27 +43,29 @@ public class RepositoryImpl implements Repository {
     }
 
     @Override
-    public Set<Record> getRecords(MetadataFormat format, DateStamp from, DateStamp until) {
-        return getRecords(format, null, from, until);
+    public Set<UrnNbn> getUrns(MetadataFormat format, DateStamp from, DateStamp until) {
+        return getUrns(format, null, from, until);
     }
 
     @Override
-    public Set<Record> getRecords(MetadataFormat format, String setSpec, DateStamp from, DateStamp until) {
+    public Set<UrnNbn> getUrns(MetadataFormat format, String setSpec, DateStamp from, DateStamp until) {
         //System.out.println("RepositoryImpl.getRecords: setSpec=" + setSpec + ", from=" + from + ", until=" + until);
         DateTime fromDt = from == null ? null : from.getDateTime();
         DateTime untilDt = until == null ? null : until.getDateTime();
         Set<UrnNbn> urnNbnSet = getUrnNbnSet(setSpec, fromDt, untilDt);
+        /*
         Set<Record> result = new HashSet<Record>(urnNbnSet.size());
-        //int total = urnNbnSet.size();
-        //int fetched = 0;
+        int total = urnNbnSet.size();
+        int fetched = 0;
         for (UrnNbn urn : urnNbnSet) {
-            //fetched++;
+            fetched++;
             result.add(new PresentRecordBuilder(backend, urn, format).build());
-            /*if (fetched % 100 == 0) {
+            if (fetched % 100 == 0) {
                 System.out.println("RepositoryImpl.getRecords: fetched " + fetched + " of " + total);
-            }*/
+            }
         }
-        return result;
+        return result;*/
+        return urnNbnSet;
     }
 
     private Set<UrnNbn> getUrnNbnSet(String setSpec, DateTime fromDt, DateTime untilDt) {
@@ -99,8 +100,13 @@ public class RepositoryImpl implements Repository {
     @Override
     public Record getRecord(Identifier id, MetadataFormat format, boolean validate) {
         UrnNbn urnNbn = UrnNbn.valueOf(id.toString());
+        return getRecord(urnNbn, format, validate);
+    }
+
+    public Record getRecord(UrnNbn urnNbn, MetadataFormat format, boolean validate) {
         UrnNbnWithStatus fetechedUrn = backend.dataAccessService().urnByRegistrarCodeAndDocumentCode(urnNbn.getRegistrarCode(),
                 urnNbn.getDocumentCode(), true);
+        //System.out.println("RepositoryImpl.getRecord: fetched urn " + fetechedUrn);
         switch (fetechedUrn.getStatus()) {
             case DEACTIVATED:
                 // TODO: before implementng deletedRecord will even deactivated dig docs available

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.dto.UrnNbn;
 import org.joda.time.DateTime;
 
 import cz.nkp.urnnbn.oaipmhprovider.ErrorCode;
@@ -43,13 +44,13 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
 
     @Override
     String[] getRequiredArguments() {
-        String[] result = { METADATA_PREFIX };
+        String[] result = {METADATA_PREFIX};
         return result;
     }
 
     @Override
     String[] getOptionalArguments() {
-        String[] result = { FROM, UNTIL, SET };
+        String[] result = {FROM, UNTIL, SET};
         return result;
     }
 
@@ -71,21 +72,31 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
     }
 
     private void createResponseForFirstRecords() throws OaiException, IOException {
-        String metadataPrefix = getArgumentValueIfPresent(METADATA_PREFIX);
-        MetadataFormat format = Parser.parseMetadataPrefix(metadataPrefix);
+        MetadataFormat format = getFormat();
         ListConditions conditions = getCriteria();
         logger.log(Level.FINE, "getting records from repository");
         // Set<Record> records = getRecords(format, conditions);
-        Set<Record> identifiers = getRecordsWithCriteria(format, conditions);
+        Set<UrnNbn> urns = getRecordsWithCriteria(format, conditions);
         logger.log(Level.FINE, "building ListRequest");
         // CompleteList request = new CompleteList(records);
-        CompleteList request = new CompleteList(identifiers);
+        CompleteList request = new CompleteList(urns, format);
         logger.log(Level.FINE, "creating RequestSequence");
         ListPart part = new ListPart(request, 0, getResultPartsManager().returnedRecords());
         // logger.log(Level.INFO, "creating new resumptionToken");
         String resumptionToken = getResultPartsManager().registerNextResultPart(part);
         // logger.log(Level.INFO, "resumptionToken: {0}", resumptionToken);
         createResponse(part, resumptionToken);
+    }
+
+    //pozor, ohybame architekturu
+    protected MetadataFormat format = null;
+
+    private MetadataFormat getFormat() throws OaiException {
+        if (format == null) {
+            String metadataPrefix = getArgumentValueIfPresent(METADATA_PREFIX);
+            format = Parser.parseMetadataPrefix(metadataPrefix);
+        }
+        return format;
     }
 
     private ListConditions getCriteria() throws OaiException {
@@ -95,11 +106,11 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
         return ListConditions.instanceOf(set, from, until);
     }
 
-    private Set<Record> getRecordsWithCriteria(MetadataFormat format, ListConditions conditions) throws OaiException {
+    private Set<UrnNbn> getRecordsWithCriteria(MetadataFormat format, ListConditions conditions) throws OaiException {
         String setSpec = conditions.getSetSpec();
         DateStamp from = conditions.getFrom();
         DateStamp until = conditions.getUntil();
-        Set<Record> records = getRecordsWithCriteria(format, setSpec, from, until);
+        Set<UrnNbn> records = getRecordsWithCriteria(format, setSpec, from, until);
         if (records.isEmpty()) {
             throw new OaiException(ErrorCode.noRecordsMatch, " no records for format: " + format.toString() + ", setSpec: " + setSpec + ", from: "
                     + from + ", until: " + until);
@@ -107,12 +118,12 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
         return records;
     }
 
-    private Set<Record> getRecordsWithCriteria(MetadataFormat format, String setSpec, DateStamp from, DateStamp until) {
+    private Set<UrnNbn> getRecordsWithCriteria(MetadataFormat format, String setSpec, DateStamp from, DateStamp until) {
         Repository repository = config.getRepository();
         if (setSpec == null) {
-            return repository.getRecords(format, from, until);
+            return repository.getUrns(format, from, until);
         } else {
-            return repository.getRecords(format, setSpec, from, until);
+            return repository.getUrns(format, setSpec, from, until);
         }
     }
 
@@ -126,9 +137,13 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
     }
 
     private void createResponse(ListPart part, String resumptionToken) throws IOException {
-        for (Record record : part.getRecords()) {
-            appendRecordDataToRoot(record);
+        //System.out.println("Creating response for part with cursor " + part.cursor() + " and size " + part.getRecords().size());
+        //int counter = 0;
+        for (UrnNbn record : part.getRecords()) {
+            appendRecordDataToRoot(record, part.getMetadataFormat());
+            //counter++;
         }
+        //System.out.println("Appended " + counter + " records");
         // for (Identifier item : part.getRecords()) {
         // appendDataToRoot(item);
         // }
@@ -140,7 +155,17 @@ public abstract class AbstractListResponse extends OaiVerbResponse {
 
     abstract ResumptionTokenManager getResultPartsManager();
 
-    // abstract void appendDataToRoot(Identifier itemId) throws IOException;
+    abstract void appendRecordDataToRoot(UrnNbn urnNbn, MetadataFormat format) throws IOException;
 
-    abstract void appendRecordDataToRoot(Record record) throws IOException;
+    protected Record convertToRepositoryRecord(UrnNbn urnNbn, MetadataFormat format) {
+/*        MetadataFormat format = null;
+        try {
+            format = getFormat();
+        } catch (OaiException e) {
+            //tohle uz by se ne melo dit, parsovani formatu probehlo driv
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }*/
+        return config.getRepository().getRecord(urnNbn, format, false);
+    }
 }

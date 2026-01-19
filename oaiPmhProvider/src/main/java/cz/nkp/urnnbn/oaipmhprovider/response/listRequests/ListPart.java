@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.oaipmhprovider.repository.MetadataFormat;
 import org.joda.time.DateTime;
 
 import cz.nkp.urnnbn.oaipmhprovider.conf.OaiPmhConfiguration;
@@ -47,8 +49,8 @@ public class ListPart {
         return list.totalSize();
     }
 
-    public List<Record> getRecords() {
-        return list.getIdentifiers(cursor, nextCursor(), maxRecordsReturned);
+    public List<UrnNbn> getRecords() {
+        return list.getUrnNbns(cursor, nextCursor(), maxRecordsReturned);
     }
 
     public int cursor() {
@@ -61,5 +63,9 @@ public class ListPart {
 
     public DateTime getValidUntil() {
         return validUntil;
+    }
+
+    public MetadataFormat getMetadataFormat() {
+        return list.getFormat();
     }
 }

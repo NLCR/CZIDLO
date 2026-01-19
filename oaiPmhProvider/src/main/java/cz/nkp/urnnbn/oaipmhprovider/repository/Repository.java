@@ -4,6 +4,8 @@
  */
 package cz.nkp.urnnbn.oaipmhprovider.repository;
 
+import cz.nkp.urnnbn.core.dto.UrnNbn;
+
 import java.util.Set;
 
 /**
@@ -14,9 +16,11 @@ public interface Repository {
 
     public static final String REGISTRAR_SET_PREFIX = "registrar:";
 
-    public Set<Record> getRecords(MetadataFormat format, DateStamp from, DateStamp until);
+    public Set<UrnNbn> getUrns(MetadataFormat format, DateStamp from, DateStamp until);
 
-    public Set<Record> getRecords(MetadataFormat format, String setSpec, DateStamp from, DateStamp until);
+    public Set<UrnNbn> getUrns(MetadataFormat format, String setSpec, DateStamp from, DateStamp until);
+
+    public Record getRecord(UrnNbn urn, MetadataFormat format, boolean validate);
 
     public Record getRecord(Identifier item, MetadataFormat format, boolean validate);
 

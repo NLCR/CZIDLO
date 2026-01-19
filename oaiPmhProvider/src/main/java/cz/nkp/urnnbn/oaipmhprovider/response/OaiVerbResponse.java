@@ -29,11 +29,11 @@ public abstract class OaiVerbResponse extends OaiResponse {
 
     public Document build() throws OaiException, IOException {
         checkParameters();
-        logger.fine("parameters checked");
+        logger.info("parameters checked");
         buildVerbHeader();
-        logger.fine("header built");
+        logger.info("header built");
         createResponse();
-        logger.fine("response built");
+        logger.info("response built");
         return doc;
     }
 
