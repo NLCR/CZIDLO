@@ -63,7 +63,8 @@ public class IndexationJob extends AbstractJob {
     public static final String PARAM_MODIFICATION_DATE_TO = "mod_date_to";
     //possiblly other paramethers
 
-    private final DateFormat dateFormat = new SimpleDateFormat("d. M. yyyy");
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     private SolrIndexer solrIndexer;
 
@@ -83,7 +84,6 @@ public class IndexationJob extends AbstractJob {
             logger.info("Executing " + IndexationJob.class.getSimpleName());
 
             IndexerConfig config = new IndexerConfig();
-            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("d. M. yyyy");
 
             // czidlo api
             config.setCzidloApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_CZIDLO_API_BASE_URL));

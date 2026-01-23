@@ -350,7 +350,7 @@ public class ProcessManagerImpl implements ProcessManager {
 
     private JobDetail buildJobDetail(Process process) {
         String id = process.getId().toString();
-        // System.err.println(parematersToString(process.getParams()));
+        System.err.println(parematersToString(process.getParams()));
         String[] params = process.getParams();
         int i = 0;
         switch (process.getType()) {
