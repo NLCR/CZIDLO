@@ -223,20 +223,24 @@ public class UrnNbnCsvExportJob extends AbstractJob {
                 if (export.getSubtitle() != null) {
                     builder.append(" (").append(export.getSubtitle()).append(')');
                 }
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             case MONOGRAPH_VOLUME:
             case PERIODICAL_VOLUME:
                 builder.append(export.getTitle());
                 builder.append(", ").append(export.getVolumeTitle());
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             case PERIODICAL_ISSUE:
                 builder.append(export.getTitle());
                 builder.append(", ").append(export.getVolumeTitle());
                 builder.append(", ").append(export.getIssueTitle());
-                return builder.toString();
+                return escapeQuotes(builder.toString());
             default:
                 return "";
         }
+    }
+
+    private String escapeQuotes(String string) {
+        return string.replace("\"", "\"\"");
     }
 
 }
