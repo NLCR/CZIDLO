@@ -57,7 +57,7 @@ public class UserManagerMockInMemory implements UserManager {
 
     @Override
     public UserDetails getUser(String userPerformingThisOperation, String login) throws UnknownRecordException, AccessRightException {
-        throw new RuntimeException("Not implemented yet");
+        throw new RuntimeException("UserManagerMockInMemory: Not implemented yet");
     }
 
     @Override

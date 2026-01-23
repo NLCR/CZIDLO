@@ -1,5 +1,6 @@
 package cz.nkp.urnnbn.czidlo_web_api.api.processes.process_manager;
 
+import cz.nkp.urnnbn.core.CountryCode;
 import cz.nkp.urnnbn.core.dto.User;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.AccessRightException;
 import cz.nkp.urnnbn.czidlo_web_api.api.exceptions.InvalidStateException;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,78 @@ public class ProcessManagerImpl implements ProcessManager {
 
     @Override
     public Process scheduleNewProcess(String login, ProcessType type, Map<String, Object> processParams) {
-        throw new RuntimeException("Not implemented");
+        //print process params
+        for (String key : processParams.keySet()) {
+            System.out.println("Process param: key=\"" + key + "\", value=\"" + processParams.get(key) + "\"");
+        }
+        cz.nkp.urnnbn.processmanager.core.Process process = rawProcessManager().scheduleNewProcess(login, toRawProcessType(type), toRawProcessParams(type, processParams));
+        return rawProcessToProcess(process);
+        //throw new RuntimeException("ProcessManagerImpl: Not implemented");
+    }
+
+    private cz.nkp.urnnbn.processmanager.core.ProcessType toRawProcessType(ProcessType type) {
+        switch (type) {
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                return cz.nkp.urnnbn.processmanager.core.ProcessType.REGISTRARS_URN_NBN_CSV_EXPORT;
+            case OAI_ADAPTER:
+                return cz.nkp.urnnbn.processmanager.core.ProcessType.OAI_ADAPTER;
+            case DI_URL_AVAILABILITY_CHECK:
+                return cz.nkp.urnnbn.processmanager.core.ProcessType.DI_URL_AVAILABILITY_CHECK;
+            case INDEXATION:
+                return cz.nkp.urnnbn.processmanager.core.ProcessType.INDEXATION;
+            default:
+                throw new IllegalArgumentException("Unknown process type: " + type);
+        }
+    }
+
+    private String[] toRawProcessParams(ProcessType type, Map<String, Object> paramMap) {
+        //see cz.nkp.urnnbn.processmanager.control.ProcessManagerImpl.buildJobDetail()
+        List<String> paramList = new ArrayList<>();
+        switch (type) {
+            case OAI_ADAPTER:
+                // TODO: implement
+                return paramList.toArray(new String[0]);
+            case REGISTRARS_URN_NBN_CSV_EXPORT:
+                paramList.add(getParam("registrationDateFrom", paramMap));
+                paramList.add(getParam("registrationDateTo", paramMap));
+                paramList.add(getParam("registrarCodes", paramMap)); //kody registratoru oddelene carkou
+                paramList.add(getParam("intEntTypes", paramMap)); //typy entit oddelene carkou
+                paramList.add(getParam("withMissingCnbOnly", paramMap));
+                paramList.add(getParam("withMissingIssnOnly", paramMap));
+                paramList.add(getParam("withMissingIsbnOnly", paramMap));
+                paramList.add(getParam("returnActive", paramMap));
+                paramList.add(getParam("returnDeactivated", paramMap));
+                paramList.add(getParam("deactivationDateFrom", paramMap));
+                paramList.add(getParam("deactivationDateTo", paramMap));
+                paramList.add(getParam("exportNumOfDigInstances", paramMap)); //mody registrace odd
+                paramList.add(CountryCode.getCode()); //country code hardcoded to CZ
+                return paramList.toArray(new String[0]);
+            case DI_URL_AVAILABILITY_CHECK:
+                paramList.add(getParam("registrarCodes", paramMap)); //kody registratoru oddelene carkou
+                paramList.add(getParam("intEntTypes", paramMap)); //typy entit oddelene carkou
+                paramList.add(getParam("urnNbnStatesIncludeActive", paramMap));
+                paramList.add(getParam("urnNbnStatesIncludeDeactivated", paramMap));
+                paramList.add(getParam("diStatesIncludeActive", paramMap));
+                paramList.add(getParam("diStatesIncludeDeactivated", paramMap));
+                paramList.add(getParam("diDsFrom", paramMap));
+                paramList.add(getParam("diDsTo", paramMap));
+                paramList.add(CountryCode.getCode()); //country code hardcoded to CZ
+                return paramList.toArray(new String[0]);
+            case INDEXATION:
+                paramList.add(getParam("mod_date_from", paramMap));
+                paramList.add(getParam("mod_date_to", paramMap));
+                return paramList.toArray(new String[0]);
+            default:
+                throw new IllegalArgumentException("Unknown process type: " + type);
+        }
+    }
+
+    private String getParam(String key, Map<String, Object> processParams) {
+        Object value = processParams.get(key);
+        if (value == null) {
+            return null;
+        }
+        return value.toString();
     }
 
     @Override
