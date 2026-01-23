@@ -30,9 +30,17 @@ public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
     static final String OAI_ADAPTER_DD_REGISTRATION_XSD_URL = "process.oaiAdapter.digDocRegistrationXsdUrl";
     static final String OAI_ADAPTER_DI_IMPORT_XSD_URL = "process.oaiAdapter.digInstImportXsdUrl";
     //SOLR INDEXER
-    static String SOLR_INDEXER_SOLR_BASE_URL = "process.solrIndexer.baseUrl";
+    /*static String SOLR_INDEXER_SOLR_BASE_URL = "process.solrIndexer.baseUrl";
     static String SOLR_INDEXER_SOLR_COLLECTION = "process.solrIndexer.collection";
     static String SOLR_INDEXER_SOLR_USE_HTTPS = "process.solrIndexer.useHttps";
     static String SOLR_INDEXER_SOLR_LOGIN = "process.solrIndexer.login";
-    static String SOLR_INDEXER_SOLR_PASSWORD = "process.solrIndexer.password";
+    static String SOLR_INDEXER_SOLR_PASSWORD = "process.solrIndexer.password";*/
+    //INDEXER
+    static String INDEXER_ES_BASE_URL = "process.indexer.es.baseUrl";
+    static String INDEXER_ES_INDEX_NAME = "process.indexer.es.index";
+    static String INDEXER_ES_LOGIN = "process.indexer.es.login";
+    static String INDEXER_ES_PASSWORD = "process.indexer.es.password";
+    static String INDEXER_DB_URL = "process.indexer.db.url";
+    static String INDEXER_DB_LOGIN = "process.indexer.db.login";
+    static String INDEXER_DB_PASSWORD = "process.indexer.db.password";
 }

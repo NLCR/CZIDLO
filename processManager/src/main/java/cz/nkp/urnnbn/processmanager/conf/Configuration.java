@@ -41,12 +41,21 @@ public class Configuration {
     private static String oaiAdapterDigDocRegistrationXsdUrl;
     private static String oaiAdapterDigInstImportXsdUrl;
     //solr indexer
-    private static String solrIndexerSolrBaseUrl;
+    /*private static String solrIndexerSolrBaseUrl;
     private static String solrIndexerSolrCollection;
     private static Boolean solrIndexerSolrUseHttps;
     private static String solrIndexerSolrLogin;
     private static String solrIndexerSolrPassword;
-    private static File solrIndexerCzidloToSolrXslt;
+    private static File solrIndexerCzidloToSolrXslt;*/
+
+    private static String indexerEsBaseUrl;
+    private static String indexerEsIndexName;
+    private static String indexerEsLogin;
+    private static String indexerEsPassword;
+
+    private static String indexerCzidloDbUrl;
+    private static String indexerCzidloDbLogin;
+    private static String indexerCzidloDbPassword;
 
     public static void init(InputStream in) throws IOException {
         init(new PropertyLoader(in));
@@ -67,11 +76,21 @@ public class Configuration {
         oaiAdapterDigDocRegistrationXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DD_REGISTRATION_XSD_URL);
         oaiAdapterDigInstImportXsdUrl = loader.loadString(PropertyKeys.OAI_ADAPTER_DI_IMPORT_XSD_URL);
         // solr indexer
-        solrIndexerSolrBaseUrl = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_BASE_URL);
+        /*solrIndexerSolrBaseUrl = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_BASE_URL);
         solrIndexerSolrCollection = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_COLLECTION);
         solrIndexerSolrUseHttps = loader.loadBoolean(PropertyKeys.SOLR_INDEXER_SOLR_USE_HTTPS, false);
         solrIndexerSolrLogin = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_LOGIN);
-        solrIndexerSolrPassword = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_PASSWORD);
+        solrIndexerSolrPassword = loader.loadString(PropertyKeys.SOLR_INDEXER_SOLR_PASSWORD);*/
+
+        //indexer
+        indexerEsBaseUrl = loader.loadString(PropertyKeys.INDEXER_ES_BASE_URL);
+        indexerEsIndexName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_NAME);
+        indexerEsLogin = loader.loadString(PropertyKeys.INDEXER_ES_LOGIN);
+        indexerEsPassword = loader.loadString(PropertyKeys.INDEXER_ES_PASSWORD);
+
+        indexerCzidloDbUrl = loader.loadString(PropertyKeys.INDEXER_DB_URL);
+        indexerCzidloDbLogin = loader.loadString(PropertyKeys.INDEXER_DB_LOGIN);
+        indexerCzidloDbPassword = loader.loadString(PropertyKeys.INDEXER_DB_PASSWORD);
 
         /*IndexerConfig indexerConfig = new IndexerConfig();
         indexerConfig.setCzidloApiBaseUrl(czidloApiBaseUrl);
@@ -81,10 +100,10 @@ public class Configuration {
         Services.init(new PostgresPooledConnector(), null);
     }
 
-    public static void initFileResources(File czidloToSolrXslt) {
+    /*public static void initFileResources(File czidloToSolrXslt) {
         logger.info("initFileResources");
         Configuration.solrIndexerCzidloToSolrXslt = czidloToSolrXslt;
-    }
+    }*/
 
     public static File getJobsDir() {
         return jobsDir;
@@ -110,7 +129,7 @@ public class Configuration {
         return czidloApiBaseUrl;
     }
 
-    public static String getSolrIndexerSolrBaseUrl() {
+    /*public static String getSolrIndexerSolrBaseUrl() {
         return solrIndexerSolrBaseUrl;
     }
 
@@ -132,6 +151,33 @@ public class Configuration {
 
     public static String getSolrXsltFilename() {
         return solrIndexerCzidloToSolrXslt.getAbsolutePath();
+    }*/
+
+    public static String getIndexerEsBaseUrl() {
+        return indexerEsBaseUrl;
     }
 
+    public static String getIndexerEsIndexName() {
+        return indexerEsIndexName;
+    }
+
+    public static String getIndexerEsLogin() {
+        return indexerEsLogin;
+    }
+
+    public static String getIndexerEsPassword() {
+        return indexerEsPassword;
+    }
+
+    public static String getIndexerCzidloDbUrl() {
+        return indexerCzidloDbUrl;
+    }
+
+    public static String getIndexerCzidloDbLogin() {
+        return indexerCzidloDbLogin;
+    }
+
+    public static String getIndexerCzidloDbPassword() {
+        return indexerCzidloDbPassword;
+    }
 }

@@ -403,12 +403,20 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(AbstractJob.PARAM_PROCESS_TYPE, process.getType().toString())//
                         .usingJobData(AbstractJob.PARAM_OWNER_LOGIN, process.getOwnerLogin())//
                         .usingJobData(IndexationJob.PARAM_CZIDLO_API_BASE_URL, Configuration.getCzidloApiBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
+                        /*.usingJobData(IndexationJob.PARAM_SOLR_BASE_URL, Configuration.getSolrIndexerSolrBaseUrl())//
                         .usingJobData(IndexationJob.PARAM_SOLR_COLLECTION, Configuration.getSolrIndexerSolrCollection())
                         .usingJobData(IndexationJob.PARAM_SOLR_USE_HTTPS, Configuration.getSolrIndexerSolrUseHttps())
                         .usingJobData(IndexationJob.PARAM_SOLR_LOGIN, Configuration.getSolrIndexerSolrLogin())
                         .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrIndexerSolrPassword())
-                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())
+                        .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())*/
+                        .usingJobData(IndexationJob.PARAM_ES_BASE_URL, Configuration.getIndexerEsBaseUrl())//
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_NAME, Configuration.getIndexerEsIndexName())
+                        .usingJobData(IndexationJob.PARAM_ES_LOGIN, Configuration.getIndexerEsLogin())
+                        .usingJobData(IndexationJob.PARAM_ES_PASSWORD, Configuration.getIndexerEsPassword())
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_URL, Configuration.getIndexerCzidloDbUrl())
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_LOGIN, Configuration.getIndexerCzidloDbLogin())
+                        .usingJobData(IndexationJob.PARAM_CZIDLO_DB_PASSWORD, Configuration.getIndexerCzidloDbPassword())//
+
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_FROM, params[i++])//
                         .usingJobData(IndexationJob.PARAM_MODIFICATION_DATE_TO, params[i++])//
                         /*

@@ -1,17 +1,21 @@
 package cz.nkp.urnnbn.indexer.es;
 
 import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
+import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
 import cz.nkp.urnnbn.indexer.Counters;
 import cz.nkp.urnnbn.indexer.DataProvider;
 import cz.nkp.urnnbn.indexer.IndexerConfig;
 import cz.nkp.urnnbn.indexer.ProgressListener;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrException;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class EsIndexer {
@@ -19,7 +23,11 @@ public class EsIndexer {
     private static final Logger logger = Logger.getLogger(EsIndexer.class.getName());
 
     private final DataProvider dataProvider;
+
+    //status info
+    private boolean stopped = false;
     private ProgressListener progressListener;
+    private long initTime;
 
     //helpers
     private CzidloApiConnector czidloApiConnector = null;
@@ -29,6 +37,7 @@ public class EsIndexer {
     private String dbPassword = null;
 
     public EsIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
+        long start = System.currentTimeMillis();
         this.dataProvider = dataProvider;
         String baseUrl = config.getEsApiBaseUrl();
         String login = config.getEsApiLogin();
@@ -45,6 +54,7 @@ public class EsIndexer {
         this.dbUrl = config.getDbUrl();
         this.dbLogin = config.getDbLogin();
         this.dbPassword = config.getDbPassword();
+        this.initTime = System.currentTimeMillis() - start;
     }
 
     public void close() {
@@ -106,6 +116,43 @@ public class EsIndexer {
         }
     }
 
+    public void indexDocuments(DateTime from, DateTime to) {
+        long start = System.currentTimeMillis();
+        List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
+        Counters counters = new Counters(digitalDocuments.size());
+        report("Processing " + counters.getFound() + " records");
+        //int limit = 3;
+        report("==============================");
+        for (DigitalDocument doc : digitalDocuments) {
+            if (stopped) {
+                report(" stopped ");
+                break;
+            }
+            indexDocument(doc.getId(), counters, false);
+        }
+        commit(); //one explicit commit at the very end
+        report(" ");
+
+        report("Summary");
+        report("=====================================================");
+        report(" records found    : " + counters.getFound());
+        report(" records processed: " + counters.getProcessed());
+        report(" records indexed  : " + counters.getIndexed());
+        report(" records erroneous: " + counters.getErrors());
+        report(" initialization duration: " + formatTime(initTime));
+        report(" records processing duration: " + formatTime(System.currentTimeMillis() - start));
+        if (progressListener != null) {
+            progressListener.onFinished(counters.getProcessed(), counters.getFound());
+        }
+    }
+
+    private String formatTime(long millis) {
+        long hours = millis / (60 * 60 * 1000);
+        long minutes = millis / (60 * 1000) - hours * 60;
+        long seconds = (millis / 1000) % 60;
+        return String.format("%d:%02d:%02d", hours, minutes, seconds);
+    }
+
     private void report(String message) {
         //reportLogger.report(message);
         System.out.println(message);
@@ -116,4 +163,16 @@ public class EsIndexer {
         //reportLogger.report(message, e);
     }
 
+    public void stop() {
+        this.stopped = true;
+    }
+
+    private void commit() {
+        //nothing
+        /*try {
+            solrConnector.commit();
+        } catch (SolrServerException | IOException e) {
+            report(" Solr server error while commiting", e);
+        }*/
+    }
 }
