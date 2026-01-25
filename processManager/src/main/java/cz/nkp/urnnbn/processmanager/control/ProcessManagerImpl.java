@@ -534,6 +534,9 @@ public class ProcessManagerImpl implements ProcessManager {
     public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException,
             InvalidStateException {
         Process process = processDao.getProcess(processId);
+        if (process.getState() != ProcessState.SCHEDULED) {
+            throw new InvalidStateException(processId, process.getState());
+        }
         // remove from queue
         boolean removedFromQueue = false;
         if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
