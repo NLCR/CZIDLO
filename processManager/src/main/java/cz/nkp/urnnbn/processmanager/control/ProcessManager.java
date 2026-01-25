@@ -108,4 +108,10 @@ public interface ProcessManager {
      * @throws InvalidStateException  If process is in RUNNING or SCHEDULED state
      */
     public void deleteProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException;
+
+    /**
+     * Shuts down the process manager immediately, killing all running jobs.
+     */
+    public void shutdown();
+
 }

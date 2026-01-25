@@ -610,4 +610,31 @@ public class ProcessManagerImpl implements ProcessManager {
         String log = String.format("Deleted process %s of user %s with id: %d.", process.getType(), process.getOwnerLogin(), processId);
         AdminLogger.getLogger().info(log);
     }
+
+    public void shutdown() {
+        logger.info("Shutting down Process Manager...");
+        Scheduler scheduler = this.scheduler;
+        this.scheduler = null; // prevent další použití během shutdownu
+
+        if (scheduler != null) {
+            try {
+                if (!scheduler.isShutdown()) {
+                    // Volitelné: nejdřív zastavit nové spouštění triggerů
+                    scheduler.standby();
+
+                    // Řízené ukončení – počká na doběh jobů
+                    scheduler.shutdown(true);
+                }
+            } catch (SchedulerException e) {
+                logger.log(Level.SEVERE, "Failed to shutdown Quartz scheduler", e);
+            }
+        }
+    }
+
+    public static synchronized void shutdownInstance() {
+        if (instance != null) {
+            instance.shutdown();
+            instance = null;
+        }
+    }
 }
