@@ -40,10 +40,12 @@ public class EsIndexer {
         String baseUrl = config.getEsApiBaseUrl();
         String login = config.getEsApiLogin();
         String password = config.getEsApiPassword();
-        String index = config.getEsApiIndexName();
+        String indexSearch = config.getEsApiIndexSearchName();
+        String indexAssign = config.getEsApiIndexAssignName();
+        String indexResolve = config.getEsApiIndexResolveName();
 
         logger.info("Initializing Elasticsearch client for URL: " + baseUrl);
-        this.esConnector = new EsConnector(baseUrl, login, password, index);
+        this.esConnector = new EsConnector(baseUrl, login, password, indexSearch, indexAssign, indexResolve);
         this.czidloApiConnector = new CzidloApiConnector(
                 config.getCzidloApiBaseUrl(),
                 null,

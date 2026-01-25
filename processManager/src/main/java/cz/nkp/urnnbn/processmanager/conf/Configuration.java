@@ -49,9 +49,11 @@ public class Configuration {
     private static File solrIndexerCzidloToSolrXslt;*/
 
     private static String indexerEsBaseUrl;
-    private static String indexerEsIndexName;
     private static String indexerEsLogin;
     private static String indexerEsPassword;
+    private static String indexerEsIndexSearchName;
+    private static String indexerEsIndexAssignName;
+    private static String indexerEsIndexResolveName;
 
     private static String indexerCzidloDbUrl;
     private static String indexerCzidloDbLogin;
@@ -84,9 +86,11 @@ public class Configuration {
 
         //indexer
         indexerEsBaseUrl = loader.loadString(PropertyKeys.INDEXER_ES_BASE_URL);
-        indexerEsIndexName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_NAME);
         indexerEsLogin = loader.loadString(PropertyKeys.INDEXER_ES_LOGIN);
         indexerEsPassword = loader.loadString(PropertyKeys.INDEXER_ES_PASSWORD);
+        indexerEsIndexSearchName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_SEARCH_NAME);
+        indexerEsIndexAssignName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_ASSIGN_NAME);
+        indexerEsIndexResolveName = loader.loadString(PropertyKeys.INDEXER_ES_INDEX_RESOLVE_NAME);
 
         indexerCzidloDbUrl = loader.loadString(PropertyKeys.INDEXER_DB_URL);
         indexerCzidloDbLogin = loader.loadString(PropertyKeys.INDEXER_DB_LOGIN);
@@ -157,8 +161,16 @@ public class Configuration {
         return indexerEsBaseUrl;
     }
 
-    public static String getIndexerEsIndexName() {
-        return indexerEsIndexName;
+    public static String getIndexerEsIndexSearchName() {
+        return indexerEsIndexSearchName;
+    }
+
+    public static String getIndexerEsIndexAssignName() {
+        return indexerEsIndexAssignName;
+    }
+
+    public static String getIndexerEsIndexResolveName() {
+        return indexerEsIndexResolveName;
     }
 
     public static String getIndexerEsLogin() {

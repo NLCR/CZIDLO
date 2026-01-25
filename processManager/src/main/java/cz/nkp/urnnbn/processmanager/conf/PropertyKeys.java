@@ -37,9 +37,11 @@ public class PropertyKeys extends cz.nkp.urnnbn.config.PropertyKeys {
     static String SOLR_INDEXER_SOLR_PASSWORD = "process.solrIndexer.password";*/
     //INDEXER
     static String INDEXER_ES_BASE_URL = "process.indexer.es.baseUrl";
-    static String INDEXER_ES_INDEX_NAME = "process.indexer.es.index";
     static String INDEXER_ES_LOGIN = "process.indexer.es.login";
     static String INDEXER_ES_PASSWORD = "process.indexer.es.password";
+    static String INDEXER_ES_INDEX_SEARCH_NAME = "process.indexer.es.index_search";
+    static String INDEXER_ES_INDEX_ASSIGN_NAME = "process.indexer.es.index_assign";
+    static String INDEXER_ES_INDEX_RESOLVE_NAME = "process.indexer.es.index_resolve";
     static String INDEXER_DB_URL = "process.indexer.db.url";
     static String INDEXER_DB_LOGIN = "process.indexer.db.login";
     static String INDEXER_DB_PASSWORD = "process.indexer.db.password";

@@ -60,9 +60,11 @@ public abstract class ApplicationConfiguration {
             indexerConfig.setSolrApiPassword(loader.loadString(PropertyKeys.INDEXER_SOLR_PASSWORD));
             //ES
             indexerConfig.setEsApiBaseUrl(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_BASE_URL));
-            indexerConfig.setEsApiIndexName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_NAME));
             indexerConfig.setEsApiLogin(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_LOGIN));
             indexerConfig.setEsApiPassword(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_PASSWORD));
+            indexerConfig.setEsApiIndexSearchName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_SEARCH_NAME));
+            indexerConfig.setEsApiIndexAssignName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_ASSIGN_NAME));
+            indexerConfig.setEsApiIndexResolveName(loader.loadStringOrNull(PropertyKeys.INDEXER_ES_INDEX_RESOLVE_NAME));
             //DB
             indexerConfig.setDbUrl(loader.loadString(PropertyKeys.INDEXER_DB_URL));
             indexerConfig.setDbLogin(loader.loadString(PropertyKeys.INDEXER_DB_LOGIN));

@@ -19,7 +19,9 @@ public class IndexerConfig {
     private String esApiBaseUrl;
     private String esApiLogin;
     private String esApiPassword;
-    private String esApiIndexName;
+    private String esApiIndexSearchName;
+    private String esApiIndexAssignName;
+    private String esApiIndexResolveName;
     // DB
     private String dbUrl;
     private String dbLogin;
@@ -124,12 +126,28 @@ public class IndexerConfig {
         this.esApiPassword = esApiPassword;
     }
 
-    public String getEsApiIndexName() {
-        return esApiIndexName;
+    public String getEsApiIndexSearchName() {
+        return esApiIndexSearchName;
     }
 
-    public void setEsApiIndexName(String esApiIndexName) {
-        this.esApiIndexName = esApiIndexName;
+    public void setEsApiIndexSearchName(String esApiIndexSearchName) {
+        this.esApiIndexSearchName = esApiIndexSearchName;
+    }
+
+    public String getEsApiIndexAssignName() {
+        return esApiIndexAssignName;
+    }
+
+    public void setEsApiIndexAssignName(String esApiIndexAssignName) {
+        this.esApiIndexAssignName = esApiIndexAssignName;
+    }
+
+    public String getEsApiIndexResolveName() {
+        return esApiIndexResolveName;
+    }
+
+    public void setEsApiIndexResolveName(String esApiIndexResolveName) {
+        this.esApiIndexResolveName = esApiIndexResolveName;
     }
 
     public String getDbUrl() {

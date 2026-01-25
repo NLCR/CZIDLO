@@ -410,9 +410,12 @@ public class ProcessManagerImpl implements ProcessManager {
                         .usingJobData(IndexationJob.PARAM_SOLR_PASSWORD, Configuration.getSolrIndexerSolrPassword())
                         .usingJobData(IndexationJob.PARAM_XSL_FILE, Configuration.getSolrXsltFilename())*/
                         .usingJobData(IndexationJob.PARAM_ES_BASE_URL, Configuration.getIndexerEsBaseUrl())//
-                        .usingJobData(IndexationJob.PARAM_ES_INDEX_NAME, Configuration.getIndexerEsIndexName())
                         .usingJobData(IndexationJob.PARAM_ES_LOGIN, Configuration.getIndexerEsLogin())
                         .usingJobData(IndexationJob.PARAM_ES_PASSWORD, Configuration.getIndexerEsPassword())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_SEARCH_NAME, Configuration.getIndexerEsIndexSearchName())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_ASSIGN_NAME, Configuration.getIndexerEsIndexAssignName())
+                        .usingJobData(IndexationJob.PARAM_ES_INDEX_RESOLVE_NAME, Configuration.getIndexerEsIndexResolveName())
+
                         .usingJobData(IndexationJob.PARAM_CZIDLO_DB_URL, Configuration.getIndexerCzidloDbUrl())
                         .usingJobData(IndexationJob.PARAM_CZIDLO_DB_LOGIN, Configuration.getIndexerCzidloDbLogin())
                         .usingJobData(IndexationJob.PARAM_CZIDLO_DB_PASSWORD, Configuration.getIndexerCzidloDbPassword())//

@@ -69,9 +69,11 @@ public class IndexationJob extends AbstractJob {
 
     //elasticsearch
     public static final String PARAM_ES_BASE_URL = "esBaseUrl";
-    public static final String PARAM_ES_INDEX_NAME = "esIndexName";
     public static final String PARAM_ES_LOGIN = "esLogin";
     public static final String PARAM_ES_PASSWORD = "esPassword";
+    public static final String PARAM_ES_INDEX_SEARCH_NAME = "esIndexSearchName";
+    public static final String PARAM_ES_INDEX_ASSIGN_NAME = "esIndexAssignName";
+    public static final String PARAM_ES_INDEX_RESOLVE_NAME = "esIndexResolveName";
 
     //database
     public static final String PARAM_CZIDLO_DB_URL = "dbUrl";
@@ -130,8 +132,12 @@ public class IndexationJob extends AbstractJob {
             //elasticsearch
             config.setEsApiBaseUrl((String) context.getMergedJobDataMap().get(PARAM_ES_BASE_URL));
             logger.info("Elasticsearch base url: " + config.getEsApiBaseUrl());
-            config.setEsApiIndexName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_NAME));
-            logger.info("Elasticsearch index name: " + config.getEsApiIndexName());
+            config.setEsApiIndexSearchName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_SEARCH_NAME));
+            logger.info("ES index (search) name: " + config.getEsApiIndexSearchName());
+            config.setEsApiIndexAssignName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_ASSIGN_NAME));
+            logger.info("ES index (assign) name: " + config.getEsApiIndexAssignName());
+            config.setEsApiIndexResolveName((String) context.getMergedJobDataMap().get(PARAM_ES_INDEX_RESOLVE_NAME));
+            logger.info("ES index (resolve) name: " + config.getEsApiIndexResolveName());
             config.setEsApiLogin((String) context.getMergedJobDataMap().get(PARAM_ES_LOGIN));
             config.setEsApiPassword((String) context.getMergedJobDataMap().get(PARAM_ES_PASSWORD));
             //logger.info("Elasticsearch login: " + config.getEsApiLogin() + ", password:" +  config.getEsApiPassword());

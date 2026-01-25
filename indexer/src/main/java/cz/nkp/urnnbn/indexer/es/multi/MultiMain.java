@@ -22,6 +22,11 @@ public class MultiMain {
 
     private static final int LOG_EVERY_N_RECORDS = 10000;
 
+    //indexy hardcoded jen pro testování
+    private static final String INDEX_SEARCH = "czidlo_multimain_search_1";
+    private static final String INDEX_RESOLVE = "czidlo_multimain_resolve_1";
+    private static final String INDEX_ASSIGN = "czidlo_multimain_assign_1";
+
     public static void main(String[] args) throws SQLException {
         Properties props = Utils.loadProperties();
 
@@ -38,7 +43,7 @@ public class MultiMain {
                 System.out.println("-------------------");
                 AtomicInteger counterSearching = new AtomicInteger();
                 DataMigrator searchingMigrator = new DataMigrator(conn, mapper, (batch) -> {
-                    indexBatch(elasticClient, Config.INDEX_SEARCH, batch);
+                    indexBatch(elasticClient, INDEX_SEARCH, batch);
                     counterSearching.addAndGet(batch.size());
                     if (counterSearching.get() % LOG_EVERY_N_RECORDS < batch.size()) {
                         System.out.println("Indexed total " + counterSearching.get() + " Searching items so far");
@@ -55,7 +60,7 @@ public class MultiMain {
                 System.out.println("-------------------");
                 AtomicInteger counterAssigning = new AtomicInteger();
                 DataMigrator assigningMigrator = new DataMigrator(conn, mapper, (batch) -> {
-                    indexBatch(elasticClient, Config.INDEX_ASSIGN, batch);
+                    indexBatch(elasticClient, INDEX_ASSIGN, batch);
                     counterAssigning.addAndGet(batch.size());
                     if (counterAssigning.get() % LOG_EVERY_N_RECORDS < batch.size()) {
                         System.out.println("Indexed total " + counterAssigning.get() + " Assigning items so far");
@@ -72,7 +77,7 @@ public class MultiMain {
                 System.out.println("-------------------");
                 AtomicInteger counterResolving = new AtomicInteger();
                 DataMigrator resolvingMigrator = new DataMigrator(conn, mapper, (batch) -> {
-                    indexBatch(elasticClient, Config.INDEX_RESOLVE, batch);
+                    indexBatch(elasticClient, INDEX_RESOLVE, batch);
                     counterResolving.addAndGet(batch.size());
                     if (counterResolving.get() % LOG_EVERY_N_RECORDS < batch.size()) {
                         System.out.println("Indexed total " + counterResolving.get() + " Resolving items so far");

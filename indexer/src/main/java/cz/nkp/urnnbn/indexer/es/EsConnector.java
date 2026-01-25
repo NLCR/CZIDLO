@@ -32,12 +32,15 @@ public class EsConnector {
 
     private static final Logger log = LoggerFactory.getLogger(EsConnector.class);
     private final ElasticsearchClient esClient;
-    @Deprecated
-    private final String index;
+    private final String indexSearch;
+    private final String indexAssign;
+    private final String indexResolve;
 
-    public EsConnector(String baseurl, String login, String password, String index) {
+    public EsConnector(String baseurl, String login, String password, String indexSearch, String indexAssign, String indexResolve) {
         this.esClient = initEsClient(baseurl, login, password);
-        this.index = index;
+        this.indexSearch = indexSearch;
+        this.indexAssign = indexAssign;
+        this.indexResolve = indexResolve;
         /*try {
             esClient.ping();
         } catch (IOException e) {
@@ -75,10 +78,11 @@ public class EsConnector {
             //reportLogger.report("Indexing digital document with internal id: " + ddInternalId);
             DdEsConversionResult conversionResult = dataProvider.convertDigitalDocumentJson(ddInternalId);
             //System.out.println(conversionResult.getSearch());
+
             //index Search
             if (conversionResult.getSearch() != null) {
                 esClient.index(idx -> idx
-                        .index(Config.INDEX_SEARCH)
+                        .index(indexSearch)
                         .id(conversionResult.getSearch().getId())
                         .document(conversionResult.getSearch())
                 );
@@ -87,7 +91,7 @@ public class EsConnector {
             //index Assigning
             if (conversionResult.getAssignment() != null) {
                 esClient.index(idx -> idx
-                        .index(Config.INDEX_ASSIGN)
+                        .index(indexAssign)
                         .id(conversionResult.getAssignment().getId())
                         .document(conversionResult.getAssignment())
                 );
@@ -110,13 +114,13 @@ public class EsConnector {
         //http://localhost:8181/api/v5/resolver/urn:nbn:cz:klg001-00002a
         //System.out.println("Indexing resolvation log: " + forIndexing.toString());
         esClient.index(i -> i
-                .index(Config.INDEX_RESOLVE)
+                .index(indexResolve)
                 .id("" + forIndexing.getInt("id"))
                 .withJson(new StringReader(forIndexing.toString()))
         );
     }
 
-    public void indexJsonString(String jsonString) throws IOException {
+    public void indexJsonStringForSearch(String jsonString) throws IOException {
         //see https://czidlo-api.trinera.cloud/api/v5/digitalDocuments/id/1823067?format=json&digitalInstances=true
         //System.out.println(jsonString);
         JsonObject forIndexing = convertJson(jsonString);
@@ -129,11 +133,11 @@ public class EsConnector {
             return;
         }
         //System.out.println(forIndexing.toString());
-        if (index == null || index.isEmpty()) {
-            throw new RuntimeException("Index name is not set in EsConnector");
+        if (indexSearch == null || indexSearch.isEmpty()) {
+            throw new RuntimeException("Index name is not set for 'index_search' in EsConnector");
         }
         esClient.index(i -> i
-                .index(index)
+                .index(indexSearch)
                 .id("dd_" + forIndexing.getInt("id"))
                 .withJson(new StringReader(forIndexing.toString()))
         );
