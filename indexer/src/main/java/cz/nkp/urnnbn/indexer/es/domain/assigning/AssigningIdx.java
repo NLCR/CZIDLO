@@ -5,26 +5,34 @@ import cz.nkp.urnnbn.indexer.es.domain.DomainIdx;
 import java.time.LocalDateTime;
 
 public class AssigningIdx implements DomainIdx {
-
+    //assigning
+    public String entitytype;
+    public String digitalborn;
     public Long digitaldocumentid;
+
+    //urnnbn
     public String documentcode;
     public String registrarcode;
-    public Long registrarid;
-    public String registrarname;
-    public Long archiverid;
-    public String archivername;
-    public String entitytype;
+    public Boolean active;
     public LocalDateTime registered;
     public LocalDateTime reserved;
     public LocalDateTime deactivated;
     public String deactivationnote;
-    public Boolean active;
+
+    //registrar
+    public Long registrarid;
+
+    //archiver
+    public Long archiverid;
+    public String archivername;
+    public String registrarname;
 
     public static AssigningIdx fromDb(Assigning assigning) {
         AssigningIdx idx = new AssigningIdx();
 
         idx.digitaldocumentid = assigning.id;
         idx.entitytype = assigning.entitytype;
+        idx.digitalborn = assigning.digitalborn;
 
         Assigning.UrnNbn urnNbn = assigning.urnnbn.getFirst();
         idx.documentcode = urnNbn == null ? null : urnNbn.documentcode;
@@ -48,7 +56,7 @@ public class AssigningIdx implements DomainIdx {
 
     @Override
     public String toString() {
-        return "AssigningIdx{" +
+        return "Assigning{" +
                 "digitaldocumentid=" + digitaldocumentid +
                 ", documentcode='" + documentcode + '\'' +
                 ", registrarcode='" + registrarcode + '\'' +
@@ -57,6 +65,7 @@ public class AssigningIdx implements DomainIdx {
                 ", archiverid=" + archiverid +
                 ", archivername='" + archivername + '\'' +
                 ", entitytype='" + entitytype + '\'' +
+                ", digitalborn=" + digitalborn +
                 ", registered=" + registered +
                 ", reserved=" + reserved +
                 ", deactivated=" + deactivated +

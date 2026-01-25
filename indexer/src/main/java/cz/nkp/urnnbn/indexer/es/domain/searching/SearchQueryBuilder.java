@@ -8,6 +8,7 @@ public class SearchQueryBuilder {
                 jsonb_build_object(
                     'urnnbn', urnnbns.json_list,
                     'entitytype', ie.entitytype,
+                    'digitalborn', ie.digitalborn,
                     'otheroriginator', ie.otheroriginator,
             
                     -- Pulling the results from the LATERAL aliases below
@@ -30,7 +31,8 @@ public class SearchQueryBuilder {
                 SELECT jsonb_agg(jsonb_build_object(
             		'registrarcode', u.registrarcode,\s
             		'documentcode', u.documentcode,
-            		'active', u.active
+            		'active', u.active,
+            		'registered', u.registered
             	)) AS json_list
                 FROM urnnbn u
                 WHERE u.digitaldocumentid = dd.id
