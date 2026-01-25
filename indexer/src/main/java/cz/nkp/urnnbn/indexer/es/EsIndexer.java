@@ -87,20 +87,8 @@ public class EsIndexer {
             report(" processing " + urnNbn);
             try {
                 esConnector.indexDocument(ddInternalId, dbUrl, dbLogin, dbPassword);
-                /*String ddCzidloJson = czidloApiConnector.getDigitalDocumentByInternalIdJson(ddInternalId, true);
-                if (ddCzidloJson == null) {
-                    report(" digital document's json record not found, ignoring");
-                    counters.incrementErrors();
-                } else {
-                    report(" converting & indexing");
-                    esConnector.indexJsonString(ddCzidloJson);
-                    report(" indexed");
-                    counters.incrementIndexed();
-                }*/
-            } /*catch (CzidloApiErrorException e) {
-                counters.incrementErrors();
-                report(" CZIDLO API error", e);
-            } */ catch (IOException e) {
+                counters.incrementIndexed();
+            } catch (IOException e) {
                 counters.incrementErrors();
                 report(" I/O error", e);
             } catch (SolrException e) {
@@ -109,6 +97,9 @@ public class EsIndexer {
             } catch (SQLException e) {
                 counters.incrementErrors();
                 report(" SQL error", e);
+            } catch (Throwable e) {
+                counters.incrementErrors();
+                report(" Unexpected error", e);
             }
         }
         if (progressListener != null) {
@@ -118,14 +109,20 @@ public class EsIndexer {
 
     public void indexDocuments(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
+        report(" indexing documents from " + from.toString() + " to " + to.toString());
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
-        //int limit = 3;
+        Integer limit = null; // for testing, set to null for production
+        int iterationCount = 0;
         report("==============================");
         for (DigitalDocument doc : digitalDocuments) {
             if (stopped) {
                 report(" stopped ");
+                break;
+            }
+            if (limit != null && iterationCount++ >= limit) {
+                report(" limit of " + limit + " reached, stopping (for testing purposes) ");
                 break;
             }
             indexDocument(doc.getId(), counters, false);
