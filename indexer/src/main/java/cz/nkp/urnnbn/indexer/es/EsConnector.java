@@ -7,6 +7,7 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
+import cz.nkp.urnnbn.indexer.ReportLogger;
 import cz.nkp.urnnbn.indexer.es.single.DdEsConversionResult;
 import cz.nkp.urnnbn.indexer.es.single.EsDataProvider;
 import jakarta.json.Json;
@@ -67,13 +68,12 @@ public class EsConnector {
         return new ElasticsearchClient(transport);
     }
 
-    public void indexDocument(long ddInternalId, String dbUrl, String dbLogin, String dbPassword) throws IOException, SQLException {
+    public void indexDocument(long ddInternalId, String dbUrl, String dbLogin, String dbPassword, ReportLogger reportLogger) throws IOException, SQLException {
         try (Connection conn = Utils.createConnection(dbUrl, dbLogin, dbPassword)) {
             ObjectMapper mapper = Config.getObjectMapper();
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
-            System.out.println("Starting data provider...");
+            //reportLogger.report("Indexing digital document with internal id: " + ddInternalId);
             DdEsConversionResult conversionResult = dataProvider.convertDigitalDocumentJson(ddInternalId);
-            System.out.println("Finished data provider.");
             //System.out.println(conversionResult.getSearch());
             //index Search
             if (conversionResult.getSearch() != null) {

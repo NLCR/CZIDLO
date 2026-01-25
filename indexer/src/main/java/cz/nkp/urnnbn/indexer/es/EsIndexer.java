@@ -4,11 +4,7 @@ import cz.nkp.urnnbn.apiClient.v5.CzidloApiConnector;
 import cz.nkp.urnnbn.core.dto.DigitalDocument;
 import cz.nkp.urnnbn.core.dto.ResolvationLog;
 import cz.nkp.urnnbn.core.dto.UrnNbn;
-import cz.nkp.urnnbn.indexer.Counters;
-import cz.nkp.urnnbn.indexer.DataProvider;
-import cz.nkp.urnnbn.indexer.IndexerConfig;
-import cz.nkp.urnnbn.indexer.ProgressListener;
-import org.apache.solr.client.solrj.SolrServerException;
+import cz.nkp.urnnbn.indexer.*;
 import org.apache.solr.common.SolrException;
 import org.joda.time.DateTime;
 
@@ -23,6 +19,7 @@ public class EsIndexer {
     private static final Logger logger = Logger.getLogger(EsIndexer.class.getName());
 
     private final DataProvider dataProvider;
+    private final ReportLogger reportLogger;
 
     //status info
     private boolean stopped = false;
@@ -38,6 +35,7 @@ public class EsIndexer {
 
     public EsIndexer(IndexerConfig config, OutputStream reportLoggerStream, DataProvider dataProvider) {
         long start = System.currentTimeMillis();
+        this.reportLogger = new ReportLogger(reportLoggerStream);
         this.dataProvider = dataProvider;
         String baseUrl = config.getEsApiBaseUrl();
         String login = config.getEsApiLogin();
@@ -58,7 +56,9 @@ public class EsIndexer {
     }
 
     public void close() {
-        //reportLogger.close();
+        if (reportLogger != null) {
+            reportLogger.close();
+        }
     }
 
     public void setProgressListener(ProgressListener progressListener) {
@@ -84,9 +84,9 @@ public class EsIndexer {
         if (urnNbn == null) {
             report(" digital document with id " + ddInternalId + " is missing URN:NBN");
         } else {
-            report(" processing " + urnNbn);
+            //report(" processing " + urnNbn);
             try {
-                esConnector.indexDocument(ddInternalId, dbUrl, dbLogin, dbPassword);
+                esConnector.indexDocument(ddInternalId, dbUrl, dbLogin, dbPassword, reportLogger);
                 counters.incrementIndexed();
             } catch (IOException e) {
                 counters.incrementErrors();
@@ -109,7 +109,7 @@ public class EsIndexer {
 
     public void indexDocuments(DateTime from, DateTime to) {
         long start = System.currentTimeMillis();
-        report(" indexing documents from " + from.toString() + " to " + to.toString());
+        report("Indexing documents from " + from.toString() + " to " + to.toString());
         List<DigitalDocument> digitalDocuments = dataProvider.digDocsByModificationDate(from, to);
         Counters counters = new Counters(digitalDocuments.size());
         report("Processing " + counters.getFound() + " records");
@@ -151,13 +151,14 @@ public class EsIndexer {
     }
 
     private void report(String message) {
-        //reportLogger.report(message);
-        System.out.println(message);
+        reportLogger.report(message);
+        //System.out.println(message);
     }
 
     private void report(String message, Throwable e) {
-        System.out.printf("%s: %s%n", message, e.getMessage());
-        //reportLogger.report(message, e);
+        //System.out.printf("%s: %s%n", message, e.getMessage());
+        reportLogger.report(message, e);
+        //System.out.println(message + ": " + e.getMessage());
     }
 
     public void stop() {

@@ -73,7 +73,7 @@ public class DiUrlAvailabilityCheckJob extends AbstractJob {
                 logger.info("Process killed");
                 context.setResult(ProcessState.KILLED);
             } else {
-                logger.info("Process finished, see export");
+                logger.info("Process finished, see report file");
                 context.setResult(ProcessState.FINISHED);
             }
         } catch (Throwable ex) {
