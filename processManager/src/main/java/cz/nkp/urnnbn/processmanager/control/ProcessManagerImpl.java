@@ -504,26 +504,25 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public synchronized boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException,
-            InvalidStateException {
-        Process process = getProcess(login, processId);
-        if (process.getState() != ProcessState.RUNNING) {
-            throw new InvalidStateException(processId, process.getState());
-        }
-
+    public synchronized boolean killRunningProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         try {
-            JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
-            if (scheduler.checkExists(jobKey)) {
-                // System.err.println("OK, running");
-                if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
-                    throw new AccessRightException(login, processId);
-                }
-                scheduler.interrupt(jobKey);
-                return true;
-            } else {
-                throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
-                // System.err.println("NOT RUNNING");
+            Process process = getProcess(login, processId);
+            // check access rights
+            if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
+                throw new AccessRightException(login, processId);
             }
+            // check state
+            if (process.getState() != ProcessState.RUNNING) {
+                throw new InvalidStateException(processId, process.getState());
+            }
+            // check if job exists
+            JobKey jobKey = new JobKey(processId.toString(), PROCESS_GROUP_JOBS);
+            if (!scheduler.checkExists(jobKey)) {
+                throw new UnknownRecordException(Process.class.getName() + " with id " + processId);
+            }
+
+            scheduler.interrupt(jobKey);
+            return true;
         } catch (SchedulerException ex) {
             logger.log(Level.SEVERE, null, ex);
             return false;
@@ -531,12 +530,17 @@ public class ProcessManagerImpl implements ProcessManager {
     }
 
     @Override
-    public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException,
-            InvalidStateException {
+    public synchronized boolean cancelScheduledProcess(String login, Long processId) throws UnknownRecordException, AccessRightException, InvalidStateException {
         Process process = processDao.getProcess(processId);
+        // check access rights
+        if (!AuthentizationUtils.isAdminOrOwner(login, process)) {
+            throw new AccessRightException(login, processId);
+        }
+        // check state
         if (process.getState() != ProcessState.SCHEDULED) {
             throw new InvalidStateException(processId, process.getState());
         }
+
         // remove from queue
         boolean removedFromQueue = false;
         if (AuthentizationUtils.isAdmin(process.getOwnerLogin())) {
