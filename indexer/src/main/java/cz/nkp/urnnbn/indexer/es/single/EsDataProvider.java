@@ -6,6 +6,9 @@ import cz.nkp.urnnbn.indexer.es.domain.assigning.Assigning;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningIdx;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningValidator;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.Resolving;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingIdx;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.searching.SearchQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.searching.Searching;
 import cz.nkp.urnnbn.indexer.es.domain.searching.SearchingIdx;
@@ -42,6 +45,16 @@ public class EsDataProvider {
             );
         } catch (SQLException | JsonProcessingException | IllegalArgumentException e) {
             throw new RuntimeException("Failed conversion for ddId: " + ddId, e);
+        }
+    }
+
+    public DdEsConversionResult convertResolvingJson(Long urId) {
+        try {
+            return new DdEsConversionResult(
+                    convertResolving(urId)
+            );
+        } catch (SQLException | JsonProcessingException | IllegalArgumentException e) {
+            throw new RuntimeException("Failed conversion for urId: " + urId, e);
         }
     }
 
@@ -90,6 +103,31 @@ public class EsDataProvider {
             assigningValidator.validate(assigning);
 
             return AssigningIdx.fromDb(assigning);
+        }
+    }
+
+    private ResolvingIdx convertResolving(Long urID) throws SQLException, JsonProcessingException, IllegalArgumentException {
+        String query = new ResolvingQueryBuilder()
+                .withAlias("resulting_json")
+                .where("ur.id = ?")
+                .build();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setLong(1, urID);
+            ResultSet resultSet = stmt.executeQuery();
+
+            if (!resultSet.next()) {
+                //throw new RuntimeException("No result found for id " + urId);
+                return null;
+            }
+
+            String json = resultSet.getString("resulting_json");
+            System.out.println(json);
+            Resolving resolving = mapper.readValue(json, Resolving.class);
+
+            //validate
+
+            return ResolvingIdx.fromDb(resolving);
         }
     }
 

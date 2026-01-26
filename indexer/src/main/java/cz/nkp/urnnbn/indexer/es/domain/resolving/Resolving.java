@@ -1,18 +1,28 @@
 package cz.nkp.urnnbn.indexer.es.domain.resolving;
 
-import cz.nkp.urnnbn.indexer.es.domain.DomainIdx;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class Resolving implements DomainIdx {
+public class Resolving{
 
     public Long id;
     public String registrarcode;
     public String documentcode;
     public LocalDateTime resolved;
+    public Boolean digitalborn;
+    public List<UrnNbn> urnnbn;
 
-    @Override
-    public String getId() {
-        return Long.toString(id);
+    public static class UrnNbn {
+        public String registrarcode;
+        public String documentcode;
+        public Boolean active;
+
+        public String getUrnnbn() {
+            if (registrarcode == null || documentcode == null) {
+                return null;
+            }
+            return "urn:nbn:cz:" + registrarcode + "-" + documentcode;
+        }
     }
 
     public static String query(Integer limit, Integer offset) {

@@ -19,7 +19,9 @@ public class SingleMain {
         //Long digitalDocumentId = 3766263L; // crashes SearchingValidator with NullPointerException
         //Long digitalDocumentId = 2719329L; //má registrar-scope id (K4_pid:CAEB0C3C-E4E8-42E2-8730-4C15A61529D4) urn:nbn:cz:vkol-009vgk
         //Long digitalDocumentId = 1254004L; // má registrar-scope id (uuid:8b489e90-4860-11e4-8113-005056827e52, OAI_Adapter:uuid:8b489e90-4860-11e4-8113-005056827e52) urn:nbn:cz:mzk-0039uq
-        Long digitalDocumentId = 8L; //ma publishera urn:nbn:cz:tst02-000004
+        //Long digitalDocumentId = 8L; //ma publishera urn:nbn:cz:tst02-000004
+        Long digitalDocumentId = 3120326L;
+        Long resolvingId = 2259946L;
 
         Properties props = Utils.loadProperties();
         ObjectMapper mapper = Config.getObjectMapper();
@@ -29,9 +31,13 @@ public class SingleMain {
             EsDataProvider dataProvider = new EsDataProvider(conn, mapper);
             System.out.println("Starting data provider...");
             DdEsConversionResult conversionResult = dataProvider.convertDigitalDocumentJson(digitalDocumentId);
+            DdEsConversionResult conversionResolvingResult = dataProvider.convertResolvingJson(resolvingId);
             System.out.println("Finished data provider.");
             //System.out.println(conversionResult.getSearch());
+            //System.out.println(conversionResult.getAssignment());
+            //System.out.println(conversionResolvingResult.getResolve());
             indexData(elasticClient, conversionResult);
+            indexData(elasticClient, conversionResolvingResult);
         } finally {
             Utils.stopElasticsearchClient(elasticClient);
         }
@@ -57,6 +63,14 @@ public class SingleMain {
                         .index(Config.INDEX_ASSIGN)
                         .id(conversionResult.getAssignment().getId())
                         .document(conversionResult.getAssignment())
+                );
+            }
+
+            if (conversionResult.getResolve() != null) {
+                esClient.index(idx -> idx
+                        .index(Config.INDEX_RESOLVE)
+                        .id(conversionResult.getResolve().getId())
+                        .document(conversionResult.getResolve())
                 );
             }
         } catch (IOException e) {

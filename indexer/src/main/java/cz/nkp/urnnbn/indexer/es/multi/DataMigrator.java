@@ -8,6 +8,8 @@ import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningIdx;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.assigning.AssigningValidator;
 import cz.nkp.urnnbn.indexer.es.domain.resolving.Resolving;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingIdx;
+import cz.nkp.urnnbn.indexer.es.domain.resolving.ResolvingQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.searching.SearchQueryBuilder;
 import cz.nkp.urnnbn.indexer.es.domain.searching.Searching;
 import cz.nkp.urnnbn.indexer.es.domain.searching.SearchingIdx;
@@ -157,8 +159,11 @@ public class DataMigrator {
         }
         try {
             conn.setAutoCommit(false);
-
-            String query = Resolving.query(DB_READ_LIMIT, DB_READ_OFFSET);
+            String query = new ResolvingQueryBuilder()
+                    .withAlias("resulting_json")
+                    .limit(DB_READ_LIMIT)
+                    .offset(DB_READ_OFFSET)
+                    .build();
 
             try (Statement stmt = conn.createStatement()) {
                 stmt.setFetchSize(DB_FETCH_SIZE == null ? 0 : DB_FETCH_SIZE);
@@ -169,7 +174,9 @@ public class DataMigrator {
                     String json = resultSet.getString("resulting_json");
                     try {
                         Resolving resolving = mapper.readValue(json, Resolving.class);
-                        batch.add(resolving);
+
+                        ResolvingIdx resolvingIdx = ResolvingIdx.fromDb(resolving);
+                        batch.add(resolvingIdx);
 
                     } catch (JsonProcessingException | IllegalArgumentException e) {
                         System.out.println("Failed to parse json: " + json + " --- " + e.getMessage());
