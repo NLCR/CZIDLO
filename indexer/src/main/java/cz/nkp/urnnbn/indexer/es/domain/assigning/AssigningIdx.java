@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class AssigningIdx implements DomainIdx {
     //assigning
     public String entitytype;
-    public String digitalborn;
+    public Boolean digitalborn;
     public Long digitaldocumentid;
 
     //urnnbn

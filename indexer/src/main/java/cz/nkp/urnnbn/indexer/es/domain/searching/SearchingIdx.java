@@ -13,7 +13,7 @@ public class SearchingIdx implements DomainIdx {
     // searching
     public Long id;
     public String entitytype;
-    public String digitalborn;
+    public Boolean digitalborn;
     public String otheroriginator;
 
     // urnnbn

@@ -11,7 +11,7 @@ public class Searching {
 
     public List<UrnNbn> urnnbn;
     public String entitytype;
-    public String digitalborn;
+    public Boolean digitalborn;
     public String otheroriginator;
 
     public Map<String, List<String>> ieidentifiers;
