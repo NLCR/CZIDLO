@@ -49,6 +49,10 @@ public class EsDataProvider {
     }
 
     public DdEsConversionResult convertResolvingJson(Long urId) {
+        if (urId == null) {
+            log.warn("urId is null, cannot convert ResolvingIdx");
+            return new DdEsConversionResult(null);
+        }
         try {
             return new DdEsConversionResult(
                     convertResolving(urId)
